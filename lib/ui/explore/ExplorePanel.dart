@@ -17,6 +17,7 @@
 import 'package:flutter/semantics.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -54,7 +55,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
-enum ExploreItem { All, NearMe, Events, Dining }
+enum ExploreItem { Events, Dining, State_Farm }
 
 enum ExploreFilterType { categories, event_time, event_tags, payment_type, work_time }
 
@@ -69,11 +70,11 @@ class ExplorePanel extends StatefulWidget {
 
   final ExploreItem initialItem;
   final ExploreFilter? initialFilter;
-  final bool mapOnly;
+  final ListMapDisplayType mapDisplayType;
   final bool rootTabDisplay;
   final String? browseGroupId;
 
-  ExplorePanel({this.initialItem = ExploreItem.Events, this.initialFilter, this.mapOnly = false, this.rootTabDisplay = false, this.browseGroupId });
+  ExplorePanel({this.initialItem = ExploreItem.Events, this.initialFilter, this.mapDisplayType = ListMapDisplayType.List, this.rootTabDisplay = false, this.browseGroupId });
 
   static Future<void> presentDetailPanel(BuildContext context, {String? eventId}) async {
     List<Event>? events = (eventId != null) ? await Events().loadEventsByIds([eventId]) : null;
@@ -161,7 +162,7 @@ class ExplorePanelState extends State<ExplorePanel>
     _selectedItem = widget.initialItem;
     _initialSelectedFilter = widget.initialFilter;
 
-    _initListDisplayType();
+    _selectDisplayType(widget.mapDisplayType);
     _initExploreItems();
     _initFilters();
     _loadEventCategories();
@@ -210,14 +211,6 @@ class ExplorePanelState extends State<ExplorePanel>
         body: RefreshIndicator(
             onRefresh: () => _loadExplores(progress: false),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Visibility(
-                  visible: (widget.mapOnly != true),
-                  child: ExploreDisplayTypeHeader(
-                      displayType: _displayType,
-                      searchVisible: (_selectedItem != ExploreItem.Dining),
-                      additionalData: {"group_id": widget.browseGroupId},
-                      onTapList: () => _selectDisplayType(ListMapDisplayType.List),
-                      onTapMap: () => _selectDisplayType(ListMapDisplayType.Map))),
               Padding(
                   padding: EdgeInsets.only(left: 16, top: 16, right: 16),
                   child: RibbonButton(
@@ -267,11 +260,6 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
-  void _initListDisplayType() {
-    ListMapDisplayType displayType = widget.mapOnly ? ListMapDisplayType.Map : ListMapDisplayType.List;
-    _selectDisplayType(displayType);
-  }
-
   void _changeDropDownValuesVisibility() {
     _dropDownValuesVisible = !_dropDownValuesVisible;
     if (mounted) {
@@ -282,16 +270,11 @@ class ExplorePanelState extends State<ExplorePanel>
   void _updateExploreItems() {
 
     List<ExploreItem> exploreItems = [];
-
-    if (_userLocationEnabled()) {
-      exploreItems.add(ExploreItem.NearMe);
-    }
-    else {
-      // We would like you to "omit it" (point 3.3.2).
-      // exploreItems.add(ExploreItem.All);
-    }
     exploreItems.add(ExploreItem.Events);
     exploreItems.add(ExploreItem.Dining);
+    if (_displayType == ListMapDisplayType.Map) {
+      exploreItems.add(ExploreItem.State_Farm);
+    }
 
     if (!ListEquality().equals(_exploreItems, exploreItems)) {
       _exploreItems = exploreItems;
@@ -313,15 +296,6 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _initFilters() {
     _itemToFilterMap = {
-      ExploreItem.All: <ExploreFilter>[
-        ExploreFilter(type: ExploreFilterType.categories),
-        ExploreFilter(type: ExploreFilterType.event_tags)
-      ],
-      ExploreItem.NearMe: <ExploreFilter>[
-        ExploreFilter(type: ExploreFilterType.categories),
-        ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {2}),
-        ExploreFilter(type: ExploreFilterType.event_tags)
-      ],
       ExploreItem.Events: <ExploreFilter>[
         ExploreFilter(type: ExploreFilterType.categories),
         ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {2}),
@@ -438,14 +412,6 @@ class ExplorePanelState extends State<ExplorePanel>
       List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedItem] : null;
       switch (_selectedItem) {
         
-        case ExploreItem.All:
-          task = _loadAll(selectedFilterList);
-          break;
-        
-        case ExploreItem.NearMe:
-          task = _loadNearMe(selectedFilterList);
-          break;
-        
         case ExploreItem.Events: 
           {
             if (_initialSelectedFilter != null) {
@@ -463,6 +429,11 @@ class ExplorePanelState extends State<ExplorePanel>
         
         case ExploreItem.Dining:
           task = _loadDining(selectedFilterList);
+          break;
+
+        case ExploreItem.State_Farm:
+          _clearExploresFromMap();
+          _viewStateFarmPoi();
           break;
 
         default:
@@ -495,33 +466,6 @@ class ExplorePanelState extends State<ExplorePanel>
         _displayExplores = explores;
         _placeExploresOnMap();
       });
-  }
-
-  Future<List<Explore>> _loadAll(List<ExploreFilter>? selectedFilterList) async {
-    Set<String?>? categories = _getSelectedCategories(selectedFilterList);
-    List<Explore> explores = [];
-    List<Explore>? events = await Events().loadEvents(categories: categories, eventFilter: EventTimeFilter.upcoming);
-    if (CollectionUtils.isNotEmpty(events)) {
-      explores.addAll(events!);
-    }
-    if (_shouldLoadGames(categories)) {
-      List<DateTime?> gamesTimeFrame = _getGamesTimeFrame(EventTimeFilter.upcoming);
-      List<Explore>? games = await Sports().loadGames(startDate: gamesTimeFrame.first, endDate: gamesTimeFrame.last);
-      if (CollectionUtils.isNotEmpty(games)) {
-        explores.addAll(games!);
-      }
-    }
-    _sortExplores(explores);
-    return explores;
-  }
-
-  Future<List<Explore>?>? _loadNearMe(List<ExploreFilter>? selectedFilterList) async {
-    Set<String?>? categories = _getSelectedCategories(selectedFilterList);
-    Set<String>? tags = _getSelectedEventTags(selectedFilterList);
-    EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
-    _locationData = _userLocationEnabled() ? await LocationServices().location : null;
-    // Do not load games here, because they do not have proper location data (lat, long)
-    return (_locationData != null) ? Events().loadEvents(locationData: _locationData, categories: categories, tags: tags, eventFilter: eventFilter) : null;
   }
 
   Future<List<Explore>> _loadEvents(List<ExploreFilter>? selectedFilterList) async {
@@ -776,9 +720,17 @@ class ExplorePanelState extends State<ExplorePanel>
   // Build UI
 
   PreferredSizeWidget get headerBarWidget {
-    String headerLabel = (widget.mapOnly)
-        ? Localization().getStringEx("panel.maps.header.title", "Maps")
-        : Localization().getStringEx("panel.explore.label.title", "Explore");
+    String? headerLabel;
+    switch (_displayType) {
+      case ListMapDisplayType.List:
+        headerLabel = Localization().getStringEx("panel.explore.label.title", "Explore");
+        break;
+      case ListMapDisplayType.Map:
+        headerLabel = Localization().getStringEx("panel.maps.header.title", "Maps");
+        break;
+      default:
+        break;
+    }
     if (widget.rootTabDisplay) {
       return RootHeaderBar(title: headerLabel);
     } else {
@@ -1036,11 +988,9 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget _buildEmpty() {
     String message;
     switch (_selectedItem) {
-      case ExploreItem.All:    message = Localization().getStringEx('panel.explore.state.online.empty.all', 'No events.'); break;
-      case ExploreItem.NearMe: message = Localization().getStringEx('panel.explore.state.online.empty.near_me', 'No events near me.'); break;
       case ExploreItem.Events: message = Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.'); break;
       case ExploreItem.Dining: message = Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.'); break;
-      default:                message =  ''; break;
+      default:                 message =  ''; break;
     }
     return SingleChildScrollView(child:
       Center(child:
@@ -1056,11 +1006,10 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget _buildOffline() {
     String message;
     switch (_selectedItem) {
-      case ExploreItem.All:    message = Localization().getStringEx('panel.explore.state.offline.empty.all', 'No events available while offline.'); break;
-      case ExploreItem.NearMe: message = Localization().getStringEx('panel.explore.state.offline.empty.near_me', 'No events near me available while offline.'); break;
-      case ExploreItem.Events: message = Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..'); break;
-      case ExploreItem.Dining: message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
-      default:                message =  ''; break;
+      case ExploreItem.Events:      message = Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..'); break;
+      case ExploreItem.Dining:      message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
+      case ExploreItem.State_Farm:  message = Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.'); break;
+      default:                      message =  ''; break;
     }
     return SingleChildScrollView(child:
       Center(child:
@@ -1283,21 +1232,19 @@ class ExplorePanelState extends State<ExplorePanel>
 
   static String? exploreItemName(ExploreItem exploreItem) {
     switch (exploreItem) {
-      case ExploreItem.All:    return Localization().getStringEx('panel.explore.button.all.title', 'All');
-      case ExploreItem.NearMe: return Localization().getStringEx('panel.explore.button.near_me.title', 'Events Near Me');
-      case ExploreItem.Events: return Localization().getStringEx('panel.explore.button.events.title', 'Events');
-      case ExploreItem.Dining: return Localization().getStringEx('panel.explore.button.dining.title', 'Dining');
-      default:                return null;
+      case ExploreItem.Events:      return Localization().getStringEx('panel.explore.button.events.title', 'Events');
+      case ExploreItem.Dining:      return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
+      case ExploreItem.State_Farm:  return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
+      default:                      return null;
     }
   }
 
   static String? exploreItemHint(ExploreItem exploreItem) {
     switch (exploreItem) {
-      case ExploreItem.All:    return Localization().getStringEx('panel.explore.button.all.hint', '');
-      case ExploreItem.NearMe: return Localization().getStringEx('panel.explore.button.near_me.hint', '');
-      case ExploreItem.Events: return Localization().getStringEx('panel.explore.button.events.hint', '');
-      case ExploreItem.Dining: return Localization().getStringEx('panel.explore.button.dining.hint', '');
-      default:                return null;
+      case ExploreItem.Events:      return Localization().getStringEx('panel.explore.button.events.hint', '');
+      case ExploreItem.Dining:      return Localization().getStringEx('panel.explore.button.dining.hint', '');
+      case ExploreItem.State_Farm:  return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
+      default:                      return null;
     }
   }
 
@@ -1333,6 +1280,12 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
+  void _clearExploresFromMap() {
+    if (_nativeMapController != null) {
+      _nativeMapController!.placePOIs(null);
+    }
+  }
+
   void _enableMap(bool enable) {
     if (_nativeMapController != null) {
       _nativeMapController!.enable(enable);
@@ -1343,6 +1296,17 @@ class ExplorePanelState extends State<ExplorePanel>
   void _enableMyLocationOnMap() {
     if (_nativeMapController != null) {
       _nativeMapController!.enableMyLocation(_userLocationEnabled());
+    }
+  }
+
+  void _viewStateFarmPoi() {
+    Analytics().logSelect(target: "State Farm Wayfinding");
+    if (_nativeMapController != null) {
+      _nativeMapController!.viewPoi({
+        'latitude': Config().stateFarmWayfinding['latitude'],
+        'longitude': Config().stateFarmWayfinding['longitude'],
+        'zoom': Config().stateFarmWayfinding['zoom'],
+      });
     }
   }
 

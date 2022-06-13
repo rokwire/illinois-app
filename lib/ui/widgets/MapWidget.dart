@@ -93,4 +93,8 @@ class MapController {
   Future<void>enableMyLocation(bool enable) async {
     return _channel.invokeMethod('enableMyLocation', enable);
   }
+
+  Future<void> viewPoi(Map<String, dynamic>? target) async {
+    return _channel.invokeMethod('viewPoi', {'target': target});
+  }
 }

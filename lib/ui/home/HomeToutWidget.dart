@@ -13,10 +13,13 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeToutWidget extends StatefulWidget {
+  static const String notifyImageUpdate      = "edu.illinois.rokwire.home.tout.image.update";
+
+  final String? favoriteId;
   final StreamController<String>? updateController;
   final void Function()? onEdit;
   
-  HomeToutWidget({Key? key, this.updateController, this.onEdit});
+  HomeToutWidget({Key? key, this.favoriteId, this.updateController, this.onEdit});
 
   @override
   _HomeToutWidgetState createState() => _HomeToutWidgetState();
@@ -46,6 +49,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
     if ((_imageUrl == null) || (_imageDateTime == null) || _shouldUpdateImage) {
       Storage().homeToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
       Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).microsecondsSinceEpoch;
+      NotificationService().notify(HomeToutWidget.notifyImageUpdate);
     }
 
     _greeting = AppDateTimeUtils.getDayGreeting();
@@ -116,21 +120,27 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   void _update() {
     String? greeting = AppDateTimeUtils.getDayGreeting();
     if (mounted && ((_greeting != greeting) || _shouldUpdateImage)) {
-      setState(() {
-        Storage().homeToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
-        Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).microsecondsSinceEpoch;
-        _greeting = greeting;
-      });
+      Storage().homeToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
+      Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).microsecondsSinceEpoch;
+      NotificationService().notify(HomeToutWidget.notifyImageUpdate);
+
+      _greeting = greeting;
+
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
   void _refresh() {
+    Storage().homeToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
+    Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).microsecondsSinceEpoch;
+    NotificationService().notify(HomeToutWidget.notifyImageUpdate);
+    
+    _greeting = AppDateTimeUtils.getDayGreeting();
+    
     if (mounted) {
-      setState(() {
-        Storage().homeToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
-        Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).microsecondsSinceEpoch;
-        _greeting = AppDateTimeUtils.getDayGreeting();
-      });
+      setState(() {});
     }
   }
 

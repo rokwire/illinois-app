@@ -52,13 +52,13 @@ class HomeFavoritesWidget extends StatefulWidget {
 
   static String? titleFromKey(String favoriteKey) {
     switch(favoriteKey) {
-      case Event.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.events', 'Events');
-      case Dining.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.dining', "Dining");
-      case Game.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.athletics', 'Athletics');
-      case News.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.news', 'News');
-      case LaundryRoom.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.laundry', 'Laundry');
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.campus_guide', 'Campus Guide');
-      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.favorites.label.inbox', 'Inbox');
+      case Event.favoriteKeyName: return Localization().getStringEx('panel.saved.label.events', 'My Events');
+      case Dining.favoriteKeyName: return Localization().getStringEx('panel.saved.label.dining', "My Dinings");
+      case Game.favoriteKeyName: return Localization().getStringEx('panel.saved.label.athletics', 'Athletics');
+      case News.favoriteKeyName: return Localization().getStringEx('panel.saved.label.news', 'My News');
+      case LaundryRoom.favoriteKeyName: return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
+      case InboxMessage.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
+      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.inbox', 'My Notifications');
     }
     return null;
   }
@@ -143,16 +143,16 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       Column(children: <Widget>[
         Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
         Container(height:8),
-        Text(Localization().getStringEx("panel.favorites.message.offline", "Favorite Items are not available while offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+        Text(Localization().getStringEx("panel.saved.message.offline", "Favorite Items are not available while offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
     ],),);
   }
 
   Widget _buildEmpty() {
     return Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 96, bottom: 16), child:
       Column(children: <Widget>[
-        Text(Localization().getStringEx("panel.favorites.message.empty", "Whoops! Nothing to see here."), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
+        Text(Localization().getStringEx("panel.saved.message.empty", "Whoops! Nothing to see here."), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
         Container(height:8),
-        Text(Localization().getStringEx("panel.favorites.message.empty.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+        Text(Localization().getStringEx("panel.saved.message.empty.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
     ],),);
   }
 
@@ -172,7 +172,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       if (limit < _favorites!.length) {
         widgets.add(
           Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child:
-            SmallRoundedButton(label: _showAll ? Localization().getStringEx('panel.favorites.button.less', "Show Less") : Localization().getStringEx('panel.favorites.button.all', "Show All"), onTap: _onViewAllTapped,),
+            SmallRoundedButton(label: _showAll ? Localization().getStringEx('panel.saved.button.less', "Show Less") : Localization().getStringEx('panel.saved.button.all', "Show All"), onTap: _onViewAllTapped,),
           ),
         );
       }

@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
@@ -46,13 +47,14 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   @override
   void initState() {
     super.initState();
-    _selectedContent = widget.content ?? SettingsContent.sections;
+    SettingsContent? lastSelectedContent = _contentFromString(Storage().settingsUserDropDownSelectionValue);
+    _selectedContent = widget.content ?? (lastSelectedContent ?? SettingsContent.sections);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(titleWidget: _buildHeaderBarTitle()),
+        appBar: _DebugContainer(child: RootHeaderBar(title: _panelHeaderLabel)),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
@@ -75,13 +77,6 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         ]),
         backgroundColor: Styles().colors!.background,
         bottomNavigationBar: uiuc.TabBar());
-  }
-
-  Widget _buildHeaderBarTitle() {
-    return _DebugContainer(
-        child: Text(_panelHeaderLabel,
-            style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-            textAlign: TextAlign.center));
   }
 
   Widget _buildContent() {
@@ -128,6 +123,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
 
   void _onTapContentItem(SettingsContent contentItem) {
     _selectedContent = contentItem;
+    Storage().settingsUserDropDownSelectionValue = _selectedContent.toString();
     _changeSettingsContentValuesVisibility();
   }
 
@@ -156,6 +152,13 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   }
 
   // Utilities
+
+  static SettingsContent? _contentFromString(String? value) {
+    if (value == null) {
+      return null;
+    }
+    return SettingsContent.values.firstWhere((element) => (element.toString() == value));
+  }
 
   String _getContentLabel(SettingsContent section) {
     switch (section) {

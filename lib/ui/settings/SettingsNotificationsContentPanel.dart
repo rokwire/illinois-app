@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsInboxHomeContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsNotificationPreferencesContentWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -58,10 +59,8 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   @override
   void initState() {
     NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
-    // Do not allow not logged in users to view "Notifications" content
-    _selectedContent =
-        widget.content ?? (Auth2().isLoggedIn ? SettingsNotificationsContent.inbox : SettingsNotificationsContent.preferences);
-
+    
+    _initInitialContent();
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _evalContentWidgetHeight();
     });
@@ -77,7 +76,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(key: _headerBarKey, title: _panelHeaderLabel),
+        appBar: RootHeaderBar(key: _headerBarKey, title: _panelHeaderLabel),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
@@ -150,8 +149,19 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
         onTap: () => _onTapContentItem(contentItem));
   }
 
+  void _initInitialContent() {
+    SettingsNotificationsContent? lastSelectedContent = _contentFromString(Storage().notificationsUserDropDownSelectionValue);
+    // Do not allow not logged in users to view "Notifications" content
+    if (!Auth2().isLoggedIn && (lastSelectedContent == SettingsNotificationsContent.inbox)) {
+      lastSelectedContent = null;
+    }
+    _selectedContent = widget.content ??
+        (lastSelectedContent ?? (Auth2().isLoggedIn ? SettingsNotificationsContent.inbox : SettingsNotificationsContent.preferences));
+  }
+
   void _onTapContentItem(SettingsNotificationsContent contentItem) {
     _selectedContent = contentItem;
+    Storage().notificationsUserDropDownSelectionValue = _selectedContent.toString();
     _changeSettingsContentValuesVisibility();
   }
 
@@ -205,6 +215,13 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
 
   // Utilities
 
+  static SettingsNotificationsContent? _contentFromString(String? value) {
+    if (value == null) {
+      return null;
+    }
+    return SettingsNotificationsContent.values.firstWhere((element) => (element.toString() == value));
+  }
+
   String _getContentLabel(SettingsNotificationsContent content) {
     switch (content) {
       case SettingsNotificationsContent.inbox:
@@ -231,6 +248,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
       if ((_selectedContent == SettingsNotificationsContent.inbox) && !Auth2().isLoggedIn) {
         // Do not allow not logged in users to view "Notifications" content
         _selectedContent = SettingsNotificationsContent.preferences;
+        Storage().notificationsUserDropDownSelectionValue = _selectedContent.toString();
       }
       if (mounted) {
         setState(() {});

@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInfoContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsRolesContentWidget.dart';
@@ -44,8 +45,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
-    // Do not allow not logged in users to view "Profile" content
-    _selectedContent = widget.content ?? (Auth2().isLoggedIn ? SettingsProfileContent.profile : SettingsProfileContent.privacy);
+    _initInitialContent();
   }
 
   @override
@@ -57,7 +57,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(title: _panelHeaderLabel),
+        appBar: RootHeaderBar(title: _panelHeaderLabel),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
@@ -128,8 +128,19 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
         onTap: () => _onTapContentItem(contentItem));
   }
 
+  void _initInitialContent() {
+    SettingsProfileContent? lastSelectedContent = _contentFromString(Storage().profileUserDropDownSelectionValue);
+    // Do not allow not logged in users to view "Profile" content
+    if (!Auth2().isLoggedIn && (lastSelectedContent == SettingsProfileContent.profile)) {
+      lastSelectedContent = null;
+    }
+    _selectedContent =
+        widget.content ?? (lastSelectedContent ?? (Auth2().isLoggedIn ? SettingsProfileContent.profile : SettingsProfileContent.privacy));
+  }
+
   void _onTapContentItem(SettingsProfileContent contentItem) {
     _selectedContent = contentItem;
+    Storage().profileUserDropDownSelectionValue = _selectedContent.toString();
     _changeSettingsContentValuesVisibility();
   }
 
@@ -154,6 +165,13 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   }
 
   // Utilities
+
+  static SettingsProfileContent? _contentFromString(String? value) {
+    if (value == null) {
+      return null;
+    }
+    return SettingsProfileContent.values.firstWhere((element) => (element.toString() == value));
+  }
 
   String _getContentLabel(SettingsProfileContent content) {
     switch (content) {
@@ -185,6 +203,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
       if ((_selectedContent == SettingsProfileContent.profile) && !Auth2().isLoggedIn) {
         // Do not allow not logged in users to view "Profile" content
         _selectedContent = SettingsProfileContent.privacy;
+        Storage().profileUserDropDownSelectionValue = _selectedContent.toString();
       }
       if (mounted) {
         setState(() {});

@@ -770,7 +770,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   void _addRecentItem(){
     if(!widget.previewMode)
-      RecentItems().addRecentItem(RecentItem.fromOriginalType(widget.event));
+      RecentItems().addRecentItem(RecentItem.fromSource(widget.event));
   }
 
   void _onTapGetTickets(String? ticketsUrl) {

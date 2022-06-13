@@ -9,6 +9,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -49,12 +50,11 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   @override
   void initState() {
     super.initState();
-    _selectedAccountKey = Storage().selectedTwitterAccount;
+
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       FlexUI.notifyChanged,
     ]);
-
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
@@ -64,6 +64,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       });
     }
 
+    _selectedAccountKey = Storage().selectedTwitterAccount;
     _loadingPage = true;
     String? accountKey = _currentAccountKey;
     Twitter().loadTweetsPage(count: Config().twitterTweetsCount, accountKey: accountKey).then((TweetsPage? tweetsPage) {
@@ -111,7 +112,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
   @override
   Widget build(BuildContext context) {
-    int displayPagesCount = tweetsCount + ((_loadingPage == true) ? 1 : 0);
+    int displayPagesCount = _tweetsCount + ((_loadingPage == true) ? 1 : 0);
     return Visibility(visible: (0 < displayPagesCount), child:
         Semantics(container: true, child:
           Column(children: <Widget>[
@@ -142,15 +143,15 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
             ),
 
             (1 < _accountKeys.length) ?
-              Semantics(container: true,  button: true, child: buildAccountDropDown(), ) :
+              Semantics(container: true,  button: true, child: _buildAccountDropDown(), ) :
               Container(),
 
-            HomeFavoriteButton(favoriteId: widget.favoriteId,),
+            HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: HomeFavoriteStyle.SlantHeader, prompt: true),
             
         ],),),),);
   }
 
-  Widget buildAccountDropDown() {
+  Widget _buildAccountDropDown() {
     String? currentAccountName = twitterAccountName(_currentAccountKey);
 
     return Semantics(label: currentAccountName, hint: "Double tap to select account", button: true, container: true, child:
@@ -200,6 +201,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
           bool isFirst = pages.isEmpty;
           pages.add(_TweetWidget(
             tweet: tweet,
+            margin: EdgeInsets.only(bottom: 5, right: 20),
             onTapPrevious: isFirst? null : _onTapPrevious,
             onTapNext: _onTapNext,
           ));
@@ -208,7 +210,10 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     }
 
     if (_loadingPage == true) {
-      pages.add(_TweetLoadingWidget());
+      pages.add(_TweetLoadingWidget(
+        progressColor: Styles().colors!.white!,
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24)
+      ));
     }
 
     double screenWidth = MediaQuery.of(context).size.width;
@@ -228,7 +233,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       );
   }
 
-  int get tweetsCount {
+  int get _tweetsCount {
     int tweetsCount = 0;
     for (TweetsPage tweetsPage in _tweetsPages) {
       tweetsCount += (tweetsPage.tweets?.length ?? 0);
@@ -237,7 +242,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   }
 
   void _onPageChanged(int index) {
-    if ((tweetsCount <= (index + 1)) && (_loadingPage != true)) {
+    if ((_tweetsCount <= (index + 1)) && (_loadingPage != true)) {
       _setStateDelayed(() {
         _loadingPage = true;
       });
@@ -262,7 +267,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     });
     String? accountKey = _currentAccountKey;
     Twitter().loadTweetsPage(
-        count: count ?? max(tweetsCount, Config().twitterTweetsCount!),
+        count: count ?? max(_tweetsCount, Config().twitterTweetsCount!),
         noCache: noCache,
         accountKey: accountKey).then((TweetsPage? tweetsPage) {
           _setState(() {
@@ -333,17 +338,280 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   }
 }
 
-class _TweetWidget extends StatelessWidget {
+class TwitterPanel extends StatefulWidget {
+  TwitterPanel({Key? key}) : super(key: key);
 
-  final Tweet? tweet;
-  final void Function()? onTapNext;
-  final void Function()? onTapPrevious;
+  @override
+  _TwitterPanelState createState() => _TwitterPanelState();
+}
 
-  _TweetWidget({this.tweet, this.onTapNext, this.onTapPrevious});
+class _TwitterPanelState extends State<TwitterPanel> implements NotificationsListener  {
+
+  List<TweetsPage> _tweetsPages = <TweetsPage>[];
+  String? _tweetsAccountKey;
+  String? _selectedAccountKey;
+  bool _loadingPage = false;
+  ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+
+    NotificationService().subscribe(this, [
+      FlexUI.notifyChanged,
+    ]);
+
+    _selectedAccountKey = Storage().selectedTwitterAccount;
+    _loadingPage = true;
+    String? accountKey = _currentAccountKey;
+
+    Twitter().loadTweetsPage(count: Config().twitterTweetsCount, accountKey: accountKey).then((TweetsPage? tweetsPage) {
+      if (mounted) {
+        setState(() {
+          _loadingPage = false;
+          if (tweetsPage != null) {
+            _tweetsPages.add(tweetsPage);
+            _tweetsAccountKey = accountKey;
+          }
+        });
+      }
+    });
+
+    _scrollController.addListener(_scrollListener);
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == FlexUI.notifyChanged) {
+      _onTwitterAccountChanged();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.only(bottom: 5, right: 20), child:
+    return Scaffold(
+      appBar: HeaderBar(
+        title: 'Twitter' /* TBD: Localization */,
+        actions: _buildActions(),
+      ),
+      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Expanded(child:
+            _buildContent(),
+          ),
+        ],)),
+      backgroundColor: Styles().colors!.background,
+    );
+  }
+
+  List<Widget>? _buildActions() {
+    String? currentAccountName = twitterAccountName(_currentAccountKey);
+    return (1 < _accountKeys.length) ? <Widget>[
+      Semantics(label: currentAccountName, hint: "Double tap to select account", button: true, container: true, child:
+        DropdownButtonHideUnderline(child:
+          DropdownButton<String>(
+            icon: Padding(padding: EdgeInsets.only(left: 4, right: 16), child: Image.asset('images/icon-down-white.png')),
+            isExpanded: false,
+            style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16, ),
+            hint: (currentAccountName != null) ? Text(currentAccountName, style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)) : null,
+            items: _buildDropDownItems(),
+            onChanged: _onDropDownValueChanged
+          ),
+        ),
+      ),
+    ] : null;
+  }
+
+
+  List<DropdownMenuItem<String>>? _buildDropDownItems() {
+    List<DropdownMenuItem<String>> dropDownItems = [];
+    for (String accountKey in _accountKeys) {
+      String? accountName = twitterAccountName(accountKey);
+      dropDownItems.add(DropdownMenuItem<String>(value: accountKey, child:
+        // BlockSemantics(blocking: true, child:
+          Semantics(label: accountName, hint: "Double tap to select account", button:false, excludeSemantics: true,child:
+            Text(accountName ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)),
+          )
+        // )
+      ));
+    }
+    return dropDownItems;
+  }
+
+  Widget _buildContent() {
+    if (_tweetsPages.isEmpty && _loadingPage == true) {
+      return Center(child: 
+        SizedBox(height: 32, width: 32, child:
+          CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary!), )
+        ),
+      );
+    }
+    else {
+      int displayPagesCount = _tweetsCount + ((_loadingPage == true) ? 1 : 0);
+      if (0 < displayPagesCount) {
+        return ListView.separated(
+            separatorBuilder: (context, index) => Container(height: 24),
+            itemCount: displayPagesCount,
+            itemBuilder: _buildListEntry,
+            controller: _scrollController);
+      }
+      else {
+        return Column(children: <Widget>[
+          Expanded(child: Container(), flex: 1),
+          Text('No tweets' /* TBD: Localization */, textAlign: TextAlign.center,),
+          Expanded(child: Container(), flex: 3),
+        ]);
+      }
+    }
+  }
+
+  Widget _buildListEntry(BuildContext context, int index) {
+    Tweet? tweet = _tweet(index);
+    return (tweet != null) ? 
+      _TweetWidget(
+        tweet: tweet,
+        margin: (0 < index) ? EdgeInsets.symmetric(horizontal: 16) : EdgeInsets.only(left: 16, right: 16, top: 16)
+      ) :
+      _TweetLoadingWidget(
+        progressColor: Styles().colors!.fillColorPrimary!,
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: _tweetsPages.isNotEmpty ? 48 : 192)
+      );
+  }
+
+  void _refresh({int? count, bool? noCache}) {
+    if (mounted) {
+      setState(() {
+        _loadingPage = true;
+      });
+    }
+    String? accountKey = _currentAccountKey;
+    Twitter().loadTweetsPage(
+        count: count ?? max(_tweetsCount, Config().twitterTweetsCount!),
+        noCache: noCache,
+        accountKey: accountKey).then((TweetsPage? tweetsPage) {
+          if (mounted) {
+            setState(() {
+              _loadingPage = false;
+              if (tweetsPage != null) {
+                _tweetsPages = [tweetsPage];
+                _tweetsAccountKey = accountKey;
+              }
+            });
+          }
+      });
+  }
+
+  void _loadMore() {
+    if (mounted) {
+      setState(() {
+        _loadingPage = true;
+      });
+    }
+    TweetsPage? lastTweetsPage = (0 < _tweetsPages.length) ? _tweetsPages.last : null;
+    Tweet? lastTweet = ((lastTweetsPage?.tweets != null) && (0 < lastTweetsPage!.tweets!.length)) ? lastTweetsPage.tweets!.last : null;
+    String? accountKey = _currentAccountKey;
+    Twitter().loadTweetsPage(count: Config().twitterTweetsCount, endTimeUtc: lastTweet?.createdAtUtc, accountKey: accountKey).then((TweetsPage? tweetsPage) {
+      if (mounted) {
+        setState(() {
+          _loadingPage = false;
+          if (tweetsPage != null) {
+            _tweetsPages.add(tweetsPage);
+            _tweetsAccountKey = accountKey;
+          }
+        });
+      }
+    });
+  }
+
+  Future<void> _onPullToRefresh() async {
+    String? accountKey = _currentAccountKey;
+    TweetsPage? tweetsPage = await Twitter().loadTweetsPage(
+      count: max(_tweetsCount, Config().twitterTweetsCount!),
+      noCache: true,
+      accountKey: accountKey);
+    if ((tweetsPage != null) && mounted) {
+      _tweetsPages = [tweetsPage];
+      _tweetsAccountKey = accountKey;
+    }
+  }
+
+  int get _tweetsCount {
+    int tweetsCount = 0;
+    for (TweetsPage tweetsPage in _tweetsPages) {
+      tweetsCount += (tweetsPage.tweets?.length ?? 0);
+    }
+    return tweetsCount;
+  }
+
+  Tweet? _tweet(int tweetIndex) {
+    for (TweetsPage tweetsPage in _tweetsPages) {
+      if ((0 <= tweetIndex) && (tweetIndex < (tweetsPage.tweets?.length ?? 0))) {
+        return tweetsPage.tweets![tweetIndex];
+      }
+      else {
+        tweetIndex -= (tweetsPage.tweets?.length ?? 0);
+      }
+    }
+    return null;
+  }
+
+  String get _currentAccountKey => _selectedAccountKey ?? _defaultAccountKey;
+
+  static String get _defaultAccountKey => _accountKeys.first;
+
+  static List<String> get _accountKeys => JsonUtils.listStringsValue(FlexUI()['home.twitter.account']) ?? [ Config.twitterDefaultAccountKey ];
+
+  static String? twitterAccountName(String accountKey) {
+    String? accountName = Config().twitterAccountName(accountKey);
+    return (accountName != null) ? "@$accountName" : null;
+  }
+
+  void _onDropDownValueChanged(String? value) {
+    Analytics().logSelect(target: "Twitter account selected: $value");
+    Storage().selectedTwitterAccount = _selectedAccountKey = (value != _defaultAccountKey) ? value : null;
+    _refresh(count: Config().twitterTweetsCount);
+  }
+
+  void _onTwitterAccountChanged() {
+    if ((_selectedAccountKey != null) && (!_accountKeys.contains(_selectedAccountKey) || (_selectedAccountKey == _defaultAccountKey))) {
+      Storage().selectedTwitterAccount = _selectedAccountKey = null;
+    }
+    if ((_tweetsAccountKey != _currentAccountKey)) {
+      _refresh(count: Config().twitterTweetsCount);
+    }
+    else if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _scrollListener() {
+    if ((_scrollController.offset >= _scrollController.position.maxScrollExtent) && (_loadingPage != true)) {
+      _loadMore();
+    }
+  }
+}
+
+class _TweetWidget extends StatelessWidget {
+
+  final Tweet? tweet;
+  final EdgeInsetsGeometry? margin;
+  final void Function()? onTapNext;
+  final void Function()? onTapPrevious;
+
+  _TweetWidget({this.tweet, this.margin, this.onTapNext, this.onTapPrevious});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(padding: margin ?? EdgeInsets.zero, child:
       Container(
         decoration: BoxDecoration(
             color: Styles().colors!.white,
@@ -442,16 +710,20 @@ class _TweetWidget extends StatelessWidget {
 
 class _TweetLoadingWidget extends StatelessWidget {
 
+  final Color progressColor;
+  final EdgeInsetsGeometry padding;
+  _TweetLoadingWidget({required this.progressColor, required this.padding});
+
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24), child:
+    return Padding(padding: padding, child:
       Container(
         color: Colors.transparent,
         clipBehavior: Clip.none,
         child:
           Center(child: 
             SizedBox(height: 24, width: 24, child:
-              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.white), )
+              CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(progressColor), )
             ),
           ),
       )
