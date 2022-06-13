@@ -27,6 +27,7 @@ import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -45,6 +46,8 @@ import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+
+// HomeRecentItemsWidget
 
 class HomeRecentItemsWidget extends StatefulWidget {
 
@@ -114,24 +117,19 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   @override
   Widget build(BuildContext context) {
     
-    /*return _RecentItemsList(favoriteId: widget.favoriteId,
-      heading: Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed'),
-      items: _recentItems,
-    );*/
-
     return Visibility(visible: CollectionUtils.isNotEmpty(_recentItems), child:
       HomeSlantWidget(favoriteId: widget.favoriteId,
           title: Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed'),
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-          child: Column(children: _buildListItems(context),)
+          child: Column(children: _buildListItems(),)
       ),
     );
 
   }
 
-  List<Widget> _buildListItems(BuildContext context){
+  List<Widget> _buildListItems() {
     List<Widget> widgets =  [];
-    if (_recentItems?.isNotEmpty ?? false){
+    if (_recentItems?.isNotEmpty ?? false) {
       
       final int limit = 3;
       int itemsCount = _recentItems!.length;
@@ -171,6 +169,88 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     });
   }
 }
+
+// HomeRecentItemsPanel
+
+class HomeRecentItemsPanel extends StatefulWidget {
+  HomeRecentItemsPanel();
+
+  @override
+  _HomeRecentItemsPanelState createState() => _HomeRecentItemsPanelState();
+}
+
+class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements NotificationsListener {
+
+  Iterable<RecentItem>? _recentItems;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, RecentItems.notifyChanged);
+    _recentItems = RecentItems().recentItems;
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == RecentItems.notifyChanged) {
+      if (mounted) {
+        setState(() {
+          _recentItems = RecentItems().recentItems;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: HeaderBar(title: Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed'),),
+      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Expanded(child:
+            SingleChildScrollView(child:
+              Padding(padding: EdgeInsets.all(16), child:
+                Column(children: _buildListItems(),)
+              )
+            ,),
+          ),
+        ],)),
+      backgroundColor: Styles().colors!.background,
+    );
+  }
+
+  List<Widget> _buildListItems() {
+    List<Widget> widgets =  [];
+    if (_recentItems != null) {
+      for (RecentItem item in _recentItems!) {
+        if (0 < widgets.length) {
+          widgets.add(Container(height: 8));
+        }
+        widgets.add(HomeRecentItemCard(recentItem: item));
+      }
+    }
+    return widgets;
+  }
+
+  Future<void> _onPullToRefresh() async {
+    if (mounted) {
+      setState(() {
+        _recentItems = RecentItems().recentItems;
+      });
+    }
+  }
+
+}
+
+// HomeRecentItemCard
 
 class HomeRecentItemCard extends StatefulWidget {
 
