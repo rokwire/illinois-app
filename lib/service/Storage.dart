@@ -481,7 +481,9 @@ class Storage extends rokwire.Storage {
   int? get homeToutImageTime => getIntWithName(homeToutImageTimeKey);
   set homeToutImageTime(int? value) => setIntWithName(homeToutImageTimeKey, value);
 
-  // User's Drop Down Selection - Profile, Notifications, Settings, Wellness
+  // User's Drop Down Selection - Profile, Notifications, Settings, Wellness, Academics
+
+  static final String _userDropDownSelectionPrefix = 'user.drop.down.selection.';
 
   Map<String, dynamic>? _userDropDownSelectionMap; // Store it "per app run, not permanent"
 
@@ -492,7 +494,9 @@ class Storage extends rokwire.Storage {
     _userDropDownSelectionMap![key] = value;
   }
 
-  String get _profileUserDropDownSelectionKey => 'user.drop.down.selection.profile';
+  String get _profileUserDropDownSelectionKey {
+    return _userDropDownSelectionPrefix + 'profile';
+  } 
 
   String? get profileUserDropDownSelectionValue {
     return _userDropDownSelectionMap?[_profileUserDropDownSelectionKey];
@@ -502,7 +506,9 @@ class Storage extends rokwire.Storage {
     _setUserDropDownSelectionMapValue(_profileUserDropDownSelectionKey, value);
   }
 
-  String get _notificationsUserDropDownSelectionKey => 'user.drop.down.selection.notifications';
+  String get _notificationsUserDropDownSelectionKey {
+    return _userDropDownSelectionPrefix + 'notifications';
+  }
 
   String? get notificationsUserDropDownSelectionValue {
     return _userDropDownSelectionMap?[_notificationsUserDropDownSelectionKey];
@@ -512,7 +518,9 @@ class Storage extends rokwire.Storage {
     _setUserDropDownSelectionMapValue(_notificationsUserDropDownSelectionKey, value);
   }
 
-  String get _settingsUserDropDownSelectionKey => 'user.drop.down.selection.settings';
+  String get _settingsUserDropDownSelectionKey {
+    return _userDropDownSelectionPrefix + 'settings';
+  }
 
   String? get settingsUserDropDownSelectionValue {
     return _userDropDownSelectionMap?[_settingsUserDropDownSelectionKey];
@@ -522,7 +530,9 @@ class Storage extends rokwire.Storage {
     _setUserDropDownSelectionMapValue(_settingsUserDropDownSelectionKey, value);
   }
 
-  String get _wellnessUserDropDownSelectionKey => 'user.drop.down.selection.wellness';
+  String get _wellnessUserDropDownSelectionKey {
+    return _userDropDownSelectionPrefix + 'wellness';
+  }
 
   String? get wellnessUserDropDownSelectionValue {
     return _userDropDownSelectionMap?[_wellnessUserDropDownSelectionKey];
@@ -530,5 +540,17 @@ class Storage extends rokwire.Storage {
 
   set wellnessUserDropDownSelectionValue(String? value) {
     _setUserDropDownSelectionMapValue(_wellnessUserDropDownSelectionKey, value);
+  }
+
+  String get _academicsUserDropDownSelectionKey {
+    return _userDropDownSelectionPrefix + 'academics';
+  }
+
+  String? get academicsUserDropDownSelectionValue {
+    return _userDropDownSelectionMap?[_academicsUserDropDownSelectionKey];
+  }
+
+  set academicsUserDropDownSelectionValue(String? value) {
+    _setUserDropDownSelectionMapValue(_academicsUserDropDownSelectionKey, value);
   }
 }
