@@ -79,13 +79,6 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         bottomNavigationBar: uiuc.TabBar());
   }
 
-  /*Widget _buildHeaderBarTitle() {
-    return _DebugContainer(
-        child: Text(_panelHeaderLabel,
-            style: TextStyle(color: Styles().colors!.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),
-            textAlign: TextAlign.center));
-  }*/
-
   Widget _buildContent() {
     return Stack(children: [Padding(padding: EdgeInsets.all(16), child: _contentWidget), _buildContentValuesContainer()]);
   }
