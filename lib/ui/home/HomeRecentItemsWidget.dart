@@ -33,6 +33,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/ext/RecentItem.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -401,17 +402,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
   }
 
   Widget _topBorder() {
-    Color? borderColor;
-    switch (widget.recentItem.type) {
-      case RecentItemType.event:   borderColor = Styles().colors?.eventColor; break;
-      case RecentItemType.dining:  borderColor = Styles().colors?.diningColor; break;
-      case RecentItemType.game:    borderColor = Styles().colors?.fillColorPrimary; break;
-      case RecentItemType.news:    borderColor = Styles().colors?.fillColorPrimary; break;
-      case RecentItemType.laundry: borderColor = Styles().colors?.accentColor2; break;
-      case RecentItemType.guide:   borderColor = Styles().colors?.accentColor3; break;
-      default:                     borderColor = Styles().colors?.fillColorPrimary; break;
-    }
-    return Container(height: 7, color: borderColor);
+    return Container(height: 7, color: widget.recentItem.headerColor ?? Styles().colors?.fillColorPrimary);
   }
 
   void _onTapFavorite() {
