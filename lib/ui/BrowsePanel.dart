@@ -287,29 +287,59 @@ class _BrowseSection extends StatelessWidget {
   String get _title => Localization().getStringEx('panel.browse.section.$sectionId.title', StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
   String get _description => Localization().getStringEx('panel.browse.section.$sectionId.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.');
 
-  bool get _hasContent => (_entriesCodes?.isNotEmpty ?? false);
-
   void _onTapExpand() {
     if (_hasContent && (onExpand != null)) {
       onExpand!();
     }
   }
 
-  bool? get _isSectionFavorite {
-    int favCount = 0, unfavCount = 0;
+  bool get _hasContent {
     if (_entriesCodes?.isNotEmpty ?? false) {
+      List<dynamic>? availableList = avalableSectionFavorites;
       for (String code in _entriesCodes!) {
-        if (Auth2().prefs?.isFavorite(HomeFavorite(code, category: _favoriteCategory)) ?? false) {
-          favCount++;
-        }
-        else {
-          unfavCount++;
+        if (availableList?.contains(code) ?? false) {
+          return true;
         }
       }
-      if ((favCount == _entriesCodes!.length)) {
+    }
+    return false;
+  }
+
+  List<String> get _availableFavoriteCodes {
+    List<String> result = <String>[];
+    if (_entriesCodes?.isNotEmpty ?? false) {
+      List<dynamic>? availableList = avalableSectionFavorites;
+      for (String code in _entriesCodes!) {
+        if (availableList?.contains(code) ?? false) {
+          result.add(code);
+        }
+      }
+    }
+    return result;
+  }
+
+  List<dynamic>? get avalableSectionFavorites => FlexUI().contentSourceEntry((_favoriteCategory != null) ? 'home.$_favoriteCategory' : 'home');
+  // bool _canFavoriteEntry(String entryId) => avalableSectionFavorites?.contains(entryId) ?? false;
+
+  bool? get _isSectionFavorite {
+    int favCount = 0, unfavCount = 0, totalCount = 0;
+    if (_entriesCodes?.isNotEmpty ?? false) {
+      List<dynamic>? availableList = avalableSectionFavorites;
+      for (String code in _entriesCodes!) {
+        if (availableList?.contains(code) ?? false) {
+          totalCount++;
+          if (Auth2().prefs?.isFavorite(HomeFavorite(code, category: _favoriteCategory)) ?? false) {
+            favCount++;
+          }
+          else {
+            unfavCount++;
+          }
+        }
+      }
+      if ((favCount == totalCount)) {
         return true;
       }
-      else if (unfavCount == _entriesCodes!.length) {
+      else if (unfavCount == totalCount) {
         return false;
       }
     }
@@ -335,7 +365,7 @@ class _BrowseSection extends StatelessWidget {
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), LinkedHashSet<String>());
     }
     else {
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), LinkedHashSet<String>.from(_entriesCodes?.reversed ?? <String>[]));
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), LinkedHashSet<String>.from(_availableFavoriteCodes.reversed));
     }
   }
 
