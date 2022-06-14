@@ -133,6 +133,8 @@
     "panel.home.connect.not_logged_in.phone_or_email.description.part_1": "Don't have a NetID? ",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
     "panel.home.connect.not_logged_in.phone_or_email.title": "Continue",
+    "panel.home.favorites.editing.header.title": "Favorites",
+    "panel.home.favorites.editing.header.description": "Tap and hold an item to change its order in favorites. Touch \"Done\" to view your updated Favorites.",
     "panel.label.offline.phone_or_email": "Feature not available when offline.",
 
     "panel.browse.label.title": "Browse",
@@ -2403,7 +2405,7 @@
     "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this favorite?",
 
     "widget.home.welcome.text.title": "Welcome to Illinois 4",
-    "widget.home.welcome.text.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam finibus, neque non mattis finibus, ante mauris laoreet ante, volutpat semper turpis massa nec sapien.\n\nNullam semper dolor a turpis faucibus, id sollicitudin risus lobortis. Quisque nulla odio, vehicula ac finibus ac, consectetur vel lectus. Vestibulum viverra vestibulum eleifend.",
+    "widget.home.welcome.text.description": "New in this version: easily reorder your favorites panel to customize your own preferences. Add or remove content by tapping {{star_icon}}. This can be done in Browse or by tapping Reorder.",
     "widget.home.welcome.button.close.label": "Close",
 
     "widget.home.tout.reorder.label": "Reorder",
