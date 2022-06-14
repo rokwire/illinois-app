@@ -2264,9 +2264,9 @@
     "widget.game_detail_heading.button.roster.title":"Lista",
     "widget.game_detail_heading.button.roster.hint": "Toca para ver la lista",
 
-    "widget.home_campus_reminders.label.campus_reminders": "Recordatorios de Campus",
-    "widget.home_campus_reminders.button.more.title": "Ver todo",
-    "widget.home_campus_reminders.button.more.hint": "Toca para ver todos los recordatorios",
+    "widget.home.campus_reminders.label.campus_reminders": "Recordatorios de Campus",
+    "widget.home.campus_reminders.button.more.title": "Ver todo",
+    "widget.home.campus_reminders.button.more.hint": "Toca para ver todos los recordatorios",
 
     "widget.card.button.favorite.on.title":"Agregar a favoritos",
     "widget.card.button.favorite.on.hint":"",

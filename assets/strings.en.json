@@ -2267,9 +2267,9 @@
     "widget.game_detail_heading.button.roster.title":"Roster",
     "widget.game_detail_heading.button.roster.hint": "Tap to view the roster",
 
-    "widget.home_campus_reminders.label.campus_reminders": "Campus Reminders",
-    "widget.home_campus_reminders.button.more.title": "View All",
-    "widget.home_campus_reminders.button.more.hint": "Tap to view all reminders",
+    "widget.home.campus_reminders.label.campus_reminders": "Campus Reminders",
+    "widget.home.campus_reminders.button.more.title": "See All",
+    "widget.home.campus_reminders.button.more.hint": "Tap to view all reminders",
 
     "widget.card.button.favorite.on.title":"Add To Favorites",
     "widget.card.button.favorite.on.hint":"",

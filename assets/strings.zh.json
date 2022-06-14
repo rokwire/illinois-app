@@ -2264,9 +2264,9 @@
 	"widget.game_detail_heading.button.roster.title":"名单",
 	"widget.game_detail_heading.button.roster.hint":"点击以查看名册",
 
-	"widget.home_campus_reminders.label.campus_reminders":"校园提醒",
-	"widget.home_campus_reminders.button.more.title": "查看全部",
-	"widget.home_campus_reminders.button.more.hint": "點按即可查看所有提醒",
+	"widget.home.campus_reminders.label.campus_reminders":"校园提醒",
+	"widget.home.campus_reminders.button.more.title": "看到所有",
+	"widget.home.campus_reminders.button.more.hint": "點按即可查看所有提醒",
 
 	"widget.card.button.favorite.on.title":"添加到收藏夹",
 	"widget.card.button.favorite.on.hint":"",
