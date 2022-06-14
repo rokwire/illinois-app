@@ -277,8 +277,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     if (homeFavorites != null) {
 
-      widgets.add(_buildEditingHeader(title: 'Favorites', favoriteId: _favoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus sapien, tempus sed bibendum et, accumsan interdum velit. Integer bibendum feugiat lectus, eget sollicitudin enim vulputate sit amet. Pellentesque at risus odio.',
+      widgets.add(_buildEditingHeader(title: Localization().getStringEx('panel.home.favorites.editing.header.title', 'Favorites'), favoriteId: _favoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
+        description: Localization().getStringEx('panel.home.favorites.editing.header.description', 'Tap and hold an item to change its order in favorites. Touch "Done" to view your updated Favorites.'),
       ));
        
       int position = 0;
