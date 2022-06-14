@@ -11,16 +11,18 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/Sports.dart';
+import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -57,8 +59,8 @@ class HomeFavoritesWidget extends StatefulWidget {
       case Game.favoriteKeyName: return Localization().getStringEx('panel.saved.label.athletics', 'Athletics');
       case News.favoriteKeyName: return Localization().getStringEx('panel.saved.label.news', 'My News');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
-      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.inbox', 'My Notifications');
+      case InboxMessage.favoriteKeyName: return Localization().getStringEx('panel.saved.label.inbox', 'My Notifications');
+      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
     }
     return null;
   }
@@ -68,8 +70,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   List<Favorite>? _favorites;
   bool _loadingFavorites = false;
-  bool _showAll = false;
-  final int limit = 3;
   
   @override
   void initState() {
@@ -77,6 +77,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Guide.notifyChanged,
+      Config.notifyConfigChanged,
     ]);
     
     if (widget.updateController != null) {
@@ -101,7 +102,16 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   @override
   void onNotification(String name, dynamic param) {
-
+    if ((name == Config.notifyConfigChanged) ||
+        (name == Connectivity.notifyStatusChanged)) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
+            (name == Guide.notifyChanged)) {
+      _refreshFavorites(showProgress: false);
+    }
   }
 
   @override
@@ -160,21 +170,21 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     List<Widget> widgets = [];
     if (CollectionUtils.isNotEmpty(_favorites)) {
       int itemsCount = _favorites!.length;
-      int visibleCount = (_showAll ? itemsCount : min(limit, itemsCount));
+      int visibleCount = min(Config().homeFavoriteItemsCount, itemsCount);
       for (int i = 0; i < visibleCount; i++) {
         Favorite? item = _favorites![i];
-        widgets.add(_buildItemCard(item));
-        if (i < (visibleCount - 1)) {
+        if (0 < widgets.length) {
           widgets.add(Container(height: 12,));
         }
+        widgets.add(_buildItemCard(item));
       }
 
-      if (limit < _favorites!.length) {
-        widgets.add(
-          Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child:
-            SmallRoundedButton(label: _showAll ? Localization().getStringEx('panel.saved.button.less', "Show Less") : Localization().getStringEx('panel.saved.button.all', "Show All"), onTap: _onViewAllTapped,),
-          ),
-        );
+      if (visibleCount < itemsCount) {
+        widgets.add(LinkButton(
+          title: Localization().getStringEx('panel.saved.button.all.title', 'See All'),
+          hint: Localization().getStringEx('panel.saved.button.all.hint', ''),
+          onTap: _onSeeAll,
+        ));
       }
     }
     return widgets;
@@ -385,9 +395,8 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     item?.favoriteLaunchDetail(context);
   }
 
-  void _onViewAllTapped() {
-    setState(() {
-      _showAll = !_showAll;
-    });
+  void _onSeeAll() {
+    Analytics().logSelect(target: 'HomeFavoritesWidget(${widget.favoriteKey}) See All');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
   }
 }

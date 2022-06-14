@@ -22,13 +22,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/News.dart';
@@ -69,13 +70,15 @@ class HomeRecentItemsWidget extends StatefulWidget {
 class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implements NotificationsListener {
 
   Iterable<RecentItem>? _recentItems;
-  bool _showAll = false;
 
   @override
   void initState() {
     super.initState();
 
-    NotificationService().subscribe(this, RecentItems.notifyChanged);
+    NotificationService().subscribe(this, [
+      Config.notifyConfigChanged,
+      RecentItems.notifyChanged,
+    ]);
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
@@ -113,6 +116,11 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
         });
       }
     }
+    else if (name == Config.notifyConfigChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   @override
@@ -132,9 +140,8 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     List<Widget> widgets =  [];
     if (_recentItems?.isNotEmpty ?? false) {
       
-      final int limit = 3;
       int itemsCount = _recentItems!.length;
-      int visibleCount = (_showAll ? itemsCount : min(limit, itemsCount));
+      int visibleCount = min(Config().homeRecentItemsCount, itemsCount);
 
       for (RecentItem item in _recentItems!) {
         if (0 < visibleCount) {
@@ -149,25 +156,24 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
         }
       }
 
-      if (limit < itemsCount) {
-        widgets.add(Padding(padding: EdgeInsets.only(top: 16), child:
-          SmallRoundedButton(
-            label: _showAll ? Localization().getStringEx('widget.home_recent_items.button.less.title', 'Show Less') : Localization().getStringEx('widget.home_recent_items.button.all.title', 'Show All'),
-            hint: _showAll ? Localization().getStringEx('widget.home_recent_items.button.less.hint', 'Tap to show less') : Localization().getStringEx('widget.home_recent_items.button.all.hint', 'Tap to show all'),
-            onTap: _onViewAllTapped,),
+      if (Config().homeRecentItemsCount < itemsCount) {
+        widgets.add(LinkButton(
+          title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'See All'),
+          hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to see all'),
+          onTap: _onSeeAll,
         ));
       }
-      
-      widgets.add(Container(height: 16,));
+      else {
+        widgets.add(Container(height: 16,));
+      }
     }
 
     return widgets;
   }
 
-  void _onViewAllTapped() {
-    setState(() {
-      _showAll = !_showAll;
-    });
+  void _onSeeAll() {
+    Analytics().logSelect(target: "HomeRecentItemsWidget See All");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeRecentItemsPanel()));
   }
 }
 
@@ -213,7 +219,7 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed'),),
+      appBar: HeaderBar(title: Localization().getStringEx('widget.home.recent_items.label.header.title', 'Recently Viewed'),),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Expanded(child:

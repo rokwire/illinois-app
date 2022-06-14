@@ -1027,8 +1027,8 @@
     "panel.saved.notifications.label": "Don’t miss an event! Get reminders of upcoming events.",
     "panel.saved.notifications.enable.label": "Enable notifications",
     "panel.saved.notifications.skip.label": "Not right now",
-    "panel.saved.button.less": "Show Less",
-    "panel.saved.button.all":"Show All",
+    "panel.saved.button.all.title":"See All",
+    "panel.saved.button.all.hint":"",
     "panel.saved.button.event_reminders":"Event reminders",
     "panel.saved.button.dining_specials":"Dining specials",
     "panel.saved.message.no_items":"Whoops! Nothing to see here.",
@@ -2267,9 +2267,9 @@
     "widget.game_detail_heading.button.roster.title":"Roster",
     "widget.game_detail_heading.button.roster.hint": "Tap to view the roster",
 
-    "widget.home_campus_reminders.label.campus_reminders": "Campus Reminders",
-    "widget.home_campus_reminders.button.more.title": "View All",
-    "widget.home_campus_reminders.button.more.hint": "Tap to view all reminders",
+    "widget.home.campus_reminders.label.campus_reminders": "Campus Reminders",
+    "widget.home.campus_reminders.button.more.title": "See All",
+    "widget.home.campus_reminders.button.more.hint": "Tap to view all reminders",
 
     "widget.card.button.favorite.on.title":"Add To Favorites",
     "widget.card.button.favorite.on.hint":"",
@@ -2308,17 +2308,14 @@
     "widget.voter.rv_alert.vote_early.text": "You are at the %s and can vote early",
     "widget.voter.rv_alert.vote_now.text": "You are at the %s and can vote now",
 
-    "widget.home_upcoming_events.label.events_for_you":"Events For You",
-    "widget.home_upcoming_events.label.events_for_you.sub_title":"Curated from your interests",
-    "widget.home_upcoming_events.button.more.title":"View All Events",
-    "widget.home_upcoming_events.button.more.hint":"Tap to view all events",
+    "widget.home.upcoming_events.label.events_for_you":"Events For You",
+    "widget.home.upcoming_events.label.events_for_you.sub_title":"Curated from your interests",
+    "widget.home.upcoming_events.button.all.title":"See All",
+    "widget.home.upcoming_events.button.all.hint":"Tap to see all events",
 
-    "widget.home_recent_items.button.more.title":"View All",
-    "widget.home_recent_items.button.more.hint":"Tap to view all",
-    "widget.home_recent_items.button.all.title":"Show All",
-    "widget.home_recent_items.button.all.hint":"Tap to show all",
-    "widget.home_recent_items.button.less.title":"Show Less",
-    "widget.home_recent_items.button.less.hint":"Tap to show less",
+    "widget.home.recent_items.label.header.title":"Recently Viewed",
+    "widget.home.recent_items.button.all.title":"See All",
+    "widget.home.recent_items.button.all.hint":"Tap to see all",
 
     "widget.home.campus_resources.label.campus_tools":"Campus Resources",
     "widget.home.campus_resources.button.events.title":"Events",
@@ -2356,9 +2353,9 @@
     "widget.home_create_poll.button.create_poll.label":"Create a Poll",
     "widget.home_create_poll.button.login.label":"Login",
 
-    "widget.home_campus_guide_highlights.label.heading": "Campus Guide Highlights",
-    "widget.home_campus_guide_highlights.button.more.title": "View All",
-    "widget.home_campus_guide_highlights.button.more.hint": "Tap to view all highlights",
+    "widget.home.campus_guide_highlights.label.heading": "Campus Guide Highlights",
+    "widget.home.campus_guide_highlights.button.more.title": "See All",
+    "widget.home.campus_guide_highlights.button.more.hint": "Tap to view all highlights",
 
     "widget.home.safer.label.title": "Building Access",
     "widget.home.safer.button.building_access.title": "Building Access",
@@ -2397,6 +2394,10 @@
 
     "widget.home.prompt.add.favorite": "Are you sure you want to ADD this favorite?",
     "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this favorite?",
+
+    "widget.home.welcome.text.title": "Welcome to Illinois 4",
+    "widget.home.welcome.text.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam finibus, neque non mattis finibus, ante mauris laoreet ante, volutpat semper turpis massa nec sapien.\n\nNullam semper dolor a turpis faucibus, id sollicitudin risus lobortis. Quisque nulla odio, vehicula ac finibus ac, consectetur vel lectus. Vestibulum viverra vestibulum eleifend.",
+    "widget.home.welcome.button.close.label": "Close",
 
     "widget.athletics_card.button.get_tickets.title":"Get Tickets",
     "widget.athletics_card.button.get_tickets.hint":"",

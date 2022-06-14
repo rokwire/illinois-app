@@ -121,7 +121,6 @@
 	"panel.home.label.welcome.logged_off":"欢迎来到伊利诺伊",
 	"panel.home.label.near_you":"周围",
 	"panel.home.label.near_you.sub_title":"探索周围",
-	"panel.home.label.recently_viewed":"最近浏览过的",
 	"panel.home.connect.not_logged_in.netid.description.part_1": "Are you a ",
 	"panel.home.connect.not_logged_in.netid.description.part_2": "university student",
 	"panel.home.connect.not_logged_in.netid.description.part_3": " or ",
@@ -1028,8 +1027,8 @@
 	"panel.saved.notifications.label": "不要错过任何活动！获取即将发生的事件的提醒。",
 	"panel.saved.notifications.enable.label": " 启用通知",
 	"panel.saved.notifications.skip.label": "不是现在",
-	"panel.saved.button.less":"显示更少",
-	"panel.saved.button.all":"全部显示",
+	"panel.saved.button.all.title":"看到所有",
+	"panel.saved.button.all.hint":"",
 	"panel.saved.button.event_reminders":"活动提醒",
 	"panel.saved.button.dining_specials":"特价晚餐",
 	"panel.saved.message.no_items":"哎呀！这里没什么可看的",
@@ -2264,9 +2263,9 @@
 	"widget.game_detail_heading.button.roster.title":"名单",
 	"widget.game_detail_heading.button.roster.hint":"点击以查看名册",
 
-	"widget.home_campus_reminders.label.campus_reminders":"校园提醒",
-	"widget.home_campus_reminders.button.more.title": "查看全部",
-	"widget.home_campus_reminders.button.more.hint": "點按即可查看所有提醒",
+	"widget.home.campus_reminders.label.campus_reminders":"校园提醒",
+	"widget.home.campus_reminders.button.more.title": "看到所有",
+	"widget.home.campus_reminders.button.more.hint": "點按即可查看所有提醒",
 
 	"widget.card.button.favorite.on.title":"添加到收藏夹",
 	"widget.card.button.favorite.on.hint":"",
@@ -2305,17 +2304,14 @@
 	"widget.voter.rv_alert.vote_early.text": "您在 %s，可以提前投票",
 	"widget.voter.rv_alert.vote_now.text": "您正在 %s 上，現在可以投票",
 
-	"widget.home_upcoming_events.label.events_for_you":"适合您的活动",
-	"widget.home_upcoming_events.label.events_for_you.sub_title":"从您的兴趣出发",
-	"widget.home_upcoming_events.button.more.title":"查看所有活动",
-	"widget.home_upcoming_events.button.more.hint":"点击以查看所有活动",
+	"widget.home.upcoming_events.label.events_for_you":"适合您的活动",
+	"widget.home.upcoming_events.label.events_for_you.sub_title":"从您的兴趣出发",
+	"widget.home.upcoming_events.button.more.title":"看到所有",
+	"widget.home.upcoming_events.button.more.hint":"點按即可查看所有活動",
 
-	"widget.home_recent_items.button.more.title":"查看全部",
-	"widget.home_recent_items.button.more.hint":"点击查看全部",
-	"widget.home_recent_items.button.all.title":"Show All",
-	"widget.home_recent_items.button.all.hint":"Tap to show all",
-	"widget.home_recent_items.button.less.title":"Show Less",
-	"widget.home_recent_items.button.less.hint":"Tap to show less",
+	"widget.home.recent_items.label.header.title":"Recently Viewed",
+	"widget.home.recent_items.button.all.title":"See All",
+	"widget.home.recent_items.button.all.hint":"Tap to see all",
 
 	"widget.home.campus_resources.label.campus_tools":"校园资源",
 	"widget.home.campus_resources.button.events.title":"活动",
@@ -2352,9 +2348,9 @@
 	"widget.home_create_poll.button.create_poll.label":"创建投票",
 	"widget.home_create_poll.button.login.label":"登录",
 
-	"widget.home_campus_guide_highlights.label.heading": "Campus Guide Highlights",
-	"widget.home_campus_guide_highlights.button.more.title": "查看全部",
-	"widget.home_campus_guide_highlights.button.more.hint": "點按即可查看所有亮點",
+	"widget.home.campus_guide_highlights.label.heading": "校園指南亮點",
+	"widget.home.campus_guide_highlights.button.more.title": "看到所有",
+	"widget.home.campus_guide_highlights.button.more.hint": "點按即可查看所有亮點",
 
 	"widget.home.safer.label.title": "Building Access",
 	"widget.home.safer.button.building_access.title": "Building Access",
@@ -2393,6 +2389,10 @@
 
 	"widget.home.prompt.add.favorite": "Are you sure you want to ADD this favorite?",
 	"widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this favorite?",
+
+	"widget.home.welcome.text.title": "Welcome to Illinois 4",
+	"widget.home.welcome.text.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam finibus, neque non mattis finibus, ante mauris laoreet ante, volutpat semper turpis massa nec sapien.\n\nNullam semper dolor a turpis faucibus, id sollicitudin risus lobortis. Quisque nulla odio, vehicula ac finibus ac, consectetur vel lectus. Vestibulum viverra vestibulum eleifend.",
+	"widget.home.welcome.button.close.label": "Close",
 
 	"widget.athletics_card.button.get_tickets.title":"获取门票",
 	"widget.athletics_card.button.get_tickets.hint":"",

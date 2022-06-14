@@ -5,12 +5,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Default drop down selection in Academics panel [#1726](https://github.com/rokwire/illinois-app/issues/1726).
+### Added
+- Added "See All" to all home list widgets, openes the corresponding content panel [#1727](https://github.com/rokwire/illinois-app/issues/1727).
+
+## [4.0.28] - 2022-06-13
 ### Added
 - Created Recent Items panel, linked to Browse panel [#1701](https://github.com/rokwire/illinois-app/issues/1701).
+- Created HomeWelcomeWidget [#1718](https://github.com/rokwire/illinois-app/issues/1718).
+- Added Favorite buttons to HomeWalletWidget items [#1718](https://github.com/rokwire/illinois-app/issues/1718).
 ### Changed
 - Cleaned up recent items handling [#1708](https://github.com/rokwire/illinois-app/issues/1708).
+- Better processing of Home editing headers as drop targets [#1718](https://github.com/rokwire/illinois-app/issues/1718).
 - Updated Wellness health rings (Work in progress)  [#1692](https://github.com/rokwire/illinois-app/issues/1692).
 - Academics Panel UI [#1714](https://github.com/rokwire/illinois-app/issues/1714).
+### Fixed
+- Fixed HomeFavoritesWidget titles for Notifications and Guide Items [#1718](https://github.com/rokwire/illinois-app/issues/1718).
+- Store user's drop down selection in each panel [#1721](https://github.com/rokwire/illinois-app/issues/1721).
 
 ## [4.0.27] - 2022-06-10
 ### Added

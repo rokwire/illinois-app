@@ -471,7 +471,6 @@ class Storage extends rokwire.Storage {
   bool? get onCampusRegionManualInside => getBoolWithName(onCampusRegionManualInsideKey);
   set onCampusRegionManualInside(bool? value) => setBoolWithName(onCampusRegionManualInsideKey, value);
 
-
   // Home Tout
 
   String get homeToutImageUrlKey => 'edu.illinois.rokwire.home.tout.image.url';
@@ -482,78 +481,11 @@ class Storage extends rokwire.Storage {
   int? get homeToutImageTime => getIntWithName(homeToutImageTimeKey);
   set homeToutImageTime(int? value) => setIntWithName(homeToutImageTimeKey, value);
 
-  // User's Drop Down Selection - Profile, Notifications, Settings, Wellness, Academics
+  // Home Welcome 
 
-  static final String _userDropDownSelectionPrefix = 'user.drop.down.selection.';
-
-  Map<String, dynamic>? _userDropDownSelectionMap; // Store it "per app run, not permanent"
-
-  void _setUserDropDownSelectionMapValue(String key, String? value) {
-    if (_userDropDownSelectionMap == null) {
-      _userDropDownSelectionMap = {};
-    }
-    _userDropDownSelectionMap![key] = value;
-  }
-
-  String get _profileUserDropDownSelectionKey {
-    return _userDropDownSelectionPrefix + 'profile';
-  } 
-
-  String? get profileUserDropDownSelectionValue {
-    return _userDropDownSelectionMap?[_profileUserDropDownSelectionKey];
-  }
-
-  set profileUserDropDownSelectionValue(String? value) {
-    _setUserDropDownSelectionMapValue(_profileUserDropDownSelectionKey, value);
-  }
-
-  String get _notificationsUserDropDownSelectionKey {
-    return _userDropDownSelectionPrefix + 'notifications';
-  }
-
-  String? get notificationsUserDropDownSelectionValue {
-    return _userDropDownSelectionMap?[_notificationsUserDropDownSelectionKey];
-  }
-
-  set notificationsUserDropDownSelectionValue(String? value) {
-    _setUserDropDownSelectionMapValue(_notificationsUserDropDownSelectionKey, value);
-  }
-
-  String get _settingsUserDropDownSelectionKey {
-    return _userDropDownSelectionPrefix + 'settings';
-  }
-
-  String? get settingsUserDropDownSelectionValue {
-    return _userDropDownSelectionMap?[_settingsUserDropDownSelectionKey];
-  }
-
-  set settingsUserDropDownSelectionValue(String? value) {
-    _setUserDropDownSelectionMapValue(_settingsUserDropDownSelectionKey, value);
-  }
-
-  String get _wellnessUserDropDownSelectionKey {
-    return _userDropDownSelectionPrefix + 'wellness';
-  }
-
-  String? get wellnessUserDropDownSelectionValue {
-    return _userDropDownSelectionMap?[_wellnessUserDropDownSelectionKey];
-  }
-
-  set wellnessUserDropDownSelectionValue(String? value) {
-    _setUserDropDownSelectionMapValue(_wellnessUserDropDownSelectionKey, value);
-  }
-
-  String get _academicsUserDropDownSelectionKey {
-    return _userDropDownSelectionPrefix + 'academics';
-  }
-
-  String? get academicsUserDropDownSelectionValue {
-    return _userDropDownSelectionMap?[_academicsUserDropDownSelectionKey];
-  }
-
-  set academicsUserDropDownSelectionValue(String? value) {
-    _setUserDropDownSelectionMapValue(_academicsUserDropDownSelectionKey, value);
-  }
+  String get homeWelcomeVisibleKey => 'edu.illinois.rokwire.home.welcome.image.time';
+  bool? get homeWelcomeVisible => getBoolWithName(homeWelcomeVisibleKey);
+  set homeWelcomeVisible(bool? value) => setBoolWithName(homeWelcomeVisibleKey, value);
 
   //Wellness Rings
   static const String _userWellnessRings = 'group_members_selection';
