@@ -76,6 +76,8 @@
     "headerbar.options.hint":"",
     "headerbar.debug.title":"Debug",
     "headerbar.debug.hint":"",
+    "headerbar.radio.title":"WPGU FM Radio",
+    "headerbar.radio.hint":"",
 
     "toggle_button.status.checked": "checked",
     "toggle_button.status.unchecked": "unchecked",
