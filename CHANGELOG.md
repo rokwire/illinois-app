@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Default drop down selection in Academics panel [#1726](https://github.com/rokwire/illinois-app/issues/1726).
 - Favorites panel UI changes [#1729](https://github.com/rokwire/illinois-app/issues/1729).
+- Updated tab icons [#1737](https://github.com/rokwire/illinois-app/issues/1737).
 - Texts in Favorites panel [#1736](https://github.com/rokwire/illinois-app/issues/1736).
 ### Added
 - Added "See All" to all home list widgets, openes the corresponding content panel [#1727](https://github.com/rokwire/illinois-app/issues/1727).
