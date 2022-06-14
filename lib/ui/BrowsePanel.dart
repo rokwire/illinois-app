@@ -432,7 +432,7 @@ class _BrowseEntry extends StatelessWidget {
       case "app_help.faqs":                  _onTapFAQs(context); break;
 
       case "athletics.game_day":             _onTapGameDay(context); break;
-      case "athletics.pref_sports":          _onTapPrefSports(context); break;
+      case "athletics.sport_prefs":         _onTapSportPrefs(context); break;
 
       case "safer.building_access":          _onTapBuildingAccess(context); break;
       case "safer.test_locations":           _onTapTestLocations(context); break;
@@ -593,7 +593,7 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
   }
 
-  void _onTapPrefSports(BuildContext context) {
+  void _onTapSportPrefs(BuildContext context) {
     Analytics().logSelect(target: "Sport Prefs");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel(content: SettingsContent.sports)));
   }

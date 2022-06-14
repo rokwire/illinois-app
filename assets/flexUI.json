@@ -3,7 +3,7 @@
 		"tabbar": ["favorites", "browse", "maps", "academics", "wellness"],
 
 		"home": ["gies_checklist", "new_student_checklist", "safer", "twitter", "canvas_courses", "my_groups", "game_day",
-			"campus_resources", "create_poll", "pref_sports", "campus_reminders", "upcoming_events", "recent_items", "wallet",
+			"campus_resources", "create_poll", "sport_prefs", "campus_reminders", "upcoming_events", "recent_items", "wallet",
 			"my_events", "my_dining", "my_athletics", "my_news", "my_laundry", "my_inbox", "my_campus_guide",
 			"wpgufm_radio", "illini_news", "app_help", "campus_highlights", "campus_links", "state_farm_center", "wellness_rings", "wellness_todo"
 		],
@@ -22,7 +22,7 @@
 		"browse": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_links", "campus_resources", "events", "feeds", "my", "polls", "recent", "state_farm_center", "wallet", "wellness"],
 		"browse.academics": ["gies_checklist", "new_student_checklist", "canvas_courses", "my_illini", "campus_reminders"],
 		"browse.app_help": ["video_tutorial", "feedback", "faqs"],
-		"browse.athletics": ["game_day", "pref_sports"],
+		"browse.athletics": ["game_day", "sport_prefs"],
 		"browse.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 		"browse.campus_guide": ["campus_highlights"],
 		"browse.campus_links": ["due_date_catalog"],
@@ -68,7 +68,7 @@
 	"rules": {
 		"roles" : {
 			"game_day"                               : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
-			"pref_sports"                            : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
+			"sport_prefs"                            : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
 			"campus_reminders"                       : [["NOT", "alumni"], "OR", "student", "OR", "fan", "OR", "employee", "OR", "parent"],
 
 			"my_illini"                              : ["student"],
