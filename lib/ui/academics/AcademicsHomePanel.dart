@@ -257,7 +257,6 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 
   bool _isCheckListCompleted(String contentKey) {
-    //TBD: DD - This logic does not work. Sync with TB how we should check if a checklist is completed
     int stepsCount = CheckList(contentKey).progressSteps?.length ?? 0;
     int completedStepsCount = CheckList(contentKey).completedStepsCount;
     return (stepsCount == completedStepsCount);
