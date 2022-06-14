@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
@@ -43,6 +44,10 @@ class AcademicsHomePanel extends StatefulWidget {
 class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     with AutomaticKeepAliveClientMixin<AcademicsHomePanel>
     implements NotificationsListener {
+
+  static final String _giesChecklistContentKey = 'gies';
+  static final String _uiucChecklistContentKey = 'uiuc_student';
+
   static AcademicsContent? _lastSelectedContent;
   late AcademicsContent _selectedContent;
   List<AcademicsContent>? _contentValues;
@@ -52,7 +57,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   void initState() {
     NotificationService().subscribe(this, [FlexUI.notifyChanged, Auth2.notifyLoginChanged]);
     _buildContentValues();
-    _selectedContent = widget.content ?? (_lastSelectedContent ?? AcademicsContent.events);
+    _initSelectedContentItem();
     super.initState();
   }
 
@@ -161,6 +166,20 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     }
   }
 
+  void _initSelectedContentItem() {
+    AcademicsContent? initialContent = widget.content ?? _lastSelectedContent;
+    if (initialContent == null) {
+      if (CollectionUtils.isNotEmpty(_contentValues)) {
+        if (_contentValues!.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(_giesChecklistContentKey)) {
+          initialContent = AcademicsContent.gies_checklist;
+        } else if (_contentValues!.contains(AcademicsContent.courses)) {
+          initialContent = AcademicsContent.courses;
+        }
+      }
+    }
+    _selectedContent = initialContent ?? AcademicsContent.events;
+  }
+
   AcademicsContent? _getContentValueFromCode(String? code) {
     if (code == 'gies_checklist') {
       return AcademicsContent.gies_checklist;
@@ -227,14 +246,21 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContent.events:
         return AcademicsEventsContentWidget();
       case AcademicsContent.gies_checklist:
-        return CheckListContentWidget(contentKey: 'gies');
+        return CheckListContentWidget(contentKey: _giesChecklistContentKey);
       case AcademicsContent.uiuc_checklist:
-        return CheckListContentWidget(contentKey: 'uiuc_student');
+        return CheckListContentWidget(contentKey: _uiucChecklistContentKey);
       case AcademicsContent.courses:
         return CanvasCoursesContentWidget();
       default:
         return Container();
     }
+  }
+
+  bool _isCheckListCompleted(String contentKey) {
+    //TBD: DD - This logic does not work. Sync with TB how we should check if a checklist is completed
+    int stepsCount = CheckList(contentKey).progressSteps?.length ?? 0;
+    int completedStepsCount = CheckList(contentKey).completedStepsCount;
+    return (stepsCount == completedStepsCount);
   }
 
   // Utilities
