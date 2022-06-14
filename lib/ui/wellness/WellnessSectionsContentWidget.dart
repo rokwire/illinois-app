@@ -52,8 +52,7 @@ class _WellnessSectionsContentWidgetState extends State<WellnessSectionsContentW
   }
 
   Widget _buildEightDimensionImage() {
-    //TBD: DD - image resource for 8 dimension
-    return Container();
+    return Padding(padding: EdgeInsets.only(top: 16), child: Image.asset('images/wellness-wheel-2019.png', width: 45, height: 45));
   }
 
   Widget _buildFooterDescription() {
