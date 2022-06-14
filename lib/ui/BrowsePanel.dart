@@ -901,7 +901,7 @@ class _BrowseCampusResourcesSection extends _BrowseSection {
   Widget _buildEntries(BuildContext context) {
     return (expanded && (_entriesCodes?.isNotEmpty ?? false)) ?
       Padding(padding: EdgeInsets.only(left: 16, bottom: 4), child:
-        HomeCampusResourcesGridWidget(favoriteCategory: contentCode, contentCodes: _entriesCodes!, promptFavorite: true,)
+        HomeCampusResourcesGridWidget(favoriteCategory: contentCode, contentCodes: _entriesCodes!, promptFavorite: kReleaseMode,)
       ) :
       Container();
   }
