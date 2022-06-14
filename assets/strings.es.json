@@ -2304,10 +2304,10 @@
     "widget.voter.rv_alert.vote_early.text": "Estás en el %s y puedes votar temprano",
     "widget.voter.rv_alert.vote_now.text": "Estás en el %s y puedes votar ahora.",
 
-    "widget.home_upcoming_events.label.events_for_you":"Eventos Para Ti",
-    "widget.home_upcoming_events.label.events_for_you.sub_title":"Curada por tus intereses",
-    "widget.home_upcoming_events.button.more.title":"Ver todos los eventos",
-    "widget.home_upcoming_events.button.more.hint":"Toca para ver todos los eventos",
+    "widget.home.upcoming_events.label.events_for_you":"Eventos Para Ti",
+    "widget.home.upcoming_events.label.events_for_you.sub_title":"Curada por tus intereses",
+    "widget.home.upcoming_events.button.more.title":"Ver todo",
+    "widget.home.upcoming_events.button.more.hint":"Toca para ver todos los eventos",
 
     "widget.home.recent_items.label.header.title":"Recently Viewed",
     "widget.home.recent_items.button.all.title":"See All",
