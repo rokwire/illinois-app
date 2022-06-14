@@ -18,6 +18,8 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsTeamsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
@@ -285,29 +287,59 @@ class _BrowseSection extends StatelessWidget {
   String get _title => Localization().getStringEx('panel.browse.section.$sectionId.title', StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
   String get _description => Localization().getStringEx('panel.browse.section.$sectionId.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.');
 
-  bool get _hasContent => (_entriesCodes?.isNotEmpty ?? false);
-
   void _onTapExpand() {
     if (_hasContent && (onExpand != null)) {
       onExpand!();
     }
   }
 
-  bool? get _isSectionFavorite {
-    int favCount = 0, unfavCount = 0;
+  bool get _hasContent {
     if (_entriesCodes?.isNotEmpty ?? false) {
+      List<dynamic>? availableList = avalableSectionFavorites;
       for (String code in _entriesCodes!) {
-        if (Auth2().prefs?.isFavorite(HomeFavorite(code, category: _favoriteCategory)) ?? false) {
-          favCount++;
-        }
-        else {
-          unfavCount++;
+        if (availableList?.contains(code) ?? false) {
+          return true;
         }
       }
-      if ((favCount == _entriesCodes!.length)) {
+    }
+    return false;
+  }
+
+  List<String> get _availableFavoriteCodes {
+    List<String> result = <String>[];
+    if (_entriesCodes?.isNotEmpty ?? false) {
+      List<dynamic>? availableList = avalableSectionFavorites;
+      for (String code in _entriesCodes!) {
+        if (availableList?.contains(code) ?? false) {
+          result.add(code);
+        }
+      }
+    }
+    return result;
+  }
+
+  List<dynamic>? get avalableSectionFavorites => FlexUI().contentSourceEntry((_favoriteCategory != null) ? 'home.$_favoriteCategory' : 'home');
+  // bool _canFavoriteEntry(String entryId) => avalableSectionFavorites?.contains(entryId) ?? false;
+
+  bool? get _isSectionFavorite {
+    int favCount = 0, unfavCount = 0, totalCount = 0;
+    if (_entriesCodes?.isNotEmpty ?? false) {
+      List<dynamic>? availableList = avalableSectionFavorites;
+      for (String code in _entriesCodes!) {
+        if (availableList?.contains(code) ?? false) {
+          totalCount++;
+          if (Auth2().prefs?.isFavorite(HomeFavorite(code, category: _favoriteCategory)) ?? false) {
+            favCount++;
+          }
+          else {
+            unfavCount++;
+          }
+        }
+      }
+      if ((favCount == totalCount)) {
         return true;
       }
-      else if (unfavCount == _entriesCodes!.length) {
+      else if (unfavCount == totalCount) {
         return false;
       }
     }
@@ -333,7 +365,7 @@ class _BrowseSection extends StatelessWidget {
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), LinkedHashSet<String>());
     }
     else {
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), LinkedHashSet<String>.from(_entriesCodes?.reversed ?? <String>[]));
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), LinkedHashSet<String>.from(_availableFavoriteCodes.reversed));
     }
   }
 
@@ -382,6 +414,7 @@ class _BrowseEntry extends StatelessWidget {
                 sectionId: sectionId,
                 entryId: entryId,
                 selected: _isFavorite,
+                enabled: _canFavorite,
                 onToggle: () => _onTapFavorite(context)
               ),
               Expanded(child:
@@ -401,6 +434,7 @@ class _BrowseEntry extends StatelessWidget {
   String get _title => Localization().getStringEx('panel.browse.entry.$sectionId.$entryId.title', StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
 
   bool get _isFavorite => Auth2().prefs?.isFavorite(HomeFavorite(entryId, category: favoriteCategory)) ?? false;
+  bool get _canFavorite => FlexUI().contentSourceEntry((favoriteCategory != null) ? 'home.$favoriteCategory' : 'home')?.contains(entryId) ?? false;
 
   void _onTapFavorite(BuildContext context) {
     Analytics().logSelect(target: "Favorite: $favoriteCategory:$entryId");
@@ -432,7 +466,10 @@ class _BrowseEntry extends StatelessWidget {
       case "app_help.faqs":                  _onTapFAQs(context); break;
 
       case "athletics.game_day":             _onTapGameDay(context); break;
-      case "athletics.pref_sports":          _onTapPrefSports(context); break;
+      case "athletics.upcoming_games":       _onTapUpcomingGames(context); break;
+      case "athletics.sport_news":           _onTapSportNews(context); break;
+      case "athletics.sport_teams":          _onTapSportTeams(context); break;
+      case "athletics.sport_prefs":          _onTapSportPrefs(context); break;
 
       case "safer.building_access":          _onTapBuildingAccess(context); break;
       case "safer.test_locations":           _onTapTestLocations(context); break;
@@ -440,6 +477,7 @@ class _BrowseEntry extends StatelessWidget {
       case "safer.wellness_answer_center":   _onTapWellnessAnswerCenter(context); break;
 
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
+      case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
 
       case "campus_links.due_date_catalog":  _onTapDueDateCatalog(context); break;
 
@@ -471,7 +509,8 @@ class _BrowseEntry extends StatelessWidget {
       case "my.my_inbox":        _onTapMyNotifications(context); break;
       case "my.my_campus_guide": _onTapMyCampusGuide(context); break;
 
-      case "pools.create_poll":  _onTapCreatePoll(context); break;
+      case "polls.create_poll":  _onTapCreatePoll(context); break;
+      case "polls.view_polls":   _onTapViewPolls(context); break;
 
       case "recent.recent_items": _onTapRecentItems(context); break;
 
@@ -593,7 +632,22 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
   }
 
-  void _onTapPrefSports(BuildContext context) {
+  void _onTapUpcomingGames(BuildContext context) {
+    Analytics().logSelect(target: "Upcoming Games");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3}))));
+  }
+
+  void _onTapSportNews(BuildContext context) {
+    Analytics().logSelect(target: "News");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
+  }
+
+  void _onTapSportTeams(BuildContext context) {
+    Analytics().logSelect(target: "Teams");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamsPanel()));
+  }
+
+  void _onTapSportPrefs(BuildContext context) {
     Analytics().logSelect(target: "Sport Prefs");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel(content: SettingsContent.sports)));
   }
@@ -771,6 +825,11 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));
   }
 
+  void _onTapViewPolls(BuildContext context) {
+    Analytics().logSelect(target: "View Polls");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
+  }
+
   void _onTapRecentItems(BuildContext context) {
     Analytics().logSelect(target: "Recent Items");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeRecentItemsPanel()));
@@ -844,15 +903,18 @@ class _BrowseFavoriteButton extends StatelessWidget {
   final String? sectionId;
   final String? entryId;
   final bool? selected;
+  final bool enabled;
   final void Function()? onToggle;
 
-  _BrowseFavoriteButton({this.sectionId, this.entryId, this.selected, this.onToggle});
+  _BrowseFavoriteButton({this.sectionId, this.entryId, this.selected, this.enabled = true, this.onToggle});
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-      InkWell(onTap: onToggle, child:
-        HomeFavoriteStar(selected: selected, style: HomeFavoriteStyle.Button,)
+    return Opacity(opacity: enabled ? 1 : 0, child:
+      Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
+        InkWell(onTap: onToggle, child:
+          HomeFavoriteStar(selected: selected, style: HomeFavoriteStyle.Button,)
+        ),
       ),
     );
   }
@@ -869,7 +931,7 @@ class _BrowseCampusResourcesSection extends _BrowseSection {
   Widget _buildEntries(BuildContext context) {
     return (expanded && (_entriesCodes?.isNotEmpty ?? false)) ?
       Padding(padding: EdgeInsets.only(left: 16, bottom: 4), child:
-        HomeCampusResourcesGridWidget(favoriteCategory: contentCode, contentCodes: _entriesCodes!, promptFavorite: true,)
+        HomeCampusResourcesGridWidget(favoriteCategory: contentCode, contentCodes: _entriesCodes!, promptFavorite: kReleaseMode,)
       ) :
       Container();
   }

@@ -270,7 +270,10 @@
 	"panel.browse.entry.app_help.faqs.title": "FAQs",
 
 	"panel.browse.entry.athletics.game_day.title": "It's Game Day!",
-	"panel.browse.entry.athletics.pref_sports.title": "Sport Prefs",
+	"panel.browse.entry.athletics.upcoming_games.title": "Upcoming Events",
+	"panel.browse.entry.athletics.sport_news.title": "News",
+	"panel.browse.entry.athletics.sport_teams.title": "Teams",
+"panel.browse.entry.athletics.sport_prefs.title": "Sport Prefs",
 
 	"panel.browse.entry.safer.building_access.title": "Building Access",
 	"panel.browse.entry.safer.test_locations.title": "Test Locations",
@@ -278,6 +281,7 @@
 	"panel.browse.entry.safer.wellness_answer_center.title": "Answer Center",
 
 	"panel.browse.entry.campus_guide.campus_highlights.title": "Campus Guide Highlights",
+	"panel.browse.entry.campus_guide.campus_guide.title": "Complete Campus Guide",
 
 	"panel.browse.entry.campus_links.due_date_catalog.title": "Due Date Catalog",
 
@@ -309,7 +313,8 @@
 	"panel.browse.entry.my.my_inbox.title": "My Notifications",
 	"panel.browse.entry.my.my_campus_guide.title": "My Campus Guide",
 
-	"panel.browse.entry.pools.create_poll.title": "Create a Poll",
+	"panel.browse.entry.polls.create_poll.title": "Create a Poll",
+	"panel.browse.entry.polls.view_polls.title": "View Polls",
 
 	"panel.browse.entry.recent.recent_items.title": "Recently Viewed",
 

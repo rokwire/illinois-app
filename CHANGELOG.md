@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added "See All" to all home list widgets, openes the corresponding content panel [#1727](https://github.com/rokwire/illinois-app/issues/1727).
 - Added "WPGU FM Radio" button to header bar title if radio is playing [#1731](https://github.com/rokwire/illinois-app/issues/1731).
+- Added more entries to different browse sections [#1733](https://github.com/rokwire/illinois-app/issues/1733).
 
 ## [4.0.28] - 2022-06-13
 ### Added
