@@ -384,6 +384,7 @@ class _BrowseEntry extends StatelessWidget {
                 sectionId: sectionId,
                 entryId: entryId,
                 selected: _isFavorite,
+                enabled: _canFavorite,
                 onToggle: () => _onTapFavorite(context)
               ),
               Expanded(child:
@@ -403,6 +404,7 @@ class _BrowseEntry extends StatelessWidget {
   String get _title => Localization().getStringEx('panel.browse.entry.$sectionId.$entryId.title', StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
 
   bool get _isFavorite => Auth2().prefs?.isFavorite(HomeFavorite(entryId, category: favoriteCategory)) ?? false;
+  bool get _canFavorite => FlexUI().contentSourceEntry((favoriteCategory != null) ? 'home.$favoriteCategory' : 'home')?.contains(entryId) ?? false;
 
   void _onTapFavorite(BuildContext context) {
     Analytics().logSelect(target: "Favorite: $favoriteCategory:$entryId");
@@ -864,15 +866,18 @@ class _BrowseFavoriteButton extends StatelessWidget {
   final String? sectionId;
   final String? entryId;
   final bool? selected;
+  final bool enabled;
   final void Function()? onToggle;
 
-  _BrowseFavoriteButton({this.sectionId, this.entryId, this.selected, this.onToggle});
+  _BrowseFavoriteButton({this.sectionId, this.entryId, this.selected, this.enabled = true, this.onToggle});
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-      InkWell(onTap: onToggle, child:
-        HomeFavoriteStar(selected: selected, style: HomeFavoriteStyle.Button,)
+    return Opacity(opacity: enabled ? 1 : 0, child:
+      Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
+        InkWell(onTap: onToggle, child:
+          HomeFavoriteStar(selected: selected, style: HomeFavoriteStyle.Button,)
+        ),
       ),
     );
   }
