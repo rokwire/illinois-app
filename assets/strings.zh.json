@@ -1028,7 +1028,7 @@
 	"panel.saved.notifications.label": "不要错过任何活动！获取即将发生的事件的提醒。",
 	"panel.saved.notifications.enable.label": " 启用通知",
 	"panel.saved.notifications.skip.label": "不是现在",
-	"panel.saved.button.all.title":"顯示所有",
+	"panel.saved.button.all.title":"看到所有",
 	"panel.saved.button.all.hint":"",
 	"panel.saved.button.event_reminders":"活动提醒",
 	"panel.saved.button.dining_specials":"特价晚餐",
@@ -2352,9 +2352,9 @@
 	"widget.home_create_poll.button.create_poll.label":"创建投票",
 	"widget.home_create_poll.button.login.label":"登录",
 
-	"widget.home_campus_guide_highlights.label.heading": "Campus Guide Highlights",
-	"widget.home_campus_guide_highlights.button.more.title": "查看全部",
-	"widget.home_campus_guide_highlights.button.more.hint": "點按即可查看所有亮點",
+	"widget.home.campus_guide_highlights.label.heading": "校園指南亮點",
+	"widget.home.campus_guide_highlights.button.more.title": "看到所有",
+	"widget.home.campus_guide_highlights.button.more.hint": "點按即可查看所有亮點",
 
 	"widget.home.safer.label.title": "Building Access",
 	"widget.home.safer.button.building_access.title": "Building Access",

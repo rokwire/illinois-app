@@ -1028,7 +1028,7 @@
     "panel.saved.notifications.label": "¡No te pierdas un evento! Reciba recordatorios de los próximos eventos!",
     "panel.saved.notifications.enable.label": "Permitir notificaciones",
     "panel.saved.notifications.skip.label": "No en este momento",
-    "panel.saved.button.all.title":"Mostrar todo",
+    "panel.saved.button.all.title":"Ver todo",
     "panel.saved.button.all.hint":"",
     "panel.saved.button.event_reminders":"Recordatorios de eventos",
     "panel.saved.button.dining_specials":"Especiales de comidas",
@@ -2352,9 +2352,9 @@
     "widget.home_create_poll.button.create_poll.label":"Crea una encuesta",
     "widget.home_create_poll.button.login.label":"Iniciar sesión",
 
-    "widget.home_campus_guide_highlights.label.heading": "Campus Guide Highlights",
-    "widget.home_campus_guide_highlights.button.more.title": "Ver todo",
-    "widget.home_campus_guide_highlights.button.more.hint": "Toca para ver todos los aspectos destacados",
+    "widget.home.campus_guide_highlights.label.heading": "Puntos destacados de la guía del campus",
+    "widget.home.campus_guide_highlights.button.more.title": "Ver todo",
+    "widget.home.campus_guide_highlights.button.more.hint": "Toca para ver todos los aspectos destacados",
 
     "widget.home.safer.label.title": "Building Access",
     "widget.home.safer.button.building_access.title": "Building Access",
