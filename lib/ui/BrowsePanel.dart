@@ -447,6 +447,7 @@ class _BrowseEntry extends StatelessWidget {
       case "safer.wellness_answer_center":   _onTapWellnessAnswerCenter(context); break;
 
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
+      case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
 
       case "campus_links.due_date_catalog":  _onTapDueDateCatalog(context); break;
 

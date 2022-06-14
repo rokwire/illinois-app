@@ -24,7 +24,7 @@
 		"browse.app_help": ["video_tutorial", "feedback", "faqs"],
 		"browse.athletics": ["game_day", "upcoming_games", "sport_news", "sport_teams", "sport_prefs"],
 		"browse.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
-		"browse.campus_guide": ["campus_highlights"],
+		"browse.campus_guide": ["campus_highlights", "campus_guide"],
 		"browse.campus_links": ["due_date_catalog"],
 		"browse.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "inbox"],
 		"browse.events": ["upcoming_events"],
