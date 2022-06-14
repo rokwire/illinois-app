@@ -71,10 +71,55 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
             Container(height: 16,),
             WellnessRingButton(label: "Create New Ring", description: "Maximum of 4 total", onTapWidget: (context){}, showLeftIcon: true,),
             Container(height: 16,),
+            _buildHistoryList()
         ],
       ),
       ])
     );
+  }
+
+  //TBD Move to other tab
+  Widget _buildHistoryList(){
+    var historyData = WellnessRingService().getAccomplishmentsHistory();
+    List<Widget> content = [];
+    if(historyData!=null && historyData.isNotEmpty){
+      for(var accomplishmentsPerDay in historyData.entries) {
+        content.add(_buildAccomplishmentCard(accomplishmentsPerDay.key, accomplishmentsPerDay.value));
+        content.add(Container(height: 8,));
+      }
+    }
+    return Container(
+      child: Column(
+        children: content,
+      ),
+    );
+  }
+
+  Widget _buildAccomplishmentCard(String title, List<WellnessRingAccomplishment>? accomplishedRings){
+    List<Widget> accomplishmentsContent = [];
+      if(accomplishedRings==null || accomplishedRings.isEmpty){
+        return Container(); //Empty scip
+      }
+
+      for(var accomplishedRingData in accomplishedRings){
+        accomplishmentsContent.add(Container( //Accomplished ring within Card
+         child: Text(accomplishedRingData.ringData.name?? "N/A")
+        ));
+        accomplishmentsContent.add(Container( //Accomplished ring within Card
+         child: Text("${accomplishedRingData.achievedValue}/${accomplishedRingData.ringData.goal}")
+        ));
+        accomplishmentsContent.add(Container(height: 2,));
+      }
+
+      return Container(
+        child: Column(
+          children: [
+            Text(title),
+            Container(height: 2,),
+            Column(children: accomplishmentsContent,)
+          ],
+        ),
+      );
   }
 
   Widget _buildButtons(){
@@ -623,6 +668,13 @@ class WellnessRingRecord {
   }
 }
 
+class WellnessRingAccomplishment{
+  WellnessRingData ringData;
+  double achievedValue;
+
+  WellnessRingAccomplishment({required this.ringData, required this.achievedValue});
+}
+
 //Service //TBD move to service class
 
 class WellnessRingService with Service{
@@ -850,62 +902,74 @@ class WellnessRingService with Service{
     return count;
   }
 
-  void splitRecordsByDay(){
+  Map<String, List<WellnessRingAccomplishment>>? getAccomplishmentsHistory(){
+    Map<String, List<WellnessRingAccomplishment>> history = {/*"2022-06014":[WellnessRingData(id: '0', timestamp: DateTime.now().millisecondsSinceEpoch, goal: 1, name: "Test" )]*/};
 
+    //First split by day and id
+    Map<String, Map<String, List<WellnessRingRecord>>> splitedRecords = _splitRecordsByDay();
+
+     //get Ring data for completed ones
+        for (var dayRecords in splitedRecords.entries){
+
+          for(var ringDayRecords in dayRecords.value.entries){
+            String ringId = ringDayRecords.key;
+            WellnessRingData? ringData = WellnessRingService()._wellnessRings?.firstWhere((element) => element.id == ringId);
+            if(ringData!=null) {
+              double goal = ringData.goal;
+              List<WellnessRingRecord>? ringRecords = dayRecords.value[ringData.id];
+              double dayCount = 0;
+              if (ringRecords != null) {
+                for (WellnessRingRecord record in ringRecords) {
+                  dayCount += record.value;
+                }
+                if (dayCount >= goal) {
+                  //Match
+                  List<WellnessRingAccomplishment>? accomplishmentsForThatDay = history[dayRecords.key];
+                  if(accomplishmentsForThatDay == null){
+                    accomplishmentsForThatDay = [];
+                    history[dayRecords.key] = accomplishmentsForThatDay;
+                  }
+
+                  WellnessRingAccomplishment? completionData = accomplishmentsForThatDay.firstWhere((element) => element.ringData.id == ringData.id,
+                      orElse: () => WellnessRingAccomplishment(ringData: ringData, achievedValue: dayCount)
+                      );
+
+                  if(!accomplishmentsForThatDay.contains(completionData)){
+                    accomplishmentsForThatDay.add(completionData);
+                  } else {
+                    completionData.achievedValue = dayCount; // if we have completed with more than the goal
+                  }
+                }
+              }
+            }
+          }
+        }
+    return history;
   }
-  //Other way to split use for dayly completions
-  // int getTotalCompletionCount(String id){
-  //
-  //   //Split records by date
-  //   Map<String, Map<String, List<WellnessRingRecord>>> splitedRecords = _splitRecordsByDay();
-  //
-  //
-  //   //
-  //   int count = 0;
-  //   WellnessRingData? ringData = _wellnessRings?.firstWhere((element) => element.id == id);
-  //   if(ringData!=null){
-  //     double goal = ringData.goal;//TBD implement updated Rings(will be list of data with update time) get the Data matching the ime period
-  //     for (Map<String,List<WellnessRingRecord>> dayRecords in splitedRecords.values){
-  //
-  //       List<WellnessRingRecord>? ringRecords = dayRecords[ringData.id];
-  //       int dayCount = 0;
-  //       if(ringRecords != null) {
-  //         for (WellnessRingRecord record in ringRecords) {
-  //           dayCount += record.value.toInt();
-  //         }
-  //         if (dayCount >= goal) {
-  //           //Match
-  //           count++;
-  //         }
-  //       }
-  //     }
-  //   }
-  //   return count;
-  // }
-  //
-  // Map<String, Map<String, List<WellnessRingRecord>>> _splitRecordsByDay(){
-  //   Map<String, Map<String, List<WellnessRingRecord>>> ringDateRecords = {};
-  //   _wellnessRecords?.forEach((record) {
-  //     String? recordDayName = record.date != null? DateFormat("yyyy-MM-dd").format(DateUtils.dateOnly(record.date!)) : null;
-  //     if(recordDayName!=null) {
-  //       Map<String, List<WellnessRingRecord>>? recordsForDay = ringDateRecords[recordDayName];
-  //       if (recordsForDay == null) {
-  //         recordsForDay = {};
-  //         ringDateRecords[recordDayName] = recordsForDay;
-  //       }
-  //
-  //       String recordId = record.wellnessRingId;
-  //       List<WellnessRingRecord>? recordsForId = recordsForDay[recordId];
-  //       if(recordsForId == null){
-  //         recordsForId = [];
-  //         recordsForDay[recordId] = recordsForId;
-  //       }
-  //       recordsForId.add(record);
-  //     }
-  //   });
-  //
-  //   return ringDateRecords;
-  // }
+
+  Map<String, Map<String, List<WellnessRingRecord>>> _splitRecordsByDay(){
+    Map<String, Map<String, List<WellnessRingRecord>>> ringDateRecords = {};
+    _wellnessRecords?.forEach((record) {
+      String? recordDayName = record.date != null? DateFormat("dddd,MMMM dd").format(DateUtils.dateOnly(record.date!)) : null;
+      if(recordDayName!=null) {
+        Map<String, List<WellnessRingRecord>>? recordsForDay = ringDateRecords[recordDayName];
+        if (recordsForDay == null) {
+          recordsForDay = {};
+          ringDateRecords[recordDayName] = recordsForDay;
+        }
+
+        String recordId = record.wellnessRingId;
+        List<WellnessRingRecord>? recordsForId = recordsForDay[recordId];
+        if(recordsForId == null){
+          recordsForId = [];
+          recordsForDay[recordId] = recordsForId;
+        }
+        recordsForId.add(record);
+      }
+    });
+
+    return ringDateRecords;
+  }
 
   String getTotalCompletionCountString(String id){
     int count = getTotalCompletionCount(id);
