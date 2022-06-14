@@ -421,7 +421,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
 
 
 class CampusResourceButton extends StatelessWidget {
-  final Favorite? favorite;
+  final HomeFavorite? favorite;
   final String? title;
   final String? hint;
   final String? iconAsset;
@@ -429,6 +429,8 @@ class CampusResourceButton extends StatelessWidget {
   final bool promptFavorite;
 
   const CampusResourceButton({ Key? key, this.favorite, this.title,  this.hint, this.iconAsset,  this.onTap, this.promptFavorite = true }) : super(key: key);
+
+  bool get _canFavorite => FlexUI().contentSourceEntry((favorite?.category != null) ? 'home.${favorite?.category}' : 'home')?.contains(favorite?.favoriteId) ?? false;
 
   @override
   Widget build(BuildContext context) {
@@ -455,7 +457,9 @@ class CampusResourceButton extends StatelessWidget {
                       Text(title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 20)),
                     ),
                   ),
-                  HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, prompt: promptFavorite,)
+                  Opacity(opacity: _canFavorite ? 1 : 0, child:
+                    HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, prompt: promptFavorite,)
+                  ),
                 ],),
                 Row(children: [
                   Expanded(child:
@@ -476,5 +480,6 @@ class CampusResourceButton extends StatelessWidget {
         ),
       ),
     );
+
   }
 }
