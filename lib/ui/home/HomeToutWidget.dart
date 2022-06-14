@@ -79,9 +79,11 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
               ],),
             )
           ),
-            Semantics(label: Localization().getStringEx('headerbar.edit.title', 'Edit'), hint: Localization().getStringEx('headerbar.options.hint', ''), button: true, excludeSemantics: true, child:
-              IconButton(icon: Image.asset('images/icon-drag-white.png', excludeFromSemantics: true), onPressed: widget.onEdit)
-            ),
+          GestureDetector(onTap: widget.onEdit, child:
+            Padding(padding: EdgeInsets.only(top: 16, right: 16), child: Text(Localization().getStringEx('widget.home.tout.reorder.label', 'Reorder'),
+                        style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18, 
+                        decoration: TextDecoration.underline, decorationColor: Styles().colors?.textColorPrimary, decorationThickness: 1)))
+          ),
         ],)
       )
 
