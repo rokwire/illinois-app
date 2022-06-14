@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.0.298] - 2022-06-14
 ### Changed
 - Default drop down selection in Academics panel [#1726](https://github.com/rokwire/illinois-app/issues/1726).
 - Favorites panel UI changes [#1729](https://github.com/rokwire/illinois-app/issues/1729).
