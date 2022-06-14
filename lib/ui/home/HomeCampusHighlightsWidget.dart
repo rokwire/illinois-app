@@ -43,6 +43,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     super.initState();
 
     NotificationService().subscribe(this, [
+      Config.notifyConfigChanged,
       Guide.notifyChanged,
       Auth2UserPrefs.notifyRolesChanged,
       AppLivecycle.notifyStateChanged,
@@ -70,7 +71,12 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Guide.notifyChanged) {
+    if (name == Config.notifyConfigChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if (name == Guide.notifyChanged) {
       _updatePromotedItems();
     }
     else if (name == Auth2UserPrefs.notifyRolesChanged) {

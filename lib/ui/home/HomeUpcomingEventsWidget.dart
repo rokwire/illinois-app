@@ -73,6 +73,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
+      Config.notifyConfigChanged,
       Auth2UserPrefs.notifyTagsChanged,
       Auth2UserPrefs.notifyInterestsChanged,
       Events.notifyEventCreated,
@@ -104,6 +105,11 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   void onNotification(String name, dynamic param) {
     if (name == Connectivity.notifyStatusChanged) {
       _loadAvailableCategories();
+    }
+    else if (name == Config.notifyConfigChanged) {
+      if (mounted) {
+        setState(() {});
+      }
     }
     else if (name == Auth2UserPrefs.notifyTagsChanged) {
       _loadEvents();

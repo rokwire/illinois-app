@@ -58,6 +58,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     super.initState();
 
     NotificationService().subscribe(this, [
+      Config.notifyConfigChanged,
       Guide.notifyChanged,
       Auth2UserPrefs.notifyRolesChanged,
       AppLivecycle.notifyStateChanged,
@@ -85,7 +86,12 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Guide.notifyChanged) {
+    if (name == Config.notifyConfigChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if (name == Guide.notifyChanged) {
       _updateReminderItems();
     }
     else if (name == Auth2UserPrefs.notifyRolesChanged) {

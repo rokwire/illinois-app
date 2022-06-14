@@ -75,7 +75,10 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   void initState() {
     super.initState();
 
-    NotificationService().subscribe(this, RecentItems.notifyChanged);
+    NotificationService().subscribe(this, [
+      Config.notifyConfigChanged,
+      RecentItems.notifyChanged,
+    ]);
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
@@ -111,6 +114,11 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
             });
           }
         });
+      }
+    }
+    else if (name == Config.notifyConfigChanged) {
+      if (mounted) {
+        setState(() {});
       }
     }
   }

@@ -77,6 +77,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Guide.notifyChanged,
+      Config.notifyConfigChanged,
     ]);
     
     if (widget.updateController != null) {
@@ -101,7 +102,16 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   @override
   void onNotification(String name, dynamic param) {
-
+    if ((name == Config.notifyConfigChanged) ||
+        (name == Connectivity.notifyStatusChanged)) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
+            (name == Guide.notifyChanged)) {
+      _refreshFavorites(showProgress: false);
+    }
   }
 
   @override
