@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/ext/Event.dart';
@@ -39,7 +40,6 @@ import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -52,7 +52,7 @@ class HomeUpcomingEventsWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home_upcoming_events.label.events_for_you', 'Events For You'),
+      title: Localization().getStringEx('widget.home.upcoming_events.label.events_for_you', 'Events For You'),
     );
 
   @override
@@ -73,6 +73,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
     
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
+      Config.notifyConfigChanged,
       Auth2UserPrefs.notifyTagsChanged,
       Auth2UserPrefs.notifyInterestsChanged,
       Events.notifyEventCreated,
@@ -104,6 +105,11 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
   void onNotification(String name, dynamic param) {
     if (name == Connectivity.notifyStatusChanged) {
       _loadAvailableCategories();
+    }
+    else if (name == Config.notifyConfigChanged) {
+      if (mounted) {
+        setState(() {});
+      }
     }
     else if (name == Auth2UserPrefs.notifyTagsChanged) {
       _loadEvents();
@@ -192,7 +198,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
             setState(() {
               _tagsFilter = tagsFilter;
               _categoriesFilter = categoriesFilter;
-              _events = _randomSelection(events, 5);
+              _events = _randomSelection(events, Config().homeUpcomingEventsCount);
             });
           }
         }
@@ -202,7 +208,7 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
             setState(() {
               _tagsFilter = null;
               _categoriesFilter = null;
-              _events = _randomSelection(events, 5);
+              _events = _randomSelection(events, Config().homeUpcomingEventsCount);
             });
           });
         }
@@ -261,8 +267,8 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       return 
         Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
           _EventsRibbonHeader(
-            title: Localization().getStringEx('widget.home_upcoming_events.label.events_for_you', 'Events For You'),
-            subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home_upcoming_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
+            title: Localization().getStringEx('widget.home.upcoming_events.label.events_for_you', 'Events For You'),
+            subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home.upcoming_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
             favoriteId: widget.favoriteId,
             rightIconAsset: 'images/settings-white.png',
             rightIconAction: () {
@@ -274,25 +280,10 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: _buildListItems(context)),
-          Container(
-            height: 20,
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 25),
-            child: RoundedButton(
-                label: Localization().getStringEx(
-                    'widget.home_upcoming_events.button.more.title',
-                    'View All Events'),
-                hint: Localization().getStringEx(
-                    'widget.home_upcoming_events.button.more.hint', ''),
-                borderColor: Styles().colors!.fillColorSecondary,
-                textColor: Styles().colors!.fillColorPrimary,
-                backgroundColor: Styles().colors!.white,
-                onTap: () => _navigateToExploreEvents(),
-              ),
-          ),
-          Container(
-            height: 24,
+          LinkButton(
+            title: Localization().getStringEx('widget.home.upcoming_events.button.more.title', 'See All'),
+            hint: Localization().getStringEx('widget.home.upcoming_events.button.more.hint', 'Tap to see all events'),
+            onTap: _navigateToExploreEvents,
           ),
         ]);
     }

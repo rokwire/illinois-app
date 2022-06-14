@@ -19,8 +19,10 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -28,10 +30,8 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeCampusRemindersWidget extends StatefulWidget {
@@ -42,7 +42,7 @@ class HomeCampusRemindersWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
+      title: Localization().getStringEx('widget.home.campus_reminders.label.campus_reminders', 'Campus Reminders'),
     );
 
   @override
@@ -50,7 +50,6 @@ class HomeCampusRemindersWidget extends StatefulWidget {
 }
 
 class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> implements NotificationsListener {
-  static const int _maxItems = 3;
 
   List<Map<String, dynamic>>? _reminderItems;
 
@@ -59,6 +58,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     super.initState();
 
     NotificationService().subscribe(this, [
+      Config.notifyConfigChanged,
       Guide.notifyChanged,
       Auth2UserPrefs.notifyRolesChanged,
       AppLivecycle.notifyStateChanged,
@@ -86,7 +86,12 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Guide.notifyChanged) {
+    if (name == Config.notifyConfigChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if (name == Guide.notifyChanged) {
       _updateReminderItems();
     }
     else if (name == Auth2UserPrefs.notifyRolesChanged) {
@@ -106,7 +111,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(_reminderItems), child:
         HomeSlantWidget(favoriteId: widget.favoriteId,
-          title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
+          title: Localization().getStringEx('widget.home.campus_reminders.label.campus_reminders', 'Campus Reminders'),
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: Column(children: _buildRemindersList())
         ),
@@ -125,7 +130,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   List<Widget> _buildRemindersList() {
     List<Widget> contentList = <Widget>[];
     if (_reminderItems != null) {
-      int remindersCount = min(_reminderItems!.length, _maxItems);
+      int remindersCount = min(_reminderItems!.length, Config().homeCampusRemindersCount);
       for (int index = 0; index < remindersCount; index++) {
         Map<String, dynamic>? reminderItem = _reminderItems![index];
         if (contentList.isNotEmpty) {
@@ -133,23 +138,19 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
         }
         contentList.add(GuideEntryCard(reminderItem));
       }
-      if (_maxItems < _reminderItems!.length) {
-        contentList.add(Container(height: 16,));
-        contentList.add(RoundedButton(
-          label: Localization().getStringEx('widget.home_campus_reminders.button.more.title', 'View All'),
-          hint: Localization().getStringEx('widget.home_campus_reminders.button.more.hint', 'Tap to view all reminders'),
-          borderColor: Styles().colors!.fillColorSecondary,
-          textColor: Styles().colors!.fillColorPrimary,
-          backgroundColor: Styles().colors!.white,
-          onTap: () => _showAll(),
+      if (remindersCount < _reminderItems!.length) {
+        contentList.add(LinkButton(
+          title: Localization().getStringEx('widget.home.campus_reminders.button.more.title', 'See All'),
+          hint: Localization().getStringEx('widget.home.campus_reminders.button.more.hint', 'Tap to view all reminders'),
+          onTap: _onSeeAll,
         ));
       }
     }
     return contentList;
   }
 
-  void _showAll() {
-    Analytics().logSelect(target: "HomeCampusRemindersWidget View All");
+  void _onSeeAll() {
+    Analytics().logSelect(target: "HomeCampusRemindersWidget See All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _reminderItems, contentTitle: Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'))));
   }
 }
