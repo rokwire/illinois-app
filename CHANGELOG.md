@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Default drop down selection in Academics panel [#1726](https://github.com/rokwire/illinois-app/issues/1726).
 ### Added
 - Added "See All" to all home list widgets, openes the corresponding content panel [#1727](https://github.com/rokwire/illinois-app/issues/1727).
+- Added "WPGU FM Radio" button to header bar title if radio is playing [#1731](https://github.com/rokwire/illinois-app/issues/1731).
 
 ## [4.0.28] - 2022-06-13
 ### Added

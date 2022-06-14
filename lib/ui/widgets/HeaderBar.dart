@@ -18,10 +18,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/header_bar.dart' as rokwire;
 
@@ -236,23 +238,20 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
       );
 }*/
 
-class RootHeaderBar extends StatelessWidget implements PreferredSizeWidget {
+class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
 
   final String? title;
 
   RootHeaderBar({Key? key, this.title}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => AppBar(
-    backgroundColor: Styles().colors?.fillColorPrimaryVariant,
-    leading: buildHeaderHomeButton(context),
-    title: buildHeaderTitle(context),
-    actions: buildHeaderActions(context),
-  );
+  State<RootHeaderBar> createState() => _RootHeaderBarState();
 
   // PreferredSizeWidget
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  // Implamentation
 
   Widget buildHeaderHomeButton(BuildContext context) {
     return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
@@ -260,8 +259,20 @@ class RootHeaderBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget buildHeaderTitle(BuildContext context) {
+    return WPGUFMRadio().isPlaying ? Row(mainAxisSize: MainAxisSize.min, children: [
+      buildHeaderTitleText(context),
+      buildHeaderRadioButton(context),
+    ],) : buildHeaderTitleText(context);
+  }
+
+  Widget buildHeaderTitleText(BuildContext context) {
     return Semantics(label: title, excludeSemantics: true, child:
       Text(title ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+  }
+
+  Widget buildHeaderRadioButton(BuildContext context) {
+    return Semantics(label: Localization().getStringEx('headerbar.radio.title', 'WPGU FM Radio'), hint: Localization().getStringEx('headerbar.radio.hint', ''), button: true, excludeSemantics: true, child:
+      IconButton(icon: Image.asset('images/radio-white.png', excludeFromSemantics: true), onPressed: () => onTapRadio(context),),);
   }
 
   List<Widget> buildHeaderActions(BuildContext context) {
@@ -291,6 +302,12 @@ class RootHeaderBar extends StatelessWidget implements PreferredSizeWidget {
     Analytics().logSelect(target: "Home");
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
+
+  void onTapRadio(BuildContext context) {
+    Analytics().logSelect(target: "WPGU FM Radio");
+    WPGUFMRadio().pause();
+  }
+
   void onTapSettings(BuildContext context) {
     Analytics().logSelect(target: "Settings");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel()));
@@ -300,13 +317,46 @@ class RootHeaderBar extends StatelessWidget implements PreferredSizeWidget {
     Analytics().logSelect(target: "Notifications");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel()));
   }
-  
 
   void onTapPersonalInformations(BuildContext context) {
     Analytics().logSelect(target: "Personal Information");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsProfileContentPanel()));
   }
 
-  
+}
 
+class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsListener {
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      WPGUFMRadio.notifyPlayerStateChanged,
+    ]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AppBar(
+    backgroundColor: Styles().colors?.fillColorPrimaryVariant,
+    leading: widget.buildHeaderHomeButton(context),
+    title: widget.buildHeaderTitle(context),
+    actions: widget.buildHeaderActions(context),
+  );
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == WPGUFMRadio.notifyPlayerStateChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
 }
