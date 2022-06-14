@@ -18,6 +18,8 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsTeamsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
@@ -432,7 +434,10 @@ class _BrowseEntry extends StatelessWidget {
       case "app_help.faqs":                  _onTapFAQs(context); break;
 
       case "athletics.game_day":             _onTapGameDay(context); break;
-      case "athletics.sport_prefs":         _onTapSportPrefs(context); break;
+      case "athletics.upcoming_games":       _onTapUpcomingGames(context); break;
+      case "athletics.sport_news":           _onTapSportNews(context); break;
+      case "athletics.sport_teams":          _onTapSportTeams(context); break;
+      case "athletics.sport_prefs":          _onTapSportPrefs(context); break;
 
       case "safer.building_access":          _onTapBuildingAccess(context); break;
       case "safer.test_locations":           _onTapTestLocations(context); break;
@@ -591,6 +596,21 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapGameDay(BuildContext context) {
     Analytics().logSelect(target: "Game Day");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+  }
+
+  void _onTapUpcomingGames(BuildContext context) {
+    Analytics().logSelect(target: "Upcoming Games");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3}))));
+  }
+
+  void _onTapSportNews(BuildContext context) {
+    Analytics().logSelect(target: "News");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
+  }
+
+  void _onTapSportTeams(BuildContext context) {
+    Analytics().logSelect(target: "Teams");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamsPanel()));
   }
 
   void _onTapSportPrefs(BuildContext context) {
