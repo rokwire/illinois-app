@@ -386,7 +386,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: 'See All');
+    Analytics().logSelect(target: 'HomeFavoritesWidget(${widget.favoriteKey}) See All');
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
   }
 }

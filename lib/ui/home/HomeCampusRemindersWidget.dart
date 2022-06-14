@@ -144,7 +144,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: "HomeCampusRemindersWidget View All");
+    Analytics().logSelect(target: "HomeCampusRemindersWidget See All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _reminderItems, contentTitle: Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'))));
   }
 }
