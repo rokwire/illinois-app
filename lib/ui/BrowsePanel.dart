@@ -479,6 +479,7 @@ class _BrowseEntry extends StatelessWidget {
       case "my.my_campus_guide": _onTapMyCampusGuide(context); break;
 
       case "polls.create_poll":  _onTapCreatePoll(context); break;
+      case "polls.view_polls":   _onTapViewPolls(context); break;
 
       case "recent.recent_items": _onTapRecentItems(context); break;
 
@@ -791,6 +792,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapCreatePoll(BuildContext context) {
     Analytics().logSelect(target: "Create Poll");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));
+  }
+
+  void _onTapViewPolls(BuildContext context) {
+    Analytics().logSelect(target: "View Polls");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
 
   void _onTapRecentItems(BuildContext context) {

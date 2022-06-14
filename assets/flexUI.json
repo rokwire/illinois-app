@@ -30,7 +30,7 @@
 		"browse.events": ["upcoming_events"],
 		"browse.feeds": ["twitter", "wpgufm_radio", "illini_news"],
 		"browse.my": ["my_groups", "my_events", "my_dining", "my_athletics", "my_news", "my_laundry", "my_inbox", "my_campus_guide"],
-		"browse.polls": ["create_poll"],
+		"browse.polls": ["create_poll", "view_polls"],
 		"browse.recent": ["recent_items"],
 		"browse.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
 		"browse.wallet": ["illini_cash_card", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card"],
