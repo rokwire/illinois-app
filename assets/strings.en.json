@@ -2313,12 +2313,9 @@
     "widget.home_upcoming_events.button.more.title":"View All Events",
     "widget.home_upcoming_events.button.more.hint":"Tap to view all events",
 
-    "widget.home_recent_items.button.more.title":"View All",
-    "widget.home_recent_items.button.more.hint":"Tap to view all",
-    "widget.home_recent_items.button.all.title":"Show All",
-    "widget.home_recent_items.button.all.hint":"Tap to show all",
-    "widget.home_recent_items.button.less.title":"Show Less",
-    "widget.home_recent_items.button.less.hint":"Tap to show less",
+    "widget.home.recent_items.label.header.title":"Recently Viewed",
+    "widget.home.recent_items.button.all.title":"See All",
+    "widget.home.recent_items.button.all.hint":"Tap to see all",
 
     "widget.home.campus_resources.label.campus_tools":"Campus Resources",
     "widget.home.campus_resources.button.events.title":"Events",

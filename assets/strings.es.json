@@ -121,7 +121,6 @@
     "panel.home.label.welcome.logged_off":"Bienvenido a Illinois",
     "panel.home.label.near_you":"Cerca de ti",
     "panel.home.label.near_you.sub_title":"Descubre lo que te rodea ahora",
-    "panel.home.label.recently_viewed":"Visto recientemente",
     "panel.home.connect.not_logged_in.netid.description.part_1": "Are you a ",
     "panel.home.connect.not_logged_in.netid.description.part_2": "university student",
     "panel.home.connect.not_logged_in.netid.description.part_3": " or ",
@@ -2310,12 +2309,9 @@
     "widget.home_upcoming_events.button.more.title":"Ver todos los eventos",
     "widget.home_upcoming_events.button.more.hint":"Toca para ver todos los eventos",
 
-    "widget.home_recent_items.button.more.title":"Ver todo",
-    "widget.home_recent_items.button.more.hint":"Toca para ver todo",
-    "widget.home_recent_items.button.all.title":"Show All",
-    "widget.home_recent_items.button.all.hint":"Tap to show all",
-    "widget.home_recent_items.button.less.title":"Show Less",
-    "widget.home_recent_items.button.less.hint":"Tap to show less",
+    "widget.home.recent_items.label.header.title":"Recently Viewed",
+    "widget.home.recent_items.button.all.title":"See All",
+    "widget.home.recent_items.button.all.hint":"Tap to see all",
 
     "widget.home.campus_resources.label.campus_tools":"Recursos del campus",
     "widget.home.campus_resources.button.events.title":"Eventos",
