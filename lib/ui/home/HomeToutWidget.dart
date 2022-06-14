@@ -97,7 +97,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
 
   String? get title1 {
     if (_greeting?.isNotEmpty ?? false) {
-      if (Auth2().fullName?.isNotEmpty ?? false) {
+      if (Auth2().firstName?.isNotEmpty ?? false) {
         return "$_greeting,";
       }
       else {
@@ -110,7 +110,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   }
 
   String? get title2 {
-    return Auth2().fullName;
+    return Auth2().firstName;
   }
 
   bool get _shouldUpdateImage {
