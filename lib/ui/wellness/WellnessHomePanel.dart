@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessSectionsContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessToDoHomeContentWidget.dart';
@@ -147,6 +148,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         return WellnessRingsHomeContentWidget();
       case WellnessContent.todo:
         return WellnessToDoHomeContentWidget();
+      case WellnessContent.resources:
+        return WellnessResourcesContentWidget();
       default:
         return Container();
     }
@@ -162,6 +165,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         return Localization().getStringEx('panel.wellness.home.header.rings.title', 'Daily Wellness Rings');
       case WellnessContent.todo:
         return Localization().getStringEx('panel.wellness.home.header.todo.title', 'My To-Do List');
+      case WellnessContent.resources:
+        return Localization().getStringEx('panel.wellness.home.header.resources.title', 'Resources');
     }
   }
 
@@ -173,8 +178,10 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         return Localization().getStringEx('panel.wellness.section.rings.label', 'Daily Wellness Rings');
       case WellnessContent.todo:
         return Localization().getStringEx('panel.wellness.section.todo.label', 'To-Do List');
+      case WellnessContent.resources:
+        return Localization().getStringEx('panel.wellness.section.resources.label', 'Wellness Resources');
     }
   }
 }
 
-enum WellnessContent { sections, rings, todo }
+enum WellnessContent { sections, rings, todo, resources }
