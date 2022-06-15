@@ -60,7 +60,7 @@
 
 		"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 		
-		"features": ["authentication", "converge", "create_poll", "mtd_bus_number", "parking_lot_directions", "gies", "new_student", "canvas"],
+		"features": ["authentication", "create_poll", "mtd_bus_number", "parking_lot_directions", "gies", "new_student", "canvas"],
 		
 		"launch":["emergency"]
 		
@@ -112,7 +112,6 @@
 			"laundry_favs"                    : 4,
 			"recent_items"                    : 4,
 			"saved"                           : 3,
-			"converge"                        : 5,
 			"connect"                         : 4,
 
 			"create_poll"                     : 4,
@@ -120,10 +119,6 @@
 			"settings.connected"              : 4,
 			"settings.link"                   : 4,
 			"settings.linked"                 : 4,
-
-			"tabbar.wallet"                   : 4,
-
-			"privacy_center.buttons"          : 4,
 
 			"onboarding.notifications_auth"   : 4,
 			"onboarding.location_auth"        : 2,
@@ -151,8 +146,6 @@
 			"illini_cash_card"                    : { "loggedIn": true },
 			"meal_plan_card"                      : { "loggedIn": true },
 
-			"wallet.vcards"                       : { "loggedIn": true },
-			"wallet.hcards"                       : { "loggedIn": true },
 			"bus_pass_card"                       : { "iCard":    true },
 			"illini_id"                           : { "iCardNum": true },
 			"illini_id_card"                      : { "iCardNum": true },
@@ -199,7 +192,6 @@
 		"enable" : {
 			"illini_cash"                   : true,
 			"create_event"                  : false,
-			"converge"                      : true,
 			"mtd_bus_number"                : true,
 			"parking_lot_directions"        : true,
 			"library_card"                  : false,
