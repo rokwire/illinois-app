@@ -80,7 +80,6 @@
 			"bus_pass_card"                          : ["student", "OR", "employee", "OR", "resident"],
 
 			"create_poll"                            : ["student", "OR", "employee"],
-			"upgrade_version_message"                : ["student", "OR", "employee"],
 
 			"onboarding.login_netid"                 : ["student", "OR", "employee"],
 			"onboarding.login_phone"                 : ["NOT", ["employee", "OR", "student"]],
@@ -149,7 +148,6 @@
 			"laundry_favs"                        : { "shibbolethLoggedIn": true },
 			"create_event"                        : { "accountRole": "event approvers" },
 			"create_stadium_poll"                 : { "accountRole": "stadium poll manager" },
-			"upgrade_version_message"             : { "shibbolethLoggedIn": true },
 			"illini_cash_card"                    : { "loggedIn": true },
 			"meal_plan_card"                      : { "loggedIn": true },
 
