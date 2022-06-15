@@ -34,6 +34,7 @@ class WellnessToDoHomeContentWidget extends StatefulWidget {
 class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentWidget> {
   late _ToDoTab _selectedTab;
   List<ToDoItem>? _todoItems;
+  Map<String, List<ToDoItem>>? _itemsMap;
   bool _itemsLoading = false;
 
   @override
@@ -121,12 +122,49 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   void _loadToDoItems() {
     _setItemsLoading(true);
     //TBD: DD - implement with backend
-    Future.delayed(Duration(seconds: 2)).then((_) {
+    Future.delayed(Duration(seconds: 1)).then((_) {
       List<dynamic>? itemsJson = JsonUtils.decodeList(
           '[{"id":"dfssdfdssdtghnhn","name":"Lon Capa Homework","category":{"id":"asdadsad","name":"Chem 201","color":"#002855","reminder_type":"night_before"},"due_date_time":"2022-05-20T16:00","work_days":["2022-05-17","2022-05-18"],"location":{"latitude":40.101977,"longitude":88.227162},"description":"I have to do my homework.","completed":true},{"id":"fdsddsdssdtghnhn","name":"Read Chapter 1 Jane Eyre","category":{"id":"67yh","name":"Eng 103","color":"#E84A27","reminder_type":"morning_of"},"due_date_time":"2022-07-03T07:15","work_days":["2022-06-30","2022-07-01","2022-07-02"],"location":{"latitude":40.201977,"longitude":87.227162},"description":"I have to do my homework.","completed":true},{"id":"09kj90ipsdfk","name":"Call about Prescriptions","due_date_time":"2022-06-15T14:30","work_days":["2022-06-02","2022-06-10"],"location":{"latitude":40.101877,"longitude":88.237162},"description":"Call about the Prescriptions.","completed":false}]');
       _todoItems = ToDoItem.listFromJson(itemsJson);
+      _buildItemsMap();
       _setItemsLoading(false);
     });
+  }
+
+  void _buildItemsMap() {
+    if (_todoItems != null) {
+      _itemsMap = <String, List<ToDoItem>>{};
+      for (ToDoItem item in _todoItems!) {
+        String itemKey = _getItemKeyByTab(item)!;
+        List<ToDoItem>? categoryItems = _itemsMap![itemKey];
+        if (categoryItems == null) {
+          categoryItems = <ToDoItem>[];
+        }
+        categoryItems.add(item);
+        _itemsMap![itemKey] = categoryItems;
+      }
+    } else {
+      _itemsMap = null;
+    }
+  }
+
+  String? _getItemKeyByTab(ToDoItem item) {
+    String? key;
+    switch (_selectedTab) {
+      case _ToDoTab.daily:
+        key = item.displayDueDate;
+        break;
+      case _ToDoTab.category:
+        key = item.category?.name;
+        break;
+      case _ToDoTab.reminders:
+        key = item.displayDueDate;
+        break;
+    }
+    if (StringUtils.isEmpty(key)) {
+      key = Localization().getStringEx('panel.wellness.todo.items.unassigned.category.label', 'Unassigned Items');
+    }
+    return key;
   }
 
   void _setItemsLoading(bool loading) {
