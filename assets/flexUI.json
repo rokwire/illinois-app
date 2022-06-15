@@ -67,10 +67,6 @@
 	},
 	"rules": {
 		"roles" : {
-			"game_day"                               : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
-			"sport_prefs"                            : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
-			"campus_reminders"                       : [["NOT", "alumni"], "OR", "student", "OR", "fan", "OR", "employee", "OR", "parent"],
-
 			"my_illini"                              : ["student"],
 			"illini_cash"                            : ["student", "OR", "employee", "OR", "parent"],
 			"illini_cash_card"                       : ["student", "OR", "employee", "OR", "parent"],
