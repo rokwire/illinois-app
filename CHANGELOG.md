@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Wellness Resources drop down item [#1741](https://github.com/rokwire/illinois-app/issues/1741).
 
-## [4.0.298] - 2022-06-14
+## [4.0.29] - 2022-06-14
 ### Changed
 - Default drop down selection in Academics panel [#1726](https://github.com/rokwire/illinois-app/issues/1726).
 - Favorites panel UI changes [#1729](https://github.com/rokwire/illinois-app/issues/1729).
