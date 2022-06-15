@@ -148,7 +148,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   checked: isGameFavorite,
                                   child: GestureDetector(
                                       child: Container(padding: EdgeInsets.only(right: 24, left: 10, bottom: 20, top: 20),
-                                        child: Image.asset(isGameFavorite ? 'images/icon-star-solid.png' : 'images/icon-star-white.png',excludeFromSemantics: true
+                                        child: Image.asset(isGameFavorite ? 'images/icon-star-white-transluent.png' : 'images/icon-star-white-frame-thin.png',excludeFromSemantics: true
                                       )),
                                       onTap: _onTapSwitchFavorite),
                                 ),

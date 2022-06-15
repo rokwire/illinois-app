@@ -941,7 +941,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
               child:
               GestureDetector(onTap: _onTapFavorite, child:
                 Container(padding: EdgeInsets.all(9), child:
-                  Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true,)
+                  Image.asset(_isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,)
             ),)),),),
         ],)
     );
