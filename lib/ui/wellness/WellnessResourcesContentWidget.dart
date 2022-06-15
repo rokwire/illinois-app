@@ -33,7 +33,13 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
   }
 
   Widget _buildContent() {
-    return Column(children: [_buildHeader(), _buildActionButtonsContainer(), _buildResourceButtonsContainer()]);
+    return Column(children: [
+      _buildHeader(),
+      _buildActionButtonsContainer(),
+      Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [Expanded(child: _buildResourceButtonsContainer()), _buildAlphabetContainer()])
+    ]);
   }
 
   Widget _buildHeader() {
@@ -138,5 +144,15 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
                     Padding(padding: EdgeInsets.symmetric(horizontal: 10), child: Image.asset('images/chevron-right.png'))
                   ])
                 ]))));
+  }
+
+  Widget _buildAlphabetContainer() {
+    List<String> alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+    List<Widget> lettersWidgetList = <Widget>[];
+    for (String letter in alphabet) {
+      lettersWidgetList.add(Text(letter, style: TextStyle(color: Styles().colors!.fillColorPrimary)));
+    }
+    return Padding(
+        padding: EdgeInsets.only(left: 10), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: lettersWidgetList));
   }
 }
