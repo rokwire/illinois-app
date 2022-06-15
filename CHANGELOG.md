@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Cleaned up FlexUI rules [#1742](https://github.com/rokwire/illinois-app/issues/1742).
+### Added
+- Wellness Resources drop down item [#1741](https://github.com/rokwire/illinois-app/issues/1741).
 
 ## [4.0.298] - 2022-06-14
 ### Changed
