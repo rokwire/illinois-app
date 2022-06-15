@@ -1610,9 +1610,11 @@
     "panel.wellness.home.header.sections.title": "Bienestar",
     "panel.wellness.home.header.rings.title": "Anillos de bienestar diarios",
     "panel.wellness.home.header.todo.title": "Mi lista de tareas pendientes",
+    "panel.wellness.home.header.resources.title": "Recursos",
     "panel.wellness.section.sections.label": "Secciones de Bienestar",
     "panel.wellness.section.rings.label": "Anillos de bienestar diarios",
     "panel.wellness.section.todo.label": "Lista de quehaceres",
+    "panel.wellness.section.resources.label": "Recursos de bienestar",
 
     "panel.wellness.sections.description.header.text": "Aprende a priorizar. Ocúpate de lo que puedes hacer hoy, ahora mismo. Esto le ayudará a ser un mejor administrador del tiempo y reducir el riesgo de procrastinación.",
     "panel.wellness.sections.description.footer.wellness.text": "Bienestar ",
@@ -1624,6 +1626,8 @@
     "panel.wellness.todo.tab.category.label": "Categoría",
     "panel.wellness.todo.tab.reminders.label": "Recordatorios",
     "panel.wellness.todo.items.completed.clear.button": "Borrar elementos completados",
+
+    "panel.wellness.resources.header.label": "Recursos de bienestar",
 
     "panel.wellness.home.header.title": "Bienestar",
     "panel.wellness.home.description.main_text": "Lograr y mantener el bienestar es un proceso dinámico que implica la autorreflexión y la creación de conciencia sobre lo que es el bienestar y lo individualizado que puede ser el proceso para abordarlo.",
