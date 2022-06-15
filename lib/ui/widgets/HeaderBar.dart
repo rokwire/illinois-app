@@ -285,17 +285,35 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
 
   Widget buildHeaderSettingsButton(BuildContext context) {
     return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: () => onTapSettings(context)));
+//    IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: () => onTapSettings(context))
+      InkWell(onTap: () => onTapSettings(context), child:
+        Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: 16, left: 6), child:
+          Image.asset('images/settings-white.png', excludeFromSemantics: true,),
+        )
+      )
+    );
   }
 
   Widget buildHeaderNotificationsButton(BuildContext context) {
     return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.notifications.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/notifications-white.png', excludeFromSemantics: true), onPressed: () => onTapNotifications(context)));
+//    IconButton(icon: Image.asset('images/notifications-white.png', excludeFromSemantics: true), onPressed: () => onTapNotifications(context))
+      InkWell(onTap: () => onTapNotifications(context), child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
+          Image.asset('images/notifications-white.png', excludeFromSemantics: true,),
+        )
+      )
+    );
   }
 
   Widget buildHeaderPersonalInfoButton(BuildContext context) {
     return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/personal-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations(context)));
+//    IconButton(icon: Image.asset('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations(context))
+      InkWell(onTap: () => onTapPersonalInformations(context), child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
+          Image.asset('images/person-white.png', excludeFromSemantics: true,),
+        )
+      )
+    );
   }
 
   void onTapHome(BuildContext context) {
