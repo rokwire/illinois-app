@@ -80,8 +80,10 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == Config.notifyConfigChanged) ||
-        (name == Connectivity.notifyStatusChanged)) {
+    if (name == Connectivity.notifyStatusChanged) {
+      _refreshNews();
+    }
+    else if (name == Config.notifyConfigChanged) {
       if (mounted) {
         setState(() {});
       }
@@ -189,16 +191,18 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
   }
 
   void _refreshNews() {
-    setStateIfMounted(() {
-      _loadingNews = true;
-    });
-    Sports().loadNews(null, Config().homeAthleticsNewsCount).then((List<News>? news) {
+    if (Connectivity().isOnline) {
       setStateIfMounted(() {
-        _loadingNews = false;
-        if (news != null) {
-          _news = news;
-        }
+        _loadingNews = true;
       });
-    });
+      Sports().loadNews(null, Config().homeAthleticsNewsCount).then((List<News>? news) {
+        setStateIfMounted(() {
+          _loadingNews = false;
+          if (news != null) {
+            _news = news;
+          }
+        });
+      });
+    }
   }
 }
