@@ -499,4 +499,10 @@ class Storage extends rokwire.Storage {
         getStringWithName(_userWellnessRings));
     return WellnessRingData.listFromJson(ringsData);
   }
+
+  // Wellness ToDo
+
+  static const String _userAccessedWellnessToDoKey = 'wellness.todo.user.accessed';
+  bool? get isUserAccessedWellnessToDo => getBoolWithName(_userAccessedWellnessToDoKey);
+  set userAccessedWellnessToDo(bool? value) => setBoolWithName(_userAccessedWellnessToDoKey, value);
 }
