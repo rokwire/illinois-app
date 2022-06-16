@@ -1629,6 +1629,9 @@
     "panel.wellness.todo.items.unassigned.category.label": "Elementos no asignados",
     "panel.wellness.todo.items.add.button": "Añadir artículo",
     "panel.wellness.todo.items.add.empty.msg": "No hay artículos próximos",
+    "panel.wellness.todo.welcome.header.label": "Bienvenido a tu",
+    "panel.wellness.todo.welcome.todo_list.label": "Lista de quehaceres",
+    "panel.wellness.todo.welcome.description.label": "Utilice esta herramienta para administrar su ...",
 
     "panel.wellness.resources.header.label": "Recursos de bienestar",
     "panel.wellness.resources.appointment.button": "Quiero hacer una cita",

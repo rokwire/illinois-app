@@ -19,6 +19,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -37,11 +38,16 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       Localization().getStringEx('panel.wellness.todo.items.unassigned.category.label', 'Unassigned Items');
   late _ToDoTab _selectedTab;
   List<ToDoItem>? _todoItems;
+  bool _welcomeVisible = false;
   bool _itemsLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _welcomeVisible = (Storage().isUserAccessedWellnessToDo != true);
+    if (Storage().isUserAccessedWellnessToDo != true) {
+      Storage().userAccessedWellnessToDo = true;
+    }
     _selectedTab = _ToDoTab.daily;
     _loadToDoItems();
   }
@@ -56,9 +62,11 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   Widget _buildContent() {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [_buildTabButtonRow(), _buildClearCompletedItemsButton(), _buildItemsContainer()]);
+    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      _buildTabButtonRow(),
+      _buildClearCompletedItemsButton(),
+      (_welcomeVisible ? _buildWelcomeContent() : _buildItemsContent())
+    ]);
   }
 
   Widget _buildTabButtonRow() {
@@ -88,7 +96,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   Widget _buildClearCompletedItemsButton() {
-    bool visible = !_itemsLoading && CollectionUtils.isNotEmpty(_todoItems);
+    bool visible = !_welcomeVisible && !_itemsLoading && CollectionUtils.isNotEmpty(_todoItems);
     return Visibility(
         visible: visible,
         child: Padding(
@@ -101,7 +109,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                 onTap: _onTapClearCompletedItems)));
   }
 
-  Widget _buildItemsContainer() {
+  Widget _buildItemsContent() {
     if (_sortedItemsMap != null) {
       List<Widget> contentList = <Widget>[];
       for (String key in _sortedItemsMap!.keys) {
@@ -128,6 +136,47 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     ]));
   }
 
+  Widget _buildWelcomeContent() {
+    return Column(children: [
+      _buildSectionWidget(_unAssignedLabel),
+      Padding(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: Container(
+              height: 200,
+              decoration: BoxDecoration(
+                  color: Styles().colors!.white,
+                  boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]),
+              child: Stack(alignment: Alignment.center, children: [
+                Padding(
+                    padding: EdgeInsets.only(top: 30),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      Text(Localization().getStringEx('panel.wellness.todo.welcome.header.label', 'Welcome to your'),
+                          style:
+                              TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium)),
+                      Padding(
+                          padding: EdgeInsets.only(top: 5),
+                          child: Text(Localization().getStringEx('panel.wellness.todo.welcome.todo_list.label', 'To-Do List'),
+                              style: TextStyle(
+                                  color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold))),
+                      Padding(
+                          padding: EdgeInsets.only(top: 20),
+                          child: Text(
+                              Localization()
+                                  .getStringEx('panel.wellness.todo.welcome.description.label', 'Use this tool to manage your ...'),
+                              style: TextStyle(
+                                  color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
+                    ])),
+                Align(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                        onTap: _onTapCloseWelcome,
+                        child: Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Image.asset('images/icon-x-orange.png', color: Styles().colors!.mediumGray))))
+              ])))
+    ]);
+  }
+
   Widget _buildEmptyContent() {
     return Column(children: [
       _buildSectionWidget(_unAssignedLabel),
@@ -140,7 +189,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   Widget _buildSectionWidget(String sectionKey) {
     return Padding(
-        padding: EdgeInsets.only(top: 10),
+        padding: EdgeInsets.only(top: 25),
         child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
           Text(sectionKey,
               overflow: TextOverflow.ellipsis,
@@ -172,12 +221,22 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     }
   }
 
+  void _onTapCloseWelcome() {
+    _welcomeVisible = false;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   void _onTapClearCompletedItems() {
     //TBD: DD - implement
     AppAlert.showDialogResult(context, 'Not Implemented');
   }
 
   void _onTapAddItem() {
+    if (_welcomeVisible) {
+      return;
+    }
     //TBD: DD - implement
   }
 
