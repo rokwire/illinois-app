@@ -99,7 +99,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
-        title: Localization().getStringEx('widget.home.game_news.text.title', 'Athletics News'),
+        title: Localization().getStringEx('widget.home.athletics_news.text.title', 'Athletics News'),
         titleIcon: Image.asset('images/icon-news.png'),
         flatHeight: 0, slantHeight: 0,
         childPadding: EdgeInsets.zero,
@@ -192,7 +192,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
   }
 
   void _onTapSeeAll() {
-    Analytics().logSelect(target: "HomeUpcomingEvents View all events");
+    Analytics().logSelect(target: "HomeAthleticsNews: View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
   }
 
