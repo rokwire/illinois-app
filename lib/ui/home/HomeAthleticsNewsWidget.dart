@@ -14,6 +14,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -40,19 +41,21 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
 
   List<News>? _news;
   bool _loadingNews = false;
+  DateTime? _pausedDateTime;
 
   @override
   void initState() {
 
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
+      AppLivecycle.notifyStateChanged,
       Config.notifyConfigChanged,
     ]);
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
-          _refreshNews();
+          _refreshNews(showProgress: true);
         }
       });
     }
@@ -80,8 +83,13 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == Config.notifyConfigChanged) ||
-        (name == Connectivity.notifyStatusChanged)) {
+    if (name == Connectivity.notifyStatusChanged) {
+      _refreshNews();
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+    else if (name == Config.notifyConfigChanged) {
       if (mounted) {
         setState(() {});
       }
@@ -188,17 +196,39 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
   }
 
-  void _refreshNews() {
-    setStateIfMounted(() {
-      _loadingNews = true;
-    });
-    Sports().loadNews(null, Config().homeAthleticsNewsCount).then((List<News>? news) {
-      setStateIfMounted(() {
-        _loadingNews = false;
-        if (news != null) {
-          _news = news;
+  void _refreshNews({bool showProgress = false}) {
+    if (Connectivity().isOnline) {
+      if (showProgress && mounted) {
+        setState(() {
+          _loadingNews = true;
+        });
+      }
+      Sports().loadNews(null, Config().homeAthleticsNewsCount).then((List<News>? news) {
+        if (mounted) {
+          setState(() {
+            if (showProgress) {
+              _loadingNews = false;
+            }
+            if (news != null) {
+              _news = news;
+            }
+          });
         }
       });
-    });
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _refreshNews();
+        }
+      }
+    }
   }
 }
