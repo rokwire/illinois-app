@@ -137,8 +137,8 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
                             left: 24,
                             bottom: 0),
                         child: Image.asset(isFavorite
-                            ? 'images/icon-star-selected.png'
-                            : 'images/icon-star.png')
+                            ? 'images/icon-star-blue.png'
+                            : 'images/icon-star-gray-frame-thin.png')
                     ))
                 )),)
         ],

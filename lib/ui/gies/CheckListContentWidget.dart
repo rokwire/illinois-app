@@ -138,11 +138,11 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
             Semantics(label: "Page ${progressStep.toString()}", button: true, hint: progressStepCompleted? "Completed" :((progressStep == currentPageProgress)? "Current page":"Not Completed"), child:
             InkWell(onTap: () => _onTapProgress(progressStep), child:
             Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
-            Container(width: 35, height: 28, child:
+            Container(width: 30, height: 28, child:
             Stack(children:<Widget>[
               Visibility(
                 visible: currentStep,
-                child:  Align(alignment: Alignment.center, child: Container(width: 28, height: 28, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white))),
+                child:  Align(alignment: Alignment.center, child: Container(width: 27, height: 27, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white))),
               ),
               Container(child:
                 Align(alignment: Alignment.center, child:
@@ -150,11 +150,11 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children:[
-                    Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 16, decoration: TextDecoration.underline), semanticsLabel: '',),
+                    Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 15, decoration: TextDecoration.underline), semanticsLabel: '',),
                     !showCheckIcon ? Container():
                     Container(
-                        height: 16,
-                        width: 16,
+                        height: 14,
+                        width: 14,
                         child:Image.asset('images/green-check-mark.png', semanticLabel: "completed",)
                     )
                   ])
@@ -815,7 +815,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
       padding: EdgeInsets.only(right: 16, left: 16,),
       color: Styles().colors!.fillColorPrimary,
       child: Row(
-        children: tabs,
+        children: [Expanded(child: Row(children: tabs))]
       )
     );
   }

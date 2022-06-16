@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.0.30] - 2022-06-15
 ### Changed
+- Gies content updated  [#1749](https://github.com/rokwire/illinois-app/issues/1749).
 - Cleaned up FlexUI rules [#1742](https://github.com/rokwire/illinois-app/issues/1742).
+- Updated icnos from Zeplin desgin [#1748](https://github.com/rokwire/illinois-app/issues/1748).
 ### Added
 - Wellness Resources drop down item [#1741](https://github.com/rokwire/illinois-app/issues/1741).
 - Wellness tip background color is color of the day [#1746](https://github.com/rokwire/illinois-app/issues/1746).
