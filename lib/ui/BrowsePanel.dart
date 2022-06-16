@@ -466,7 +466,7 @@ class _BrowseEntry extends StatelessWidget {
       case "app_help.faqs":                  _onTapFAQs(context); break;
 
       case "athletics.game_day":             _onTapGameDay(context); break;
-      case "athletics.upcoming_games":       _onTapUpcomingGames(context); break;
+      case "athletics.sport_events":         _onTapSportEvents(context); break;
       case "athletics.sport_news":           _onTapSportNews(context); break;
       case "athletics.sport_teams":          _onTapSportTeams(context); break;
       case "athletics.sport_prefs":          _onTapSportPrefs(context); break;
@@ -632,18 +632,18 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
   }
 
-  void _onTapUpcomingGames(BuildContext context) {
-    Analytics().logSelect(target: "Upcoming Games");
+  void _onTapSportEvents(BuildContext context) {
+    Analytics().logSelect(target: "Athletics Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3}))));
   }
 
   void _onTapSportNews(BuildContext context) {
-    Analytics().logSelect(target: "News");
+    Analytics().logSelect(target: "Athletics News");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
   }
 
   void _onTapSportTeams(BuildContext context) {
-    Analytics().logSelect(target: "Teams");
+    Analytics().logSelect(target: "Athletics Teams");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamsPanel()));
   }
 

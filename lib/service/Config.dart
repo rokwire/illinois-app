@@ -161,6 +161,7 @@ class Config extends rokwire.Config {
   int  get homeCampusRemindersCount  => JsonUtils.intValue(settings['homeCampusRemindersCount']) ?? 3;
   int  get homeFavoriteItemsCount    => JsonUtils.intValue(settings['homeFavoriteItemsCount']) ?? 3;
   int  get homeAthleticsNewsCount    => JsonUtils.intValue(settings['homeAthleticsNewsCount']) ?? 3;
+  int  get homeAthleticsEventsCount  => JsonUtils.intValue(settings['homeAthleticsEventsCount']) ?? 3;
   int  get homeRecentItemsCount      => JsonUtils.intValue(settings['homeRecentItemsCount']) ?? 3;
   int  get homeUpcomingEventsCount   => JsonUtils.intValue(settings['homeUpcomingEventsCount']) ?? 5;
   int  get recentItemsCount          => JsonUtils.intValue(settings['recentItemsCount']) ?? 32;
