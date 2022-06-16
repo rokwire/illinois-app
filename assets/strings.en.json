@@ -2442,6 +2442,10 @@
     "widget.home.athletics_events.button.all.title": "See All",
     "widget.home.athletics_events.button.all.hint": "Tap to see all events",
 
+    "widget.home.athletics_teams.text.title": "Athletics Teams",
+    "widget.home.athletics_teams.button.all.title": "See All",
+    "widget.home.athletics_teams.button.all.hint": "Tap to see all teams",
+
     "widget.home.tout.reorder.label": "Reorder",
 
     "widget.athletics_card.button.get_tickets.title":"Get Tickets",

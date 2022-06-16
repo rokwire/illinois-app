@@ -4,7 +4,7 @@
 
 		"home": ["gies_checklist", "new_student_checklist", "safer", "twitter", "canvas_courses", "my_groups",
 			"campus_highlights", "campus_reminders", "campus_resources", "campus_links",
-			"game_day", "sport_events", "sport_news", "sport_prefs",
+			"game_day", "sport_events", "sport_news", "sport_teams", "sport_prefs",
 			"upcoming_events", "recent_items", "wallet",
 			"my_events", "my_dining", "my_athletics", "my_news", "my_laundry", "my_inbox", "my_campus_guide",
 			"create_poll", "wpgufm_radio", "illini_news", "app_help", "state_farm_center", "wellness_rings", "wellness_todo"
