@@ -281,8 +281,8 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
               crossAxisAlignment: CrossAxisAlignment.center,
               children: _buildListItems(context)),
           LinkButton(
-            title: Localization().getStringEx('widget.home.upcoming_events.button.more.title', 'See All'),
-            hint: Localization().getStringEx('widget.home.upcoming_events.button.more.hint', 'Tap to see all events'),
+            title: Localization().getStringEx('widget.home.upcoming_events.button.all.title', 'See All'),
+            hint: Localization().getStringEx('widget.home.upcoming_events.button.all.hint', 'Tap to see all events'),
             onTap: _navigateToExploreEvents,
           ),
         ]);
