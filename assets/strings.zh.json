@@ -2423,7 +2423,14 @@
 	"widget.home.welcome.text.description": "此版本中的新功能：輕鬆重新排列您的收藏面板以自定義您自己的偏好。 通過點擊 {{star_icon}} 添加或刪除內容。 這可以在瀏覽中或通過點擊重新排序來完成。",
 	"widget.home.welcome.button.close.label": "關",
 
-    "widget.home.tout.reorder.label": "重新排序",
+	"widget.home.athletics_news.text.title": "Athletics News",
+	"widget.home.athletics_news.text.empty": "Whoops! Nothing to see here.",
+	"widget.home.athletics_news.text.empty.description": "No Athletics News are available right now.",
+	"widget.home.athletics_news.text.offline": "Athletics News are not available while offline",
+	"widget.home.athletics_news.button.all.title": "See All",
+	"widget.home.athletics_news.button.all.hint": "Tap to see all news",
+
+  "widget.home.tout.reorder.label": "重新排序",
 
 	"widget.athletics_card.button.get_tickets.title":"获取门票",
 	"widget.athletics_card.button.get_tickets.hint":"",

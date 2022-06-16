@@ -204,3 +204,13 @@ class AppDateTimeUtils {
   }
 
 }
+
+extension StateExt on State {
+  @protected
+  void setStateIfMounted(VoidCallback fn) {
+    if (mounted) {
+      // ignore: invalid_use_of_protected_member
+      setState(fn);
+    }
+  }
+}
