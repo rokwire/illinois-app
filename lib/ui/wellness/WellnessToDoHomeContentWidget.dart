@@ -65,7 +65,9 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
       _buildTabButtonRow(),
       _buildClearCompletedItemsButton(),
-      (_welcomeVisible ? _buildWelcomeContent() : _buildItemsContent())
+      (_welcomeVisible ? _buildWelcomeContent() : _buildItemsContent()),
+      //TBD: DD - properly position the button if the content is not scrollable
+      _buildManageCategoriesButton()
     ]);
   }
 
@@ -107,6 +109,17 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                 fontSize: 18,
                 label: Localization().getStringEx('panel.wellness.todo.items.completed.clear.button', 'Clear Completed Items'),
                 onTap: _onTapClearCompletedItems)));
+  }
+
+  Widget _buildManageCategoriesButton() {
+    return Padding(
+        padding: EdgeInsets.only(top: 30),
+        child: RoundedButton(
+            contentWeight: 0.75,
+            padding: EdgeInsets.symmetric(vertical: 8),
+            fontSize: 18,
+            label: Localization().getStringEx('panel.wellness.todo.categories.manage.button', 'Manage Categories'),
+            onTap: _onTapManageCategories));
   }
 
   Widget _buildItemsContent() {
@@ -229,6 +242,11 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _onTapClearCompletedItems() {
+    //TBD: DD - implement
+    AppAlert.showDialogResult(context, 'Not Implemented');
+  }
+
+  void _onTapManageCategories() {
     //TBD: DD - implement
     AppAlert.showDialogResult(context, 'Not Implemented');
   }

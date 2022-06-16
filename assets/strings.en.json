@@ -1633,6 +1633,7 @@
     "panel.wellness.todo.welcome.header.label": "Welcome to your",
     "panel.wellness.todo.welcome.todo_list.label": "To-Do List",
     "panel.wellness.todo.welcome.description.label": "Use this tool to manage your ...",
+    "panel.wellness.todo.categories.manage.button": "Manage Categories",
 
     "panel.wellness.resources.header.label": "Wellness Resources",
     "panel.wellness.resources.appointment.button": "I want to make an appointment",

@@ -1634,6 +1634,7 @@
     "panel.wellness.todo.welcome.header.label": "歡迎來到您的",
     "panel.wellness.todo.welcome.todo_list.label": "待辦事項清單",
     "panel.wellness.todo.welcome.description.label": "使用此工具管理您的 ...",
+    "panel.wellness.todo.categories.manage.button": "管理類別",
 
     "panel.wellness.resources.header.label": "健康資源",
     "panel.wellness.resources.appointment.button": "我想預約",
