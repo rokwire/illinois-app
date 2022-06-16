@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.0.31] - 2022-06-16
 ### Added
 - Created HomeAthleticsNewsWidget [#1752](https://github.com/rokwire/illinois-app/issues/1752).
 - Created HomeAthliticsEventsWidget [#1754](https://github.com/rokwire/illinois-app/issues/1754).
