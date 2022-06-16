@@ -2426,6 +2426,13 @@
     "widget.home.welcome.text.description": "Nuevo en esta versión: reordene fácilmente su panel de favoritos para personalizar sus propias preferencias. Agregue o elimine contenido tocando {{star_icon}}. Esto se puede hacer en Examinar o tocando Reordenar.",
     "widget.home.welcome.button.close.label": "Cerca",
 
+    "widget.home.athletics_news.text.title": "Athletics News",
+    "widget.home.athletics_news.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.athletics_news.text.empty.description": "No Athletics News are available right now.",
+    "widget.home.athletics_news.text.offline": "Athletics News are not available while offline",
+    "widget.home.athletics_news.button.all.title": "See All",
+    "widget.home.athletics_news.button.all.hint": "Tap to see all news",
+
     "widget.home.tout.reorder.label": "Reordenar",
 
     "widget.athletics_card.button.get_tickets.title":"Obtener boletos",
