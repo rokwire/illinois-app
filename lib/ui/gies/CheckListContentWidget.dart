@@ -451,6 +451,12 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
             }
           }
 
+          String? widgetName = JsonUtils.stringValue(contentEntry["widget"]);
+          if(StringUtils.isNotEmpty(widgetName)){
+              contentEntryWidgets.add(_buildCustomWidget(name:widgetName, params: JsonUtils.mapValue("params")), );
+          }
+
+
           if (0 < contentEntryWidgets.length) {
             contentList.add(
               Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
@@ -561,6 +567,27 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
       Row(children: [ Expanded(child: Column(children: contentList))],)
       ),
     ),);
+  }
+
+  Widget _buildCustomWidget({String? name, Map<String, dynamic>? params}){
+    if(StringUtils.isNotEmpty(name)){
+      switch (name) {
+        case "student_info":
+          return _buildStudentInfoWidget(params);
+      }
+    }
+    return Container();
+  }
+
+  _buildStudentInfoWidget(Map<String, dynamic>? params){
+    //TBD implement
+    return Container(
+      height: 100,
+      child: Column(
+        children: [
+          Text("Student info in progress..."),
+      ]),
+    );
   }
 }
 

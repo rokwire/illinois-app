@@ -21,6 +21,10 @@ abstract class CheckList with Service implements NotificationsListener{
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
   static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
   static const String notifyContentChanged  = "edu.illinois.rokwire.gies.service.content.changed";
+  static const String notifyExecuteCustomWidgetAction  = "edu.illinois.rokwire.gies.service.content.execute.widget.action";
+
+  //Custom actions
+  static const String widgetActionApproveUserInfo  = "edu.illinois.rokwire.checklist.gies.widget.action.approve.info";
 
   // Singleton instance wrapper
   factory CheckList(String serviceName){
@@ -48,6 +52,9 @@ abstract class CheckList with Service implements NotificationsListener{
   List<int>? _progressSteps;
 
   DateTime? _pausedDateTime;
+
+  //custom widgets data
+  dynamic _studentInfo; //TBD load
 
   // String checklistName();
 
@@ -266,6 +273,15 @@ abstract class CheckList with Service implements NotificationsListener{
 
   void processButtonPage(Map<String, dynamic> button, {String? callerPageId}) {
     String? pageId = callerPageId ?? currentPageId;
+
+    Map<String, dynamic>? widgetCustomAction = JsonUtils.mapValue(button["widget_action"]);
+    if(widgetCustomAction!=null){
+      String? actionName = widgetCustomAction["name"];
+      if(actionName!=null)
+        _processWidgetAction(actionName);
+      NotificationService().notify(notifyExecuteCustomWidgetAction, {_contentName: widgetCustomAction});
+    }
+
     if (pageButtonCompletes(button)) {
       if ((pageId != null) && pageId.isNotEmpty) {
         if(!(_completedPages?.contains(pageId) ?? false)){
@@ -306,6 +322,15 @@ abstract class CheckList with Service implements NotificationsListener{
       }
 
       this.pushPage(pushPage);
+    }
+  }
+
+  void _processWidgetAction(String actionName){
+    switch(actionName){
+      case widgetActionApproveUserInfo : {
+        //TBD implement
+        AppToast.show("Try to upload User Info: $_studentInfo");
+      }
     }
   }
 
