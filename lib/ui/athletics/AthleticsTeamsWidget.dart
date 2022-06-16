@@ -79,36 +79,17 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.topCenter,
-      children: <Widget>[
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            buildMenSectionHeader(),
-            Container(
-              decoration: BoxDecoration(
-                  border:
-                  Border.all(color: Styles().colors!.surfaceAccent!, width: 1)),
-              child: Column(
-                children: buildSportList(_menSports),
-              ),
-            ),
-            Container(
-              height: 20,
-            ),
-            buildWomenSectionHeader(),
-            Container(
-                decoration: BoxDecoration(
-                    border: Border.all(
-                        color: Styles().colors!.surfaceAccent!, width: 1)),
-                child: Column(
-                  children: buildSportList(_womenSports),
-                )),
-          ],
-        ),
-      ],
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      buildMenSectionHeader(),
+      Container(decoration: BoxDecoration(border:Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
+        Column(children: buildSportList(_menSports),),
+      ),
+      Container(height: 20,),
+      buildWomenSectionHeader(),
+      Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
+        Column(children: buildSportList(_womenSports),),
+      ),
+    ],);
   }
 
   List<Widget> buildSportList(List<SportDefinition>? sports) {
@@ -116,10 +97,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget>
     if (sports != null && sports.isNotEmpty) {
       for (SportDefinition sport in sports) {
         if (widgetList.isNotEmpty) {
-          widgetList.add(Divider(
-            color: Styles().colors!.surfaceAccent,
-            height: 1,
-          ));
+          widgetList.add(Divider(color: Styles().colors!.surfaceAccent, height: 1,));
         }
         widgetList.add(AthleticsSportItemWidget(
             sport: sport,
