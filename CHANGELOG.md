@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Created HomeAthleticsNewsWidget [#1752](https://github.com/rokwire/illinois-app/issues/1752).
+- Created HomeAthliticsEventsWidget [#1754](https://github.com/rokwire/illinois-app/issues/1754).
+- Created HomeAthliticsTeamsWidget [#1757](https://github.com/rokwire/illinois-app/issues/1757).
 
 ## [4.0.30] - 2022-06-15
 ### Changed

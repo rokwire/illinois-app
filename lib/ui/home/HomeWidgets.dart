@@ -303,7 +303,7 @@ class HomeFavoriteStar extends StatelessWidget {
     if (style == HomeFavoriteStyle.SlantHeader) {
       return (selected == true) ?
         Image.asset('images/icon-star-orange.png', excludeFromSemantics: true) :
-        Image.asset('images/icon-star-white-frame-thin.png', excludeFromSemantics: true,);
+        Image.asset('images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,);
     }
     else if (style == HomeFavoriteStyle.Button) {
       if (selected == null) {

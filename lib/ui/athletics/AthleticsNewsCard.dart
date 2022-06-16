@@ -70,7 +70,9 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
               Container(
                 decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(4))),
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                    boxShadow: [const BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+                ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 24),
                   child: Column(
