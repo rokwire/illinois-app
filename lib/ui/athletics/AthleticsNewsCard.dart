@@ -92,7 +92,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
     String? category = widget.news!.category;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24),
-      child: Row(
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(
             child: Container(
