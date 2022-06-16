@@ -15,6 +15,7 @@
  */
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
@@ -32,9 +33,10 @@ class WellnessToDoHomeContentWidget extends StatefulWidget {
 }
 
 class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentWidget> {
+  static final String _unAssignedLabel =
+      Localization().getStringEx('panel.wellness.todo.items.unassigned.category.label', 'Unassigned Items');
   late _ToDoTab _selectedTab;
   List<ToDoItem>? _todoItems;
-  Map<String, List<ToDoItem>>? _itemsMap;
   bool _itemsLoading = false;
 
   @override
@@ -46,12 +48,17 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   @override
   Widget build(BuildContext context) {
-    return Stack(alignment: Alignment.center, children: [
-      Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [_buildTabButtonRow(), _buildClearCompletedItemsButton(), _buildItemsWidget()]),
-      Visibility(visible: _itemsLoading, child: CircularProgressIndicator())
-    ]);
+    if (_itemsLoading) {
+      return _buildLoadingContent();
+    } else {
+      return _buildContent();
+    }
+  }
+
+  Widget _buildContent() {
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [_buildTabButtonRow(), _buildClearCompletedItemsButton(), _buildItemsContainer()]);
   }
 
   Widget _buildTabButtonRow() {
@@ -94,15 +101,66 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                 onTap: _onTapClearCompletedItems)));
   }
 
-  Widget _buildItemsWidget() {
-    if (CollectionUtils.isEmpty(_todoItems)) {
-      return Container();
+  Widget _buildItemsContainer() {
+    if (_sortedItemsMap != null) {
+      List<Widget> contentList = <Widget>[];
+      for (String key in _sortedItemsMap!.keys) {
+        List<ToDoItem>? items = _sortedItemsMap![key];
+        if (CollectionUtils.isNotEmpty(items)) {
+          contentList.add(_buildSectionWidget(key));
+          for (ToDoItem item in items!) {
+            contentList.add(Padding(padding: EdgeInsets.only(top: 10), child: _ToDoItemCard(item: item)));
+          }
+        }
+      }
+      return Column(children: contentList);
+    } else {
+      return _buildEmptyContent();
     }
-    List<Widget> contentList = <Widget>[];
-    for (ToDoItem item in _todoItems!) {
-      contentList.add(Padding(padding: EdgeInsets.only(top: 10), child: _ToDoItemCard(item: item)));
-    }
-    return Column(children: contentList);
+  }
+
+  Widget _buildLoadingContent() {
+    return Center(
+        child: Column(children: <Widget>[
+      Container(height: MediaQuery.of(context).size.height / 5),
+      CircularProgressIndicator(),
+      Container(height: MediaQuery.of(context).size.height / 5 * 3)
+    ]));
+  }
+
+  Widget _buildEmptyContent() {
+    return Column(children: [
+      _buildSectionWidget(_unAssignedLabel),
+      Padding(
+          padding: EdgeInsets.symmetric(vertical: 30, horizontal: 16),
+          child: Text(Localization().getStringEx('panel.wellness.todo.items.add.empty.msg', 'No upcoming items'),
+              style: TextStyle(fontSize: 14, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular)))
+    ]);
+  }
+
+  Widget _buildSectionWidget(String sectionKey) {
+    return Padding(
+        padding: EdgeInsets.only(top: 10),
+        child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Text(sectionKey,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: TextStyle(fontSize: 20, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary)),
+          Padding(padding: EdgeInsets.only(left: 7), child: Image.asset('images/icon-down.png')),
+          Expanded(child: Container()),
+          RoundedButton(
+              label: Localization().getStringEx('panel.wellness.todo.items.add.button', 'Add Item'),
+              borderColor: Styles().colors!.fillColorPrimary,
+              textColor: Styles().colors!.fillColorPrimary,
+              leftIcon: Image.asset('images/icon-add-14x14.png', color: Styles().colors!.fillColorPrimary),
+              iconPadding: 8,
+              rightIconPadding: EdgeInsets.only(right: 8),
+              fontSize: 14,
+              contentWeight: 0,
+              fontFamily: Styles().fontFamilies!.regular,
+              padding: EdgeInsets.zero,
+              onTap: _onTapAddItem)
+        ]));
   }
 
   void _onTabChanged({required _ToDoTab tab}) {
@@ -119,6 +177,10 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     AppAlert.showDialogResult(context, 'Not Implemented');
   }
 
+  void _onTapAddItem() {
+    //TBD: DD - implement
+  }
+
   void _loadToDoItems() {
     _setItemsLoading(true);
     //TBD: DD - implement with backend
@@ -126,26 +188,22 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       List<dynamic>? itemsJson = JsonUtils.decodeList(
           '[{"id":"dfssdfdssdtghnhn","name":"Lon Capa Homework","category":{"id":"asdadsad","name":"Chem 201","color":"#002855","reminder_type":"night_before"},"due_date_time":"2022-05-20T16:00","work_days":["2022-05-17","2022-05-18"],"location":{"latitude":40.101977,"longitude":88.227162},"description":"I have to do my homework.","completed":true},{"id":"fdsddsdssdtghnhn","name":"Read Chapter 1 Jane Eyre","category":{"id":"67yh","name":"Eng 103","color":"#E84A27","reminder_type":"morning_of"},"due_date_time":"2022-07-03T07:15","work_days":["2022-06-30","2022-07-01","2022-07-02"],"location":{"latitude":40.201977,"longitude":87.227162},"description":"I have to do my homework.","completed":true},{"id":"09kj90ipsdfk","name":"Call about Prescriptions","due_date_time":"2022-06-15T14:30","work_days":["2022-06-02","2022-06-10"],"location":{"latitude":40.101877,"longitude":88.237162},"description":"Call about the Prescriptions.","completed":false}]');
       _todoItems = ToDoItem.listFromJson(itemsJson);
-      _buildItemsMap();
+      _sortItemsByDate();
       _setItemsLoading(false);
     });
   }
 
-  void _buildItemsMap() {
-    if (_todoItems != null) {
-      _itemsMap = <String, List<ToDoItem>>{};
-      for (ToDoItem item in _todoItems!) {
-        String itemKey = _getItemKeyByTab(item)!;
-        List<ToDoItem>? categoryItems = _itemsMap![itemKey];
-        if (categoryItems == null) {
-          categoryItems = <ToDoItem>[];
-        }
-        categoryItems.add(item);
-        _itemsMap![itemKey] = categoryItems;
-      }
-    } else {
-      _itemsMap = null;
+  void _sortItemsByDate() {
+    if (CollectionUtils.isEmpty(_todoItems)) {
+      return;
     }
+    _todoItems!.sort((ToDoItem first, ToDoItem second) {
+      if (first.dueDateTime == null || second.dueDateTime == null) {
+        return 0;
+      } else {
+        return (first.dueDateTime!.isBefore(second.dueDateTime!)) ? -1 : 1;
+      }
+    });
   }
 
   String? _getItemKeyByTab(ToDoItem item) {
@@ -162,9 +220,38 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         break;
     }
     if (StringUtils.isEmpty(key)) {
-      key = Localization().getStringEx('panel.wellness.todo.items.unassigned.category.label', 'Unassigned Items');
+      key = _unAssignedLabel;
     }
     return key;
+  }
+
+  Map<String, List<ToDoItem>>? get _sortedItemsMap {
+    if (CollectionUtils.isEmpty(_todoItems)) {
+      return null;
+    }
+    Map<String, List<ToDoItem>> itemsMap = {};
+    for (ToDoItem item in _todoItems!) {
+      String itemKey = _getItemKeyByTab(item)!;
+      List<ToDoItem>? categoryItems = itemsMap[itemKey];
+      if (categoryItems == null) {
+        categoryItems = <ToDoItem>[];
+      }
+      categoryItems.add(item);
+      itemsMap[itemKey] = categoryItems;
+    }
+    if (_selectedTab != _ToDoTab.category) {
+      return itemsMap;
+    }
+    SplayTreeMap<String, List<ToDoItem>> sortedMap = SplayTreeMap<String, List<ToDoItem>>.from(itemsMap, (first, second) {
+      if ((first == _unAssignedLabel) && (second != _unAssignedLabel)) {
+        return -1;
+      } else if ((first != _unAssignedLabel) && (second == _unAssignedLabel)) {
+        return 1;
+      } else {
+        return first.compareTo(second);
+      }
+    });
+    return sortedMap;
   }
 
   void _setItemsLoading(bool loading) {

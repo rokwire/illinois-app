@@ -1627,6 +1627,8 @@
     "panel.wellness.todo.tab.reminders.label": "Recordatorios",
     "panel.wellness.todo.items.completed.clear.button": "Borrar elementos completados",
     "panel.wellness.todo.items.unassigned.category.label": "Elementos no asignados",
+    "panel.wellness.todo.items.add.button": "Añadir artículo",
+    "panel.wellness.todo.items.add.empty.msg": "No hay artículos próximos",
 
     "panel.wellness.resources.header.label": "Recursos de bienestar",
     "panel.wellness.resources.appointment.button": "Quiero hacer una cita",

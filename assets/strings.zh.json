@@ -1629,6 +1629,8 @@
     "panel.wellness.todo.tab.reminders.label": "提醒",
     "panel.wellness.todo.items.completed.clear.button": "清除已完成的項目",
     "panel.wellness.todo.items.unassigned.category.label": "未分配的項目",
+    "panel.wellness.todo.items.add.button": "添加項目",
+    "panel.wellness.todo.items.add.empty.msg": "沒有即將到來的項目",
 
     "panel.wellness.resources.header.label": "健康資源",
     "panel.wellness.resources.appointment.button": "我想預約",
