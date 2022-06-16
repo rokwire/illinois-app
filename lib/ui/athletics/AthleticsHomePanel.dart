@@ -231,7 +231,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                 children: <Widget>[
                                   Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 16),
-                                    child: AthleticsTeamsWidget(handleLabelClick: true,),
+                                    child: AthleticsTeamsWidget(handleTeamTap: true,),
                                   ),
                                   Container(
                                     height: 40,

@@ -29,6 +29,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
+import 'package:illinois/ui/home/HomeAthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCampusLinksWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
@@ -184,6 +185,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (code == 'sport_news') {
       return handle ? HomeAthliticsNewsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAthliticsNewsWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'sport_teams') {
+      return handle ? HomeAthliticsTeamsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAthliticsTeamsWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'sport_prefs') {
       return handle ? HomePreferredSportsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomePreferredSportsWidget(menSports: true, womenSports: true, favoriteId: code, updateController: _updateController,);
