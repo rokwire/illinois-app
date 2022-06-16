@@ -27,6 +27,7 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
+import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
 import 'package:illinois/ui/home/HomeCampusLinksWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
@@ -177,6 +178,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     if (code == 'game_day') {
       return handle ? HomeGameDayWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeGameDayWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'sport_events') {
+      return handle ? HomeAthliticsEventsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAthliticsEventsWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'sport_news') {
       return handle ? HomeAthliticsNewsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAthliticsNewsWidget(favoriteId: code, updateController: _updateController,);
