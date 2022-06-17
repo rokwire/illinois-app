@@ -2410,7 +2410,7 @@
     "widget.home.wallet.meal_plan.label.meals_remaining.text": "Meals Remaining",
     "widget.home.wallet.meal_plan.label.dining_dollars.text": "Dining Dollars",
 
-    "widget.home.wallet.bus_pass.title": "MTD",
+    "widget.home.wallet.bus_pass.title": "MTD Bus Pass",
     "widget.home.wallet.bus_pass.label.card_expires.text": "Card Expires: %s",
 
     "widget.home.wallet.illini_id.title": "Illini ID",

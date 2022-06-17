@@ -2405,7 +2405,7 @@
     "widget.home.wallet.meal_plan.label.meals_remaining.text": "Comidas restantes",
     "widget.home.wallet.meal_plan.label.dining_dollars.text": "Dólares para cenar",
 
-    "widget.home.wallet.bus_pass.title": "MTD",
+    "widget.home.wallet.bus_pass.title": "Pase de autobús MTD",
     "widget.home.wallet.bus_pass.label.card_expires.text": "La tarjeta caduca: %s",
 
     "widget.home.wallet.illini_id.title": "Identificación Illini",
