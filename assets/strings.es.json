@@ -227,8 +227,8 @@
     "panel.browse.alert.building_access.privacy_level.4.button.label": "Establecer en 4",
     "panel.browse.alert.building_access.privacy_level.5.button.label": "Establecer en 5",
 
-    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to favorites?",
-    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from favorites?",
+    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to your favorites?",
+    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from your favorites?",
 
     "panel.browse.section.academics.title": "Academics",
     "panel.browse.section.academics.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
@@ -2341,6 +2341,10 @@
     "widget.home.recent_items.button.all.title":"See All",
     "widget.home.recent_items.button.all.hint":"Tap to see all",
 
+    "widget.home.my_groups.label.header.title":"My Groups",
+    "widget.home.my_groups.button.all.title":"See All",
+    "widget.home.my_groups.button.all.hint":"Tap to see all groups",
+
     "widget.home.campus_resources.label.campus_tools":"Recursos del campus",
     "widget.home.campus_resources.button.events.title":"Eventos",
     "widget.home.campus_resources.button.events.hint":"",
@@ -2401,7 +2405,7 @@
     "widget.home.wallet.meal_plan.label.meals_remaining.text": "Comidas restantes",
     "widget.home.wallet.meal_plan.label.dining_dollars.text": "Dólares para cenar",
 
-    "widget.home.wallet.bus_pass.title": "MTD",
+    "widget.home.wallet.bus_pass.title": "Pase de autobús MTD",
     "widget.home.wallet.bus_pass.label.card_expires.text": "La tarjeta caduca: %s",
 
     "widget.home.wallet.illini_id.title": "Identificación Illini",
@@ -2416,10 +2420,10 @@
     "widget.home.radio.title": "WPGU FM Radio",
 
     "widget.home.prompt.add.favorite": "Are you sure you want to ADD this favorite?",
-    "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this favorite?",
+    "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this item from your favorites?",
 
     "widget.home.welcome.text.title": "Bienvenido a illinois 4",
-    "widget.home.welcome.text.description": "Nuevo en esta versión: reordene fácilmente su panel de favoritos para personalizar sus propias preferencias. Agregue o elimine contenido tocando {{star_icon}}. Esto se puede hacer en Examinar o tocando Reordenar.",
+    "widget.home.welcome.text.description": "Nuevo en esta versión: personalice el contenido de la aplicación de Illinois que desea al frente y al centro en Favoritos. Cambie o reordene sus favoritos tocando Personalizar, o agregue o elimine contenido tocando \u2606.",
     "widget.home.welcome.button.close.label": "Cerca",
 
     "widget.home.athletics_news.text.title": "Athletics News",
@@ -2440,7 +2444,10 @@
     "widget.home.athletics_teams.button.all.title": "See All",
     "widget.home.athletics_teams.button.all.hint": "Tap to see all teams",
 
-    "widget.home.tout.reorder.label": "Reordenar",
+    "widget.home.tout.customize.label": "personalizar",
+    "widget.home.tout.button.info.label": "Información",
+    "widget.home.tout.button.info.hint": "Toca para más información",
+    "widget.home.tout.popup.info.content": "La aplicación de Illinois usa su nombre de <a href='{{student_self_service_url}}'>Autoservicio para estudiantes</a>. Puede cambiar su nombre preferido en Información personal y Nombre preferido.",
 
     "widget.athletics_card.button.get_tickets.title":"Obtener boletos",
     "widget.athletics_card.button.get_tickets.hint":"",
