@@ -2428,7 +2428,7 @@
     "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this favorite?",
 
     "widget.home.welcome.text.title": "Welcome to Illinois 4",
-    "widget.home.welcome.text.description": "New in this version: easily reorder your favorites panel to customize your own preferences. Add or remove content by tapping {{star_icon}}. This can be done in Browse or by tapping Reorder.",
+    "widget.home.welcome.text.description": "New in this version: personalize the Illinois app content you want front and center in Favorites. Change or reorder your favorites by tapping on Customize, or add or remove content by tapping \u2606.",
     "widget.home.welcome.button.close.label": "Close",
 
     "widget.home.athletics_news.text.title": "Athletics News",

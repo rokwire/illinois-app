@@ -2423,7 +2423,7 @@
     "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this favorite?",
 
     "widget.home.welcome.text.title": "Bienvenido a illinois 4",
-    "widget.home.welcome.text.description": "Nuevo en esta versión: reordene fácilmente su panel de favoritos para personalizar sus propias preferencias. Agregue o elimine contenido tocando {{star_icon}}. Esto se puede hacer en Examinar o tocando Reordenar.",
+    "widget.home.welcome.text.description": "Nuevo en esta versión: personalice el contenido de la aplicación de Illinois que desea al frente y al centro en Favoritos. Cambie o reordene sus favoritos tocando Personalizar, o agregue o elimine contenido tocando \u2606.",
     "widget.home.welcome.button.close.label": "Cerca",
 
     "widget.home.athletics_news.text.title": "Athletics News",

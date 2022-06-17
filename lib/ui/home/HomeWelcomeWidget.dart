@@ -38,12 +38,6 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final String iconMacro = '{{star_icon}}';
-    String descriptionMsg = Localization().getStringEx('widget.home.welcome.text.description', "New in this version: easily reorder your favorites panel to customize your own preferences. Add or remove content by tapping $iconMacro. This can be done in Browse or by tapping Reorder");
-    int iconMacroPosition = descriptionMsg.indexOf(iconMacro);
-    String descriptionMsgStart = (0 < iconMacroPosition) ? descriptionMsg.substring(0, iconMacroPosition) : '';
-    String descriptionMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < descriptionMsg.length)) ? descriptionMsg.substring(iconMacroPosition + iconMacro.length) : '';
-
     return Visibility(visible: _visible ?? true, child:
       Container(color: Styles().colors?.fillColorPrimary, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -64,11 +58,8 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
             ),
           ],),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child: 
-            RichText(text: TextSpan(style: TextStyle(color: Styles().colors!.textColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 16), children: [
-              TextSpan(text: descriptionMsgStart),
-              WidgetSpan(alignment: PlaceholderAlignment.middle, child: HomeFavoriteStar(selected: true, style: HomeFavoriteStyle.SlantHeader, padding: EdgeInsets.symmetric(horizontal: 5))),
-              TextSpan(text: descriptionMsgEnd)
-          ]))),
+            Text(Localization().getStringEx('widget.home.welcome.text.description', "New in this version: personalize the Illinois app content you want front and center in Favorites. Change or reorder your favorites by tapping on Customize, or add or remove content by tapping \u2606."), style: TextStyle(color: Styles().colors!.textColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 16)),
+          ),
           Container(height: 1, color: Styles().colors?.disabledTextColor),
         ],),
       )

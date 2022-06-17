@@ -2423,7 +2423,7 @@
 	"widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this favorite?",
 
 	"widget.home.welcome.text.title": "歡迎來到伊利諾伊州 4",
-	"widget.home.welcome.text.description": "此版本中的新功能：輕鬆重新排列您的收藏面板以自定義您自己的偏好。 通過點擊 {{star_icon}} 添加或刪除內容。 這可以在瀏覽中或通過點擊重新排序來完成。",
+	"widget.home.welcome.text.description": "此版本的新功能：個性化您想要在收藏夾中置頂和居中的伊利諾伊應用程序內容。 點擊自定義更改或重新排序您的收藏夾，或點擊 \u2606 添加或刪除內容。",
 	"widget.home.welcome.button.close.label": "關",
 
 	"widget.home.athletics_news.text.title": "Athletics News",
