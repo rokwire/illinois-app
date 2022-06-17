@@ -271,11 +271,9 @@
     "panel.browse.entry.app_help.feedback.title": "Feedback",
     "panel.browse.entry.app_help.faqs.title": "FAQs",
 
-    "panel.browse.entry.athletics.game_day.title": "It's Game Day!",
     "panel.browse.entry.athletics.sport_events.title": "Upcoming Events",
     "panel.browse.entry.athletics.sport_news.title": "News",
     "panel.browse.entry.athletics.sport_teams.title": "Teams",
-    "panel.browse.entry.athletics.sport_prefs.title": "Sport Prefs",
 
     "panel.browse.entry.safer.building_access.title": "Building Access",
     "panel.browse.entry.safer.test_locations.title": "Test Locations",
@@ -300,13 +298,14 @@
     "panel.browse.entry.campus_resources.campus_guide.title": "Campus Guide",
     "panel.browse.entry.campus_resources.inbox.title": "Notifications",
 
-    "panel.browse.entry.events.upcoming_events.title": "Events For You",
+    "panel.browse.entry.events.suggested_events.title": "Suggested Events",
 
     "panel.browse.entry.feeds.twitter.title": "Twitter",
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU FM Radio",
     "panel.browse.entry.feeds.illini_news.title": "Illini News",
 
     "panel.browse.entry.my.my_groups.title": "My Groups",
+    "panel.browse.entry.my.my_game_day.title": "My Game Day",
     "panel.browse.entry.my.my_events.title": "My Events",
     "panel.browse.entry.my.my_dining.title": "My Dinings",
     "panel.browse.entry.my.my_athletics.title": "My Athletics",
@@ -2337,10 +2336,10 @@
     "widget.voter.rv_alert.vote_early.text": "You are at the %s and can vote early",
     "widget.voter.rv_alert.vote_now.text": "You are at the %s and can vote now",
 
-    "widget.home.upcoming_events.label.events_for_you":"Events For You",
-    "widget.home.upcoming_events.label.events_for_you.sub_title":"Curated from your interests",
-    "widget.home.upcoming_events.button.all.title":"See All",
-    "widget.home.upcoming_events.button.all.hint":"Tap to see all events",
+    "widget.home.suggested_events.label.events_for_you":"Suggested Events",
+    "widget.home.suggested_events.label.events_for_you.sub_title":"Curated from your interests",
+    "widget.home.suggested_events.button.all.title":"See All",
+    "widget.home.suggested_events.button.all.hint":"Tap to see all events",
 
     "widget.home.recent_items.label.header.title":"Recently Viewed",
     "widget.home.recent_items.button.all.title":"See All",

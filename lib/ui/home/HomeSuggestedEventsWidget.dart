@@ -43,23 +43,23 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class HomeUpcomingEventsWidget extends StatefulWidget {
+class HomeSuggestedEventsWidget extends StatefulWidget {
 
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  HomeUpcomingEventsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  HomeSuggestedEventsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home.upcoming_events.label.events_for_you', 'Events For You'),
+      title: Localization().getStringEx('widget.home.suggested_events.label.events_for_you', 'Suggested Events'),
     );
 
   @override
-  _HomeUpcomingEventsWidgetState createState() => _HomeUpcomingEventsWidgetState();
+  State<HomeSuggestedEventsWidget> createState() => _HomeSuggestedEventsWidgetState();
 }
 
-class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> implements NotificationsListener {
+class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> implements NotificationsListener {
 
   Set<String>?   _availableCategories;
   Set<String>?   _categoriesFilter;
@@ -267,8 +267,8 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
       return 
         Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
           _EventsRibbonHeader(
-            title: Localization().getStringEx('widget.home.upcoming_events.label.events_for_you', 'Events For You'),
-            subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home.upcoming_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
+            title: Localization().getStringEx('widget.home.suggested_events.label.events_for_you', 'Suggested Events'),
+            subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home.suggested_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
             favoriteId: widget.favoriteId,
             rightIconAsset: 'images/settings-white.png',
             rightIconAction: () {
@@ -281,8 +281,8 @@ class _HomeUpcomingEventsWidgetState extends State<HomeUpcomingEventsWidget> imp
               crossAxisAlignment: CrossAxisAlignment.center,
               children: _buildListItems(context)),
           LinkButton(
-            title: Localization().getStringEx('widget.home.upcoming_events.button.all.title', 'See All'),
-            hint: Localization().getStringEx('widget.home.upcoming_events.button.all.hint', 'Tap to see all events'),
+            title: Localization().getStringEx('widget.home.suggested_events.button.all.title', 'See All'),
+            hint: Localization().getStringEx('widget.home.suggested_events.button.all.hint', 'Tap to see all events'),
             onTap: _navigateToExploreEvents,
           ),
         ]);
