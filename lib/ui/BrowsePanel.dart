@@ -491,7 +491,7 @@ class _BrowseEntry extends StatelessWidget {
       case "campus_resources.campus_guide": _onTapCampusGuide(context); break;
       case "campus_resources.inbox":        _onTapInbox(context); break;
 
-      case "events.upcoming_events": _onTapUpcomingEvents(context); break;
+      case "events.suggested_events": _onTapSuggestedEvents(context); break;
 
       case "feeds.twitter":      _onTapTwitter(context); break;
       case "feeds.wpgufm_radio": _onTapWPGUFMRadio(context); break;
@@ -748,8 +748,8 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.inbox)));
   }
 
-  void _onTapUpcomingEvents(BuildContext context) {
-    Analytics().logSelect(target: "Events");
+  void _onTapSuggestedEvents(BuildContext context) {
+    Analytics().logSelect(target: "Suggested Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
   }
 

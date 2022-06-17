@@ -298,7 +298,7 @@
     "panel.browse.entry.campus_resources.campus_guide.title": "Campus Guide",
     "panel.browse.entry.campus_resources.inbox.title": "Notifications",
 
-    "panel.browse.entry.events.upcoming_events.title": "Events For You",
+    "panel.browse.entry.events.upcoming_events.title": "Suggested Events",
 
     "panel.browse.entry.feeds.twitter.title": "Twitter",
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU FM Radio",
@@ -2332,10 +2332,10 @@
     "widget.voter.rv_alert.vote_early.text": "Estás en el %s y puedes votar temprano",
     "widget.voter.rv_alert.vote_now.text": "Estás en el %s y puedes votar ahora.",
 
-    "widget.home.upcoming_events.label.events_for_you":"Eventos Para Ti",
-    "widget.home.upcoming_events.label.events_for_you.sub_title":"Curada por tus intereses",
-    "widget.home.upcoming_events.button.more.title":"Ver todo",
-    "widget.home.upcoming_events.button.more.hint":"Toca para ver todos los eventos",
+    "widget.home.suggested_events.label.events_for_you":"Eventos sugeridos",
+    "widget.home.suggested_events.label.events_for_you.sub_title":"Curada por tus intereses",
+    "widget.home.suggested_events.button.more.title":"Ver todo",
+    "widget.home.suggested_events.button.more.hint":"Toca para ver todos los eventos",
 
     "widget.home.recent_items.label.header.title":"Recently Viewed",
     "widget.home.recent_items.button.all.title":"See All",

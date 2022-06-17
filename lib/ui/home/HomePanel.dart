@@ -61,7 +61,7 @@ import 'package:illinois/ui/home/HomeSaferWidget.dart';
 import 'package:illinois/ui/home/HomeCampusHighlightsWidget.dart';
 import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeVoterRegistrationWidget.dart';
-import 'package:illinois/ui/home/HomeUpcomingEventsWidget.dart';
+import 'package:illinois/ui/home/HomeSuggestedEventsWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -194,8 +194,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     else if (code == 'campus_reminders') {
       return handle ? HomeCampusRemindersWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCampusRemindersWidget(favoriteId: code, updateController: _updateController,);
     }
-    else if (code == 'upcoming_events') {
-      return handle ? HomeUpcomingEventsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeUpcomingEventsWidget(favoriteId: code, updateController: _updateController,);
+    else if (code == 'suggested_events') {
+      return handle ? HomeSuggestedEventsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeSuggestedEventsWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'recent_items') {
       return handle ? HomeRecentItemsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeRecentItemsWidget(favoriteId: code, updateController: _updateController,);
