@@ -33,13 +33,13 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
   }
 
   Widget _buildContent() {
-    return Column(children: [
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(children: [
       _buildHeader(),
       _buildActionButtonsContainer(),
       Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [Expanded(child: _buildResourceButtonsContainer()), _buildAlphabetContainer()])
-    ]);
+    ]));
   }
 
   Widget _buildHeader() {

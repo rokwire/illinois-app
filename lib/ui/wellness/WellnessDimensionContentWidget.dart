@@ -18,29 +18,27 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/wellness/WellnessDimensionPanel.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class WellnessEightDimensionsPanel extends StatefulWidget {
+class WellnessDimensionContentWidget extends StatefulWidget {
   final Map<String, dynamic>? content;
-  final bool rootTabDisplay;
 
-  WellnessEightDimensionsPanel({this.content, this.rootTabDisplay = false});
+  WellnessDimensionContentWidget({this.content});
 
   @override
-  _WellnessEightDimensionsPanelState createState() => _WellnessEightDimensionsPanelState();
+  _WellnessDimensionContentWidgetState createState() => _WellnessDimensionContentWidgetState();
 }
 
-class _WellnessEightDimensionsPanelState extends State<WellnessEightDimensionsPanel> implements NotificationsListener {
+class _WellnessDimensionContentWidgetState extends State<WellnessDimensionContentWidget> implements NotificationsListener {
   Map<String, dynamic>? _jsonContent;
   Map<String, dynamic>? _stringsContent;
 
@@ -81,22 +79,9 @@ class _WellnessEightDimensionsPanelState extends State<WellnessEightDimensionsPa
     String? secondaryTextKey = MapPathKey.entry(_jsonContent, 'description.secondary_text');
     String? secondaryText = Localization().getStringFromKeyMapping(secondaryTextKey, _stringsContent);
     
-    return Scaffold(
-      backgroundColor: Styles().colors!.background,
-      appBar: widget.rootTabDisplay ? RootHeaderBar(title: Localization().getStringEx('panel.wellness.header.title', 'Wellness')) : _buildStandardHeaderBar(),
-      body: SingleChildScrollView(
-        child: Column(
+    return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Visibility(visible: widget.rootTabDisplay, child:
-              Row(children: [
-                Expanded(child:
-                  Container(color: Styles().colors?.fillColorPrimaryVariant, padding: EdgeInsets.symmetric(vertical: 24), child:
-                    Center(child: _buildImage(_jsonContent, 'header.image'))
-                 )
-                )
-              ],)
-            ),
             Visibility(
               visible: StringUtils.isNotEmpty(introText),
               child: Padding(
@@ -141,43 +126,7 @@ class _WellnessEightDimensionsPanelState extends State<WellnessEightDimensionsPa
             _buildActivities(),
             _buildResources()
           ],
-        ),
-      ),
-      bottomNavigationBar: widget.rootTabDisplay ? null : uiuc.TabBar(),
-    );
-  }
-
-  PreferredSizeWidget _buildStandardHeaderBar() {
-    String? headerTitleKey = MapPathKey.entry(_jsonContent, 'header.title');
-    String headerTitle = Localization().getStringFromKeyMapping(headerTitleKey, _stringsContent)!;
-    return PreferredSize(
-        preferredSize: Size.fromHeight(132),
-        child: AppBar(
-          leading: Semantics(
-              label: Localization().getStringEx('headerbar.back.title', 'Back'),
-              hint: Localization().getStringEx('headerbar.back.hint', ''),
-              button: true,
-              excludeSemantics: true,
-              child: IconButton(
-                  icon: Image.asset('images/chevron-left-white.png'),
-                  onPressed: () => _onTapBack(),)),
-          flexibleSpace: Align(alignment: Alignment.bottomCenter, child: SingleChildScrollView(child:Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              _buildImage(_jsonContent, 'header.image'),
-              Padding(
-                padding: EdgeInsets.only(top: 12, bottom: 24),
-                child: Semantics(label: headerTitle, hint:  Localization().getStringEx("app.common.heading.one.hint","Header 1"), header: true, excludeSemantics: true, child: Text(
-                  headerTitle,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 24),
-                )),
-              )
-            ],
-          ))),
-          centerTitle: true,
-        ),
-      );
+        );
   }
 
   Widget _buildDescriptionButtons() {
@@ -314,7 +263,7 @@ class _WellnessEightDimensionsPanelState extends State<WellnessEightDimensionsPa
       String? panelSource = MapPathKey.entry(action, 'source');
       Map<String, dynamic>? panelContent = MapPathKey.entry(Assets()['wellness.panels'], panelSource);
       if (panelContent != null) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessEightDimensionsPanel(content: panelContent,)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessDimensionPanel(content: panelContent,)));
       }
     } else /*if ('web' == actionName)*/ {
       _launchUrl(MapPathKey.entry(action, 'source'));
@@ -516,11 +465,6 @@ class _WellnessEightDimensionsPanelState extends State<WellnessEightDimensionsPa
     }
     
     _launchUrl(MapPathKey.entry(socialMedia, 'url'));
-  }
-
-  void _onTapBack() {
-    Analytics().logSelect(target: "Back");
-    Navigator.pop(context);
   }
 
   String? _getImagePathBySocialMediaType(String? socialMediaType) {
