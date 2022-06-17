@@ -40,7 +40,6 @@ import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
@@ -469,7 +468,6 @@ class _BrowseEntry extends StatelessWidget {
       case "athletics.sport_events":         _onTapSportEvents(context); break;
       case "athletics.sport_news":           _onTapSportNews(context); break;
       case "athletics.sport_teams":          _onTapSportTeams(context); break;
-      case "athletics.sport_prefs":          _onTapSportPrefs(context); break;
 
       case "safer.building_access":          _onTapBuildingAccess(context); break;
       case "safer.test_locations":           _onTapTestLocations(context); break;
@@ -645,11 +643,6 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapSportTeams(BuildContext context) {
     Analytics().logSelect(target: "Athletics Teams");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamsPanel()));
-  }
-
-  void _onTapSportPrefs(BuildContext context) {
-    Analytics().logSelect(target: "Sport Prefs");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel(content: SettingsContent.sports)));
   }
 
   void _onTapBuildingAccess(BuildContext context) {
