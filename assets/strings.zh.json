@@ -2341,6 +2341,10 @@
 	"widget.home.recent_items.button.all.title":"See All",
 	"widget.home.recent_items.button.all.hint":"Tap to see all",
 
+	"widget.home.my_groups.label.header.title":"My Groups",
+	"widget.home.my_groups.button.all.title":"See All",
+	"widget.home.my_groups.button.all.hint":"Tap to see all groups",
+
 	"widget.home.campus_resources.label.campus_tools":"校园资源",
 	"widget.home.campus_resources.button.events.title":"活动",
 	"widget.home.campus_resources.button.events.hint":"",
