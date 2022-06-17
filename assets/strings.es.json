@@ -1132,11 +1132,7 @@
     "panel.laundry.issues_submitted.success.description.label": "Uno de nuestros técnicos llegará a su propiedad dentro de los 3 días hábiles para reparar la máquina. Le pedimos disculpas por cualquier inconveniente que pueda haber experimentado.",
     "panel.laundry.issues_submitted.return.button": "Devolver",
 
-    "panel.settings.home.header.settings.label": "Configuración",
-    "panel.settings.home.header.interests.label": "Mis intereses",
-    "panel.settings.home.header.food_filter.label": "Mi filtro de comida",
-    "panel.settings.home.header.sports.label": "Mis equipos deportivos",
-    "panel.settings.home.header.calendar.label": "Configuración de mi calendario",
+    "panel.settings.home.header.settings.label": "Mi configuración",
     "panel.settings.home.settings.sections.section.label": "Configuración de secciones",
     "panel.settings.home.settings.sections.interests.label": "Mis intereses",
     "panel.settings.home.settings.sections.food_filter.label": "Mi filtro de comida",
@@ -1212,14 +1208,11 @@
     "panel.settings.profile.content.profile.label": "Mi perfil",
     "panel.settings.profile.content.who_are_you.label": "Quién eres tú",
     "panel.settings.profile.content.privacy.label": "Configuración de privacidad de mi aplicación",
-    "panel.settings.profile.header.profile.label": "Perfil",
-    "panel.settings.profile.header.who_are_you.label": "Quién eres tú",
-    "panel.settings.profile.header.privacy.label": "Privacidad",
+    "panel.settings.profile.header.profile.label": "Mi perfil",
 
     "panel.settings.notifications.content.inbox.label": "Mis Notificaciones",
     "panel.settings.notifications.content.preferences.label": "Mis preferencias de notificación",
     "panel.settings.notifications.header.inbox.label": "Mis Notificaciones",
-    "panel.settings.notifications.header.preferences.label": "Mis preferencias de notificación",
 
     "panel.settings.home.calendar.settings.add_events.label": "Agregar eventos guardados al calendario",
     "panel.settings.home.calendar.settings.prompt.label": "Preguntar al guardar eventos en el calendario",

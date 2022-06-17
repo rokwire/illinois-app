@@ -1132,11 +1132,7 @@
     "panel.laundry.issues_submitted.success.description.label": "我們的一名技術人員將在 3 個工作日內到達您的物業為機器提供服務. 對於您可能遇到的任何不便, 我們深表歉意.",
     "panel.laundry.issues_submitted.return.button": "返回",
 
-    "panel.settings.home.header.settings.label": "設置",
-    "panel.settings.home.header.interests.label": "我的興趣",
-    "panel.settings.home.header.food_filter.label": "我的食物過濾器",
-    "panel.settings.home.header.sports.label": "我的運動隊",
-	"panel.settings.home.header.calendar.label": "我的日曆設置",
+    "panel.settings.home.header.settings.label": "我的設置",
     "panel.settings.home.settings.sections.section.label": "設置部分",
     "panel.settings.home.settings.sections.interests.label": "我的興趣",
     "panel.settings.home.settings.sections.food_filter.label": "我的食物過濾器",
@@ -1212,14 +1208,11 @@
     "panel.settings.profile.content.profile.label": "我的簡歷",
     "panel.settings.profile.content.who_are_you.label": "你是誰",
     "panel.settings.profile.content.privacy.label": "我的應用隱私設置",
-    "panel.settings.profile.header.profile.label": "輪廓",
-    "panel.settings.profile.header.who_are_you.label": "你是誰",
-    "panel.settings.profile.header.privacy.label": "隱私",
+    "panel.settings.profile.header.profile.label": "我的簡歷",
 
     "panel.settings.notifications.content.inbox.label": "我的通知",
     "panel.settings.notifications.content.preferences.label": "我的通知偏好",
     "panel.settings.notifications.header.inbox.label": "我的通知",
-    "panel.settings.notifications.header.preferences.label": "我的通知偏好",
 
     "panel.settings.home.calendar.settings.add_events.label": "將保存的事件添加到日曆",
     "panel.settings.home.calendar.settings.prompt.label": "將事件保存到日曆時提示",

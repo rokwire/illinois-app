@@ -1132,11 +1132,7 @@
     "panel.laundry.issues_submitted.success.description.label": "One of our technicians will arrive at your property within 3 business days to service the machine. We apologize for any inconvenience you may have experienced.",
     "panel.laundry.issues_submitted.return.button": "Return",
 
-    "panel.settings.home.header.settings.label": "Settings",
-    "panel.settings.home.header.interests.label": "My Interests",
-    "panel.settings.home.header.food_filter.label": "My Food Filter",
-    "panel.settings.home.header.sports.label": "My Sports Teams",
-    "panel.settings.home.header.calendar.label": "My Calendar Settings",
+    "panel.settings.home.header.settings.label": "My Settings",
     "panel.settings.home.settings.sections.section.label": "Setting Sections",
     "panel.settings.home.settings.sections.interests.label": "My Interests",
     "panel.settings.home.settings.sections.food_filter.label": "My Food Filter",
@@ -1212,14 +1208,11 @@
     "panel.settings.profile.content.profile.label": "My Profile",
     "panel.settings.profile.content.who_are_you.label": "Who Are You",
     "panel.settings.profile.content.privacy.label": "My App Privacy Settings",
-    "panel.settings.profile.header.profile.label": "Profile",
-    "panel.settings.profile.header.who_are_you.label": "Who Are You",
-    "panel.settings.profile.header.privacy.label": "Privacy",
+    "panel.settings.profile.header.profile.label": "My Profile",
 
     "panel.settings.notifications.content.inbox.label": "My Notifications",
     "panel.settings.notifications.content.preferences.label": "My Notification Preferences",
     "panel.settings.notifications.header.inbox.label": "My Notifications",
-    "panel.settings.notifications.header.preferences.label": "My Notification Preferences",
 
     "panel.settings.home.calendar.settings.add_events.label": "Add saved events to calendar",
     "panel.settings.home.calendar.settings.prompt.label": "Prompt when saving events to calendar",
