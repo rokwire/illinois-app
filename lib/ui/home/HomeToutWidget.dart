@@ -80,7 +80,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
             )
           ),
           GestureDetector(onTap: widget.onEdit, child:
-            Padding(padding: EdgeInsets.only(top: 16, right: 16), child: Text(Localization().getStringEx('widget.home.tout.reorder.label', 'Reorder'),
+            Padding(padding: EdgeInsets.only(top: 16, right: 16), child: Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
                         style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18, 
                         decoration: TextDecoration.underline, decorationColor: Styles().colors?.textColorPrimary, decorationThickness: 1)))
           ),

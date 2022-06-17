@@ -2449,7 +2449,7 @@
     "widget.home.athletics_teams.button.all.title": "See All",
     "widget.home.athletics_teams.button.all.hint": "Tap to see all teams",
 
-    "widget.home.tout.reorder.label": "Reorder",
+    "widget.home.tout.customize.label": "Customize",
 
     "widget.athletics_card.button.get_tickets.title":"Get Tickets",
     "widget.athletics_card.button.get_tickets.hint":"",
