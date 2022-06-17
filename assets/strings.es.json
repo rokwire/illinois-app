@@ -1598,16 +1598,16 @@
     "panel.bus_pass.error.duplicate.text": "Este pase de bus MTD ya se ha mostrado en otro dispositivo.\n\nSolo un dispositivo puede mostrar el pase de bus MTD por ID de Illini.",
     "panel.bus_pass.error.default.text": "No se puede cargar el pase de autobús",
 
-    "panel.wellness.header.title": "Bienestar",
-
     "panel.wellness.home.header.sections.title": "Bienestar",
     "panel.wellness.home.header.rings.title": "Anillos de bienestar diarios",
     "panel.wellness.home.header.todo.title": "Mi lista de tareas pendientes",
     "panel.wellness.home.header.resources.title": "Recursos",
+    "panel.wellness.home.header.eight_dimensions.title": "8 dimensiones",
     "panel.wellness.section.sections.label": "Secciones de Bienestar",
     "panel.wellness.section.rings.label": "Anillos de bienestar diarios",
     "panel.wellness.section.todo.label": "Lista de quehaceres",
     "panel.wellness.section.resources.label": "Recursos de bienestar",
+    "panel.wellness.section.eight_dimensions.label": "8 dimensiones del bienestar",
 
     "panel.wellness.sections.description.header.text": "Aprende a priorizar. Ocúpate de lo que puedes hacer hoy, ahora mismo. Esto le ayudará a ser un mejor administrador del tiempo y reducir el riesgo de procrastinación.",
     "panel.wellness.sections.description.footer.wellness.text": "Bienestar ",

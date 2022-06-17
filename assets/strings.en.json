@@ -1599,16 +1599,16 @@
     "panel.bus_pass.error.duplicate.text": "This MTD bus pass has already been displayed on another device.\n\nOnly one device can display the MTD bus pass per Illini ID.",
     "panel.bus_pass.error.default.text": "Unable to load bus pass",
 
-    "panel.wellness.header.title": "Wellness",
-
     "panel.wellness.home.header.sections.title": "Wellness",
     "panel.wellness.home.header.rings.title": "Daily Wellness Rings",
     "panel.wellness.home.header.todo.title": "My To-Do List",
     "panel.wellness.home.header.resources.title": "Resources",
+    "panel.wellness.home.header.eight_dimensions.title": "8 Dimensions",
     "panel.wellness.section.sections.label": "Wellness Sections",
     "panel.wellness.section.rings.label": "Daily Wellness Rings",
     "panel.wellness.section.todo.label": "To-Do List",
     "panel.wellness.section.resources.label": "Wellness Resources",
+    "panel.wellness.section.eight_dimensions.label": "8 Dimensions of Wellness",
 
     "panel.wellness.sections.description.header.text": "Learn to prioritize. Take care of what you can get done today, right now. This will help you be a better time manager and reduce the risk of procrastination.",
     "panel.wellness.sections.description.footer.wellness.text": "Wellness ",

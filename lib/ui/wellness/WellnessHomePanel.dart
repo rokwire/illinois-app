@@ -15,6 +15,8 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/wellness/WellnessDimensionContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessSectionsContentWidget.dart';
@@ -38,6 +40,7 @@ class WellnessHomePanel extends StatefulWidget {
 class _WellnessHomePanelState extends State<WellnessHomePanel> {
   static WellnessContent? _lastSelectedContent;
   late WellnessContent _selectedContent;
+  ScrollController _scrollController = ScrollController();
   bool _contentValuesVisible = false;
 
   @override
@@ -53,6 +56,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
+                  controller: _scrollController,
                   physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null),
                   child: Container(
                       color: Styles().colors!.background,
@@ -75,7 +79,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   }
 
   Widget _buildContent() {
-    return Stack(children: [Padding(padding: EdgeInsets.all(16), child: _contentWidget), _buildContentValuesContainer()]);
+    return Stack(children: [Padding(padding: EdgeInsets.symmetric(vertical: 16), child: _contentWidget), _buildContentValuesContainer()]);
   }
 
   Widget _buildContentValuesContainer() {
@@ -121,6 +125,16 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
     _changeSettingsContentValuesVisibility();
   }
 
+  void _onTapEightDimensions() {
+    Analytics().logSelect(target: "Wellness 8 Dimensions");
+    _selectedContent = _lastSelectedContent = WellnessContent.eight_dimensions;
+    _contentValuesVisible = false;
+    _scrollController.animateTo(0, duration: Duration(milliseconds: 10), curve: Curves.ease);
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   void _changeSettingsContentValuesVisibility() {
     _contentValuesVisible = !_contentValuesVisible;
     if (mounted) {
@@ -143,13 +157,15 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   Widget get _contentWidget {
     switch (_selectedContent) {
       case WellnessContent.sections:
-        return WellnessSectionsContentWidget();
+        return WellnessSectionsContentWidget(onTapEightDimension: () => _onTapEightDimensions());
       case WellnessContent.rings:
         return WellnessRingsHomeContentWidget();
       case WellnessContent.todo:
         return WellnessToDoHomeContentWidget();
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
+      case WellnessContent.eight_dimensions:
+        return WellnessDimensionContentWidget();
       default:
         return Container();
     }
@@ -167,6 +183,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         return Localization().getStringEx('panel.wellness.home.header.todo.title', 'My To-Do List');
       case WellnessContent.resources:
         return Localization().getStringEx('panel.wellness.home.header.resources.title', 'Resources');
+      case WellnessContent.eight_dimensions:
+        return Localization().getStringEx('panel.wellness.home.header.eight_dimensions.title', '8 Dimensions');
     }
   }
 
@@ -180,8 +198,10 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         return Localization().getStringEx('panel.wellness.section.todo.label', 'To-Do List');
       case WellnessContent.resources:
         return Localization().getStringEx('panel.wellness.section.resources.label', 'Wellness Resources');
+      case WellnessContent.eight_dimensions:
+        return Localization().getStringEx('panel.wellness.section.eight_dimensions.label', '8 Dimensions of Wellness');
     }
   }
 }
 
-enum WellnessContent { sections, rings, todo, resources }
+enum WellnessContent { sections, rings, todo, resources, eight_dimensions }
