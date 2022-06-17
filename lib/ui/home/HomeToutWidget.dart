@@ -271,7 +271,7 @@ class _InfoDialog extends StatelessWidget {
 
   void _onTapClose(BuildContext context) {
     Analytics().logAlert(text: "Info", selection: "Close");
-    Navigator.pop(context, "");
+    Navigator.pop(context);
   }
 
   void _onTapLink(BuildContext context, String? url) {
