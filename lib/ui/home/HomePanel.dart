@@ -176,7 +176,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       return handle? null : HomeWelcomeWidget(favoriteId: code, updateController: _updateController,); //TBD
     }
 
-    if (code == 'game_day') {
+    else if (code == 'my_game_day') {
       return handle ? HomeAthleticsGameDayWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAthleticsGameDayWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'sport_events') {

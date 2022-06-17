@@ -271,7 +271,6 @@
     "panel.browse.entry.app_help.feedback.title": "Feedback",
     "panel.browse.entry.app_help.faqs.title": "FAQs",
 
-    "panel.browse.entry.athletics.game_day.title": "It's Game Day!",
     "panel.browse.entry.athletics.upcoming_games.title": "Upcoming Events",
     "panel.browse.entry.athletics.sport_news.title": "News",
     "panel.browse.entry.athletics.sport_teams.title": "Teams",
@@ -306,6 +305,7 @@
     "panel.browse.entry.feeds.illini_news.title": "Illini News",
 
     "panel.browse.entry.my.my_groups.title": "My Groups",
+    "panel.browse.entry.my.my_game_day.title": "My Game Day",
     "panel.browse.entry.my.my_events.title": "My Events",
     "panel.browse.entry.my.my_dining.title": "My Dinings",
     "panel.browse.entry.my.my_athletics.title": "My Athletics",

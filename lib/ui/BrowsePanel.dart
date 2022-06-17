@@ -464,7 +464,6 @@ class _BrowseEntry extends StatelessWidget {
       case "app_help.feedback":              _onTapFeedback(context); break;
       case "app_help.faqs":                  _onTapFAQs(context); break;
 
-      case "athletics.game_day":             _onTapGameDay(context); break;
       case "athletics.sport_events":         _onTapSportEvents(context); break;
       case "athletics.sport_news":           _onTapSportNews(context); break;
       case "athletics.sport_teams":          _onTapSportTeams(context); break;
@@ -499,6 +498,7 @@ class _BrowseEntry extends StatelessWidget {
       case "feeds.illini_news":  _onTapIlliniNews(context); break;
 
       case "my.my_groups":       _onTapMyGroups(context); break;
+      case "my.my_game_day":     _onTapMyGameDay(context); break;
       case "my.my_events":       _onTapMyEvents(context); break;
       case "my.my_dining":       _onTapMyDinings(context); break;
       case "my.my_athletics":    _onTapMyAthletics(context); break;
@@ -623,11 +623,6 @@ class _BrowseEntry extends StatelessWidget {
         title: Localization().getStringEx('panel.settings.faqs.label.title', 'FAQs'),
       )));
     }
-  }
-
-  void _onTapGameDay(BuildContext context) {
-    Analytics().logSelect(target: "Game Day");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
   }
 
   void _onTapSportEvents(BuildContext context) {
@@ -776,6 +771,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapMyGroups(BuildContext context) {
     Analytics().logSelect(target: "My Groups");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+  }
+
+  void _onTapMyGameDay(BuildContext context) {
+    Analytics().logSelect(target: "My Game Day");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
   }
 
   void _onTapMyEvents(BuildContext context) {
