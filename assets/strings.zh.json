@@ -1599,16 +1599,16 @@
 	"panel.bus_pass.error.duplicate.text": "此MTD總線通行證已經顯示在另一台設備上。\n\n每個Illini ID僅一台設備可以顯示MTD總線通行證。",
 	"panel.bus_pass.error.default.text": "無法加載公交通行證",
 
-	"panel.wellness.header.title": "健康",
-
     "panel.wellness.home.header.sections.title": "健康",
     "panel.wellness.home.header.rings.title": "每日健康戒指",
     "panel.wellness.home.header.todo.title": "我的待辦事項清單",
     "panel.wellness.home.header.resources.title": "資源",
+    "panel.wellness.home.header.eight_dimensions.title": "8 尺寸",
     "panel.wellness.section.sections.label": "健康部分",
     "panel.wellness.section.rings.label": "每日健康戒指",
     "panel.wellness.section.todo.label": "待辦事項清單",
     "panel.wellness.section.resources.label": "健康資源",
+    "panel.wellness.section.eight_dimensions.label": "健康的 8 個維度",
 
     "panel.wellness.sections.description.header.text": "學會優先考慮。 照顧你今天可以完成的事情，現在。 這將幫助您成為更好的時間管理者並降低拖延的風險。",
     "panel.wellness.sections.description.footer.wellness.text": "健康 ",

@@ -62,13 +62,13 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   Widget _buildContent() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
       _buildTabButtonRow(),
       _buildClearCompletedItemsButton(),
       (_welcomeVisible ? _buildWelcomeContent() : _buildItemsContent()),
       //TBD: DD - properly position the button if the content is not scrollable
       _buildManageCategoriesButton()
-    ]);
+    ]));
   }
 
   Widget _buildTabButtonRow() {
