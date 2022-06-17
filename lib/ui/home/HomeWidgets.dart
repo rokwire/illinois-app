@@ -303,17 +303,17 @@ class HomeFavoriteStar extends StatelessWidget {
     if (style == HomeFavoriteStyle.SlantHeader) {
       return (selected == true) ?
         Image.asset('images/icon-star-orange.png', excludeFromSemantics: true) :
-        Image.asset('images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,);
+        Image.asset('images/icon-star-white-frame-thin.png', excludeFromSemantics: true,);
     }
     else if (style == HomeFavoriteStyle.Button) {
       if (selected == null) {
         return Image.asset('images/icon-star-gray.png', excludeFromSemantics: true);
       }
       else if (selected == true) {
-        return Image.asset('images/icon-star-blue.png', excludeFromSemantics: true);
+        return Image.asset('images/icon-star-orange.png', excludeFromSemantics: true);
       }
       else if (selected == false) {
-        return Image.asset('images/icon-star-gray-frame-thin.png', excludeFromSemantics: true);
+        return Image.asset('images/icon-star-white.png', excludeFromSemantics: true);
       }
     }
     
