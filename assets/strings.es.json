@@ -227,8 +227,8 @@
     "panel.browse.alert.building_access.privacy_level.4.button.label": "Establecer en 4",
     "panel.browse.alert.building_access.privacy_level.5.button.label": "Establecer en 5",
 
-    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to favorites?",
-    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from favorites?",
+    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to your favorites?",
+    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from your favorites?",
 
     "panel.browse.section.academics.title": "Academics",
     "panel.browse.section.academics.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
@@ -2420,7 +2420,7 @@
     "widget.home.radio.title": "WPGU FM Radio",
 
     "widget.home.prompt.add.favorite": "Are you sure you want to ADD this favorite?",
-    "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this favorite?",
+    "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this item from your favorites?",
 
     "widget.home.welcome.text.title": "Bienvenido a illinois 4",
     "widget.home.welcome.text.description": "Nuevo en esta versión: personalice el contenido de la aplicación de Illinois que desea al frente y al centro en Favoritos. Cambie o reordene sus favoritos tocando Personalizar, o agregue o elimine contenido tocando \u2606.",

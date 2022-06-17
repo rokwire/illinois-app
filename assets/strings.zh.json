@@ -227,8 +227,8 @@
 	"panel.browse.alert.building_access.privacy_level.4.button.label": "設置為 4",
 	"panel.browse.alert.building_access.privacy_level.5.button.label": "設置為 5",
 
-	"panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to favorites?",
-	"panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from favorites?",
+	"panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to your favorites?",
+	"panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from your favorites?",
 
 	"panel.browse.section.academics.title": "Academics",
 	"panel.browse.section.academics.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
@@ -2420,7 +2420,7 @@
 	"widget.home.radio.title": "WPGU FM Radio",
 
 	"widget.home.prompt.add.favorite": "Are you sure you want to ADD this favorite?",
-	"widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this favorite?",
+	"widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this item from your favorites?",
 
 	"widget.home.welcome.text.title": "歡迎來到伊利諾伊州 4",
 	"widget.home.welcome.text.description": "此版本的新功能：個性化您想要在收藏夾中置頂和居中的伊利諾伊應用程序內容。 點擊自定義更改或重新排序您的收藏夾，或點擊 \u2606 添加或刪除內容。",

@@ -370,8 +370,8 @@ class _BrowseSection extends StatelessWidget {
 
   Future<bool?> promptSectionFavorite(BuildContext context) async {
     String message = (_isSectionFavorite != true) ?
-      Localization().getStringEx('panel.browse.prompt.add.all.favorites', 'Are you sure you want to ADD ALL items to favorites?') :
-      Localization().getStringEx('panel.browse.prompt.remove.all.favorites', 'Are you sure you want to REMOVE ALL items from favorites?');
+      Localization().getStringEx('panel.browse.prompt.add.all.favorites', 'Are you sure you want to ADD ALL items to your favorites?') :
+      Localization().getStringEx('panel.browse.prompt.remove.all.favorites', 'Are you sure you want to REMOVE ALL items from your favorites?');
     return await showDialog(context: context, builder: (BuildContext context) {
       return AlertDialog(
         content: Text(message),
