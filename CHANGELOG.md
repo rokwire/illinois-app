@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Text updates in Browse / Athletics [#1765](https://github.com/rokwire/illinois-app/issues/1765).
 - Text updates in Favorites panel [#1767](https://github.com/rokwire/illinois-app/issues/1767).
 - Text updates in Favorites and Browse panels [#1770](https://github.com/rokwire/illinois-app/issues/1770).
+- Renamed Maps tabbar button to Map [#1772](https://github.com/rokwire/illinois-app/issues/1772).
 - Make Wellness 8 Dimensions part of the drop down items [#1764](https://github.com/rokwire/illinois-app/issues/1764).
 
 ## [4.0.31] - 2022-06-16
