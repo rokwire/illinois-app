@@ -76,12 +76,12 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: RootHeaderBar(key: _headerBarKey, title: _panelHeaderLabel),
+        appBar: RootHeaderBar(
+            key: _headerBarKey, title: Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'My Notifications')),
         body: Column(children: <Widget>[
           Expanded(
-              child: SingleChildScrollView(
-                  physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null),
-                  child: _buildContent()))
+              child:
+                  SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child: _buildContent()))
         ]),
         backgroundColor: Styles().colors!.background,
         bottomNavigationBar: uiuc.TabBar(key: _tabBarKey));
@@ -219,15 +219,6 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
         return Localization().getStringEx('panel.settings.notifications.content.inbox.label', 'My Notifications');
       case SettingsNotificationsContent.preferences:
         return Localization().getStringEx('panel.settings.notifications.content.preferences.label', 'My Notification Preferences');
-    }
-  }
-
-  String get _panelHeaderLabel {
-    switch (_selectedContent) {
-      case SettingsNotificationsContent.inbox:
-        return Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'My Notifications');
-      case SettingsNotificationsContent.preferences:
-        return Localization().getStringEx('panel.settings.notifications.header.preferences.label', 'My Notification Preferences');
     }
   }
 

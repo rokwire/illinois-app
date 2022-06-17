@@ -53,7 +53,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: _DebugContainer(child: RootHeaderBar(title: _panelHeaderLabel)),
+        appBar: _DebugContainer(
+            child: RootHeaderBar(title: Localization().getStringEx('panel.settings.home.header.settings.label', 'My Settings'))),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
@@ -163,21 +164,6 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
       case SettingsContent.calendar:
         return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'My Calendar Settings');
-    }
-  }
-
-  String get _panelHeaderLabel {
-    switch (_selectedContent) {
-      case SettingsContent.sections:
-        return Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings');
-      case SettingsContent.interests:
-        return Localization().getStringEx('panel.settings.home.header.interests.label', 'My Interests');
-      case SettingsContent.food_filters:
-        return Localization().getStringEx('panel.settings.home.header.food_filter.label', 'My Food Filter');
-      case SettingsContent.sports:
-        return Localization().getStringEx('panel.settings.home.header.sports.label', 'My Sports Teams');
-      case SettingsContent.calendar:
-        return Localization().getStringEx('panel.settings.home.header.calendar.label', 'My Calendar Settings');
     }
   }
 }
