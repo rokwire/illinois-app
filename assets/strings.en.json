@@ -1627,6 +1627,10 @@
     "panel.wellness.todo.welcome.description.label": "Use this tool to manage your ...",
     "panel.wellness.todo.categories.manage.button": "Manage Categories",
 
+    "panel.wellness.categories.manage.title": "Manage Categories",
+    "panel.wellness.categories.create.header.label": "Create a Category",
+    "panel.wellness.categories.create.header.description": "Examples could include making a category for RSOs, each class, or for your every day miscellaneous tasks.",
+
     "panel.wellness.resources.header.label": "Wellness Resources",
     "panel.wellness.resources.appointment.button": "I want to make an appointment",
     "panel.wellness.resources.help_person.button": "I want to help a friend, student, or a co-worker",

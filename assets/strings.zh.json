@@ -1628,6 +1628,10 @@
     "panel.wellness.todo.welcome.description.label": "使用此工具管理您的 ...",
     "panel.wellness.todo.categories.manage.button": "管理類別",
 
+    "panel.wellness.categories.manage.title": "管理類別",
+    "panel.wellness.categories.create.header.label": "創建類別",
+    "panel.wellness.categories.create.header.description": "示例可能包括為 RSO、每個班級或您的日常雜項任務創建一個類別.",
+
     "panel.wellness.resources.header.label": "健康資源",
     "panel.wellness.resources.appointment.button": "我想預約",
     "panel.wellness.resources.help_person.button": "我想幫助朋友、學生或同事",

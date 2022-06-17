@@ -1626,6 +1626,10 @@
     "panel.wellness.todo.welcome.description.label": "Utilice esta herramienta para administrar su ...",
     "panel.wellness.todo.categories.manage.button": "Gestionar categorías",
 
+    "panel.wellness.categories.manage.title": "Gestionar categorías",
+    "panel.wellness.categories.create.header.label": "Crear una categoría",
+    "panel.wellness.categories.create.header.description": "Los ejemplos podrían incluir crear una categoría para RSO, cada clase o para sus tareas misceláneas diarias.",
+
     "panel.wellness.resources.header.label": "Recursos de bienestar",
     "panel.wellness.resources.appointment.button": "Quiero hacer una cita",
     "panel.wellness.resources.help_person.button": "Quiero ayudar a un amigo, estudiante o compañero de trabajo",

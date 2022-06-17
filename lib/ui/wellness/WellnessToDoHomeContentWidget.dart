@@ -17,9 +17,12 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/wellness/WellnessManageCategoriesPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -247,8 +250,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _onTapManageCategories() {
-    //TBD: DD - implement
-    AppAlert.showDialogResult(context, 'Not Implemented');
+    Analytics().logSelect(target: "Manage Categories");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessManageCategoriesPanel()));
   }
 
   void _onTapAddItem() {
