@@ -70,8 +70,8 @@ class TabBar extends rokwire.TabBar {
     }
     else if (code == 'maps') {
       return rokwire.TabWidget(
-        label: Localization().getStringEx('tabbar.maps.title', 'Maps'),
-        hint: Localization().getStringEx('tabbar.maps.hint', ''),
+        label: Localization().getStringEx('tabbar.map.title', 'Map'),
+        hint: Localization().getStringEx('tabbar.map.hint', 'Map Page'),
         iconAsset: 'images/tab-navigate.png',
         selectedIconAsset: 'images/tab-navigate-selected.png',
         selected: (tabController?.index == index),
