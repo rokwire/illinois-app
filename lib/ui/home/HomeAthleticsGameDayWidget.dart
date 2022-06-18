@@ -22,25 +22,26 @@ import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDayWidget.dart';
 
-class HomeGameDayWidget extends StatefulWidget {
+class HomeAthleticsGameDayWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  HomeGameDayWidget({Key? key, this.favoriteId, this.updateController,}) : super(key: key);
+  HomeAthleticsGameDayWidget({Key? key, this.favoriteId, this.updateController,}) : super(key: key);
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: 'Game Day' /*TBD: Localization */,
+      title: Localization().getStringEx('panel.browse.entry.my.my_game_day.title', 'My Game Day'),
     );
 
-  _HomeGameDayState createState() => _HomeGameDayState();
+  State<HomeAthleticsGameDayWidget> createState() => _HomeAthleticsGameDayWidgetState();
 }
 
-class _HomeGameDayState extends State<HomeGameDayWidget> implements NotificationsListener {
+class _HomeAthleticsGameDayWidgetState extends State<HomeAthleticsGameDayWidget> implements NotificationsListener {
 
   List<Game>? _todayGames;
 

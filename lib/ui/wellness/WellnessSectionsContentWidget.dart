@@ -14,35 +14,71 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/wellness/WellnessEightDimensionsPanel.dart';
+import 'package:flutter/material.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Transportation.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class WellnessSectionsContentWidget extends StatefulWidget {
-  WellnessSectionsContentWidget();
+  final void Function()? onTapEightDimension;
+
+  WellnessSectionsContentWidget({this.onTapEightDimension});
 
   @override
   State<WellnessSectionsContentWidget> createState() => _WellnessSectionsContentWidgetState();
 }
 
-class _WellnessSectionsContentWidgetState extends State<WellnessSectionsContentWidget> {
+class _WellnessSectionsContentWidgetState extends State<WellnessSectionsContentWidget> implements NotificationsListener {
+  Color? _tipColor;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
+    _loadTipColor();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  void _loadTipColor() {
+    _setLoading(true);
+    Transportation().loadBusColor(userId: Auth2().accountId, deviceId: Auth2().deviceId).then((activeColor) {
+      _tipColor = activeColor;
+      _setLoading(false);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return _buildContent();
+    return _loading ? _buildLoadingContent() : _buildContent();
   }
 
   Widget _buildContent() {
-    return Column(
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [_buildHeaderDescription(), _buildEightDimensionImage(), _buildFooterDescription(), _buildEightDimensionButton()]);
+        children: [_buildTipDescription(), _buildEightDimensionImage(), _buildFooterDescription(), _buildEightDimensionButton()]));
   }
 
-  Widget _buildHeaderDescription() {
+  Widget _buildLoadingContent() {
+    return Center(
+        child: Column(children: <Widget>[
+      Container(height: MediaQuery.of(context).size.height / 5),
+      CircularProgressIndicator(),
+      Container(height: MediaQuery.of(context).size.height / 5 * 3)
+    ]));
+  }
+
+  Widget _buildTipDescription() {
     return Container(
-        color: Styles().colors!.accentColor3,
+        color: (_tipColor ?? Styles().colors!.accentColor3),
         padding: EdgeInsets.all(42),
         child: Text(
             Localization().getStringEx('panel.wellness.sections.description.header.text',
@@ -52,8 +88,7 @@ class _WellnessSectionsContentWidgetState extends State<WellnessSectionsContentW
   }
 
   Widget _buildEightDimensionImage() {
-    //TBD: DD - image resource for 8 dimension
-    return Container();
+    return Padding(padding: EdgeInsets.only(top: 16), child: Image.asset('images/wellness-wheel-2019.png', width: 45, height: 45));
   }
 
   Widget _buildFooterDescription() {
@@ -83,11 +118,22 @@ class _WellnessSectionsContentWidgetState extends State<WellnessSectionsContentW
         textStyle: TextStyle(fontSize: 14),
         rightIcon: Image.asset('images/external-link.png'),
         rightIconPadding: EdgeInsets.only(left: 4, right: 6),
-        onTap: _onTapEightDimensions);
+        onTap: widget.onTapEightDimension ?? () => {});
   }
 
-  void _onTapEightDimensions() {
-    Analytics().logSelect(target: "Wellness 8 Dimensions");
-    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => WellnessEightDimensionsPanel()));
+  void _setLoading(bool loading) {
+    _loading = loading;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  // Notifications Listener
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Auth2.notifyLoginChanged) {
+      _loadTipColor();
+    }
   }
 }

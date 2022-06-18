@@ -146,6 +146,8 @@ abstract class CheckList with Service implements NotificationsListener{
     //TMP:
     if(_contentName == "uiuc_student"){
       return AppBundle.loadString('assets/uiucStudent.json');
+    } else if(_contentName == "gies"){
+      return AppBundle.loadString('assets/gies.json');
     }
 
     try {

@@ -5,9 +5,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.0.32] - 2022-06-17
+### Fixed
+- Color of the current selected drop down item in Notifications [#1760](https://github.com/rokwire/illinois-app/issues/1760).
+### Changed
+- Do not change header bar title based on the drop down selection [#1762](https://github.com/rokwire/illinois-app/issues/1762).
+- Text updates in Browse / Athletics [#1765](https://github.com/rokwire/illinois-app/issues/1765).
+- Text updates in Favorites panel [#1767](https://github.com/rokwire/illinois-app/issues/1767).
+- Text updates in Favorites and Browse panels [#1770](https://github.com/rokwire/illinois-app/issues/1770).
+- Text updates in Reorder/Customize panel [#1774](https://github.com/rokwire/illinois-app/issues/1774).
+- Renamed Maps tabbar button to Map [#1772](https://github.com/rokwire/illinois-app/issues/1772).
+- Make Wellness 8 Dimensions part of the drop down items [#1764](https://github.com/rokwire/illinois-app/issues/1764).
+
+## [4.0.31] - 2022-06-16
+### Added
+- Created HomeAthleticsNewsWidget [#1752](https://github.com/rokwire/illinois-app/issues/1752).
+- Created HomeAthliticsEventsWidget [#1754](https://github.com/rokwire/illinois-app/issues/1754).
+- Created HomeAthliticsTeamsWidget [#1757](https://github.com/rokwire/illinois-app/issues/1757).
+- Wellness ToDo List - UI updates (Task in progress) [#1689](https://github.com/rokwire/illinois-app/issues/1689).
+
+## [4.0.30] - 2022-06-15
+### Changed
+- Gies content updated  [#1749](https://github.com/rokwire/illinois-app/issues/1749).
+- Cleaned up FlexUI rules [#1742](https://github.com/rokwire/illinois-app/issues/1742).
+- Updated icnos from Zeplin desgin [#1748](https://github.com/rokwire/illinois-app/issues/1748).
+### Added
+- Wellness Resources drop down item [#1741](https://github.com/rokwire/illinois-app/issues/1741).
+- Wellness tip background color is color of the day [#1746](https://github.com/rokwire/illinois-app/issues/1746).
+
+## [4.0.29] - 2022-06-14
 ### Changed
 - Default drop down selection in Academics panel [#1726](https://github.com/rokwire/illinois-app/issues/1726).
 - Favorites panel UI changes [#1729](https://github.com/rokwire/illinois-app/issues/1729).
+- Updated tab icons [#1737](https://github.com/rokwire/illinois-app/issues/1737).
+- Texts in Favorites panel [#1736](https://github.com/rokwire/illinois-app/issues/1736).
 ### Added
 - Added "See All" to all home list widgets, openes the corresponding content panel [#1727](https://github.com/rokwire/illinois-app/issues/1727).
 - Added "WPGU FM Radio" button to header bar title if radio is playing [#1731](https://github.com/rokwire/illinois-app/issues/1731).

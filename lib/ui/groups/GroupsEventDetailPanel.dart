@@ -480,7 +480,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                   'widget.card.button.favorite.on.hint', ''),
               button: true,
-              child: Image.asset(isFavorite ? 'images/icon-star-solid.png' : 'images/icon-favorites-white.png') //TBD selected image res
+              child: Image.asset(isFavorite ? 'images/icon-star-white-transluent.png' : 'images/icon-star-white-frame-bold.png') //TBD selected image res
           )));
   }
 

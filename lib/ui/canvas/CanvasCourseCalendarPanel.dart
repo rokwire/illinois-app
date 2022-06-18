@@ -254,7 +254,7 @@ class _CanvasCourseCalendarPanelState extends State<CanvasCourseCalendarPanel> i
                               padding: EdgeInsets.only(top: 10),
                               child: Container(
                                   padding: EdgeInsets.only(left: 24, bottom: 24),
-                                  child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png',
+                                  child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png',
                                       excludeFromSemantics: true)))))))
         ]));
   }

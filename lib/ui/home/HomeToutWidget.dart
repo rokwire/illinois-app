@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -12,6 +15,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeToutWidget extends StatefulWidget {
   static const String notifyImageUpdate      = "edu.illinois.rokwire.home.tout.image.update";
@@ -67,6 +71,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   @override
   Widget build(BuildContext context) {
     String? imageUrl = _imageUrl;
+    String? title2 = _title2;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       (imageUrl != null) ? _buildImageWidget(imageUrl) : Container(),
       Container(padding: EdgeInsets.only(bottom: 16,), color: Styles().colors?.fillColorPrimary, child:
@@ -74,13 +79,24 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16, top: 16), child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(title1 ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18),),
-                Text(title2 ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                Text(_title1 ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18),),
+                Visibility(visible: StringUtils.isNotEmpty(title2), child:
+                  Row(children: [
+                    Text(title2 ?? '', style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),),
+                    Semantics(label: Localization().getStringEx("widget.home.tout.button.info.label", "Info"), hint: Localization().getStringEx("widget.home.tout.button.info.hint", "Tap for more info"), child:
+                      InkWell(onTap: _onInfo, child:
+                        Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8), child:
+                          Image.asset('images/icon-info-orange.png', excludeFromSemantics: true,),
+                        )
+                      ),
+                    ),
+                  ],)
+                ),
               ],),
             )
           ),
           GestureDetector(onTap: widget.onEdit, child:
-            Padding(padding: EdgeInsets.only(top: 16, right: 16), child: Text(Localization().getStringEx('widget.home.tout.reorder.label', 'Reorder'),
+            Padding(padding: EdgeInsets.only(top: 16, right: 16), child: Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
                         style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18, 
                         decoration: TextDecoration.underline, decorationColor: Styles().colors?.textColorPrimary, decorationThickness: 1)))
           ),
@@ -135,7 +151,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
     ]);
   }
 
-  String? get title1 {
+  String? get _title1 {
     if (_greeting?.isNotEmpty ?? false) {
       if (Auth2().firstName?.isNotEmpty ?? false) {
         return "$_greeting,";
@@ -149,7 +165,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
     }
   }
 
-  String? get title2 {
+  String? get _title2 {
     return Auth2().firstName;
   }
 
@@ -184,6 +200,11 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
     }
   }
 
+  void _onInfo() {
+    Analytics().logSelect(target: "Search");
+    _InfoDialog.show(context);
+  }
+
   // NotificationsListener
 
   @override
@@ -199,4 +220,66 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
       }
     }
   }
+}
+
+class _InfoDialog extends StatelessWidget {
+
+  static void show(BuildContext context) {
+    showDialog(context: context, builder: (_) =>  _InfoDialog(),);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final String selfServiceUrlMacro = '{{student_self_service_url}}';
+    String contentHtml = Localization().getStringEx("widget.home.tout.popup.info.content", "Illinois app uses your first name from <a href='{{student_self_service_url}}'>Student Self-Service</a>. You can change your preferred name under Personal Information and Preferred First Name.");
+    contentHtml = contentHtml.replaceAll(selfServiceUrlMacro, Config().studentSelfServiceUrl ?? '');
+    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+      Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), alignment: Alignment.center, child: 
+        Container(decoration: BoxDecoration(color: Styles().colors?.fillColorPrimary, borderRadius: BorderRadius.circular(8)), child:
+    
+          Padding(padding: EdgeInsets.only(left: 24, bottom: 24), child:
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+                Expanded(child:
+                  Padding(padding: EdgeInsets.only(top: 24), child:
+                    Html(data: contentHtml,
+                      onLinkTap: (url, renderContext, attributes, element) => _onTapLink(context, url),
+                      style: {
+                        "body": Style(color: Styles().colors?.white, fontFamily: Styles().fontFamilies!.bold, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                        "a": Style(color: Styles().colors?.fillColorSecondaryVariant),
+                      },),
+                    //Text('Illinois app uses your first name from Student Self-Service. You can change your preferred name under Personal Information and Preferred First Name',
+                    //  style: TextStyle(color: Styles().colors?.white, fontSize: 16, fontFamily: Styles().fontFamilies!.bold,),
+                    //)
+                  )
+                ),
+                Semantics(button: true, label: Localization().getStringEx("dialog.close.title","Close"), child:
+                  InkWell(onTap: () => _onTapClose(context), child:
+                    Padding(padding: EdgeInsets.all(16), child:
+                      Image.asset('images/close-white.png', excludeFromSemantics: true,)
+                    )
+                  )
+                )
+              ]),
+            ]),
+          ),
+
+        ),
+      ),
+    );
+  }
+
+  void _onTapClose(BuildContext context) {
+    Analytics().logAlert(text: "Info", selection: "Close");
+    Navigator.pop(context);
+  }
+
+  void _onTapLink(BuildContext context, String? url) {
+    Analytics().logAlert(text: "Info", selection: "Student Self Service");
+    if (StringUtils.isNotEmpty(url)) {
+      Navigator.pop(context);
+      launch(url!);
+    }
+  }
+
 }

@@ -1,13 +1,17 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 
@@ -20,7 +24,7 @@ class HomeMyGroupsWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: 'My Groups' /*TBD: Localization */,
+      title: Localization().getStringEx('widget.home.my_groups.label.header.title', 'My Groups'),
     );
 
   @override
@@ -76,10 +80,10 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   Widget build(BuildContext context) {
     return Visibility(visible: _haveGroups, child:
         HomeSlantWidget(favoriteId: widget.favoriteId,
-          title: "My Groups" /*TBD: Localization */,
+          title: Localization().getStringEx('widget.home.my_groups.label.header.title', 'My Groups'),
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: _buildContent(),
-          childPadding: const EdgeInsets.only(top: 8, bottom: 16),
+          childPadding: const EdgeInsets.only(top: 8),
         ),
     );
   }
@@ -103,9 +107,17 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
       _pageController = PageController(viewportFraction: pageViewport);
     }
 
-    return Container(height: pageHeight, child:
-      PageView(controller: _pageController, children: pages,)
-    );
+    return Column(children: [
+      Container(height: pageHeight, child:
+        PageView(controller: _pageController, children: pages,)
+      ),
+      LinkButton(
+        title: Localization().getStringEx('widget.home.my_groups.button.all.title', 'See All'),
+        hint: Localization().getStringEx('widget.home.my_groups.button.all.hint', 'Tap to see all groups'),
+        onTap: _onSeeAll,
+      ),
+    ],);
+
   }
 
   List<Group>? _sortGroups(List<Group>? groups){
@@ -156,5 +168,10 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
 
   bool get _haveGroups{
     return _myGroups?.isNotEmpty ?? false;
+  }
+
+  void _onSeeAll() {
+    Analytics().logSelect(target: "HomeMyGroups See All");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 }

@@ -326,7 +326,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Expanded(child:
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-                        Text(Localization().getStringEx('widget.home.wallet.bus_pass.title', 'MTD'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
+                        Text(Localization().getStringEx('widget.home.wallet.bus_pass.title', 'MTD Bus Pass'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
                       ),
                     ),
                     HomeFavoriteButton(favorite: widget.favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.all(12), prompt: true)

@@ -2,10 +2,12 @@
 	"content": {
 		"tabbar": ["favorites", "browse", "maps", "academics", "wellness"],
 
-		"home": ["gies_checklist", "new_student_checklist", "safer", "twitter", "canvas_courses", "my_groups", "game_day",
-			"campus_resources", "create_poll", "sport_prefs", "campus_reminders", "upcoming_events", "recent_items", "wallet",
+		"home": ["gies_checklist", "new_student_checklist", "safer", "twitter", "canvas_courses", "my_groups", "my_game_day",
+			"campus_highlights", "campus_reminders", "campus_resources", "campus_links",
+			"sport_events", "sport_news", "sport_teams",
+			"suggested_events", "recent_items", "wallet",
 			"my_events", "my_dining", "my_athletics", "my_news", "my_laundry", "my_inbox", "my_campus_guide",
-			"wpgufm_radio", "illini_news", "app_help", "campus_highlights", "campus_links", "state_farm_center", "wellness_rings", "wellness_todo"
+			"create_poll", "wpgufm_radio", "illini_news", "app_help", "state_farm_center", "wellness_rings", "wellness_todo"
 		],
 		"home.system": ["tout", "welcome", "emergency", "voter_registration", "connect"],
 		"home.connect": ["netid", "phone_or_email"],
@@ -22,14 +24,14 @@
 		"browse": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_links", "campus_resources", "events", "feeds", "my", "polls", "recent", "state_farm_center", "wallet", "wellness"],
 		"browse.academics": ["gies_checklist", "new_student_checklist", "canvas_courses", "my_illini", "campus_reminders"],
 		"browse.app_help": ["video_tutorial", "feedback", "faqs"],
-		"browse.athletics": ["game_day", "upcoming_games", "sport_news", "sport_teams", "sport_prefs"],
+		"browse.athletics": ["sport_events", "sport_news", "sport_teams"],
 		"browse.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 		"browse.campus_guide": ["campus_highlights", "campus_guide"],
 		"browse.campus_links": ["due_date_catalog"],
 		"browse.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "inbox"],
-		"browse.events": ["upcoming_events"],
+		"browse.events": ["suggested_events"],
 		"browse.feeds": ["twitter", "wpgufm_radio", "illini_news"],
-		"browse.my": ["my_groups", "my_events", "my_dining", "my_athletics", "my_news", "my_laundry", "my_inbox", "my_campus_guide"],
+		"browse.my": ["my_groups", "my_game_day", "my_events", "my_dining", "my_athletics", "my_news", "my_laundry", "my_inbox", "my_campus_guide"],
 		"browse.polls": ["create_poll", "view_polls"],
 		"browse.recent": ["recent_items"],
 		"browse.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
@@ -60,17 +62,13 @@
 
 		"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 		
-		"features": ["authentication", "converge", "create_poll", "mtd_bus_number", "parking_lot_directions", "gies", "new_student", "canvas"],
+		"features": ["authentication", "create_poll", "mtd_bus_number", "parking_lot_directions", "gies", "new_student", "canvas"],
 		
 		"launch":["emergency"]
 		
 	},
 	"rules": {
 		"roles" : {
-			"game_day"                               : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
-			"sport_prefs"                            : ["fan", "AND", ["student", "OR", "employee", "OR", "parent"], "AND", ["NOT", ["visitor", "OR", "alumni"]]],
-			"campus_reminders"                       : [["NOT", "alumni"], "OR", "student", "OR", "fan", "OR", "employee", "OR", "parent"],
-
 			"my_illini"                              : ["student"],
 			"illini_cash"                            : ["student", "OR", "employee", "OR", "parent"],
 			"illini_cash_card"                       : ["student", "OR", "employee", "OR", "parent"],
@@ -80,7 +78,6 @@
 			"bus_pass_card"                          : ["student", "OR", "employee", "OR", "resident"],
 
 			"create_poll"                            : ["student", "OR", "employee"],
-			"upgrade_version_message"                : ["student", "OR", "employee"],
 
 			"onboarding.login_netid"                 : ["student", "OR", "employee"],
 			"onboarding.login_phone"                 : ["NOT", ["employee", "OR", "student"]],
@@ -113,7 +110,6 @@
 			"laundry_favs"                    : 4,
 			"recent_items"                    : 4,
 			"saved"                           : 3,
-			"converge"                        : 5,
 			"connect"                         : 4,
 
 			"create_poll"                     : 4,
@@ -121,10 +117,6 @@
 			"settings.connected"              : 4,
 			"settings.link"                   : 4,
 			"settings.linked"                 : 4,
-
-			"tabbar.wallet"                   : 4,
-
-			"privacy_center.buttons"          : 4,
 
 			"onboarding.notifications_auth"   : 4,
 			"onboarding.location_auth"        : 2,
@@ -147,20 +139,21 @@
 			"canvas_courses"                      : { "shibbolethLoggedIn": true },
 			"laundry"                             : { "shibbolethLoggedIn": true },
 			"laundry_favs"                        : { "shibbolethLoggedIn": true },
-			"create_event"                        : { "accountRole": "event approvers" },
-			"create_stadium_poll"                 : { "accountRole": "stadium poll manager" },
-			"upgrade_version_message"             : { "shibbolethLoggedIn": true },
-			"illini_cash_card"                    : { "loggedIn": true },
-			"meal_plan_card"                      : { "loggedIn": true },
-
-			"wallet.vcards"                       : { "loggedIn": true },
-			"wallet.hcards"                       : { "loggedIn": true },
+			"illini_cash"                         : { "shibbolethLoggedIn": true },
+			"illini_cash_card"                    : { "shibbolethLoggedIn": true },
+			"meal_plan"                           : { "shibbolethLoggedIn": true },
+			"meal_plan_card"                      : { "shibbolethLoggedIn": true },
+			"bus_pass"                            : { "iCard":    true },
 			"bus_pass_card"                       : { "iCard":    true },
 			"illini_id"                           : { "iCardNum": true },
 			"illini_id_card"                      : { "iCardNum": true },
 			"library_card"                        : { "iCardLibraryNum": true },
+
 			"inbox"                               : { "shibbolethLoggedIn": true },
 			"inbox_favs"                          : { "shibbolethLoggedIn": true },
+
+			"create_event"                        : { "accountRole": "event approvers" },
+			"create_stadium_poll"                 : { "accountRole": "stadium poll manager" },
 
 			"settings.connect"                    : { "loggedIn": false },
 			"settings.connected"                  : { "loggedIn": true },
@@ -201,7 +194,6 @@
 		"enable" : {
 			"illini_cash"                   : true,
 			"create_event"                  : false,
-			"converge"                      : true,
 			"mtd_bus_number"                : true,
 			"parking_lot_directions"        : true,
 			"library_card"                  : false,

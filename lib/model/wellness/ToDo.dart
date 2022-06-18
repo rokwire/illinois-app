@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ToDoItem {
@@ -71,6 +72,13 @@ class ToDoItem {
       return null;
     }
     return DateTimeUtils.dateTimeFromString(dueDateTimeString, format: _dateTimeFormat);
+  }
+
+  String? get displayDueDate {
+    if (dueDateTime == null) {
+      return null;
+    }
+    return AppDateTime().formatDateTime(dueDateTime, format: 'EEEE, MM/dd', ignoreTimeZone: true);
   }
 
   static List<ToDoItem>? listFromJson(List<dynamic>? jsonList) {

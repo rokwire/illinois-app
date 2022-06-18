@@ -38,7 +38,6 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
 
   @override
   Widget build(BuildContext context) {
-
     return Visibility(visible: _visible ?? true, child:
       Container(color: Styles().colors?.fillColorPrimary, child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -58,9 +57,9 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
               ),
             ),
           ],),
-          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child:
-            Text(Localization().getStringEx("widget.home.welcome.text.description", 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam finibus, neque non mattis finibus, ante mauris laoreet ante, volutpat semper turpis massa nec sapien.\n\nNullam semper dolor a turpis faucibus, id sollicitudin risus lobortis. Quisque nulla odio, vehicula ac finibus ac, consectetur vel lectus. Vestibulum viverra vestibulum eleifend.'),
-              style: TextStyle(color: Styles().colors!.textColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 16,),),),
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child: 
+            Text(Localization().getStringEx('widget.home.welcome.text.description', "New in this version: personalize the Illinois app content you want front and center in Favorites. Change or reorder your favorites by tapping on Customize, or add or remove content by tapping \u2606."), style: TextStyle(color: Styles().colors!.textColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 16)),
+          ),
           Container(height: 1, color: Styles().colors?.disabledTextColor),
         ],),
       )
