@@ -34,8 +34,8 @@
     "tabbar.wallet.hint":"Página de cartera",
     "tabbar.favorites.title":"Favoritas",
     "tabbar.favorites.hint":"Página de favoritos",
-    "tabbar.maps.title":"Mapas",
-    "tabbar.maps.hint":"Página de mapas",
+    "tabbar.map.title":"Mapa",
+    "tabbar.map.hint":"Página del mapa",
     "tabbar.academics.title":"Académica",
     "tabbar.academics.hint":"Página académica",
     "tabbar.wellness.title":"Bienestar",
@@ -133,9 +133,11 @@
     "panel.home.connect.not_logged_in.phone_or_email.description.part_1": "Don't have a NetID? ",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
     "panel.home.connect.not_logged_in.phone_or_email.title": "Continue",
-    "panel.home.favorites.editing.header.title": "Favoritos",
-    "panel.home.favorites.editing.header.description": "Toque y mantenga presionado un elemento para cambiar su orden en favoritos. Toca \"Listo\" para ver tus favoritos actualizados.",
-    "panel.label.offline.phone_or_email": "Feature not available when offline.",
+    "panel.home.edit.favorites.header.title": "Tus favoritas",
+    "panel.home.edit.favorites.header.description": "A continuación se muestra el contenido que se encuentra actualmente en su pantalla de favoritos. Para reordenar sus favoritos, toque, mantenga presionado y arrastre un elemento. Para eliminar un elemento de sus favoritos, haga clic en la estrella.",
+    "panel.home.edit.unused.header.title": "Favoritos no utilizados",
+    "panel.home.edit.unused.header.description": "Para agregar uno de los siguientes elementos a sus favoritos, haga clic en la estrella.",
+    "panel.label.offline.phone_or_email": "Característica no disponible cuando está fuera de línea.",
 
     "panel.browse.label.title": "Vistazo",
     "panel.browse.button.events.title":"Eventos",
@@ -227,8 +229,8 @@
     "panel.browse.alert.building_access.privacy_level.4.button.label": "Establecer en 4",
     "panel.browse.alert.building_access.privacy_level.5.button.label": "Establecer en 5",
 
-    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to favorites?",
-    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from favorites?",
+    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to your favorites?",
+    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from your favorites?",
 
     "panel.browse.section.academics.title": "Academics",
     "panel.browse.section.academics.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
@@ -345,7 +347,7 @@
     "panel.search.field.search.title": "Buscar",
     "panel.search.field.search.hint": "Escriba un término de búsqueda",
 
-    "panel.maps.header.title": "Mapas",
+    "panel.maps.header.title": "Mapa",
 
     "panel.academics.header.title": "Académica",
     "panel.academics.section.events.label": "Eventos Académicos",
@@ -1132,7 +1134,7 @@
     "panel.laundry.issues_submitted.return.button": "Devolver",
 
     "panel.settings.home.header.settings.label": "Mi configuración",
-    "panel.settings.home.settings.sections.section.label": "Configuración de secciones",
+    "panel.settings.home.settings.sections.section.label": "Iniciar sesión/Cerrar sesión",
     "panel.settings.home.settings.sections.interests.label": "Mis intereses",
     "panel.settings.home.settings.sections.food_filter.label": "Mi filtro de comida",
     "panel.settings.home.settings.sections.sports.label": "Mis equipos deportivos",
@@ -1598,10 +1600,6 @@
     "panel.bus_pass.error.default.text": "No se puede cargar el pase de autobús",
 
     "panel.wellness.home.header.sections.title": "Bienestar",
-    "panel.wellness.home.header.rings.title": "Anillos de bienestar diarios",
-    "panel.wellness.home.header.todo.title": "Mi lista de tareas pendientes",
-    "panel.wellness.home.header.resources.title": "Recursos",
-    "panel.wellness.home.header.eight_dimensions.title": "8 dimensiones",
     "panel.wellness.section.sections.label": "Secciones de Bienestar",
     "panel.wellness.section.rings.label": "Anillos de bienestar diarios",
     "panel.wellness.section.todo.label": "Lista de quehaceres",
@@ -2345,6 +2343,10 @@
     "widget.home.recent_items.button.all.title":"See All",
     "widget.home.recent_items.button.all.hint":"Tap to see all",
 
+    "widget.home.my_groups.label.header.title":"My Groups",
+    "widget.home.my_groups.button.all.title":"See All",
+    "widget.home.my_groups.button.all.hint":"Tap to see all groups",
+
     "widget.home.campus_resources.label.campus_tools":"Recursos del campus",
     "widget.home.campus_resources.button.events.title":"Eventos",
     "widget.home.campus_resources.button.events.hint":"",
@@ -2405,7 +2407,7 @@
     "widget.home.wallet.meal_plan.label.meals_remaining.text": "Comidas restantes",
     "widget.home.wallet.meal_plan.label.dining_dollars.text": "Dólares para cenar",
 
-    "widget.home.wallet.bus_pass.title": "MTD",
+    "widget.home.wallet.bus_pass.title": "Pase de autobús MTD",
     "widget.home.wallet.bus_pass.label.card_expires.text": "La tarjeta caduca: %s",
 
     "widget.home.wallet.illini_id.title": "Identificación Illini",
@@ -2420,10 +2422,10 @@
     "widget.home.radio.title": "WPGU FM Radio",
 
     "widget.home.prompt.add.favorite": "Are you sure you want to ADD this favorite?",
-    "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this favorite?",
+    "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this item from your favorites?",
 
     "widget.home.welcome.text.title": "Bienvenido a illinois 4",
-    "widget.home.welcome.text.description": "Nuevo en esta versión: reordene fácilmente su panel de favoritos para personalizar sus propias preferencias. Agregue o elimine contenido tocando {{star_icon}}. Esto se puede hacer en Examinar o tocando Reordenar.",
+    "widget.home.welcome.text.description": "Nuevo en esta versión: personalice el contenido de la aplicación de Illinois que desea al frente y al centro en Favoritos. Cambie o reordene sus favoritos tocando Personalizar, o agregue o elimine contenido tocando \u2606.",
     "widget.home.welcome.button.close.label": "Cerca",
 
     "widget.home.athletics_news.text.title": "Athletics News",
@@ -2444,7 +2446,10 @@
     "widget.home.athletics_teams.button.all.title": "See All",
     "widget.home.athletics_teams.button.all.hint": "Tap to see all teams",
 
-    "widget.home.tout.reorder.label": "Reordenar",
+    "widget.home.tout.customize.label": "personalizar",
+    "widget.home.tout.button.info.label": "Información",
+    "widget.home.tout.button.info.hint": "Toca para más información",
+    "widget.home.tout.popup.info.content": "La aplicación de Illinois usa su nombre de <a href='{{student_self_service_url}}'>Autoservicio para estudiantes</a>. Puede cambiar su nombre preferido en Información personal y Nombre preferido.",
 
     "widget.athletics_card.button.get_tickets.title":"Obtener boletos",
     "widget.athletics_card.button.get_tickets.hint":"",

@@ -285,8 +285,10 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     if (homeFavorites != null) {
 
-      widgets.add(_buildEditingHeader(title: Localization().getStringEx('panel.home.favorites.editing.header.title', 'Favorites'), favoriteId: _favoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
-        description: Localization().getStringEx('panel.home.favorites.editing.header.description', 'Tap and hold an item to change its order in favorites. Touch "Done" to view your updated Favorites.'),
+      widgets.add(_buildEditingHeader(
+        favoriteId: _favoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
+        title: Localization().getStringEx('panel.home.edit.favorites.header.title', 'Your Favorites'),
+        description: Localization().getStringEx('panel.home.edit.favorites.header.description', 'Below is the content currently on your favorites screen. To reorder your favorites, tap, hold, and drag an item. To remove an item from your favorites, click on the star.'),
       ));
        
       int position = 0;
@@ -304,8 +306,10 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     List<String>? fullContent = JsonUtils.listStringsValue(FlexUI()['home']);
     if (fullContent != null) {
 
-      widgets.add(_buildEditingHeader(title: 'Unused Favorites', favoriteId: _unfavoritesHeaderId, dropAnchorAlignment: null,
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus sapien, tempus sed bibendum et, accumsan interdum velit. Integer bibendum feugiat lectus, eget sollicitudin enim vulputate sit amet. Pellentesque at risus odio.',
+      widgets.add(_buildEditingHeader(
+        favoriteId: _unfavoritesHeaderId, dropAnchorAlignment: null,
+        title: Localization().getStringEx('panel.home.edit.unused.header.title', 'Unused Favorites'),
+        description: Localization().getStringEx('panel.home.edit.unused.header.description', 'To add one of the below items to your favorites, click on the star.'),
       ));
 
       int position = 0;

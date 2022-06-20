@@ -34,8 +34,8 @@
 	"tabbar.wallet.hint":"钱包页面",
 	"tabbar.favorites.title":"收藏夾",
 	"tabbar.favorites.hint":"收藏頁面",
-	"tabbar.maps.title":"地圖",
-	"tabbar.maps.hint":"地圖頁面",
+	"tabbar.map.title":"地圖",
+	"tabbar.map.hint":"地圖頁面",
 	"tabbar.academics.title":"學者",
 	"tabbar.academics.hint":"學者頁面",
 	"tabbar.wellness.title":"健康",
@@ -133,9 +133,11 @@
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_1": "Don't have a NetID? ",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
 	"panel.home.connect.not_logged_in.phone_or_email.title": "Continue",
-    "panel.home.favorites.editing.header.title": "收藏夾",
-    "panel.home.favorites.editing.header.description": "點擊並按住一個項目以更改其在收藏夾中的順序。 觸摸“完成”以查看您更新的收藏夾。",
-	"panel.label.offline.phone_or_email": "Feature not available when offline.",
+	"panel.home.edit.favorites.header.title": "你的最愛",
+	"panel.home.edit.favorites.header.description": "以下是當前收藏夾屏幕上的內容。 要重新排序您的收藏夾，請點按、按住並拖動項目。 要從收藏夾中刪除項目，請單擊星號。",
+	"panel.home.edit.unused.header.title": "未使用的收藏夾",
+	"panel.home.edit.unused.header.description": "要將以下項目之一添加到您的收藏夾，請單擊星號。",
+	"panel.label.offline.phone_or_email": "離線時功能不可用。",
 
 	"panel.browse.label.title":"浏览",
 	"panel.browse.button.events.title":"活动",
@@ -227,8 +229,8 @@
 	"panel.browse.alert.building_access.privacy_level.4.button.label": "設置為 4",
 	"panel.browse.alert.building_access.privacy_level.5.button.label": "設置為 5",
 
-	"panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to favorites?",
-	"panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from favorites?",
+	"panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to your favorites?",
+	"panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from your favorites?",
 
 	"panel.browse.section.academics.title": "Academics",
 	"panel.browse.section.academics.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
@@ -1132,7 +1134,7 @@
     "panel.laundry.issues_submitted.return.button": "返回",
 
     "panel.settings.home.header.settings.label": "我的設置",
-    "panel.settings.home.settings.sections.section.label": "設置部分",
+    "panel.settings.home.settings.sections.section.label": "登入/登出",
     "panel.settings.home.settings.sections.interests.label": "我的興趣",
     "panel.settings.home.settings.sections.food_filter.label": "我的食物過濾器",
     "panel.settings.home.settings.sections.sports.label": "我的運動隊",
@@ -1600,10 +1602,6 @@
 	"panel.bus_pass.error.default.text": "無法加載公交通行證",
 
     "panel.wellness.home.header.sections.title": "健康",
-    "panel.wellness.home.header.rings.title": "每日健康戒指",
-    "panel.wellness.home.header.todo.title": "我的待辦事項清單",
-    "panel.wellness.home.header.resources.title": "資源",
-    "panel.wellness.home.header.eight_dimensions.title": "8 尺寸",
     "panel.wellness.section.sections.label": "健康部分",
     "panel.wellness.section.rings.label": "每日健康戒指",
     "panel.wellness.section.todo.label": "待辦事項清單",
@@ -2345,6 +2343,10 @@
 	"widget.home.recent_items.button.all.title":"See All",
 	"widget.home.recent_items.button.all.hint":"Tap to see all",
 
+	"widget.home.my_groups.label.header.title":"My Groups",
+	"widget.home.my_groups.button.all.title":"See All",
+	"widget.home.my_groups.button.all.hint":"Tap to see all groups",
+
 	"widget.home.campus_resources.label.campus_tools":"校园资源",
 	"widget.home.campus_resources.button.events.title":"活动",
 	"widget.home.campus_resources.button.events.hint":"",
@@ -2405,7 +2407,7 @@
 	"widget.home.wallet.meal_plan.label.meals_remaining.text": "剩餘膳食",
 	"widget.home.wallet.meal_plan.label.dining_dollars.text": "餐飲美元",
 
-	"widget.home.wallet.bus_pass.title": "MTD",
+	"widget.home.wallet.bus_pass.title": "MTD 巴士通票",
 	"widget.home.wallet.bus_pass.label.card_expires.text": "卡過期：%s",
 
 	"widget.home.wallet.illini_id.title": "伊利尼身份證",
@@ -2420,10 +2422,10 @@
 	"widget.home.radio.title": "WPGU FM Radio",
 
 	"widget.home.prompt.add.favorite": "Are you sure you want to ADD this favorite?",
-	"widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this favorite?",
+	"widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this item from your favorites?",
 
 	"widget.home.welcome.text.title": "歡迎來到伊利諾伊州 4",
-	"widget.home.welcome.text.description": "此版本中的新功能：輕鬆重新排列您的收藏面板以自定義您自己的偏好。 通過點擊 {{star_icon}} 添加或刪除內容。 這可以在瀏覽中或通過點擊重新排序來完成。",
+	"widget.home.welcome.text.description": "此版本的新功能：個性化您想要在收藏夾中置頂和居中的伊利諾伊應用程序內容。 點擊自定義更改或重新排序您的收藏夾，或點擊 \u2606 添加或刪除內容。",
 	"widget.home.welcome.button.close.label": "關",
 
 	"widget.home.athletics_news.text.title": "Athletics News",
@@ -2444,7 +2446,10 @@
 	"widget.home.athletics_teams.button.all.title": "See All",
 	"widget.home.athletics_teams.button.all.hint": "Tap to see all teams",
 
-	"widget.home.tout.reorder.label": "重新排序",
+	"widget.home.tout.customize.label": "定制",
+	"widget.home.tout.button.info.label": "信息",
+	"widget.home.tout.button.info.hint": "點擊了解更多信息",
+	"widget.home.tout.popup.info.content": "伊利諾伊州應用程序使用您來自 <a href='{{student_self_service_url}}'>學生自助服務</a> 的名字。 您可以在“個人信息”和“首選名字”下更改首選名稱。",
 
 	"widget.athletics_card.button.get_tickets.title":"获取门票",
 	"widget.athletics_card.button.get_tickets.hint":"",
