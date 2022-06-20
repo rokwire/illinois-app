@@ -24,8 +24,10 @@ class HomeMyGroupsWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home.my_groups.label.header.title', 'My Groups'),
+      title: title,
     );
+
+  static String get title => Localization().getStringEx('widget.home.my_groups.label.header.title', 'My Groups');
 
   @override
   State<StatefulWidget> createState() => _HomeMyGroupsState();

@@ -60,8 +60,9 @@ class HomeRecentItemsWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed'),
+      title: title,
     );
+  static String get title => Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed');
 
   @override
   _HomeRecentItemsWidgetState createState() => _HomeRecentItemsWidgetState();

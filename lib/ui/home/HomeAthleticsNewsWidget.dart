@@ -31,8 +31,10 @@ class HomeAthliticsNewsWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home.athletics_news.text.title', 'Athletics News'),
+      title: title,
     );
+
+  static String get title => Localization().getStringEx('widget.home.athletics_news.text.title', 'Athletics News');
 
   State<HomeAthliticsNewsWidget> createState() => _HomeAthleticsNewsWidgetState();
 }

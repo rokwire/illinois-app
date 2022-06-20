@@ -52,8 +52,10 @@ class HomeSuggestedEventsWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home.suggested_events.label.events_for_you', 'Suggested Events'),
+      title: title,
     );
+
+  static String get title => Localization().getStringEx('widget.home.suggested_events.label.events_for_you', 'Suggested Events');
 
   @override
   State<HomeSuggestedEventsWidget> createState() => _HomeSuggestedEventsWidgetState();

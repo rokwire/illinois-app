@@ -20,8 +20,10 @@ class HomeAthliticsTeamsWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home.athletics_teams.text.title', 'Athletics Teams'),
+      title: title,
     );
+
+  static String get title => Localization().getStringEx('widget.home.athletics_teams.text.title', 'Athletics Teams');
 
   State<HomeAthliticsTeamsWidget> createState() => _HomeAthliticsTeamsWidgetState();
 }

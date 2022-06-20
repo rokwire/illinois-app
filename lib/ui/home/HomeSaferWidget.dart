@@ -32,8 +32,10 @@ class HomeSaferWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
+      title: title,
     );
+
+  static String get title => Localization().getStringEx('widget.home.safer.label.title', 'Building Access');
 
   @override
   _HomeSaferWidgetState createState() => _HomeSaferWidgetState();

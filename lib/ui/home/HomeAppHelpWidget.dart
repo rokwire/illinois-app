@@ -43,8 +43,10 @@ class HomeAppHelpWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widgets.home.app_help.header.title',  'App Help'),
+      title: title,
     );
+
+  static String get title => Localization().getStringEx('widgets.home.app_help.header.title',  'App Help');
 
   @override
   State<StatefulWidget> createState() => _HomeAppHelpWidgetState();

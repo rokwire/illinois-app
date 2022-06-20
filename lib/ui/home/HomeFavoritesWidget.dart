@@ -44,8 +44,21 @@ class HomeFavoritesWidget extends StatefulWidget {
 
   static Widget handle({required String favoriteKey, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: _HomeFavoritesWidgetState._titleFromKey(favoriteKey),
+      title: titleFromKey(favoriteKey: favoriteKey),
     );
+  
+  static String? titleFromKey({required String favoriteKey}) {
+    switch(favoriteKey) {
+      case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.events', 'My Events');
+      case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.dining', 'My Dinings');
+      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.athletics', 'My Athletics');
+      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.news', 'My News');
+      case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.laundry', 'My Laundry');
+      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.inbox', 'My Notifications');
+      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.campus_guide', 'My Campus Guide');
+    }
+    return null;
+  }
 
   @override
   _HomeFavoritesWidgetState createState() => _HomeFavoritesWidgetState();
@@ -371,20 +384,8 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     return null;
   }
 
-  String? get headingTitle => _titleFromKey(widget.favoriteKey);
+  String? get headingTitle => HomeFavoritesWidget.titleFromKey(favoriteKey: widget.favoriteKey);
 
-  static String? _titleFromKey(String favoriteKey) {
-    switch(favoriteKey) {
-      case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.events', 'My Events');
-      case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.dining', 'My Dinings');
-      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.athletics', 'My Athletics');
-      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.news', 'My News');
-      case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.laundry', 'My Laundry');
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.inbox', 'My Notifications');
-      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.campus_guide', 'My Campus Guide');
-    }
-    return null;
-  }
 
   Image? get headingIcon {
     switch(widget.favoriteKey) {

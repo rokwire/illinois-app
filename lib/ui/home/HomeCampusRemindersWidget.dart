@@ -42,9 +42,11 @@ class HomeCampusRemindersWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home.campus_reminders.label.campus_reminders', 'Campus Reminders'),
+      title: title,
     );
 
+  static String get title => Localization().getStringEx('widget.home.campus_reminders.label.campus_reminders', 'Campus Reminders');
+  
   @override
   _HomeCampusRemindersWidgetState createState() => _HomeCampusRemindersWidgetState();
 }

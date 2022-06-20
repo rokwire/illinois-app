@@ -19,8 +19,10 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'),
+      title: title,
     );
+
+  static String get title => Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio');
 
   @override
   Widget build(BuildContext context) {

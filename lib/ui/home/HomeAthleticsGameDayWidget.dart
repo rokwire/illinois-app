@@ -35,8 +35,10 @@ class HomeAthleticsGameDayWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('panel.browse.entry.my.my_game_day.title', 'My Game Day'),
+      title: title,
     );
+
+  static String get title => Localization().getStringEx('panel.browse.entry.my.my_game_day.title', 'My Game Day');
 
   State<HomeAthleticsGameDayWidget> createState() => _HomeAthleticsGameDayWidgetState();
 }
