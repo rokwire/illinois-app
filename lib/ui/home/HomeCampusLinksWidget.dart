@@ -42,8 +42,10 @@ class HomeCampusLinksWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widgets.home.campus_links.header.title', 'Campus Links'),
+      title: title,
     );
+
+  static String get title => Localization().getStringEx('widgets.home.campus_links.header.title', 'Campus Links');
 
   @override
   State<StatefulWidget> createState() => _HomeCampusLinksWidgetState();

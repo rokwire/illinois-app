@@ -24,8 +24,10 @@ class HomeMyGroupsWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home.my_groups.label.header.title', 'My Groups'),
+      title: title,
     );
+
+  static String get title => Localization().getStringEx('widget.home.my_groups.label.header.title', 'My Groups');
 
   @override
   State<StatefulWidget> createState() => _HomeMyGroupsState();
@@ -112,8 +114,8 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
         PageView(controller: _pageController, children: pages,)
       ),
       LinkButton(
-        title: Localization().getStringEx('widget.home.my_groups.button.all.title', 'See All'),
-        hint: Localization().getStringEx('widget.home.my_groups.button.all.hint', 'Tap to see all groups'),
+        title: Localization().getStringEx('widget.home.my_groups.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.my_groups.button.all.hint', 'Tap to view all groups'),
         onTap: _onSeeAll,
       ),
     ],);
@@ -171,7 +173,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: "HomeMyGroups See All");
+    Analytics().logSelect(target: "HomeMyGroups View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 }
