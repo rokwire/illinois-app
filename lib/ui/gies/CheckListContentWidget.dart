@@ -33,6 +33,16 @@ import 'package:url_launcher/url_launcher.dart';
 
 
 class CheckListContentWidget extends StatefulWidget{
+  static final TextStyle _regularText = TextStyle(
+    color: Styles().colors!.fillColorPrimary,
+    fontFamily: Styles().fontFamilies!.regular,
+    fontSize: 18,
+  );
+  static final TextStyle _boldText = TextStyle(
+    color: Styles().colors!.fillColorPrimary,
+    fontFamily: Styles().fontFamilies!.bold,
+    fontSize: 18,
+  );
 
   final String contentKey;
 
@@ -580,13 +590,167 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
   }
 
   _buildStudentInfoWidget(Map<String, dynamic>? params){
+    List<Widget> content = [];
+
+    Map<String, dynamic>? studentInfo = CheckList(widget.contentKey).studentInfo;
+    if(studentInfo == null || studentInfo.isEmpty){
+      return Container();
+    }
+
+    //UIN
+    String? uin = JsonUtils.stringValue(studentInfo['uin']);
+    if(StringUtils.isNotEmpty(uin)){
+      content.add(
+        Container(
+          child: RichText(
+              textAlign: TextAlign.left,
+              text: TextSpan(
+                  children:[
+                    TextSpan(text:"UIN: ", style : CheckListContentWidget._boldText,),
+                    TextSpan(text: uin!, style : CheckListContentWidget._regularText),
+                  ]
+              ))
+        )
+      );
+      content.add(Container(height: 10,));
+    }
+    //Name
+    content.add(_buildNameEntry(data: studentInfo));
+
+    //Mailing Address
+    Map<String, dynamic>? mailingAddressData = JsonUtils.mapValue(studentInfo['mailingAddress']);
+    content.add(_buildTitleEntry(title:"Mailing Address", countyName: JsonUtils.stringValue(mailingAddressData?['County']) ?? ""));
+    content.add(Container(height: 10,));
+    content.add(_buildAddressEntry(data: mailingAddressData));
+
+    //Permanent Address
+    Map<String, dynamic>? permanentAddressData = JsonUtils.mapValue(studentInfo['permanentAddress']);
+    content.add(_buildTitleEntry(title:"Permanent Address", countyName: JsonUtils.stringValue(permanentAddressData?['County']) ?? ""));
+    content.add(Container(height: 10,));
+    content.add(_buildAddressEntry(data: permanentAddressData));
+
+    List<dynamic>? emergencyContracts = JsonUtils.listValue(studentInfo["emergencycontacts"]);
+    if(emergencyContracts!=null && emergencyContracts.isNotEmpty){
+      for( int i=0; i<emergencyContracts.length; i++){
+        dynamic contractRawData = emergencyContracts[i];
+        Map<String, dynamic>? contractData = JsonUtils.mapValue(contractRawData);
+        if(contractData!=null){
+          Map<String, dynamic>? addressData = JsonUtils.mapValue(contractData["Address"]);
+          content.add(_buildTitleEntry(title:"Emergency Contact ${i+1}", countyName: JsonUtils.stringValue(addressData?['County']) ?? ""));
+          content.add(Container(height: 10,));
+          String? contactType = JsonUtils.mapValue(contractData["RelationShip"])?["Name"];
+          content.add(_buildNameEntry(data: contractData, additionalInfo: contactType));
+          content.add(_buildAddressEntry(data: addressData));
+        }
+      }
+    }
     //TBD implement
     return Container(
-      height: 100,
+      child: Row( children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: content),
+        )
+      ])
+    );
+  }
+  Widget _buildNameEntry({Map<String, dynamic>? data, String? additionalInfo /*preferred by default*/}){
+    if(data == null || data.isEmpty)
+      return Container();
+
+    List<Widget> content = [];
+    String? firstName = JsonUtils.stringValue(data['firstName'] ?? data['FirstName']) ?? "";
+    String? lastName = JsonUtils.stringValue(data['lastName'] ?? data['LastName']) ?? "";
+    String? preferred = JsonUtils.stringValue(data['preferred']) ?? "";
+    if(StringUtils.isNotEmpty(firstName) || StringUtils.isNotEmpty(lastName) || StringUtils.isNotEmpty(preferred  )){
+      content.add(
+          Container(
+              child: RichText(
+                  textAlign: TextAlign.left,
+                  text: TextSpan(
+                      children:[
+                        TextSpan(text:"$firstName $lastName (", style : CheckListContentWidget._regularText,),
+                        TextSpan(text: additionalInfo == null ? "Preferred Name: ": "$additionalInfo", style : CheckListContentWidget._boldText),
+                        TextSpan(text: additionalInfo == null? "$preferred)" : ")", style : CheckListContentWidget._regularText,),
+                      ]
+                  ))
+          )
+      );
+      content.add(Container(height: 10,));
+    }
+
+    return Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: content,
+        )
+    );
+  }
+
+  Widget _buildTitleEntry({String? title, String? countyName = ""}){
+    if(title == null || title.isEmpty)
+      return Container();
+
+    return Container(
+        child: RichText(
+            textAlign: TextAlign.left,
+            text: TextSpan(
+                children:[
+                  TextSpan(text:"$title ", style : CheckListContentWidget._boldText,),
+                  TextSpan(text:"(", style : CheckListContentWidget._regularText,),
+                  TextSpan(text: "County: ", style : CheckListContentWidget._boldText),
+                  TextSpan(text: "$countyName):", style : CheckListContentWidget._regularText,),
+                ]
+            ))
+    );
+  }
+
+  Widget _buildAddressEntry({Map<String, dynamic>? data}){
+    if(data == null || data.isEmpty)
+      return Container();
+
+    List<Widget> content = [];
+    if(CollectionUtils.isNotEmpty(data.entries)){
+      String? countyName = JsonUtils.stringValue(data['County']) ?? "";
+      String? street1 = JsonUtils.stringValue(data['Street1']) ?? "";
+      String? city = JsonUtils.stringValue(data['City']) ?? "";
+      String? stateName = JsonUtils.stringValue(data['StateName']) ?? "";
+      String? stateAbbr = JsonUtils.stringValue(data['StateAbbr']) ?? "";
+      String? zipCode = JsonUtils.stringValue(data['ZipCode']) ?? "";
+      Map?    phone = JsonUtils.mapValue(data['Phone']);
+      String areaCode = phone != null ? JsonUtils.stringValue(phone['AreaCode']) ?? "" : "";
+      String phoneNumber = phone != null ? JsonUtils.stringValue(phone['Number']) ?? "" : "";
+
+      //Address
+      content.add(Container(
+          child: Text(
+              "$street1 \n"
+                  +"$city, $stateName (Abbr: $stateAbbr) $zipCode",
+              style: CheckListContentWidget._regularText)
+      ));
+      content.add(Container(height: 10,));
+      //Address phone
+      content.add(
+          Container(
+              child: RichText(
+                  textAlign: TextAlign.left,
+                  text: TextSpan(
+                      children:[
+                        TextSpan(text:"Phone: ", style : CheckListContentWidget._boldText,),
+                        TextSpan(text: "($areaCode) $phoneNumber", style :CheckListContentWidget._regularText),
+                      ]
+                  ))
+          )
+      );
+      content.add(Container(height: 10,));
+    }
+
+    return Container(
       child: Column(
-        children: [
-          Text("Student info in progress..."),
-      ]),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: content,
+      )
     );
   }
 }

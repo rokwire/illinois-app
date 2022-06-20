@@ -55,7 +55,7 @@ abstract class CheckList with Service implements NotificationsListener{
   DateTime? _pausedDateTime;
 
   //custom widgets data
-  dynamic _studentInfo; //TBD load
+  Map<String, dynamic>? _studentInfo; //TBD load
 
   // String checklistName();
 
@@ -211,11 +211,12 @@ abstract class CheckList with Service implements NotificationsListener{
     String? responseString = response?.body;
     //TBD remove
     Log.d("Contact Info Request: ${response?.request.toString()}  Response: $responseCode : $responseString");
-    return responseString;
     if (responseCode == 200) {
       dynamic jsonResponse = JsonUtils.decode(responseString);
       return jsonResponse;
     } else {
+      //TBD remove
+      return JsonUtils.decode(_mocContactInfoResponse);
       Log.e('Failed to load Contact Info. Response code: $responseCode, Response:\n$responseString');
       return null;
     }
@@ -357,7 +358,7 @@ abstract class CheckList with Service implements NotificationsListener{
   void _processWidgetAction(String actionName){
     switch(actionName){
       case widgetActionApproveUserInfo : {
-        //TBD implement
+        //TBD implement Hook to groups api
         AppToast.show("Try to upload User Info: $_studentInfo");
       }
     }
@@ -527,6 +528,10 @@ abstract class CheckList with Service implements NotificationsListener{
     return false; //Remove Notes buttons if we don't support them anymore. Hide for now
   }
 
+  Map<String, dynamic>? get studentInfo{
+    return _studentInfo;
+  }
+
   String get _cacheFileName => "$_contentName.json";
   //Utils
   bool _pageCanComplete(Map? page) {
@@ -559,6 +564,66 @@ abstract class CheckList with Service implements NotificationsListener{
 
   int? getPageProgress(Map<String, dynamic>? page) {
     return (page != null) ? (JsonUtils.intValue(page['progress']) ?? JsonUtils.intValue(page['progress-possition'])) : null;
+  }
+
+  //TBD remove
+  String get _mocContactInfoResponse{
+    return "{\r\n   "
+        "\"uin\":\"657427043\",\r\n   "
+        "\"firstName\":\"Clint\",\r\n   "
+        "\"lastName\":\"Stearns\",\r\n   "
+        "\"preferred\":\"\",\r\n  "
+        " \"mailingAddress\":{\r\n      "
+          "\"Type\":\"MA\",\r\n      "
+          "\"Street1\":\"207EMichiganAve\",\r\n      "
+          "\"City\":\"Urbana\",\r\n     "
+          "\"StateAbbr\":\"IL\",\r\n      "
+          "\"StateName\":\"Illinois\",\r\n      "
+          "\"ZipCode\":\"61801-5028\",\r\n      "
+          "\"County\":\"Champaign\",\r\n     "
+          " \"Phone\":{\r\n         "
+            "\"AreaCode\":\"217\",\r\n         "
+            "\"Number\":\"3676260\"\r\n      "
+          "}\r\n   "
+        "},\r\n   "
+        "\"permanentAddress\":{\r\n     "
+          "\"Type\":\"PR\",\r\n      "
+          "\"Street1\":\"207EMichiganAve\",\r\n      "
+          "\"City\":\"Urbana\",\r\n      "
+          "\"StateAbbr\":\"IL\",\r\n      "
+          "\"StateName\":\"Illinois\",\r\n      "
+          "\"ZipCode\":\"61801-5028\",\r\n      "
+          "\"County\":\"Champaign\",\r\n      "
+          "\"Phone\":{\r\n         "
+            "\"AreaCode\":\"217\",\r\n         "
+            "\"Number\":\"3676260\"\r\n      "
+          "}\r\n   "
+        "},\r\n   "
+        "\"emergencycontacts\":[\r\n      "
+          "{\r\n         "
+            "\"Priority\":\"1\",\r\n        "
+            "\"RelationShip\":{\r\n            "
+              "\"Code\":\"I\",\r\n            "
+              "\"Name\":\"Spouse\"\r\n         "
+            "},\r\n         "
+            "\"FirstName\":\"Michelle\",\r\n         "
+            "\"LastName\":\"Stearns\",\r\n         "
+            "\"Address\":{\r\n           "
+              " \"Type\":\"ECA\",\r\n            "
+              "\"Street1\":\"207EMichiganAve\",\r\n            "
+              "\"City\":\"Urbana\",\r\n            "
+              "\"StateAbbr\":\"IL\",\r\n            "
+              "\"StateName\":\"Illinois\",\r\n            "
+              "\"ZipCode\":\"61801\",\r\n            "
+              "\"County\":\"\",\r\n           "
+              " \"Phone\":{\r\n               "
+                "\"AreaCode\":\"217\",\r\n               "
+                "\"Number\":\"3676260\"\r\n            "
+              "}\r\n         "
+            "}\r\n      "
+          "}\r\n   "
+        "]\r"
+        "\n}";
   }
 
   @override
