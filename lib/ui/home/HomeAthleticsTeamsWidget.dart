@@ -55,8 +55,8 @@ class _HomeAthliticsTeamsWidgetState extends State<HomeAthliticsTeamsWidget> {
         child: AthleticsTeamsWidget(handleTeamTap: true, sportsLimit: Config().homeAthleticsTeamsCount, updateSportPrefs: false),
       ),
       LinkButton(
-        title: Localization().getStringEx('widget.home.athletics_teams.button.all.title', 'See All'),
-        hint: Localization().getStringEx('widget.home.athletics_teams.button.all.hint', 'Tap to see all teams'),
+        title: Localization().getStringEx('widget.home.athletics_teams.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.athletics_teams.button.all.hint', 'Tap to view all teams'),
         onTap: _onTapSeeAll,
       ),
       

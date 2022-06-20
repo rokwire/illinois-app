@@ -125,8 +125,8 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
       }
       if (promotedCount < _promotedItems!.length) {
           contentList.add(LinkButton(
-            title: Localization().getStringEx('widget.home.campus_guide_highlights.button.more.title', 'See All'),
-            hint: Localization().getStringEx('widget.home.campus_guide_highlights.button.more.hint', 'Tap to view all highlights'),
+            title: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.title', 'View All'),
+            hint: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.hint', 'Tap to view all highlights'),
             onTap: _onSeeAll,
           ));
       }
@@ -135,7 +135,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: "HomeCampusHighlightsWidget See All");
+    Analytics().logSelect(target: "HomeCampusHighlightsWidget View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _promotedItems, contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'))));
   }
 }

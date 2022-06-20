@@ -112,8 +112,8 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
         PageView(controller: _pageController, children: pages,)
       ),
       LinkButton(
-        title: Localization().getStringEx('widget.home.my_groups.button.all.title', 'See All'),
-        hint: Localization().getStringEx('widget.home.my_groups.button.all.hint', 'Tap to see all groups'),
+        title: Localization().getStringEx('widget.home.my_groups.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.my_groups.button.all.hint', 'Tap to view all groups'),
         onTap: _onSeeAll,
       ),
     ],);
@@ -171,7 +171,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: "HomeMyGroups See All");
+    Analytics().logSelect(target: "HomeMyGroups View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 }

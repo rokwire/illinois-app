@@ -171,8 +171,8 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
       }
       contentList.add(
           LinkButton(
-            title: Localization().getStringEx('widget.home.upcoming_events.button.all.title', 'See All'),
-            hint: Localization().getStringEx('widget.home.upcoming_events.button.all.hint', 'Tap to see all events'),
+            title: Localization().getStringEx('widget.home.athletics_events.button.all.title', 'View All'),
+            hint: Localization().getStringEx('widget.home.athletics_events.button.all.hint', 'Tap to view all events'),
             onTap: _onTapSeeAll,
           ),
 

@@ -140,8 +140,8 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
       }
       if (remindersCount < _reminderItems!.length) {
         contentList.add(LinkButton(
-          title: Localization().getStringEx('widget.home.campus_reminders.button.more.title', 'See All'),
-          hint: Localization().getStringEx('widget.home.campus_reminders.button.more.hint', 'Tap to view all reminders'),
+          title: Localization().getStringEx('widget.home.campus_reminders.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.campus_reminders.button.all.hint', 'Tap to view all reminders'),
           onTap: _onSeeAll,
         ));
       }
@@ -150,7 +150,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: "HomeCampusRemindersWidget See All");
+    Analytics().logSelect(target: "HomeCampusRemindersWidget View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _reminderItems, contentTitle: Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'))));
   }
 }

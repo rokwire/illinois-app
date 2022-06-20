@@ -158,8 +158,8 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
       if (Config().homeRecentItemsCount < itemsCount) {
         widgets.add(LinkButton(
-          title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'See All'),
-          hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to see all'),
+          title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to view all items'),
           onTap: _onSeeAll,
         ));
       }
@@ -172,7 +172,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: "HomeRecentItemsWidget See All");
+    Analytics().logSelect(target: "HomeRecentItemsWidget View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeRecentItemsPanel()));
   }
 }

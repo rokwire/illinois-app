@@ -181,7 +181,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
       if (visibleCount < itemsCount) {
         widgets.add(LinkButton(
-          title: Localization().getStringEx('panel.saved.button.all.title', 'See All'),
+          title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
           hint: Localization().getStringEx('panel.saved.button.all.hint', ''),
           onTap: _onSeeAll,
         ));
@@ -396,7 +396,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: 'HomeFavoritesWidget(${widget.favoriteKey}) See All');
+    Analytics().logSelect(target: 'HomeFavoritesWidget(${widget.favoriteKey}) View All');
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
   }
 }
