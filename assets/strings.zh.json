@@ -1628,7 +1628,12 @@
 
     "panel.wellness.categories.manage.title": "管理類別",
     "panel.wellness.categories.create.header.label": "創建類別",
-    "panel.wellness.categories.create.header.description": "示例可能包括為 RSO、每個班級或您的日常雜項任務創建一個類別.",
+    "panel.wellness.categories.create.header.description": "示例：RSO 或俱樂部、特定班級或雜項任務類別.",
+    "panel.wellness.categories.name.field.label": "姓名",
+    "panel.wellness.categories.reminders.field.label": "提醒事項",
+    "panel.wellness.categories.save.button": "節省",
+    "panel.wellness.categories.manage.existing.label": "管理現有類別",
+    "panel.wellness.categories.manage.empty.label": "沒有當前類別",
 
     "panel.wellness.resources.header.label": "健康資源",
     "panel.wellness.resources.appointment.button": "我想預約",
@@ -2661,6 +2666,10 @@
 
     "model.canvas.calendar.event.type.event.label": "事件",
     "model.canvas.calendar.event.type.assignment.label": "任務",
+
+    "model.wellness.todo.category.reminder.type.none.label": "沒有任何",
+    "model.wellness.todo.category.reminder.type.morning_of.label": "早上的",
+    "model.wellness.todo.category.reminder.type.night_before.label": "前一天晚上",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",
