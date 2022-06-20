@@ -84,7 +84,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
           ),
 
                 
-          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: HomeFavoriteStyle.SlantHeader, prompt: true),
+          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: HomeFavoriteStyle.Handle, prompt: true),
         ],),
       ),
 
@@ -282,7 +282,7 @@ class HomeTitleIcon extends StatelessWidget {
   }
 }
 
-enum HomeFavoriteStyle { SlantHeader, Button }
+enum HomeFavoriteStyle { SlantHeader, Handle, Button }
 
 class HomeFavoriteStar extends StatelessWidget {
 
@@ -304,6 +304,11 @@ class HomeFavoriteStar extends StatelessWidget {
       return (selected == true) ?
         Image.asset('images/icon-star-orange.png', excludeFromSemantics: true) :
         Image.asset('images/icon-star-white-frame-thin.png', excludeFromSemantics: true,);
+    }
+    else if (style == HomeFavoriteStyle.Handle) {
+      return (selected == true) ?
+        Image.asset('images/icon-star-orange.png', excludeFromSemantics: true) :
+        Image.asset('images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,);
     }
     else if (style == HomeFavoriteStyle.Button) {
       if (selected == null) {

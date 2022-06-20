@@ -23,26 +23,25 @@ class HomeCheckListWidget extends StatefulWidget{
 
   const HomeCheckListWidget({Key? key, required this.contentKey, this.favoriteId, this.updateController}) : super(key: key);
 
+  static String title({required String contentKey}) => titleFromKey(contentKey);
+
   static Widget handle({required String contentKey, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: titleFromKey(contentKey),
+      title: title(contentKey: contentKey),
     );
 
-  @override
-  State<StatefulWidget> createState() => _HomeCheckListWidgetState();
-
-  String get title => titleFromKey(contentKey);
-
   static String titleFromKey(String contentKey) {
-    if(contentKey == "gies"){
+    if (contentKey == "gies") {
       return Localization().getStringEx( 'widget.checklist.gies.title', 'iDegrees New Student Checklist');
-    } else if (contentKey == "uiuc_student"){
+    } else if (contentKey == "uiuc_student") {
       return Localization().getStringEx( 'widget.checklist.uiuc.title', 'New Student Checklist');
     }
 
     return "";
   }
 
+  @override
+  State<StatefulWidget> createState() => _HomeCheckListWidgetState();
 }
 
 class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements NotificationsListener{
@@ -257,7 +256,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
     return CheckList(widget.contentKey).progressSteps?.length ?? 0;
   }
 
-  String get _title => widget.title;
+  String get _title => HomeCheckListWidget.title(contentKey: widget.contentKey);
 
   @override
   void onNotification(String name, param) {
