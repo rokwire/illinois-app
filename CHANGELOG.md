@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.0.33] - 2022-06-20
 ### Changed
 - Do not change header bar title based on the drop down selection in Wellness [#1776](https://github.com/rokwire/illinois-app/issues/1776).
 - Header bar title from "Maps" to "Map" [#1778](https://github.com/rokwire/illinois-app/issues/1778).
