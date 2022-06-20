@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -98,7 +99,8 @@ abstract class CheckList with Service implements NotificationsListener{
     _buildProgressSteps();
     _loadPageVerification();
     _ensureNavigationPages();
-
+    _loadUserInfo().then(
+            (value) => _studentInfo = value);
     if (_pages != null) {
       await super.initService();
     }
@@ -190,6 +192,33 @@ abstract class CheckList with Service implements NotificationsListener{
   // ignore: unused_element
   Future<List<dynamic>?> _loadFromAssets() async{
     return JsonUtils.decodeList(await AppBundle.loadString('assets/gies.json'));
+  }
+
+  Future<dynamic> _loadUserInfo() async {
+    if(_contentName != "gies"){
+      return null;
+    }
+    if (StringUtils.isEmpty(Config().gatewayUrl)) {
+      Log.e('Missing gateway url.');
+      return null;
+    }
+    String? contactInfoUrl = "${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}";
+    String? token = Auth2().uiucToken?.accessToken;
+    // String? token = Auth2().token?.accessToken;
+
+    Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: {"ExternalAuthorization":token});
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    //TBD remove
+    Log.d("Contact Info Request: ${response?.request.toString()}  Response: $responseCode : $responseString");
+    return responseString;
+    if (responseCode == 200) {
+      dynamic jsonResponse = JsonUtils.decode(responseString);
+      return jsonResponse;
+    } else {
+      Log.e('Failed to load Contact Info. Response code: $responseCode, Response:\n$responseString');
+      return null;
+    }
   }
 
   void _buildProgressSteps() {
