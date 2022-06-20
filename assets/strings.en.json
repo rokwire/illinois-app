@@ -58,6 +58,8 @@
     "headerbar.back.hint":"",
     "headerbar.close.title":"Close",
     "headerbar.close.hint":"",
+    "headerbar.save.title":"Save",
+    "headerbar.save.hint":"",
     "headerbar.saved.title":"Saved",
     "headerbar.saved.hint":"",
     "headerbar.teams.title":"Teams",

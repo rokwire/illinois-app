@@ -621,9 +621,9 @@ class _HomeHeaderBar extends RootHeaderBar {
   }
 
   Widget buildHeaderEditDoneButton(BuildContext context) {
-    return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
+    return Semantics(label: Localization().getStringEx('headerbar.save.title', 'Save'), hint: Localization().getStringEx('headerbar.save.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: () => onTapEditDone(context), child:
-        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.save.title', 'Save'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       )
     );
   }

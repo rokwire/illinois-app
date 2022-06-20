@@ -58,6 +58,8 @@
     "headerbar.back.hint":"",
     "headerbar.close.title":"Cerrar",
     "headerbar.close.hint":"",
+    "headerbar.save.title":"Ahorrar",
+    "headerbar.save.hint":"",
     "headerbar.saved.title":"Guardado",
     "headerbar.saved.hint":"",
     "headerbar.teams.title":"Equipos",
