@@ -1620,9 +1620,8 @@
     "panel.wellness.todo.items.unassigned.category.label": "Unassigned Items",
     "panel.wellness.todo.items.add.button": "Add Item",
     "panel.wellness.todo.items.add.empty.msg": "No upcoming items",
-    "panel.wellness.todo.welcome.header.label": "Welcome to your",
-    "panel.wellness.todo.welcome.todo_list.label": "To-Do List",
-    "panel.wellness.todo.welcome.description.label": "Use this tool to manage your ...",
+    "panel.wellness.todo.welcome.label": "Welcome to Your To-Do List",
+    "panel.wellness.todo.welcome.description.label": "Free up space in your mind by recording your to-do items here.",
     "panel.wellness.todo.categories.manage.button": "Manage Categories",
 
     "panel.wellness.categories.manage.title": "Manage Categories",
