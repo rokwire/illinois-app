@@ -27,6 +27,9 @@ import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
+import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
+import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
+import 'package:illinois/ui/home/HomeAthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCampusLinksWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
@@ -50,16 +53,15 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomeCampusRemindersWidget.dart';
 import 'package:illinois/ui/home/HomeCampusResourcesWidget.dart';
 import 'package:illinois/ui/home/HomeCreatePollWidget.dart';
-import 'package:illinois/ui/home/HomeGameDayWidget.dart';
+import 'package:illinois/ui/home/HomeAthleticsGameDayWidget.dart';
 import 'package:illinois/ui/home/HomeLoginWidget.dart';
 import 'package:illinois/ui/home/HomeMyGroupsWidget.dart';
-import 'package:illinois/ui/home/HomePreferredSportsWidget.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeSaferWidget.dart';
 import 'package:illinois/ui/home/HomeCampusHighlightsWidget.dart';
 import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeVoterRegistrationWidget.dart';
-import 'package:illinois/ui/home/HomeUpcomingEventsWidget.dart';
+import 'package:illinois/ui/home/HomeSuggestedEventsWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -174,20 +176,26 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       return handle? null : HomeWelcomeWidget(favoriteId: code, updateController: _updateController,); //TBD
     }
 
-    if (code == 'game_day') {
-      return handle ? HomeGameDayWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeGameDayWidget(favoriteId: code, updateController: _updateController,);
+    else if (code == 'my_game_day') {
+      return handle ? HomeAthleticsGameDayWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAthleticsGameDayWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'sport_events') {
+      return handle ? HomeAthliticsEventsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAthliticsEventsWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'sport_news') {
+      return handle ? HomeAthliticsNewsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAthliticsNewsWidget(favoriteId: code, updateController: _updateController,);
+    }
+    else if (code == 'sport_teams') {
+      return handle ? HomeAthliticsTeamsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAthliticsTeamsWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'campus_resources') {
       return handle ? HomeCampusResourcesWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCampusResourcesWidget(favoriteId: code, updateController: _updateController,);
     }
-    else if (code == 'sport_prefs') {
-      return handle ? HomePreferredSportsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomePreferredSportsWidget(menSports: true, womenSports: true, favoriteId: code, updateController: _updateController,);
-    }
     else if (code == 'campus_reminders') {
       return handle ? HomeCampusRemindersWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCampusRemindersWidget(favoriteId: code, updateController: _updateController,);
     }
-    else if (code == 'upcoming_events') {
-      return handle ? HomeUpcomingEventsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeUpcomingEventsWidget(favoriteId: code, updateController: _updateController,);
+    else if (code == 'suggested_events') {
+      return handle ? HomeSuggestedEventsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeSuggestedEventsWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'recent_items') {
       return handle ? HomeRecentItemsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeRecentItemsWidget(favoriteId: code, updateController: _updateController,);
@@ -277,8 +285,10 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
     if (homeFavorites != null) {
 
-      widgets.add(_buildEditingHeader(title: Localization().getStringEx('panel.home.favorites.editing.header.title', 'Favorites'), favoriteId: _favoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
-        description: Localization().getStringEx('panel.home.favorites.editing.header.description', 'Tap and hold an item to change its order in favorites. Touch "Done" to view your updated Favorites.'),
+      widgets.add(_buildEditingHeader(
+        favoriteId: _favoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
+        title: Localization().getStringEx('panel.home.edit.favorites.header.title', 'Your Favorites'),
+        description: Localization().getStringEx('panel.home.edit.favorites.header.description', 'Below is the content currently on your favorites screen. To reorder your favorites, tap, hold, and drag an item. To remove an item from your favorites, click on the star.'),
       ));
        
       int position = 0;
@@ -296,8 +306,10 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     List<String>? fullContent = JsonUtils.listStringsValue(FlexUI()['home']);
     if (fullContent != null) {
 
-      widgets.add(_buildEditingHeader(title: 'Unused Favorites', favoriteId: _unfavoritesHeaderId, dropAnchorAlignment: null,
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec risus sapien, tempus sed bibendum et, accumsan interdum velit. Integer bibendum feugiat lectus, eget sollicitudin enim vulputate sit amet. Pellentesque at risus odio.',
+      widgets.add(_buildEditingHeader(
+        favoriteId: _unfavoritesHeaderId, dropAnchorAlignment: null,
+        title: Localization().getStringEx('panel.home.edit.unused.header.title', 'Unused Favorites'),
+        description: Localization().getStringEx('panel.home.edit.unused.header.description', 'To add one of the below items to your favorites, click on the star.'),
       ));
 
       int position = 0;

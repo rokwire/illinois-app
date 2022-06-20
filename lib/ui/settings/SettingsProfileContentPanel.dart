@@ -57,7 +57,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: RootHeaderBar(title: _panelHeaderLabel),
+        appBar: RootHeaderBar(title: Localization().getStringEx('panel.settings.profile.header.profile.label', 'My Profile')),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
@@ -172,17 +172,6 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
         return Localization().getStringEx('panel.settings.profile.content.who_are_you.label', 'Who Are You');
       case SettingsProfileContent.privacy:
         return Localization().getStringEx('panel.settings.profile.content.privacy.label', 'My App Privacy Settings');
-    }
-  }
-
-  String get _panelHeaderLabel {
-    switch (_selectedContent) {
-      case SettingsProfileContent.profile:
-        return Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile');
-      case SettingsProfileContent.who_are_you:
-        return Localization().getStringEx('panel.settings.profile.header.who_are_you.label', 'Who Are You');
-      case SettingsProfileContent.privacy:
-        return Localization().getStringEx('panel.settings.profile.header.privacy.label', 'Privacy');
     }
   }
 

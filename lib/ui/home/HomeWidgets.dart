@@ -310,10 +310,10 @@ class HomeFavoriteStar extends StatelessWidget {
         return Image.asset('images/icon-star-gray.png', excludeFromSemantics: true);
       }
       else if (selected == true) {
-        return Image.asset('images/icon-star-blue.png', excludeFromSemantics: true);
+        return Image.asset('images/icon-star-orange.png', excludeFromSemantics: true);
       }
       else if (selected == false) {
-        return Image.asset('images/icon-star-gray-frame-thin.png', excludeFromSemantics: true);
+        return Image.asset('images/icon-star-white.png', excludeFromSemantics: true);
       }
     }
     
@@ -359,8 +359,8 @@ class HomeFavoriteButton extends StatelessWidget {
 
   static Future<bool?> promptFavorite(BuildContext context, Favorite? favorite) async {
     String message = (Auth2().prefs?.isFavorite(favorite) ?? false) ?
-      Localization().getStringEx('widget.home.prompt.remove.favorite', 'Are you sure you want to REMOVE this favorite') :
-      Localization().getStringEx('widget.home.prompt.add.favorite', 'Are you sure you want to ADD this favorite');
+      Localization().getStringEx('widget.home.prompt.remove.favorite', 'Are you sure you want to REMOVE this item from your favorites?') :
+      Localization().getStringEx('widget.home.prompt.add.favorite', 'Are you sure you want to ADD this favorite?');
     return await showDialog(context: context, builder: (BuildContext context) {
       return AlertDialog(
         content: Text(message),

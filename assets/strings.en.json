@@ -34,8 +34,8 @@
     "tabbar.wallet.hint":"Wallet Page",
     "tabbar.favorites.title":"Favorites",
     "tabbar.favorites.hint":"Favorites Page",
-    "tabbar.maps.title":"Maps",
-    "tabbar.maps.hint":"Maps Page",
+    "tabbar.map.title":"Map",
+    "tabbar.map.hint":"Map Page",
     "tabbar.academics.title":"Academics",
     "tabbar.academics.hint":"Academics Page",
     "tabbar.wellness.title":"Wellness",
@@ -133,8 +133,10 @@
     "panel.home.connect.not_logged_in.phone_or_email.description.part_1": "Don't have a NetID? ",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
     "panel.home.connect.not_logged_in.phone_or_email.title": "Continue",
-    "panel.home.favorites.editing.header.title": "Favorites",
-    "panel.home.favorites.editing.header.description": "Tap and hold an item to change its order in favorites. Touch \"Done\" to view your updated Favorites.",
+    "panel.home.edit.favorites.header.title": "Your Favorites",
+    "panel.home.edit.favorites.header.description": "Below is the content currently on your favorites screen. To reorder your favorites, tap, hold, and drag an item. To remove an item from your favorites, click on the star.",
+    "panel.home.edit.unused.header.title": "Unused Favorites",
+    "panel.home.edit.unused.header.description": "To add one of the below items to your favorites, click on the star.",
     "panel.label.offline.phone_or_email": "Feature not available when offline.",
 
     "panel.browse.label.title": "Browse",
@@ -227,8 +229,8 @@
     "panel.browse.alert.building_access.privacy_level.4.button.label": "Set to 4",
     "panel.browse.alert.building_access.privacy_level.5.button.label": "Set to 5",
 
-    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to favorites?",
-    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from favorites?",
+    "panel.browse.prompt.add.all.favorites": "Are you sure you want to ADD ALL items to your favorites?",
+    "panel.browse.prompt.remove.all.favorites": "Are you sure you want to REMOVE ALL items from your favorites?",
 
     "panel.browse.section.academics.title": "Academics",
     "panel.browse.section.academics.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
@@ -271,11 +273,9 @@
     "panel.browse.entry.app_help.feedback.title": "Feedback",
     "panel.browse.entry.app_help.faqs.title": "FAQs",
 
-    "panel.browse.entry.athletics.game_day.title": "It's Game Day!",
-    "panel.browse.entry.athletics.upcoming_games.title": "Upcoming Events",
+    "panel.browse.entry.athletics.sport_events.title": "Upcoming Events",
     "panel.browse.entry.athletics.sport_news.title": "News",
     "panel.browse.entry.athletics.sport_teams.title": "Teams",
-    "panel.browse.entry.athletics.sport_prefs.title": "Sport Prefs",
 
     "panel.browse.entry.safer.building_access.title": "Building Access",
     "panel.browse.entry.safer.test_locations.title": "Test Locations",
@@ -300,13 +300,14 @@
     "panel.browse.entry.campus_resources.campus_guide.title": "Campus Guide",
     "panel.browse.entry.campus_resources.inbox.title": "Notifications",
 
-    "panel.browse.entry.events.upcoming_events.title": "Events For You",
+    "panel.browse.entry.events.suggested_events.title": "Suggested Events",
 
     "panel.browse.entry.feeds.twitter.title": "Twitter",
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU FM Radio",
     "panel.browse.entry.feeds.illini_news.title": "Illini News",
 
     "panel.browse.entry.my.my_groups.title": "My Groups",
+    "panel.browse.entry.my.my_game_day.title": "My Game Day",
     "panel.browse.entry.my.my_events.title": "My Events",
     "panel.browse.entry.my.my_dining.title": "My Dinings",
     "panel.browse.entry.my.my_athletics.title": "My Athletics",
@@ -346,7 +347,7 @@
     "panel.search.field.search.title": "Search",
     "panel.search.field.search.hint": "Type a search term",
 
-    "panel.maps.header.title": "Maps",
+    "panel.maps.header.title": "Map",
 
     "panel.academics.header.title": "Academics",
     "panel.academics.section.events.label": "Academic Events",
@@ -1132,12 +1133,8 @@
     "panel.laundry.issues_submitted.success.description.label": "One of our technicians will arrive at your property within 3 business days to service the machine. We apologize for any inconvenience you may have experienced.",
     "panel.laundry.issues_submitted.return.button": "Return",
 
-    "panel.settings.home.header.settings.label": "Settings",
-    "panel.settings.home.header.interests.label": "My Interests",
-    "panel.settings.home.header.food_filter.label": "My Food Filter",
-    "panel.settings.home.header.sports.label": "My Sports Teams",
-    "panel.settings.home.header.calendar.label": "My Calendar Settings",
-    "panel.settings.home.settings.sections.section.label": "Setting Sections",
+    "panel.settings.home.header.settings.label": "My Settings",
+    "panel.settings.home.settings.sections.section.label": "Sign In/Sign Out",
     "panel.settings.home.settings.sections.interests.label": "My Interests",
     "panel.settings.home.settings.sections.food_filter.label": "My Food Filter",
     "panel.settings.home.settings.sections.sports.label": "My Sports Teams",
@@ -1212,14 +1209,11 @@
     "panel.settings.profile.content.profile.label": "My Profile",
     "panel.settings.profile.content.who_are_you.label": "Who Are You",
     "panel.settings.profile.content.privacy.label": "My App Privacy Settings",
-    "panel.settings.profile.header.profile.label": "Profile",
-    "panel.settings.profile.header.who_are_you.label": "Who Are You",
-    "panel.settings.profile.header.privacy.label": "Privacy",
+    "panel.settings.profile.header.profile.label": "My Profile",
 
     "panel.settings.notifications.content.inbox.label": "My Notifications",
     "panel.settings.notifications.content.preferences.label": "My Notification Preferences",
     "panel.settings.notifications.header.inbox.label": "My Notifications",
-    "panel.settings.notifications.header.preferences.label": "My Notification Preferences",
 
     "panel.settings.home.calendar.settings.add_events.label": "Add saved events to calendar",
     "panel.settings.home.calendar.settings.prompt.label": "Prompt when saving events to calendar",
@@ -1606,16 +1600,12 @@
     "panel.bus_pass.error.duplicate.text": "This MTD bus pass has already been displayed on another device.\n\nOnly one device can display the MTD bus pass per Illini ID.",
     "panel.bus_pass.error.default.text": "Unable to load bus pass",
 
-    "panel.wellness.header.title": "Wellness",
-
     "panel.wellness.home.header.sections.title": "Wellness",
-    "panel.wellness.home.header.rings.title": "Daily Wellness Rings",
-    "panel.wellness.home.header.todo.title": "My To-Do List",
-    "panel.wellness.home.header.resources.title": "Resources",
     "panel.wellness.section.sections.label": "Wellness Sections",
     "panel.wellness.section.rings.label": "Daily Wellness Rings",
     "panel.wellness.section.todo.label": "To-Do List",
     "panel.wellness.section.resources.label": "Wellness Resources",
+    "panel.wellness.section.eight_dimensions.label": "8 Dimensions of Wellness",
 
     "panel.wellness.sections.description.header.text": "Learn to prioritize. Take care of what you can get done today, right now. This will help you be a better time manager and reduce the risk of procrastination.",
     "panel.wellness.sections.description.footer.wellness.text": "Wellness ",
@@ -1627,6 +1617,13 @@
     "panel.wellness.todo.tab.category.label": "Category",
     "panel.wellness.todo.tab.reminders.label": "Reminders",
     "panel.wellness.todo.items.completed.clear.button": "Clear Completed Items",
+    "panel.wellness.todo.items.unassigned.category.label": "Unassigned Items",
+    "panel.wellness.todo.items.add.button": "Add Item",
+    "panel.wellness.todo.items.add.empty.msg": "No upcoming items",
+    "panel.wellness.todo.welcome.header.label": "Welcome to your",
+    "panel.wellness.todo.welcome.todo_list.label": "To-Do List",
+    "panel.wellness.todo.welcome.description.label": "Use this tool to manage your ...",
+    "panel.wellness.todo.categories.manage.button": "Manage Categories",
 
     "panel.wellness.resources.header.label": "Wellness Resources",
     "panel.wellness.resources.appointment.button": "I want to make an appointment",
@@ -2337,14 +2334,18 @@
     "widget.voter.rv_alert.vote_early.text": "You are at the %s and can vote early",
     "widget.voter.rv_alert.vote_now.text": "You are at the %s and can vote now",
 
-    "widget.home.upcoming_events.label.events_for_you":"Events For You",
-    "widget.home.upcoming_events.label.events_for_you.sub_title":"Curated from your interests",
-    "widget.home.upcoming_events.button.all.title":"See All",
-    "widget.home.upcoming_events.button.all.hint":"Tap to see all events",
+    "widget.home.suggested_events.label.events_for_you":"Suggested Events",
+    "widget.home.suggested_events.label.events_for_you.sub_title":"Curated from your interests",
+    "widget.home.suggested_events.button.all.title":"See All",
+    "widget.home.suggested_events.button.all.hint":"Tap to see all events",
 
     "widget.home.recent_items.label.header.title":"Recently Viewed",
     "widget.home.recent_items.button.all.title":"See All",
     "widget.home.recent_items.button.all.hint":"Tap to see all",
+
+    "widget.home.my_groups.label.header.title":"My Groups",
+    "widget.home.my_groups.button.all.title":"See All",
+    "widget.home.my_groups.button.all.hint":"Tap to see all groups",
 
     "widget.home.campus_resources.label.campus_tools":"Campus Resources",
     "widget.home.campus_resources.button.events.title":"Events",
@@ -2407,7 +2408,7 @@
     "widget.home.wallet.meal_plan.label.meals_remaining.text": "Meals Remaining",
     "widget.home.wallet.meal_plan.label.dining_dollars.text": "Dining Dollars",
 
-    "widget.home.wallet.bus_pass.title": "MTD",
+    "widget.home.wallet.bus_pass.title": "MTD Bus Pass",
     "widget.home.wallet.bus_pass.label.card_expires.text": "Card Expires: %s",
 
     "widget.home.wallet.illini_id.title": "Illini ID",
@@ -2422,13 +2423,34 @@
     "widget.home.radio.title": "WPGU FM Radio",
 
     "widget.home.prompt.add.favorite": "Are you sure you want to ADD this favorite?",
-    "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this favorite?",
+    "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this item from your favorites?",
 
     "widget.home.welcome.text.title": "Welcome to Illinois 4",
-    "widget.home.welcome.text.description": "New in this version: easily reorder your favorites panel to customize your own preferences. Add or remove content by tapping {{star_icon}}. This can be done in Browse or by tapping Reorder.",
+    "widget.home.welcome.text.description": "New in this version: personalize the Illinois app content you want front and center in Favorites. Change or reorder your favorites by tapping on Customize, or add or remove content by tapping \u2606.",
     "widget.home.welcome.button.close.label": "Close",
 
-    "widget.home.tout.reorder.label": "Reorder",
+    "widget.home.athletics_news.text.title": "Athletics News",
+    "widget.home.athletics_news.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.athletics_news.text.empty.description": "No Athletics News are available right now.",
+    "widget.home.athletics_news.text.offline": "Athletics News are not available while offline",
+    "widget.home.athletics_news.button.all.title": "See All",
+    "widget.home.athletics_news.button.all.hint": "Tap to see all news",
+
+    "widget.home.athletics_events.text.title": "Athletics Events",
+    "widget.home.athletics_events.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.athletics_events.text.empty.description": "No Athletics Events are available right now.",
+    "widget.home.athletics_events.text.offline": "Athletics Events are not available while offline",
+    "widget.home.athletics_events.button.all.title": "See All",
+    "widget.home.athletics_events.button.all.hint": "Tap to see all events",
+
+    "widget.home.athletics_teams.text.title": "Athletics Teams",
+    "widget.home.athletics_teams.button.all.title": "See All",
+    "widget.home.athletics_teams.button.all.hint": "Tap to see all teams",
+
+    "widget.home.tout.customize.label": "Customize",
+    "widget.home.tout.button.info.label": "Info",
+    "widget.home.tout.button.info.hint": "Tap for more info",
+    "widget.home.tout.popup.info.content": "Illinois app uses your first name from <a href='{{student_self_service_url}}'>Student Self-Service</a>. You can change your preferred name under Personal Information and Preferred First Name.",
 
     "widget.athletics_card.button.get_tickets.title":"Get Tickets",
     "widget.athletics_card.button.get_tickets.hint":"",

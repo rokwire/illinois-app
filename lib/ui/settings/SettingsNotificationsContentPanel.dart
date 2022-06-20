@@ -76,12 +76,12 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: RootHeaderBar(key: _headerBarKey, title: _panelHeaderLabel),
+        appBar: RootHeaderBar(
+            key: _headerBarKey, title: Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'My Notifications')),
         body: Column(children: <Widget>[
           Expanded(
-              child: SingleChildScrollView(
-                  physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null),
-                  child: _buildContent()))
+              child:
+                  SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child: _buildContent()))
         ]),
         backgroundColor: Styles().colors!.background,
         bottomNavigationBar: uiuc.TabBar(key: _tabBarKey));
@@ -95,11 +95,11 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
               key: _contentDropDownKey,
               padding: EdgeInsets.only(left: _defaultPadding, top: _defaultPadding, right: _defaultPadding),
               child: RibbonButton(
-                  textColor: (_contentValuesVisible ? Styles().colors!.fillColorSecondary : Styles().colors!.fillColorPrimary),
+                  textColor: Styles().colors!.fillColorSecondary,
                   backgroundColor: Styles().colors!.white,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                  rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down.png'),
+                  rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
                   label: _getContentLabel(_selectedContent),
                   onTap: _changeSettingsContentValuesVisibility)),
           Container(
@@ -219,15 +219,6 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
         return Localization().getStringEx('panel.settings.notifications.content.inbox.label', 'My Notifications');
       case SettingsNotificationsContent.preferences:
         return Localization().getStringEx('panel.settings.notifications.content.preferences.label', 'My Notification Preferences');
-    }
-  }
-
-  String get _panelHeaderLabel {
-    switch (_selectedContent) {
-      case SettingsNotificationsContent.inbox:
-        return Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'My Notifications');
-      case SettingsNotificationsContent.preferences:
-        return Localization().getStringEx('panel.settings.notifications.header.preferences.label', 'My Notification Preferences');
     }
   }
 

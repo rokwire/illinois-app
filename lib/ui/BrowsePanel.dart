@@ -40,7 +40,6 @@ import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
-import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
@@ -371,8 +370,8 @@ class _BrowseSection extends StatelessWidget {
 
   Future<bool?> promptSectionFavorite(BuildContext context) async {
     String message = (_isSectionFavorite != true) ?
-      Localization().getStringEx('panel.browse.prompt.add.all.favorites', 'Are you sure you want to ADD ALL items to favorites?') :
-      Localization().getStringEx('panel.browse.prompt.remove.all.favorites', 'Are you sure you want to REMOVE ALL items from favorites?');
+      Localization().getStringEx('panel.browse.prompt.add.all.favorites', 'Are you sure you want to ADD ALL items to your favorites?') :
+      Localization().getStringEx('panel.browse.prompt.remove.all.favorites', 'Are you sure you want to REMOVE ALL items from your favorites?');
     return await showDialog(context: context, builder: (BuildContext context) {
       return AlertDialog(
         content: Text(message),
@@ -465,11 +464,9 @@ class _BrowseEntry extends StatelessWidget {
       case "app_help.feedback":              _onTapFeedback(context); break;
       case "app_help.faqs":                  _onTapFAQs(context); break;
 
-      case "athletics.game_day":             _onTapGameDay(context); break;
-      case "athletics.upcoming_games":       _onTapUpcomingGames(context); break;
+      case "athletics.sport_events":         _onTapSportEvents(context); break;
       case "athletics.sport_news":           _onTapSportNews(context); break;
       case "athletics.sport_teams":          _onTapSportTeams(context); break;
-      case "athletics.sport_prefs":          _onTapSportPrefs(context); break;
 
       case "safer.building_access":          _onTapBuildingAccess(context); break;
       case "safer.test_locations":           _onTapTestLocations(context); break;
@@ -494,13 +491,14 @@ class _BrowseEntry extends StatelessWidget {
       case "campus_resources.campus_guide": _onTapCampusGuide(context); break;
       case "campus_resources.inbox":        _onTapInbox(context); break;
 
-      case "events.upcoming_events": _onTapUpcomingEvents(context); break;
+      case "events.suggested_events": _onTapSuggestedEvents(context); break;
 
       case "feeds.twitter":      _onTapTwitter(context); break;
       case "feeds.wpgufm_radio": _onTapWPGUFMRadio(context); break;
       case "feeds.illini_news":  _onTapIlliniNews(context); break;
 
       case "my.my_groups":       _onTapMyGroups(context); break;
+      case "my.my_game_day":     _onTapMyGameDay(context); break;
       case "my.my_events":       _onTapMyEvents(context); break;
       case "my.my_dining":       _onTapMyDinings(context); break;
       case "my.my_athletics":    _onTapMyAthletics(context); break;
@@ -627,29 +625,19 @@ class _BrowseEntry extends StatelessWidget {
     }
   }
 
-  void _onTapGameDay(BuildContext context) {
-    Analytics().logSelect(target: "Game Day");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
-  }
-
-  void _onTapUpcomingGames(BuildContext context) {
-    Analytics().logSelect(target: "Upcoming Games");
+  void _onTapSportEvents(BuildContext context) {
+    Analytics().logSelect(target: "Athletics Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3}))));
   }
 
   void _onTapSportNews(BuildContext context) {
-    Analytics().logSelect(target: "News");
+    Analytics().logSelect(target: "Athletics News");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
   }
 
   void _onTapSportTeams(BuildContext context) {
-    Analytics().logSelect(target: "Teams");
+    Analytics().logSelect(target: "Athletics Teams");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamsPanel()));
-  }
-
-  void _onTapSportPrefs(BuildContext context) {
-    Analytics().logSelect(target: "Sport Prefs");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel(content: SettingsContent.sports)));
   }
 
   void _onTapBuildingAccess(BuildContext context) {
@@ -760,8 +748,8 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.inbox)));
   }
 
-  void _onTapUpcomingEvents(BuildContext context) {
-    Analytics().logSelect(target: "Events");
+  void _onTapSuggestedEvents(BuildContext context) {
+    Analytics().logSelect(target: "Suggested Events");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
   }
 
@@ -783,6 +771,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapMyGroups(BuildContext context) {
     Analytics().logSelect(target: "My Groups");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+  }
+
+  void _onTapMyGameDay(BuildContext context) {
+    Analytics().logSelect(target: "My Game Day");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
   }
 
   void _onTapMyEvents(BuildContext context) {
