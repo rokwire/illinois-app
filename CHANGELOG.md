@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Do not change header bar title based on the drop down selection in Wellness [#1776](https://github.com/rokwire/illinois-app/issues/1776).
 - Header bar title from "Maps" to "Map" [#1778](https://github.com/rokwire/illinois-app/issues/1778).
+- Rename from "Setting Sections" to "Sign In/Sign Out" [#1780](https://github.com/rokwire/illinois-app/issues/1780).
 
 ## [4.0.32] - 2022-06-17
 ### Fixed
