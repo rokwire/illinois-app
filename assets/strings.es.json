@@ -1600,10 +1600,6 @@
     "panel.bus_pass.error.default.text": "No se puede cargar el pase de autobús",
 
     "panel.wellness.home.header.sections.title": "Bienestar",
-    "panel.wellness.home.header.rings.title": "Anillos de bienestar diarios",
-    "panel.wellness.home.header.todo.title": "Mi lista de tareas pendientes",
-    "panel.wellness.home.header.resources.title": "Recursos",
-    "panel.wellness.home.header.eight_dimensions.title": "8 dimensiones",
     "panel.wellness.section.sections.label": "Secciones de Bienestar",
     "panel.wellness.section.rings.label": "Anillos de bienestar diarios",
     "panel.wellness.section.todo.label": "Lista de quehaceres",
