@@ -1624,10 +1624,18 @@
     "panel.wellness.todo.items.unassigned.category.label": "未分配的項目",
     "panel.wellness.todo.items.add.button": "添加項目",
     "panel.wellness.todo.items.add.empty.msg": "沒有即將到來的項目",
-    "panel.wellness.todo.welcome.header.label": "歡迎來到您的",
-    "panel.wellness.todo.welcome.todo_list.label": "待辦事項清單",
-    "panel.wellness.todo.welcome.description.label": "使用此工具管理您的 ...",
+    "panel.wellness.todo.welcome.label": "歡迎來到你的待辦事項清單",
+    "panel.wellness.todo.welcome.description.label": "通過在此處記錄您的待辦事項來釋放您的大腦空間.",
     "panel.wellness.todo.categories.manage.button": "管理類別",
+
+    "panel.wellness.categories.manage.title": "管理類別",
+    "panel.wellness.categories.create.header.label": "創建類別",
+    "panel.wellness.categories.create.header.description": "示例：RSO 或俱樂部、特定班級或雜項任務類別.",
+    "panel.wellness.categories.name.field.label": "姓名",
+    "panel.wellness.categories.reminders.field.label": "提醒事項",
+    "panel.wellness.categories.save.button": "節省",
+    "panel.wellness.categories.manage.existing.label": "管理現有類別",
+    "panel.wellness.categories.manage.empty.label": "沒有當前類別",
 
     "panel.wellness.resources.header.label": "健康資源",
     "panel.wellness.resources.appointment.button": "我想預約",
@@ -2693,6 +2701,10 @@
 
     "model.canvas.calendar.event.type.event.label": "事件",
     "model.canvas.calendar.event.type.assignment.label": "任務",
+
+    "model.wellness.todo.category.reminder.type.none.label": "沒有任何",
+    "model.wellness.todo.category.reminder.type.morning_of.label": "早上的",
+    "model.wellness.todo.category.reminder.type.night_before.label": "前一天晚上",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",

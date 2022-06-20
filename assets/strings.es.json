@@ -1622,10 +1622,18 @@
     "panel.wellness.todo.items.unassigned.category.label": "Elementos no asignados",
     "panel.wellness.todo.items.add.button": "Añadir artículo",
     "panel.wellness.todo.items.add.empty.msg": "No hay artículos próximos",
-    "panel.wellness.todo.welcome.header.label": "Bienvenido a tu",
-    "panel.wellness.todo.welcome.todo_list.label": "Lista de quehaceres",
-    "panel.wellness.todo.welcome.description.label": "Utilice esta herramienta para administrar su ...",
+    "panel.wellness.todo.welcome.label": "Bienvenido a tu lista de tareas pendientes",
+    "panel.wellness.todo.welcome.description.label": "Libere espacio en su mente registrando sus tareas pendientes aquí.",
     "panel.wellness.todo.categories.manage.button": "Gestionar categorías",
+
+    "panel.wellness.categories.manage.title": "Gestionar categorías",
+    "panel.wellness.categories.create.header.label": "Crear una categoría",
+    "panel.wellness.categories.create.header.description": "Ejemplos: una RSO o club, una clase específica o una categoría de tarea miscelánea.",
+    "panel.wellness.categories.name.field.label": "NOMBRE",
+    "panel.wellness.categories.reminders.field.label": "RECORDATORIOS",
+    "panel.wellness.categories.save.button": "Ahorrar",
+    "panel.wellness.categories.manage.existing.label": "Administrar categorías existentes",
+    "panel.wellness.categories.manage.empty.label": "No hay categorías actuales",
 
     "panel.wellness.resources.header.label": "Recursos de bienestar",
     "panel.wellness.resources.appointment.button": "Quiero hacer una cita",
@@ -2693,6 +2701,10 @@
 
     "model.canvas.calendar.event.type.event.label": "Evento",
     "model.canvas.calendar.event.type.assignment.label": "Asignación",
+
+    "model.wellness.todo.category.reminder.type.none.label": "Ninguno",
+    "model.wellness.todo.category.reminder.type.morning_of.label": "Mañana de",
+    "model.wellness.todo.category.reminder.type.night_before.label": "La noche anterior",
 
     "logic.date_time.greeting.morning": "Buenos días",
     "logic.date_time.greeting.afternoon": "Buenas tardes",
