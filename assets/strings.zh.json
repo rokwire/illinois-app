@@ -118,7 +118,8 @@
 	"panel.menu.label.connected_netid":"连接NetID",
 	"panel.menu.label.confirm_sign_out":"您确定要退出吗?",
 
-	"panel.home.header.title": "伊利諾伊州",
+	"panel.home.header.title": "收藏夾",
+	"panel.home.header.editing.title": "定制",
 	"panel.home.label.welcome.logged_in":"欢迎,%s!",
 	"panel.home.label.welcome.logged_off":"欢迎来到伊利诺伊",
 	"panel.home.label.near_you":"周围",

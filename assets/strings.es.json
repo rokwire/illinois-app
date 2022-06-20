@@ -118,7 +118,8 @@
     "panel.menu.label.connected_netid":"NetID conectado",
     "panel.menu.label.confirm_sign_out":"¿Está seguro de que desea cerrar sesión?",
 
-    "panel.home.header.title": "ILLINOIS",
+    "panel.home.header.title": "Favoritas",
+    "panel.home.header.editing.title": "Personalizar",
     "panel.home.label.welcome.logged_in":"¡Bienvenido, %s!",
     "panel.home.label.welcome.logged_off":"Bienvenido a Illinois",
     "panel.home.label.near_you":"Cerca de ti",

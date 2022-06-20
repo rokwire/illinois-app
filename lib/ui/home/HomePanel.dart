@@ -119,8 +119,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   Widget build(BuildContext context) {
     super.build(context);
 
+    String title = _isEditing ?
+      Localization().getStringEx('panel.home.header.editing.title', 'Customize') :
+      Localization().getStringEx('panel.home.header.title', 'Favorites');
+
     return Scaffold(
-      appBar: _HomeHeaderBar(title: Localization().getStringEx('panel.home.header.title', 'ILLINOIS'), onEditDone: _isEditing ? _onEditDone : null,),
+      appBar: _HomeHeaderBar(title: title, onEditDone: _isEditing ? _onEditDone : null,),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Listener(onPointerMove: _onPointerMove, onPointerUp: (_) => _onPointerCancel, onPointerCancel: (_) => _onPointerCancel, child:
           Column(key: _contentWrapperKey, children: <Widget>[
