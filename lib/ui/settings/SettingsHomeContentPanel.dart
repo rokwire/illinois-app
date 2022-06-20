@@ -155,7 +155,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   String _getContentLabel(SettingsContent section) {
     switch (section) {
       case SettingsContent.sections:
-        return Localization().getStringEx('panel.settings.home.settings.sections.section.label', 'Setting Sections');
+        return Localization().getStringEx('panel.settings.home.settings.sections.section.label', 'Sign In/Sign Out');
       case SettingsContent.interests:
         return Localization().getStringEx('panel.settings.home.settings.sections.interests.label', 'My Interests');
       case SettingsContent.food_filters:
