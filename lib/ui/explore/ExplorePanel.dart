@@ -726,7 +726,7 @@ class ExplorePanelState extends State<ExplorePanel>
         headerLabel = Localization().getStringEx("panel.explore.label.title", "Explore");
         break;
       case ListMapDisplayType.Map:
-        headerLabel = Localization().getStringEx("panel.maps.header.title", "Maps");
+        headerLabel = Localization().getStringEx("panel.maps.header.title", "Map");
         break;
       default:
         break;
