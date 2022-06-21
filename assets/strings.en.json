@@ -143,6 +143,7 @@
     "panel.label.offline.phone_or_email": "Feature not available when offline.",
 
     "panel.browse.label.title": "Browse",
+    "panel.browse.label.sections.title": "App Sections",
     "panel.browse.button.events.title":"Events",
     "panel.browse.button.events.hint":"",
     "panel.browse.button.dining.title":"Dining",
@@ -226,6 +227,11 @@
     "panel.browse.button.verify_phone.title":"Verify your phone number",
     "panel.browse.button.verify_phone.hint":"",
 
+    "panel.browse.section.status.expand.title": "Expand",
+    "panel.browse.section.status.expand.hint": "Tap to expand section content",
+    "panel.browse.section.status.colapse.title": "Colapse",
+    "panel.browse.section.status.colapse.hint": "Tap to colapse section content",
+
     "panel.browse.web_panel.header.schedule_grades_more.title": "My Illini",
 
     "panel.browse.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
@@ -253,6 +259,8 @@
     "panel.browse.section.events.description": "Find events across campus and around the world.",
     "panel.browse.section.feeds.title": "Feeds",
     "panel.browse.section.feeds.description": "Listen to radio, read the news and check out Illinois feeds from social media.",
+    "panel.browse.section.groups.title": "Groups",
+    "panel.browse.section.groups.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
     "panel.browse.section.my.title": "My",
     "panel.browse.section.my.description": "Personalized views of everything you are interested in.",
     "panel.browse.section.polls.title": "Polls",
@@ -308,6 +316,8 @@
     "panel.browse.entry.feeds.twitter.title": "Twitter",
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU FM Radio",
     "panel.browse.entry.feeds.illini_news.title": "Illini News",
+
+    "panel.browse.entry.groups.all_groups.title": "All Groups",
 
     "panel.browse.entry.my.my_groups.title": "My Groups",
     "panel.browse.entry.my.my_game_day.title": "My Game Day",
@@ -2354,7 +2364,8 @@
     "widget.home.recent_items.button.all.title":"View All",
     "widget.home.recent_items.button.all.hint":"Tap to view all items",
 
-    "widget.home.my_groups.label.header.title":"My Groups",
+    "widget.home.groups.my.label.header.title":"My Groups",
+    "widget.home.groups.all.label.header.title":"All Groups",
     "widget.home.my_groups.button.all.title":"View All",
     "widget.home.my_groups.button.all.hint":"Tap to view all groups",
 

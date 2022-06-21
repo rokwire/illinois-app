@@ -143,6 +143,7 @@
 	"panel.label.offline.phone_or_email": "離線時功能不可用。",
 
 	"panel.browse.label.title":"浏览",
+	"panel.browse.label.sections.title": "應用部分",
 	"panel.browse.button.events.title":"活动",
 	"panel.browse.button.events.hint":"",
 	"panel.browse.button.dining.title":"用餐",
@@ -226,6 +227,11 @@
 	"panel.browse.button.verify_phone.title":"验证您的电话号码",
 	"panel.browse.button.verify_phone.hint":"",
 
+	"panel.browse.section.status.expand.title": "擴張",
+	"panel.browse.section.status.expand.hint": "點按以展開部分內容",
+	"panel.browse.section.status.colapse.title": "折疊",
+	"panel.browse.section.status.colapse.hint": "點按以折疊部分內容",
+
 	"panel.browse.web_panel.header.schedule_grades_more.title":"我的Illini",
 
 	"panel.browse.alert.building_access.privacy_update.msg": "您的隱私級別為 {{privacy_level_icon}} ，您每次都必須登錄才能顯示您的建築物訪問狀態。 您想將您的隱私級別更改為 4 或 5，以便您只需登錄一次？",
@@ -253,6 +259,8 @@
 	"panel.browse.section.events.description": "查找校園和世界各地的活動。",
 	"panel.browse.section.feeds.title": "飼料",
 	"panel.browse.section.feeds.description": "收聽廣播、閱讀新聞並查看來自社交媒體的伊利諾伊州動態。",
+	"panel.browse.section.groups.title": "團體",
+	"panel.browse.section.groups.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
 	"panel.browse.section.my.title": "我的",
 	"panel.browse.section.my.description": "您感興趣的所有內容的個性化視圖。",
 	"panel.browse.section.polls.title": "民意調查",
@@ -308,6 +316,8 @@
 	"panel.browse.entry.feeds.twitter.title": "Twitter",
 	"panel.browse.entry.feeds.wpgufm_radio.title": "WPGU FM Radio",
 	"panel.browse.entry.feeds.illini_news.title": "Illini News",
+
+	"panel.browse.entry.groups.all_groups.title": "All Groups",
 
 	"panel.browse.entry.my.my_groups.title": "My Groups",
 	"panel.browse.entry.my.my_game_day.title": "My Game Day",
@@ -2350,7 +2360,8 @@
 	"widget.home.recent_items.button.all.title":"查看全部",
 	"widget.home.recent_items.button.all.hint":"點擊查看所有項目",
 
-	"widget.home.my_groups.label.header.title":"我的群組",
+	"widget.home.groups.my.label.header.title":"我的群組",
+	"widget.home.groups.all.label.header.title":"所有組",
 	"widget.home.my_groups.button.all.title":"查看全部",
 	"widget.home.my_groups.button.all.hint":"點按即可查看所有群組",
 

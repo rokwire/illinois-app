@@ -19,22 +19,32 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 class HomeMyGroupsWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
+  final GroupsContentType contentType;
 
-  const HomeMyGroupsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  const HomeMyGroupsWidget({Key? key, required this.contentType, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+  static Widget handle({required GroupsContentType contentType, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: title,
+      title: titleForContentType(contentType),
     );
 
-  static String get title => Localization().getStringEx('widget.home.my_groups.label.header.title', 'My Groups');
+  String get _title => titleForContentType(contentType);
+  
+  static String title({required GroupsContentType contentType}) => titleForContentType(contentType);
+
+  static String titleForContentType(GroupsContentType contentType) {
+    switch(contentType) {
+      case GroupsContentType.my: return Localization().getStringEx('widget.home.groups.my.label.header.title', 'My Groups');
+      case GroupsContentType.all: return Localization().getStringEx('widget.home.groups.all.label.header.title', 'All Groups');
+    }
+  }
 
   @override
   State<StatefulWidget> createState() => _HomeMyGroupsState();
 }
 
 class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements NotificationsListener{
-  List<Group>? _myGroups;
+  List<Group>? _groups;
   PageController? _pageController;
   DateTime? _pausedDateTime;
 
@@ -68,11 +78,11 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   }
 
   void _loadGroups(){
-    Groups().loadGroups(myGroups: true).then((groups) {
+    Groups().loadGroups(contentType: widget.contentType).then((groups) {
       _sortGroups(groups);
       if(mounted){
         setState(() {
-          _myGroups = groups;
+          _groups = groups;
         });
       }
     });
@@ -82,7 +92,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   Widget build(BuildContext context) {
     return Visibility(visible: _haveGroups, child:
         HomeSlantWidget(favoriteId: widget.favoriteId,
-          title: Localization().getStringEx('widget.home.my_groups.label.header.title', 'My Groups'),
+          title: widget._title,
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: _buildContent(),
           childPadding: const EdgeInsets.only(top: 8),
@@ -92,8 +102,8 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
 
   Widget _buildContent() {
     List<Widget> pages = <Widget>[];
-    if(_myGroups?.isNotEmpty ?? false) {
-      for (Group? group in _myGroups!) {
+    if(_groups?.isNotEmpty ?? false) {
+      for (Group? group in _groups!) {
         if (group != null) {
           pages.add(GroupCard(
             group: group, displayType: GroupCardDisplayType.homeGroups,));
@@ -169,11 +179,11 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   }
 
   bool get _haveGroups{
-    return _myGroups?.isNotEmpty ?? false;
+    return _groups?.isNotEmpty ?? false;
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: "HomeMyGroups View All");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+    Analytics().logSelect(target: "HomeGroups ${widget.contentType} View All");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel(contentType: widget.contentType,)));
   }
 }

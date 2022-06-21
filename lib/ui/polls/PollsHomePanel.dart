@@ -660,7 +660,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Future<void> _reloadMyGroups() async {
-    _myGroups = await Groups().loadGroups(myGroups: true);
+    _myGroups = await Groups().loadGroups(contentType: GroupsContentType.my);
   }
 
   Set<String>? get _myGroupIds {

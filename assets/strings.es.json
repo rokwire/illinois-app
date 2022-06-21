@@ -143,6 +143,7 @@
     "panel.label.offline.phone_or_email": "Característica no disponible cuando está fuera de línea.",
 
     "panel.browse.label.title": "Vistazo",
+    "panel.browse.label.sections.title": "Secciones de la aplicación",
     "panel.browse.button.events.title":"Eventos",
     "panel.browse.button.events.hint":"",
     "panel.browse.button.dining.title":"Comida",
@@ -226,6 +227,11 @@
     "panel.browse.button.verify_phone.title":"Verifique su número de teléfono",
     "panel.browse.button.verify_phone.hint":"",
 
+    "panel.browse.section.status.expand.title": "Expandir",
+    "panel.browse.section.status.expand.hint": "Toque para expandir el contenido de la sección",
+    "panel.browse.section.status.colapse.title": "Colapsar",
+    "panel.browse.section.status.colapse.hint": "Toca para contraer el contenido de la sección",
+
     "panel.browse.web_panel.header.schedule_grades_more.title": "Mi Illini",
 
     "panel.browse.alert.building_access.privacy_update.msg": "Con su nivel de privacidad en {{privacy_level_icon}}, tendrá que iniciar sesión cada vez para mostrar el estado de acceso a su edificio. ¿Quieres cambiar tu nivel de privacidad a 4 o 5 para que solo tengas que iniciar sesión una vez?",
@@ -253,6 +259,8 @@
     "panel.browse.section.events.description": "Encuentra eventos en todo el campus y en todo el mundo.",
     "panel.browse.section.feeds.title": "Feeds",
     "panel.browse.section.feeds.description": "Escuche la radio, lea las noticias y vea los feeds de Illinois en las redes sociales.",
+    "panel.browse.section.groups.title": "Grupos",
+    "panel.browse.section.groups.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
     "panel.browse.section.my.title": "Mi",
     "panel.browse.section.my.description": "Vistas personalizadas de todo lo que te interesa.",
     "panel.browse.section.polls.title": "Centro",
@@ -308,6 +316,8 @@
     "panel.browse.entry.feeds.twitter.title": "Twitter",
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU FM Radio",
     "panel.browse.entry.feeds.illini_news.title": "Illini News",
+
+    "panel.browse.entry.groups.all_groups.title": "All Groups",
 
     "panel.browse.entry.my.my_groups.title": "My Groups",
     "panel.browse.entry.my.my_game_day.title": "My Game Day",
@@ -2350,7 +2360,8 @@
     "widget.home.recent_items.button.all.title":"Ver todo",
     "widget.home.recent_items.button.all.hint":"Toca para ver todos los elementos",
 
-    "widget.home.my_groups.label.header.title":"Mis grupos",
+    "widget.home.groups.my.label.header.title":"Mis grupos",
+    "widget.home.groups.all.label.header.title":"Todos los grupos",
     "widget.home.my_groups.button.all.title":"Ver todo",
     "widget.home.my_groups.button.all.hint":"Toca para ver todos los grupos",
 

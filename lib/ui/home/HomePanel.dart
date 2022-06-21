@@ -32,6 +32,7 @@ import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCampusLinksWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
+import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:illinois/ui/home/HomeTBDWidget.dart';
@@ -47,6 +48,7 @@ import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -55,7 +57,7 @@ import 'package:illinois/ui/home/HomeCampusResourcesWidget.dart';
 import 'package:illinois/ui/home/HomeCreatePollWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsGameDayWidget.dart';
 import 'package:illinois/ui/home/HomeLoginWidget.dart';
-import 'package:illinois/ui/home/HomeMyGroupsWidget.dart';
+import 'package:illinois/ui/home/HomeGroupsWidget.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeSaferWidget.dart';
 import 'package:illinois/ui/home/HomeCampusHighlightsWidget.dart';
@@ -65,8 +67,6 @@ import 'package:illinois/ui/home/HomeSuggestedEventsWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-
-import 'HomeCheckListWidget.dart';
 
 class HomePanel extends StatefulWidget {
   static const String notifyRefresh      = "edu.illinois.rokwire.home.refresh";
@@ -308,11 +308,20 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (code == 'my_groups') {
       if (title) {
-        return HomeMyGroupsWidget.title;
+        return HomeMyGroupsWidget.title(contentType: GroupsContentType.my);
       } else if (handle) {
-        return HomeMyGroupsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+        return HomeMyGroupsWidget.handle(contentType: GroupsContentType.my, favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
-        return HomeMyGroupsWidget(favoriteId: code, updateController: _updateController,);
+        return HomeMyGroupsWidget(contentType: GroupsContentType.my, favoriteId: code, updateController: _updateController,);
+      }
+    }
+    else if (code == 'all_groups') {
+      if (title) {
+        return HomeMyGroupsWidget.titleForContentType(GroupsContentType.all);
+      } else if (handle) {
+        return HomeMyGroupsWidget.handle(contentType: GroupsContentType.all, favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeMyGroupsWidget(contentType: GroupsContentType.all, favoriteId: code, updateController: _updateController,);
       }
     }
     else if (code == 'safer') {
