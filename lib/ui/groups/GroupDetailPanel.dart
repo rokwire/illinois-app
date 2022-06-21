@@ -1131,14 +1131,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _showModalImage(String? url){
-    Analytics().logSelect(target: "Image");
+    Analytics().logSelect(target: "Image", attributes: _group?.analyticsAttributes);
     if (url != null) {
-      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image", attributes: _group?.analyticsAttributes))));
     }
   }
 
   void _onGroupOptionsTap() {
-    Analytics().logSelect(target: 'Group Options');
+    Analytics().logSelect(target: 'Group Options', attributes: _group?.analyticsAttributes);
     int membersCount = _group?.membersCount ?? 0;
     String? confirmMsg = (membersCount > 1)
         ? sprintf(
@@ -1175,7 +1175,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         leftIconAsset: "images/icon-leave-group.png",
                         label: Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
                         onTap: () {
-                          Analytics().logSelect(target: "Leave group");
+                          Analytics().logSelect(target: "Leave group", attributes: _group?.analyticsAttributes);
                           showDialog(
                               context: context,
                               builder: (context) => _buildConfirmationDialog(
@@ -1199,7 +1199,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         leftIconAsset: "images/icon-delete-group.png",
                         label: Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
                         onTap: () {
-                          Analytics().logSelect(target: "Delete group");
+                          Analytics().logSelect(target: "Delete group", attributes: _group?.analyticsAttributes);
                           showDialog(
                               context: context,
                               builder: (context) => _buildConfirmationDialog(
@@ -1231,7 +1231,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapEventOptions() {
-    Analytics().logSelect(target: "Event options");
+    Analytics().logSelect(target: "Event options", attributes: _group?.analyticsAttributes);
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -1268,7 +1268,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTab(_DetailTab tab) {
-    Analytics().logSelect(target: "Tab: $tab");
+    Analytics().logSelect(target: "Tab: $tab", attributes: _group?.analyticsAttributes);
     if (_currentTab != tab) {
       setState(() {
         _currentTab = tab;
@@ -1290,7 +1290,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapLeave() {
-    Analytics().logSelect(target: "Leave Group");
+    Analytics().logSelect(target: "Leave Group", attributes: _group?.analyticsAttributes);
     showDialog(
         context: context,
         builder: (context) => _buildConfirmationDialog(
@@ -1315,7 +1315,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onWebsite() {
-    Analytics().logSelect(target: 'Group url');
+    Analytics().logSelect(target: 'Group url', attributes: _group?.analyticsAttributes);
     String? url = _group?.webURL;
     if (StringUtils.isNotEmpty(url)) {
       launch(url!);
@@ -1323,17 +1323,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapMembers(){
-    Analytics().logSelect(target: "Group Members");
+    Analytics().logSelect(target: "Group Members", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group)));
   }
 
   void _onTapSettings(){
-    Analytics().logSelect(target: "Group Settings");
+    Analytics().logSelect(target: "Group Settings", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,)));
   }
 
   void _onTapPromote() {
-    Analytics().logSelect(target: "Promote Group");
+    Analytics().logSelect(target: "Promote Group", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupQrCodePanel(group: _group)));
   }
 
@@ -1341,7 +1341,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (_memberAttendLoading) {
       return;
     }
-    Analytics().logSelect(target: "Take Attendance");
+    Analytics().logSelect(target: "Take Attendance", attributes: _group?.analyticsAttributes);
     FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors!.fillColorSecondary!)!,
             Localization().getStringEx('panel.group_detail.attendance.scan.cancel.button.title', 'Cancel'), true, ScanMode.QR)
         .then((scanResult) {
@@ -1497,7 +1497,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onCancelMembershipRequest() {
-    Analytics().logSelect(target: "Cancel membership request");
+    Analytics().logSelect(target: "Cancel membership request", attributes: _group?.analyticsAttributes);
     showDialog(
         context: context,
         builder: (context) => _buildConfirmationDialog(
@@ -1514,17 +1514,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapCreateEvent(){
-    Analytics().logSelect(target: "Create Event");
+    Analytics().logSelect(target: "Create Event", attributes: _group?.analyticsAttributes);
     Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
   }
 
   void _onTapBrowseEvents(){
-    Analytics().logSelect(target: "Browse Events");
+    Analytics().logSelect(target: "Browse Events", attributes: _group?.analyticsAttributes);
     Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(browseGroupId: _group?.id, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
   }
 
   void _onTapCreatePost() {
-    Analytics().logSelect(target: "Create Post");
+    Analytics().logSelect(target: "Create Post", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group))).then((result) {
       if (_refreshingPosts != true) {
         _refreshCurrentPosts();
