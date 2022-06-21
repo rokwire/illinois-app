@@ -204,10 +204,11 @@ abstract class CheckList with Service implements NotificationsListener{
       return null;
     }
     String? contactInfoUrl = "${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}";
+    TMP: contactInfoUrl+="&mode=1"; //TBD remove Workaround after we have test account to test with
     String? token = Auth2().uiucToken?.accessToken;
     // String? token = Auth2().token?.accessToken;
 
-    Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: {"ExternalAuthorization":token});
+    Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: {"External-Authorization":token});
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     Log.d("Contact Info Request: ${response?.request.toString()}  Response: $responseCode : $responseString");
