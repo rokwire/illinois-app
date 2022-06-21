@@ -733,14 +733,16 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         }
       }
       else if (dropFavoriteId == _unfavoritesHeaderId) {
-        if (0 <= dragIndex) {
-          if (dropAnchor == CrossAxisAlignment.start) {
-            // move drag favorite at 
+        if (dropAnchor == CrossAxisAlignment.start) {
+          // move or add drag favorite
+          if (0 <= dragIndex) {
             favoritesList.removeAt(dragIndex);
-            favoritesList.insert(0, dragFavoriteId);
-            Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
           }
-          else {
+          favoritesList.insert(0, dragFavoriteId);
+          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
+        }
+        else {
+          if (0 <= dragIndex) {
             // remove favorite
             HomeFavoriteButton.promptFavorite(context, HomeFavorite(dragFavoriteId)).then((bool? result) {
               if (result == true) {
