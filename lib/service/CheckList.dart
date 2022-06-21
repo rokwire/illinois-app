@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -21,6 +23,10 @@ abstract class CheckList with Service implements NotificationsListener{
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
   static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
   static const String notifyContentChanged  = "edu.illinois.rokwire.gies.service.content.changed";
+  static const String notifyExecuteCustomWidgetAction  = "edu.illinois.rokwire.gies.service.content.execute.widget.action";
+
+  //Custom actions
+  static const String widgetActionApproveUserInfo  = "edu.illinois.rokwire.checklist.gies.widget.action.approve.info";
 
   // Singleton instance wrapper
   factory CheckList(String serviceName){
@@ -48,6 +54,9 @@ abstract class CheckList with Service implements NotificationsListener{
   List<int>? _progressSteps;
 
   DateTime? _pausedDateTime;
+
+  //custom widgets data
+  Map<String, dynamic>? _studentInfo; //TBD load
 
   // String checklistName();
 
@@ -91,7 +100,8 @@ abstract class CheckList with Service implements NotificationsListener{
     _buildProgressSteps();
     _loadPageVerification();
     _ensureNavigationPages();
-
+    _loadUserInfo().then(
+            (value) => _studentInfo = value);
     if (_pages != null) {
       await super.initService();
     }
@@ -185,6 +195,34 @@ abstract class CheckList with Service implements NotificationsListener{
     return JsonUtils.decodeList(await AppBundle.loadString('assets/gies.json'));
   }
 
+  Future<dynamic> _loadUserInfo() async {
+    if(_contentName != "gies"){
+      return null;
+    }
+    if (StringUtils.isEmpty(Config().gatewayUrl)) {
+      Log.e('Missing gateway url.');
+      return null;
+    }
+    String? contactInfoUrl = "${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}";
+    TMP: contactInfoUrl+="&mode=1"; //TBD remove Workaround after we have test account to test with
+    String? token = Auth2().uiucToken?.accessToken;
+    // String? token = Auth2().token?.accessToken;
+
+    Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: {"External-Authorization":token});
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    Log.d("Contact Info Request: ${response?.request.toString()}  Response: $responseCode : $responseString");
+    if (responseCode == 200) {
+      dynamic jsonResponse = JsonUtils.decode(responseString);
+      return jsonResponse;
+    } else {
+      //TBD remove
+      // return JsonUtils.decode(_mocContactInfoResponse);
+      Log.e('Failed to load Contact Info. Response code: $responseCode, Response:\n$responseString');
+      return null;
+    }
+  }
+
   void _buildProgressSteps() {
     _progressPages = Map<int, Set<String>>();
     if ((_pages != null) && _pages!.isNotEmpty) {
@@ -266,6 +304,16 @@ abstract class CheckList with Service implements NotificationsListener{
 
   void processButtonPage(Map<String, dynamic> button, {String? callerPageId}) {
     String? pageId = callerPageId ?? currentPageId;
+
+    Map<String, dynamic>? widgetCustomAction = JsonUtils.mapValue(button["widget_action"]);
+    if(widgetCustomAction!=null){
+      String? actionName = widgetCustomAction["name"];
+      Map<String, dynamic>? params = JsonUtils.mapValue(widgetCustomAction["params"]);
+      if(actionName!=null)
+        _processWidgetAction(actionName, params);
+      NotificationService().notify(notifyExecuteCustomWidgetAction, {_contentName: widgetCustomAction});
+    }
+
     if (pageButtonCompletes(button)) {
       if ((pageId != null) && pageId.isNotEmpty) {
         if(!(_completedPages?.contains(pageId) ?? false)){
@@ -307,6 +355,41 @@ abstract class CheckList with Service implements NotificationsListener{
 
       this.pushPage(pushPage);
     }
+  }
+
+  void _processWidgetAction(String actionName, Map<String, dynamic>? params){
+    switch(actionName){
+      case widgetActionApproveUserInfo : {
+        _joinApprovalGroup(params);
+        break;
+      }
+    }
+  }
+
+  void _joinApprovalGroup(Map<String, dynamic>? params) async{
+    String? groupName = JsonUtils.stringValue(params?["group_name"]);
+    if(groupName == null){
+      Log.d("Unable to Join approval group: missing group name");
+      return;
+    }
+    
+    Groups().searchGroups(groupName).then((foundGroups){
+      if(CollectionUtils.isEmpty(foundGroups)){
+        Log.d("Unable to Join approval group: Unable to find group with name $groupName");
+      }
+      var group;
+      try {
+        group = foundGroups?.firstWhere((element) => element.title == groupName);
+      } catch (e){print(e);}
+      String? groupId = group?.id;
+      if(StringUtils.isEmpty(groupId)){
+        Log.d("Unable to Join approval group: Unable to find group with id $groupId");
+      }
+      
+      Groups().requestMembership(group, []).then((value){
+        Log.d("Requesting group finished with status: ${value? "Success": "Failed"}");
+      });
+    });
   }
 
   bool isProgressStepCompleted(int? progressStep) {
@@ -473,6 +556,10 @@ abstract class CheckList with Service implements NotificationsListener{
     return false; //Remove Notes buttons if we don't support them anymore. Hide for now
   }
 
+  Map<String, dynamic>? get studentInfo{
+    return _studentInfo;
+  }
+
   String get _cacheFileName => "$_contentName.json";
   //Utils
   bool _pageCanComplete(Map? page) {
@@ -505,6 +592,66 @@ abstract class CheckList with Service implements NotificationsListener{
 
   int? getPageProgress(Map<String, dynamic>? page) {
     return (page != null) ? (JsonUtils.intValue(page['progress']) ?? JsonUtils.intValue(page['progress-possition'])) : null;
+  }
+
+  //TBD remove
+  String get _mocContactInfoResponse{
+    return "{\r\n   "
+        "\"uin\":\"657427043\",\r\n   "
+        "\"firstName\":\"Clint\",\r\n   "
+        "\"lastName\":\"Stearns\",\r\n   "
+        "\"preferred\":\"\",\r\n  "
+        " \"mailingAddress\":{\r\n      "
+          "\"Type\":\"MA\",\r\n      "
+          "\"Street1\":\"207EMichiganAve\",\r\n      "
+          "\"City\":\"Urbana\",\r\n     "
+          "\"StateAbbr\":\"IL\",\r\n      "
+          "\"StateName\":\"Illinois\",\r\n      "
+          "\"ZipCode\":\"61801-5028\",\r\n      "
+          "\"County\":\"Champaign\",\r\n     "
+          " \"Phone\":{\r\n         "
+            "\"AreaCode\":\"217\",\r\n         "
+            "\"Number\":\"3676260\"\r\n      "
+          "}\r\n   "
+        "},\r\n   "
+        "\"permanentAddress\":{\r\n     "
+          "\"Type\":\"PR\",\r\n      "
+          "\"Street1\":\"207EMichiganAve\",\r\n      "
+          "\"City\":\"Urbana\",\r\n      "
+          "\"StateAbbr\":\"IL\",\r\n      "
+          "\"StateName\":\"Illinois\",\r\n      "
+          "\"ZipCode\":\"61801-5028\",\r\n      "
+          "\"County\":\"Champaign\",\r\n      "
+          "\"Phone\":{\r\n         "
+            "\"AreaCode\":\"217\",\r\n         "
+            "\"Number\":\"3676260\"\r\n      "
+          "}\r\n   "
+        "},\r\n   "
+        "\"emergencycontacts\":[\r\n      "
+          "{\r\n         "
+            "\"Priority\":\"1\",\r\n        "
+            "\"RelationShip\":{\r\n            "
+              "\"Code\":\"I\",\r\n            "
+              "\"Name\":\"Spouse\"\r\n         "
+            "},\r\n         "
+            "\"FirstName\":\"Michelle\",\r\n         "
+            "\"LastName\":\"Stearns\",\r\n         "
+            "\"Address\":{\r\n           "
+              " \"Type\":\"ECA\",\r\n            "
+              "\"Street1\":\"207EMichiganAve\",\r\n            "
+              "\"City\":\"Urbana\",\r\n            "
+              "\"StateAbbr\":\"IL\",\r\n            "
+              "\"StateName\":\"Illinois\",\r\n            "
+              "\"ZipCode\":\"61801\",\r\n            "
+              "\"County\":\"\",\r\n           "
+              " \"Phone\":{\r\n               "
+                "\"AreaCode\":\"217\",\r\n               "
+                "\"Number\":\"3676260\"\r\n            "
+              "}\r\n         "
+            "}\r\n      "
+          "}\r\n   "
+        "]\r"
+        "\n}";
   }
 
   @override

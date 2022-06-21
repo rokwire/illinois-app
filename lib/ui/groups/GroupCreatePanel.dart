@@ -151,6 +151,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                                 _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
                                 _buildMembershipLayout(),
                               ],)),
+                            Container(height: 8,),
+                            _buildCanAutojoinLayout(),
                             Container(height: 8),
                             _buildPollsLayout(),
                             Container(height: 16),
@@ -580,6 +582,22 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       }
       setState(() {});
     });
+  }
+  //Autojoin
+  Widget _buildCanAutojoinLayout(){
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.auto_join.enabled.label", "Group can be joined automatically?"),//TBD localize
+        value: _group?.canJoinAutomatically,
+        onTap: () {
+          if (_group?.canJoinAutomatically != null) {
+            _group!.canJoinAutomatically = !(_group!.canJoinAutomatically!);
+          } else {
+            _group?.canJoinAutomatically = true;
+          }
+        }
+      ),
+    );
   }
 
   // AuthMan Group
