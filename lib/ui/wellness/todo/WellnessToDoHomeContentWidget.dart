@@ -22,7 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/wellness/WellnessManageCategoriesPanel.dart';
+import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -241,7 +241,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   void _onTapManageCategories() {
     Analytics().logSelect(target: "Manage Categories");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessManageCategoriesPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessManageToDoCategoriesPanel()));
   }
 
   void _onTapAddItem() {
