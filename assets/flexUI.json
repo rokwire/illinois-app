@@ -2,7 +2,7 @@
 	"content": {
 		"tabbar": ["favorites", "browse", "maps", "academics", "wellness"],
 
-		"home": ["gies_checklist", "new_student_checklist", "safer", "twitter", "canvas_courses", "my_groups", "my_game_day",
+		"home": ["gies_checklist", "new_student_checklist", "safer", "twitter", "canvas_courses", "my_groups", "all_groups", "my_game_day",
 			"campus_highlights", "campus_reminders", "campus_resources", "campus_links",
 			"sport_events", "sport_news", "sport_teams",
 			"suggested_events", "recent_items", "wallet",
@@ -21,7 +21,7 @@
 
 		"academics": ["gies_checklist", "new_student_checklist", "canvas_courses", "academics_events", "my_illini"],
 
-		"browse": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_links", "campus_resources", "events", "feeds", "my", "polls", "recent", "state_farm_center", "wallet", "wellness"],
+		"browse": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_links", "campus_resources", "events", "feeds", "groups", "my", "polls", "recent", "state_farm_center", "wallet", "wellness"],
 		"browse.academics": ["gies_checklist", "new_student_checklist", "canvas_courses", "my_illini", "campus_reminders"],
 		"browse.app_help": ["video_tutorial", "feedback", "faqs"],
 		"browse.athletics": ["sport_events", "sport_news", "sport_teams"],
@@ -31,6 +31,7 @@
 		"browse.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "inbox"],
 		"browse.events": ["suggested_events"],
 		"browse.feeds": ["twitter", "wpgufm_radio", "illini_news"],
+		"browse.groups": ["all_groups"],
 		"browse.my": ["my_groups", "my_game_day", "my_events", "my_dining", "my_athletics", "my_news", "my_laundry", "my_inbox", "my_campus_guide"],
 		"browse.polls": ["create_poll", "view_polls"],
 		"browse.recent": ["recent_items"],
