@@ -193,13 +193,11 @@
 			"laundry_favs"                  : { "housingResidenceStatus" : true }
 		},
 		"enable" : {
-			"illini_cash"                   : true,
 			"create_event"                  : false,
-			"mtd_bus_number"                : true,
-			"parking_lot_directions"        : true,
 			"library_card"                  : false,
 			"emergency"                     : false,
-			"faqs"                          : false
+			"faqs"                          : false,
+			"wayfinding"                    : false
 		}
 	}
 }
