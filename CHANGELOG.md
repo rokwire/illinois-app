@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Created All Groups widget [#1786](https://github.com/rokwire/illinois-app/issues/1786).
+- Load wellness tip color from the new day color API [#1788](https://github.com/rokwire/illinois-app/issues/1788).
+- Wellness ToDo List - UI updates (Task in progress) [#1689](https://github.com/rokwire/illinois-app/issues/1689).
+### Changed
+- Disable wayfinding in State Farm Center [#1790](https://github.com/rokwire/illinois-app/issues/1790).
+
+## [4.0.33] - 2022-06-20
+### Changed
+- Do not change header bar title based on the drop down selection in Wellness [#1776](https://github.com/rokwire/illinois-app/issues/1776).
+- Header bar title from "Maps" to "Map" [#1778](https://github.com/rokwire/illinois-app/issues/1778).
+- Rename from "Setting Sections" to "Sign In/Sign Out" [#1780](https://github.com/rokwire/illinois-app/issues/1780).
+- Text and behavior updates in Favorites and Browse panels [#1782](https://github.com/rokwire/illinois-app/issues/1782).
+### Added
+- Wellness ToDo List - UI updates (Task in progress) [#1689](https://github.com/rokwire/illinois-app/issues/1689).
 
 ## [4.0.32] - 2022-06-17
 ### Fixed

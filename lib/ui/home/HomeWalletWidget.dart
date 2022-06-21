@@ -31,8 +31,10 @@ class HomeWalletWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home.wallet.label.title', 'Wallet'),
+      title: title,
     );
+
+  static String get title => Localization().getStringEx('widget.home.wallet.label.title', 'Wallet');
 
   @override
   State<HomeWalletWidget> createState() => _HomeWalletWidgetState();

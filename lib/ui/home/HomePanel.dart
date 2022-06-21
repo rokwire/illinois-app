@@ -32,6 +32,7 @@ import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCampusLinksWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
+import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:illinois/ui/home/HomeTBDWidget.dart';
@@ -47,6 +48,7 @@ import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -55,7 +57,7 @@ import 'package:illinois/ui/home/HomeCampusResourcesWidget.dart';
 import 'package:illinois/ui/home/HomeCreatePollWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsGameDayWidget.dart';
 import 'package:illinois/ui/home/HomeLoginWidget.dart';
-import 'package:illinois/ui/home/HomeMyGroupsWidget.dart';
+import 'package:illinois/ui/home/HomeGroupsWidget.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeSaferWidget.dart';
 import 'package:illinois/ui/home/HomeCampusHighlightsWidget.dart';
@@ -65,8 +67,6 @@ import 'package:illinois/ui/home/HomeSuggestedEventsWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-
-import 'HomeCheckListWidget.dart';
 
 class HomePanel extends StatefulWidget {
   static const String notifyRefresh      = "edu.illinois.rokwire.home.refresh";
@@ -119,8 +119,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   Widget build(BuildContext context) {
     super.build(context);
 
+    String title = _isEditing ?
+      Localization().getStringEx('panel.home.header.editing.title', 'Customize') :
+      Localization().getStringEx('panel.home.header.title', 'Favorites');
+
     return Scaffold(
-      appBar: _HomeHeaderBar(title: Localization().getStringEx('panel.home.header.title', 'ILLINOIS'), onEditDone: _isEditing ? _onEditDone : null,),
+      appBar: _HomeHeaderBar(title: title, onEditDone: _isEditing ? _onEditDone : null,),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Listener(onPointerMove: _onPointerMove, onPointerUp: (_) => _onPointerCancel, onPointerCancel: (_) => _onPointerCancel, child:
           Column(key: _contentWrapperKey, children: <Widget>[
@@ -149,8 +153,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     if (codes != null) {
       for (String code in codes) {
         if ((availableCodes == null) || availableCodes.contains(code)) {
-          Widget? widget = _buildWidgetFromCode(code);
-          if (widget != null) {
+          dynamic widget = _dataFromCode(code);
+          if (widget is Widget) {
             widgets.add(widget);
           }
         }
@@ -159,119 +163,314 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     return widgets;
   }
 
-  Widget? _buildWidgetFromCode(String code, { bool handle = false, int position = 0 }) {
+  dynamic _dataFromCode(String code, { bool title = false, bool handle = false, int position = 0 }) {
     if (code == 'tout') {
-      return handle ? null : HomeToutWidget(favoriteId: code, updateController: _updateController, onEdit: _onEdit,);
+      return (title || handle) ? null : HomeToutWidget(favoriteId: code, updateController: _updateController, onEdit: _onEdit,);
     }
     else if (code == 'emergency') {
-      return handle ? null : FlexContent.fromAssets(code, favoriteId: code, updateController: _updateController);
+      return (title || handle) ? null : FlexContent.fromAssets(code, favoriteId: code, updateController: _updateController);
     }
     else if (code == 'voter_registration') {
-      return handle ? null : HomeVoterRegistrationWidget(favoriteId: code, updateController: _updateController,);
+      return (title || handle) ? null : HomeVoterRegistrationWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'connect') {
-      return handle ? null : HomeLoginWidget(favoriteId: code, updateController: _updateController,);
+      return (title || handle) ? null : HomeLoginWidget(favoriteId: code, updateController: _updateController,);
     }
     else if (code == 'welcome') {
-      return handle? null : HomeWelcomeWidget(favoriteId: code, updateController: _updateController,); //TBD
+      return (title || handle) ? null : HomeWelcomeWidget(favoriteId: code, updateController: _updateController,); //TBD
     }
 
     else if (code == 'my_game_day') {
-      return handle ? HomeAthleticsGameDayWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAthleticsGameDayWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeAthleticsGameDayWidget.title;
+      } else if (handle) {
+        return HomeAthleticsGameDayWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeAthleticsGameDayWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'sport_events') {
-      return handle ? HomeAthliticsEventsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAthliticsEventsWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeAthliticsEventsWidget.title;
+      } else if (handle) {
+        return HomeAthliticsEventsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeAthliticsEventsWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'sport_news') {
-      return handle ? HomeAthliticsNewsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAthliticsNewsWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeAthliticsNewsWidget.title;
+      } else if (handle) {
+        return HomeAthliticsNewsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeAthliticsNewsWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'sport_teams') {
-      return handle ? HomeAthliticsTeamsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAthliticsTeamsWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeAthliticsTeamsWidget.title;
+      } else if (handle) {
+        return HomeAthliticsTeamsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeAthliticsTeamsWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'campus_resources') {
-      return handle ? HomeCampusResourcesWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCampusResourcesWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeCampusResourcesWidget.title;
+      } else if (handle) {
+        return HomeCampusResourcesWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeCampusResourcesWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'campus_reminders') {
-      return handle ? HomeCampusRemindersWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCampusRemindersWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeCampusRemindersWidget.title;
+      } else if (handle) {
+        return HomeCampusRemindersWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeCampusRemindersWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'suggested_events') {
-      return handle ? HomeSuggestedEventsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeSuggestedEventsWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeSuggestedEventsWidget.title;
+      } else if (handle) {
+        return HomeSuggestedEventsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeSuggestedEventsWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'recent_items') {
-      return handle ? HomeRecentItemsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeRecentItemsWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeRecentItemsWidget.title;
+      } else if (handle) {
+        return HomeRecentItemsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeRecentItemsWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'campus_highlights') {
-      return handle ? HomeCampusHighlightsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCampusHighlightsWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeCampusHighlightsWidget.title;
+      } else if (handle) {
+        return HomeCampusHighlightsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeCampusHighlightsWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'twitter') {
-      return handle ? HomeTwitterWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeTwitterWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeTwitterWidget.title;
+      } else if (handle) {
+        return HomeTwitterWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeTwitterWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'gies_checklist') {
-      return handle ? HomeCheckListWidget.handle(contentKey: 'gies', favoriteId: code, dragAndDropHost: this, position: position) : HomeCheckListWidget(contentKey: 'gies', favoriteId: code, updateController: _updateController);
+      if (title) {
+        return HomeCheckListWidget.title(contentKey: 'gies');
+      } else if (handle) {
+        return HomeCheckListWidget.handle(contentKey: 'gies', favoriteId: code, dragAndDropHost: this, position: position);
+      } else {
+        return HomeCheckListWidget(contentKey: 'gies', favoriteId: code, updateController: _updateController);
+      }
     }
     else if (code == 'new_student_checklist') {
-      return handle ? HomeCheckListWidget.handle(contentKey: "uiuc_student" /* TBD => "new_student" */, favoriteId: code, dragAndDropHost: this, position: position) : HomeCheckListWidget(contentKey: "uiuc_student" /* TBD => "new_student" */, favoriteId: code, updateController: _updateController);
+      if (title) {
+        return HomeCheckListWidget.title(contentKey: "uiuc_student") /* TBD => "new_student" */;
+      } else if (handle) {
+        return HomeCheckListWidget.handle(contentKey: "uiuc_student" /* TBD => "new_student" */, favoriteId: code, dragAndDropHost: this, position: position);
+      } else {
+        return HomeCheckListWidget(contentKey: "uiuc_student" /* TBD => "new_student" */, favoriteId: code, updateController: _updateController);
+      }
     }
     else if (code == 'canvas_courses') {
-      return handle ? HomeCanvasCoursesWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCanvasCoursesWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeCanvasCoursesWidget.title;
+      } else if (handle) {
+        return HomeCanvasCoursesWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeCanvasCoursesWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'create_poll') {
-      return handle ? HomeCreatePollWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCreatePollWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeCreatePollWidget.title;
+      } else if (handle) {
+        return HomeCreatePollWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeCreatePollWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'my_groups') {
-      return handle ? HomeMyGroupsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeMyGroupsWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeMyGroupsWidget.title(contentType: GroupsContentType.my);
+      } else if (handle) {
+        return HomeMyGroupsWidget.handle(contentType: GroupsContentType.my, favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeMyGroupsWidget(contentType: GroupsContentType.my, favoriteId: code, updateController: _updateController,);
+      }
+    }
+    else if (code == 'all_groups') {
+      if (title) {
+        return HomeMyGroupsWidget.titleForContentType(GroupsContentType.all);
+      } else if (handle) {
+        return HomeMyGroupsWidget.handle(contentType: GroupsContentType.all, favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeMyGroupsWidget(contentType: GroupsContentType.all, favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'safer') {
-      return handle ? HomeSaferWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeSaferWidget(key: _saferKey, favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeSaferWidget.title;
+      } else if (handle) {
+        return HomeSaferWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeSaferWidget(key: _saferKey, favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'wallet') {
-      return handle ? HomeWalletWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeWalletWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeWalletWidget.title;
+      } else if (handle) {
+        return HomeWalletWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeWalletWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'wpgufm_radio') {
-      return handle ? HomeWPGUFMRadioWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeWPGUFMRadioWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeWPGUFMRadioWidget.title;
+      } else if (handle) {
+        return HomeWPGUFMRadioWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeWPGUFMRadioWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'app_help') {
-      return handle ? HomeAppHelpWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeAppHelpWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeAppHelpWidget.title;
+      } else if (handle) {
+        return HomeAppHelpWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeAppHelpWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'state_farm_center') {
-      return handle ? HomeStateFarmCenterWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeStateFarmCenterWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeStateFarmCenterWidget.title;
+      } else if (handle) {
+        return HomeStateFarmCenterWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeStateFarmCenterWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'campus_links') {
-      return handle ? HomeCampusLinksWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,) : HomeCampusLinksWidget(favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeCampusLinksWidget.title;
+      } else if (handle) {
+        return HomeCampusLinksWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeCampusLinksWidget(favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'illini_news') {
-      return handle ? HomeHandleWidget(title: 'Illini News', favoriteId: code, dragAndDropHost: this, position: position,) : HomeTBDWidget(title: 'Illini News', favoriteId: code, updateController: _updateController);
+      if (title) {
+        return 'Illini News';
+      } else if (handle) {
+        return HomeHandleWidget(title: 'Illini News', favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeTBDWidget(title: 'Illini News', favoriteId: code, updateController: _updateController);
+      }
     }
     else if (code == 'wellness_rings') {
-      return handle ? HomeHandleWidget(title: 'Wellness Rings', favoriteId: code, dragAndDropHost: this, position: position,) : HomeTBDWidget(title: 'Wellness Rings', favoriteId: code, updateController: _updateController);
+      if (title) {
+        return 'Wellness Rings';
+      } else if (handle) {
+        return HomeHandleWidget(title: 'Wellness Rings', favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeTBDWidget(title: 'Wellness Rings', favoriteId: code, updateController: _updateController);
+      }
     }
     else if (code == 'wellness_todo') {
-      return handle ? HomeHandleWidget(title: 'Wellness To Do', favoriteId: code, dragAndDropHost: this, position: position,) : HomeTBDWidget(title: 'Wellness To Do', favoriteId: code, updateController: _updateController);
+      if (title) {
+        return 'Wellness To Do';
+      } else if (handle) {
+        return HomeHandleWidget(title: 'Wellness To Do', favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeTBDWidget(title: 'Wellness To Do', favoriteId: code, updateController: _updateController);
+      }
     }
 
     else if (code == 'my_events') {
-      return handle ? HomeFavoritesWidget.handle(favoriteKey: Event.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,) : HomeFavoritesWidget(favoriteKey: Event.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeFavoritesWidget.titleFromKey(favoriteKey: Event.favoriteKeyName);
+      } else if (handle) {
+        return HomeFavoritesWidget.handle(favoriteKey: Event.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeFavoritesWidget(favoriteKey: Event.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'my_dining') {
-      return handle ? HomeFavoritesWidget.handle(favoriteKey: Dining.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,) : HomeFavoritesWidget(favoriteKey: Dining.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeFavoritesWidget.titleFromKey(favoriteKey: Dining.favoriteKeyName);
+      } else if (handle) {
+        return HomeFavoritesWidget.handle(favoriteKey: Dining.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeFavoritesWidget(favoriteKey: Dining.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'my_athletics') {
-      return handle ? HomeFavoritesWidget.handle(favoriteKey: Game.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,) : HomeFavoritesWidget(favoriteKey: Game.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeFavoritesWidget.titleFromKey(favoriteKey: Game.favoriteKeyName);
+      } else if (handle) {
+        return HomeFavoritesWidget.handle(favoriteKey: Game.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeFavoritesWidget(favoriteKey: Game.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'my_news') {
-      return handle ? HomeFavoritesWidget.handle(favoriteKey: News.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,) : HomeFavoritesWidget(favoriteKey: News.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeFavoritesWidget.titleFromKey(favoriteKey: News.favoriteKeyName);
+      } else if (handle) {
+        return HomeFavoritesWidget.handle(favoriteKey: News.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeFavoritesWidget(favoriteKey: News.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'my_laundry') {
-      return handle ? HomeFavoritesWidget.handle(favoriteKey: LaundryRoom.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,) : HomeFavoritesWidget(favoriteKey: LaundryRoom.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeFavoritesWidget.titleFromKey(favoriteKey: LaundryRoom.favoriteKeyName);
+      } else if (handle) {
+        return HomeFavoritesWidget.handle(favoriteKey: LaundryRoom.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeFavoritesWidget(favoriteKey: LaundryRoom.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'my_inbox') {
-      return handle ? HomeFavoritesWidget.handle(favoriteKey: InboxMessage.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,) : HomeFavoritesWidget(favoriteKey: InboxMessage.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeFavoritesWidget.titleFromKey(favoriteKey: InboxMessage.favoriteKeyName);
+      } else if (handle) {
+        return HomeFavoritesWidget.handle(favoriteKey: InboxMessage.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeFavoritesWidget(favoriteKey: InboxMessage.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      }
     }
     else if (code == 'my_campus_guide') {
-      return handle ? HomeFavoritesWidget.handle(favoriteKey: GuideFavorite.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,) : HomeFavoritesWidget(favoriteKey: GuideFavorite.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      if (title) {
+        return HomeFavoritesWidget.titleFromKey(favoriteKey: GuideFavorite.favoriteKeyName);
+      } else if (handle) {
+        return HomeFavoritesWidget.handle(favoriteKey: GuideFavorite.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeFavoritesWidget(favoriteKey: GuideFavorite.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      }
     }
     else {
-      return handle ? null : FlexContent.fromAssets(code, favoriteId: code, updateController: _updateController);
+      return (handle || title) ? null : FlexContent.fromAssets(code, favoriteId: code, updateController: _updateController);
     }
   }
 
@@ -294,8 +493,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       int position = 0;
       for (String code in List<String>.from(homeFavorites).reversed) {
         if (_availableCodes?.contains(code) ?? false) {
-          Widget? widget = _buildWidgetFromCode(code, handle: true, position: position);
-          if (widget != null) {
+          dynamic widget = _dataFromCode(code, handle: true, position: position);
+          if (widget is Widget) {
             widgets.add(widget);
             position++;
           }
@@ -312,15 +511,31 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         description: Localization().getStringEx('panel.home.edit.unused.header.description', 'To add one of the below items to your favorites, click on the star.'),
       ));
 
-      int position = 0;
+      List<Map<String, dynamic>> unusedList = <Map<String, dynamic>>[];
+
       for (String code in fullContent) {
         if (!(homeFavorites?.contains(code) ?? false)) {
-          Widget? widget = _buildWidgetFromCode(code, handle: true, position: position);
-          if (widget != null) {
+          dynamic title = _dataFromCode(code, title: true);
+          if (title is String) {
+            unusedList.add({'title' : title, 'code': code});
+          }
+        }
+      }
+      
+      unusedList.sort((Map<String, dynamic> entry1, Map<String, dynamic> entry2) {
+        String title1 = JsonUtils.stringValue(entry1['title'])?.toLowerCase() ?? '';
+        String title2 = JsonUtils.stringValue(entry2['title'])?.toLowerCase() ?? '';
+        return title1.compareTo(title2);
+      });
+
+      int position = 0;
+      for (Map<String, dynamic> entry in unusedList) {
+        String? code = JsonUtils.stringValue(entry['code']);
+        dynamic widget = (code != null) ? _dataFromCode(code, handle: true, position: position) : null;
+          if (widget is Widget) {
             widgets.add(widget);
             position++;
           }
-        }
       }
     }
 
@@ -527,14 +742,16 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         }
       }
       else if (dropFavoriteId == _unfavoritesHeaderId) {
-        if (0 <= dragIndex) {
-          if (dropAnchor == CrossAxisAlignment.start) {
-            // move drag favorite at 
+        if (dropAnchor == CrossAxisAlignment.start) {
+          // move or add drag favorite
+          if (0 <= dragIndex) {
             favoritesList.removeAt(dragIndex);
-            favoritesList.insert(0, dragFavoriteId);
-            Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
           }
-          else {
+          favoritesList.insert(0, dragFavoriteId);
+          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
+        }
+        else {
+          if (0 <= dragIndex) {
             // remove favorite
             HomeFavoriteButton.promptFavorite(context, HomeFavorite(dragFavoriteId)).then((bool? result) {
               if (result == true) {
@@ -617,9 +834,9 @@ class _HomeHeaderBar extends RootHeaderBar {
   }
 
   Widget buildHeaderEditDoneButton(BuildContext context) {
-    return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
+    return Semantics(label: Localization().getStringEx('headerbar.save.title', 'Save'), hint: Localization().getStringEx('headerbar.save.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: () => onTapEditDone(context), child:
-        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.save.title', 'Save'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
       )
     );
   }

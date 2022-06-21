@@ -24,7 +24,8 @@
     "content":[
       {
         "heading":"<h1>Verify Your Personal Information in Student Self-Service</h1>Once you have established your NetID, use it to log into the online <a href='https://apps.uillinois.edu/selfservice/'>Student Self-Service</a> and verify your personal information, such as your contact information. Keeping this information up to date is extremely important and ensures proper delivery of important documents."
-      }
+      },
+      {"widget": "student_info"}
     ],
     "group_name":"GIES Onboarding Step 2",
     "id":"verify.personal.information",
@@ -32,7 +33,11 @@
       {
         "completes":true,
         "page":"setup.zoom.accounts",
-        "title":"My information is correct"
+        "title":"My information is correct",
+        "widget_action": {
+          "name":"edu.illinois.rokwire.checklist.gies.widget.action.approve.info",
+          "params": {"group_name":"GIES Onboarding Step 2"}
+        }
       }
     ],
     "navigation_buttons":[

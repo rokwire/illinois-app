@@ -59,7 +59,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   @override
   void initState() {
     _event = widget.event;
-    Groups().loadGroups(myGroups: true).then((groups) {
+    Groups().loadGroups(contentType: GroupsContentType.my).then((groups) {
       if(groups?.isNotEmpty ?? false){
         _adminGroups = groups!.where((group) => group.currentUserIsAdmin).toList();
       }

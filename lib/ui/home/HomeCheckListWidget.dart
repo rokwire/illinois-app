@@ -25,24 +25,27 @@ class HomeCheckListWidget extends StatefulWidget{
 
   static Widget handle({required String contentKey, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: titleFromKey(contentKey),
+      title: title(contentKey: contentKey),
     );
+
+  String? get _title => title(contentKey: contentKey);
+
+  static String? title({required String contentKey}) => titleForKey(contentKey);
+
+  static String? titleForKey(String contentKey) {
+    if (contentKey == "gies") {
+      return Localization().getStringEx( 'widget.checklist.gies.title', 'iDegrees New Student Checklist');
+    }
+    else if (contentKey == "uiuc_student") {
+      return Localization().getStringEx( 'widget.checklist.uiuc.title', 'New Student Checklist');
+    }
+    else {
+      return null;
+    }
+  }
 
   @override
   State<StatefulWidget> createState() => _HomeCheckListWidgetState();
-
-  String get title => titleFromKey(contentKey);
-
-  static String titleFromKey(String contentKey) {
-    if(contentKey == "gies"){
-      return Localization().getStringEx( 'widget.checklist.gies.title', 'iDegrees New Student Checklist');
-    } else if (contentKey == "uiuc_student"){
-      return Localization().getStringEx( 'widget.checklist.uiuc.title', 'New Student Checklist');
-    }
-
-    return "";
-  }
-
 }
 
 class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements NotificationsListener{
@@ -62,7 +65,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   Widget build(BuildContext context) {
     return Visibility(visible: true, child:
         HomeSlantWidget(favoriteId: widget.favoriteId,
-          title: _title,
+          title: widget._title,
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: _buildContent(),
           headerAxisAlignment: CrossAxisAlignment.start,
@@ -256,8 +259,6 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   int get _stepsCount {
     return CheckList(widget.contentKey).progressSteps?.length ?? 0;
   }
-
-  String get _title => widget.title;
 
   @override
   void onNotification(String name, param) {

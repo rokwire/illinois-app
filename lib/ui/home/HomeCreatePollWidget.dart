@@ -37,8 +37,10 @@ class HomeCreatePollWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"),
+      title: title,
     );
+
+  static String get title => Localization().getStringEx("widget.home_create_poll.heading.title", "Polls");
 
   @override
   _HomeCreatePollWidgetState createState() => _HomeCreatePollWidgetState();

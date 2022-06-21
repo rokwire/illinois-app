@@ -20,7 +20,7 @@ import 'package:illinois/ui/wellness/WellnessDimensionContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessSectionsContentWidget.dart';
-import 'package:illinois/ui/wellness/WellnessToDoHomeContentWidget.dart';
+import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -143,10 +143,11 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   }
 
   PreferredSizeWidget get headerBar {
+    String title = Localization().getStringEx('panel.wellness.home.header.sections.title', 'Wellness');
     if (widget.rootTabDisplay) {
-      return RootHeaderBar(title: _panelHeaderLabel);
+      return RootHeaderBar(title: title);
     } else {
-      return HeaderBar(title: _panelHeaderLabel);
+      return HeaderBar(title: title);
     }
   }
 
@@ -172,21 +173,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   }
 
   // Utilities
-
-  String get _panelHeaderLabel {
-    switch (_selectedContent) {
-      case WellnessContent.sections:
-        return Localization().getStringEx('panel.wellness.home.header.sections.title', 'Wellness');
-      case WellnessContent.rings:
-        return Localization().getStringEx('panel.wellness.home.header.rings.title', 'Daily Wellness Rings');
-      case WellnessContent.todo:
-        return Localization().getStringEx('panel.wellness.home.header.todo.title', 'My To-Do List');
-      case WellnessContent.resources:
-        return Localization().getStringEx('panel.wellness.home.header.resources.title', 'Resources');
-      case WellnessContent.eight_dimensions:
-        return Localization().getStringEx('panel.wellness.home.header.eight_dimensions.title', '8 Dimensions');
-    }
-  }
 
   String _getContentLabel(WellnessContent section) {
     switch (section) {
