@@ -42,8 +42,10 @@ class HomeStateFarmCenterWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widgets.home.state_farm_center.header.title',  'State Farm Center'),
+      title: title,
     );
+
+  static String get title => Localization().getStringEx('widgets.home.state_farm_center.header.title',  'State Farm Center');
 
   @override
   State<StatefulWidget> createState() => _HomeStateFarmCenterWidgetState();

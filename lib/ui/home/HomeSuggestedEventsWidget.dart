@@ -52,8 +52,10 @@ class HomeSuggestedEventsWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home.suggested_events.label.events_for_you', 'Suggested Events'),
+      title: title,
     );
+
+  static String get title => Localization().getStringEx('widget.home.suggested_events.label.events_for_you', 'Suggested Events');
 
   @override
   State<HomeSuggestedEventsWidget> createState() => _HomeSuggestedEventsWidgetState();
@@ -281,8 +283,8 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
               crossAxisAlignment: CrossAxisAlignment.center,
               children: _buildListItems(context)),
           LinkButton(
-            title: Localization().getStringEx('widget.home.suggested_events.button.all.title', 'See All'),
-            hint: Localization().getStringEx('widget.home.suggested_events.button.all.hint', 'Tap to see all events'),
+            title: Localization().getStringEx('widget.home.suggested_events.button.all.title', 'View All'),
+            hint: Localization().getStringEx('widget.home.suggested_events.button.all.hint', 'Tap to view all events'),
             onTap: _navigateToExploreEvents,
           ),
         ]);

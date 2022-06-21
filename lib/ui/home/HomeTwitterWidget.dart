@@ -30,9 +30,11 @@ class HomeTwitterWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: 'Twitter' /* TBD: Localization */,
+      title: title,
     );
 
+  static String get title => 'Twitter' /* TBD: Localization */;
+  
   @override
   _HomeTwitterWidgetState createState() => _HomeTwitterWidgetState();
 }

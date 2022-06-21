@@ -22,9 +22,11 @@ class HomeCanvasCoursesWidget extends StatefulWidget {
 
   static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses'),
+      title: title,
     );
 
+  static String get title => Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses');
+  
   @override
   _HomeCanvasCoursesWidgetState createState() => _HomeCanvasCoursesWidgetState();
 }

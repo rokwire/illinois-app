@@ -15,6 +15,7 @@
  */
 
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ToDoItem {
@@ -166,6 +167,19 @@ class ToDoCategory {
         return 'morning_of';
       case ToDoCategoryReminderType.none:
         return 'none';
+      default:
+        return null;
+    }
+  }
+
+  static String? reminderTypeToDisplayString(ToDoCategoryReminderType? type) {
+    switch (type) {
+      case ToDoCategoryReminderType.none:
+        return Localization().getStringEx('model.wellness.todo.category.reminder.type.none.label', 'None');
+      case ToDoCategoryReminderType.morning_of:
+        return Localization().getStringEx('model.wellness.todo.category.reminder.type.morning_of.label', 'Morning Of');
+      case ToDoCategoryReminderType.night_before:
+        return Localization().getStringEx('model.wellness.todo.category.reminder.type.night_before.label', 'Night Before');
       default:
         return null;
     }
