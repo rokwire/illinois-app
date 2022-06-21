@@ -1,5 +1,6 @@
 
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -363,26 +364,31 @@ class HomeFavoriteButton extends StatelessWidget {
   }
 
   static Future<bool?> promptFavorite(BuildContext context, Favorite? favorite) async {
-    String message = (Auth2().prefs?.isFavorite(favorite) ?? false) ?
-      Localization().getStringEx('widget.home.prompt.remove.favorite', 'Are you sure you want to REMOVE this item from your favorites?') :
-      Localization().getStringEx('widget.home.prompt.add.favorite', 'Are you sure you want to ADD this favorite?');
-    return await showDialog(context: context, builder: (BuildContext context) {
-      return AlertDialog(
-        content: Text(message),
-        actions: <Widget>[
-          TextButton(child: Text(Localization().getStringEx("dialog.yes.title", "Yes")),
-            onPressed:(){
-              Analytics().logAlert(text: message, selection: "Yes");
-              Navigator.pop(context, true);
-            }),
-          TextButton(child: Text(Localization().getStringEx("dialog.no.title", "No")),
-            onPressed:(){
-              Analytics().logAlert(text: message, selection: "No");
-              Navigator.pop(context, false);
-            }),
-        ]
-      );
-    });
+    if (kReleaseMode) {
+      String message = (Auth2().prefs?.isFavorite(favorite) ?? false) ?
+        Localization().getStringEx('widget.home.prompt.remove.favorite', 'Are you sure you want to REMOVE this item from your favorites?') :
+        Localization().getStringEx('widget.home.prompt.add.favorite', 'Are you sure you want to ADD this favorite?');
+      return await showDialog(context: context, builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(child: Text(Localization().getStringEx("dialog.yes.title", "Yes")),
+              onPressed:(){
+                Analytics().logAlert(text: message, selection: "Yes");
+                Navigator.pop(context, true);
+              }),
+            TextButton(child: Text(Localization().getStringEx("dialog.no.title", "No")),
+              onPressed:(){
+                Analytics().logAlert(text: message, selection: "No");
+                Navigator.pop(context, false);
+              }),
+          ]
+        );
+      });
+    }
+    else {
+      return true;
+    }
   }
 }
 
@@ -450,7 +456,7 @@ class HomeCommandButton extends StatelessWidget {
                       CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2),
                     )
                 )
-                : HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, prompt: true)
+                : HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, prompt: kReleaseMode)
               )
             ],),
             StringUtils.isNotEmpty(description)

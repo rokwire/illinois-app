@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Created All Groups widget [#1786](https://github.com/rokwire/illinois-app/issues/1786).
+- Load wellness tip color from the new day color API [#1788](https://github.com/rokwire/illinois-app/issues/1788).
+### Changed
+- Disable wayfinding in State Farm Center [#1790](https://github.com/rokwire/illinois-app/issues/1790).
 
 ## [4.0.33] - 2022-06-20
 ### Changed

@@ -1901,7 +1901,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   /// Returns the groups that current user is admin of without the current group
   ///
   Future<List<Group>?> _loadOtherAdminUserGroups() async {
-    List<Group>? userGroups = await Groups().loadGroups(myGroups: true);
+    List<Group>? userGroups = await Groups().loadGroups(contentType: GroupsContentType.my);
     List<Group>? userAdminGroups;
     if (CollectionUtils.isNotEmpty(userGroups)) {
       userAdminGroups = [];
