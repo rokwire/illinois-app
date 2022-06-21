@@ -1642,6 +1642,7 @@
     "panel.wellness.categories.create.header.description": "Ejemplos: una RSO o club, una clase específica o una categoría de tarea miscelánea.",
     "panel.wellness.categories.name.field.label": "NOMBRE",
     "panel.wellness.categories.reminders.field.label": "RECORDATORIOS",
+    "panel.wellness.todo.items.this_week.label": "Esta semana",
     "panel.wellness.categories.save.button": "Ahorrar",
     "panel.wellness.categories.manage.existing.label": "Administrar categorías existentes",
     "panel.wellness.categories.manage.empty.label": "No hay categorías actuales",

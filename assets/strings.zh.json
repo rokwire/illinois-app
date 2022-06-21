@@ -1644,6 +1644,7 @@
     "panel.wellness.categories.create.header.description": "示例：RSO 或俱樂部、特定班級或雜項任務類別.",
     "panel.wellness.categories.name.field.label": "姓名",
     "panel.wellness.categories.reminders.field.label": "提醒事項",
+    "panel.wellness.todo.items.this_week.label": "本星期",
     "panel.wellness.categories.save.button": "節省",
     "panel.wellness.categories.manage.existing.label": "管理現有類別",
     "panel.wellness.categories.manage.empty.label": "沒有當前類別",

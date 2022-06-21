@@ -1643,6 +1643,7 @@
     "panel.wellness.categories.create.header.description": "Examples: an RSO or club, a specific class, or a miscellaneous task category.",
     "panel.wellness.categories.name.field.label": "NAME",
     "panel.wellness.categories.reminders.field.label": "REMINMDERS",
+    "panel.wellness.todo.items.this_week.label": "This Week",
     "panel.wellness.categories.save.button": "Save",
     "panel.wellness.categories.manage.existing.label": "Manage Existing Categories",
     "panel.wellness.categories.manage.empty.label": "No current categories",

@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/wellness/todo/WellnessCreateToDoItemPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
@@ -42,12 +43,15 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       Localization().getStringEx('panel.wellness.todo.items.unassigned.category.label', 'Unassigned Items');
   late _ToDoTab _selectedTab;
   List<ToDoItem>? _todoItems;
+  late DateTime _calendarStartDate;
+  late DateTime _calendarEndDate;
   bool _itemsLoading = false;
 
   @override
   void initState() {
     super.initState();
     _selectedTab = _ToDoTab.daily;
+    _initCalendarDates();
     _loadToDoItems();
     if (Storage().isUserAccessedWellnessToDo != true) {
       Storage().userAccessedWellnessToDo = true;
@@ -71,8 +75,10 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           _buildTabButtonRow(),
+          _buildCalendarWidget(),
           _buildClearCompletedItemsButton(),
           _buildItemsContent(),
+          _buildCalendarWidget(),
           //TBD: DD - properly position the button if the content is not scrollable
           _buildManageCategoriesButton()
         ]));
@@ -116,6 +122,86 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                 fontSize: 18,
                 label: Localization().getStringEx('panel.wellness.todo.items.completed.clear.button', 'Clear Completed Items'),
                 onTap: _onTapClearCompletedItems)));
+  }
+
+  Widget _buildCalendarWidget() {
+    if (_selectedTab != _ToDoTab.reminders) {
+      return Container();
+    }
+    TextStyle smallStyle = TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular);
+    return Padding(
+        padding: EdgeInsets.only(top: 28),
+        child: Column(children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(_calendarStartDate, format: 'MMMM yyyy', ignoreTimeZone: true)),
+                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
+            Expanded(child: Container()),
+            Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: GestureDetector(onTap: _onTapPreviousWeek, child: Image.asset('images/icon-blue-chevron-left.png'))),
+            Text(Localization().getStringEx('panel.wellness.todo.items.this_week.label', 'This Week'), style: smallStyle),
+            Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: GestureDetector(onTap: _onTapNextWeek, child: Image.asset('images/icon-blue-chevron-right.png')))
+          ]),
+          Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                Text('Su', style: smallStyle),
+                Text('M', style: smallStyle),
+                Text('T', style: smallStyle),
+                Text('W', style: smallStyle),
+                Text('Th', style: smallStyle),
+                Text('F', style: smallStyle),
+                Text('Sa', style: smallStyle)
+              ])),
+          Padding(
+              padding: EdgeInsets.only(top: 5),
+              child: Container(
+                  height: 176,
+                  decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(5), boxShadow: [
+                    BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
+                  ]),
+                  child: Stack(children: [
+                    _buildCalendarVerticalDelimiters(),
+                    _buildCalendarHotizontalDelimiter(),
+                    _buildCalendarHeaderDatesWidget()
+                  ])))
+        ]));
+  }
+
+  Widget _buildCalendarVerticalDelimiters() {
+    return Expanded(
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+      _buildCalendarVerticalDelimiter(),
+      _buildCalendarVerticalDelimiter(),
+      _buildCalendarVerticalDelimiter(),
+      _buildCalendarVerticalDelimiter(),
+      _buildCalendarVerticalDelimiter(),
+      _buildCalendarVerticalDelimiter()
+    ]));
+  }
+
+  Widget _buildCalendarHotizontalDelimiter() {
+    return Padding(padding: EdgeInsets.only(top: 32), child: Container(height: 1, color: Styles().colors!.lightGray));
+  }
+
+  Widget _buildCalendarVerticalDelimiter() {
+    return Container(width: 1, color: Styles().colors!.lightGray);
+  }
+
+  Widget _buildCalendarHeaderDatesWidget() {
+    List<Widget> dateWidgetList = <Widget>[];
+    DateTime currentDate = DateTime.fromMillisecondsSinceEpoch(_calendarStartDate.millisecondsSinceEpoch);
+    while (currentDate.isBefore(_calendarEndDate)) {
+      String dateFormatted = AppDateTime().formatDateTime(currentDate, format: 'dd', ignoreTimeZone: true)!;
+      Text dateWidget = Text(dateFormatted,
+          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold));
+      dateWidgetList.add(dateWidget);
+      currentDate = currentDate.add(Duration(days: 1));
+    }
+    return Padding(
+        padding: EdgeInsets.only(top: 7), child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: dateWidgetList));
   }
 
   Widget _buildManageCategoriesButton() {
@@ -239,6 +325,14 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     AppAlert.showDialogResult(context, 'Not Implemented');
   }
 
+  void _onTapPreviousWeek() {
+    //TBD: DD - implement
+  }
+
+  void _onTapNextWeek() {
+    //TBD: DD - implement
+  }
+
   void _onTapManageCategories() {
     Analytics().logSelect(target: "Manage Categories");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessManageToDoCategoriesPanel()));
@@ -247,6 +341,12 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   void _onTapAddItem() {
     Analytics().logSelect(target: "Add Item");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessCreateToDoItemPanel()));
+  }
+
+  void _initCalendarDates() {
+    DateTime now = DateTime.now();
+    _calendarStartDate = now.subtract(Duration(days: now.weekday));
+    _calendarEndDate = now.add(Duration(days: (7 - (now.weekday + 1))));
   }
 
   void _loadToDoItems() {
