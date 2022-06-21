@@ -23,15 +23,15 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class WellnessManageCategoriesPanel extends StatefulWidget {
+class WellnessManageToDoCategoriesPanel extends StatefulWidget {
   final ToDoCategory? category;
-  WellnessManageCategoriesPanel({this.category});
+  WellnessManageToDoCategoriesPanel({this.category});
 
   @override
-  State<WellnessManageCategoriesPanel> createState() => _WellnessManageCategoriesPanelState();
+  State<WellnessManageToDoCategoriesPanel> createState() => _WellnessManageToDoCategoriesPanelState();
 }
 
-class _WellnessManageCategoriesPanelState extends State<WellnessManageCategoriesPanel> {
+class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCategoriesPanel> {
   ToDoCategory? _category;
   List<ToDoCategory>? _categories;
   late ToDoCategoryReminderType _selectedReminderType;

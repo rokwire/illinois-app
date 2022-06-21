@@ -20,7 +20,7 @@ import 'package:illinois/ui/wellness/WellnessDimensionContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessSectionsContentWidget.dart';
-import 'package:illinois/ui/wellness/WellnessToDoHomeContentWidget.dart';
+import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
