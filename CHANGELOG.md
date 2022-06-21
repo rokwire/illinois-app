@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Created All Groups widget [#1786](https://github.com/rokwire/illinois-app/issues/1786).
 - Load wellness tip color from the new day color API [#1788](https://github.com/rokwire/illinois-app/issues/1788).
+- Wellness ToDo List - UI updates (Task in progress) [#1689](https://github.com/rokwire/illinois-app/issues/1689).
 ### Changed
 - Disable wayfinding in State Farm Center [#1790](https://github.com/rokwire/illinois-app/issues/1790).
 
