@@ -356,7 +356,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _cancelMembershipRequest() {
     _setConfirmationLoading(true);
-    Groups().cancelRequestMembership(widget.group).whenComplete(() {
+    Groups().cancelRequestMembership(_group).whenComplete(() {
       if (mounted) {
         _setConfirmationLoading(false);
         _loadGroup();
@@ -366,7 +366,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Future<void> _leaveGroup() {
     _setConfirmationLoading(true);
-    return Groups().leaveGroup(widget.group).whenComplete(() {
+    return Groups().leaveGroup(_group).whenComplete(() {
       if (mounted) {
         _setConfirmationLoading(false);
         _loadGroup(loadEvents: true);
@@ -1478,7 +1478,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onMembershipRequest() {
-    Analytics().logSelect(target: "Request to join", attributes: widget.group!.analyticsAttributes);
+    Analytics().logSelect(target: "Request to join", attributes: _group?.analyticsAttributes);
     if (CollectionUtils.isNotEmpty(_group?.questions)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
     } else {
