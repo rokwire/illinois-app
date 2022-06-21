@@ -76,10 +76,10 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           _buildTabButtonRow(),
           _buildCalendarWidget(),
-          _buildClearCompletedItemsButton(),
           _buildItemsContent(),
           _buildCalendarWidget(),
           //TBD: DD - properly position the button if the content is not scrollable
+          _buildClearCompletedItemsButton(),
           _buildManageCategoriesButton()
         ]));
   }
@@ -117,6 +117,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         child: Padding(
             padding: EdgeInsets.only(top: 15),
             child: RoundedButton(
+                borderColor: Styles().colors!.fillColorPrimary,
                 contentWeight: 0.75,
                 padding: EdgeInsets.symmetric(vertical: 8),
                 fontSize: 18,
@@ -171,15 +172,14 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   Widget _buildCalendarVerticalDelimiters() {
-    return Expanded(
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       _buildCalendarVerticalDelimiter(),
       _buildCalendarVerticalDelimiter(),
       _buildCalendarVerticalDelimiter(),
       _buildCalendarVerticalDelimiter(),
       _buildCalendarVerticalDelimiter(),
       _buildCalendarVerticalDelimiter()
-    ]));
+    ]);
   }
 
   Widget _buildCalendarHotizontalDelimiter() {
@@ -206,13 +206,12 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   Widget _buildManageCategoriesButton() {
     return Padding(
-        padding: EdgeInsets.only(top: 30),
-        child: RoundedButton(
-            contentWeight: 0.75,
-            padding: EdgeInsets.symmetric(vertical: 8),
-            fontSize: 18,
-            label: Localization().getStringEx('panel.wellness.todo.categories.manage.button', 'Manage Categories'),
-            onTap: _onTapManageCategories));
+        padding: EdgeInsets.only(top: 25),
+        child: GestureDetector(
+            onTap: _onTapManageCategories,
+            //TBD: DD - underline
+            child: Text(Localization().getStringEx('panel.wellness.todo.categories.manage.button', 'Manage Categories'),
+                    style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary))));
   }
 
   Widget _buildItemsContent() {
