@@ -438,19 +438,12 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapFavorite(BuildContext context) {
     Analytics().logSelect(target: "Favorite: $favoriteCategory:$entryId");
     Favorite favorite = HomeFavorite(entryId, category: favoriteCategory);
-    if (kReleaseMode) {
-      HomeFavoriteButton.promptFavorite(context, favorite).then((bool? result) {
-        if (result == true) {
-          _toggleFavorite();
-        }
-      });
-    }
-    else {
-      _toggleFavorite();
-    }
+    HomeFavoriteButton.promptFavorite(context, favorite).then((bool? result) {
+      if (result == true) {
+        Auth2().prefs?.toggleFavorite(HomeFavorite(entryId, category: favoriteCategory));
+      }
+    });
   }
-
-  void _toggleFavorite() => Auth2().prefs?.toggleFavorite(HomeFavorite(entryId, category: favoriteCategory));
 
   void _onTap(BuildContext context) {
     switch("$sectionId.$entryId") {
