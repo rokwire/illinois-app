@@ -74,6 +74,26 @@ class Transportation /* with Service */ {
     return null;
   }
 
+  Future<Color?> loadAlternateColor() async {
+    String? transportationUrl = Config().transportationUrl;
+    String url = "$transportationUrl/bus/day/color";
+    try {
+      final response = await Network().get(url, auth: Auth2());
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        Map<String, dynamic>? jsonData = JsonUtils.decodeMap(responseString);
+        String? colorHex = (jsonData != null) ? jsonData["alternate_day_color"] : null;
+        return StringUtils.isNotEmpty(colorHex) ? UiColors.fromHex(colorHex) : null;
+      } else {
+        Log.e('Failed to load alternate day color. Response string: $responseString');
+      }
+    } catch (e) {
+      Log.e(e.toString());
+    }
+    return null;
+  }
+
   Future<dynamic> loadBusPass({String? userId, String? deviceId, Map<String, dynamic>? iBeaconData}) async {
     try {
       String url = "${Config().transportationUrl}/bus/pass";
