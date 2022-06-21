@@ -117,6 +117,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             _buildPollsLayout(),
                             Container(height: 16, color: Styles().colors!.background),
                             _buildAttendanceLayout(),
+                            Container(height: 16, color: Styles().colors!.background),
+                            _buildCanAutoJoinLayout(),
                             Container(height: 24,  color: Styles().colors!.background,),
                           ],),)
                       ]),
@@ -891,6 +893,30 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         setState(() {});
       }
     }
+  }
+
+  //Auto Join
+  //Autojoin
+  Widget _buildCanAutoJoinLayout(){
+    return Container( color: Styles().colors!.background,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.auto_join.enabled.label", "Group can be joined automatically?"),//TBD localize
+          value: _group?.canJoinAutomatically,
+          onTap: () {
+            if (_group?.canJoinAutomatically != null) {
+              _group!.canJoinAutomatically = !(_group!.canJoinAutomatically!);
+            } else {
+              _group?.canJoinAutomatically = true;
+            }
+
+            if(mounted){
+              setState(() {
+
+              });
+            }
+          }
+      ),
+    );
   }
 
   // Common

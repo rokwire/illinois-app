@@ -60,7 +60,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [CheckList.notifyPageChanged, CheckList.notifyContentChanged]);
+    NotificationService().subscribe(this, [CheckList.notifyPageChanged, CheckList.notifyContentChanged, CheckList.notifyPageCompleted]);
   }
 
   @override
@@ -282,7 +282,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
 
   @override
   void onNotification(String name, param) {
-    if(name == CheckList.notifyContentChanged){
+    if(name == CheckList.notifyContentChanged|| name == CheckList.notifyPageCompleted){
       if (param != null&& param is Map<String, dynamic> && param.containsKey(widget.contentKey)) {
         if (mounted) {
           setState(() {});
