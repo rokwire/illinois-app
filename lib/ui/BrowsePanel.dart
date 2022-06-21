@@ -53,6 +53,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -166,7 +167,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     if (sectionsList.isNotEmpty) {
       contentList.add(
         HomeSlantWidget(
-          title: 'App Sections' /* TBD: Localization */,
+          title: Localization().getStringEx('panel.browse.label.sections.title', 'App Sections'),
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           child: Column(children: sectionsList,),
         )    
@@ -247,7 +248,10 @@ class _BrowseSection extends StatelessWidget {
                   Text(_description, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface))
                 )
               ),
-              Semantics(label: expanded ? 'Colapse' : 'Expand' /* TBD: Localization */, button: true, child:
+              Semantics(
+                label: expanded ? Localization().getStringEx('panel.browse.section.status.colapse.title', 'Colapse') : Localization().getStringEx('panel.browse.section.status.expand.title', 'Expand'),
+                hint: expanded ? Localization().getStringEx('panel.browse.section.status.colapse.hint', 'Tap to colapse section content') : Localization().getStringEx('panel.browse.section.status.expand.hint', 'Tap to expand section content'),
+                button: true, child:
                   Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
                     SizedBox(width: 18, height: 18, child:
                       Center(child:
@@ -438,19 +442,12 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapFavorite(BuildContext context) {
     Analytics().logSelect(target: "Favorite: $favoriteCategory:$entryId");
     Favorite favorite = HomeFavorite(entryId, category: favoriteCategory);
-    if (kReleaseMode) {
-      HomeFavoriteButton.promptFavorite(context, favorite).then((bool? result) {
-        if (result == true) {
-          _toggleFavorite();
-        }
-      });
-    }
-    else {
-      _toggleFavorite();
-    }
+    HomeFavoriteButton.promptFavorite(context, favorite).then((bool? result) {
+      if (result == true) {
+        Auth2().prefs?.toggleFavorite(HomeFavorite(entryId, category: favoriteCategory));
+      }
+    });
   }
-
-  void _toggleFavorite() => Auth2().prefs?.toggleFavorite(HomeFavorite(entryId, category: favoriteCategory));
 
   void _onTap(BuildContext context) {
     switch("$sectionId.$entryId") {
@@ -496,6 +493,8 @@ class _BrowseEntry extends StatelessWidget {
       case "feeds.twitter":      _onTapTwitter(context); break;
       case "feeds.wpgufm_radio": _onTapWPGUFMRadio(context); break;
       case "feeds.illini_news":  _onTapIlliniNews(context); break;
+
+      case "groups.all_groups":  _onTapAllGroups(context); break;
 
       case "my.my_groups":       _onTapMyGroups(context); break;
       case "my.my_game_day":     _onTapMyGameDay(context); break;
@@ -768,9 +767,14 @@ class _BrowseEntry extends StatelessWidget {
     _notImplemented(context);
   }
 
+  void _onTapAllGroups(BuildContext context) {
+    Analytics().logSelect(target: "All Groups");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel(contentType: GroupsContentType.all,)));
+  }
+
   void _onTapMyGroups(BuildContext context) {
     Analytics().logSelect(target: "My Groups");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel(contentType: GroupsContentType.my)));
   }
 
   void _onTapMyGameDay(BuildContext context) {

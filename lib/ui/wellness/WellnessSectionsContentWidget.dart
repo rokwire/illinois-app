@@ -50,7 +50,7 @@ class _WellnessSectionsContentWidgetState extends State<WellnessSectionsContentW
 
   void _loadTipColor() {
     _setLoading(true);
-    Transportation().loadBusColor(userId: Auth2().accountId, deviceId: Auth2().deviceId).then((activeColor) {
+    Transportation().loadAlternateColor().then((activeColor) {
       _tipColor = activeColor;
       _setLoading(false);
     });
