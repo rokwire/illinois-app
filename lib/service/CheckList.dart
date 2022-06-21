@@ -7,6 +7,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -209,14 +210,13 @@ abstract class CheckList with Service implements NotificationsListener{
     Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: {"ExternalAuthorization":token});
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
-    //TBD remove
     Log.d("Contact Info Request: ${response?.request.toString()}  Response: $responseCode : $responseString");
     if (responseCode == 200) {
       dynamic jsonResponse = JsonUtils.decode(responseString);
       return jsonResponse;
     } else {
       //TBD remove
-      return JsonUtils.decode(_mocContactInfoResponse);
+      // return JsonUtils.decode(_mocContactInfoResponse);
       Log.e('Failed to load Contact Info. Response code: $responseCode, Response:\n$responseString');
       return null;
     }
@@ -307,8 +307,9 @@ abstract class CheckList with Service implements NotificationsListener{
     Map<String, dynamic>? widgetCustomAction = JsonUtils.mapValue(button["widget_action"]);
     if(widgetCustomAction!=null){
       String? actionName = widgetCustomAction["name"];
+      Map<String, dynamic>? params = JsonUtils.mapValue(widgetCustomAction["params"]);
       if(actionName!=null)
-        _processWidgetAction(actionName);
+        _processWidgetAction(actionName, params);
       NotificationService().notify(notifyExecuteCustomWidgetAction, {_contentName: widgetCustomAction});
     }
 
@@ -355,13 +356,39 @@ abstract class CheckList with Service implements NotificationsListener{
     }
   }
 
-  void _processWidgetAction(String actionName){
+  void _processWidgetAction(String actionName, Map<String, dynamic>? params){
     switch(actionName){
       case widgetActionApproveUserInfo : {
-        //TBD implement Hook to groups api
-        AppToast.show("Try to upload User Info: $_studentInfo");
+        _joinApprovalGroup(params);
+        break;
       }
     }
+  }
+
+  void _joinApprovalGroup(Map<String, dynamic>? params) async{
+    String? groupName = JsonUtils.stringValue(params?["group_name"]);
+    if(groupName == null){
+      Log.d("Unable to Join approval group: missing group name");
+      return;
+    }
+    
+    Groups().searchGroups(groupName).then((foundGroups){
+      if(CollectionUtils.isEmpty(foundGroups)){
+        Log.d("Unable to Join approval group: Unable to find group with name $groupName");
+      }
+      var group;
+      try {
+        group = foundGroups?.firstWhere((element) => element.title == groupName);
+      } catch (e){print(e);}
+      String? groupId = group?.id;
+      if(StringUtils.isEmpty(groupId)){
+        Log.d("Unable to Join approval group: Unable to find group with id $groupId");
+      }
+      
+      Groups().requestMembership(group, []).then((value){
+        Log.d("Requesting group finished with status: ${value? "Success": "Failed"}");
+      });
+    });
   }
 
   bool isProgressStepCompleted(int? progressStep) {
