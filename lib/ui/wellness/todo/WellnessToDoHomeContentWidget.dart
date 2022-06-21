@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/wellness/todo/WellnessCreateToDoItemPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -41,7 +42,6 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       Localization().getStringEx('panel.wellness.todo.items.unassigned.category.label', 'Unassigned Items');
   late _ToDoTab _selectedTab;
   List<ToDoItem>? _todoItems;
-  bool _welcomeVisible = false;
   bool _itemsLoading = false;
 
   @override
@@ -245,10 +245,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _onTapAddItem() {
-    if (_welcomeVisible) {
-      return;
-    }
-    //TBD: DD - implement
+    Analytics().logSelect(target: "Add Item");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessCreateToDoItemPanel()));
   }
 
   void _loadToDoItems() {

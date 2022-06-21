@@ -1617,6 +1617,7 @@
     "panel.wellness.sections.description.footer.dimensions.text": "身體, 心理, 環境, 財務, 精神, 職業, 情感和社會健康.",
     "panel.wellness.sections.dimensions.button": "了解有關 8 個維度的更多信息",
 
+    "panel.wellness.todo.header.label": "我的待辦事項清單",
     "panel.wellness.todo.tab.daily.label": "日常的",
     "panel.wellness.todo.tab.category.label": "類別",
     "panel.wellness.todo.tab.reminders.label": "提醒",
@@ -1636,6 +1637,14 @@
     "panel.wellness.categories.save.button": "節省",
     "panel.wellness.categories.manage.existing.label": "管理現有類別",
     "panel.wellness.categories.manage.empty.label": "沒有當前類別",
+
+    "panel.wellness.todo.item.add.label": "添加項目",
+    "panel.wellness.todo.item.name.field.label": "項目名",
+    "panel.wellness.todo.item.optional_fields.label": "可選字段",
+    "panel.wellness.todo.item.category.field.label": "類別",
+    "panel.wellness.todo.item.location.field.label": "地點",
+    "panel.wellness.todo.item.description.field.label": "描述",
+    "panel.wellness.todo.item.save.button": "節省",
 
     "panel.wellness.resources.header.label": "健康資源",
     "panel.wellness.resources.appointment.button": "我想預約",
