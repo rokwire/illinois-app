@@ -21,12 +21,14 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ToDoItem {
-  static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm';
+  static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm:ssZ';
 
   final String? id;
   final String? name;
   final ToDoCategory? category;
-  final String? dueDateTimeString;
+  final DateTime? dueDateTimeUtc;
+  final bool? hasDueTime;
+  final DateTime? reminderDateTimeUtc;
   final List<String>? workDays;
   final ToDoItemLocation? location;
   final String? description;
@@ -36,7 +38,9 @@ class ToDoItem {
       {this.id,
       this.name,
       this.category,
-      this.dueDateTimeString,
+      this.dueDateTimeUtc,
+      this.hasDueTime,
+      this.reminderDateTimeUtc,
       this.workDays,
       this.location,
       this.description,
@@ -50,7 +54,9 @@ class ToDoItem {
         id: JsonUtils.stringValue(json['id']),
         name: JsonUtils.stringValue(json['name']),
         category: ToDoCategory.fromJson(JsonUtils.mapValue(json['category'])),
-        dueDateTimeString: JsonUtils.stringValue(json['due_date_time']),
+        dueDateTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['due_date_time']), format: _dateTimeFormat, isUtc: true),
+        hasDueTime: JsonUtils.boolValue(json['has_due_time']),
+        reminderDateTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['reminder_date_time']), format: _dateTimeFormat, isUtc: true),
         workDays: JsonUtils.listStringsValue(json['work_days']),
         location: ToDoItemLocation.fromJson(JsonUtils.mapValue(json['location'])),
         description: JsonUtils.stringValue(json['description']),
@@ -62,7 +68,10 @@ class ToDoItem {
       'id': id,
       'name': name,
       'category': category?.toJson(),
-      'due_date_time': dueDateTimeString,
+      //TBD: DD - check TZ symbol
+      'due_date_time': AppDateTime().formatDateTime(dueDateTimeUtc, format: _dateTimeFormat),
+      'has_due_time': hasDueTime,
+      'reminder_date_time': AppDateTime().formatDateTime(reminderDateTimeUtc, format: _dateTimeFormat),
       'work_days': workDays,
       'location': location?.toJson(),
       'description': description,
@@ -71,10 +80,7 @@ class ToDoItem {
   }
 
   DateTime? get dueDateTime {
-    if (StringUtils.isEmpty(dueDateTimeString)) {
-      return null;
-    }
-    return DateTimeUtils.dateTimeFromString(dueDateTimeString, format: _dateTimeFormat);
+    return AppDateTime().getDeviceTimeFromUtcTime(dueDateTimeUtc);
   }
 
   String? get displayDueDate {
