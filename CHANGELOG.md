@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.0.35] - 2022-06-22
 ### Fixed
 - Fixed section toggle from Browse panel [#1798](https://github.com/rokwire/illinois-app/issues/1798).
 - Fixed typo in "iDegrees New Student Checklist" from Browse / Academics [#1800](https://github.com/rokwire/illinois-app/issues/1800).
@@ -14,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed FlexUI rules for filtering Favorites panel content [#1802](https://github.com/rokwire/illinois-app/issues/1802).
 - Hide Building access from Favorites and Browse [#1804](https://github.com/rokwire/illinois-app/issues/1804).
 - Hide the building access status and image from IDCardPanel [#1806](https://github.com/rokwire/illinois-app/issues/1806).
+- Updated WellnessRingContent [#1749](https://github.com/rokwire/illinois-app/issues/1749).
 ### Added
 - Wellness ToDo List - UI updates (Task in progress) [#1689](https://github.com/rokwire/illinois-app/issues/1689).
 
