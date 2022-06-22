@@ -74,7 +74,25 @@ class AppAlert {
         ],
       );
     },);
+  }
 
+  static Future<void> showMessage(BuildContext context, String? message) async {
+    return showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          Text(message!, textAlign: TextAlign.center,),
+        ],),
+        actions: <Widget>[
+          TextButton(
+              child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
+              onPressed: (){
+                Analytics().logAlert(text: message, selection: "OK");
+                  Navigator.pop(context);
+              }
+          ) //return dismissed 'true'
+        ],
+      );
+    },);
   }
 }
 

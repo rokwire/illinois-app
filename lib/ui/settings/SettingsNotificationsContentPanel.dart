@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -22,15 +23,36 @@ import 'package:illinois/ui/settings/SettingsNotificationPreferencesContentWidge
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+
+enum SettingsNotificationsContent { inbox, preferences }
 
 class SettingsNotificationsContentPanel extends StatefulWidget {
   final SettingsNotificationsContent? content;
 
   SettingsNotificationsContentPanel({this.content});
+
+  static void present(BuildContext context, { SettingsNotificationsContent? content}) {
+    if (content == SettingsNotificationsContent.inbox) {
+      if (Connectivity().isOffline) {
+        AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
+      }
+      else if (!Auth2().isOidcLoggedIn) {
+        AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.inbox', 'You need to be logged in to access Notifications.'));
+      }
+      else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: content)));
+      }
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: content)));
+    }
+  }
 
   static void launchMessageDetail(InboxMessage message) {
     FirebaseMessaging().processDataMessageEx(message.data, allowedPayloadTypes: {
@@ -238,5 +260,3 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   }
 
 }
-
-enum SettingsNotificationsContent { inbox, preferences }

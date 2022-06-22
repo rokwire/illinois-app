@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -20,6 +21,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/section.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class HomeWalletWidget extends StatefulWidget {
@@ -42,11 +44,25 @@ class HomeWalletWidget extends StatefulWidget {
 
 class _HomeWalletWidgetState extends State<HomeWalletWidget> implements NotificationsListener {
 
+  List<String>? _displayCodes;
+  Set<String>? _availableCodes;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
     ]);
+
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+        }
+      });
+    }
+
+    _availableCodes = _buildAvailableCodes();
+    _displayCodes = _buildDisplayCodes();
 
     super.initState();
   }
@@ -57,56 +73,99 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: Localization().getStringEx('widget.home.wallet.label.title', 'Wallet'),
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      child: Column(children: _buildCommandsList(),
-    ),
-    );
-  }
-
-  List<Widget> _buildCommandsList() {
-    List<Widget> contentList = <Widget>[];
-    List<dynamic>? contentListCodes = FlexUI()['home.wallet'];
-    if (contentListCodes != null) {
-      for (dynamic code in contentListCodes) {
-        Widget? contentEntry;
-        if (code == 'illini_cash_card') {
-          contentEntry = HomeIlliniCashWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-        }
-        else if (code == 'meal_plan_card') {
-          contentEntry = HomeMealPlanWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-        }
-        else if (code == 'bus_pass_card') {
-          contentEntry = HomeBusPassWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-        }
-        else if (code == 'illini_id_card') {
-          contentEntry = HomeIlliniIdWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-        }
-        else if (code == 'library_card') {
-          contentEntry = HomeLibraryCardWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-        }
-
-        if (contentEntry != null) {
-          if (contentList.isNotEmpty) {
-            contentList.add(Container(height: 8,));
-          }
-          contentList.add(contentEntry);
-        }
-      }
-
-    }
-   return contentList;
-  }
-
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
+    if (name == FlexUI.notifyChanged) {
+      _updateAvailableCodes();
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      _updateDisplayCodes();
+    }
   }
 
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> commandsList = _buildCommandsList();
+    return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
+      title: Localization().getStringEx('widget.home.wallet.label.title', 'Wallet'),
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      child: Column(children: commandsList,),
+    ) : Container();
+  }
+
+  List<Widget> _buildCommandsList() {
+    List<Widget> contentList = <Widget>[];
+    if (_displayCodes != null) {
+      for (String code in _displayCodes!.reversed) {
+        if ((_availableCodes == null) || _availableCodes!.contains(code)) {
+          Widget? contentEntry;
+          if (code == 'illini_cash_card') {
+            contentEntry = HomeIlliniCashWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+          }
+          else if (code == 'meal_plan_card') {
+            contentEntry = HomeMealPlanWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+          }
+          else if (code == 'bus_pass_card') {
+            contentEntry = HomeBusPassWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+          }
+          else if (code == 'illini_id_card') {
+            contentEntry = HomeIlliniIdWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+          }
+          else if (code == 'library_card') {
+            contentEntry = HomeLibraryCardWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+          }
+
+          if (contentEntry != null) {
+            if (contentList.isNotEmpty) {
+              contentList.add(Container(height: 8,));
+            }
+            contentList.add(contentEntry);
+          }
+        }
+      }
+    }
+    return contentList;
+  }
+
+  //  List<dynamic>? contentListCodes = FlexUI()['home.wallet'];
+
+  Set<String>? _buildAvailableCodes() => JsonUtils.setStringsValue(FlexUI()['home.wallet']);
+
+  void _updateAvailableCodes() {
+    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home.wallet']);
+    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
+      setState(() {
+        _availableCodes = availableCodes;
+      });
+    }
+  }
+
+  List<String>? _buildDisplayCodes() {
+    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
+    if (favorites == null) {
+      // Build a default set of favorites
+      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.wallet'));
+      if (fullContent != null) {
+        favorites = LinkedHashSet<String>.from(fullContent.reversed);
+        Future.delayed(Duration(), () {
+          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites);
+        });
+      }
+    }
+    
+    return (favorites != null) ? List.from(favorites) : null;
+  }
+
+  void _updateDisplayCodes() {
+    List<String>? displayCodes = _buildDisplayCodes();
+    if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes) && mounted) {
+      setState(() {
+        _displayCodes = displayCodes;
+      });
+    }
+  }
 }
 
 // HomeIlliniCashWalletWidget
@@ -164,9 +223,11 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
                           margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         )
                       ),
-                      Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
-                        IconButton(color: Styles().colors!.fillColorPrimary, icon: Image.asset('images/button-plus-orange.png', excludeFromSemantics: true), onPressed: _onTapPlus)
-                      ),
+                      Visibility(visible: SettingsAddIlliniCashPanel.canPresent, child:
+                        Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
+                          IconButton(color: Styles().colors!.fillColorPrimary, icon: Image.asset('images/button-plus-orange.png', excludeFromSemantics: true), onPressed: _onTapPlus)
+                        ),
+                      )
                     ]),
                   ),
                 ),
@@ -180,12 +241,12 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
 
   void _onTap() {
     Analytics().logSelect(target: 'Illini Cash');
-    Navigator.push(context, CupertinoPageRoute( settings: RouteSettings(name: SettingsIlliniCashPanel.routeName), builder: (context) => SettingsIlliniCashPanel()));
+    SettingsIlliniCashPanel.present(context);
   }
 
   void _onTapPlus() {
     Analytics().logSelect(target: "Add Illini Cash");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsAddIlliniCashPanel()));
+    SettingsAddIlliniCashPanel.present(context);
   }
 
   // NotificationsListener
@@ -275,7 +336,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
 
   void _onTap() {
     Analytics().logSelect(target: 'Meal Plan');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsMealPlanPanel()));
+    SettingsMealPlanPanel.present(context);
   }
 
   // NotificationsListener
@@ -342,7 +403,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
                         VerticalTitleValueSection(
                           title: Auth2().authCard?.role ?? '',
                           titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 24, color: Styles().colors?.fillColorPrimary),
-                          value: sprintf(Localization().getStringEx('widget.home.wallet.bus_pass.label.card_expires.text', 'Card Expires: %s'), [Auth2().authCard?.expirationDate ?? '']),
+                          value: StringUtils.isNotEmpty(Auth2().authCard?.expirationDate) ? sprintf(Localization().getStringEx('widget.home.wallet.bus_pass.label.card_expires.text', 'Card Expires: %s'), [Auth2().authCard?.expirationDate ?? '']) : '',
                           valueTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary),
                           margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         )
@@ -360,11 +421,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
 
   void _onTap() {
     Analytics().logSelect(target: 'Bus Pass');
-    showModalBottomSheet(context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-        builder: (context) => MTDBusPassPanel());
+    MTDBusPassPanel.present(context);
   }
 
   // NotificationsListener
@@ -429,7 +486,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
                     Row(children: <Widget>[
                       Expanded(child:
                         VerticalTitleValueSection(
-                          title: Auth2().authCard?.fullName ?? '',
+                          title: StringUtils.isNotEmpty(Auth2().authCard?.fullName) ? Auth2().authCard?.fullName : Auth2().fullName,
                           value: Auth2().authCard?.uin ?? '',
                           margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         )
@@ -447,11 +504,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
 
   void _onTap() {
     Analytics().logSelect(target: 'Illini ID');
-    showModalBottomSheet(context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-        builder: (context) => IDCardPanel());
+     IDCardPanel.present(context);
   }
 
   // NotificationsListener

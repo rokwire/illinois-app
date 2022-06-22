@@ -99,7 +99,7 @@ class _HomeStateFarmCenterWidgetState extends State<HomeStateFarmCenterWidget> i
     return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widgets.home.state_farm_center.header.title', 'State Farm Center'),
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      child: Column(children: _buildCommandsList(),),
+      child: Column(children: commandsList,),
       //flatHeight: 0, slantHeight: 0, childPadding: EdgeInsets.all(16),
     ) : Container();
   }
@@ -200,7 +200,7 @@ class _HomeStateFarmCenterWidgetState extends State<HomeStateFarmCenterWidget> i
 
   void _onCreateStadiumPoll() {
     Analytics().logSelect(target: "HomeStateFarmCenterWidget: Create Stadium Poll");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateStadiumPollPanel()));
+    CreateStadiumPollPanel.present(context);
   }
 
 }

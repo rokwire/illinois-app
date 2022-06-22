@@ -1,7 +1,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
@@ -209,7 +208,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
   }
 
   void _onTapContinue(){
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CheckListPanel(contentKey: widget.contentKey,)));
+    CheckListPanel.present(context, contentKey: widget.contentKey);
   }
 
   void _onTapViewNotes(){

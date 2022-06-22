@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed section toggle from Browse panel [#1798](https://github.com/rokwire/illinois-app/issues/1798).
 - Fixed typo in "iDegrees New Student Checklist" from Browse / Academics [#1800](https://github.com/rokwire/illinois-app/issues/1800).
+- Acknowledge favorites content when building HomeWalletWidget content.
+- Do not build command list twice in compound widgets in HomePanel.
+### Changed
+- Removed FlexUI rules for filtering Favorites panel content [#1802](https://github.com/rokwire/illinois-app/issues/1802).
+- Hide Building access from Favorites and Browse [#1804](https://github.com/rokwire/illinois-app/issues/1804).
+- Hide the building access status and image from IDCardPanel [#1806](https://github.com/rokwire/illinois-app/issues/1806).
 
 ## [4.0.34] - 2022-06-21
 ### Added

@@ -34,6 +34,22 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class MTDBusPassPanel extends StatefulWidget {
   _MTDBusPassPanelState createState() => _MTDBusPassPanelState();
+
+  static void present(BuildContext context) {
+    if (!Auth2().isOidcLoggedIn) {
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.bus_pass', 'You need to be logged in to access MTD Bus Pass.'));
+    }
+    else if (Auth2().authCard == null) {
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.no_card.bus_pass', 'You need a valid Illini Identity card to access MTD Bus Pass.'));
+    }
+    else {
+      showModalBottomSheet(context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+        builder: (context) => MTDBusPassPanel());
+    }
+  }
 }
 
 class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements NotificationsListener {

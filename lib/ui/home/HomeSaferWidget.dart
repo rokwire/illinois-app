@@ -91,7 +91,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
     return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
         titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-        child: Column(children: _buildCommandsList(),),
+        child: Column(children: commandsList,),
     ) : Container();
   }
 
@@ -279,13 +279,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   void _showBuildingAccessPanel() {
-    showModalBottomSheet(context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-        builder: (context) {
-          return IDCardPanel();
-        });
+     IDCardPanel.present(context);
   }
 
   void _onTestLocations() {
