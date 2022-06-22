@@ -99,7 +99,7 @@ class _HomeCampusLinksWidgetState extends State<HomeCampusLinksWidget> implement
     return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widgets.home.campus_links.header.title', 'Campus Links'),
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      child: Column(children: _buildCommandsList(),),
+      child: Column(children: commandsList,),
       //flatHeight: 0, slantHeight: 0, childPadding: EdgeInsets.all(16),
     ) : Container();
   }

@@ -99,7 +99,7 @@ class _HomeStateFarmCenterWidgetState extends State<HomeStateFarmCenterWidget> i
     return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widgets.home.state_farm_center.header.title', 'State Farm Center'),
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      child: Column(children: _buildCommandsList(),),
+      child: Column(children: commandsList,),
       //flatHeight: 0, slantHeight: 0, childPadding: EdgeInsets.all(16),
     ) : Container();
   }
