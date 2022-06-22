@@ -150,7 +150,8 @@
 			"library_card"                  : false,
 			"emergency"                     : false,
 			"faqs"                          : false,
-			"wayfinding"                    : false
+			"wayfinding"                    : false,
+			"safer"                         : false
 		}
 	}
 }
