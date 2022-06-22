@@ -1664,6 +1664,8 @@
     "panel.wellness.categories.manage.empty.name.msg": "Por favor, complete el nombre de la categoría.",
     "panel.wellness.categories.manage.category.create.succeeded.msg": "Categoría creada con éxito.",
     "panel.wellness.categories.manage.category.create.failed.msg": "No se pudo crear la categoría.",
+    "panel.wellness.categories.manage.category.delete.succeeded.msg": "Categoría eliminada con éxito.",
+    "panel.wellness.categories.manage.category.delete.failed.msg": "Error al eliminar la categoría.",
 
     "panel.wellness.todo.item.add.label": "Agregar un artículo",
     "panel.wellness.todo.item.name.field.label": "NOMBRE DEL ÁRTICULO",

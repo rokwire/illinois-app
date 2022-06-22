@@ -260,7 +260,18 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   void _onTapDeleteCategory(ToDoCategory category) {
-    //TBD: DD - implement
+    _setLoading(true);
+    Wellness().deleteToDoCategoryCached(category.id!).then((success) {
+      late String msg;
+      if (success) {
+        msg =
+            Localization().getStringEx('panel.wellness.categories.manage.category.delete.succeeded.msg', 'Category deleted successfully.');
+      } else {
+        msg = Localization().getStringEx('panel.wellness.categories.manage.category.delete.failed.msg', 'Failed to delete category.');
+      }
+      AppAlert.showDialogResult(context, msg);
+      _setLoading(false);
+    });
   }
 
   void _onTapSave() {

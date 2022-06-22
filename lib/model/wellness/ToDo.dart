@@ -125,7 +125,8 @@ class ToDoItemLocation {
 }
 
 class ToDoCategory {
-  final String? id;
+  //TBD: DD - make it final again when we have backend APIs
+  String? id;
   final String? name;
   final String? colorHex;
   final ToDoCategoryReminderType? reminderType;

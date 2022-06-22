@@ -62,9 +62,31 @@ class Wellness with Service {
     if (_toDoCategories == null) {
       _toDoCategories = <ToDoCategory>[];
     }
+    category.id = (_toDoCategories!.length + 1).toString();
     _toDoCategories!.add(category);
     NotificationService().notify(notifyToDoCategoryCreated);
     return true;
+  }
+
+  Future<bool> deleteToDoCategoryCached(String categoryId) async {
+    if (_toDoCategories == null) {
+      return false;
+    }
+    ToDoCategory? catToDelete;
+    for (ToDoCategory cat in _toDoCategories!) {
+      if (cat.id == categoryId) {
+        catToDelete = cat;
+        break;
+      }
+    }
+    if (catToDelete != null) {
+      _toDoCategories!.remove(catToDelete);
+      NotificationService().notify(notifyToDoCategoryDeleted);
+      return true;
+    } else {
+      Log.w('No such category');
+      return false;
+    }
   }
 
   Future<List<ToDoItem>?> loadToDoItemsCached() async {
