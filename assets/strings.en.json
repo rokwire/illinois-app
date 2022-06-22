@@ -1014,6 +1014,8 @@
     "panel.settings.add_illini_cash.error.buy_illini_cash.text":"Unable to complete transaction. Please try again later.",
     "panel.settings.add_illini_cash.error.buy_illini_cash_elligible.text":"The recipient is not eligible to buy Illini Cash",
     "panel.settings.add_illini_cash.message.buy_illini_cash_success.text":"Transaction successfully processed.",
+    "panel.settings.add_illini_cash.message.offline.text":"Add Illini Cash is are not available while offline.",
+    "panel.settings.add_illini_cash.message.logged_out.text":"You need to be logged in to access Add Illini Cash.",
 
     "panel.settings.meal_plan.label.title": "University Housing Meal Plan",
     "panel.settings.meal_plan.button.login_to_view_meal_plan.text": "Sign in to View Your Meal Plan",
@@ -2687,6 +2689,10 @@
     "widget.gies.button.title.continue": "Continue",
     "widget.checklist.gies.title": "iDegrees New Student Checklist",
     "widget.checklist.uiuc.title": "New Student Checklist",
+    "widget.checklist.gies.offline": "iDegrees New Student Checklist not available while offline.",
+    "widget.checklist.uiuc.offline": "New Student Checklist not available while offline.",
+    "widget.checklist.gies.logged_out": "You need to be logged in to access iDegrees New Student Checklist.",
+    "widget.checklist.uiuc.logged_out": "You need to be logged in to access New Student Checklist.",
 
     "widgets.home.app_help.header.title": "App Help",
     "widgets.home.app_help.video_tutorial.button.title": "Video Tutorial",

@@ -535,12 +535,12 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapGiesChecklist(BuildContext context) {
     Analytics().logSelect(target: "Gies Checklist");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CheckListPanel(contentKey: 'gies_checklist',)));
+    CheckListPanel.present(context, contentKey: 'gies_checklist');
   }
 
   void _onTapNewStudentChecklist(BuildContext context) {
     Analytics().logSelect(target: "New Student Checklist");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CheckListPanel(contentKey: 'new_student_checklist',)));
+    CheckListPanel.present(context, contentKey: 'new_student_checklist');
   }
 
   void _onTapCanvasCourses(BuildContext context) {

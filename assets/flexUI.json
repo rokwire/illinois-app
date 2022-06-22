@@ -80,18 +80,13 @@
 
 		},
 		"groups": {
-			"safer"                                  : ["NOT", "Gies Online Programs"],
 			"calendar.on_campus"                     : ["NOT", "Gies Online Programs"],
+			"home.twitter.account.canvas"            : ["Canvas Beta", "AND", ["NOT", "Gies Online Programs"]],
 			"gies"                                   : ["Gies Online Programs"],
-			"gies_checklist"                         : ["Gies Online Programs"],
 			"new_student"                            : ["2022 New Students"],
-			"new_student_checklist"                  : ["2022 New Students"],
-			"canvas"                                 : ["Canvas Beta"],
-			"canvas_courses"                         : ["Canvas Beta"],
-			"home.twitter.account.canvas"            : ["Canvas Beta", "AND", ["NOT", "Gies Online Programs"]]
+			"canvas"                                 : ["Canvas Beta"]
 		},
 		"locations": {
-			"safer"                                  : ["campus"]
 		},
 		"privacy" : {
 			"connect"                         : 4,
@@ -114,11 +109,8 @@
 		"auth": {
 			"connect"                             : { "loggedIn": false },
 			"gies"                                : { "shibbolethLoggedIn": true },
-			"gies_checklist"                      : { "shibbolethLoggedIn": true },
 			"new_student"                         : { "shibbolethLoggedIn": true },
-			"new_student_checklist"               : { "shibbolethLoggedIn": true },
 			"canvas"                              : { "shibbolethLoggedIn": true },
-			"canvas_courses"                      : { "shibbolethLoggedIn": true },
 
 			"settings.connect"                    : { "loggedIn": false },
 			"settings.connected"                  : { "loggedIn": true },

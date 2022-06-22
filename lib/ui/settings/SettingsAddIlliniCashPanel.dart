@@ -19,6 +19,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -40,6 +41,20 @@ class SettingsAddIlliniCashPanel extends StatefulWidget {
   final ScrollController? scrollController;
 
   SettingsAddIlliniCashPanel({this.scrollController});
+
+  static bool get canPresent => Connectivity().isNotOffline && Auth2().isOidcLoggedIn;
+
+  static void present(BuildContext context) {
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx("panel.settings.add_illini_cash.message.offline.text", "Add Illini Cash is are not available while offline."));
+    }
+    else if (!Auth2().isOidcLoggedIn) {
+      AppAlert.showMessage(context, Localization().getStringEx("panel.settings.add_illini_cash.message.logged_out.text", "You need to be logged in to access Add Illini Cash."));
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsAddIlliniCashPanel()));
+    }
+  }
 
   @override
   _SettingsAddIlliniCashPanelState createState() =>

@@ -1012,6 +1012,8 @@
 	"panel.settings.add_illini_cash.error.duplicate_transaction.text": "购买Illini现金的程序已经开始。请稍候监控您的余额并检查您的邮件是否有收据。",
 	"panel.settings.add_illini_cash.error.buy_illini_cash_elligible.text":"收件人没有资格购买Illini现金",
 	"panel.settings.add_illini_cash.message.buy_illini_cash_success.text":"交易已成功处理。",
+	"panel.settings.add_illini_cash.message.offline.text":"Add Illini Cash is are not available while offline.",
+	"panel.settings.add_illini_cash.message.logged_out.text":"You need to be logged in to access Add Illini Cash.",
 
 	"panel.settings.meal_plan.label.title":"大学住宿膳食计划",
 	"panel.settings.meal_plan.button.login_to_view_meal_plan.text":"登录以查看您的用餐计划",
@@ -2679,8 +2681,12 @@
 	"widget.gies.button.title.review": "審查清單",
 	"widget.gies.button.title.view_notes": "查看我的筆記",
 	"widget.gies.button.title.continue": "繼續",
-    "widget.checklist.gies.title": "iDegrees 新學生清單",
-    "widget.checklist.uiuc.title": "新學生清單",
+	"widget.checklist.gies.title": "iDegrees 新學生清單",
+	"widget.checklist.uiuc.title": "新學生清單",
+	"widget.checklist.gies.offline": "iDegrees New Student Checklist not available while offline.",
+	"widget.checklist.uiuc.offline": "New Student Checklist not available while offline.",
+	"widget.checklist.gies.logged_out": "You need to be logged in to access iDegrees New Student Checklist.",
+	"widget.checklist.uiuc.logged_out": "You need to be logged in to access New Student Checklist.",
 
 	"widgets.home.app_help.header.title": "App Help",
 	"widgets.home.app_help.video_tutorial.button.title": "Video Tutorial",
