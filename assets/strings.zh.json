@@ -221,6 +221,19 @@
 	"panel.browse.label.offline.crisis_help": "離線時無法使用危機幫助。",
 	"panel.browse.label.offline.date_cat": "截止日期目錄在離線時不可用。",
   "panel.browse.label.offline.video_tutorial": "離線時無法使用視頻教程.",
+	"panel.browse.label.offline.inbox": "Notifications are not available while offline.",
+
+	"panel.browse.label.logged_out.illini_cash": "You need to be logged in to access Illini Cash.",
+	"panel.browse.label.logged_out.meal_plan": "You need to be logged in to access University Housing Meal Plan.",
+	"panel.browse.label.logged_out.bus_pass": "You need to be logged in to access MTD Bus Pass.",
+	"panel.browse.label.logged_out.illini_id": "You need to be logged in to access Illini ID.",
+	"panel.browse.label.logged_out.create_stadium_poll": "You need to be logged in to create a Stadium Poll.",
+	"panel.browse.label.logged_out.inbox": "You need to be logged in to access Notifications.",
+
+	"panel.browse.label.no_card.bus_pass": "You need a valid Illini Identity card to access MTD Bus Pass.",
+	"panel.browse.label.no_card.illini_id": "You need a valid Illini Identity card to access Illini ID.",
+
+	"panel.browse.label.no_rights.create_stadium_poll": "You have no rights to create a Stadium Poll.",
 
 	"panel.browse.button.sign_in.title":"登录",
 	"panel.browse.button.sign_in.hint":"",
@@ -2505,6 +2518,8 @@
 	"widget.home.favorites.message.empty.laundry": "在洗衣房中的物品上點擊 \u2606，以便您可以在這裡快速找到它們。",
 	"widget.home.favorites.message.empty.campus_guide": "在 Campus Guide 中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
 	"widget.home.favorites.message.empty.inbox": "在通知中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
+
+	"widget.home.favorites.message.logged_out.inbox": "You need to be logged in to access My Notifications.",
 
 	"widget.home.favorites.all.title": "查看全部",
 	"widget.home.favorites.all.hint.events": "點按即可查看所有喜愛的活動",

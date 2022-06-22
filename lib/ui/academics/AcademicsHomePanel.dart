@@ -216,7 +216,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   void _onMyIlliniSelected() {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context,
-          Localization().getStringEx('widget.home.campus_resources.label.my_illini.offline', 'My Illini not available while offline.'));
+          Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
     } else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
       // Please make this use an external browser
       // Ref: https://github.com/rokwire/illinois-app/issues/1110

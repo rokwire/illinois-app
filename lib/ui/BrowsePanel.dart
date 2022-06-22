@@ -551,7 +551,7 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapMyIllini(BuildContext context) {
     Analytics().logSelect(target: "My Illini");
     if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.campus_resources.label.my_illini.offline', 'My Illini not available while offline.'));
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
     }
     else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
 
@@ -648,11 +648,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapBuildingAccess(BuildContext context) {
     Analytics().logSelect(target: 'Building Access');
-    showModalBottomSheet(context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-        builder: (context) => IDCardPanel());
+    IDCardPanel.present(context);
   }
   
   void _onTapTestLocations(BuildContext context) {
@@ -716,7 +712,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapIlliniCash(BuildContext context) {
     Analytics().logSelect(target: "Illini Cash");
-    Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: SettingsIlliniCashPanel.routeName), builder: (context) => SettingsIlliniCashPanel()));
+    SettingsIlliniCashPanel.present(context);
   }
 
   void _onTapWellness(BuildContext context) {
@@ -751,7 +747,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapInbox(BuildContext context) {
     Analytics().logSelect(target: "Inbox");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.inbox)));
+    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
   }
 
   void _onTapSuggestedEvents(BuildContext context) {
@@ -855,30 +851,22 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapCreateStadiumPoll(BuildContext context) {
     Analytics().logSelect(target: "Create Stadium Poll");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateStadiumPollPanel()));
+    CreateStadiumPollPanel.present(context);
   }
 
   void _onTapMealPlan(BuildContext context) {
     Analytics().logSelect(target: "Meal Plan");
-    Navigator.of(context, rootNavigator: false).push(CupertinoPageRoute(builder: (context) => SettingsMealPlanPanel()));
+    SettingsMealPlanPanel.present(context);
   }
 
   void _onTapBusPass(BuildContext context) {
     Analytics().logSelect(target: "Bus Pass");
-    showModalBottomSheet(context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-        builder: (context) => MTDBusPassPanel());
+    MTDBusPassPanel.present(context);
   }
 
   void _onTapIlliniId(BuildContext context) {
-    Analytics().logSelect(target: "Bus Pass");
-    showModalBottomSheet(context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-        builder: (context) => IDCardPanel());
+    Analytics().logSelect(target: "Illini ID");
+    IDCardPanel.present(context);
   }
 
   void _onTapLibraryCard(BuildContext context) {

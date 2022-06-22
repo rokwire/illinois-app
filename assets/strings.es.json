@@ -221,6 +221,19 @@
     "panel.browse.label.offline.crisis_help": "Crisis Help no está disponible sin conexión.",
     "panel.browse.label.offline.date_cat": "El catálogo de fecha de vencimiento no está disponible sin conexión.",
     "panel.browse.label.offline.video_tutorial": "Video tutorial no disponible sin conexión.",
+    "panel.browse.label.offline.inbox": "Notifications are not available while offline.",
+
+    "panel.browse.label.logged_out.illini_cash": "You need to be logged in to access Illini Cash.",
+    "panel.browse.label.logged_out.meal_plan": "You need to be logged in to access University Housing Meal Plan.",
+    "panel.browse.label.logged_out.bus_pass": "You need to be logged in to access MTD Bus Pass.",
+    "panel.browse.label.logged_out.illini_id": "You need to be logged in to access Illini ID.",
+    "panel.browse.label.logged_out.create_stadium_poll": "You need to be logged in to create a Stadium Poll.",
+    "panel.browse.label.logged_out.inbox": "You need to be logged in to access Notifications.",
+
+    "panel.browse.label.no_card.bus_pass": "You need a valid Illini Identity card to access MTD Bus Pass.",
+    "panel.browse.label.no_card.illini_id": "You need a valid Illini Identity card to access Illini ID.",
+
+    "panel.browse.label.no_rights.create_stadium_poll": "You have no rights to create a Stadium Poll.",
 
     "panel.browse.button.sign_in.title":"Iniciar sesión",
     "panel.browse.button.sign_in.hint":"",
@@ -2505,6 +2518,8 @@
     "widget.home.favorites.message.empty.laundry": "Toca el \u2606 en los artículos de Lavandería para que puedas encontrarlos rápidamente aquí.",
     "widget.home.favorites.message.empty.campus_guide": "Toca el \u2606 en los elementos de la Guía del campus para que puedas encontrarlos rápidamente aquí.",
     "widget.home.favorites.message.empty.inbox": "Toca \u2606 en los elementos de Notificaciones para que puedas encontrarlos rápidamente aquí.",
+
+    "widget.home.favorites.message.logged_out.inbox": "You need to be logged in to access My Notifications.",
 
     "widget.home.favorites.all.title": "Ver todo",
     "widget.home.favorites.all.hint.events": "Toque para ver todos los eventos favoritos",

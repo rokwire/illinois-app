@@ -279,13 +279,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   void _showBuildingAccessPanel() {
-    showModalBottomSheet(context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-        builder: (context) {
-          return IDCardPanel();
-        });
+     IDCardPanel.present(context);
   }
 
   void _onTestLocations() {

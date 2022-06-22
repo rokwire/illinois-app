@@ -2,6 +2,7 @@
     "app.title":"Illinois",
     "app.team_name":"Illinois",
     "app.offline.message.title":"You appear to be offline",
+    "app.logged_out.message.title":"You are not logged in",
 
     "generic.minutes": "minutes",
     "generic.hours": "hours",
@@ -208,6 +209,7 @@
     "panel.browse.button.video_tutorial.hint": "",
     
     "panel.browse.label.browse_all": "Browse all",
+    
     "panel.browse.label.offline.sign_in": "Sign In not available while offline.",
     "panel.browse.label.offline.verify_phone": "Verify your phone number is not available while offline.",
     "panel.browse.label.offline.my_illini": "My Illini is not available while offline.",
@@ -221,6 +223,19 @@
     "panel.browse.label.offline.crisis_help": "Crisis Help is not available while offline.",
     "panel.browse.label.offline.date_cat": "Due Date Catalog not available while offline.",
     "panel.browse.label.offline.video_tutorial": "Video Tutorial not available while offline.",
+    "panel.browse.label.offline.inbox": "Notifications are not available while offline.",
+
+    "panel.browse.label.logged_out.illini_cash": "You need to be logged in to access Illini Cash.",
+    "panel.browse.label.logged_out.meal_plan": "You need to be logged in to access University Housing Meal Plan.",
+    "panel.browse.label.logged_out.bus_pass": "You need to be logged in to access MTD Bus Pass.",
+    "panel.browse.label.logged_out.illini_id": "You need to be logged in to access Illini ID.",
+    "panel.browse.label.logged_out.create_stadium_poll": "You need to be logged in to create a Stadium Poll.",
+    "panel.browse.label.logged_out.inbox": "You need to be logged in to access Notifications.",
+
+    "panel.browse.label.no_card.bus_pass": "You need a valid Illini Identity card to access MTD Bus Pass.",
+    "panel.browse.label.no_card.illini_id": "You need a valid Illini Identity card to access Illini ID.",
+
+    "panel.browse.label.no_rights.create_stadium_poll": "You have no rights to create a Stadium Poll.",
 
     "panel.browse.button.sign_in.title":"Sign In",
     "panel.browse.button.sign_in.hint":"",
@@ -2408,7 +2423,6 @@
     "widget.home.campus_resources.button.inbox.title": "Notifications",
     "widget.home.campus_resources.button.inbox.hint": "",
     "widget.home.campus_resources.header.my_illini.title": "My Illini",
-    "widget.home.campus_resources.label.my_illini.offline": "My Illini not available while offline.",
 
     "widget.home_create_poll.heading.title":"Polls",
     "widget.home_create_poll.button.close.label":"Close",
@@ -2510,6 +2524,8 @@
     "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on on items in Laundry so you can quickly find them here.",
     "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on on items in Campus Guide so you can quickly find them here.",
     "widget.home.favorites.message.empty.inbox": "Tap the \u2606 on on items in Notifications so you can quickly find them here.",
+
+    "widget.home.favorites.message.logged_out.inbox": "You need to be logged in to access My Notifications.",
 
     "widget.home.favorites.all.title": "View All",
     "widget.home.favorites.all.hint.events": "Tap to view all favorite events",
