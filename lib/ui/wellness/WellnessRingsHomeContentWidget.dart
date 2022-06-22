@@ -106,6 +106,24 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     }
   }
 
+  Widget _buildHistoryContent(){
+    return Container(
+      child: Column(
+        children: [
+          Container(height: 8,),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 6),
+            child: Text(Localization().getStringEx('panel.wellness.rings.description.label', "See your recent progress in one place by checking your log for the lat 14 days."),
+              style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+          )),
+          Container(height: 12,),
+          _buildHistoryList(),
+        ],
+      )
+
+    );
+  }
+
   Widget _buildTodaysRingsContent(){
     return Container(
       child:
@@ -125,18 +143,12 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     );
   }
 
-  Widget _buildHistoryContent(){
-    return Container(
-      child: _buildHistoryList(),
-    );
-  }
-
   Widget _buildHistoryList(){
     var historyData = WellnessRingService().getAccomplishmentsHistory();
     List<Widget> content = [];
     if(historyData!=null && historyData.isNotEmpty){
       for(var accomplishmentsPerDay in historyData.entries) {
-        content.add(_buildAccomplishmentCard(accomplishmentsPerDay.key, accomplishmentsPerDay.value));
+        content.add(_AccomplishmentCard(title: accomplishmentsPerDay.key, accomplishments: accomplishmentsPerDay.value));
         content.add(Container(height: 8,));
       }
     }
@@ -145,33 +157,6 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
         children: content,
       ),
     );
-  }
-
-  Widget _buildAccomplishmentCard(String title, List<WellnessRingAccomplishment>? accomplishedRings){
-    List<Widget> accomplishmentsContent = [];
-      if(accomplishedRings==null || accomplishedRings.isEmpty){
-        return Container(); //Empty scip
-      }
-
-      for(var accomplishedRingData in accomplishedRings){
-        accomplishmentsContent.add(Container( //Accomplished ring within Card
-         child: Text(accomplishedRingData.ringData.name?? "N/A")
-        ));
-        accomplishmentsContent.add(Container( //Accomplished ring within Card
-         child: Text("${accomplishedRingData.achievedValue}/${accomplishedRingData.ringData.goal}")
-        ));
-        accomplishmentsContent.add(Container(height: 2,));
-      }
-
-      return Container(
-        child: Column(
-          children: [
-            Text(title),
-            Container(height: 2,),
-            Column(children: accomplishmentsContent,)
-          ],
-        ),
-      );
   }
 
   Widget _buildButtons(){
@@ -562,6 +547,107 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Image.asset('images/icon-gear.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
     ));
+  }
+}
+
+class _AccomplishmentCard extends StatefulWidget{
+  final String? title; //Date at top
+  final List<WellnessRingAccomplishment>? accomplishments;
+
+  const _AccomplishmentCard({Key? key, this.title, this.accomplishments}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _AccomplishmentCardState();
+
+}
+
+class _AccomplishmentCardState extends State<_AccomplishmentCard>{
+
+  @override
+  Widget build(BuildContext context) {
+    return CollectionUtils.isEmpty(widget.accomplishments) ? Container() :
+        Container( //TBD Draw
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          decoration: BoxDecoration(color: Colors.white, border: Border.all(width: 1, color: Styles().colors!.surfaceAccent!), borderRadius: BorderRadius.circular(5), ),
+          child: _buildAccomplishmentCard(widget.title??"", widget.accomplishments),
+        );
+  }
+
+  Widget _buildAccomplishmentCard(String title, List<WellnessRingAccomplishment>? accomplishedRings){
+    List<Widget> accomplishmentsTextContent = [];
+    List<Widget> accomplishmentsCircleContent = [];
+    if(accomplishedRings==null || accomplishedRings.isEmpty){
+      return Container(); //Empty scip
+    }
+
+    for(var accomplishedRingData in accomplishedRings){
+      //TEXT
+      accomplishmentsTextContent.add(
+          Container( //Accomplished ring within Card
+            child: Text("${accomplishedRingData.ringData.name?? "N/A"} ${_trimDecimal(accomplishedRingData.achievedValue)}/${_trimDecimal(accomplishedRingData.ringData.goal)}")
+      ));
+      accomplishmentsTextContent.add(Container(height: 2,));
+      //RING
+      accomplishmentsCircleContent.add(_buildRingCircle(color: accomplishedRingData.ringData.color ?? Colors.white));
+      accomplishmentsCircleContent.add(Container(height: 5,));
+    }
+
+    return Container(
+      child:
+      Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title),
+                Container(height: 2,),
+                Text("${widget.accomplishments?.length} Rings Completed!"),
+                Container(height: 6,),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: accomplishmentsTextContent,)
+              ],
+            ),
+          ),
+          Container(
+            child:Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: accomplishmentsCircleContent,
+            )
+          )
+        ],
+      )
+    );
+  }
+
+  Widget _buildRingCircle({required Color color, Color background = Colors.white}){
+    const double WIDGET_SIZE = 25;
+    const double STROKE_SIZE = 4;
+
+    return Container(
+      width: WIDGET_SIZE,
+      height: WIDGET_SIZE,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+      ),
+      padding: EdgeInsets.all(STROKE_SIZE),
+      child: Container(
+        // width: WIDGET_SIZE - STROKE_SIZE,
+        // height: WIDGET_SIZE - STROKE_SIZE,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: background,
+        ),
+      )
+    );
+  }
+
+  //Util
+
+  num _trimDecimal(double value){
+    return value % 1 == 0 ? value.toInt() : value;
   }
 }
 
