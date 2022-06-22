@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
@@ -23,6 +22,7 @@ import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/todo/WellnessCreateToDoItemPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
@@ -397,11 +397,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   void _loadToDoItems() {
     _setItemsLoading(true);
-    //TBD: DD - implement with backend
-    Future.delayed(Duration(seconds: 1)).then((_) {
-      List<dynamic>? itemsJson = JsonUtils.decodeList(
-          '[{"id":"dfssdfdssdtghnhn","name":"Lon Capa Homework","category":{"id":"asdadsad","name":"Chem 201","color":"#002855","reminder_type":"night_before"},"due_date_time":"2022-06-19T16:00:001Z","has_due_time":false,"reminder_date_time":"2022-06-18T19:00:001Z","work_days":["2022-05-17","2022-05-18"],"location":{"latitude":40.101977,"longitude":88.227162},"description":"I have to do my homework.","completed":true},{"id":"fdsddsdssdtghnhn","name":"Read Chapter 1 Jane Eyre","category":{"id":"67yh","name":"Eng 103","color":"#E84A27","reminder_type":"morning_of"},"due_date_time":"2022-06-20T07:15:001Z","has_due_time":true,"reminder_date_time":"2022-06-20T09:00:001Z","work_days":["2022-06-30","2022-07-01","2022-07-02"],"location":{"latitude":40.201977,"longitude":87.227162},"description":"I have to do my homework.","completed":true},{"id":"09kj90ipsdfk","name":"Call about Prescriptions","due_date_time":"2022-06-21T14:30:001Z","has_due_time":true,"work_days":["2022-06-02","2022-06-10"],"location":{"latitude":40.101877,"longitude":88.237162},"description":"Call about the Prescriptions.","completed":false},{"id":"0asa9kj90ipsdfk","name":"Call about Prescriptions 2","due_date_time":"2022-06-22T17:30:001Z","has_due_time":false,"work_days":["2022-06-29","2022-06-30"],"location":{"latitude":40.101877,"longitude":88.237162},"description":"Call about the Prescriptions 2.","completed":false},{"id":"0asa9kj90ipsdfk","name":"Call about Prescriptions 4","due_date_time":"2022-06-24T11:30:001Z","has_due_time":false,"work_days":["2022-06-29","2022-06-30"],"location":{"latitude":40.101877,"longitude":88.237162},"description":"Call about the Prescriptions 4.","completed":false},{"id":"0asa9kj90ipqwqwsdfk","name":"Call about Prescriptions 5","due_date_time":"2022-06-25T12:30:001Z","has_due_time":true,"work_days":["2022-06-29","2022-06-30"],"location":{"latitude":40.101877,"longitude":88.237162},"description":"Call about the Prescriptions 5.","completed":false},{"id":"09ksdde45fk","name":"Read Chapter 1 Jane Eyre","has_due_time":false,"category":{"id":"67yh","name":"Eng 103","color":"#E84A27","reminder_type":"morning_of"},"location":{"latitude":40.101877,"longitude":88.237162},"description":"Read this chapter.","completed":false}]');
-      _todoItems = ToDoItem.listFromJson(itemsJson);
+    Wellness().loadToDoItems().then((items) {
+      _todoItems = items;
       _sortItemsByDate();
       _setItemsLoading(false);
     });

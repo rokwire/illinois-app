@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -369,11 +370,8 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
 
   void _loadCategories() {
     _setLoading(true);
-    //TBD: DD - implement with backend
-    Future.delayed(Duration(seconds: 1)).then((_) {
-      List<dynamic>? categoriesJson = JsonUtils.decodeList(
-          '[{"id":"asdadsad","name":"Chem 201","color":"#002855","reminder_type":"night_before"},{"id":"67yh","name":"Eng 103","color":"#E84A27","reminder_type":"morning_of"}]');
-      _categories = ToDoCategory.listFromJson(categoriesJson);
+    Wellness().loadToDoCategories().then((categories) {
+      _categories = categories;
       _setLoading(false);
     });
   }
