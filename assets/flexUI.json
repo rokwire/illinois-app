@@ -63,7 +63,7 @@
 
 		"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 		
-		"features": ["authentication", "create_poll", "mtd_bus_number", "parking_lot_directions", "gies", "new_student", "canvas"],
+		"features": ["authentication", "create_poll", "mtd_bus_number", "parking_lot_directions", "gies", "new_student", "canvas", "safer"],
 		
 		"launch":["emergency"]
 		

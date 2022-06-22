@@ -100,7 +100,7 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
     return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widgets.home.app_help.header.title',  'App Help'),
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      child: Column(children: _buildCommandsList(),),
+      child: Column(children: commandsList,),
       //flatHeight: 0, slantHeight: 0, childPadding: EdgeInsets.all(16),
     ) : Container();
   }

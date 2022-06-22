@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -42,11 +44,25 @@ class HomeWalletWidget extends StatefulWidget {
 
 class _HomeWalletWidgetState extends State<HomeWalletWidget> implements NotificationsListener {
 
+  List<String>? _displayCodes;
+  Set<String>? _availableCodes;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
     ]);
+
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+        }
+      });
+    }
+
+    _availableCodes = _buildAvailableCodes();
+    _displayCodes = _buildDisplayCodes();
 
     super.initState();
   }
@@ -57,56 +73,99 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: Localization().getStringEx('widget.home.wallet.label.title', 'Wallet'),
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      child: Column(children: _buildCommandsList(),
-    ),
-    );
-  }
-
-  List<Widget> _buildCommandsList() {
-    List<Widget> contentList = <Widget>[];
-    List<dynamic>? contentListCodes = FlexUI()['home.wallet'];
-    if (contentListCodes != null) {
-      for (dynamic code in contentListCodes) {
-        Widget? contentEntry;
-        if (code == 'illini_cash_card') {
-          contentEntry = HomeIlliniCashWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-        }
-        else if (code == 'meal_plan_card') {
-          contentEntry = HomeMealPlanWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-        }
-        else if (code == 'bus_pass_card') {
-          contentEntry = HomeBusPassWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-        }
-        else if (code == 'illini_id_card') {
-          contentEntry = HomeIlliniIdWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-        }
-        else if (code == 'library_card') {
-          contentEntry = HomeLibraryCardWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-        }
-
-        if (contentEntry != null) {
-          if (contentList.isNotEmpty) {
-            contentList.add(Container(height: 8,));
-          }
-          contentList.add(contentEntry);
-        }
-      }
-
-    }
-   return contentList;
-  }
-
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
+    if (name == FlexUI.notifyChanged) {
+      _updateAvailableCodes();
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      _updateDisplayCodes();
+    }
   }
 
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> commandsList = _buildCommandsList();
+    return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
+      title: Localization().getStringEx('widget.home.wallet.label.title', 'Wallet'),
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      child: Column(children: commandsList,),
+    ) : Container();
+  }
+
+  List<Widget> _buildCommandsList() {
+    List<Widget> contentList = <Widget>[];
+    if (_displayCodes != null) {
+      for (String code in _displayCodes!.reversed) {
+        if ((_availableCodes == null) || _availableCodes!.contains(code)) {
+          Widget? contentEntry;
+          if (code == 'illini_cash_card') {
+            contentEntry = HomeIlliniCashWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+          }
+          else if (code == 'meal_plan_card') {
+            contentEntry = HomeMealPlanWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+          }
+          else if (code == 'bus_pass_card') {
+            contentEntry = HomeBusPassWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+          }
+          else if (code == 'illini_id_card') {
+            contentEntry = HomeIlliniIdWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+          }
+          else if (code == 'library_card') {
+            contentEntry = HomeLibraryCardWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+          }
+
+          if (contentEntry != null) {
+            if (contentList.isNotEmpty) {
+              contentList.add(Container(height: 8,));
+            }
+            contentList.add(contentEntry);
+          }
+        }
+      }
+    }
+    return contentList;
+  }
+
+  //  List<dynamic>? contentListCodes = FlexUI()['home.wallet'];
+
+  Set<String>? _buildAvailableCodes() => JsonUtils.setStringsValue(FlexUI()['home.wallet']);
+
+  void _updateAvailableCodes() {
+    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home.wallet']);
+    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
+      setState(() {
+        _availableCodes = availableCodes;
+      });
+    }
+  }
+
+  List<String>? _buildDisplayCodes() {
+    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
+    if (favorites == null) {
+      // Build a default set of favorites
+      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.wallet'));
+      if (fullContent != null) {
+        favorites = LinkedHashSet<String>.from(fullContent.reversed);
+        Future.delayed(Duration(), () {
+          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites);
+        });
+      }
+    }
+    
+    return (favorites != null) ? List.from(favorites) : null;
+  }
+
+  void _updateDisplayCodes() {
+    List<String>? displayCodes = _buildDisplayCodes();
+    if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes) && mounted) {
+      setState(() {
+        _displayCodes = displayCodes;
+      });
+    }
+  }
 }
 
 // HomeIlliniCashWalletWidget

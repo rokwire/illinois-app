@@ -91,7 +91,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
     return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
         titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-        child: Column(children: _buildCommandsList(),),
+        child: Column(children: commandsList,),
     ) : Container();
   }
 
