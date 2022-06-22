@@ -18,10 +18,12 @@ import 'dart:io';
 
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -37,10 +39,12 @@ class WellnessRingsHomeContentWidget extends StatefulWidget {
 
 class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeContentWidget> implements NotificationsListener{
 
+  late _WellnessRingsTab _selectedTab;
 
   @override
   void initState() {
     super.initState();
+    _selectedTab = _WellnessRingsTab.today;
     NotificationService().subscribe(this, [
       WellnessRingService.notifyUserRingsUpdated,
     ]);
@@ -54,31 +58,79 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
 
   @override
   Widget build(BuildContext context) {
-    return
-      _buildTodaysRingsContent();
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Container(height: 8,),
+          _buildHeader(),
+          Container(height: 12,),
+          _buildTabButtonRow(),
+          _buildContent()
+        ]));
+
   }
 
-  _buildTodaysRingsContent(){
+  Widget _buildHeader() {
+    return Container(
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Text(Localization().getStringEx('panel.wellness.rings.header.label', 'My Daily Wellness Rings'),
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
+          HomeFavoriteButton(style: HomeFavoriteStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
+        ]));
+  }
+
+  Widget _buildTabButtonRow() {
+    return Row(children: [
+      Expanded(
+          child: _TabButton(
+              position: _TabButtonPosition.first,
+              selected: (_selectedTab == _WellnessRingsTab.today),
+              label: Localization().getStringEx('panel.wellness.rings.tab.daily.label', "Today's Rings"),
+              hint: Localization().getStringEx('panel.wellness.rings.tab.daily.hint', ''),
+              onTap: () => _onTabChanged(tab: _WellnessRingsTab.today))),
+      Expanded(
+          child: _TabButton(
+              position: _TabButtonPosition.last,
+              selected: (_selectedTab == _WellnessRingsTab.history),
+              label: Localization().getStringEx('panel.wellness.rings.tab.history.label', 'Accomplishments'),
+              hint: Localization().getStringEx('panel.wellness.rings.tab.history.hint', ''),
+              onTap: () => _onTabChanged(tab: _WellnessRingsTab.history)))
+    ]);
+  }
+
+  Widget _buildContent(){
+    switch(_selectedTab){
+      case _WellnessRingsTab.today : return _buildTodaysRingsContent();
+      case _WellnessRingsTab.history : return _buildHistoryContent();
+    }
+  }
+
+  Widget _buildTodaysRingsContent(){
     return Container(
       child:
       Stack(children:[
         Column(
           children: [
-            Container(height: 16,),
+            Container(height: 32,),
             WellnessRing(),
-            Container(height: 16,),
+            Container(height: 28,),
             _buildButtons(),
             Container(height: 16,),
             WellnessRingButton(label: "Create New Ring", description: "Maximum of 4 total", onTapWidget: (context){}, showLeftIcon: true,),
             Container(height: 16,),
-            _buildHistoryList()
         ],
       ),
       ])
     );
   }
 
-  //TBD Move to other tab
+  Widget _buildHistoryContent(){
+    return Container(
+      child: _buildHistoryList(),
+    );
+  }
+
   Widget _buildHistoryList(){
     var historyData = WellnessRingService().getAccomplishmentsHistory();
     List<Widget> content = [];
@@ -146,6 +198,15 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     return Container(
       child: Column(children: content,),
     );
+  }
+
+  void _onTabChanged({required _WellnessRingsTab tab}) {
+    if (_selectedTab != tab) {
+      _selectedTab = tab;
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   @override
@@ -989,5 +1050,67 @@ class WellnessRingService with Service{
 
   WellnessRingData? getRingData(String id){
     return wellnessRings?.firstWhere((ring) => ring.id == id);
+  }
+}
+
+//Common Widgets //Probably will use shared widgets with TODOLIst
+enum _WellnessRingsTab { today, history}
+
+enum _TabButtonPosition { first, middle, last }
+
+class _TabButton extends StatelessWidget {
+  final String? label;
+  final String? hint;
+  final _TabButtonPosition position;
+  final bool? selected;
+  final GestureTapCallback? onTap;
+
+  _TabButton({this.label, this.hint, required this.position, this.selected, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Semantics(
+            label: label,
+            hint: hint,
+            button: true,
+            excludeSemantics: true,
+            child: Container(
+                height: 24 + 16 * MediaQuery.of(context).textScaleFactor,
+                decoration: BoxDecoration(
+                    color: selected! ? Colors.white : Styles().colors!.lightGray, border: _border, borderRadius: _borderRadius),
+                child: Center(
+                    child: Text(label!,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: selected! ? Styles().fontFamilies!.extraBold : Styles().fontFamilies!.medium,
+                            fontSize: 16,
+                            color: Styles().colors!.fillColorPrimary))))));
+  }
+
+  BorderRadiusGeometry? get _borderRadius {
+    switch (position) {
+      case _TabButtonPosition.first:
+        return BorderRadius.horizontal(left: Radius.circular(100.0));
+      case _TabButtonPosition.middle:
+        return null;
+      case _TabButtonPosition.last:
+        return BorderRadius.horizontal(right: Radius.circular(100.0));
+    }
+  }
+
+  BoxBorder? get _border {
+    BorderSide borderSide = BorderSide(color: Styles().colors!.surfaceAccent!, width: 2, style: BorderStyle.solid);
+    switch (position) {
+      case _TabButtonPosition.first:
+        return Border.fromBorderSide(borderSide);
+      case _TabButtonPosition.middle:
+        return Border(top: borderSide, bottom: borderSide);
+      case _TabButtonPosition.last:
+        return Border.fromBorderSide(borderSide);
+    }
   }
 }
