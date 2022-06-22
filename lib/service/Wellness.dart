@@ -49,6 +49,39 @@ class Wellness with Service {
 
   // ToDo List
 
+  //TBD: DD - temporary caching of categories and todo items. To be deleted when we have implemented service
+  // Remove from here - start
+  List<ToDoCategory>? _toDoCategories;
+  List<ToDoItem>? _toDoItems;
+
+  Future<List<ToDoCategory>?> loadToDoCategoriesCached() async {
+    return _toDoCategories;
+  }
+
+  Future<bool> createToDoCategoryCached(ToDoCategory category) async {
+    if (_toDoCategories == null) {
+      _toDoCategories = <ToDoCategory>[];
+    }
+    _toDoCategories!.add(category);
+    NotificationService().notify(notifyToDoCategoryCreated);
+    return true;
+  }
+
+  Future<List<ToDoItem>?> loadToDoItemsCached() async {
+    return _toDoItems;
+  }
+
+  Future<bool> createToDoItemCached(ToDoItem item) async {
+    if (_toDoItems == null) {
+      _toDoItems = <ToDoItem>[];
+    }
+    _toDoItems!.add(item);
+    NotificationService().notify(notifyToDoItemCreated);
+    return true;
+  }
+
+  // Remove to here - end
+
   Future<List<ToDoCategory>?> loadToDoCategories() async {
     if (isEnabled) {
       Log.w('Failed to load wellness todo categories. Missing wellness url.');

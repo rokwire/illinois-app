@@ -91,7 +91,7 @@ class ToDoItem {
   }
 
   Color get color {
-    return UiColors.fromHex(category?.colorHex) ?? Styles().colors!.fillColorPrimary!;
+    return category?.color ?? Styles().colors!.fillColorPrimary!;
   }
 
   static List<ToDoItem>? listFromJson(List<dynamic>? jsonList) {
@@ -141,6 +141,10 @@ class ToDoCategory {
         name: JsonUtils.stringValue(json['name']),
         colorHex: JsonUtils.stringValue(json['color']),
         reminderType: reminderTypeFromString(JsonUtils.stringValue(json['reminder_type'])));
+  }
+
+  Color get color {
+    return UiColors.fromHex(colorHex) ?? Styles().colors!.fillColorPrimary!;
   }
 
   static List<ToDoCategory>? listFromJson(List<dynamic>? jsonList) {

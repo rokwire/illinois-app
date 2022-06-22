@@ -1664,6 +1664,9 @@
     "panel.wellness.categories.save.button": "Save",
     "panel.wellness.categories.manage.existing.label": "Manage Existing Categories",
     "panel.wellness.categories.manage.empty.label": "No current categories",
+    "panel.wellness.categories.manage.empty.name.msg": "Please, fill category name.",
+    "panel.wellness.categories.manage.category.create.succeeded.msg": "Category created successfully.",
+    "panel.wellness.categories.manage.category.create.failed.msg": "Failed to create category.",
 
     "panel.wellness.todo.item.add.label": "Add an Item",
     "panel.wellness.todo.item.name.field.label": "ITEM NAME",

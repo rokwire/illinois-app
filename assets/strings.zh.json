@@ -1663,6 +1663,9 @@
     "panel.wellness.categories.save.button": "節省",
     "panel.wellness.categories.manage.existing.label": "管理現有類別",
     "panel.wellness.categories.manage.empty.label": "沒有當前類別",
+    "panel.wellness.categories.manage.empty.name.msg": "請填寫類別名稱.",
+    "panel.wellness.categories.manage.category.create.succeeded.msg": "類別創建成功.",
+    "panel.wellness.categories.manage.category.create.failed.msg": "創建類別失敗.",
 
     "panel.wellness.todo.item.add.label": "添加項目",
     "panel.wellness.todo.item.name.field.label": "項目名",
