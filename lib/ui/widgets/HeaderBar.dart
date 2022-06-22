@@ -333,7 +333,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
 
   void onTapNotifications(BuildContext context) {
     Analytics().logSelect(target: "Notifications");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel()));
+    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
   }
 
   void onTapPersonalInformations(BuildContext context) {
