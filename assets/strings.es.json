@@ -1632,7 +1632,7 @@
     "panel.wellness.todo.items.completed.clear.button": "Borrar elementos completados",
     "panel.wellness.todo.items.unassigned.category.label": "Elementos no asignados",
     "panel.wellness.todo.items.add.button": "Añadir artículo",
-    "panel.wellness.todo.items.add.empty.msg": "No hay artículos próximos",
+    "panel.wellness.todo.items.add.empty.msg": "Actualmente no tiene elementos de la lista de tareas pendientes.",
     "panel.wellness.todo.welcome.label": "Bienvenido a tu lista de tareas pendientes",
     "panel.wellness.todo.welcome.description.label": "Libere espacio en su mente registrando sus tareas pendientes aquí.",
     "panel.wellness.todo.categories.manage.button": "Gestionar categorías",

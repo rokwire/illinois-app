@@ -1634,7 +1634,7 @@
     "panel.wellness.todo.items.completed.clear.button": "清除已完成的項目",
     "panel.wellness.todo.items.unassigned.category.label": "未分配的項目",
     "panel.wellness.todo.items.add.button": "添加項目",
-    "panel.wellness.todo.items.add.empty.msg": "沒有即將到來的項目",
+    "panel.wellness.todo.items.add.empty.msg": "您目前沒有待辦事項列表項.",
     "panel.wellness.todo.welcome.label": "歡迎來到你的待辦事項清單",
     "panel.wellness.todo.welcome.description.label": "通過在此處記錄您的待辦事項來釋放您的大腦空間.",
     "panel.wellness.todo.categories.manage.button": "管理類別",

@@ -1633,7 +1633,7 @@
     "panel.wellness.todo.items.completed.clear.button": "Clear Completed Items",
     "panel.wellness.todo.items.unassigned.category.label": "Unassigned Items",
     "panel.wellness.todo.items.add.button": "Add Item",
-    "panel.wellness.todo.items.add.empty.msg": "No upcoming items",
+    "panel.wellness.todo.items.add.empty.msg": "You currently have no to-do list items.",
     "panel.wellness.todo.welcome.label": "Welcome to Your To-Do List",
     "panel.wellness.todo.welcome.description.label": "Free up space in your mind by recording your to-do items here.",
     "panel.wellness.todo.categories.manage.button": "Manage Categories",
