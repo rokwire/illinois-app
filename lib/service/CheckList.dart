@@ -7,7 +7,6 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -204,6 +203,7 @@ abstract class CheckList with Service implements NotificationsListener{
       return null;
     }
     String? contactInfoUrl = "${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}";
+    // ignore: unused_label
     TMP: contactInfoUrl+="&mode=1"; //TBD remove Workaround after we have test account to test with
     String? token = Auth2().uiucToken?.accessToken;
     // String? token = Auth2().token?.accessToken;
@@ -595,6 +595,7 @@ abstract class CheckList with Service implements NotificationsListener{
   }
 
   //TBD remove
+  // ignore: unused_element
   String get _mocContactInfoResponse{
     return "{\r\n   "
         "\"uin\":\"657427043\",\r\n   "

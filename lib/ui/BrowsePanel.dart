@@ -109,7 +109,9 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       (name == Localization.notifyStringsUpdated) ||
       (name == Styles.notifyChanged))
     {
-      setState(() { });
+      if (mounted) {
+        setState(() { });
+      }
     }
   }
 
@@ -184,6 +186,9 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         setState(() {
           _contentCodes = contentCodes;
         });
+      }
+      else {
+        _contentCodes = contentCodes;
       }
     }
   }
@@ -322,7 +327,6 @@ class _BrowseSection extends StatelessWidget {
   }
 
   List<dynamic>? get avalableSectionFavorites => FlexUI().contentSourceEntry((_favoriteCategory != null) ? 'home.$_favoriteCategory' : 'home');
-  // bool _canFavoriteEntry(String entryId) => avalableSectionFavorites?.contains(entryId) ?? false;
 
   bool? get _isSectionFavorite {
     int favCount = 0, unfavCount = 0, totalCount = 0;
@@ -364,7 +368,10 @@ class _BrowseSection extends StatelessWidget {
   }
 
   void _toggleSectionFavorite() {
-    if (_isSectionFavorite == true) {
+    if (_favoriteCategory == null) {
+      Auth2().prefs?.applyFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), _availableFavoriteCodes.reversed, _isSectionFavorite != true);
+    }
+    else if (_isSectionFavorite == true) {
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), LinkedHashSet<String>());
     }
     else {
