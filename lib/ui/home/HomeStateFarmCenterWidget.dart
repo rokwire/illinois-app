@@ -165,7 +165,10 @@ class _HomeStateFarmCenterWidgetState extends State<HomeStateFarmCenterWidget> i
       // Build a default set of favorites
       List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.state_farm_center'));
       if (fullContent != null) {
-        Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites = LinkedHashSet<String>.from(fullContent.reversed));
+        favorites = LinkedHashSet<String>.from(fullContent.reversed);
+        Future.delayed(Duration(), () {
+          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites);
+        });
       }
     }
     
