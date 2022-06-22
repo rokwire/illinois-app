@@ -16,9 +16,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -31,18 +34,24 @@ class WellnessManageToDoCategoriesPanel extends StatefulWidget {
   State<WellnessManageToDoCategoriesPanel> createState() => _WellnessManageToDoCategoriesPanelState();
 }
 
-class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCategoriesPanel> {
+class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCategoriesPanel> implements NotificationsListener {
   ToDoCategory? _category;
   List<ToDoCategory>? _categories;
   late ToDoCategoryReminderType _selectedReminderType;
+  Color? _selectedColor;
   TextEditingController _nameController = TextEditingController();
   bool _reminderTypeDropDownValuesVisible = false;
+  bool _loading = false;
 
   @override
   void initState() {
     super.initState();
+    NotificationService()
+        .subscribe(this, [Wellness.notifyToDoCategoryCreated, Wellness.notifyToDoCategoryUpdated, Wellness.notifyToDoCategoryDeleted]);
     _category = widget.category;
+    _selectedColor = _category?.color;
     _selectedReminderType = _category?.reminderType ?? ToDoCategoryReminderType.none;
+    _loadCategories();
   }
 
   @override
@@ -94,11 +103,12 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     return Padding(
         padding: EdgeInsets.only(top: 20),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          _buildColorEntry(color: Styles().colors!.fillColorSecondary!, isSelected: true),
-          _buildColorEntry(color: Styles().colors!.diningColor!),
-          _buildColorEntry(color: Styles().colors!.placeColor!),
-          _buildColorEntry(color: Styles().colors!.accentColor2!),
-          _buildColorEntry(color: Styles().colors!.accentColor3!),
+          _buildColorEntry(
+              color: Styles().colors!.fillColorSecondary!, isSelected: (_selectedColor == Styles().colors!.fillColorSecondary)),
+          _buildColorEntry(color: Styles().colors!.diningColor!, isSelected: (_selectedColor == Styles().colors!.diningColor)),
+          _buildColorEntry(color: Styles().colors!.placeColor!, isSelected: (_selectedColor == Styles().colors!.placeColor)),
+          _buildColorEntry(color: Styles().colors!.accentColor2!, isSelected: (_selectedColor == Styles().colors!.accentColor2)),
+          _buildColorEntry(color: Styles().colors!.accentColor3!, isSelected: (_selectedColor == Styles().colors!.accentColor3)),
           _buildColorEntry(imageAsset: 'images/icon-color-edit.png'),
         ]));
   }
@@ -106,7 +116,10 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   Widget _buildColorEntry({Color? color, String? imageAsset, bool isSelected = false}) {
     BoxBorder? border = isSelected ? Border.all(color: Colors.black, width: 2) : null;
     DecorationImage? image = StringUtils.isNotEmpty(imageAsset) ? DecorationImage(image: AssetImage(imageAsset!), fit: BoxFit.fill) : null;
-    return Container(width: 50, height: 50, decoration: BoxDecoration(color: color, image: image, border: border, shape: BoxShape.circle));
+    return GestureDetector(
+        onTap: () => _onTapColor(color),
+        child: Container(
+            width: 50, height: 50, decoration: BoxDecoration(color: color, image: image, border: border, shape: BoxShape.circle)));
   }
 
   Widget _buildRemindersWidget() {
@@ -182,18 +195,17 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   Widget _buildSaveButton() {
-    //TBD: DD - implement
     return Padding(
         padding: EdgeInsets.only(top: 30),
         child: RoundedButton(
             label: Localization().getStringEx('panel.wellness.categories.save.button', 'Save'),
             contentWeight: 0,
+            progress: _loading,
             padding: EdgeInsets.symmetric(horizontal: 46, vertical: 8),
             onTap: _onTapSave));
   }
 
   Widget _buildManageCategories() {
-    //TBD: DD - implement
     return Padding(
         padding: EdgeInsets.only(top: 30),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -210,8 +222,12 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
 
   List<Widget> _buildCategoriesWidgetList() {
     List<Widget> widgetList = <Widget>[];
-    if (CollectionUtils.isNotEmpty(_categories)) {
-      //TBD: DD - implement
+    if (_loading) {
+      widgetList.add(CircularProgressIndicator());
+    } else if (CollectionUtils.isNotEmpty(_categories)) {
+      for (ToDoCategory category in _categories!) {
+        widgetList.add(Padding(padding: EdgeInsets.only(top: 7), child: _buildCategoryCard(category)));
+      }
     } else {
       widgetList.add(Text(Localization().getStringEx('panel.wellness.categories.manage.empty.label', 'No current categories'),
           style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)));
@@ -219,8 +235,70 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     return widgetList;
   }
 
-  void _onTapSave() {
+  Widget _buildCategoryCard(ToDoCategory category) {
+    return GestureDetector(
+        onTap: () => _onTapEditCategory(category),
+        child: Container(
+            decoration: BoxDecoration(color: category.color, borderRadius: BorderRadius.circular(5)),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Padding(
+                  padding: EdgeInsets.only(left: 20, top: 10, bottom: 10),
+                  child: Text(StringUtils.ensureNotEmpty(category.name),
+                      style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 14))),
+              Expanded(child: Container()),
+              Image.asset('images/icon-edit-white.png'),
+              GestureDetector(
+                  onTap: () => _onTapDeleteCategory(category),
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
+                      child: Image.asset('images/icon-x-orange-small.png', color: Styles().colors!.white)))
+            ])));
+  }
+
+  void _onTapEditCategory(ToDoCategory category) {
     //TBD: DD - implement
+  }
+
+  void _onTapDeleteCategory(ToDoCategory category) {
+    _setLoading(true);
+    Wellness().deleteToDoCategoryCached(category.id!).then((success) {
+      late String msg;
+      if (success) {
+        msg =
+            Localization().getStringEx('panel.wellness.categories.manage.category.delete.succeeded.msg', 'Category deleted successfully.');
+      } else {
+        msg = Localization().getStringEx('panel.wellness.categories.manage.category.delete.failed.msg', 'Failed to delete category.');
+      }
+      AppAlert.showDialogResult(context, msg);
+      _setLoading(false);
+    });
+  }
+
+  void _onTapSave() {
+    FocusScope.of(context).requestFocus(FocusNode());
+    String name = _nameController.text;
+    if(StringUtils.isEmpty(name)) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.categories.manage.empty.name.msg', 'Please, fill category name.'));
+      return;
+    }
+    _setLoading(true);
+    _category = ToDoCategory(name: name, colorHex: UiColors.toHex(_selectedColor), reminderType: _selectedReminderType);
+    Wellness().createToDoCategoryCached(_category!).then((success) {
+      late String msg;
+      if (success) {
+        msg = Localization().getStringEx('panel.wellness.categories.manage.category.create.succeeded.msg', 'Category created successfully.');
+      } else {
+        msg = Localization().getStringEx('panel.wellness.categories.manage.category.create.failed.msg', 'Failed to create category.');
+      }
+      AppAlert.showDialogResult(context, msg);
+      _setLoading(false);
+    });
+  }
+
+  void _onTapColor(Color? color) {
+    //TBD: DD - implement custom color
+    _selectedColor = color;
+    _updateState();
   }
 
   void _onTapReminderType(ToDoCategoryReminderType type) {
@@ -236,9 +314,44 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     _updateState();
   }
 
+  void _loadCategories() {
+    _setLoading(true);
+    Wellness().loadToDoCategoriesCached().then((categories) {
+      _categories = categories;
+      _setLoading(false);
+    });
+  }
+
+  void _clearSelectedFields() {
+    _category = null;
+    _selectedColor = null;
+    _selectedReminderType = ToDoCategoryReminderType.none;
+    _nameController.text = '';
+    _updateState();
+  }
+
   void _updateState() {
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  void _setLoading(bool loading) {
+    _loading = loading;
+    _updateState();
+  }
+
+  // Notifications Listener
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Wellness.notifyToDoCategoryCreated) {
+      _clearSelectedFields();
+      _loadCategories();
+    } else if (name == Wellness.notifyToDoCategoryUpdated) {
+      _loadCategories();
+    } else if (name == Wellness.notifyToDoCategoryDeleted) {
+      _loadCategories();
     }
   }
 }

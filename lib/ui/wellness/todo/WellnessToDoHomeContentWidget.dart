@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
@@ -23,6 +22,8 @@ import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/todo/WellnessCreateToDoItemPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -74,55 +75,75 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          _buildToDoListHeader(),
           _buildTabButtonRow(),
           _buildCalendarWidget(),
           _buildItemsContent(),
-          _buildCalendarWidget(),
-          //TBD: DD - properly position the button if the content is not scrollable
           _buildClearCompletedItemsButton(),
           _buildManageCategoriesButton()
         ]));
   }
 
-  Widget _buildTabButtonRow() {
-    return Row(children: [
-      Expanded(
-          child: _TabButton(
-              position: _TabButtonPosition.first,
-              selected: (_selectedTab == _ToDoTab.daily),
-              label: Localization().getStringEx('panel.wellness.todo.tab.daily.label', 'Daily'),
-              hint: Localization().getStringEx('panel.wellness.todo.tab.daily.hint', ''),
-              onTap: () => _onTabChanged(tab: _ToDoTab.daily))),
-      Expanded(
-          child: _TabButton(
-              position: _TabButtonPosition.middle,
-              selected: (_selectedTab == _ToDoTab.category),
-              label: Localization().getStringEx('panel.wellness.todo.tab.category.label', 'Category'),
-              hint: Localization().getStringEx('panel.wellness.todo.tab.category.hint', ''),
-              onTap: () => _onTabChanged(tab: _ToDoTab.category))),
-      Expanded(
-          child: _TabButton(
-              position: _TabButtonPosition.last,
-              selected: (_selectedTab == _ToDoTab.reminders),
-              label: Localization().getStringEx('panel.wellness.todo.tab.reminders.label', 'Reminders'),
-              hint: Localization().getStringEx('panel.wellness.todo.tab.reminders.hint', ''),
-              onTap: () => _onTabChanged(tab: _ToDoTab.reminders)))
+  Widget _buildToDoListHeader() {
+    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Text(Localization().getStringEx('panel.wellness.todo.header.label', 'My To-Do List'),
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
+      HomeFavoriteButton(style: HomeFavoriteStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16)),
+      Expanded(child: Container()),
+      RoundedButton(
+          label: Localization().getStringEx('panel.wellness.todo.items.add.button', 'Add Item'),
+          borderColor: Styles().colors!.fillColorSecondary,
+          textColor: Styles().colors!.fillColorPrimary,
+          leftIcon: Image.asset('images/icon-add-14x14.png', color: Styles().colors!.fillColorPrimary),
+          iconPadding: 8,
+          rightIconPadding: EdgeInsets.only(right: 8),
+          fontSize: 14,
+          contentWeight: 0,
+          fontFamily: Styles().fontFamilies!.regular,
+          padding: EdgeInsets.zero,
+          onTap: _onTapAddItem)
     ]);
   }
 
+  Widget _buildTabButtonRow() {
+    return Padding(
+        padding: EdgeInsets.only(top: 14),
+        child: Row(children: [
+          Expanded(
+              child: _TabButton(
+                  position: _TabButtonPosition.first,
+                  selected: (_selectedTab == _ToDoTab.daily),
+                  label: Localization().getStringEx('panel.wellness.todo.tab.daily.label', 'Daily'),
+                  hint: Localization().getStringEx('panel.wellness.todo.tab.daily.hint', ''),
+                  onTap: () => _onTabChanged(tab: _ToDoTab.daily))),
+          Expanded(
+              child: _TabButton(
+                  position: _TabButtonPosition.middle,
+                  selected: (_selectedTab == _ToDoTab.category),
+                  label: Localization().getStringEx('panel.wellness.todo.tab.category.label', 'Category'),
+                  hint: Localization().getStringEx('panel.wellness.todo.tab.category.hint', ''),
+                  onTap: () => _onTabChanged(tab: _ToDoTab.category))),
+          Expanded(
+              child: _TabButton(
+                  position: _TabButtonPosition.last,
+                  selected: (_selectedTab == _ToDoTab.reminders),
+                  label: Localization().getStringEx('panel.wellness.todo.tab.reminders.label', 'Reminders'),
+                  hint: Localization().getStringEx('panel.wellness.todo.tab.reminders.hint', ''),
+                  onTap: () => _onTabChanged(tab: _ToDoTab.reminders)))
+        ]));
+  }
+
   Widget _buildClearCompletedItemsButton() {
-    bool visible = !_itemsLoading && CollectionUtils.isNotEmpty(_todoItems);
-    return Visibility(
-        visible: visible,
-        child: Padding(
-            padding: EdgeInsets.only(top: 15),
-            child: RoundedButton(
-                borderColor: Styles().colors!.fillColorPrimary,
-                contentWeight: 0.75,
-                padding: EdgeInsets.symmetric(vertical: 8),
-                fontSize: 18,
-                label: Localization().getStringEx('panel.wellness.todo.items.completed.clear.button', 'Clear Completed Items'),
-                onTap: _onTapClearCompletedItems)));
+    return Padding(
+        padding: EdgeInsets.only(top: 40),
+        child: RoundedButton(
+            borderColor: Styles().colors!.fillColorPrimary,
+            contentWeight: 0.75,
+            padding: EdgeInsets.symmetric(vertical: 8),
+            fontSize: 18,
+            label: Localization().getStringEx('panel.wellness.todo.items.completed.clear.button', 'Clear Completed Items'),
+            onTap: _onTapClearCompletedItems));
   }
 
   Widget _buildCalendarWidget() {
@@ -166,7 +187,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                   child: Stack(children: [
                     _buildCalendarVerticalDelimiters(),
                     _buildCalendarHotizontalDelimiter(),
-                    _buildCalendarHeaderDatesWidget()
+                    _buildCalendarHeaderDatesWidget(),
+                    _buildCalendarItems()
                   ])))
         ]));
   }
@@ -204,14 +226,46 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         padding: EdgeInsets.only(top: 7), child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: dateWidgetList));
   }
 
+  Widget _buildCalendarItems() {
+    List<Widget> scrollWidgets = <Widget>[];
+    DateTime currentDate = DateTime.fromMillisecondsSinceEpoch(_calendarStartDate.millisecondsSinceEpoch);
+    while (currentDate.isBefore(_calendarEndDate)) {
+      List<Widget> dayItemWidgets = <Widget>[];
+      List<ToDoItem>? dayItems = _getItemsForDate(currentDate);
+      if (CollectionUtils.isNotEmpty(dayItems)) {
+        for (ToDoItem item in dayItems!) {
+          dayItemWidgets.add(Padding(padding: EdgeInsets.only(top: 7), child: _buildCalendarToDoItem(item)));
+        }
+      }
+      if (CollectionUtils.isEmpty(dayItemWidgets)) {
+        dayItemWidgets.add(_buildCalendarToDoItem(null)); // Build empty transparent widget for proper horizontal adjustment
+      }
+      scrollWidgets.add(SingleChildScrollView(
+          scrollDirection: Axis.vertical, child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: dayItemWidgets)));
+
+      currentDate = currentDate.add(Duration(days: 1));
+    }
+    return Padding(
+        padding: EdgeInsets.only(top: 34), child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: scrollWidgets));
+  }
+
+  Widget _buildCalendarToDoItem(ToDoItem? item) {
+    double widgetSize = 30;
+    return GestureDetector(
+        onTap: () => _onTapCalendarItem(item),
+        child: Container(height: widgetSize, width: widgetSize, decoration: BoxDecoration(color: item?.color ?? Colors.transparent, shape: BoxShape.circle)));
+  }
+
   Widget _buildManageCategoriesButton() {
     return Padding(
-        padding: EdgeInsets.only(top: 25),
+        padding: EdgeInsets.only(top: 15),
         child: GestureDetector(
             onTap: _onTapManageCategories,
-            //TBD: DD - underline
-            child: Text(Localization().getStringEx('panel.wellness.todo.categories.manage.button', 'Manage Categories'),
-                    style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary))));
+            child: Column(children: [
+              Text(Localization().getStringEx('panel.wellness.todo.categories.manage.button', 'Manage Categories'),
+                  style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary)),
+              Divider(color: Styles().colors!.fillColorPrimary, thickness: 2, height: 2, indent: 100, endIndent: 100)
+            ])));
   }
 
   Widget _buildItemsContent() {
@@ -246,7 +300,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       _buildSectionWidget(_unAssignedLabel),
       Padding(
           padding: EdgeInsets.symmetric(vertical: 30, horizontal: 16),
-          child: Text(Localization().getStringEx('panel.wellness.todo.items.add.empty.msg', 'No upcoming items'),
+          child: Text(Localization().getStringEx('panel.wellness.todo.items.add.empty.msg', 'You currently have no to-do list items.'),
               style: TextStyle(fontSize: 14, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular)))
     ]);
   }
@@ -255,24 +309,13 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     return Padding(
         padding: EdgeInsets.only(top: 25),
         child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Text(sectionKey,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              style: TextStyle(fontSize: 20, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary)),
-          Padding(padding: EdgeInsets.only(left: 7), child: Image.asset('images/icon-down.png')),
-          Expanded(child: Container()),
-          RoundedButton(
-              label: Localization().getStringEx('panel.wellness.todo.items.add.button', 'Add Item'),
-              borderColor: Styles().colors!.fillColorPrimary,
-              textColor: Styles().colors!.fillColorPrimary,
-              leftIcon: Image.asset('images/icon-add-14x14.png', color: Styles().colors!.fillColorPrimary),
-              iconPadding: 8,
-              rightIconPadding: EdgeInsets.only(right: 8),
-              fontSize: 14,
-              contentWeight: 0,
-              fontFamily: Styles().fontFamilies!.regular,
-              padding: EdgeInsets.zero,
-              onTap: _onTapAddItem)
+          Image.asset('images/icon-down.png'),
+          Padding(
+              padding: EdgeInsets.only(left: 7),
+              child: Text(sectionKey,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: TextStyle(fontSize: 20, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary)))
         ]));
   }
 
@@ -332,6 +375,10 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     //TBD: DD - implement
   }
 
+  void _onTapCalendarItem(ToDoItem? item) {
+    //TBD: DD - implement
+  }
+
   void _onTapManageCategories() {
     Analytics().logSelect(target: "Manage Categories");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessManageToDoCategoriesPanel()));
@@ -350,11 +397,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   void _loadToDoItems() {
     _setItemsLoading(true);
-    //TBD: DD - implement with backend
-    Future.delayed(Duration(seconds: 1)).then((_) {
-      List<dynamic>? itemsJson = JsonUtils.decodeList(
-          '[{"id":"dfssdfdssdtghnhn","name":"Lon Capa Homework","category":{"id":"asdadsad","name":"Chem 201","color":"#002855","reminder_type":"night_before"},"due_date_time":"2022-05-20T16:00","work_days":["2022-05-17","2022-05-18"],"location":{"latitude":40.101977,"longitude":88.227162},"description":"I have to do my homework.","completed":true},{"id":"fdsddsdssdtghnhn","name":"Read Chapter 1 Jane Eyre","category":{"id":"67yh","name":"Eng 103","color":"#E84A27","reminder_type":"morning_of"},"due_date_time":"2022-07-03T07:15","work_days":["2022-06-30","2022-07-01","2022-07-02"],"location":{"latitude":40.201977,"longitude":87.227162},"description":"I have to do my homework.","completed":true},{"id":"09kj90ipsdfk","name":"Call about Prescriptions","due_date_time":"2022-06-15T14:30","work_days":["2022-06-02","2022-06-10"],"location":{"latitude":40.101877,"longitude":88.237162},"description":"Call about the Prescriptions.","completed":false},{"id":"09ksdde45fk","name":"Read Chapter 1 Jane Eyre","category":{"id":"67yh","name":"Eng 103","color":"#E84A27","reminder_type":"morning_of"},"location":{"latitude":40.101877,"longitude":88.237162},"description":"Read this chapter.","completed":false}]');
-      _todoItems = ToDoItem.listFromJson(itemsJson);
+    Wellness().loadToDoItems().then((items) {
+      _todoItems = items;
       _sortItemsByDate();
       _setItemsLoading(false);
     });
@@ -425,6 +469,24 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     return sortedMap;
   }
 
+  List<ToDoItem>? _getItemsForDate(DateTime date) {
+    List<ToDoItem>? dayItems;
+    if (_todoItems != null) {
+      for (ToDoItem item in _todoItems!) {
+        DateTime? itemDueDate = item.dueDateTime;
+        if (itemDueDate != null) {
+          if ((itemDueDate.year == date.year) && (itemDueDate.month == date.month) && (itemDueDate.day == date.day)) {
+            if (dayItems == null) {
+              dayItems = <ToDoItem>[];
+            }
+            dayItems.add(item);
+          }
+        }
+      }
+    }
+    return dayItems;
+  }
+
   void _setItemsLoading(bool loading) {
     _itemsLoading = loading;
     if (mounted) {
@@ -444,12 +506,11 @@ class _ToDoItemCard extends StatefulWidget {
 class _ToDoItemCardState extends State<_ToDoItemCard> {
   @override
   Widget build(BuildContext context) {
-    Color cardColor = UiColors.fromHex(widget.item.category?.colorHex) ?? Styles().colors!.fillColorPrimary!;
     return Container(
-        decoration: BoxDecoration(color: cardColor, borderRadius: BorderRadius.all(Radius.circular(10))),
+        decoration: BoxDecoration(color: widget.item.color, borderRadius: BorderRadius.all(Radius.circular(10))),
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          _buildCompletedWidget(color: cardColor),
+          _buildCompletedWidget(color: widget.item.color),
           Expanded(
               child: Text(StringUtils.ensureNotEmpty(widget.item.name),
                   overflow: TextOverflow.ellipsis,
