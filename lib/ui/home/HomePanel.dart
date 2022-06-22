@@ -583,18 +583,31 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       // Build a default set of favorites
       List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home'));
       if (fullContent != null) {
-        Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), homeFavorites = LinkedHashSet<String>.from(fullContent.reversed));
+        homeFavorites = LinkedHashSet<String>.from(fullContent.reversed);
+        Future.delayed(Duration(), () {
+          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), homeFavorites);
+        });
       }
     }
     return (homeFavorites != null) ? List.from(homeFavorites) : null;
   }
 
   void _updateDisplayCodes() {
-    List<String>? displayCodes = _buildDisplayCodes();
-    if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes) && mounted) {
-      setState(() {
-        _displayCodes = displayCodes;
-      });
+    if (mounted) {
+      List<String>? displayCodes = _buildDisplayCodes();
+      if (_isEditing) {
+        if (displayCodes != null) {
+          _displayCodes = displayCodes;
+        }
+        setState(() {});
+      }
+      else {
+        if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes)) {
+          setState(() {
+            _displayCodes = displayCodes;
+          });
+        }
+      }
     }
   }
 
