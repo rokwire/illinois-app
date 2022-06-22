@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import 'package:flutter/material.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ToDoItem {
@@ -80,6 +82,10 @@ class ToDoItem {
       return null;
     }
     return AppDateTime().formatDateTime(dueDateTime, format: 'EEEE, MM/dd', ignoreTimeZone: true);
+  }
+
+  Color get color {
+    return UiColors.fromHex(category?.colorHex) ?? Styles().colors!.fillColorPrimary!;
   }
 
   static List<ToDoItem>? listFromJson(List<dynamic>? jsonList) {
