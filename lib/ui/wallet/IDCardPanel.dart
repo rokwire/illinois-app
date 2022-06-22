@@ -35,6 +35,22 @@ import 'package:qr_flutter/qr_flutter.dart';
 class IDCardPanel extends StatefulWidget {
   IDCardPanel();
 
+  static void present(BuildContext context) {
+    if (!Auth2().isOidcLoggedIn) {
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.illini_id', 'You need to be logged in to access Illini ID.'));
+    }
+    else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.no_card.illini_id', 'You need a valid Illini Identity card to access Illini ID.'));
+    }
+    else {
+      showModalBottomSheet(context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+        builder: (context) => IDCardPanel());
+    }
+  }
+
   _IDCardPanelState createState() => _IDCardPanelState();
 }
 

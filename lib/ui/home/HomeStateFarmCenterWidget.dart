@@ -200,7 +200,7 @@ class _HomeStateFarmCenterWidgetState extends State<HomeStateFarmCenterWidget> i
 
   void _onCreateStadiumPoll() {
     Analytics().logSelect(target: "HomeStateFarmCenterWidget: Create Stadium Poll");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateStadiumPollPanel()));
+    CreateStadiumPollPanel.present(context);
   }
 
 }

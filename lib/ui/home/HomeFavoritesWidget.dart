@@ -75,6 +75,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     NotificationService().subscribe(this, [
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
+      Auth2.notifyLoginChanged,
       Guide.notifyChanged,
       Config.notifyConfigChanged,
     ]);
@@ -102,7 +103,8 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   @override
   void onNotification(String name, dynamic param) {
     if ((name == Config.notifyConfigChanged) ||
-        (name == Connectivity.notifyStatusChanged)) {
+        (name == Connectivity.notifyStatusChanged) ||
+        (name == Auth2.notifyLoginChanged)) {
       if (mounted) {
         setState(() {});
       }
@@ -128,6 +130,9 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     if (Connectivity().isOffline) {
       return [_buildOffline()];
     }
+    else if ((widget.favoriteKey == InboxMessage.favoriteKeyName) && !Auth2().isOidcLoggedIn) {
+      return [_buildLoggedOut()];
+    }
     else if (_loadingFavorites) {
       return [_buildProgress()];
     }
@@ -149,6 +154,10 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   Widget _buildOffline() {
     return _buildMessageCard(title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"), message: _offlineMessage,);
+  }
+
+  Widget _buildLoggedOut() {
+    return _buildMessageCard(title: Localization().getStringEx("app.logged_out.message.title", "You are not logged in"), message: _loggedOutMessage,);
   }
 
   Widget _buildEmpty() {
@@ -409,6 +418,13 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.laundry', 'My Laundry are not available while offline.');
       case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.inbox', 'My Notifications are not available while offline.');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.campus_guide', 'My Campus Guide are not available while offline.');
+    }
+    return null;
+  }
+
+  String? get _loggedOutMessage {
+    switch(widget.favoriteKey) {
+      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.logged_out.inbox', 'You need to be logged in to access My Notifications.');
     }
     return null;
   }

@@ -348,8 +348,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
 
   void _onTapIlliniCash(BuildContext context) {
     Analytics().logSelect(target: "Illini Cash");
-    Navigator.push(
-        context, CupertinoPageRoute(settings: RouteSettings(name: SettingsIlliniCashPanel.routeName), builder: (context) => SettingsIlliniCashPanel()));
+    SettingsIlliniCashPanel.present(context);
   }
 
   void _onTapLaundry(BuildContext context) {
@@ -360,7 +359,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
   void _onTapMyIllini(BuildContext context) {
     Analytics().logSelect(target: "My Illini");
     if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.campus_resources.label.my_illini.offline', 'My Illini not available while offline.'));
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
     }
     else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
 
@@ -420,7 +419,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
 
   void _onTapInbox(BuildContext context) {
     Analytics().logSelect(target: "Inbox");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.inbox)));
+    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
   }
 }
 
