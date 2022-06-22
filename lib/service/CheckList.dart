@@ -17,6 +17,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'Config.dart';
 
+//TBD Update content in gies.json to be up to date with the BB - rename to "gies" and bbcategory +suffix = _checklist
+//TBD Upload content in uiuc_student.json to the BB - rename to "new_student" and bbcategory +suffix = _checklist
+
 abstract class CheckList with Service implements NotificationsListener{
   static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
