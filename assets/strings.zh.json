@@ -2497,6 +2497,10 @@
 	"widget.home.athletics_teams.button.all.title": "查看全部",
 	"widget.home.athletics_teams.button.all.hint": "點按即可查看所有球隊",
 
+	"widget.home.campus_guide.text.title": "Campus Guide",
+	"widget.home.campus_guide.button.all.title": "View All",
+	"widget.home.campus_guide.button.all.hint": "Tap to view all items",
+
 	"widget.home.tout.customize.label": "定制",
 	"widget.home.tout.button.info.label": "信息",
 	"widget.home.tout.button.info.hint": "點擊了解更多信息",
