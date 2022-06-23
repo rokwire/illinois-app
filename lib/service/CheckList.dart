@@ -25,7 +25,7 @@ abstract class CheckList with Service implements NotificationsListener{
   static const String notifyExecuteCustomWidgetAction  = "edu.illinois.rokwire.gies.service.content.execute.widget.action";
 
   //Custom actions
-  static const String widgetActionApproveUserInfo  = "edu.illinois.rokwire.checklist.gies.widget.action.approve.info";
+  static const String widgetActionRequestGroup  = "edu.illinois.rokwire.checklist.gies.widget.action.request.group";
 
   // Singleton instance wrapper
   factory CheckList(String serviceName){
@@ -359,7 +359,7 @@ abstract class CheckList with Service implements NotificationsListener{
 
   void _processWidgetAction(String actionName, Map<String, dynamic>? params){
     switch(actionName){
-      case widgetActionApproveUserInfo : {
+      case widgetActionRequestGroup : {
         _joinApprovalGroup(params);
         break;
       }

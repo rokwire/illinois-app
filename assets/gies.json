@@ -35,7 +35,7 @@
         "page":"setup.zoom.accounts",
         "title":"My information is correct",
         "widget_action": {
-          "name":"edu.illinois.rokwire.checklist.gies.widget.action.approve.info",
+          "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
           "params": {"group_name":"GIES Onboarding Step 2"}
         }
       }
