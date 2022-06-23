@@ -114,7 +114,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
   }
 
   Widget _buildContent() {
-    if ((_categories != null) && (0 < _categories!.length)) {
+    if ((_categories != null) && (0 < _categories!.length) && (_categorySections != null)) {
       List<Widget> contentList = <Widget>[];
       for (String category in _categories!) {
         contentList.add(_buildHeading(category));
