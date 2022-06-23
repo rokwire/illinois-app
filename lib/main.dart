@@ -129,7 +129,7 @@ void main() async {
     Events(),
     Groups(),
     CheckList("gies"),
-    CheckList("uiuc_student"),
+    CheckList("new_student"),
     Canvas(),
     Rewards(),
     OnCampus(),

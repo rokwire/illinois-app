@@ -291,11 +291,11 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (code == 'new_student_checklist') {
       if (title) {
-        return HomeCheckListWidget.title(contentKey: "uiuc_student") /* TBD => "new_student" */;
+        return HomeCheckListWidget.title(contentKey: "new_student");
       } else if (handle) {
-        return HomeCheckListWidget.handle(contentKey: "uiuc_student" /* TBD => "new_student" */, favoriteId: code, dragAndDropHost: this, position: position);
+        return HomeCheckListWidget.handle(contentKey: "new_student", favoriteId: code, dragAndDropHost: this, position: position);
       } else {
-        return HomeCheckListWidget(contentKey: "uiuc_student" /* TBD => "new_student" */, favoriteId: code, updateController: _updateController);
+        return HomeCheckListWidget(contentKey: "new_student", favoriteId: code, updateController: _updateController);
       }
     }
     else if (code == 'canvas_courses') {

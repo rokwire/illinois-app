@@ -17,9 +17,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'Config.dart';
 
-//TBD Update content in gies.json to be up to date with the BB - rename to "gies" and bbcategory +suffix = _checklist
-//TBD Upload content in uiuc_student.json to the BB - rename to "new_student" and bbcategory +suffix = _checklist
-
 abstract class CheckList with Service implements NotificationsListener{
   static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
@@ -34,7 +31,7 @@ abstract class CheckList with Service implements NotificationsListener{
   factory CheckList(String serviceName){
     switch (serviceName){
       case "gies" : return _GiesCheckListInstanceWrapper();
-      case "uiuc_student" : return _StudentCheckListInstanceWrapper();
+      case "new_student" : return _StudentCheckListInstanceWrapper();
     }
     return _GiesCheckListInstanceWrapper(); //default
   }
@@ -153,14 +150,15 @@ abstract class CheckList with Service implements NotificationsListener{
   Future<String?> _loadContentStringFromNet() async {
     //TBD REMOVE
     //TMP:
-    if(_contentName == "uiuc_student"){
-      return AppBundle.loadString('assets/uiucStudent.json');
+    if(_contentName == "new_student"){
+      return AppBundle.loadString('assets/newStudent.json');
     } else if(_contentName == "gies"){
       return AppBundle.loadString('assets/gies.json');
     }
 
     try {
       List<dynamic> result;
+      //TBD rename bbcategory to _contentName +suffix = _checklist
       Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': [_contentName]}), auth: Auth2());
       List<dynamic>? responseList = (response?.statusCode == 200) ? JsonUtils.decodeList(response?.body)  : null;
       if (responseList != null) {
@@ -702,5 +700,5 @@ class _StudentCheckListInstanceWrapper extends CheckList{
 
   factory _StudentCheckListInstanceWrapper() => _instance;
 
-  _StudentCheckListInstanceWrapper._internal() : super.fromName("uiuc_student");
+  _StudentCheckListInstanceWrapper._internal() : super.fromName("new_student");
 }
