@@ -55,7 +55,7 @@ abstract class CheckList with Service implements NotificationsListener{
   DateTime? _pausedDateTime;
 
   //custom widgets data
-  Map<String, dynamic>? _studentInfo; //TBD load
+  Map<String, dynamic>? _studentInfo;
 
   // String checklistName();
 
@@ -204,8 +204,7 @@ abstract class CheckList with Service implements NotificationsListener{
       return null;
     }
     String? contactInfoUrl = "${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}";
-    // ignore: unused_label
-    TMP: contactInfoUrl+="&mode=1"; //TBD remove Workaround after we have test account to test with
+    // TMP: contactInfoUrl+="&mode=1"; //Workaround to pass dummy data until we have test account to test with
     String? token = Auth2().uiucToken?.accessToken;
     // String? token = Auth2().token?.accessToken;
 
