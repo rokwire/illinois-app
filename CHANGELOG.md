@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Created Campus Guide home widget [#1808](https://github.com/rokwire/illinois-app/issues/1808).
 - Created Dining home widget [#1814](https://github.com/rokwire/illinois-app/issues/1814).
 - Updated GIES content [#1749](https://github.com/rokwire/illinois-app/issues/1749).
+### Changed
+- Wellness updates [#1816](https://github.com/rokwire/illinois-app/issues/1816).
 
 ## [4.0.35] - 2022-06-22
 ### Fixed
