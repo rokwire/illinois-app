@@ -15,144 +15,261 @@
  */
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/DeepLink.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WellnessResourcesContentWidget extends StatefulWidget {
-  WellnessResourcesContentWidget();
+  static const String wellnessCategoryKey = 'resources';
+  final String wellnessCategory = wellnessCategoryKey;
+
+  final bool showHeader;
+  final bool showOnlyFavorites;
+  final int? limit;
+
+  WellnessResourcesContentWidget({this.showHeader = true, this.showOnlyFavorites = false, this.limit });
 
   @override
   State<WellnessResourcesContentWidget> createState() => _WellnessResourcesContentWidgetState();
 }
 
-class _WellnessResourcesContentWidgetState extends State<WellnessResourcesContentWidget> {
+class _WellnessResourcesContentWidgetState extends State<WellnessResourcesContentWidget> implements NotificationsListener {
+
+  List<dynamic>? _commands;
+  Map<String, dynamic>? _strings;
+  int? _limit;
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      Assets.notifyChanged,
+    ]);
+    _initContent();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+  
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Assets.notifyChanged) {
+      if (mounted) {
+        setState(() {
+          _initContent();
+        });
+      }
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return _buildContent();
   }
 
   Widget _buildContent() {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(children: [
+    _limit = widget.limit;
+    return Padding(padding: EdgeInsets.symmetric(horizontal: (widget.limit == null) ? 16 : 0), child: Column(children: [
       _buildHeader(),
-      _buildActionButtonsContainer(),
-      Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [Expanded(child: _buildResourceButtonsContainer()), _buildAlphabetContainer()])
+      _buildLargeButtonsContainer(),
+      _buildRegularButtonsContainer(),
+      _buildViewAllButton(),
     ]));
   }
 
   Widget _buildHeader() {
-    return Padding(
-        padding: EdgeInsets.only(left: 5, bottom: 10, right: 5),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Text(Localization().getStringEx('panel.wellness.resources.header.label', 'Wellness Resources'),
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)),
-          HomeFavoriteStar(selected: false, style: HomeFavoriteStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
-        ]));
+    return widget.showHeader ? Padding(padding: EdgeInsets.only(left: 5, bottom: 10, right: 5), child:
+      Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Text(Localization().getStringEx('panel.wellness.resources.header.label', 'Wellness Resources'),
+          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)
+        ),
+      ]),
+    ) : Container();
   }
 
-  Widget _buildActionButtonsContainer() {
+  Widget _buildLargeButtonsContainer() {
     List<Widget> widgetList = <Widget>[];
-    widgetList.add(_buildActionButton(
-        label: Localization().getStringEx('panel.wellness.resources.appointment.button', 'I want to make an appointment')));
-    widgetList.add(_buildActionButton(
-        label:
-            Localization().getStringEx('panel.wellness.resources.help_person.button', 'I want to help a friend, student, or a co-worker')));
-    widgetList.add(
-        _buildActionButton(label: Localization().getStringEx('panel.wellness.resources.not_sure.button', "I'm not sure where to start")));
-    return Column(children: widgetList);
-  }
-
-  Widget _buildActionButton({required String label}) {
-    return Padding(
-        padding: EdgeInsets.only(bottom: 10),
-        child: Container(
-            decoration: BoxDecoration(
-                color: Styles().colors!.white,
-                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                borderRadius: BorderRadius.circular(5)),
-            child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15),
-                child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Expanded(
-                      child: Padding(
-                          padding: EdgeInsets.only(left: 15),
-                          child: Text(label,
-                              style: TextStyle(
-                                  color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)))),
-                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                    Padding(
-                        padding: EdgeInsets.only(left: 5),
-                        child: Image.asset('images/external-link.png', color: Styles().colors!.mediumGray)),
-                    HomeFavoriteStar(selected: false, style: HomeFavoriteStyle.Button, padding: EdgeInsets.only(left: 7, right: 15))
-                  ])
-                ]))));
-  }
-
-  Widget _buildResourceButtonsContainer() {
-    List<Widget> widgetList = <Widget>[];
-    widgetList.add(_buildResourceButton(
-        label: Localization().getStringEx('panel.wellness.resources.24_hour.button', '24-Hour Resources'), isExternalLink: false));
-    widgetList.add(_buildResourceButton(
-        label: Localization().getStringEx('panel.wellness.resources.accessibility.button', 'Accessibility and Accommodations')));
-    widgetList
-        .add(_buildResourceButton(label: Localization().getStringEx('panel.wellness.resources.after_hours.button', 'After Hours Support')));
-    widgetList.add(
-        _buildResourceButton(label: Localization().getStringEx('panel.wellness.resources.campus_service.button', 'Campus Service Units')));
-    widgetList.add(_buildResourceButton(
-        label: Localization().getStringEx('panel.wellness.resources.core_campus_resources.button', 'Core Campus Resources'),
-        isExternalLink: false));
-    widgetList.add(_buildResourceButton(
-        label: Localization().getStringEx('panel.wellness.resources.financial_assistance.button', 'Financial Assistance')));
-    widgetList.add(_buildResourceButton(
-        label: Localization().getStringEx('panel.wellness.resources.fitness_recreations.button', 'Fitness and Recreations')));
-    widgetList.add(
-        _buildResourceButton(label: Localization().getStringEx('panel.wellness.resources.food_nutrition.button', 'Food and Nutrition')));
-    widgetList.add(_buildResourceButton(
-        label: Localization().getStringEx('panel.wellness.resources.health_counselling.button', 'Mental Health and Counselling')));
-    widgetList.add(
-        _buildResourceButton(label: Localization().getStringEx('panel.wellness.resources.nature_culture.button', 'Nature and Culture')));
-    widgetList.add(_buildResourceButton(
-        label: Localization().getStringEx('panel.wellness.resources.other_resources.button', 'Other Wellness Resources')));
-    widgetList.add(
-        _buildResourceButton(label: Localization().getStringEx('panel.wellness.resources.sexual_misconduct.button', 'Sexual Misconduct')));
-    widgetList.add(_buildResourceButton(
-        label: Localization().getStringEx('panel.wellness.resources.events_workshops.button', 'Wellness Events & Workshops')));
-    return Column(children: widgetList);
-  }
-
-  Widget _buildResourceButton({required String label, bool isExternalLink = true, void Function()? onTap}) {
-    return GestureDetector(
-        onTap: onTap,
-        child: Container(
-            color: Styles().colors!.white,
-            child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  HomeFavoriteStar(selected: false, style: HomeFavoriteStyle.Button, padding: EdgeInsets.symmetric(horizontal: 10)),
-                  Expanded(
-                      child: Text(label,
-                          style:
-                              TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16))),
-                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                    Visibility(
-                        visible: isExternalLink,
-                        child: Padding(
-                            padding: EdgeInsets.only(left: 7),
-                            child: Image.asset('images/external-link.png', color: Styles().colors!.mediumGray))),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 10), child: Image.asset('images/chevron-right.png'))
-                  ])
-                ]))));
-  }
-
-  Widget _buildAlphabetContainer() {
-    List<String> alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-    List<Widget> lettersWidgetList = <Widget>[];
-    for (String letter in alphabet) {
-      lettersWidgetList.add(Text(letter, style: TextStyle(color: Styles().colors!.fillColorPrimary)));
+    if (_commands != null) {
+      for (dynamic entry in _commands!) {
+        Map<String, dynamic>? command = JsonUtils.mapValue(entry);
+        if (command != null) {
+          String? type = JsonUtils.stringValue(command['type']);
+          if (type == 'large') {
+            String? id = JsonUtils.stringValue(command['id']);
+            Favorite favorite = WellnessFavorite(id, category: widget.wellnessCategory);
+            if (!widget.showOnlyFavorites || (Auth2().prefs?.isFavorite(favorite) ?? false)) {
+              if ((_limit == null) || (0 < _limit!)) {
+                if (widgetList.isNotEmpty) {
+                  widgetList.add(Container(height: (widget.limit != null) ? 3 : 8,));
+                }
+                widgetList.add(_buildLargeButton(
+                  label: _getString(id),
+                  favorite: favorite,
+                  hasExternalLink: UrlUtils.isWebScheme(JsonUtils.stringValue(command['url'])),
+                  onTap: () => _onCommand(command),
+                ));
+                if (_limit != null) {
+                  _limit = _limit! - 1;
+                }
+              }
+            }
+          }
+        }
+      }
     }
-    return Padding(
-        padding: EdgeInsets.only(left: 10), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: lettersWidgetList));
+
+    widgetList.add(Container(height: (widget.limit == null) ? 16 : ((0 < (_limit ?? 0) ? 8 : 0)),));
+    
+    return Column(children: widgetList);
+  }
+
+  Widget _buildRegularButtonsContainer() {
+    List<Widget> widgetList = <Widget>[];
+    if (_commands != null) {
+      for (dynamic entry in _commands!) {
+        Map<String, dynamic>? command = JsonUtils.mapValue(entry);
+        if (command != null) {
+          String? type = JsonUtils.stringValue(command['type']);
+          if (type == 'regular') {
+            if (widgetList.isNotEmpty) {
+              widgetList.add(Divider(color: Styles().colors!.surfaceAccent, height: 1,));
+            }
+            String? id = JsonUtils.stringValue(command['id']);
+            Favorite favorite = WellnessFavorite(id, category: widget.wellnessCategory);
+            if (!widget.showOnlyFavorites || (Auth2().prefs?.isFavorite(favorite) ?? false)) {
+              if ((_limit == null) || (0 < _limit!)) {
+                widgetList.add(_buildRegularButton(
+                  label: _getString(id),
+                  favorite: favorite,
+                  hasExternalLink: UrlUtils.isWebScheme(JsonUtils.stringValue(command['url'])),
+                  onTap: () => _onCommand(command),
+                ));
+                if (_limit != null) {
+                  _limit = _limit! - 1;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return Container(decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.circular(5)), child:
+      Column(children: widgetList)
+    );
+
+  }
+
+  Widget _buildLargeButton({String? label, Favorite? favorite, bool hasExternalLink = false, void Function()? onTap}) {
+    return Container(decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.circular(5)), child:
+      InkWell(onTap: onTap, child:
+        Padding(padding: EdgeInsets.only(left: 16), child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+                Text(label ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
+              ),
+            ),
+            hasExternalLink ? Padding(padding: EdgeInsets.only(left: 6, top: 18, bottom: 18), child:
+              Image.asset('images/external-link.png', color: Styles().colors!.mediumGray)
+            ) : Container(),
+            HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),)
+          ]),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRegularButton({String? label, Favorite? favorite, bool hasExternalLink = true, void Function()? onTap}) {
+    return InkWell(onTap: onTap, child:
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)),
+        Expanded(child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 17), child:
+            Text(label ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16))
+          ),
+        ),
+        hasExternalLink ? Padding(padding: EdgeInsets.only(left: 8, top: 18, bottom: 18), child:
+          Image.asset('images/external-link.png', color: Styles().colors!.mediumGray)
+        ) : Container(),
+        Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 18, bottom: 18), child:
+          Image.asset('images/chevron-right.png')
+        ),
+      ]),
+    );
+  }
+
+  Widget _buildViewAllButton() {
+    return (_limit == 0) ? LinkButton(
+        title: Localization().getStringEx('panel.wellness.resources.button.all.title', 'View All'),
+        hint: Localization().getStringEx('panel.wellness.resources.button.all.hint', 'Tap to view all groups'),
+        onTap: _onViewAll,
+      ) : Container();
+  }
+
+  void _initContent() {
+    Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${widget.wellnessCategory}']) ;
+    _commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
+    _strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
+  }
+
+  String? _getString(String? key, {String? languageCode}) {
+    if ((_strings != null) && (key != null)) {
+      Map<String, dynamic>? mapping =
+        JsonUtils.mapValue(_strings![languageCode]) ??
+        JsonUtils.mapValue(_strings![Localization().currentLocale?.languageCode]) ??
+        JsonUtils.mapValue(_strings![Localization().defaultLocale?.languageCode]);
+      if (mapping != null) {
+        return JsonUtils.stringValue(mapping[key]);
+      }
+    }
+    return null;
+  }
+
+  void _onViewAll() {
+    Analytics().logSelect(target: "HomeWellnessResourcesWidget View All");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.resources,)));
+  }
+
+  void _onCommand(Map<String, dynamic> command) {
+    Analytics().logSelect(target: _getString(JsonUtils.stringValue(command['id']), languageCode: Localization().defaultLocale?.languageCode),);
+    _launchUrl(JsonUtils.stringValue(command['url']));
+  }
+
+  void _launchUrl(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else if (UrlUtils.launchInternal(url)){
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      }
+      else{
+        launch(url!);
+      }
+    }
   }
 }

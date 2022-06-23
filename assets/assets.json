@@ -695,378 +695,51 @@
 	},
 
 	"wellness": {
-		"panels": {
-			"home": {
-				"header": { "title": "panel.wellness.home.header.title", "image": "group-4.png" },
-				"description": { "main_text": "panel.wellness.home.description.main_text", "secondary_text": "panel.wellness.home.description.secondary_text" },
-				"activities": [
-					{ "header": { "title": "panel.wellness.home.eight_dimensions.header.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.home.activities.physical", "font_size": 20, "image": "physical.png", "action": { "name": "panel", "source": "physical" } },
-							{ "title": "panel.wellness.home.activities.mental", "font_size": 20, "image": "mental.png", "action": { "name": "panel", "source": "mental" } },
-							{ "title": "panel.wellness.home.activities.environmental", "image": "environmental.png", "action": { "name": "panel", "source": "environmental" } },
-							{ "title": "panel.wellness.home.activities.financial", "font_size": 20, "image": "financial-2.png", "action": { "name": "panel", "source": "financial" } },
-							{ "title": "panel.wellness.home.activities.spiritual", "font_size": 20, "image": "spiritual.png", "action": { "name": "panel", "source": "spiritual" } },
-							{ "title": "panel.wellness.home.activities.vocational", "font_size": 20, "image": "vocational.png", "action": { "name": "panel", "source": "vocational" } },
-							{ "title": "panel.wellness.home.activities.emotional", "font_size": 20, "image": "emotional.png", "action": { "name": "panel", "source": "emotional" } },
-							{ "title": "panel.wellness.home.activities.social", "font_size": 20, "image": "social.png", "action": { "name": "panel", "source": "social" } }
-						]
-					},
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "icon-schedule.png" },
-						"items": [
-							{ "title": "panel.wellness.home.activities.interactive_mood_meter", "image": "group-7.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/interactive-mood-meter" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.home.activities.memory_mix_up", "image": "group-2.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/memory-mixup" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.kognito_at_risk", "image": "kognito.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito" } }
-						]
-					}
-				]
-			},
-			"physical": {
-				"header": { "title": "panel.wellness.physical.header.title", "image": "group.png" },
-				"description": { "main_text": "panel.wellness.physical.description.main_text", "secondary_text": "panel.wellness.physical.description.secondary_text", "bullet": "panel.wellness.common.description.bullet" },
-				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
-						]
-					}
-				],
-				"resources": [
-					{
-						"title": "panel.wellness.common.resources.campus_recreation.title",
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.physical.resources.personal_training", "url": "https://campusrec.illinois.edu/programs/personal-training/", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.physical.resources.group_fitness", "url": "https://campusrec.illinois.edu/programs/group-fitness/", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.physical.resources.aquatics", "url": "https://campusrec.illinois.edu/programs/aquatics/", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.physical.resources.food_nutrition", "url": "https://campusrec.illinois.edu/programs/student-wellness/nutrition-food/", "icon": "link-out.png", "hint": "" }
-						],
-						"social_media": [
-							{ "type": "instagram", "url": "https://www.instagram.com/illinoiscampusrec/" }
-						]
-					},
-					{
-						"title": "panel.wellness.common.resources.mckinley_health_center.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.physical.resources.mymckinley.title", "url":"https://mymckinley.illinois.edu/", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.appointments_mckinley", "url":"http://mckinley.illinois.edu/medical-services/appointments", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.immunization", "url":"http://mckinley.illinois.edu/medical-services/immunization-allergy-travel-clinic", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.womens_health", "url":"http://mckinley.illinois.edu/medical-services/womens-health", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.fitness", "url":"http://mckinley.illinois.edu/health-education/fitness", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.nutrition", "url":"http://mckinley.illinois.edu/health-education/nutrition", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.sexual_health", "url":"http://mckinley.illinois.edu/health-education/sexual-health", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.lgbtq", "url":"http://mckinley.illinois.edu/health-education/sexual-health/lgbtq-health", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.lab", "url":"http://mckinley.illinois.edu/medical-services/laboratory", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.radiology", "url":"http://mckinley.illinois.edu/medical-services/radiology", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.pharmacy", "url":"http://mckinley.illinois.edu/pharmacy/about-pharmacy", "icon": "link-out.png", "hint": "" }
-						],
-						"social_media": [
-							{ "type":"youtube", "url":"https://www.youtube.com/user/MHCMcTV" },
-							{ "type":"facebook", "url":"https://www.facebook.com/MckinleyHC/" },
-							{ "type":"instagram", "url":"https://www.instagram.com/mckinleyhealthcenter/" }
-						]
-					},
-					{
-						"title": "panel.wellness.common.resources.mckinley_wellness_app.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.physical.resources.first_time_visitors", "url":"http://mhcwellness.illinois.edu/first-time-visitors", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.primary_care", "url":"http://mhcwellness.illinois.edu/primary-care", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.schedule_appointment", "url":"http://mhcwellness.illinois.edu/mymckinley-schedule-appointment", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.dial_nurse", "url":"http://mhcwellness.illinois.edu/dial-nurse", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.health_resource_centers", "url":"http://mhcwellness.illinois.edu/health-resource-centers", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.exercise", "url":"http://mhcwellness.illinois.edu/exercise", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.eat_well", "url":"http://mhcwellness.illinois.edu/eat-well", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.sexual_health", "url":"http://mhcwellness.illinois.edu/sexual-health", "icon": "link-out.png", "hint": "" }
-						]
-					}
-				]
-			},
-			"mental": {
-				"header": { "title": "panel.wellness.mental.header.title", "image": "group-444.png" },
-				"description": { "main_text": "panel.wellness.mental.description.main_text", "secondary_text": "panel.wellness.mental.description.secondary_text", "bullet": "panel.wellness.common.description.bullet",
-					"ribbon_buttons": [
-						{ "title": "panel.wellness.mental.description.buttons.appointment", "url": "https://wellness.web.illinois.edu/help/i-want-to-make-an-appointment/", "icon": "link-out.png", "hint": "" },
-						{ "title": "panel.wellness.mental.description.buttons.help_friend", "url": "https://wellness.web.illinois.edu/help/i-want-to-help-a-friend-student-or-coworker/", "icon": "link-out.png", "hint": "" },
-						{ "title": "panel.wellness.mental.description.buttons.where_to_start", "url": "https://wellness.web.illinois.edu/help/im-not-sure-where-to-start", "icon": "link-out.png", "hint": "" }
-					]
-				},
-				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.mood_meter", "image": "group-7.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/interactive-mood-meter" } },
-							{ "title": "panel.wellness.mental.interactive_activities.activity.mixup", "image": "group-2.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/memory-mixup" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.kognito_at_risk_center", "image": "kognito.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito" } }
-						]
-					}
-				],
-				"resources": [
-					{ "title": "panel.wellness.common.resources.counseling_center.title",
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.mental.resources.counseling", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=Counseling.center", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.mental.resources.outreach", "url": "https://counselingcenter.illinois.edu/outreach-and-prevention-services", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.common.resources.ace_it", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=drugs.alcohol.help", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_health_center.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.mental.resources.mental_services", "url":"http://mckinley.illinois.edu/medical-services/mental-health", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.stress_management", "url":"http://mckinley.illinois.edu/health-education/stress-management", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.relaxation_techniques", "url":"http://mckinley.illinois.edu/health-education/stress-management/relaxation-techniques", "icon": "link-out.png", "hint": "" }
-						],
-						"social_media": [
-							{ "type":"youtube", "url":"https://www.youtube.com/user/MHCMcTV" },
-							{ "type":"facebook", "url":"https://www.facebook.com/MckinleyHC/" },
-							{ "type":"instagram", "url":"https://www.instagram.com/mckinleyhealthcenter/" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_wellness_app.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.resources.mental_health", "url":"http://mhcwellness.illinois.edu/mental-health", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.mental.resources.manage_stress", "url":"http://mhcwellness.illinois.edu/manage-stress", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.mental.resources.get_sleep", "url":"http://mhcwellness.illinois.edu/get-sleep", "icon": "link-out.png", "hint": "" }
-						]
-					}
-				]
-			},
-			"environmental": {
-				"header": { "title": "panel.wellness.environmental.header.title", "image": "group-9.png" },
-				"description": { "main_text": "panel.wellness.environmental.description.main_text", "secondary_text": "panel.wellness.environmental.description.secondary_text", "bullet": "panel.wellness.common.description.bullet"
-				},
-				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
-						]
-					}
-				],
-				"resources": [
-					{
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.environmental.resources.arboretum", "url": "http://arboretum.illinois.edu/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.campus_recreation.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.environmental.resources.campus_bike_center", "url":"https://campusrec.illinois.edu/programs/campus-bike-center/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_wellness_app.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.environmental.resources.transportation_safety", "url":"http://mhcwellness.illinois.edu/safety-transportation", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.environmental.resources.late_night_studying", "url":"http://mhcwellness.illinois.edu/studying-late-night", "icon": "link-out.png", "hint": "" }
-						]
-					}
-				]
-			},
-			"financial": {
-				"header": { "title": "panel.wellness.financial.header.title", "image": "financial.png" },
-				"description": { "main_text": "panel.wellness.financial.description.main_text", "secondary_text": "panel.wellness.financial.description.secondary_text", "bullet": "panel.wellness.common.description.bullet" },
-				"resources": [
-					{
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.financial.resources.financial_wellness_program", "url": "https://extension.illinois.edu/cfiv/financial-wellness-college-students", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.financial.resources.your_legal_health", "url": "https://odos.illinois.edu/sls/resources/brochures/docs/your-legal-health.pdf", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.financial.resources.student_money_management", "url": "https://www.studentmoney.uillinois.edu/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_wellness_app.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.financial.resources.budgets", "url":"http://mhcwellness.illinois.edu/budget-finances", "icon": "link-out.png", "hint": "" }
-						]
-					}
-				]
-			},
-			"spiritual": {
-				"header": { "title": "panel.wellness.spiritual.header.title", "image": "group-44.png" },
-				"description": { "main_text": "panel.wellness.spiritual.description.main_text", "secondary_text": "panel.wellness.spiritual.description.secondary_text", "bullet": "panel.wellness.common.description.bullet" },
-				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
-						]
-					}
-				],
-				"resources": [
-					{
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.spiritual.resources.reflection_rooms", "url": "https://www.library.illinois.edu/ugl/about/reflection-rooms/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.office_inclusion.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.resources.programs", "url":"https://oiir.illinois.edu/programs", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.bnaacc", "url":"https://oiir.illinois.edu/bnaacc", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.aacc", "url":"https://oiir.illinois.edu/aacc", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.la_casa", "url":"https://oiir.illinois.edu/la-casa-cultural-latina", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.native_american_house", "url":"https://oiir.illinois.edu/native-american-house", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.spiritual.resources.dean_students.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.spiritual.resources.religious_worker", "url":"https://odos.illinois.edu/resources/rwa/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_health_center.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.resources.relaxation_techniques", "url":"http://mckinley.illinois.edu/health-education/stress-management/relaxation-techniques", "icon": "link-out.png", "hint": "" }
-						],
-						"social_media": [
-							{ "type":"youtube", "url":"https://www.youtube.com/user/MHCMcTV" },
-							{ "type":"facebook", "url":"https://www.facebook.com/MckinleyHC/" },
-							{ "type":"instagram", "url":"https://www.instagram.com/mckinleyhealthcenter/" }
-						]
-					}
-				]
-			},
-			"vocational": {
-				"header": { "title": "panel.wellness.vocational.header.title", "image": "group-15.png" },
-				"description": { "main_text": "panel.wellness.vocational.description.main_text", "secondary_text": "panel.wellness.vocational.description.secondary_text", "bullet": "panel.wellness.common.description.bullet" },
-				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
-						]
-					}
-				],
-				"resources": [
-					{
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.vocational.resources.career_center", "url": "https://www.careercenter.illinois.edu/", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.vocational.resources.student_job_board", "url": "https://secure.osfa.illinois.edu/vjb/", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.vocational.resources.top_scholars", "url": "https://topscholars.illinois.edu/", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.vocational.resources.i_programs", "url": "http://leadership.illinois.edu/i-programs", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_wellness_app.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.vocational.resources.networking", "url":"http://mhcwellness.illinois.edu/networking", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.vocational.resources.student_assistance_center", "url":"http://mhcwellness.illinois.edu/student-assistance-center%E2%80%A8", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.vocational.resources.academic_advisement", "url":"http://mhcwellness.illinois.edu/academic-advisement", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.vocational.resources.faqs", "url":"http://mhcwellness.illinois.edu/faq", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.vocational.resources.study_tips", "url":"http://mhcwellness.illinois.edu/study-tips", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.vocational.resources.compass", "url":"http://mhcwellness.illinois.edu/what-compass", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.vocational.resources.tutoring", "url":"http://mhcwellness.illinois.edu/tutoring", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.involved", "url":"http://mhcwellness.illinois.edu/getting-involved", "icon": "link-out.png", "hint": "" }
-						]
-					}
-				]
-			},
-			"emotional": {
-				"header": { "title": "panel.wellness.emotional.header.title", "image": "path.png" },
-				"description": { "main_text": "panel.wellness.emotional.description.main_text", "secondary_text": "panel.wellness.emotional.description.secondary_text", "bullet": "panel.wellness.common.description.bullet" },
-				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.mood_meter", "image": "group-7.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/interactive-mood-meter" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
-						]
-					}
-				],
-				"resources": [
-					{
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.emotional.resources.community_care", "url": "https://odos.uiuc.edu/community-of-care/resources/students/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{
-						"title": "panel.wellness.common.resources.office_inclusion.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.resources.programs", "url":"https://oiir.illinois.edu/programs", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.women_center", "url":"https://oiir.illinois.edu/womens-center", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.lgbt_center", "url":"https://oiir.illinois.edu/lgbt-resource-center", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{
-						"title": "panel.wellness.common.resources.counseling_center.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.interactive_activities.activity.kognito_at_risk_center", "url":"edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.ace_it", "url":"edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=drugs.alcohol.help", "icon": "link-out.png", "hint": "" }
-						],
-						"social_media": [
-							{ "type":"twitter", "url":"http://twitter.com/UI_Counseling" },
-							{ "type":"facebook", "url":"https://www.facebook.com/IllinoisCounselingCenter" },
-							{ "type":"youtube", "url":"https://www.youtube.com/channel/UCyxUtefuFNxkk2MuwhcDgig" },
-							{ "type":"instagram", "url":"https://www.instagram.com/illinoiscounselingcenter/" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_health_center.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.resources.stress_management", "url":"http://mckinley.illinois.edu/health-education/stress-management", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.mental_health", "url":"http://mckinley.illinois.edu/medical-services/mental-health", "icon": "link-out.png", "hint": "" }
-						],
-						"social_media": [
-							{ "type":"youtube", "url":"https://www.youtube.com/user/MHCMcTV" },
-							{ "type":"facebook", "url":"https://www.facebook.com/MckinleyHC/" },
-							{ "type":"instagram", "url":"https://www.instagram.com/mckinleyhealthcenter/" }
-						]
-					}
-				]
-			},
-			"social": {
-				"header": { "title": "panel.wellness.social.header.title", "image": "group-16.png" },
-				"description": { "main_text": "panel.wellness.social.description.main_text", "secondary_text": "panel.wellness.social.description.secondary_text", "bullet": "panel.wellness.common.description.bullet" },
-				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.mood_meter", "image": "group-7.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/interactive-mood-meter" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
-						]
-					}
-				],
-				"resources": [
-					{
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.social.resources.engage", "url": "https://illinois.campuslabs.com/engage/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.campus_recreation.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.social.resources.intramural_sports", "url":"https://campusrec.illinois.edu/programs/intramural/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.social.resources.illini_union.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.social.resources.rso", "url":"https://union.illinois.edu/get-involved/office-of-registered-organizations", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.social.resources.master_calendar", "url":"https://mastercalendar.union.illinois.edu/MasterCalendar/MasterCalendar.aspx", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.office_inclusion.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.resources.bnaacc", "url":"https://oiir.illinois.edu/bnaacc", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.aacc", "url":"https://oiir.illinois.edu/aacc", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.la_casa", "url":"https://oiir.illinois.edu/la-casa-cultural-latina", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.native_american_house", "url":"https://oiir.illinois.edu/native-american-house", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.women_center", "url":"https://oiir.illinois.edu/womens-center", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.lgbt_center", "url":"https://oiir.illinois.edu/lgbt-resource-center", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.social.resources.international_education", "url":"https://oiir.illinois.edu/cultural-resource-centers/international-education", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_wellness_app.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.resources.involved", "url":"http://mhcwellness.illinois.edu/getting-involved", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.social.resources.going_out", "url":"http://mhcwellness.illinois.edu/going-out", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.social.resources.peer_pressure", "url":"http://mhcwellness.illinois.edu/peer-pressure", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.social.resources.roommates", "url":"http://mhcwellness.illinois.edu/roommates", "icon": "link-out.png", "hint": "" }
-						]
-					}
-				]
+		"resources": {
+			"commands": [
+				{"id":"appointment", "type": "large", "url": "https://wellness.web.illinois.edu/help/i-want-to-make-an-appointment"},
+				{"id":"help", "type": "large", "url": "https://wellness.web.illinois.edu/help/i-want-to-help-a-friend-student-or-coworker"},
+				{"id":"where_to_start", "type": "large", "url": "https://wellness.web.illinois.edu/help/im-not-sure-where-to-start"},
+				{"id":"securing_food", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=bookstore"},
+				{"id":"telehealth", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=intl.students"},
+				{"id":"podcast", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=learn.money"},
+	
+				{"id":"crisis_resources", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=legal"},
+				{"id":"accessibility_and_accommodations", "type": "regular", "url": "https://wellness.illinois.edu/mental-health-resources/accessibility-and-accommodations"},
+				{"id":"after_hours", "type": "regular", "url": "https://odos.illinois.edu/community-of-care/emergency-dean"},
+				{"id":"campus_service_units", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units"},
+				{"id":"core_campus_resources", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=lgbt.resource"},
+				{"id":"financial_assistance", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/financial"},
+				{"id":"fitness_and_recreation", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/fitness-recreation"},
+				{"id":"food_and_nutrition", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/food-nutrition"},
+				{"id":"mental_health_and_counseling", "type": "regular", "url": "https://wellness.illinois.edu/mental-health-resources/students"},
+				{"id":"nature_and_culture", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/faculty-and-staff/nature-and-culture"},
+				{"id":"other", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/resources"},
+				{"id":"sexual_misconduct", "type": "regular", "url": "https://wellness.illinois.edu/mental-health-resources/sexual-misconduct"},
+				{"id":"events_and_workshops", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/workshops-and-events"}
+			],
+			"strings": {
+				"en": {
+					"appointment": "I want to make an appointment",
+					"help": "I want to help a friend, student, or co-worker",
+					"where_to_start": "I’m not sure where to start",
+					"securing_food": "I need help securing food",
+					"telehealth": "I want to learn about HealthiestYou Telehealth",
+					"podcast": "Listen to the Healthy Illini podcast",
+					"crisis_resources": "24-Hour Crisis Resources",
+					"accessibility_and_accommodations": "Accessibility and Accommodations",
+					"after_hours": "After Hours Support",
+					"campus_service_units": "Campus Service Units",
+					"core_campus_resources": "Core Campus Resources",
+					"financial_assistance": "Financial Assistance",
+					"fitness_and_recreation": "Fitness and Recreation",
+					"food_and_nutrition": "Food and Nutrition",
+					"mental_health_and_counseling": "Mental Health & Counseling",
+					"nature_and_culture": "Nature & Culture",
+					"other": "Other Wellness Resources",
+					"sexual_misconduct": "Sexual Misconduct",
+					"events_and_workshops": "Wellness Events & Workshops"
+				}
 			}
 		}
 	}

@@ -515,6 +515,7 @@ class _BrowseEntry extends StatelessWidget {
       case "my.my_laundry":      _onTapMyLaundry(context); break;
       case "my.my_inbox":        _onTapMyNotifications(context); break;
       case "my.my_campus_guide": _onTapMyCampusGuide(context); break;
+      case "my.my_wellness_resources": _onTapMyWellnessResources(context); break;
 
       case "polls.create_poll":  _onTapCreatePoll(context); break;
       case "polls.view_polls":   _onTapViewPolls(context); break;
@@ -831,6 +832,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapMyCampusGuide(BuildContext context) {
     Analytics().logSelect(target: "My Campus Guide");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [GuideFavorite.favoriteKeyName]); } ));
+  }
+
+  void _onTapMyWellnessResources(BuildContext context) {
+    Analytics().logSelect(target: "My Wellness Resources");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.resources,); } ));
   }
 
   void _onTapCreatePoll(BuildContext context) {
