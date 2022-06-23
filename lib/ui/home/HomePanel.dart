@@ -34,6 +34,7 @@ import 'package:illinois/ui/home/HomeCampusGuideWidget.dart';
 import 'package:illinois/ui/home/HomeCampusLinksWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeCheckListWidget.dart';
+import 'package:illinois/ui/home/HomeDiningWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:illinois/ui/home/HomeTBDWidget.dart';
@@ -343,6 +344,15 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeSaferWidget(key: _saferKey, favoriteId: code, updateController: _updateController,);
       }
     }
+    else if (code == 'dinings') {
+      if (title) {
+        return HomeDiningWidget.title;
+      } else if (handle) {
+        return HomeDiningWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeDiningWidget(favoriteId: code, updateController: _updateController,);
+      }
+    }
     else if (code == 'wallet') {
       if (title) {
         return HomeWalletWidget.title;
@@ -625,11 +635,13 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     if (_isEditing) {
       //TMP:
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), null);
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'safer'), null);
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'app_help'), null);
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'dinings'), null);
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'safer'), null);
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'campus_resources'), null);
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'state_farm_center'), null);
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'campus_links'), null);
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'campus_resources'), null);
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'wallet'), null);
     }
     else {
       _updateController.add(HomePanel.notifyRefresh);

@@ -428,11 +428,11 @@ class _BrowseEntry extends StatelessWidget {
                 onToggle: () => _onTapFavorite(context)
               ),
               Expanded(child:
-                Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
                   Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary)),
                 ),
               ),
-              Padding(padding: EdgeInsets.only(right: 16), child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18), child:
                 Image.asset('images/chevron-right.png'),
               ),
             ],),
@@ -481,6 +481,9 @@ class _BrowseEntry extends StatelessWidget {
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
 
       case "campus_links.due_date_catalog":  _onTapDueDateCatalog(context); break;
+
+      case "dinings.dinings_all":            _onTapDiningsAll(context); break;
+      case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
 
       case "campus_resources.events":       _onTapEvents(context); break;
       case "campus_resources.dining":       _onTapDining(context); break;
@@ -688,6 +691,16 @@ class _BrowseEntry extends StatelessWidget {
     else if (_canDueDateCatalog) {
       launch(Config().dateCatalogUrl!);
     }
+  }
+
+  void _onTapDiningsAll(BuildContext context) {
+    Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining) ));
+  }
+
+  void _onTapDiningsOpen(BuildContext context) {
+    Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining Open Now");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
   }
 
   void _onTapEvents(BuildContext context) {
