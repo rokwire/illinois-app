@@ -30,6 +30,7 @@ import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsTeamsWidget.dart';
+import 'package:illinois/ui/home/HomeCampusGuideWidget.dart';
 import 'package:illinois/ui/home/HomeCampusLinksWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeCheckListWidget.dart';
@@ -232,6 +233,15 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeCampusRemindersWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
         return HomeCampusRemindersWidget(favoriteId: code, updateController: _updateController,);
+      }
+    }
+    else if (code == 'campus_guide') {
+      if (title) {
+        return HomeCampusGuideWidget.title;
+      } else if (handle) {
+        return HomeCampusGuideWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeCampusGuideWidget(favoriteId: code, updateController: _updateController,);
       }
     }
     else if (code == 'suggested_events') {

@@ -1,16 +1,20 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/guide/GuideCategoriesPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -38,13 +42,16 @@ class _HomeCampusGuideWidgetState extends State<HomeCampusGuideWidget> implement
 
   List<String>? _categories;
   Map<String, List<GuideSection>>? _categorySections;
+  String? _selectedCategory;
+  DateTime? _selectedCategoryTime;
 
   @override
   void initState() {
 
     NotificationService().subscribe(this, [
-      Config.notifyConfigChanged,
       Guide.notifyChanged,
+      Config.notifyConfigChanged,
+      AppLivecycle.notifyStateChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -55,7 +62,11 @@ class _HomeCampusGuideWidgetState extends State<HomeCampusGuideWidget> implement
       });
     }
 
+    _selectedCategory = Storage().homeCampusRemindersCategory;
+    _selectedCategoryTime = (Storage().homeCampusRemindersCategoryTime != null) ? DateTime.fromMillisecondsSinceEpoch(Storage().homeCampusRemindersCategoryTime ?? 0) : null;
+
     _buildCategories();
+    _updateSelectedCategoryIfNeeded();
 
     super.initState();
   }
@@ -70,11 +81,23 @@ class _HomeCampusGuideWidgetState extends State<HomeCampusGuideWidget> implement
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == Guide.notifyChanged) ||
-        (name == Config.notifyConfigChanged)){
-      setState(() {
-        _buildCategories();
-      });
+    if (name == Guide.notifyChanged) {
+      if (mounted) {
+        setState(() {
+          _buildCategories();
+          _updateSelectedCategoryIfNeeded();
+        });
+      }
+    }
+    else if (name == Config.notifyConfigChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      if (_updateSelectedCategoryIfNeeded() && mounted) {
+        setState(() {});
+      }
     }
   }
 
@@ -94,32 +117,30 @@ class _HomeCampusGuideWidgetState extends State<HomeCampusGuideWidget> implement
       Padding(padding: EdgeInsets.symmetric(horizontal: 16),
         child: _buildContent(),
       ),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.campus_guide.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.campus_guide.button.all.hint', 'Tap to view all items'),
-        onTap: _onTapViewAll,
-      ),
-      
     ],);
   }
 
 
   Widget _buildContent() {
-    if ((_categories != null) && (0 < _categories!.length)) {
-      List<Widget> contentList = <Widget>[];
-      for (String category in _categories!) {
-        contentList.add(_buildHeading(category));
-        contentList.add(_buildSections(_categorySections![category], category: category));
-      }
-
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
+    if ((_selectedCategory != null) && (_categorySections != null)) {
+      return Column(children: <Widget>[
+        _buildHeading(_selectedCategory!),
+        _buildSections(_categorySections![_selectedCategory], category: _selectedCategory),
+        LinkButton(
+          title: Localization().getStringEx('widget.home.campus_guide.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.campus_guide.button.all.hint', 'Tap to view the complete Campus Guide'),
+          onTap: _onTapViewAll,
+        ),
+      ]);
     }
     else {
-      return Padding(padding: EdgeInsets.all(32), child:
-        Center(child:
-          Text(Localization().getStringEx('panel.guide_categories.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
-        ,)
-      );
+      return Row(children: [
+        Expanded(child:
+            Padding(padding: EdgeInsets.only(top: 8, bottom: 16), child:
+              Text(Localization().getStringEx('widget.home.campus_guide.content.empty', 'Campus Guide content not available.'), style: TextStyle(color: Styles().colors!.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies?.medium),)
+            ),
+        ),
+      ],);
     }
   }
 
@@ -131,7 +152,7 @@ class _HomeCampusGuideWidgetState extends State<HomeCampusGuideWidget> implement
           Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 10, bottom: 10), child:
             Row(children: <Widget>[
               Expanded(child:
-                Text(category, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),),
+                Text(category, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, color: Colors.white, fontSize: 16, letterSpacing: 1.0),),
               ),
            ]),
           ),
@@ -143,32 +164,33 @@ class _HomeCampusGuideWidgetState extends State<HomeCampusGuideWidget> implement
   Widget _buildSections(List<GuideSection>? sections, { String? category }) {
     List<Widget> contentList = <Widget>[];
     if (sections != null) {
-      for (GuideSection section in sections) {
+      int count = min(Config().homeCampusGuideCount, sections.length);
+      for (int index = 0; index < count; index++) {
+        GuideSection section = sections[index];
         if (contentList.isNotEmpty) {
           contentList.add(Divider(color: Styles().colors!.surfaceAccent, height: 1,));
         }
         contentList.add(_buildEntry(section, category: category));
       }
     }
-    return Container(decoration: BoxDecoration(border:Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
+    return Container(decoration: BoxDecoration(color: Colors.white,  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.only(bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))), child:
       Column(children: contentList),
     );
   }
 
   Widget _buildEntry(GuideSection section, { String? category }) {
     return GestureDetector(onTap: () => _onTapSection(section, category: category), child:
-      Container(color: Colors.white, child:
-        Padding(padding: EdgeInsets.only(left: 10, top: 0, bottom: 0), child:
+      
+        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
           Row(children: <Widget>[
             Expanded(child:
               Text(section.name ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16),),
             ),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 6), child:
+            Padding(padding: EdgeInsets.only(right: 6), child:
               Image.asset('images/chevron-right.png', excludeFromSemantics: true),
             )
           ],),
         ),
-      ),
     );
   }
 
@@ -216,6 +238,27 @@ class _HomeCampusGuideWidgetState extends State<HomeCampusGuideWidget> implement
     }
   }
 
+  bool hasCategory(String? category) {
+    return _categorySections?.containsKey(category) ?? false;
+  }
+
+  bool get _isSelectedCategoryExpired {
+    return (_selectedCategoryTime == null) || ( 4 < DateTime.now().difference(_selectedCategoryTime!).inHours);
+  }
+
+  bool _updateSelectedCategoryIfNeeded() {
+    if ((_selectedCategory == null) || _isSelectedCategoryExpired || !hasCategory(_selectedCategory)) {
+      int categoriesCount = _categories?.length ?? 0;
+      int categoryIndex = Random().nextInt(categoriesCount);
+      if ((0 <= categoryIndex) && (categoryIndex < categoriesCount)) {
+        Storage().homeCampusRemindersCategory = _selectedCategory = _categories![categoryIndex];
+        Storage().homeCampusRemindersCategoryTime = (_selectedCategoryTime = DateTime.now()).millisecondsSinceEpoch;
+        return true;
+      }
+    }
+    return false;
+  }
+
   void _onTapCategory(String category) {
     Analytics().logSelect(target: category);
     //Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(category: category,)));
@@ -227,5 +270,7 @@ class _HomeCampusGuideWidgetState extends State<HomeCampusGuideWidget> implement
   }
 
   void _onTapViewAll() {
+    Analytics().logSelect(target: "HomeCampusGuideWidget View All");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideCategoriesPanel(guide: widget.guide,)));
   }
 }
