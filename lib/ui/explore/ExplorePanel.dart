@@ -118,7 +118,6 @@ class ExplorePanelState extends State<ExplorePanel>
   Position? _locationData;
   LocationServicesStatus? _locationServicesStatus;
 
-  ExploreFilter? _initialSelectedFilter;
   Map<ExploreItem, List<ExploreFilter>>? _itemToFilterMap;
   bool _filterOptionsVisible = false;
 
@@ -130,12 +129,6 @@ class ExplorePanelState extends State<ExplorePanel>
   bool? _loadingProgress;
   bool _dropDownValuesVisible = false;
   
-
-  // When we click item[index == 2] -the TabBar creates and immediately dispose item[index == 1] (But _state.mounted = true)
-  // as a result the ExplorePanel.panelState loses its _element so we need to recreate the panel(as workaround)
-  // store if expose() is called
-  bool disposed = false;
-
   //Maps
   static const double MapBarHeight = 114;
 
@@ -159,18 +152,22 @@ class ExplorePanelState extends State<ExplorePanel>
       Styles.notifyChanged,
     ]);
 
-    _selectedItem = widget.initialItem;
-    _initialSelectedFilter = widget.initialFilter;
 
-    _selectDisplayType(widget.mapDisplayType);
-    _initExploreItems();
     _initFilters();
-    _loadEventCategories();
+    _selectedItem = widget.initialItem;
+    _selectDisplayType(widget.mapDisplayType);
+
     _mapExploreBarAnimationController = AnimationController (duration: Duration(milliseconds: 200), lowerBound: -MapBarHeight, upperBound: 0, vsync: this)
       ..addListener(() {
         this._refresh(() {});
       });
-    disposed = false;
+
+    _loadingProgress = true;
+    _loadEventCategories().then((List<dynamic>? result) {
+      _eventCategories = result;
+      _initExploreItems();
+    });
+
     super.initState();
   }
 
@@ -182,7 +179,8 @@ class ExplorePanelState extends State<ExplorePanel>
       Analytics().logMapHide();
     }
 
-    disposed = true;
+    _mapExploreBarAnimationController.dispose();
+
     super.dispose();
   }
 
@@ -239,6 +237,13 @@ class ExplorePanelState extends State<ExplorePanel>
         bottomNavigationBar: widget.rootTabDisplay ? null : uiuc.TabBar());
   }
 
+  void _changeDropDownValuesVisibility() {
+    _dropDownValuesVisible = !_dropDownValuesVisible;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   void _initExploreItems() {
     if (Auth2().privacyMatch(2)) {
       LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
@@ -257,13 +262,6 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else {
         _updateExploreItems();
-    }
-  }
-
-  void _changeDropDownValuesVisibility() {
-    _dropDownValuesVisible = !_dropDownValuesVisible;
-    if (mounted) {
-      setState(() {});
     }
   }
 
@@ -307,6 +305,17 @@ class ExplorePanelState extends State<ExplorePanel>
       ],
     };
 
+    if (widget.initialFilter != null) {
+      _itemToFilterMap?.forEach((ExploreItem item, List<ExploreFilter> filters) {
+        for (int index = 0; index < filters.length; index++) {
+          ExploreFilter filter = filters[index];
+          if (filter.type == widget.initialFilter?.type) {
+            filters[index] = widget.initialFilter!;
+          }
+        }
+      });
+    }
+
     _filterEventTimeValues = [
       Localization().getStringEx('panel.explore.filter.time.upcoming', 'Upcoming'),
       Localization().getStringEx('panel.explore.filter.time.today', 'Today'),
@@ -328,15 +337,20 @@ class ExplorePanelState extends State<ExplorePanel>
     ];
   }
 
-  void _loadEventCategories() {
-    if (Connectivity().isNotOffline) {
-      Events().loadEventCategories().then((List<dynamic>? result) {
+  Future<List<dynamic>?> _loadEventCategories() async {
+    return Connectivity().isNotOffline ? await Events().loadEventCategories() : null;
+  }
+
+  void _updateEventCategories() {
+    _loadEventCategories().then((List<dynamic>? result) {
+      if (result != null) {
         _refresh(() {
           _eventCategories = result;
         });
         _loadExplores();
-      });
-    }
+      }
+    });
+    
   }
 
   List<String?> _buildFilterEventDateSubLabels() {
@@ -413,19 +427,8 @@ class ExplorePanelState extends State<ExplorePanel>
       switch (_selectedItem) {
         
         case ExploreItem.Events: 
-          {
-            if (_initialSelectedFilter != null) {
-              ExploreFilter? filter = (CollectionUtils.isNotEmpty(selectedFilterList)) ?
-                (selectedFilterList as List<ExploreFilter?>).firstWhereOrNull((selectedFilter) => selectedFilter?.type == _initialSelectedFilter?.type) : null;
-              if (filter != null) {
-                int filterIndex = selectedFilterList!.indexOf(filter);
-                selectedFilterList.remove(filter);
-                selectedFilterList.insert(filterIndex, ExploreFilter(type: _initialSelectedFilter!.type, selectedIndexes: _initialSelectedFilter!.selectedIndexes, active: _initialSelectedFilter!.active));
-              }
-            }
-            task = _loadEvents(selectedFilterList);
-            break;
-          }
+          task = _loadEvents(selectedFilterList);
+          break;
         
         case ExploreItem.Dining:
           task = _loadDining(selectedFilterList);
@@ -1112,14 +1115,6 @@ class ExplorePanelState extends State<ExplorePanel>
 
     for (int i = 0; i < visibleFilters.length; i++) {
       ExploreFilter selectedFilter = visibleFilters[i];
-      if (_initialSelectedFilter != null &&
-          _initialSelectedFilter!.type == selectedFilter.type) {
-        selectedFilter = ExploreFilter(
-            type: _initialSelectedFilter!.type,
-            selectedIndexes: _initialSelectedFilter!.selectedIndexes,
-            active: _initialSelectedFilter!.active);
-        _initialSelectedFilter = null;
-      }
       List<String> filterValues = _getFilterValuesByType(selectedFilter.type)!;
       int filterValueIndex = selectedFilter.firstSelectedIndex;
       String? filterHeaderLabel = filterValues[filterValueIndex];
@@ -1213,10 +1208,6 @@ class ExplorePanelState extends State<ExplorePanel>
   ///Public interface
   void selectItem(ExploreItem exploreItem, {ExploreFilter? initialFilter}) {
     bool reloadExplores = false;
-    if (_initialSelectedFilter != initialFilter) {
-      reloadExplores = true;
-      _initialSelectedFilter = initialFilter;
-    }
     if (exploreItem != _selectedItem) {
       reloadExplores = true;
       _selectedItem = exploreItem; //Fix initial panel opening selection
@@ -1260,7 +1251,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _refresh(void fn()){
-    if(!disposed && mounted) {
+    if(mounted) {
       this.setState(fn);
     }
   }
@@ -1342,7 +1333,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else if (name == Connectivity.notifyStatusChanged) {
       if (Connectivity().isNotOffline) {
-        _loadEventCategories();
+        _updateEventCategories();
       }
     }
     else if (name == Localization.notifyStringsUpdated) {
