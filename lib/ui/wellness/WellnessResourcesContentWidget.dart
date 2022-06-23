@@ -36,9 +36,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(children: [
       _buildHeader(),
       _buildActionButtonsContainer(),
-      Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [Expanded(child: _buildResourceButtonsContainer()), _buildAlphabetContainer()])
+      _buildResourceButtonsContainer(),
     ]));
   }
 
@@ -146,13 +144,4 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
                 ]))));
   }
 
-  Widget _buildAlphabetContainer() {
-    List<String> alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-    List<Widget> lettersWidgetList = <Widget>[];
-    for (String letter in alphabet) {
-      lettersWidgetList.add(Text(letter, style: TextStyle(color: Styles().colors!.fillColorPrimary)));
-    }
-    return Padding(
-        padding: EdgeInsets.only(left: 10), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: lettersWidgetList));
-  }
 }
