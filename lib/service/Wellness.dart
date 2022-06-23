@@ -32,7 +32,7 @@ class Wellness with Service {
   static const String notifyToDoCategoryDeleted = "edu.illinois.rokwire.wellness.todo.category.deleted";
   static const String notifyToDoItemCreated = "edu.illinois.rokwire.wellness.todo.item.created";
   static const String notifyToDoItemUpdated = "edu.illinois.rokwire.wellness.todo.item.updated";
-  static const String notifyToDoItemDeleted = "edu.illinois.rokwire.wellness.todo.item.deleted";
+  static const String notifyToDoItemsDeleted = "edu.illinois.rokwire.wellness.todo.items.deleted";
 
   // Singleton Factory
 
@@ -141,7 +141,7 @@ class Wellness with Service {
     }
     if (itemToDelete != null) {
       _toDoItems!.remove(itemToDelete);
-      NotificationService().notify(notifyToDoItemDeleted);
+      NotificationService().notify(notifyToDoItemsDeleted);
       return true;
     } else {
       Log.w('No such item');

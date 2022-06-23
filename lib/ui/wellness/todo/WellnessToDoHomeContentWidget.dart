@@ -52,7 +52,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Wellness.notifyToDoItemCreated, Wellness.notifyToDoItemUpdated, Wellness.notifyToDoItemDeleted]);
+    NotificationService().subscribe(this, [Wellness.notifyToDoItemCreated, Wellness.notifyToDoItemUpdated, Wellness.notifyToDoItemsDeleted]);
     _selectedTab = _ToDoTab.daily;
     _initCalendarDates();
     _loadToDoItems();
@@ -265,9 +265,19 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   Widget _buildCalendarToDoItem(ToDoItem? item) {
     double widgetSize = 30;
+    bool hasReminder = (item?.reminderDateTimeUtc != null);
     return GestureDetector(
         onTap: () => _onTapCalendarItem(item),
-        child: Container(height: widgetSize, width: widgetSize, decoration: BoxDecoration(color: item?.color ?? Colors.transparent, shape: BoxShape.circle)));
+        child: Container(
+            height: widgetSize,
+            width: widgetSize,
+            decoration: BoxDecoration(color: item?.color ?? Colors.transparent, shape: BoxShape.circle),
+            child: Visibility(
+                visible: hasReminder,
+                child: Center(
+                    child: Stack(
+                        alignment: Alignment.center,
+                        children: [Image.asset('images/icon-oval-white.png'), Image.asset('images/icon-arrows.png')])))));
   }
 
   Widget _buildManageCategoriesButton() {
@@ -534,7 +544,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       _loadToDoItems();
     } else if (name == Wellness.notifyToDoItemUpdated) {
       _loadToDoItems();
-    } else if (name == Wellness.notifyToDoItemDeleted) {
+    } else if (name == Wellness.notifyToDoItemsDeleted) {
       _loadToDoItems();
     }
   }
