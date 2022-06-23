@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Transportation.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessSectionsContentWidget extends StatefulWidget {
-  final void Function()? onTapEightDimension;
-
-  WellnessSectionsContentWidget({this.onTapEightDimension});
+  WellnessSectionsContentWidget();
 
   @override
   State<WellnessSectionsContentWidget> createState() => _WellnessSectionsContentWidgetState();
@@ -118,13 +121,20 @@ class _WellnessSectionsContentWidgetState extends State<WellnessSectionsContentW
         textStyle: TextStyle(fontSize: 14),
         rightIcon: Image.asset('images/external-link.png'),
         rightIconPadding: EdgeInsets.only(left: 4, right: 6),
-        onTap: widget.onTapEightDimension ?? () => {});
+        onTap: onTapEightDimension);
   }
 
   void _setLoading(bool loading) {
     _loading = loading;
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  void onTapEightDimension() {
+    Analytics().logSelect(target: 'Learn more about the 8 dimensions');
+    if (StringUtils.isNotEmpty(Config().wellness8DimensionsUrl)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().wellness8DimensionsUrl, title: Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'),)));
     }
   }
 
