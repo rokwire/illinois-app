@@ -265,7 +265,6 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
     return Padding(
         padding: EdgeInsets.only(left: 5),
         child: Container(
-            padding: EdgeInsets.symmetric(vertical: 7),
             decoration: BoxDecoration(color: Styles().colors!.lightGray),
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
               Padding(
@@ -274,9 +273,11 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
                       style: TextStyle(fontSize: 11, color: Colors.black, fontFamily: Styles().fontFamilies!.regular))),
               GestureDetector(
                   onTap: () => _onTapRemoveWorkDay(date),
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 25, right: 10),
-                      child: Image.asset('images/icon-x-orange-small.png', color: Colors.black)))
+                  child: Container(
+                      color: Styles().colors!.lightGray,
+                      child: Padding(
+                          padding: EdgeInsets.only(left: 25, top: 7, right: 10, bottom: 7),
+                          child: Image.asset('images/icon-x-orange-small.png', color: Colors.black))))
             ])));
   }
 
@@ -345,23 +346,61 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
     }
   }
 
-  void _onTapDueDate() {
-    //TBD: DD - implement
+  void _onTapDueDate() async {
+    DateTime? resultDate = await _pickDate(initialDate: _dueDate);
+    if (resultDate != null) {
+      _dueDate = resultDate;
+      _updateState();
+    }
   }
 
-  void _onTapDueTime() {
+  void _onTapDueTime() async {
     if (_dueDate == null) {
       return;
     }
-    //TBD: DD - implement
+    TimeOfDay initialTime = _dueTime ?? TimeOfDay.now();
+    TimeOfDay? resultTime = await showTimePicker(context: context, initialTime: initialTime);
+    if (resultTime != null) {
+      _dueTime = resultTime;
+      _updateState();
+    }
+  }
+
+  void _onTapWorkDays() async {
+    DateTime? resultDate = await _pickDate(initialDate: _workDays?.last);
+    if ((resultDate != null) && !(_workDays?.contains(resultDate) ?? false)) {
+      if (_workDays == null) {
+        _workDays = <DateTime>[];
+      }
+      _workDays!.add(resultDate);
+      _workDays!.sort();
+      _updateState();
+    }
   }
 
   void _onTapRemoveWorkDay(DateTime date) {
-    //TBD: DD - implement
+    if (_workDays?.contains(date) ?? false) {
+      _workDays!.remove(date);
+      _updateState();
+    }
   }
 
-  void _onTapWorkDays() {
-    //TBD: DD - implement
+  Future<DateTime?> _pickDate({DateTime? initialDate}) async {
+    if (initialDate == null) {
+      initialDate = DateTime.now();
+    }
+    final int oneYearInDays = 365;
+    DateTime firstDate = DateTime.fromMillisecondsSinceEpoch(initialDate.subtract(Duration(days: oneYearInDays)).millisecondsSinceEpoch);
+    DateTime lastDate = DateTime.fromMillisecondsSinceEpoch(initialDate.add(Duration(days: oneYearInDays)).millisecondsSinceEpoch);
+    DateTime? resultDate = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: firstDate,
+        lastDate: lastDate,
+        builder: (BuildContext context, Widget? child) {
+          return Theme(data: ThemeData.light(), child: child!);
+        });
+    return resultDate;
   }
 
   void _onTapSave() {
@@ -370,7 +409,7 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
 
   void _loadCategories() {
     _setLoading(true);
-    Wellness().loadToDoCategories().then((categories) {
+    Wellness().loadToDoCategoriesCached().then((categories) {
       _categories = categories;
       _setLoading(false);
     });
@@ -378,13 +417,17 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
 
   void _setLoading(bool loading) {
     _loading = loading;
+    _updateState();
+  }
+
+  void _updateState() {
     if (mounted) {
       setState(() {});
     }
   }
 
   String? get _formattedDueDate {
-    return AppDateTime().formatDateTime(_dueDate, format: 'MM/dd/YY', ignoreTimeZone: true);
+    return AppDateTime().formatDateTime(_dueDate, format: 'MM/dd/yy', ignoreTimeZone: true);
   }
 
   String? get _formattedDueTime {
