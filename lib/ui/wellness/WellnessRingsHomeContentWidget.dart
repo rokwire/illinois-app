@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Storage.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:intl/intl.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -33,10 +39,12 @@ class WellnessRingsHomeContentWidget extends StatefulWidget {
 
 class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeContentWidget> implements NotificationsListener{
 
+  late _WellnessRingsTab _selectedTab;
 
   @override
   void initState() {
     super.initState();
+    _selectedTab = _WellnessRingsTab.today;
     NotificationService().subscribe(this, [
       WellnessRingService.notifyUserRingsUpdated,
     ]);
@@ -50,19 +58,81 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
 
   @override
   Widget build(BuildContext context) {
-    return
-      _buildTodaysRingsContent();
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Container(height: 8,),
+          _buildHeader(),
+          Container(height: 12,),
+          _buildTabButtonRow(),
+          _buildContent()
+        ]));
+
   }
 
-  _buildTodaysRingsContent(){
+  Widget _buildHeader() {
+    return Container(
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Text(Localization().getStringEx('panel.wellness.rings.header.label', 'My Daily Wellness Rings'),
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
+          HomeFavoriteButton(style: HomeFavoriteStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
+        ]));
+  }
+
+  Widget _buildTabButtonRow() {
+    return Row(children: [
+      Expanded(
+          child: _TabButton(
+              position: _TabButtonPosition.first,
+              selected: (_selectedTab == _WellnessRingsTab.today),
+              label: Localization().getStringEx('panel.wellness.rings.tab.daily.label', "Today's Rings"),
+              hint: Localization().getStringEx('panel.wellness.rings.tab.daily.hint', ''),
+              onTap: () => _onTabChanged(tab: _WellnessRingsTab.today))),
+      Expanded(
+          child: _TabButton(
+              position: _TabButtonPosition.last,
+              selected: (_selectedTab == _WellnessRingsTab.history),
+              label: Localization().getStringEx('panel.wellness.rings.tab.history.label', 'Accomplishments'),
+              hint: Localization().getStringEx('panel.wellness.rings.tab.history.hint', ''),
+              onTap: () => _onTabChanged(tab: _WellnessRingsTab.history)))
+    ]);
+  }
+
+  Widget _buildContent(){
+    switch(_selectedTab){
+      case _WellnessRingsTab.today : return _buildTodaysRingsContent();
+      case _WellnessRingsTab.history : return _buildHistoryContent();
+    }
+  }
+
+  Widget _buildHistoryContent(){
+    return Container(
+      child: Column(
+        children: [
+          Container(height: 8,),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 6),
+            child: Text(Localization().getStringEx('panel.wellness.rings.description.label', "See your recent progress in one place by checking your log for the lat 14 days."),
+              style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+          )),
+          Container(height: 12,),
+          _buildHistoryList(),
+        ],
+      )
+
+    );
+  }
+
+  Widget _buildTodaysRingsContent(){
     return Container(
       child:
       Stack(children:[
         Column(
           children: [
-            Container(height: 16,),
+            Container(height: 32,),
             WellnessRing(),
-            Container(height: 16,),
+            Container(height: 28,),
             _buildButtons(),
             Container(height: 16,),
             WellnessRingButton(label: "Create New Ring", description: "Maximum of 4 total", onTapWidget: (context){}, showLeftIcon: true,),
@@ -70,6 +140,22 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
         ],
       ),
       ])
+    );
+  }
+
+  Widget _buildHistoryList(){
+    var historyData = WellnessRingService().getAccomplishmentsHistory();
+    List<Widget> content = [];
+    if(historyData!=null && historyData.isNotEmpty){
+      for(var accomplishmentsPerDay in historyData.entries) {
+        content.add(_AccomplishmentCard(title: accomplishmentsPerDay.key, accomplishments: accomplishmentsPerDay.value));
+        content.add(Container(height: 8,));
+      }
+    }
+    return Container(
+      child: Column(
+        children: content,
+      ),
     );
   }
 
@@ -97,6 +183,15 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     return Container(
       child: Column(children: content,),
     );
+  }
+
+  void _onTabChanged({required _WellnessRingsTab tab}) {
+    if (_selectedTab != tab) {
+      _selectedTab = tab;
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   @override
@@ -317,7 +412,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
           WellnessRingData? data = WellnessRingService().wellnessRings
               ?.firstWhere((element) => element.id == param);
           if (data != null) {
-            AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.all(0),
+            AppAlert.showCustomDialog(context: this.context, contentPadding: EdgeInsets.all(0),
               contentWidget:
                 Container(
                     child: Column(
@@ -341,7 +436,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                                 Container(
                                   padding: EdgeInsets.only(left: 50, bottom: 10),
                                   child: GestureDetector(
-                                  onTap: () => Navigator.of(context).pop(),
+                                  onTap: () => Navigator.of(this.context).pop(),
                                   child: Text("x", style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 22),),
                                 )),
                               ],
@@ -447,11 +542,112 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
 
   Widget get _rightIcon{
     return GestureDetector(
-      onTap: (){ if (widget.onTapRightWidget!=null) widget.onTapRightWidget!(context);},
+      onTap: (){ if (widget.onTapRightWidget!=null) widget.onTapRightWidget!(this.context);},
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Image.asset('images/icon-gear.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
     ));
+  }
+}
+
+class _AccomplishmentCard extends StatefulWidget{
+  final String? title; //Date at top
+  final List<WellnessRingAccomplishment>? accomplishments;
+
+  const _AccomplishmentCard({Key? key, this.title, this.accomplishments}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _AccomplishmentCardState();
+
+}
+
+class _AccomplishmentCardState extends State<_AccomplishmentCard>{
+
+  @override
+  Widget build(BuildContext context) {
+    return CollectionUtils.isEmpty(widget.accomplishments) ? Container() :
+        Container( //TBD Draw
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          decoration: BoxDecoration(color: Colors.white, border: Border.all(width: 1, color: Styles().colors!.surfaceAccent!), borderRadius: BorderRadius.circular(5), ),
+          child: _buildAccomplishmentCard(widget.title??"", widget.accomplishments),
+        );
+  }
+
+  Widget _buildAccomplishmentCard(String title, List<WellnessRingAccomplishment>? accomplishedRings){
+    List<Widget> accomplishmentsTextContent = [];
+    List<Widget> accomplishmentsCircleContent = [];
+    if(accomplishedRings==null || accomplishedRings.isEmpty){
+      return Container(); //Empty scip
+    }
+
+    for(var accomplishedRingData in accomplishedRings){
+      //TEXT
+      accomplishmentsTextContent.add(
+          Container( //Accomplished ring within Card
+            child: Text("${accomplishedRingData.ringData.name?? "N/A"} ${_trimDecimal(accomplishedRingData.achievedValue)}/${_trimDecimal(accomplishedRingData.ringData.goal)}")
+      ));
+      accomplishmentsTextContent.add(Container(height: 2,));
+      //RING
+      accomplishmentsCircleContent.add(_buildRingCircle(color: accomplishedRingData.ringData.color ?? Colors.white));
+      accomplishmentsCircleContent.add(Container(height: 5,));
+    }
+
+    return Container(
+      child:
+      Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title),
+                Container(height: 2,),
+                Text("${widget.accomplishments?.length} Rings Completed!"),
+                Container(height: 6,),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: accomplishmentsTextContent,)
+              ],
+            ),
+          ),
+          Container(
+            child:Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: accomplishmentsCircleContent,
+            )
+          )
+        ],
+      )
+    );
+  }
+
+  Widget _buildRingCircle({required Color color, Color background = Colors.white}){
+    const double WIDGET_SIZE = 25;
+    const double STROKE_SIZE = 4;
+
+    return Container(
+      width: WIDGET_SIZE,
+      height: WIDGET_SIZE,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+      ),
+      padding: EdgeInsets.all(STROKE_SIZE),
+      child: Container(
+        // width: WIDGET_SIZE - STROKE_SIZE,
+        // height: WIDGET_SIZE - STROKE_SIZE,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: background,
+        ),
+      )
+    );
+  }
+
+  //Util
+
+  num _trimDecimal(double value){
+    return value % 1 == 0 ? value.toInt() : value;
   }
 }
 
@@ -465,17 +661,22 @@ class WellnessRingData {
   String? unit;
   int timestamp;
 
-  WellnessRingData({required this.id , this.name, required this.goal, this.unit = "times" , this.color = Colors.orange, required this.timestamp});
+  //helper property to avoid creating date everytime
+  DateTime? date;
+
+  WellnessRingData({required this.id , this.name, required this.goal, this.date, this.unit = "times" , this.color = Colors.orange, required this.timestamp});
 
   static WellnessRingData? fromJson(Map<String, dynamic>? json){
     if(json!=null) {
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(JsonUtils.intValue(json['timestamp'])??0);
       return WellnessRingData(
         id:     JsonUtils.stringValue(json['id']) ?? "",
         goal:   JsonUtils.doubleValue(json['goal']) ?? 1.0,
         name:   JsonUtils.stringValue(json['name']),
         unit:   JsonUtils.stringValue(json['unit']),
         timestamp:   JsonUtils.intValue(json['timestamp']) ?? DateTime.now().millisecondsSinceEpoch,
-        color:  UiColors.fromHex(JsonUtils.stringValue(json['color']))
+        color:  UiColors.fromHex(JsonUtils.stringValue(json['color'])),
+        date: date
       );
     }
     return null;
@@ -499,6 +700,7 @@ class WellnessRingData {
     this.name= other.name;
     this.unit = other.unit;
     this.timestamp = other.timestamp;
+    this.date = other.date != null ? DateTimeUtils().copyDateTime(other.date!): null;
   }
 
   @override
@@ -548,15 +750,22 @@ class WellnessRingRecord {
   final double value;
   final int timestamp;
 
+  //helper property to avoid creating date everytime
+  DateTime? date;
+
   WellnessRingRecord(
-      {required this.value, required this.timestamp, required this.wellnessRingId});
+      {required this.value, required this.timestamp, required this.wellnessRingId}){
+    if(date==null){
+      date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    }
+  }
 
   static WellnessRingRecord? fromJson(Map<String, dynamic>? json) {
     if (json != null) {
       return WellnessRingRecord(
           wellnessRingId: JsonUtils.stringValue(json['wellnessRingId']) ?? "",
           value: JsonUtils.doubleValue(json['value']) ?? 0.0,
-          timestamp: JsonUtils.intValue(json['timestamp']) ?? 0
+          timestamp: JsonUtils.intValue(json['timestamp']) ?? 0,
       );
     }
     return null;
@@ -606,11 +815,20 @@ class WellnessRingRecord {
   }
 }
 
+class WellnessRingAccomplishment{
+  WellnessRingData ringData;
+  double achievedValue;
+
+  WellnessRingAccomplishment({required this.ringData, required this.achievedValue});
+}
+
 //Service //TBD move to service class
 
 class WellnessRingService with Service{
   static const String notifyUserRingsUpdated = "edu.illinois.rokwire.wellness.user.ring.updated";
   static const String notifyUserRingsAccomplished = "edu.illinois.rokwire.wellness.user.ring.accomplished";
+
+  static const String _cacheFileName = "wellness.json";
   static const int MAX_RINGS = 4;
   static const List<dynamic> predefinedRings = [
     {'name': "Hobby", 'goal': 10, 'color': 'FFF57C00' , 'id': "id_0", 'unit':'session'},
@@ -627,6 +845,8 @@ class WellnessRingService with Service{
     WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: "id_1"),
     WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: "id_2"),
   ];
+
+  File? _cacheFile;
 
   List<WellnessRingData>? _wellnessRings;
   List<WellnessRingRecord>? _wellnessRecords; //TBD implement its mocced for now
@@ -646,20 +866,62 @@ class WellnessRingService with Service{
   WellnessRingService.internal();
 
   @override
-  Future<void> initService() {
-    _loadFromStorage();
+  Future<void> initService() async {
+    _cacheFile = await _getCacheFile();
+    await _initFromCache();
     _loadFromNet();
     return super.initService();
   }
 
-  void _loadFromStorage(){
+  Future<void> _initFromCache() async{
+    _loadContentJsonFromCache().then((Map<String, dynamic>? storedValues) {
+        // _wellnessRings = storedValues?["wellness_rings_data"] ?? [];
+        _wellnessRecords = WellnessRingRecord.listFromJson(storedValues?["wellness_ring_records"] ?? []);
+      }
+    );
     _wellnessRings =  WellnessRingData.listFromJson(predefinedRings);//Storage().userWellnessRings; //TBD implement from file //TBD Moc for now
-    _wellnessRecords = []; //_mocWellnessRecords; //TBD Implement from file //TBD Moc for now
+    // _wellnessRecords = []; //_mocWellnessRecords; //TBD Implement from file //TBD Moc for now
   }
   
   void _loadFromNet(){
     //TBD network API
-    _storeWellnessRings();
+    // _storeWellnessRingData();
+  }
+
+  //Cashe
+  Future<File> _getCacheFile() async {
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String cacheFilePath = join(appDocDir.path, _cacheFileName);
+    return File(cacheFilePath);
+  }
+
+  Future<String?> _loadContentStringFromCache() async {
+    return (await _cacheFile?.exists() == true) ? await _cacheFile?.readAsString() : null;
+  }
+
+  Future<void> _saveRingsDataToCache() async{
+    String? data = JsonUtils.encode({
+      "wellness_rings_data": _wellnessRings,
+      "wellness_ring_records": _wellnessRecords,
+    });
+
+    return _saveContentStringToCache(data);
+  }
+
+  Future<void> _saveContentStringToCache(String? value) async {
+    try {
+      if (value != null) {
+        await _cacheFile?.writeAsString(value, flush: true);
+      }
+      else {
+        await _cacheFile?.delete();
+      }
+    }
+    catch(e) { print(e.toString()); }
+  }
+
+  Future<Map<String, dynamic>?> _loadContentJsonFromCache() async {
+    return JsonUtils.decodeMap(await _loadContentStringFromCache());
   }
   
   void addRing(WellnessRingData data) async {
@@ -671,7 +933,7 @@ class WellnessRingService with Service{
       _wellnessRings!.add(data);
     }
     NotificationService().notify(notifyUserRingsUpdated);
-    _storeWellnessRings();
+    _storeWellnessRingData();
   }
   
   void updateRing(WellnessRingData data) async {
@@ -681,7 +943,7 @@ class WellnessRingService with Service{
       ringData.updateFromOther(data);
     }
     NotificationService().notify(notifyUserRingsUpdated);
-    _storeWellnessRings();
+    _storeWellnessRingData();
   }
   
   void removeRing(WellnessRingData data) async {
@@ -691,7 +953,7 @@ class WellnessRingService with Service{
        _wellnessRings?.remove(ringData);
     }
     NotificationService().notify(notifyUserRingsUpdated);
-    _storeWellnessRings();
+    _storeWellnessRingData();
   }
 
   void addRecord(WellnessRingRecord record){
@@ -703,10 +965,13 @@ class WellnessRingService with Service{
     if(alreadyAccomplished == false) {
       _checkForAccomplishment(record.wellnessRingId);
     }
+    _storeWellnessRecords();
   }
 
   double getRingDailyValue(String wellnessRingId){
-    Iterable<WellnessRingRecord>? selection = _wellnessRecords?.where((record) => record.wellnessRingId == wellnessRingId);
+    Iterable<WellnessRingRecord>? selection = _wellnessRecords?.where((record) =>
+      ((record.wellnessRingId == wellnessRingId)
+        && ((DateTimeUtils.midnight(DateTime.now())?.millisecondsSinceEpoch ?? 0) < record.timestamp)));
         // ?.where((record) => ((DateTimeUtils.midnight(DateTime.now())?.millisecondsSinceEpoch ?? 0) < record.timestamp));// Today records
 
     double value = 0.0;
@@ -730,13 +995,17 @@ class WellnessRingService with Service{
     return (_wellnessRings?.length ?? 0) < MAX_RINGS;
   }
   
-  void _storeWellnessRings(){
-    Storage().userWellnessRings = _wellnessRings;
+  void _storeWellnessRingData(){
+    _saveRingsDataToCache();
+  }
+
+  void _storeWellnessRecords(){
+    _saveRingsDataToCache();
   }
 
   Future<List<WellnessRingData>?> getWellnessRings() async {
     if(_wellnessRings == null){ //TBD REMOVE workaround while we are not added to the Services
-      _loadFromStorage();
+      _initFromCache();
     }
     return _wellnessRings; //TBD load from net
   }
@@ -746,8 +1015,107 @@ class WellnessRingService with Service{
   }
 
   int getTotalCompletionCount(String id){
-    //TODO
-    return 3;
+
+    //Split records by date
+    Map<String, List<WellnessRingRecord>> ringDateRecords = {};
+    _wellnessRecords?.forEach((record) {
+      String? recordDayName = record.date != null? DateFormat("yyyy-MM-dd").format(DateUtils.dateOnly(record.date!)) : null;
+      if(recordDayName!=null) {
+        List<WellnessRingRecord>? recordsForDay = ringDateRecords[recordDayName];
+        if (recordsForDay == null) {
+          recordsForDay = [];
+          ringDateRecords[recordDayName] = recordsForDay;
+        }
+        recordsForDay.add(record);
+      }
+    });
+
+    //
+    int count = 0;
+    WellnessRingData? ringData = _wellnessRings?.firstWhere((element) => element.id == id);
+    if(ringData!=null){
+      double goal = ringData.goal;//TBD implement updated Rings(will be list of data with update time) get the Data matching the ime period
+      for (List<WellnessRingRecord> dayRecords in ringDateRecords.values){
+        int dayCount = 0;
+        for(WellnessRingRecord record in dayRecords){
+          dayCount += record.value.toInt();
+        }
+        if(dayCount >= goal){
+          //Match
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
+  Map<String, List<WellnessRingAccomplishment>>? getAccomplishmentsHistory(){
+    Map<String, List<WellnessRingAccomplishment>> history = {/*"2022-06014":[WellnessRingData(id: '0', timestamp: DateTime.now().millisecondsSinceEpoch, goal: 1, name: "Test" )]*/};
+
+    //First split by day and id
+    Map<String, Map<String, List<WellnessRingRecord>>> splitedRecords = _splitRecordsByDay();
+
+     //get Ring data for completed ones
+        for (var dayRecords in splitedRecords.entries){
+
+          for(var ringDayRecords in dayRecords.value.entries){
+            String ringId = ringDayRecords.key;
+            WellnessRingData? ringData = WellnessRingService()._wellnessRings?.firstWhere((element) => element.id == ringId);
+            if(ringData!=null) {
+              double goal = ringData.goal;
+              List<WellnessRingRecord>? ringRecords = dayRecords.value[ringData.id];
+              double dayCount = 0;
+              if (ringRecords != null) {
+                for (WellnessRingRecord record in ringRecords) {
+                  dayCount += record.value;
+                }
+                if (dayCount >= goal) {
+                  //Match
+                  List<WellnessRingAccomplishment>? accomplishmentsForThatDay = history[dayRecords.key];
+                  if(accomplishmentsForThatDay == null){
+                    accomplishmentsForThatDay = [];
+                    history[dayRecords.key] = accomplishmentsForThatDay;
+                  }
+
+                  WellnessRingAccomplishment? completionData = accomplishmentsForThatDay.firstWhere((element) => element.ringData.id == ringData.id,
+                      orElse: () => WellnessRingAccomplishment(ringData: ringData, achievedValue: dayCount)
+                      );
+
+                  if(!accomplishmentsForThatDay.contains(completionData)){
+                    accomplishmentsForThatDay.add(completionData);
+                  } else {
+                    completionData.achievedValue = dayCount; // if we have completed with more than the goal
+                  }
+                }
+              }
+            }
+          }
+        }
+    return history;
+  }
+
+  Map<String, Map<String, List<WellnessRingRecord>>> _splitRecordsByDay(){
+    Map<String, Map<String, List<WellnessRingRecord>>> ringDateRecords = {};
+    _wellnessRecords?.forEach((record) {
+      String? recordDayName = record.date != null? DateFormat("dddd,MMMM dd").format(DateUtils.dateOnly(record.date!)) : null;
+      if(recordDayName!=null) {
+        Map<String, List<WellnessRingRecord>>? recordsForDay = ringDateRecords[recordDayName];
+        if (recordsForDay == null) {
+          recordsForDay = {};
+          ringDateRecords[recordDayName] = recordsForDay;
+        }
+
+        String recordId = record.wellnessRingId;
+        List<WellnessRingRecord>? recordsForId = recordsForDay[recordId];
+        if(recordsForId == null){
+          recordsForId = [];
+          recordsForDay[recordId] = recordsForId;
+        }
+        recordsForId.add(record);
+      }
+    });
+
+    return ringDateRecords;
   }
 
   String getTotalCompletionCountString(String id){
@@ -768,5 +1136,67 @@ class WellnessRingService with Service{
 
   WellnessRingData? getRingData(String id){
     return wellnessRings?.firstWhere((ring) => ring.id == id);
+  }
+}
+
+//Common Widgets //Probably will use shared widgets with TODOLIst
+enum _WellnessRingsTab { today, history}
+
+enum _TabButtonPosition { first, middle, last }
+
+class _TabButton extends StatelessWidget {
+  final String? label;
+  final String? hint;
+  final _TabButtonPosition position;
+  final bool? selected;
+  final GestureTapCallback? onTap;
+
+  _TabButton({this.label, this.hint, required this.position, this.selected, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Semantics(
+            label: label,
+            hint: hint,
+            button: true,
+            excludeSemantics: true,
+            child: Container(
+                height: 24 + 16 * MediaQuery.of(context).textScaleFactor,
+                decoration: BoxDecoration(
+                    color: selected! ? Colors.white : Styles().colors!.lightGray, border: _border, borderRadius: _borderRadius),
+                child: Center(
+                    child: Text(label!,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: selected! ? Styles().fontFamilies!.extraBold : Styles().fontFamilies!.medium,
+                            fontSize: 16,
+                            color: Styles().colors!.fillColorPrimary))))));
+  }
+
+  BorderRadiusGeometry? get _borderRadius {
+    switch (position) {
+      case _TabButtonPosition.first:
+        return BorderRadius.horizontal(left: Radius.circular(100.0));
+      case _TabButtonPosition.middle:
+        return null;
+      case _TabButtonPosition.last:
+        return BorderRadius.horizontal(right: Radius.circular(100.0));
+    }
+  }
+
+  BoxBorder? get _border {
+    BorderSide borderSide = BorderSide(color: Styles().colors!.surfaceAccent!, width: 2, style: BorderStyle.solid);
+    switch (position) {
+      case _TabButtonPosition.first:
+        return Border.fromBorderSide(borderSide);
+      case _TabButtonPosition.middle:
+        return Border(top: borderSide, bottom: borderSide);
+      case _TabButtonPosition.last:
+        return Border.fromBorderSide(borderSide);
+    }
   }
 }
