@@ -1680,6 +1680,9 @@
     "panel.wellness.todo.item.location.field.label": "地點",
     "panel.wellness.todo.item.description.field.label": "描述",
     "panel.wellness.todo.item.save.button": "節省",
+    "panel.wellness.todo.item.empty.name.msg": "請填寫姓名.",
+    "panel.wellness.todo.item.create.succeeded.msg": "待辦事項創建成功.",
+    "panel.wellness.todo.item.create.failed.msg": "創建待辦事項失敗.",
 
     "panel.wellness.resources.header.label": "健康資源",
     "panel.wellness.resources.appointment.button": "我想預約",

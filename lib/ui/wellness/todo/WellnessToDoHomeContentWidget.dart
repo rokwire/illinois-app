@@ -28,6 +28,7 @@ import 'package:illinois/ui/wellness/todo/WellnessCreateToDoItemPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -39,7 +40,7 @@ class WellnessToDoHomeContentWidget extends StatefulWidget {
   State<WellnessToDoHomeContentWidget> createState() => _WellnessToDoHomeContentWidgetState();
 }
 
-class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentWidget> {
+class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentWidget> implements NotificationsListener {
   static final String _unAssignedLabel =
       Localization().getStringEx('panel.wellness.todo.items.unassigned.category.label', 'Unassigned Items');
   late _ToDoTab _selectedTab;
@@ -51,6 +52,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [Wellness.notifyToDoItemCreated]);
     _selectedTab = _ToDoTab.daily;
     _initCalendarDates();
     _loadToDoItems();
@@ -60,6 +62,12 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         _showWelcomePopup();
       });
     }
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   @override
@@ -491,6 +499,15 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     _itemsLoading = loading;
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  // Notifications Listener
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Wellness.notifyToDoItemCreated) {
+      _loadToDoItems();
     }
   }
 }

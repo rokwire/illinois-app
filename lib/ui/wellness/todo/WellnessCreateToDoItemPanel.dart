@@ -22,6 +22,7 @@ import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -42,8 +43,7 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
   DateTime? _dueDate;
   TimeOfDay? _dueTime;
   List<DateTime>? _workDays;
-  double? _locationLat;
-  double? _locationLong;
+  ToDoItemLocation? _location;
   bool _categoriesDropDownVisible = false;
   bool _loading = false;
 
@@ -360,6 +360,7 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
   }
 
   void _onTapDueDate() async {
+    _hideKeyboard();
     DateTime? resultDate = await _pickDate(initialDate: _dueDate);
     if (resultDate != null) {
       _dueDate = resultDate;
@@ -371,6 +372,7 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
     if (_dueDate == null) {
       return;
     }
+    _hideKeyboard();
     TimeOfDay initialTime = _dueTime ?? TimeOfDay.now();
     TimeOfDay? resultTime = await showTimePicker(context: context, initialTime: initialTime);
     if (resultTime != null) {
@@ -406,8 +408,9 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
       if (locationSelectionResult != null && locationSelectionResult.isNotEmpty) {
         Map<String, dynamic>? locationData = locationSelectionResult["location"];
         if (locationData != null) {
-          _locationLat = JsonUtils.doubleValue(locationData['latitude']);
-          _locationLong = JsonUtils.doubleValue(locationData['longitude']);
+          double? lat = JsonUtils.doubleValue(locationData['latitude']);
+          double? long = JsonUtils.doubleValue(locationData['longitude']);
+          _location = ToDoItemLocation(latitude: lat, longitude: long);
         }
       }
     }
@@ -433,7 +436,45 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
   }
 
   void _onTapSave() {
-    //TBD: DD - implement
+    _hideKeyboard();
+    String name = _nameController.text;
+    if (StringUtils.isEmpty(name)) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.todo.item.empty.name.msg', 'Please, fill name.'));
+      return;
+    }
+    _setLoading(true);
+    bool hasDueTime = false;
+    if (_dueDate != null) {
+      if (_dueTime != null) {
+        hasDueTime = true;
+        _dueDate = DateTime(_dueDate!.year, _dueDate!.month, _dueDate!.day, _dueTime!.hour, _dueTime!.minute);
+      }
+    }
+    String? description = StringUtils.isNotEmpty(_descriptionController.text) ? _descriptionController.text : null;
+    ToDoItem item = ToDoItem(
+        name: name,
+        category: _category,
+        dueDateTimeUtc: _dueDate?.toUtc(),
+        hasDueTime: hasDueTime,
+        location: _location,
+        isCompleted: false,
+        description: description,
+        workDays: _formattedWorkDays,
+        reminderDateTimeUtc: _reminderDateTimeUtc);
+    Wellness().createToDoItemCached(item).then((success) {
+      late String msg;
+      if (success) {
+        msg = Localization().getStringEx('panel.wellness.todo.item.create.succeeded.msg', 'To-Do item created successfully.');
+      } else {
+        msg = Localization().getStringEx('panel.wellness.todo.item.create.failed.msg', 'Failed to create To-Do item.');
+      }
+      AppAlert.showDialogResult(context, msg).then((_) {
+        if (success) {
+          Navigator.of(context).pop();
+        }
+      });
+      _setLoading(false);
+    });
   }
 
   void _loadCategories() {
@@ -447,6 +488,10 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
   void _setLoading(bool loading) {
     _loading = loading;
     _updateState();
+  }
+
+  void _hideKeyboard() {
+    FocusScope.of(context).requestFocus(FocusNode());
   }
 
   void _updateState() {
@@ -468,10 +513,39 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
   }
 
   String? get _formattedLocation {
-    if ((_locationLat != null) && (_locationLong != null)) {
-      return '$_locationLat, $_locationLong';
+    if (_location != null) {
+      return '${_location?.latitude}, ${_location?.longitude}';
     } else {
       return null;
     }
+  }
+
+  List<String>? get _formattedWorkDays {
+    if(CollectionUtils.isEmpty(_workDays)) {
+      return null;
+    }
+    List<String> stringList = <String>[];
+    for(DateTime day in _workDays!) {
+      String? formattedWorkDay = AppDateTime().formatDateTime(day, format: 'yyyy-MM-dd', ignoreTimeZone: true);
+      if(StringUtils.isNotEmpty(formattedWorkDay)) {
+        stringList.add(formattedWorkDay!);
+      }
+    }
+    return stringList;
+  }
+
+  DateTime? get _reminderDateTimeUtc {
+    if (_dueDate == null) {
+      return null;
+    }
+    ToDoCategoryReminderType? reminderType = _category?.reminderType;
+    if((reminderType == null) || (reminderType == ToDoCategoryReminderType.none)) {
+      return null;
+    }
+    // Do not set reminder date if there is no due date or the reminder type is none.
+    int dayDiff = (reminderType == ToDoCategoryReminderType.night_before) ? -1 : 0;
+    int hour = (reminderType == ToDoCategoryReminderType.night_before) ? 17 : 9; // predefined day hours
+    DateTime reminderDateTime = DateTime(_dueDate!.year, _dueDate!.month, (_dueDate!.day + dayDiff), hour);
+    return reminderDateTime.toUtc();
   }
 }

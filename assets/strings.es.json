@@ -1678,6 +1678,9 @@
     "panel.wellness.todo.item.location.field.label": "UBICACIÓN",
     "panel.wellness.todo.item.description.field.label": "DESCRIPCIÓN",
     "panel.wellness.todo.item.save.button": "Ahorrar",
+    "panel.wellness.todo.item.empty.name.msg": "Por favor, complete el nombre.",
+    "panel.wellness.todo.item.create.succeeded.msg": "Tarea pendiente creada con éxito.",
+    "panel.wellness.todo.item.create.failed.msg": "No se pudo crear el elemento de tareas pendientes.",
 
     "panel.wellness.resources.header.label": "Recursos de bienestar",
     "panel.wellness.resources.appointment.button": "Quiero hacer una cita",

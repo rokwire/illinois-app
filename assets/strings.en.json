@@ -1681,6 +1681,9 @@
     "panel.wellness.todo.item.location.field.label": "LOCATION",
     "panel.wellness.todo.item.description.field.label": "DESCRIPTION",
     "panel.wellness.todo.item.save.button": "Save",
+    "panel.wellness.todo.item.empty.name.msg": "Please, fill name.",
+    "panel.wellness.todo.item.create.succeeded.msg": "To-Do item created successfully.",
+    "panel.wellness.todo.item.create.failed.msg": "Failed to create To-Do item.",
 
     "panel.wellness.resources.header.label": "Wellness Resources",
     "panel.wellness.resources.appointment.button": "I want to make an appointment",
