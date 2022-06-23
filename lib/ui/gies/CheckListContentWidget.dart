@@ -148,7 +148,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
             Semantics(label: "Page ${progressStep.toString()}", button: true, hint: progressStepCompleted? "Completed" :((progressStep == currentPageProgress)? "Current page":"Not Completed"), child:
             InkWell(onTap: () => _onTapProgress(progressStep), child:
             Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
-            Container(width: 30, height: 28, child:
+            Container(width: 28, height: 28, child:
             Stack(children:<Widget>[
               Visibility(
                 visible: currentStep,

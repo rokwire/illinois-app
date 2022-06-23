@@ -43,7 +43,7 @@ class CheckListPanel extends StatefulWidget {
   static String? _offlineMessage(String contentKey) {
     if (contentKey == "gies") {
       return Localization().getStringEx('widget.checklist.gies.offline', 'iDegrees New Student Checklist not available while offline.');
-    } else if (contentKey == "uiuc_student") {
+    } else if (contentKey == "new_student") {
       return Localization().getStringEx('widget.checklist.uiuc.offline', 'New Student Checklist not available while offline.');
     }
   }
@@ -51,7 +51,7 @@ class CheckListPanel extends StatefulWidget {
   static String? _loggedOutMessage(String contentKey) {
     if (contentKey == "gies") {
       return Localization().getStringEx('widget.checklist.gies.logged_out', 'You need to be logged in to access iDegrees New Student Checklist.');
-    } else if (contentKey == "uiuc_student") {
+    } else if (contentKey == "new_student") {
       return Localization().getStringEx('widget.checklist.uiuc.logged_out', 'You need to be logged in to access New Student Checklist.');
     }
   }
@@ -70,7 +70,7 @@ class _CheckListPanelState extends State<CheckListPanel> {
   String get _title {
     if (widget.contentKey == "gies") {
       return Localization().getStringEx('widget.checklist.gies.title', 'iDegrees New Student Checklist');
-    } else if (widget.contentKey == "uiuc_student") {
+    } else if (widget.contentKey == "new_student") {
       return Localization().getStringEx('widget.checklist.uiuc.title', 'New Student Checklist');
     }
 

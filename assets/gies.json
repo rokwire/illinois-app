@@ -7,17 +7,9 @@
     ],
     "group_name":"GIES Onboarding Step 1",
     "id":"setup.university.accounts",
-    "navigation_buttons":[
-      {
-        "completes":true,
-        "page":"verify.personal.information",
-        "position":"right",
-        "title":">"
-      }
-    ],
     "progress":1,
     "step_title":"Step 1",
-    "text":"<p><i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i></p><p>Throughout your program, you will use a variety of platforms to complete your courses and connect with your peers. The steps below are essential to utilizing with these platforms and should only take 5-10 minutes each to setup.</p><p>You should complete Step 2 of your checklist within 1-2 weeks of accepting your offer.</p>",
+    "text":"<p><i>If this step is marked as complete, we've confirmed that you've set up your University Email Account and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
     "title":"Set Up Your University Email Account"
   },
   {
@@ -35,12 +27,12 @@
         "page":"setup.zoom.accounts",
         "title":"My information is correct",
         "widget_action": {
-          "name":"edu.illinois.rokwire.checklist.gies.widget.action.approve.info",
+          "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
           "params": {"group_name":"GIES Onboarding Step 2"}
         }
       }
     ],
-    "navigation_buttons":[
+    "_navigation_buttons":[
       {
         "page":"setup.university.accounts",
         "position":"left",
@@ -55,33 +47,20 @@
     ],
     "progress":2,
     "step_title":"Step 2",
-    "text":"<p><i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i></p><p>Throughout your program, you will use a variety of platforms to complete your courses and connect with your peers. The steps below are essential to utilizing with these platforms and should only take 5-10 minutes each to setup.</p><p>You should complete Step 2 of your checklist within 1-2 weeks of accepting your offer.</p>",
+    "text":"<p>This the information we currently show for your Personal Information. If any of it is incorrect, please use the instructions below to correct it. If it's correct, please click the My information is correct button below.",
     "title":"Verify Your Personal Information in Student Self-Service"
   },
   {
     "content":[
       {
-        "heading":"<h1>Set Up Your Illinois Zoom Pro Account</h1>Zoom Pro is the way you will participate in your live sessions (lectures) for each course, office hours and more. Follow these <a href='https://uofi.box.com/s/j168hch5ro8188wkyhykunff84wwenps'>step-by-step instructions</a> to get setup with Zoom."
+        "heading":"<h1>Set Up Your Illinois Zoom Pro Account</h1>Zoom Pro is the way you will participate in your live sessions (lectures) for each course, office hours and more. Follow these <a href='https://answers.uillinois.edu/96159'>step-by-step instructions</a> to get setup with Zoom."
       }
     ],
     "group_name":"GIES Onboarding Step 3",
     "id":"setup.zoom.accounts",
-    "navigation_buttons":[
-      {
-        "page":"verify.personal.information",
-        "position":"left",
-        "title":"<"
-      },
-      {
-        "completes":true,
-        "page":"setup.coursera.account",
-        "position":"right",
-        "title":">"
-      }
-    ],
     "progress":3,
     "step_title":"Step 3",
-    "text":"<p><i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i></p><p>Throughout your program, you will use a variety of platforms to complete your courses and connect with your peers. The steps below are essential to utilizing with these platforms and should only take 5-10 minutes each to setup.</p><p>You should complete Step 2 of your checklist within 1-2 weeks of accepting your offer.</p>",
+    "text":"<p><i>If this step is marked as complete, we've confirmed that you've set up your Illinois Zoom Pro account and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
     "title":"Set Up Your Illinois Zoom Pro Account"
   },
   {
@@ -96,22 +75,9 @@
     ],
     "group_name":"GIES Onboarding Step 4",
     "id":"setup.coursera.account",
-    "navigation_buttons":[
-      {
-        "page":"setup.zoom.accounts",
-        "position":"left",
-        "title":"<"
-      },
-      {
-        "completes":true,
-        "page":"connect.workspace.and.student.guide",
-        "position":"right",
-        "title":">"
-      }
-    ],
     "progress":4,
     "step_title":"Step 4",
-    "text":"<p><i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i></p><p></p>",
+    "text":"<p><i>If this step is marked as complete, we've confirmed that you've set up your Coursera account and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
     "title":"Set up your Coursera Account"
   },
   {
@@ -129,21 +95,9 @@
     ],
     "group_name":"GIES Onboarding Step 5",
     "id":"join.workspace",
-    "navigation_buttons":[
-      {
-        "page":"setup.coursera.account",
-        "position":"left",
-        "title":"<"
-      },
-      {
-        "completes":true,
-        "position":"right",
-        "swipe_page":"connect.workspace.and.student.guide",
-        "title":">"
-      }
-    ],
     "progress":5,
     "step_title":"Step 5",
+    "text":"<p><i>If this step is marked as complete, we've confirmed that you've set up your Workplace account and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
     "title":"Join Workplace"
   },
   {
@@ -154,17 +108,15 @@
     ],
     "group_name":"GIES Onboarding Step 6",
     "id":"connect.workspace.and.student.guide",
-    "navigation_buttons":[
-      {
-        "page":"join.workspace",
-        "position":"left",
-        "title":"<"
-      },
+    "buttons":[
       {
         "completes":true,
         "page":"complete.onboarding.course",
-        "position":"right",
-        "title":">"
+        "title":"Completed",
+        "widget_action": {
+          "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
+          "params": {"group_name":"GIES Onboarding Step 6"}
+        }
       }
     ],
     "progress":6,
@@ -172,20 +124,13 @@
     "title":"Connect with your New Student Guide"
   },
   {
-    "_buttons":[
-      {
-        "completes":true,
-        "page":"review.course.recommendations.and.register.for.courses",
-        "title":"Done"
-      }
-    ],
     "content":[
       {
         "bullets":[
           "A Foundational Component on Coursera (MOOCs)",
           "Weekly Live Class Sessions, Graded Assignments and Exams on Canvas (High Engagement/HE)"
         ],
-        "heading":"Our online courses are delivered on two platforms: Coursera & Canvas.  Each course has two structural components:"
+        "heading":"<h1>Complete Your Onboarding Course</h1>Our online courses are delivered on two platforms: Coursera & Canvas.  Each course has two structural components:"
       },
       {
         "bullets":[
@@ -199,32 +144,12 @@
     ],
     "group_name":"GIES Onboarding Step 7",
     "id":"complete.onboarding.course",
-    "navigation_buttons":[
-      {
-        "page":"connect.workspace.and.student.guide",
-        "position":"left",
-        "title":"<"
-      },
-      {
-        "completes":true,
-        "page":"review.course.recommendations.and.register.for.courses",
-        "position":"right",
-        "title":">"
-      }
-    ],
     "progress":7,
     "step_title":"Step 7",
-    "text":"<i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, you should have already completed the onboarding course. Feel free to review this information or skip this step and head straight to Step 5.</i>",
+    "text":"<p><i>If this step is marked as complete, we've confirmed that you've completed your Onboarding Course and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
     "title":"Complete Coursera Onboarding Course"
   },
   {
-    "_buttons":[
-      {
-        "completes":true,
-        "page":"sumbit.official.credentials",
-        "title":"Done"
-      }
-    ],
     "content":[
       {
         "bullets":[
@@ -252,41 +177,37 @@
         "heading":"<b>iMSA Students:</b>"
       }
     ],
+
     "group_name":"GIES Onboarding Step 8",
     "id":"review.course.recommendations.and.register.for.courses",
-    "navigation_buttons":[
-      {
-        "page":"complete.onboarding.course",
-        "position":"left",
-        "title":"<"
-      },
+    "buttons":[
       {
         "completes":true,
         "page":"sumbit.official.credentials",
-        "position":"right",
-        "title":">"
+        "title":"Completed",
+        "widget_action": {
+          "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
+          "params": {"group_name":"GIES Onboarding Step 8"}
+        }
       }
     ],
     "progress":8,
     "step_title":"Step 8",
-    "text":"<b>Spring 2022 registration will open on Thursday, November 18 for all new students. Check back soon for details regarding course recommendations for your first semester.</b><p>We are excited to begin this journey with you, and our team is prepared to help along the way. While you may want to create a full degree plan at this time, it is important to focus on your first set of courses. After courses begin, you will have an opportunity to attend a Degree Planning workshop offered by the Student & Academic Success Team.</p>",
+    "text":"<p><b>Fall 2022 registration will open on Thursday, _________ for all new students. Check back soon for details regarding course recommendations for your first semester.</b></p><p>We are excited to begin this journey with you, and our team is prepared to help along the way. While you may want to create a full degree plan at this time, it is important to focus on your first set of courses. After courses begin, you will have an opportunity to attend a Degree Planning workshop offered by the Student & Academic Success Team.</p><p>If you are already registered for any courses, they are listed below.</p>",
     "title":"Review Course Recommendations and Register for Courses"
   },
   {
+    "group_name":"GIES Onboarding Step 9",
+    "id":"sumbit.official.credentials",
     "buttons":[
       {
         "completes":true,
         "page":"new.student.office.hours",
-        "title":"Done"
-      }
-    ],
-    "group_name":"GIES Onboarding Step 9",
-    "id":"sumbit.official.credentials",
-    "navigation_buttons":[
-      {
-        "page":"review.course.recommendations.and.register.for.courses",
-        "position":"left",
-        "title":"<"
+        "title":"I completed this",
+        "widget_action": {
+          "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
+          "params": {"group_name":"GIES Onboarding Step 9"}
+        }
       }
     ],
     "progress":9,
@@ -304,7 +225,7 @@
       }
     ],
     "id":"new.student.office.hours",
-    "progress-possition":8,
+    "progress-possition":10,
     "title":"Checklist completed"
   }
 ]
