@@ -268,7 +268,9 @@
 	"panel.browse.section.campus_links.description": "鏈接到許多信息來源，以幫助您在伊利諾伊州享受和繁榮。",
 	"panel.browse.section.campus_resources.title": "校園資源",
 	"panel.browse.section.campus_resources.description": "可讓您訪問您經常使用的應用程序部分的快捷方式。",
-	"panel.browse.section.events.title": "活動",
+	"panel.browse.section.dinings.title": "用餐",
+	"panel.browse.section.dinings.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
+"panel.browse.section.events.title": "活動",
 	"panel.browse.section.events.description": "查找校園和世界各地的活動。",
 	"panel.browse.section.feeds.title": "飼料",
 	"panel.browse.section.feeds.description": "收聽廣播、閱讀新聞並查看來自社交媒體的伊利諾伊州動態。",
@@ -323,6 +325,9 @@
 	"panel.browse.entry.campus_resources.quick_polls.title": "Quick Polls",
 	"panel.browse.entry.campus_resources.campus_guide.title": "Campus Guide",
 	"panel.browse.entry.campus_resources.inbox.title": "Notifications",
+
+	"panel.browse.entry.dinings.dinings_all.title": "Residence Hall Dining",
+	"panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Open Now",
 
 	"panel.browse.entry.events.upcoming_events.title": "Suggested Events",
 
@@ -2723,6 +2728,12 @@
 	"widgets.home.campus_links.date_cat.button.title": "Due Date Catalog",
 	"widgets.home.campus_links.date_cat.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 	"widgets.home.campus_links.date_cat.label.offline": "Due Date Catalog not available while offline.",
+
+	"widgets.home.dinings.header.title": "Dining",
+	"widgets.home.dinings.all.button.title": "Residence Hall Dining",
+	"widgets.home.dinings.all.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+	"widgets.home.dinings.open.button.title": "Residence Hall Dining Open Now",
+	"widgets.home.dinings.open.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 
 	"model.group.updated.now": "Updated now",
 	"model.group.updated.minute": "Updated about a minute ago",
