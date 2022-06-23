@@ -101,6 +101,7 @@ class Config extends rokwire.Config {
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
   String? get videoTutorialUrl       => JsonUtils.stringValue(otherUniversityServices['video_tutorial_url']);
   String? get videoTutorialCcUrl     => JsonUtils.stringValue(otherUniversityServices['video_tutorial_cc_url']);
+  String? get wellness8DimensionsUrl => JsonUtils.stringValue(otherUniversityServices['wellness_8_dimensions_url']);
   String? get wpgufmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['wpgufm_radio_url']);
 
   // Getters: Platform Building Blocks
@@ -168,6 +169,7 @@ class Config extends rokwire.Config {
   int  get homeAthleticsTeamsCount   => JsonUtils.intValue(settings['homeAthleticsTeamsCount']) ?? 2;
   int  get homeRecentItemsCount      => JsonUtils.intValue(settings['homeRecentItemsCount']) ?? 3;
   int  get homeUpcomingEventsCount   => JsonUtils.intValue(settings['homeUpcomingEventsCount']) ?? 5;
+  int  get homeWellnessResourcesCount=> JsonUtils.intValue(settings['homeWellnessResourcesCount']) ?? 5;
   int  get recentItemsCount          => JsonUtils.intValue(settings['recentItemsCount']) ?? 32;
   int  get homePollsCount            => JsonUtils.intValue(settings['homePollsCount']) ?? 3;
   String get appPrivacyVersion       => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');

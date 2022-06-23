@@ -15,17 +15,18 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/wellness/WellnessDimensionContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
-import 'package:illinois/ui/wellness/WellnessSectionsContentWidget.dart';
+import 'package:illinois/ui/wellness/WellnessDailyTipsContentWidget.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+
+enum WellnessContent { dailyTips, rings, todo, resources }
 
 class WellnessHomePanel extends StatefulWidget {
   final WellnessContent? content;
@@ -46,7 +47,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   @override
   void initState() {
     super.initState();
-    _selectedContent = widget.content ?? (_lastSelectedContent ?? WellnessContent.sections);
+    _selectedContent = widget.content ?? (_lastSelectedContent ?? WellnessContent.dailyTips);
   }
 
   @override
@@ -125,16 +126,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
     _changeSettingsContentValuesVisibility();
   }
 
-  void _onTapEightDimensions() {
-    Analytics().logSelect(target: "Wellness 8 Dimensions");
-    _selectedContent = _lastSelectedContent = WellnessContent.eight_dimensions;
-    _contentValuesVisible = false;
-    _scrollController.animateTo(0, duration: Duration(milliseconds: 10), curve: Curves.ease);
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
   void _changeSettingsContentValuesVisibility() {
     _contentValuesVisible = !_contentValuesVisible;
     if (mounted) {
@@ -157,16 +148,14 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case WellnessContent.sections:
-        return WellnessSectionsContentWidget(onTapEightDimension: () => _onTapEightDimensions());
+      case WellnessContent.dailyTips:
+        return WellnessDailyTipsContentWidget();
       case WellnessContent.rings:
         return WellnessRingsHomeContentWidget();
       case WellnessContent.todo:
         return WellnessToDoHomeContentWidget();
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
-      case WellnessContent.eight_dimensions:
-        return WellnessDimensionContentWidget();
       default:
         return Container();
     }
@@ -176,18 +165,29 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
 
   String _getContentLabel(WellnessContent section) {
     switch (section) {
-      case WellnessContent.sections:
-        return Localization().getStringEx('panel.wellness.section.sections.label', 'Wellness Sections');
+      case WellnessContent.dailyTips:
+        return Localization().getStringEx('panel.wellness.section.daily_tips.label', 'Wellness Daily Tips');
       case WellnessContent.rings:
         return Localization().getStringEx('panel.wellness.section.rings.label', 'Daily Wellness Rings');
       case WellnessContent.todo:
         return Localization().getStringEx('panel.wellness.section.todo.label', 'To-Do List');
       case WellnessContent.resources:
         return Localization().getStringEx('panel.wellness.section.resources.label', 'Wellness Resources');
-      case WellnessContent.eight_dimensions:
-        return Localization().getStringEx('panel.wellness.section.eight_dimensions.label', '8 Dimensions of Wellness');
     }
   }
 }
 
-enum WellnessContent { sections, rings, todo, resources, eight_dimensions }
+// WellnessFavorite
+
+class WellnessFavorite implements Favorite {
+  final String? id;
+  final String? category;
+  WellnessFavorite(this.id, {this.category});
+
+  bool operator == (o) => o is WellnessFavorite && o.id == id && o.category == category;
+  int get hashCode => (id?.hashCode ?? 0) ^ (category?.hashCode ?? 0);
+
+  static String favoriteKeyName({String? category}) => (category != null) ? "wellness.$category.widgetIds" : "wellness.widgetIds";
+  @override String get favoriteKey => favoriteKeyName(category: category);
+  @override String? get favoriteId => id;
+}

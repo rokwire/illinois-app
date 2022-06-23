@@ -42,6 +42,7 @@ import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
 import 'package:illinois/ui/home/HomeWelcomeWidget.dart';
+import 'package:illinois/ui/home/HomeWellnessResourcesWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -487,6 +488,15 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeFavoritesWidget.handle(favoriteKey: GuideFavorite.favoriteKeyName, favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
         return HomeFavoritesWidget(favoriteKey: GuideFavorite.favoriteKeyName, favoriteId: code, updateController: _updateController,);
+      }
+    }
+    else if (code == 'my_wellness_resources') {
+      if (title) {
+        return HomeWellnessResourcesWidget.title;
+      } else if (handle) {
+        return HomeWellnessResourcesWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeWellnessResourcesWidget(favoriteId: code, updateController: _updateController,);
       }
     }
     else {
