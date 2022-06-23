@@ -348,6 +348,7 @@
     "panel.browse.entry.my.my_laundry.title": "My Laundry",
     "panel.browse.entry.my.my_inbox.title": "My Notifications",
     "panel.browse.entry.my.my_campus_guide.title": "My Campus Guide",
+    "panel.browse.entry.my.my_wellness_resources.title": "My Wellness Resources",
 
     "panel.browse.entry.polls.create_poll.title": "Create a Poll",
     "panel.browse.entry.polls.view_polls.title": "View Polls",
@@ -1687,6 +1688,8 @@
     "panel.wellness.todo.item.save.button": "Save",
 
     "panel.wellness.resources.header.label": "Wellness Resources",
+    "panel.wellness.resources.button.all.title": "View App",
+    "panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
 
     "panel.wellness.home.header.title": "Wellness",
     "panel.wellness.home.description.main_text": "Achieving and sustaining wellness is a dynamic process that involves self-reflection and the building of awareness of what well-being is and how individualized the process of addressing it can be.",

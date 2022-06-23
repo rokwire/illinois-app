@@ -17,10 +17,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -30,8 +32,14 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class WellnessResourcesContentWidget extends StatefulWidget {
-  final String wellnessCategory = 'resources';
-  WellnessResourcesContentWidget();
+  static const String wellnessCategoryKey = 'resources';
+  final String wellnessCategory = wellnessCategoryKey;
+
+  final bool showHeader;
+  final bool showOnlyFavorites;
+  final int? limit;
+
+  WellnessResourcesContentWidget({this.showHeader = true, this.showOnlyFavorites = false, this.limit });
 
   @override
   State<WellnessResourcesContentWidget> createState() => _WellnessResourcesContentWidgetState();
@@ -41,6 +49,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
 
   List<dynamic>? _commands;
   Map<String, dynamic>? _strings;
+  int? _limit;
 
   @override
   void initState() {
@@ -82,20 +91,23 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
   }
 
   Widget _buildContent() {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(children: [
+    _limit = widget.limit;
+    return Padding(padding: EdgeInsets.symmetric(horizontal: (widget.limit == null) ? 16 : 0), child: Column(children: [
       _buildHeader(),
       _buildLargeButtonsContainer(),
       _buildRegularButtonsContainer(),
+      _buildViewAllButton(),
     ]));
   }
 
   Widget _buildHeader() {
-    return Padding(
-        padding: EdgeInsets.only(left: 5, bottom: 10, right: 5),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Text(Localization().getStringEx('panel.wellness.resources.header.label', 'Wellness Resources'),
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)),
-        ]));
+    return widget.showHeader ? Padding(padding: EdgeInsets.only(left: 5, bottom: 10, right: 5), child:
+      Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Text(Localization().getStringEx('panel.wellness.resources.header.label', 'Wellness Resources'),
+          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)
+        ),
+      ]),
+    ) : Container();
   }
 
   Widget _buildLargeButtonsContainer() {
@@ -107,42 +119,31 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
           String? type = JsonUtils.stringValue(command['type']);
           if (type == 'large') {
             String? id = JsonUtils.stringValue(command['id']);
-            widgetList.add(_buildLargeButton(
-              label: _getString(id),
-              favorite: WellnessFavorite(id, category: widget.wellnessCategory),
-              hasExternalLink: UrlUtils.isWebScheme(JsonUtils.stringValue(command['url'])),
-              onTap: () => _onCommand(command),
-            ));
+            Favorite favorite = WellnessFavorite(id, category: widget.wellnessCategory);
+            if (!widget.showOnlyFavorites || (Auth2().prefs?.isFavorite(favorite) ?? false)) {
+              if ((_limit == null) || (0 < _limit!)) {
+                if (widgetList.isNotEmpty) {
+                  widgetList.add(Container(height: (widget.limit != null) ? 3 : 8,));
+                }
+                widgetList.add(_buildLargeButton(
+                  label: _getString(id),
+                  favorite: favorite,
+                  hasExternalLink: UrlUtils.isWebScheme(JsonUtils.stringValue(command['url'])),
+                  onTap: () => _onCommand(command),
+                ));
+                if (_limit != null) {
+                  _limit = _limit! - 1;
+                }
+              }
+            }
           }
         }
       }
     }
 
-    widgetList.add(Container(height: 16,));
+    widgetList.add(Container(height: (widget.limit == null) ? 16 : ((0 < (_limit ?? 0) ? 8 : 0)),));
     
     return Column(children: widgetList);
-  }
-
-  Widget _buildLargeButton({String? label, Favorite? favorite, bool hasExternalLink = false, void Function()? onTap}) {
-    return Padding(padding: EdgeInsets.only(bottom: 10), child:
-      Container(decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.circular(5)), child:
-        InkWell(onTap: onTap, child:
-          Padding(padding: EdgeInsets.only(left: 16), child:
-            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Expanded(child:
-                Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-                  Text(label ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
-                ),
-              ),
-              hasExternalLink ? Padding(padding: EdgeInsets.only(left: 6, top: 18, bottom: 18), child:
-                Image.asset('images/external-link.png', color: Styles().colors!.mediumGray)
-              ) : Container(),
-              HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),)
-            ]),
-          ),
-        ),
-      ),
-    );
   }
 
   Widget _buildRegularButtonsContainer() {
@@ -157,12 +158,20 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
               widgetList.add(Divider(color: Styles().colors!.surfaceAccent, height: 1,));
             }
             String? id = JsonUtils.stringValue(command['id']);
-            widgetList.add(_buildRegularButton(
-              label: _getString(id),
-              favorite: WellnessFavorite(id, category: widget.wellnessCategory),
-              hasExternalLink: UrlUtils.isWebScheme(JsonUtils.stringValue(command['url'])),
-              onTap: () => _onCommand(command),
-            ));
+            Favorite favorite = WellnessFavorite(id, category: widget.wellnessCategory);
+            if (!widget.showOnlyFavorites || (Auth2().prefs?.isFavorite(favorite) ?? false)) {
+              if ((_limit == null) || (0 < _limit!)) {
+                widgetList.add(_buildRegularButton(
+                  label: _getString(id),
+                  favorite: favorite,
+                  hasExternalLink: UrlUtils.isWebScheme(JsonUtils.stringValue(command['url'])),
+                  onTap: () => _onCommand(command),
+                ));
+                if (_limit != null) {
+                  _limit = _limit! - 1;
+                }
+              }
+            }
           }
         }
       }
@@ -172,6 +181,26 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
       Column(children: widgetList)
     );
 
+  }
+
+  Widget _buildLargeButton({String? label, Favorite? favorite, bool hasExternalLink = false, void Function()? onTap}) {
+    return Container(decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.circular(5)), child:
+      InkWell(onTap: onTap, child:
+        Padding(padding: EdgeInsets.only(left: 16), child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
+                Text(label ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
+              ),
+            ),
+            hasExternalLink ? Padding(padding: EdgeInsets.only(left: 6, top: 18, bottom: 18), child:
+              Image.asset('images/external-link.png', color: Styles().colors!.mediumGray)
+            ) : Container(),
+            HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),)
+          ]),
+        ),
+      ),
+    );
   }
 
   Widget _buildRegularButton({String? label, Favorite? favorite, bool hasExternalLink = true, void Function()? onTap}) {
@@ -193,6 +222,14 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
     );
   }
 
+  Widget _buildViewAllButton() {
+    return (_limit == 0) ? LinkButton(
+        title: Localization().getStringEx('panel.wellness.resources.button.all.title', 'View All'),
+        hint: Localization().getStringEx('panel.wellness.resources.button.all.hint', 'Tap to view all groups'),
+        onTap: _onViewAll,
+      ) : Container();
+  }
+
   void _initContent() {
     Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${widget.wellnessCategory}']) ;
     _commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
@@ -210,6 +247,11 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
       }
     }
     return null;
+  }
+
+  void _onViewAll() {
+    Analytics().logSelect(target: "HomeWellnessResourcesWidget View All");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.resources,)));
   }
 
   void _onCommand(Map<String, dynamic> command) {
