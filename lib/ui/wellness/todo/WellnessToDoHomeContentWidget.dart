@@ -160,31 +160,37 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     }
     TextStyle smallStyle = TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular);
     return Padding(
-        padding: EdgeInsets.only(top: 28),
+        padding: EdgeInsets.only(top: 13),
         child: Column(children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(_calendarStartDate, format: 'MMMM yyyy', ignoreTimeZone: true)),
+            Text(StringUtils.ensureNotEmpty(_formattedCalendarMonthLabel),
                 style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
             Expanded(child: Container()),
-            Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: GestureDetector(onTap: _onTapPreviousWeek, child: Image.asset('images/icon-blue-chevron-left.png'))),
+            GestureDetector(
+                onTap: _onTapPreviousWeek,
+                child: Container(
+                    color: Colors.transparent,
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                        child: Image.asset('images/icon-blue-chevron-left.png')))),
             Text(Localization().getStringEx('panel.wellness.todo.items.this_week.label', 'This Week'), style: smallStyle),
-            Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: GestureDetector(onTap: _onTapNextWeek, child: Image.asset('images/icon-blue-chevron-right.png')))
+            GestureDetector(
+                onTap: _onTapNextWeek,
+                child: Container(
+                    color: Colors.transparent,
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                        child: Image.asset('images/icon-blue-chevron-right.png'))))
           ]),
-          Padding(
-              padding: EdgeInsets.only(top: 10),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                Text('Su', style: smallStyle),
-                Text('M', style: smallStyle),
-                Text('T', style: smallStyle),
-                Text('W', style: smallStyle),
-                Text('Th', style: smallStyle),
-                Text('F', style: smallStyle),
-                Text('Sa', style: smallStyle)
-              ])),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+            Text('Su', style: smallStyle),
+            Text('M', style: smallStyle),
+            Text('T', style: smallStyle),
+            Text('W', style: smallStyle),
+            Text('Th', style: smallStyle),
+            Text('F', style: smallStyle),
+            Text('Sa', style: smallStyle)
+          ]),
           Padding(
               padding: EdgeInsets.only(top: 5),
               child: Container(
@@ -364,9 +370,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   void _onTabChanged({required _ToDoTab tab}) {
     if (_selectedTab != tab) {
       _selectedTab = tab;
-      if (mounted) {
-        setState(() {});
-      }
+      _updateState();
     }
   }
 
@@ -376,11 +380,17 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _onTapPreviousWeek() {
-    //TBD: DD - implement
+    Duration weekDuration = Duration(days: 7);
+    _calendarStartDate = _calendarStartDate.subtract(weekDuration);
+    _calendarEndDate = _calendarEndDate.subtract(weekDuration);
+    _updateState();
   }
 
   void _onTapNextWeek() {
-    //TBD: DD - implement
+    Duration weekDuration = Duration(days: 7);
+    _calendarStartDate = _calendarStartDate.add(weekDuration);
+    _calendarEndDate = _calendarEndDate.add(weekDuration);
+    _updateState();
   }
 
   void _onTapCalendarItem(ToDoItem? item) {
@@ -497,8 +507,22 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   void _setItemsLoading(bool loading) {
     _itemsLoading = loading;
+    _updateState();
+  }
+
+  void _updateState() {
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  String get _formattedCalendarMonthLabel {
+    if (_calendarStartDate.month != _calendarEndDate.month) {
+      return AppDateTime().formatDateTime(_calendarStartDate, format: 'MMMM', ignoreTimeZone: true)! +
+          ' / ' +
+          AppDateTime().formatDateTime(_calendarEndDate, format: 'MMMM yyyy', ignoreTimeZone: true)!;
+    } else {
+      return AppDateTime().formatDateTime(_calendarStartDate, format: 'MMMM yyyy', ignoreTimeZone: true)!;
     }
   }
 
