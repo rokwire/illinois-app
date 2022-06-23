@@ -27,14 +27,14 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class WellnessSectionsContentWidget extends StatefulWidget {
-  WellnessSectionsContentWidget();
+class WellnessDailyTipsContentWidget extends StatefulWidget {
+  WellnessDailyTipsContentWidget();
 
   @override
-  State<WellnessSectionsContentWidget> createState() => _WellnessSectionsContentWidgetState();
+  State<WellnessDailyTipsContentWidget> createState() => _WellnessDailyTipsContentWidgetState();
 }
 
-class _WellnessSectionsContentWidgetState extends State<WellnessSectionsContentWidget> implements NotificationsListener {
+class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsContentWidget> implements NotificationsListener {
   Color? _tipColor;
   bool _loading = false;
 

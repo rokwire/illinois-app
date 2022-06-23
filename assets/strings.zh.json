@@ -1635,7 +1635,7 @@
 	"panel.bus_pass.error.default.text": "無法加載公交通行證",
 
     "panel.wellness.home.header.sections.title": "健康",
-    "panel.wellness.section.sections.label": "健康部分",
+    "panel.wellness.section.daily_tips.label": "健康每日小貼士",
     "panel.wellness.section.rings.label": "每日健康戒指",
     "panel.wellness.section.todo.label": "待辦事項清單",
     "panel.wellness.section.resources.label": "健康資源",

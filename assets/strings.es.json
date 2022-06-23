@@ -1633,7 +1633,7 @@
     "panel.bus_pass.error.default.text": "No se puede cargar el pase de autobús",
 
     "panel.wellness.home.header.sections.title": "Bienestar",
-    "panel.wellness.section.sections.label": "Secciones de Bienestar",
+    "panel.wellness.section.daily_tips.label": "Consejos diarios de bienestar",
     "panel.wellness.section.rings.label": "Anillos de bienestar diarios",
     "panel.wellness.section.todo.label": "Lista de quehaceres",
     "panel.wellness.section.resources.label": "Recursos de bienestar",

@@ -17,13 +17,15 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
-import 'package:illinois/ui/wellness/WellnessSectionsContentWidget.dart';
+import 'package:illinois/ui/wellness/WellnessDailyTipsContentWidget.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+
+enum WellnessContent { dailyTips, rings, todo, resources }
 
 class WellnessHomePanel extends StatefulWidget {
   final WellnessContent? content;
@@ -44,7 +46,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   @override
   void initState() {
     super.initState();
-    _selectedContent = widget.content ?? (_lastSelectedContent ?? WellnessContent.sections);
+    _selectedContent = widget.content ?? (_lastSelectedContent ?? WellnessContent.dailyTips);
   }
 
   @override
@@ -145,8 +147,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case WellnessContent.sections:
-        return WellnessSectionsContentWidget();
+      case WellnessContent.dailyTips:
+        return WellnessDailyTipsContentWidget();
       case WellnessContent.rings:
         return WellnessRingsHomeContentWidget();
       case WellnessContent.todo:
@@ -162,8 +164,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
 
   String _getContentLabel(WellnessContent section) {
     switch (section) {
-      case WellnessContent.sections:
-        return Localization().getStringEx('panel.wellness.section.sections.label', 'Wellness Sections');
+      case WellnessContent.dailyTips:
+        return Localization().getStringEx('panel.wellness.section.daily_tips.label', 'Wellness Daily Tips');
       case WellnessContent.rings:
         return Localization().getStringEx('panel.wellness.section.rings.label', 'Daily Wellness Rings');
       case WellnessContent.todo:
@@ -173,5 +175,3 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
     }
   }
 }
-
-enum WellnessContent { sections, rings, todo, resources }

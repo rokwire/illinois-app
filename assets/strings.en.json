@@ -1636,7 +1636,7 @@
     "panel.bus_pass.error.default.text": "Unable to load bus pass",
 
     "panel.wellness.home.header.sections.title": "Wellness",
-    "panel.wellness.section.sections.label": "Wellness Sections",
+    "panel.wellness.section.daily_tips.label": "Wellness Daily Tips",
     "panel.wellness.section.rings.label": "Daily Wellness Rings",
     "panel.wellness.section.todo.label": "To-Do List",
     "panel.wellness.section.resources.label": "Wellness Resources",
