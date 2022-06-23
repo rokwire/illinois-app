@@ -260,6 +260,14 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   void _onTapDeleteCategory(ToDoCategory category) {
+    AppAlert.showConfirmationDialog(
+        buildContext: context,
+        message: Localization().getStringEx(
+            'panel.wellness.categories.manage.category.delete.confirmation.msg', 'Are sure that you want to delete this category?'),
+        positiveCallback: () => _deleteCategory(category));
+  }
+
+  void _deleteCategory(ToDoCategory category) {
     _setLoading(true);
     Wellness().deleteToDoCategoryCached(category.id!).then((success) {
       late String msg;

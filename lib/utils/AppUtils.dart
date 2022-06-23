@@ -94,6 +94,38 @@ class AppAlert {
       );
     },);
   }
+
+  static Future<bool> showConfirmationDialog(
+      {required BuildContext buildContext,
+      required String message,
+      String? positiveButtonLabel,
+      required VoidCallback positiveCallback,
+      VoidCallback? negativeCallback,
+      String? negativeButtonLabel}) async {
+    bool alertDismissed = await showDialog(
+        context: buildContext,
+        builder: (context) {
+          return AlertDialog(content: Text(message), actions: <Widget>[
+            TextButton(
+                child: Text(
+                    StringUtils.ensureNotEmpty(positiveButtonLabel, defaultValue: Localization().getStringEx('dialog.yes.title', 'Yes'))),
+                onPressed: () {
+                  positiveCallback();
+                  Navigator.pop(context, true);
+                }),
+            TextButton(
+                child: Text(
+                    StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx('dialog.no.title', 'No'))),
+                onPressed: () {
+                  if (negativeCallback != null) {
+                    negativeCallback();
+                  }
+                  Navigator.pop(context, true);
+                })
+          ]);
+        });
+    return alertDismissed;
+  }
 }
 
 class AppSemantics {

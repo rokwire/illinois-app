@@ -1669,6 +1669,7 @@
     "panel.wellness.categories.manage.category.create.failed.msg": "Failed to create category.",
     "panel.wellness.categories.manage.category.delete.succeeded.msg": "Category deleted successfully.",
     "panel.wellness.categories.manage.category.delete.failed.msg": "Failed to delete category.",
+    "panel.wellness.categories.manage.category.delete.confirmation.msg": "Are sure that you want to delete this category?",
 
     "panel.wellness.todo.item.add.label": "Add an Item",
     "panel.wellness.todo.item.name.field.label": "ITEM NAME",
