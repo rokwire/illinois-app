@@ -7,14 +7,6 @@
     ],
     "group_name":"GIES Onboarding Step 1",
     "id":"setup.university.accounts",
-    "_navigation_buttons":[
-      {
-        "completes":true,
-        "page":"verify.personal.information",
-        "position":"right",
-        "title":">"
-      }
-    ],
     "progress":1,
     "step_title":"Step 1",
     "text":"<p><i>If this step is marked as complete, we've confirmed that you've set up your University Email Account and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
@@ -66,19 +58,6 @@
     ],
     "group_name":"GIES Onboarding Step 3",
     "id":"setup.zoom.accounts",
-    "_navigation_buttons":[
-      {
-        "page":"verify.personal.information",
-        "position":"left",
-        "title":"<"
-      },
-      {
-        "completes":true,
-        "page":"setup.coursera.account",
-        "position":"right",
-        "title":">"
-      }
-    ],
     "progress":3,
     "step_title":"Step 3",
     "text":"<p><i>If this step is marked as complete, we've confirmed that you've set up your Illinois Zoom Pro account and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
@@ -96,19 +75,6 @@
     ],
     "group_name":"GIES Onboarding Step 4",
     "id":"setup.coursera.account",
-    "_navigation_buttons":[
-      {
-        "page":"setup.zoom.accounts",
-        "position":"left",
-        "title":"<"
-      },
-      {
-        "completes":true,
-        "page":"connect.workspace.and.student.guide",
-        "position":"right",
-        "title":">"
-      }
-    ],
     "progress":4,
     "step_title":"Step 4",
     "text":"<p><i>If this step is marked as complete, we've confirmed that you've set up your Coursera account and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
@@ -129,19 +95,6 @@
     ],
     "group_name":"GIES Onboarding Step 5",
     "id":"join.workspace",
-    "_navigation_buttons":[
-      {
-        "page":"setup.coursera.account",
-        "position":"left",
-        "title":"<"
-      },
-      {
-        "completes":true,
-        "position":"right",
-        "swipe_page":"connect.workspace.and.student.guide",
-        "title":">"
-      }
-    ],
     "progress":5,
     "step_title":"Step 5",
     "text":"<p><i>If this step is marked as complete, we've confirmed that you've set up your Workplace account and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
@@ -166,31 +119,11 @@
         }
       }
     ],
-    "_navigation_buttons":[
-      {
-        "page":"join.workspace",
-        "position":"left",
-        "title":"<"
-      },
-      {
-        "completes":true,
-        "page":"complete.onboarding.course",
-        "position":"right",
-        "title":">"
-      }
-    ],
     "progress":6,
     "step_title":"Step 6",
     "title":"Connect with your New Student Guide"
   },
   {
-    "_buttons":[
-      {
-        "completes":true,
-        "page":"review.course.recommendations.and.register.for.courses",
-        "title":"Done"
-      }
-    ],
     "content":[
       {
         "bullets":[
@@ -211,32 +144,12 @@
     ],
     "group_name":"GIES Onboarding Step 7",
     "id":"complete.onboarding.course",
-    "_navigation_buttons":[
-      {
-        "page":"connect.workspace.and.student.guide",
-        "position":"left",
-        "title":"<"
-      },
-      {
-        "completes":true,
-        "page":"review.course.recommendations.and.register.for.courses",
-        "position":"right",
-        "title":">"
-      }
-    ],
     "progress":7,
     "step_title":"Step 7",
     "text":"<p><i>If this step is marked as complete, we've confirmed that you've completed your Onboarding Course and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
     "title":"Complete Coursera Onboarding Course"
   },
   {
-    "_buttons":[
-      {
-        "completes":true,
-        "page":"sumbit.official.credentials",
-        "title":"Done"
-      }
-    ],
     "content":[
       {
         "bullets":[
@@ -264,6 +177,7 @@
         "heading":"<b>iMSA Students:</b>"
       }
     ],
+
     "group_name":"GIES Onboarding Step 8",
     "id":"review.course.recommendations.and.register.for.courses",
     "buttons":[
@@ -275,19 +189,6 @@
           "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
           "params": {"group_name":"GIES Onboarding Step 8"}
         }
-      }
-    ],
-    "_navigation_buttons":[
-      {
-        "page":"complete.onboarding.course",
-        "position":"left",
-        "title":"<"
-      },
-      {
-        "completes":true,
-        "page":"sumbit.official.credentials",
-        "position":"right",
-        "title":">"
       }
     ],
     "progress":8,
@@ -307,13 +208,6 @@
           "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
           "params": {"group_name":"GIES Onboarding Step 9"}
         }
-      }
-    ],
-    "_navigation_buttons":[
-      {
-        "page":"review.course.recommendations.and.register.for.courses",
-        "position":"left",
-        "title":"<"
       }
     ],
     "progress":9,
