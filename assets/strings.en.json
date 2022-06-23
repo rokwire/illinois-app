@@ -270,6 +270,8 @@
     "panel.browse.section.campus_links.description": "Links to many sources for information that helps you enjoy and prosper at Illinois.",
     "panel.browse.section.campus_resources.title": "Campus Resources",
     "panel.browse.section.campus_resources.description": "Shortcuts to get you to those parts of the app you use regularly.",
+    "panel.browse.section.dinings.title": "Dining",
+    "panel.browse.section.dinings.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
     "panel.browse.section.events.title": "Events",
     "panel.browse.section.events.description": "Find events across campus and around the world.",
     "panel.browse.section.feeds.title": "Feeds",
@@ -325,6 +327,9 @@
     "panel.browse.entry.campus_resources.quick_polls.title": "Quick Polls",
     "panel.browse.entry.campus_resources.campus_guide.title": "Campus Guide",
     "panel.browse.entry.campus_resources.inbox.title": "Notifications",
+
+    "panel.browse.entry.dinings.dinings_all.title": "Residence Hall Dining",
+    "panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Open Now",
 
     "panel.browse.entry.events.suggested_events.title": "Suggested Events",
 
@@ -2733,6 +2738,12 @@
     "widgets.home.campus_links.date_cat.button.title": "Due Date Catalog",
     "widgets.home.campus_links.date_cat.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     "widgets.home.campus_links.date_cat.label.offline": "Due Date Catalog not available while offline.",
+
+    "widgets.home.dinings.header.title": "Dining",
+    "widgets.home.dinings.all.button.title": "Residence Hall Dining",
+    "widgets.home.dinings.all.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "widgets.home.dinings.open.button.title": "Residence Hall Dining Open Now",
+    "widgets.home.dinings.open.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",

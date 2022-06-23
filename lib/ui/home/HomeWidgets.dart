@@ -443,9 +443,9 @@ class HomeCommandButton extends StatelessWidget {
           padding: EdgeInsets.only(left: 16, bottom: 16),
           decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Row(children: <Widget>[
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
-                Padding(padding: EdgeInsets.only(top: 16), child:
+                Padding(padding: EdgeInsets.only(top: 15, bottom: 7), child:
                   Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary), semanticsLabel: "",),
                 )
               ),
