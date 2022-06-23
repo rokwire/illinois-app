@@ -23,7 +23,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class ToDoItem {
   static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm:ssZ';
 
-  final String? id;
+  //TBD: DD - make it final again when we have backend APIs
+  String? id;
   final String? name;
   final ToDoCategory? category;
   final DateTime? dueDateTimeUtc;

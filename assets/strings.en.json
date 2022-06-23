@@ -1689,6 +1689,9 @@
     "panel.wellness.todo.item.empty.name.msg": "Please, fill name.",
     "panel.wellness.todo.item.create.succeeded.msg": "To-Do item created successfully.",
     "panel.wellness.todo.item.create.failed.msg": "Failed to create To-Do item.",
+    "panel.wellness.todo.item.delete.confirmation.msg": "Are sure that you want to delete this To-Do item?",
+    "panel.wellness.todo.item.delete.succeeded.msg": "To-Do item deleted successfully.",
+    "panel.wellness.todo.item.delete.failed.msg": "Failed to delete To-Do item.",
 
     "panel.wellness.resources.header.label": "Wellness Resources",
     "panel.wellness.resources.appointment.button": "I want to make an appointment",

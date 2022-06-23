@@ -1688,6 +1688,9 @@
     "panel.wellness.todo.item.empty.name.msg": "請填寫姓名.",
     "panel.wellness.todo.item.create.succeeded.msg": "待辦事項創建成功.",
     "panel.wellness.todo.item.create.failed.msg": "創建待辦事項失敗.",
+    "panel.wellness.todo.item.delete.confirmation.msg": "確定要刪除此待辦事項嗎?",
+    "panel.wellness.todo.item.delete.succeeded.msg": "已成功刪除待辦事項.",
+    "panel.wellness.todo.item.delete.failed.msg": "刪除待辦事項失敗.",
 
     "panel.wellness.resources.header.label": "健康資源",
     "panel.wellness.resources.appointment.button": "我想預約",

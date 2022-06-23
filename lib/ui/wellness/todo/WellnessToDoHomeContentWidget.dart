@@ -52,7 +52,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Wellness.notifyToDoItemCreated]);
+    NotificationService().subscribe(this, [Wellness.notifyToDoItemCreated, Wellness.notifyToDoItemDeleted]);
     _selectedTab = _ToDoTab.daily;
     _initCalendarDates();
     _loadToDoItems();
@@ -508,6 +508,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   void onNotification(String name, param) {
     if (name == Wellness.notifyToDoItemCreated) {
       _loadToDoItems();
+    } else if (name == Wellness.notifyToDoItemDeleted) {
+      _loadToDoItems();
     }
   }
 }
@@ -521,19 +523,24 @@ class _ToDoItemCard extends StatefulWidget {
 }
 
 class _ToDoItemCardState extends State<_ToDoItemCard> {
+  bool _loading = false;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(color: widget.item.color, borderRadius: BorderRadius.all(Radius.circular(10))),
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          _buildCompletedWidget(color: widget.item.color),
-          Expanded(
-              child: Text(StringUtils.ensureNotEmpty(widget.item.name),
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold))),
-          GestureDetector(onTap: _onTapRemove, child: Image.asset('images/icon-x-orange.png', color: Styles().colors!.white))
-        ]));
+    return Stack(alignment: Alignment.center, children: [
+      Container(
+          decoration: BoxDecoration(color: widget.item.color, borderRadius: BorderRadius.all(Radius.circular(10))),
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            _buildCompletedWidget(color: widget.item.color),
+            Expanded(
+                child: Text(StringUtils.ensureNotEmpty(widget.item.name),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold))),
+            GestureDetector(onTap: _onTapRemove, child: Image.asset('images/icon-x-orange.png', color: Styles().colors!.white))
+          ])),
+      Visibility(visible: _loading, child: CircularProgressIndicator())
+    ]);
   }
 
   Widget _buildCompletedWidget({required Color color}) {
@@ -552,7 +559,32 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
   }
 
   void _onTapRemove() {
-    //TBD: DD - implement
+    AppAlert.showConfirmationDialog(
+        buildContext: context,
+        message: Localization()
+            .getStringEx('panel.wellness.todo.item.delete.confirmation.msg', 'Are sure that you want to delete this To-Do item?'),
+        positiveCallback: () => _deleteToDoItem());
+  }
+
+  void _deleteToDoItem() {
+    _setLoading(true);
+    Wellness().deleteToDoItemCached(widget.item.id!).then((success) {
+      late String msg;
+      if (success) {
+        msg = Localization().getStringEx('panel.wellness.todo.item.delete.succeeded.msg', 'To-Do item deleted successfully.');
+      } else {
+        msg = Localization().getStringEx('panel.wellness.todo.item.delete.failed.msg', 'Failed to delete To-Do item.');
+      }
+      AppAlert.showDialogResult(context, msg);
+      _setLoading(false);
+    });
+  }
+
+  void _setLoading(bool loading) {
+    _loading = loading;
+    if (mounted) {
+      setState(() {});
+    }
   }
 }
 

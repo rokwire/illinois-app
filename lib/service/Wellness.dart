@@ -31,6 +31,7 @@ class Wellness with Service {
   static const String notifyToDoCategoryUpdated = "edu.illinois.rokwire.wellness.todo.category.updated";
   static const String notifyToDoCategoryDeleted = "edu.illinois.rokwire.wellness.todo.category.deleted";
   static const String notifyToDoItemCreated = "edu.illinois.rokwire.wellness.todo.item.created";
+  static const String notifyToDoItemDeleted = "edu.illinois.rokwire.wellness.todo.item.deleted";
 
   // Singleton Factory
 
@@ -97,9 +98,31 @@ class Wellness with Service {
     if (_toDoItems == null) {
       _toDoItems = <ToDoItem>[];
     }
+    item.id = (_toDoItems!.length + 1).toString();
     _toDoItems!.add(item);
     NotificationService().notify(notifyToDoItemCreated);
     return true;
+  }
+
+  Future<bool> deleteToDoItemCached(String itemId) async {
+    if (_toDoItems == null) {
+      return false;
+    }
+    ToDoItem? itemToDelete;
+    for (ToDoItem item in _toDoItems!) {
+      if (item.id == itemId) {
+        itemToDelete = item;
+        break;
+      }
+    }
+    if (itemToDelete != null) {
+      _toDoItems!.remove(itemToDelete);
+      NotificationService().notify(notifyToDoItemDeleted);
+      return true;
+    } else {
+      Log.w('No such item');
+      return false;
+    }
   }
 
   // Remove to here - end
