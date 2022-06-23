@@ -7,7 +7,7 @@
     ],
     "group_name":"GIES Onboarding Step 1",
     "id":"setup.university.accounts",
-    "navigation_buttons":[
+    "_navigation_buttons":[
       {
         "completes":true,
         "page":"verify.personal.information",
@@ -40,7 +40,7 @@
         }
       }
     ],
-    "navigation_buttons":[
+    "_navigation_buttons":[
       {
         "page":"setup.university.accounts",
         "position":"left",
@@ -66,7 +66,7 @@
     ],
     "group_name":"GIES Onboarding Step 3",
     "id":"setup.zoom.accounts",
-    "navigation_buttons":[
+    "_navigation_buttons":[
       {
         "page":"verify.personal.information",
         "position":"left",
@@ -96,7 +96,7 @@
     ],
     "group_name":"GIES Onboarding Step 4",
     "id":"setup.coursera.account",
-    "navigation_buttons":[
+    "_navigation_buttons":[
       {
         "page":"setup.zoom.accounts",
         "position":"left",
@@ -129,7 +129,7 @@
     ],
     "group_name":"GIES Onboarding Step 5",
     "id":"join.workspace",
-    "navigation_buttons":[
+    "_navigation_buttons":[
       {
         "page":"setup.coursera.account",
         "position":"left",
@@ -154,7 +154,18 @@
     ],
     "group_name":"GIES Onboarding Step 6",
     "id":"connect.workspace.and.student.guide",
-    "navigation_buttons":[
+    "buttons":[
+      {
+        "completes":true,
+        "page":"complete.onboarding.course",
+        "title":"Completed",
+        "widget_action": {
+          "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
+          "params": {"group_name":"GIES Onboarding Step 6"}
+        }
+      }
+    ],
+    "_navigation_buttons":[
       {
         "page":"join.workspace",
         "position":"left",
@@ -199,7 +210,7 @@
     ],
     "group_name":"GIES Onboarding Step 7",
     "id":"complete.onboarding.course",
-    "navigation_buttons":[
+    "_navigation_buttons":[
       {
         "page":"connect.workspace.and.student.guide",
         "position":"left",
@@ -254,7 +265,18 @@
     ],
     "group_name":"GIES Onboarding Step 8",
     "id":"review.course.recommendations.and.register.for.courses",
-    "navigation_buttons":[
+    "buttons":[
+      {
+        "completes":true,
+        "page":"sumbit.official.credentials",
+        "title":"Completed",
+        "widget_action": {
+          "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
+          "params": {"group_name":"GIES Onboarding Step 8"}
+        }
+      }
+    ],
+    "_navigation_buttons":[
       {
         "page":"complete.onboarding.course",
         "position":"left",
@@ -282,7 +304,18 @@
     ],
     "group_name":"GIES Onboarding Step 9",
     "id":"sumbit.official.credentials",
-    "navigation_buttons":[
+    "buttons":[
+      {
+        "completes":true,
+        "page":"new.student.office.hours",
+        "title":"I completed this",
+        "widget_action": {
+          "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
+          "params": {"group_name":"GIES Onboarding Step 9"}
+        }
+      }
+    ],
+    "_navigation_buttons":[
       {
         "page":"review.course.recommendations.and.register.for.courses",
         "position":"left",
@@ -304,7 +337,7 @@
       }
     ],
     "id":"new.student.office.hours",
-    "progress-possition":8,
+    "progress-possition":10,
     "title":"Checklist completed"
   }
 ]
