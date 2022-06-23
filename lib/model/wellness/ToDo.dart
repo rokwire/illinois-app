@@ -33,7 +33,7 @@ class ToDoItem {
   final List<String>? workDays;
   final ToDoItemLocation? location;
   final String? description;
-  final bool isCompleted;
+  bool isCompleted;
 
   ToDoItem(
       {this.id,

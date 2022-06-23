@@ -31,6 +31,7 @@ class Wellness with Service {
   static const String notifyToDoCategoryUpdated = "edu.illinois.rokwire.wellness.todo.category.updated";
   static const String notifyToDoCategoryDeleted = "edu.illinois.rokwire.wellness.todo.category.deleted";
   static const String notifyToDoItemCreated = "edu.illinois.rokwire.wellness.todo.item.created";
+  static const String notifyToDoItemUpdated = "edu.illinois.rokwire.wellness.todo.item.updated";
   static const String notifyToDoItemDeleted = "edu.illinois.rokwire.wellness.todo.item.deleted";
 
   // Singleton Factory
@@ -101,6 +102,29 @@ class Wellness with Service {
     item.id = (_toDoItems!.length + 1).toString();
     _toDoItems!.add(item);
     NotificationService().notify(notifyToDoItemCreated);
+    return true;
+  }
+
+  Future<bool> updateToDoItemCached(ToDoItem item) async {
+    if (_toDoItems == null) {
+      return false;
+    }
+    ToDoItem? existing;
+    int? existingIndex;
+    for (int i = 0; i < _toDoItems!.length; i++) {
+      ToDoItem currentItem = _toDoItems![i];
+      if (item.id == currentItem.id) {
+        existing = currentItem;
+        existingIndex = i;
+        break;
+      }
+    }
+    if (existing == null) {
+      return false;
+    }
+    _toDoItems!.removeAt(existingIndex!);
+    _toDoItems!.insert(existingIndex, item);
+    NotificationService().notify(notifyToDoItemUpdated);
     return true;
   }
 

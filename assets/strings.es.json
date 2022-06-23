@@ -1689,6 +1689,7 @@
     "panel.wellness.todo.item.delete.confirmation.msg": "¿Estás seguro de que deseas eliminar este elemento de Tareas pendientes?",
     "panel.wellness.todo.item.delete.succeeded.msg": "Tarea pendiente eliminada con éxito.",
     "panel.wellness.todo.item.delete.failed.msg": "No se pudo eliminar el elemento de tareas pendientes.",
+    "panel.wellness.todo.item.update.failed.msg": "No se pudo actualizar el elemento de tareas pendientes.",
 
     "panel.wellness.resources.header.label": "Recursos de bienestar",
     "panel.wellness.resources.appointment.button": "Quiero hacer una cita",

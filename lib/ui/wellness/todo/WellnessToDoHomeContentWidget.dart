@@ -52,7 +52,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Wellness.notifyToDoItemCreated, Wellness.notifyToDoItemDeleted]);
+    NotificationService().subscribe(this, [Wellness.notifyToDoItemCreated, Wellness.notifyToDoItemUpdated, Wellness.notifyToDoItemDeleted]);
     _selectedTab = _ToDoTab.daily;
     _initCalendarDates();
     _loadToDoItems();
@@ -508,6 +508,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   void onNotification(String name, param) {
     if (name == Wellness.notifyToDoItemCreated) {
       _loadToDoItems();
+    } else if (name == Wellness.notifyToDoItemUpdated) {
+      _loadToDoItems();
     } else if (name == Wellness.notifyToDoItemDeleted) {
       _loadToDoItems();
     }
@@ -555,7 +557,15 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
   }
 
   void _onTapCompleted() {
-    //TBD: DD - implement
+    _setLoading(true);
+    widget.item.isCompleted = !widget.item.isCompleted;
+    Wellness().updateToDoItemCached(widget.item).then((success) {
+      if (!success) {
+        String msg = Localization().getStringEx('panel.wellness.todo.item.update.failed.msg', 'Failed to update To-Do item.');
+        AppAlert.showDialogResult(context, msg);
+      }
+      _setLoading(false);
+    });
   }
 
   void _onTapRemove() {

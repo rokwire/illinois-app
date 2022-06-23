@@ -1691,6 +1691,7 @@
     "panel.wellness.todo.item.delete.confirmation.msg": "確定要刪除此待辦事項嗎?",
     "panel.wellness.todo.item.delete.succeeded.msg": "已成功刪除待辦事項.",
     "panel.wellness.todo.item.delete.failed.msg": "刪除待辦事項失敗.",
+    "panel.wellness.todo.item.update.failed.msg": "未能更新待辦事項.",
 
     "panel.wellness.resources.header.label": "健康資源",
     "panel.wellness.resources.appointment.button": "我想預約",
