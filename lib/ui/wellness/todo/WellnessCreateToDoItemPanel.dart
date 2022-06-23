@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -37,11 +38,12 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
   ToDoCategory? _category;
   List<ToDoCategory>? _categories;
   TextEditingController _nameController = TextEditingController();
-  TextEditingController _locationController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   DateTime? _dueDate;
   TimeOfDay? _dueTime;
   List<DateTime>? _workDays;
+  double? _locationLat;
+  double? _locationLong;
   bool _categoriesDropDownVisible = false;
   bool _loading = false;
 
@@ -288,7 +290,18 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
           Padding(
               padding: EdgeInsets.only(bottom: 5),
               child: _buildFieldLabel(label: Localization().getStringEx('panel.wellness.todo.item.location.field.label', 'LOCATION'))),
-          _buildInputField(controller: _locationController)
+          GestureDetector(
+              onTap: _onTapLocation,
+              child: Row(children: [
+                Expanded(
+                    child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                        decoration:
+                            BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
+                        child: Text(StringUtils.ensureNotEmpty(_formattedLocation),
+                            style:
+                                TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface))))
+              ]))
         ]));
   }
 
@@ -315,7 +328,7 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
         child: TextField(
             controller: controller,
             decoration: InputDecoration(border: InputBorder.none),
-            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)));
+            style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)));
   }
 
   Widget _buildSaveButton() {
@@ -385,6 +398,22 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
     }
   }
 
+  void _onTapLocation() async {
+    _setLoading(true);
+    String? location = await NativeCommunicator().launchSelectLocation();
+    if (location != null) {
+      Map<String, dynamic>? locationSelectionResult = JsonUtils.decodeMap(location);
+      if (locationSelectionResult != null && locationSelectionResult.isNotEmpty) {
+        Map<String, dynamic>? locationData = locationSelectionResult["location"];
+        if (locationData != null) {
+          _locationLat = JsonUtils.doubleValue(locationData['latitude']);
+          _locationLong = JsonUtils.doubleValue(locationData['longitude']);
+        }
+      }
+    }
+    _setLoading(false);
+  }
+
   Future<DateTime?> _pickDate({DateTime? initialDate}) async {
     if (initialDate == null) {
       initialDate = DateTime.now();
@@ -436,5 +465,13 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
     }
     DateTime time = DateTime(_dueDate!.year, _dueDate!.month, _dueDate!.day, _dueTime!.hour, _dueTime!.minute);
     return AppDateTime().formatDateTime(time, format: 'h:mm a', ignoreTimeZone: true);
+  }
+
+  String? get _formattedLocation {
+    if ((_locationLat != null) && (_locationLong != null)) {
+      return '$_locationLat, $_locationLong';
+    } else {
+      return null;
+    }
   }
 }

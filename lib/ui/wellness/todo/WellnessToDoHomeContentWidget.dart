@@ -397,7 +397,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   void _loadToDoItems() {
     _setItemsLoading(true);
-    Wellness().loadToDoItems().then((items) {
+    Wellness().loadToDoItemsCached().then((items) {
       _todoItems = items;
       _sortItemsByDate();
       _setItemsLoading(false);
