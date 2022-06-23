@@ -31,6 +31,8 @@ class Wellness with Service {
   static const String notifyToDoCategoryUpdated = "edu.illinois.rokwire.wellness.todo.category.updated";
   static const String notifyToDoCategoryDeleted = "edu.illinois.rokwire.wellness.todo.category.deleted";
   static const String notifyToDoItemCreated = "edu.illinois.rokwire.wellness.todo.item.created";
+  static const String notifyToDoItemUpdated = "edu.illinois.rokwire.wellness.todo.item.updated";
+  static const String notifyToDoItemsDeleted = "edu.illinois.rokwire.wellness.todo.items.deleted";
 
   // Singleton Factory
 
@@ -97,9 +99,55 @@ class Wellness with Service {
     if (_toDoItems == null) {
       _toDoItems = <ToDoItem>[];
     }
+    item.id = (_toDoItems!.length + 1).toString();
     _toDoItems!.add(item);
     NotificationService().notify(notifyToDoItemCreated);
     return true;
+  }
+
+  Future<bool> updateToDoItemCached(ToDoItem item) async {
+    if (_toDoItems == null) {
+      return false;
+    }
+    ToDoItem? existing;
+    int? existingIndex;
+    for (int i = 0; i < _toDoItems!.length; i++) {
+      ToDoItem currentItem = _toDoItems![i];
+      if (item.id == currentItem.id) {
+        existing = currentItem;
+        existingIndex = i;
+        break;
+      }
+    }
+    if (existing == null) {
+      return false;
+    }
+    _toDoItems!.removeAt(existingIndex!);
+    _toDoItems!.insert(existingIndex, item);
+    NotificationService().notify(notifyToDoItemUpdated);
+    return true;
+  }
+
+  Future<bool> deleteToDoItemsCached(List<String>? idList) async {
+    if (CollectionUtils.isEmpty(_toDoItems) || CollectionUtils.isEmpty(idList)) {
+      return false;
+    }
+    List<ToDoItem> itemsToDelete = <ToDoItem>[];
+    for (ToDoItem item in _toDoItems!) {
+      if (idList!.contains(item.id)) {
+        itemsToDelete.add(item);
+      }
+    }
+    if (CollectionUtils.isNotEmpty(itemsToDelete)) {
+      for (ToDoItem itemToDelete in itemsToDelete) {
+        _toDoItems!.remove(itemToDelete);
+      }
+      NotificationService().notify(notifyToDoItemsDeleted);
+      return true;
+    } else {
+      Log.w('No items');
+      return false;
+    }
   }
 
   // Remove to here - end

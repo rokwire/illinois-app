@@ -28,6 +28,7 @@ import 'package:illinois/ui/wellness/todo/WellnessCreateToDoItemPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -39,7 +40,7 @@ class WellnessToDoHomeContentWidget extends StatefulWidget {
   State<WellnessToDoHomeContentWidget> createState() => _WellnessToDoHomeContentWidgetState();
 }
 
-class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentWidget> {
+class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentWidget> implements NotificationsListener {
   static final String _unAssignedLabel =
       Localization().getStringEx('panel.wellness.todo.items.unassigned.category.label', 'Unassigned Items');
   late _ToDoTab _selectedTab;
@@ -51,6 +52,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [Wellness.notifyToDoItemCreated, Wellness.notifyToDoItemUpdated, Wellness.notifyToDoItemsDeleted]);
     _selectedTab = _ToDoTab.daily;
     _initCalendarDates();
     _loadToDoItems();
@@ -60,6 +62,12 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         _showWelcomePopup();
       });
     }
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   @override
@@ -152,31 +160,37 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     }
     TextStyle smallStyle = TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular);
     return Padding(
-        padding: EdgeInsets.only(top: 28),
+        padding: EdgeInsets.only(top: 13),
         child: Column(children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(_calendarStartDate, format: 'MMMM yyyy', ignoreTimeZone: true)),
+            Text(StringUtils.ensureNotEmpty(_formattedCalendarMonthLabel),
                 style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
             Expanded(child: Container()),
-            Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: GestureDetector(onTap: _onTapPreviousWeek, child: Image.asset('images/icon-blue-chevron-left.png'))),
+            GestureDetector(
+                onTap: _onTapPreviousWeek,
+                child: Container(
+                    color: Colors.transparent,
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                        child: Image.asset('images/icon-blue-chevron-left.png')))),
             Text(Localization().getStringEx('panel.wellness.todo.items.this_week.label', 'This Week'), style: smallStyle),
-            Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: GestureDetector(onTap: _onTapNextWeek, child: Image.asset('images/icon-blue-chevron-right.png')))
+            GestureDetector(
+                onTap: _onTapNextWeek,
+                child: Container(
+                    color: Colors.transparent,
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                        child: Image.asset('images/icon-blue-chevron-right.png'))))
           ]),
-          Padding(
-              padding: EdgeInsets.only(top: 10),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                Text('Su', style: smallStyle),
-                Text('M', style: smallStyle),
-                Text('T', style: smallStyle),
-                Text('W', style: smallStyle),
-                Text('Th', style: smallStyle),
-                Text('F', style: smallStyle),
-                Text('Sa', style: smallStyle)
-              ])),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+            Text('Su', style: smallStyle),
+            Text('M', style: smallStyle),
+            Text('T', style: smallStyle),
+            Text('W', style: smallStyle),
+            Text('Th', style: smallStyle),
+            Text('F', style: smallStyle),
+            Text('Sa', style: smallStyle)
+          ]),
           Padding(
               padding: EdgeInsets.only(top: 5),
               child: Container(
@@ -251,9 +265,19 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   Widget _buildCalendarToDoItem(ToDoItem? item) {
     double widgetSize = 30;
+    bool hasReminder = (item?.reminderDateTimeUtc != null);
     return GestureDetector(
         onTap: () => _onTapCalendarItem(item),
-        child: Container(height: widgetSize, width: widgetSize, decoration: BoxDecoration(color: item?.color ?? Colors.transparent, shape: BoxShape.circle)));
+        child: Container(
+            height: widgetSize,
+            width: widgetSize,
+            decoration: BoxDecoration(color: item?.color ?? Colors.transparent, shape: BoxShape.circle),
+            child: Visibility(
+                visible: hasReminder,
+                child: Center(
+                    child: Stack(
+                        alignment: Alignment.center,
+                        children: [Image.asset('images/icon-oval-white.png'), Image.asset('images/icon-arrows.png')])))));
   }
 
   Widget _buildManageCategoriesButton() {
@@ -356,23 +380,60 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   void _onTabChanged({required _ToDoTab tab}) {
     if (_selectedTab != tab) {
       _selectedTab = tab;
-      if (mounted) {
-        setState(() {});
-      }
+      _updateState();
     }
   }
 
   void _onTapClearCompletedItems() {
-    //TBD: DD - implement
-    AppAlert.showDialogResult(context, 'Not Implemented');
+    if (CollectionUtils.isEmpty(_todoItems)) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.todo.items.no_items.msg', 'There are no To-Do items.'));
+      return;
+    }
+    AppAlert.showConfirmationDialog(
+        buildContext: context,
+        message: Localization().getStringEx(
+            'panel.wellness.todo.item.completed.delete.confirmation.msg', 'Are you sure that you want to delete all completed To-Do items?'),
+        positiveCallback: () => _deleteCompletedItems());
+  }
+
+  void _deleteCompletedItems() {
+    List<String> completedItemsIds = <String>[];
+    for (ToDoItem item in _todoItems!) {
+      if (item.isCompleted) {
+        completedItemsIds.add(item.id!);
+      }
+    }
+    if (CollectionUtils.isEmpty(completedItemsIds)) {
+      AppAlert.showDialogResult(
+          context, Localization().getStringEx('panel.wellness.todo.items.no_completed_items.msg', 'There are no completed To-Do items.'));
+      return;
+    }
+    _setItemsLoading(true);
+    Wellness().deleteToDoItemsCached(completedItemsIds).then((success) {
+      late String msg;
+      if (success) {
+        msg = Localization()
+            .getStringEx('panel.wellness.todo.items.completed.clear.succeeded.msg', 'Completed To-Do items are deleted successfully.');
+      } else {
+        msg = Localization().getStringEx('panel.wellness.todo.items.completed.clear.failed.msg', 'Failed to delete completed To-Do items.');
+      }
+      AppAlert.showDialogResult(context, msg);
+      _setItemsLoading(false);
+    });
   }
 
   void _onTapPreviousWeek() {
-    //TBD: DD - implement
+    Duration weekDuration = Duration(days: 7);
+    _calendarStartDate = _calendarStartDate.subtract(weekDuration);
+    _calendarEndDate = _calendarEndDate.subtract(weekDuration);
+    _updateState();
   }
 
   void _onTapNextWeek() {
-    //TBD: DD - implement
+    Duration weekDuration = Duration(days: 7);
+    _calendarStartDate = _calendarStartDate.add(weekDuration);
+    _calendarEndDate = _calendarEndDate.add(weekDuration);
+    _updateState();
   }
 
   void _onTapCalendarItem(ToDoItem? item) {
@@ -397,7 +458,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   void _loadToDoItems() {
     _setItemsLoading(true);
-    Wellness().loadToDoItems().then((items) {
+    Wellness().loadToDoItemsCached().then((items) {
       _todoItems = items;
       _sortItemsByDate();
       _setItemsLoading(false);
@@ -489,8 +550,35 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   void _setItemsLoading(bool loading) {
     _itemsLoading = loading;
+    _updateState();
+  }
+
+  void _updateState() {
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  String get _formattedCalendarMonthLabel {
+    if (_calendarStartDate.month != _calendarEndDate.month) {
+      return AppDateTime().formatDateTime(_calendarStartDate, format: 'MMMM', ignoreTimeZone: true)! +
+          ' / ' +
+          AppDateTime().formatDateTime(_calendarEndDate, format: 'MMMM yyyy', ignoreTimeZone: true)!;
+    } else {
+      return AppDateTime().formatDateTime(_calendarStartDate, format: 'MMMM yyyy', ignoreTimeZone: true)!;
+    }
+  }
+
+  // Notifications Listener
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Wellness.notifyToDoItemCreated) {
+      _loadToDoItems();
+    } else if (name == Wellness.notifyToDoItemUpdated) {
+      _loadToDoItems();
+    } else if (name == Wellness.notifyToDoItemsDeleted) {
+      _loadToDoItems();
     }
   }
 }
@@ -504,19 +592,24 @@ class _ToDoItemCard extends StatefulWidget {
 }
 
 class _ToDoItemCardState extends State<_ToDoItemCard> {
+  bool _loading = false;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(color: widget.item.color, borderRadius: BorderRadius.all(Radius.circular(10))),
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          _buildCompletedWidget(color: widget.item.color),
-          Expanded(
-              child: Text(StringUtils.ensureNotEmpty(widget.item.name),
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold))),
-          GestureDetector(onTap: _onTapRemove, child: Image.asset('images/icon-x-orange.png', color: Styles().colors!.white))
-        ]));
+    return Stack(alignment: Alignment.center, children: [
+      Container(
+          decoration: BoxDecoration(color: widget.item.color, borderRadius: BorderRadius.all(Radius.circular(10))),
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            _buildCompletedWidget(color: widget.item.color),
+            Expanded(
+                child: Text(StringUtils.ensureNotEmpty(widget.item.name),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold))),
+            GestureDetector(onTap: _onTapRemove, child: Image.asset('images/icon-x-orange.png', color: Styles().colors!.white))
+          ])),
+      Visibility(visible: _loading, child: CircularProgressIndicator())
+    ]);
   }
 
   Widget _buildCompletedWidget({required Color color}) {
@@ -531,11 +624,44 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
   }
 
   void _onTapCompleted() {
-    //TBD: DD - implement
+    _setLoading(true);
+    widget.item.isCompleted = !widget.item.isCompleted;
+    Wellness().updateToDoItemCached(widget.item).then((success) {
+      if (!success) {
+        String msg = Localization().getStringEx('panel.wellness.todo.item.update.failed.msg', 'Failed to update To-Do item.');
+        AppAlert.showDialogResult(context, msg);
+      }
+      _setLoading(false);
+    });
   }
 
   void _onTapRemove() {
-    //TBD: DD - implement
+    AppAlert.showConfirmationDialog(
+        buildContext: context,
+        message: Localization()
+            .getStringEx('panel.wellness.todo.item.delete.confirmation.msg', 'Are sure that you want to delete this To-Do item?'),
+        positiveCallback: () => _deleteToDoItem());
+  }
+
+  void _deleteToDoItem() {
+    _setLoading(true);
+    Wellness().deleteToDoItemsCached([widget.item.id!]).then((success) {
+      late String msg;
+      if (success) {
+        msg = Localization().getStringEx('panel.wellness.todo.item.delete.succeeded.msg', 'To-Do item deleted successfully.');
+      } else {
+        msg = Localization().getStringEx('panel.wellness.todo.item.delete.failed.msg', 'Failed to delete To-Do item.');
+      }
+      AppAlert.showDialogResult(context, msg);
+      _setLoading(false);
+    });
+  }
+
+  void _setLoading(bool loading) {
+    _loading = loading;
+    if (mounted) {
+      setState(() {});
+    }
   }
 }
 

@@ -17,10 +17,12 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -37,11 +39,11 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
   ToDoCategory? _category;
   List<ToDoCategory>? _categories;
   TextEditingController _nameController = TextEditingController();
-  TextEditingController _locationController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   DateTime? _dueDate;
   TimeOfDay? _dueTime;
   List<DateTime>? _workDays;
+  ToDoItemLocation? _location;
   bool _categoriesDropDownVisible = false;
   bool _loading = false;
 
@@ -265,7 +267,6 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
     return Padding(
         padding: EdgeInsets.only(left: 5),
         child: Container(
-            padding: EdgeInsets.symmetric(vertical: 7),
             decoration: BoxDecoration(color: Styles().colors!.lightGray),
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
               Padding(
@@ -274,9 +275,11 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
                       style: TextStyle(fontSize: 11, color: Colors.black, fontFamily: Styles().fontFamilies!.regular))),
               GestureDetector(
                   onTap: () => _onTapRemoveWorkDay(date),
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 25, right: 10),
-                      child: Image.asset('images/icon-x-orange-small.png', color: Colors.black)))
+                  child: Container(
+                      color: Styles().colors!.lightGray,
+                      child: Padding(
+                          padding: EdgeInsets.only(left: 25, top: 7, right: 10, bottom: 7),
+                          child: Image.asset('images/icon-x-orange-small.png', color: Colors.black))))
             ])));
   }
 
@@ -287,7 +290,18 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
           Padding(
               padding: EdgeInsets.only(bottom: 5),
               child: _buildFieldLabel(label: Localization().getStringEx('panel.wellness.todo.item.location.field.label', 'LOCATION'))),
-          _buildInputField(controller: _locationController)
+          GestureDetector(
+              onTap: _onTapLocation,
+              child: Row(children: [
+                Expanded(
+                    child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                        decoration:
+                            BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
+                        child: Text(StringUtils.ensureNotEmpty(_formattedLocation),
+                            style:
+                                TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface))))
+              ]))
         ]));
   }
 
@@ -314,7 +328,7 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
         child: TextField(
             controller: controller,
             decoration: InputDecoration(border: InputBorder.none),
-            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)));
+            style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)));
   }
 
   Widget _buildSaveButton() {
@@ -345,32 +359,127 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
     }
   }
 
-  void _onTapDueDate() {
-    //TBD: DD - implement
+  void _onTapDueDate() async {
+    _hideKeyboard();
+    DateTime? resultDate = await _pickDate(initialDate: _dueDate);
+    if (resultDate != null) {
+      _dueDate = resultDate;
+      _updateState();
+    }
   }
 
-  void _onTapDueTime() {
+  void _onTapDueTime() async {
     if (_dueDate == null) {
       return;
     }
-    //TBD: DD - implement
+    _hideKeyboard();
+    TimeOfDay initialTime = _dueTime ?? TimeOfDay.now();
+    TimeOfDay? resultTime = await showTimePicker(context: context, initialTime: initialTime);
+    if (resultTime != null) {
+      _dueTime = resultTime;
+      _updateState();
+    }
+  }
+
+  void _onTapWorkDays() async {
+    DateTime? resultDate = await _pickDate(initialDate: _workDays?.last);
+    if ((resultDate != null) && !(_workDays?.contains(resultDate) ?? false)) {
+      if (_workDays == null) {
+        _workDays = <DateTime>[];
+      }
+      _workDays!.add(resultDate);
+      _workDays!.sort();
+      _updateState();
+    }
   }
 
   void _onTapRemoveWorkDay(DateTime date) {
-    //TBD: DD - implement
+    if (_workDays?.contains(date) ?? false) {
+      _workDays!.remove(date);
+      _updateState();
+    }
   }
 
-  void _onTapWorkDays() {
-    //TBD: DD - implement
+  void _onTapLocation() async {
+    _setLoading(true);
+    String? location = await NativeCommunicator().launchSelectLocation();
+    if (location != null) {
+      Map<String, dynamic>? locationSelectionResult = JsonUtils.decodeMap(location);
+      if (locationSelectionResult != null && locationSelectionResult.isNotEmpty) {
+        Map<String, dynamic>? locationData = locationSelectionResult["location"];
+        if (locationData != null) {
+          double? lat = JsonUtils.doubleValue(locationData['latitude']);
+          double? long = JsonUtils.doubleValue(locationData['longitude']);
+          _location = ToDoItemLocation(latitude: lat, longitude: long);
+        }
+      }
+    }
+    _setLoading(false);
+  }
+
+  Future<DateTime?> _pickDate({DateTime? initialDate}) async {
+    if (initialDate == null) {
+      initialDate = DateTime.now();
+    }
+    final int oneYearInDays = 365;
+    DateTime firstDate = DateTime.fromMillisecondsSinceEpoch(initialDate.subtract(Duration(days: oneYearInDays)).millisecondsSinceEpoch);
+    DateTime lastDate = DateTime.fromMillisecondsSinceEpoch(initialDate.add(Duration(days: oneYearInDays)).millisecondsSinceEpoch);
+    DateTime? resultDate = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: firstDate,
+        lastDate: lastDate,
+        builder: (BuildContext context, Widget? child) {
+          return Theme(data: ThemeData.light(), child: child!);
+        });
+    return resultDate;
   }
 
   void _onTapSave() {
-    //TBD: DD - implement
+    _hideKeyboard();
+    String name = _nameController.text;
+    if (StringUtils.isEmpty(name)) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.todo.item.empty.name.msg', 'Please, fill name.'));
+      return;
+    }
+    _setLoading(true);
+    bool hasDueTime = false;
+    if (_dueDate != null) {
+      if (_dueTime != null) {
+        hasDueTime = true;
+        _dueDate = DateTime(_dueDate!.year, _dueDate!.month, _dueDate!.day, _dueTime!.hour, _dueTime!.minute);
+      }
+    }
+    String? description = StringUtils.isNotEmpty(_descriptionController.text) ? _descriptionController.text : null;
+    ToDoItem item = ToDoItem(
+        name: name,
+        category: _category,
+        dueDateTimeUtc: _dueDate?.toUtc(),
+        hasDueTime: hasDueTime,
+        location: _location,
+        isCompleted: false,
+        description: description,
+        workDays: _formattedWorkDays,
+        reminderDateTimeUtc: _reminderDateTimeUtc);
+    Wellness().createToDoItemCached(item).then((success) {
+      late String msg;
+      if (success) {
+        msg = Localization().getStringEx('panel.wellness.todo.item.create.succeeded.msg', 'To-Do item created successfully.');
+      } else {
+        msg = Localization().getStringEx('panel.wellness.todo.item.create.failed.msg', 'Failed to create To-Do item.');
+      }
+      AppAlert.showDialogResult(context, msg).then((_) {
+        if (success) {
+          Navigator.of(context).pop();
+        }
+      });
+      _setLoading(false);
+    });
   }
 
   void _loadCategories() {
     _setLoading(true);
-    Wellness().loadToDoCategories().then((categories) {
+    Wellness().loadToDoCategoriesCached().then((categories) {
       _categories = categories;
       _setLoading(false);
     });
@@ -378,13 +487,21 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
 
   void _setLoading(bool loading) {
     _loading = loading;
+    _updateState();
+  }
+
+  void _hideKeyboard() {
+    FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  void _updateState() {
     if (mounted) {
       setState(() {});
     }
   }
 
   String? get _formattedDueDate {
-    return AppDateTime().formatDateTime(_dueDate, format: 'MM/dd/YY', ignoreTimeZone: true);
+    return AppDateTime().formatDateTime(_dueDate, format: 'MM/dd/yy', ignoreTimeZone: true);
   }
 
   String? get _formattedDueTime {
@@ -393,5 +510,42 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
     }
     DateTime time = DateTime(_dueDate!.year, _dueDate!.month, _dueDate!.day, _dueTime!.hour, _dueTime!.minute);
     return AppDateTime().formatDateTime(time, format: 'h:mm a', ignoreTimeZone: true);
+  }
+
+  String? get _formattedLocation {
+    if (_location != null) {
+      return '${_location?.latitude}, ${_location?.longitude}';
+    } else {
+      return null;
+    }
+  }
+
+  List<String>? get _formattedWorkDays {
+    if(CollectionUtils.isEmpty(_workDays)) {
+      return null;
+    }
+    List<String> stringList = <String>[];
+    for(DateTime day in _workDays!) {
+      String? formattedWorkDay = AppDateTime().formatDateTime(day, format: 'yyyy-MM-dd', ignoreTimeZone: true);
+      if(StringUtils.isNotEmpty(formattedWorkDay)) {
+        stringList.add(formattedWorkDay!);
+      }
+    }
+    return stringList;
+  }
+
+  DateTime? get _reminderDateTimeUtc {
+    if (_dueDate == null) {
+      return null;
+    }
+    ToDoCategoryReminderType? reminderType = _category?.reminderType;
+    if((reminderType == null) || (reminderType == ToDoCategoryReminderType.none)) {
+      return null;
+    }
+    // Do not set reminder date if there is no due date or the reminder type is none.
+    int dayDiff = (reminderType == ToDoCategoryReminderType.night_before) ? -1 : 0;
+    int hour = (reminderType == ToDoCategoryReminderType.night_before) ? 17 : 9; // predefined day hours
+    DateTime reminderDateTime = DateTime(_dueDate!.year, _dueDate!.month, (_dueDate!.day + dayDiff), hour);
+    return reminderDateTime.toUtc();
   }
 }
