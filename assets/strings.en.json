@@ -1693,6 +1693,11 @@
     "panel.wellness.todo.item.delete.succeeded.msg": "To-Do item deleted successfully.",
     "panel.wellness.todo.item.delete.failed.msg": "Failed to delete To-Do item.",
     "panel.wellness.todo.item.update.failed.msg": "Failed to update To-Do item.",
+    "panel.wellness.todo.items.no_items.msg": "There are no To-Do items.",
+    "panel.wellness.todo.item.completed.delete.confirmation.msg": "Are you sure that you want to delete all completed To-Do items?",
+    "panel.wellness.todo.items.no_completed_items.msg": "There are no completed To-Do items.",
+    "panel.wellness.todo.items.completed.clear.succeeded.msg": "Completed To-Do items are deleted successfully.",
+    "panel.wellness.todo.items.completed.clear.failed.msg": "Failed to delete completed To-Do items.",
 
     "panel.wellness.resources.header.label": "Wellness Resources",
     "panel.wellness.resources.appointment.button": "I want to make an appointment",

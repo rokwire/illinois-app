@@ -110,17 +110,17 @@ class AppAlert {
                 child: Text(
                     StringUtils.ensureNotEmpty(positiveButtonLabel, defaultValue: Localization().getStringEx('dialog.yes.title', 'Yes'))),
                 onPressed: () {
-                  positiveCallback();
                   Navigator.pop(context, true);
+                  positiveCallback();
                 }),
             TextButton(
                 child: Text(
                     StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx('dialog.no.title', 'No'))),
                 onPressed: () {
+                  Navigator.pop(context, true);
                   if (negativeCallback != null) {
                     negativeCallback();
                   }
-                  Navigator.pop(context, true);
                 })
           ]);
         });

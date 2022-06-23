@@ -1692,6 +1692,11 @@
     "panel.wellness.todo.item.delete.succeeded.msg": "已成功刪除待辦事項.",
     "panel.wellness.todo.item.delete.failed.msg": "刪除待辦事項失敗.",
     "panel.wellness.todo.item.update.failed.msg": "未能更新待辦事項.",
+    "panel.wellness.todo.items.no_items.msg": "沒有待辦事項.",
+    "panel.wellness.todo.item.completed.delete.confirmation.msg": "您確定要刪除所有已完成的待辦事項嗎?",
+    "panel.wellness.todo.items.no_completed_items.msg": "沒有已完成的待辦事項.",
+    "panel.wellness.todo.items.completed.clear.succeeded.msg": "已完成的待辦事項已成功刪除.",
+    "panel.wellness.todo.items.completed.clear.failed.msg": "無法刪除已完成的待辦事項.",
 
     "panel.wellness.resources.header.label": "健康資源",
     "panel.wellness.resources.appointment.button": "我想預約",

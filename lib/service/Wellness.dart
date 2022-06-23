@@ -128,23 +128,24 @@ class Wellness with Service {
     return true;
   }
 
-  Future<bool> deleteToDoItemCached(String itemId) async {
-    if (_toDoItems == null) {
+  Future<bool> deleteToDoItemsCached(List<String>? idList) async {
+    if (CollectionUtils.isEmpty(_toDoItems) || CollectionUtils.isEmpty(idList)) {
       return false;
     }
-    ToDoItem? itemToDelete;
+    List<ToDoItem> itemsToDelete = <ToDoItem>[];
     for (ToDoItem item in _toDoItems!) {
-      if (item.id == itemId) {
-        itemToDelete = item;
-        break;
+      if (idList!.contains(item.id)) {
+        itemsToDelete.add(item);
       }
     }
-    if (itemToDelete != null) {
-      _toDoItems!.remove(itemToDelete);
+    if (CollectionUtils.isNotEmpty(itemsToDelete)) {
+      for (ToDoItem itemToDelete in itemsToDelete) {
+        _toDoItems!.remove(itemToDelete);
+      }
       NotificationService().notify(notifyToDoItemsDeleted);
       return true;
     } else {
-      Log.w('No such item');
+      Log.w('No items');
       return false;
     }
   }

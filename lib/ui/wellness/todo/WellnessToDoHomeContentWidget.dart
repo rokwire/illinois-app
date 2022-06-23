@@ -385,8 +385,41 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _onTapClearCompletedItems() {
-    //TBD: DD - implement
-    AppAlert.showDialogResult(context, 'Not Implemented');
+    if (CollectionUtils.isEmpty(_todoItems)) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.todo.items.no_items.msg', 'There are no To-Do items.'));
+      return;
+    }
+    AppAlert.showConfirmationDialog(
+        buildContext: context,
+        message: Localization().getStringEx(
+            'panel.wellness.todo.item.completed.delete.confirmation.msg', 'Are you sure that you want to delete all completed To-Do items?'),
+        positiveCallback: () => _deleteCompletedItems());
+  }
+
+  void _deleteCompletedItems() {
+    List<String> completedItemsIds = <String>[];
+    for (ToDoItem item in _todoItems!) {
+      if (item.isCompleted) {
+        completedItemsIds.add(item.id!);
+      }
+    }
+    if (CollectionUtils.isEmpty(completedItemsIds)) {
+      AppAlert.showDialogResult(
+          context, Localization().getStringEx('panel.wellness.todo.items.no_completed_items.msg', 'There are no completed To-Do items.'));
+      return;
+    }
+    _setItemsLoading(true);
+    Wellness().deleteToDoItemsCached(completedItemsIds).then((success) {
+      late String msg;
+      if (success) {
+        msg = Localization()
+            .getStringEx('panel.wellness.todo.items.completed.clear.succeeded.msg', 'Completed To-Do items are deleted successfully.');
+      } else {
+        msg = Localization().getStringEx('panel.wellness.todo.items.completed.clear.failed.msg', 'Failed to delete completed To-Do items.');
+      }
+      AppAlert.showDialogResult(context, msg);
+      _setItemsLoading(false);
+    });
   }
 
   void _onTapPreviousWeek() {
@@ -612,7 +645,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
 
   void _deleteToDoItem() {
     _setLoading(true);
-    Wellness().deleteToDoItemCached(widget.item.id!).then((success) {
+    Wellness().deleteToDoItemsCached([widget.item.id!]).then((success) {
       late String msg;
       if (success) {
         msg = Localization().getStringEx('panel.wellness.todo.item.delete.succeeded.msg', 'To-Do item deleted successfully.');
