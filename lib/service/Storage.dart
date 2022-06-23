@@ -487,6 +487,16 @@ class Storage extends rokwire.Storage {
   bool? get homeWelcomeVisible => getBoolWithName(homeWelcomeVisibleKey);
   set homeWelcomeVisible(bool? value) => setBoolWithName(homeWelcomeVisibleKey, value);
 
+  // Home Campus Reminders
+
+  String get homeCampusRemindersCategoryKey => 'edu.illinois.rokwire.home.campus_reminders.category';
+  String? get homeCampusRemindersCategory => getStringWithName(homeCampusRemindersCategoryKey);
+  set homeCampusRemindersCategory(String? value) => setStringWithName(homeCampusRemindersCategoryKey, value);
+
+  String get homeCampusRemindersCategoryTimeKey => 'edu.illinois.rokwire.home.campus_reminders.category.time';
+  int? get homeCampusRemindersCategoryTime => getIntWithName(homeCampusRemindersCategoryTimeKey);
+  set homeCampusRemindersCategoryTime(int? value) => setIntWithName(homeCampusRemindersCategoryTimeKey, value);
+
   //Wellness Rings
   static const String _userWellnessRings = 'group_members_selection';
 

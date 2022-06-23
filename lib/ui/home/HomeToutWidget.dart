@@ -53,7 +53,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
     _imageDateTime = DateTime.fromMillisecondsSinceEpoch(Storage().homeToutImageTime ?? 0);
     if ((_imageUrl == null) || (_imageDateTime == null) || _shouldUpdateImage) {
       Storage().homeToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
-      Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).microsecondsSinceEpoch;
+      Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).millisecondsSinceEpoch;
       NotificationService().notify(HomeToutWidget.notifyImageUpdate);
     }
 
@@ -177,7 +177,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
     String? greeting = AppDateTimeUtils.getDayGreeting();
     if (mounted && ((_greeting != greeting) || _shouldUpdateImage)) {
       Storage().homeToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
-      Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).microsecondsSinceEpoch;
+      Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).millisecondsSinceEpoch;
       NotificationService().notify(HomeToutWidget.notifyImageUpdate);
 
       _greeting = greeting;
@@ -190,7 +190,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
 
   void _refresh() {
     Storage().homeToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.home.tout');
-    Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).microsecondsSinceEpoch;
+    Storage().homeToutImageTime = (_imageDateTime = DateTime.now()).millisecondsSinceEpoch;
     NotificationService().notify(HomeToutWidget.notifyImageUpdate);
     
     _greeting = AppDateTimeUtils.getDayGreeting();

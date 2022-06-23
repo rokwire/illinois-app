@@ -159,6 +159,7 @@ class Config extends rokwire.Config {
   String? get canvasAssignmentDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['assignment_format']);
 
   // Getters: settings
+  int  get homeCampusGuideCount      => JsonUtils.intValue(settings['homeCampusGuideCount']) ?? 3;
   int  get homeCampusHighlightsCount => JsonUtils.intValue(settings['homeCampusHighlightsCount']) ?? 3;
   int  get homeCampusRemindersCount  => JsonUtils.intValue(settings['homeCampusRemindersCount']) ?? 3;
   int  get homeFavoriteItemsCount    => JsonUtils.intValue(settings['homeFavoriteItemsCount']) ?? 3;
@@ -168,6 +169,7 @@ class Config extends rokwire.Config {
   int  get homeRecentItemsCount      => JsonUtils.intValue(settings['homeRecentItemsCount']) ?? 3;
   int  get homeUpcomingEventsCount   => JsonUtils.intValue(settings['homeUpcomingEventsCount']) ?? 5;
   int  get recentItemsCount          => JsonUtils.intValue(settings['recentItemsCount']) ?? 32;
+  int  get homePollsCount            => JsonUtils.intValue(settings['homePollsCount']) ?? 3;
   String get appPrivacyVersion       => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');
 
   @override

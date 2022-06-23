@@ -2503,6 +2503,11 @@
     "widget.home.athletics_teams.button.all.title": "View All",
     "widget.home.athletics_teams.button.all.hint": "Tap to view all teams",
 
+    "widget.home.campus_guide.text.title": "Campus Guide",
+    "widget.home.campus_guide.content.empty": "Campus Guide content not available.",
+    "widget.home.campus_guide.button.all.title": "View All",
+    "widget.home.campus_guide.button.all.hint": "Tap to view the complete Campus Guide",
+
     "widget.home.tout.customize.label": "Customize",
     "widget.home.tout.button.info.label": "Info",
     "widget.home.tout.button.info.hint": "Tap for more info",
