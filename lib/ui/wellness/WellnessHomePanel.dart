@@ -19,6 +19,7 @@ import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessDailyTipsContentWidget.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -174,4 +175,19 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         return Localization().getStringEx('panel.wellness.section.resources.label', 'Wellness Resources');
     }
   }
+}
+
+// WellnessFavorite
+
+class WellnessFavorite implements Favorite {
+  final String? id;
+  final String? category;
+  WellnessFavorite(this.id, {this.category});
+
+  bool operator == (o) => o is WellnessFavorite && o.id == id && o.category == category;
+  int get hashCode => (id?.hashCode ?? 0) ^ (category?.hashCode ?? 0);
+
+  static String favoriteKeyName({String? category}) => (category != null) ? "wellness.$category.widgetIds" : "wellness.widgetIds";
+  @override String get favoriteKey => favoriteKeyName(category: category);
+  @override String? get favoriteId => id;
 }

@@ -20,37 +20,62 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class WellnessResourcesContentWidget extends StatefulWidget {
+  final String wellnessCategory = 'resources';
   WellnessResourcesContentWidget();
 
   @override
   State<WellnessResourcesContentWidget> createState() => _WellnessResourcesContentWidgetState();
 }
 
-class _WellnessResourcesContentWidgetState extends State<WellnessResourcesContentWidget> {
+class _WellnessResourcesContentWidgetState extends State<WellnessResourcesContentWidget> implements NotificationsListener {
 
   List<dynamic>? _commands;
   Map<String, dynamic>? _strings;
 
   @override
   void initState() {
-    Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.resources']) ;
-    _commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
-    _strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      Assets.notifyChanged,
+    ]);
+    _initContent();
     super.initState();
   }
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     super.dispose();
   }
   
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Assets.notifyChanged) {
+      if (mounted) {
+        setState(() {
+          _initContent();
+        });
+      }
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return _buildContent();
@@ -70,7 +95,6 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Text(Localization().getStringEx('panel.wellness.resources.header.label', 'Wellness Resources'),
               style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)),
-          HomeFavoriteStar(selected: false, style: HomeFavoriteStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
         ]));
   }
 
@@ -82,8 +106,10 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
         if (command != null) {
           String? type = JsonUtils.stringValue(command['type']);
           if (type == 'large') {
+            String? id = JsonUtils.stringValue(command['id']);
             widgetList.add(_buildLargeButton(
-              label: _getString(JsonUtils.stringValue(command['id'])),
+              label: _getString(id),
+              favorite: WellnessFavorite(id, category: widget.wellnessCategory),
               hasExternalLink: UrlUtils.isWebScheme(JsonUtils.stringValue(command['url'])),
               onTap: () => _onCommand(command),
             ));
@@ -91,11 +117,13 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
         }
       }
     }
+
+    widgetList.add(Container(height: 16,));
     
     return Column(children: widgetList);
   }
 
-  Widget _buildLargeButton({String? label, bool hasExternalLink = false, void Function()? onTap}) {
+  Widget _buildLargeButton({String? label, Favorite? favorite, bool hasExternalLink = false, void Function()? onTap}) {
     return Padding(padding: EdgeInsets.only(bottom: 10), child:
       Container(decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.circular(5)), child:
         InkWell(onTap: onTap, child:
@@ -109,7 +137,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
               hasExternalLink ? Padding(padding: EdgeInsets.only(left: 6, top: 18, bottom: 18), child:
                 Image.asset('images/external-link.png', color: Styles().colors!.mediumGray)
               ) : Container(),
-              HomeFavoriteButton(style: HomeFavoriteStyle.Button, padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),)
+              HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),)
             ]),
           ),
         ),
@@ -128,8 +156,10 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
             if (widgetList.isNotEmpty) {
               widgetList.add(Divider(color: Styles().colors!.surfaceAccent, height: 1,));
             }
+            String? id = JsonUtils.stringValue(command['id']);
             widgetList.add(_buildRegularButton(
-              label: _getString(JsonUtils.stringValue(command['id'])),
+              label: _getString(id),
+              favorite: WellnessFavorite(id, category: widget.wellnessCategory),
               hasExternalLink: UrlUtils.isWebScheme(JsonUtils.stringValue(command['url'])),
               onTap: () => _onCommand(command),
             ));
@@ -139,14 +169,15 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
     }
 
     return Container(decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: BorderRadius.circular(5)), child:
-    Column(children: widgetList));
+      Column(children: widgetList)
+    );
 
   }
 
-  Widget _buildRegularButton({String? label, bool hasExternalLink = true, void Function()? onTap}) {
+  Widget _buildRegularButton({String? label, Favorite? favorite, bool hasExternalLink = true, void Function()? onTap}) {
     return InkWell(onTap: onTap, child:
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        HomeFavoriteButton(style: HomeFavoriteStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)),
+        HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(vertical: 17), child:
             Text(label ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16))
@@ -160,6 +191,12 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
         ),
       ]),
     );
+  }
+
+  void _initContent() {
+    Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${widget.wellnessCategory}']) ;
+    _commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
+    _strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
   }
 
   String? _getString(String? key, {String? languageCode}) {
