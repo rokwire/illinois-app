@@ -17,9 +17,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'Config.dart';
 
-//TBD Update content in gies.json to be up to date with the BB - rename to "gies" and bbcategory +suffix = _checklist
-//TBD Upload content in uiuc_student.json to the BB - rename to "new_student" and bbcategory +suffix = _checklist
-
 abstract class CheckList with Service implements NotificationsListener{
   static const String notifyPageChanged  = "edu.illinois.rokwire.gies.service.page.changed";
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
@@ -28,13 +25,13 @@ abstract class CheckList with Service implements NotificationsListener{
   static const String notifyExecuteCustomWidgetAction  = "edu.illinois.rokwire.gies.service.content.execute.widget.action";
 
   //Custom actions
-  static const String widgetActionApproveUserInfo  = "edu.illinois.rokwire.checklist.gies.widget.action.approve.info";
+  static const String widgetActionRequestGroup  = "edu.illinois.rokwire.checklist.gies.widget.action.request.group";
 
   // Singleton instance wrapper
   factory CheckList(String serviceName){
     switch (serviceName){
       case "gies" : return _GiesCheckListInstanceWrapper();
-      case "uiuc_student" : return _StudentCheckListInstanceWrapper();
+      case "new_student" : return _StudentCheckListInstanceWrapper();
     }
     return _GiesCheckListInstanceWrapper(); //default
   }
@@ -58,7 +55,7 @@ abstract class CheckList with Service implements NotificationsListener{
   DateTime? _pausedDateTime;
 
   //custom widgets data
-  Map<String, dynamic>? _studentInfo; //TBD load
+  Map<String, dynamic>? _studentInfo;
 
   // String checklistName();
 
@@ -153,14 +150,15 @@ abstract class CheckList with Service implements NotificationsListener{
   Future<String?> _loadContentStringFromNet() async {
     //TBD REMOVE
     //TMP:
-    if(_contentName == "uiuc_student"){
-      return AppBundle.loadString('assets/uiucStudent.json');
+    if(_contentName == "new_student"){
+      return AppBundle.loadString('assets/newStudent.json');
     } else if(_contentName == "gies"){
       return AppBundle.loadString('assets/gies.json');
     }
 
     try {
       List<dynamic> result;
+      //TBD rename bbcategory to _contentName +suffix = _checklist
       Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': [_contentName]}), auth: Auth2());
       List<dynamic>? responseList = (response?.statusCode == 200) ? JsonUtils.decodeList(response?.body)  : null;
       if (responseList != null) {
@@ -206,8 +204,7 @@ abstract class CheckList with Service implements NotificationsListener{
       return null;
     }
     String? contactInfoUrl = "${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}";
-    // ignore: unused_label
-    TMP: contactInfoUrl+="&mode=1"; //TBD remove Workaround after we have test account to test with
+    // TMP: contactInfoUrl+="&mode=1"; //Workaround to pass dummy data until we have test account to test with
     String? token = Auth2().uiucToken?.accessToken;
     // String? token = Auth2().token?.accessToken;
 
@@ -362,7 +359,7 @@ abstract class CheckList with Service implements NotificationsListener{
 
   void _processWidgetAction(String actionName, Map<String, dynamic>? params){
     switch(actionName){
-      case widgetActionApproveUserInfo : {
+      case widgetActionRequestGroup : {
         _joinApprovalGroup(params);
         break;
       }
@@ -702,5 +699,5 @@ class _StudentCheckListInstanceWrapper extends CheckList{
 
   factory _StudentCheckListInstanceWrapper() => _instance;
 
-  _StudentCheckListInstanceWrapper._internal() : super.fromName("uiuc_student");
+  _StudentCheckListInstanceWrapper._internal() : super.fromName("new_student");
 }

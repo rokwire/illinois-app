@@ -46,7 +46,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     implements NotificationsListener {
 
   static final String _giesChecklistContentKey = 'gies';
-  static final String _uiucChecklistContentKey = 'uiuc_student';
+  static final String _uiucChecklistContentKey = 'new_student';
 
   static AcademicsContent? _lastSelectedContent;
   late AcademicsContent _selectedContent;

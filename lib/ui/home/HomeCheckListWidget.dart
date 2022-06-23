@@ -35,7 +35,7 @@ class HomeCheckListWidget extends StatefulWidget{
     if (contentKey == "gies") {
       return Localization().getStringEx( 'widget.checklist.gies.title', 'iDegrees New Student Checklist');
     }
-    else if (contentKey == "uiuc_student") {
+    else if (contentKey == "new_student") {
       return Localization().getStringEx( 'widget.checklist.uiuc.title', 'New Student Checklist');
     }
     else {
