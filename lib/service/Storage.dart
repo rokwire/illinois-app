@@ -487,6 +487,16 @@ class Storage extends rokwire.Storage {
   bool? get homeWelcomeVisible => getBoolWithName(homeWelcomeVisibleKey);
   set homeWelcomeVisible(bool? value) => setBoolWithName(homeWelcomeVisibleKey, value);
 
+  // Browse Tout
+
+  String get browseToutImageUrlKey => 'edu.illinois.rokwire.browse.tout.image.url';
+  String? get browseToutImageUrl => getStringWithName(browseToutImageUrlKey);
+  set browseToutImageUrl(String? value) => setStringWithName(browseToutImageUrlKey, value);
+
+  String get browseToutImageTimeKey => 'edu.illinois.rokwire.browse.tout.image.time';
+  int? get browseToutImageTime => getIntWithName(browseToutImageTimeKey);
+  set browseToutImageTime(int? value) => setIntWithName(browseToutImageTimeKey, value);
+
   // Home Campus Reminders
 
   String get homeCampusRemindersCategoryKey => 'edu.illinois.rokwire.home.campus_reminders.category';
@@ -498,17 +508,10 @@ class Storage extends rokwire.Storage {
   set homeCampusRemindersCategoryTime(int? value) => setIntWithName(homeCampusRemindersCategoryTimeKey, value);
 
   //Wellness Rings
+  
   static const String _userWellnessRings = 'group_members_selection';
-
-  set userWellnessRings(List<WellnessRingData>? wellnessRings) {
-    setStringWithName(_userWellnessRings, JsonUtils.encode(wellnessRings));
-  }
-
-  List<WellnessRingData>? get userWellnessRings {
-    List<dynamic>? ringsData = JsonUtils.decodeList(
-        getStringWithName(_userWellnessRings));
-    return WellnessRingData.listFromJson(ringsData);
-  }
+  List<WellnessRingData>? get userWellnessRings => WellnessRingData.listFromJson(JsonUtils.decodeList(getStringWithName(_userWellnessRings)));
+  set userWellnessRings(List<WellnessRingData>? wellnessRings) => setStringWithName(_userWellnessRings, JsonUtils.encode(wellnessRings));
 
   // Wellness ToDo
 
