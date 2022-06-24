@@ -153,11 +153,11 @@ class Wellness with Service {
   // Remove to here - end
 
   Future<List<ToDoCategory>?> loadToDoCategories() async {
-    if (isEnabled) {
+    if (!isEnabled) {
       Log.w('Failed to load wellness todo categories. Missing wellness url.');
       return null;
     }
-    String url = '${Config().wellnessUrl}/todo/categories';
+    String url = '${Config().wellnessUrl}/api/user/todo_categories';
     http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -171,11 +171,11 @@ class Wellness with Service {
   }
 
   Future<bool> createToDoCategory(ToDoCategory category) async {
-    if (isEnabled) {
+    if (!isEnabled) {
       Log.w('Failed to create wellness todo category. Missing wellness url.');
       return false;
     }
-    String url = '${Config().wellnessUrl}/todo/categories';
+    String url = '${Config().wellnessUrl}/api/user/todo_categories';
     String? categoryJson = JsonUtils.encode(category);
     http.Response? response = await Network().post(url, auth: Auth2(), body: categoryJson);
     int? responseCode = response?.statusCode;
@@ -191,11 +191,11 @@ class Wellness with Service {
   }
 
   Future<bool> updateToDoCategory(ToDoCategory category) async {
-    if (isEnabled) {
+    if (!isEnabled) {
       Log.w('Failed to update wellness todo category. Missing wellness url.');
       return false;
     }
-    String url = '${Config().wellnessUrl}/todo/categories/${category.id}';
+    String url = '${Config().wellnessUrl}/api/user/todo_categories/${category.id}';
     String? categoryJson = JsonUtils.encode(category);
     http.Response? response = await Network().put(url, auth: Auth2(), body: categoryJson);
     int? responseCode = response?.statusCode;
@@ -211,11 +211,11 @@ class Wellness with Service {
   }
 
   Future<bool> deleteToDoCategory(String categoryId) async {
-    if (isEnabled) {
+    if (!isEnabled) {
       Log.w('Failed to delete wellness todo category. Missing wellness url.');
       return false;
     }
-    String url = '${Config().wellnessUrl}/todo/categories/$categoryId';
+    String url = '${Config().wellnessUrl}/api/user/todo_categories/$categoryId';
     http.Response? response = await Network().delete(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -230,7 +230,7 @@ class Wellness with Service {
   }
 
   Future<bool> createToDoItem(ToDoItem item) async {
-    if (isEnabled) {
+    if (!isEnabled) {
       Log.w('Failed to create wellness todo item. Missing wellness url.');
       return false;
     }
@@ -250,7 +250,7 @@ class Wellness with Service {
   }
 
   Future<List<ToDoItem>?> loadToDoItems() async {
-    if (isEnabled) {
+    if (!isEnabled) {
       Log.w('Failed to load wellness todo items. Missing wellness url.');
       return null;
     }
