@@ -213,10 +213,10 @@ abstract class CheckList with Service implements NotificationsListener{
       Log.e('Missing gateway url.');
       return null;
     }
-    String? contactInfoUrl = "${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}";
-    // TMP: contactInfoUrl+="&mode=1"; //Workaround to pass dummy data until we have test account to test with
+    String? contactInfoUrl = "${Config().gatewayUrl}/person/contactinfo?id=";
+        contactInfoUrl+="${Auth2().uin}";
+        // contactInfoUrl+="123456789"; //Workaround to return dummy data
     String? token = Auth2().uiucToken?.accessToken;
-    // String? token = Auth2().token?.accessToken;
 
     Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: {"External-Authorization":token});
     int? responseCode = response?.statusCode;
