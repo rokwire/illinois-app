@@ -1674,6 +1674,9 @@
 	"panel.wellness.categories.manage.category.create.failed.msg": "創建類別失敗.",
 	"panel.wellness.categories.manage.category.delete.succeeded.msg": "類別刪除成功.",
 	"panel.wellness.categories.manage.category.delete.failed.msg": "刪除類別失敗.",
+    "panel.wellness.categories.manage.category.delete.confirmation.msg": "確定要刪除此類別?",
+    "panel.wellness.categories.manage.color.pick.cancel.button": "取消",
+    "panel.wellness.categories.manage.color.pick.select.button": "選擇",
 
 	"panel.wellness.todo.item.add.label": "添加項目",
 	"panel.wellness.todo.item.name.field.label": "項目名",

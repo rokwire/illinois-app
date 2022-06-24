@@ -1673,6 +1673,8 @@
     "panel.wellness.categories.manage.category.delete.succeeded.msg": "Categoría eliminada con éxito.",
     "panel.wellness.categories.manage.category.delete.failed.msg": "Error al eliminar la categoría.",
     "panel.wellness.categories.manage.category.delete.confirmation.msg": "Está seguro de que desea eliminar esta categoría?",
+    "panel.wellness.categories.manage.color.pick.cancel.button": "Cancelar",
+    "panel.wellness.categories.manage.color.pick.select.button": "Seleccione",
 
     "panel.wellness.todo.item.add.label": "Agregar un artículo",
     "panel.wellness.todo.item.name.field.label": "NOMBRE DEL ÁRTICULO",
