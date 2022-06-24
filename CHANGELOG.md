@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated wellness resources [#1820](https://github.com/rokwire/illinois-app/issues/1820).
 - Updated GIES content [#1749](https://github.com/rokwire/illinois-app/issues/1749).
 - Updated home and browse tout images [#1822](https://github.com/rokwire/illinois-app/issues/1822).
+### Added
+- Wellness ToDo List - possibility for overriding item reminder and caegory color picker [#1689](https://github.com/rokwire/illinois-app/issues/1689).
 
 ## [4.0.36] - 2022-06-23
 ### Added

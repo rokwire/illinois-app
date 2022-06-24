@@ -1673,6 +1673,8 @@
     "panel.wellness.categories.manage.category.delete.succeeded.msg": "Categoría eliminada con éxito.",
     "panel.wellness.categories.manage.category.delete.failed.msg": "Error al eliminar la categoría.",
     "panel.wellness.categories.manage.category.delete.confirmation.msg": "Está seguro de que desea eliminar esta categoría?",
+    "panel.wellness.categories.manage.color.pick.cancel.button": "Cancelar",
+    "panel.wellness.categories.manage.color.pick.select.button": "Seleccione",
 
     "panel.wellness.todo.item.add.label": "Agregar un artículo",
     "panel.wellness.todo.item.name.field.label": "NOMBRE DEL ÁRTICULO",
@@ -1696,6 +1698,8 @@
     "panel.wellness.todo.items.no_completed_items.msg": "No hay tareas pendientes completadas.",
     "panel.wellness.todo.items.completed.clear.succeeded.msg": "Los elementos pendientes completados se eliminan con éxito.",
     "panel.wellness.todo.items.completed.clear.failed.msg": "Error al eliminar los elementos pendientes completados.",
+    "panel.wellness.todo.items.reminder.set.button": "Establecer recordatorio",
+    "panel.wellness.todo.items.reminder.set.failed.msg": "No se pudo configurar el recordatorio.",
 
     "panel.wellness.resources.header.label": "Recursos de bienestar",
     "panel.wellness.resources.button.all.title": "View App",

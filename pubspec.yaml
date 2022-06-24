@@ -59,6 +59,7 @@ dependencies:
   just_audio: ^0.9.21
   flutter_barcode_scanner: ^2.0.0
   confetti: ^0.6.0
+  flutter_colorpicker: ^1.0.3
 
   rokwire_plugin:
     # When depending on this package from a real application you should use:

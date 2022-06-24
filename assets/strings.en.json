@@ -1676,6 +1676,8 @@
     "panel.wellness.categories.manage.category.delete.succeeded.msg": "Category deleted successfully.",
     "panel.wellness.categories.manage.category.delete.failed.msg": "Failed to delete category.",
     "panel.wellness.categories.manage.category.delete.confirmation.msg": "Are sure that you want to delete this category?",
+    "panel.wellness.categories.manage.color.pick.cancel.button": "Cancel",
+    "panel.wellness.categories.manage.color.pick.select.button": "Select",
 
     "panel.wellness.todo.item.add.label": "Add an Item",
     "panel.wellness.todo.item.name.field.label": "ITEM NAME",
@@ -1699,6 +1701,8 @@
     "panel.wellness.todo.items.no_completed_items.msg": "There are no completed To-Do items.",
     "panel.wellness.todo.items.completed.clear.succeeded.msg": "Completed To-Do items are deleted successfully.",
     "panel.wellness.todo.items.completed.clear.failed.msg": "Failed to delete completed To-Do items.",
+    "panel.wellness.todo.items.reminder.set.button": "Set Reminder",
+    "panel.wellness.todo.items.reminder.set.failed.msg": "Failed to set reminder.",
 
     "panel.wellness.resources.header.label": "Wellness Resources",
     "panel.wellness.resources.button.all.title": "View App",

@@ -436,8 +436,11 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     _updateState();
   }
 
-  void _onTapCalendarItem(ToDoItem? item) {
-    //TBD: DD - implement
+  void _onTapCalendarItem(ToDoItem? item) async {
+    if (item == null) {
+      return;
+    }
+    AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.zero, contentWidget: _ToDoItemReminderDialog(item: item));
   }
 
   void _onTapManageCategories() {
@@ -723,5 +726,160 @@ class _TabButton extends StatelessWidget {
       case _TabButtonPosition.last:
         return Border.fromBorderSide(borderSide);
     }
+  }
+}
+
+class _ToDoItemReminderDialog extends StatefulWidget {
+  final ToDoItem item;
+  _ToDoItemReminderDialog({required this.item});
+
+  @override
+  State<_ToDoItemReminderDialog> createState() => _ToDoItemReminderDialogState();
+
+}
+class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
+  late ToDoItem _item;
+  late DateTime _reminderDateTime;
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _item = widget.item;
+    _reminderDateTime = AppDateTime().getDeviceTimeFromUtcTime(_item.reminderDateTimeUtc) ?? _item.dueDateTime!;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(mainAxisSize: MainAxisSize.min, children: [
+      Stack(children: [
+        Align(
+            alignment: Alignment.topRight,
+            child: GestureDetector(
+                onTap: _onTapCloseEditReminderDialog,
+                child: Container(
+                    color: Colors.transparent,
+                    child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png'))))),
+        Padding(
+            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+            child: Center(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Expanded(
+                    child: Text(StringUtils.ensureNotEmpty(_item.name),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 4,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary)))
+              ]),
+              GestureDetector(
+                  onTap: _onTapPickReminderDate,
+                  child: Container(
+                      color: Colors.transparent,
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Text(StringUtils.ensureNotEmpty(_formattedDate),
+                              style: TextStyle(
+                                  fontSize: 14, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular))))),
+              GestureDetector(
+                  onTap: _onTapPickReminderTime,
+                  child: Container(
+                      color: Colors.transparent,
+                      child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Text(StringUtils.ensureNotEmpty(_formattedTime),
+                              style: TextStyle(
+                                  fontSize: 36, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold))))),
+              Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: RoundedButton(
+                      label: Localization().getStringEx('panel.wellness.todo.items.reminder.set.button', 'Set Reminder'),
+                      onTap: _onTapSetReminder,
+                      contentWeight: 0,
+                      progress: _loading,
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10)))
+            ])))
+      ])
+    ]);
+  }
+
+  void _onTapPickReminderDate() {
+    if (_loading) {
+      return;
+    }
+    final int oneYearInDays = 365;
+    DateTime firstDate =
+        DateTime.fromMillisecondsSinceEpoch(_reminderDateTime.subtract(Duration(days: oneYearInDays)).millisecondsSinceEpoch);
+    DateTime lastDate = DateTime.fromMillisecondsSinceEpoch(_reminderDateTime.add(Duration(days: oneYearInDays)).millisecondsSinceEpoch);
+    showDatePicker(
+        context: context,
+        initialDate: _reminderDateTime,
+        firstDate: firstDate,
+        lastDate: lastDate,
+        builder: (BuildContext context, Widget? child) {
+          return Theme(data: ThemeData.light(), child: child!);
+        }).then((resultDate) {
+      if (resultDate != null) {
+        _reminderDateTime = resultDate;
+        _updateState();
+      }
+    });
+  }
+
+  void _onTapPickReminderTime() {
+    if (_loading) {
+      return;
+    }
+    TimeOfDay initialTime = TimeOfDay(hour: _reminderDateTime.hour, minute: _reminderDateTime.minute);
+    showTimePicker(context: context, initialTime: initialTime).then((resultTime) {
+      if (resultTime != null) {
+        _reminderDateTime =
+            DateTime(_reminderDateTime.year, _reminderDateTime.month, _reminderDateTime.day, resultTime.hour, resultTime.minute);
+        _updateState();
+      }
+    });
+  }
+
+  void _onTapSetReminder() {
+    if (_loading) {
+      return;
+    }
+    _setLoading(true);
+    _item.reminderDateTimeUtc = _reminderDateTime.toUtc();
+    Wellness().updateToDoItemCached(_item).then((success) {
+      _setLoading(false);
+      if (!success) {
+        String msg = Localization().getStringEx('panel.wellness.todo.items.reminder.set.failed.msg', 'Failed to set reminder.');
+        AppAlert.showDialogResult(context, msg);
+      } else {
+        Navigator.of(context).pop(true);
+      }
+    });
+  }
+
+  void _onTapCloseEditReminderDialog() {
+    if(_loading) {
+      return;
+    }
+    Navigator.of(context).pop(true);
+  }
+
+  void _setLoading(bool loading) {
+    _loading = loading;
+    _updateState();
+  }
+
+  void _updateState() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  String get _formattedDate {
+    return AppDateTime().formatDateTime(_reminderDateTime, format: 'EEEE, MM/dd', ignoreTimeZone: true)!;
+  }
+
+  String get _formattedTime {
+    return AppDateTime().formatDateTime(_reminderDateTime, format: 'hh : mm a', ignoreTimeZone: true)!;
   }
 }

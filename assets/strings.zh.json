@@ -1674,6 +1674,9 @@
 	"panel.wellness.categories.manage.category.create.failed.msg": "創建類別失敗.",
 	"panel.wellness.categories.manage.category.delete.succeeded.msg": "類別刪除成功.",
 	"panel.wellness.categories.manage.category.delete.failed.msg": "刪除類別失敗.",
+    "panel.wellness.categories.manage.category.delete.confirmation.msg": "確定要刪除此類別?",
+    "panel.wellness.categories.manage.color.pick.cancel.button": "取消",
+    "panel.wellness.categories.manage.color.pick.select.button": "選擇",
 
 	"panel.wellness.todo.item.add.label": "添加項目",
 	"panel.wellness.todo.item.name.field.label": "項目名",
@@ -1697,6 +1700,8 @@
     "panel.wellness.todo.items.no_completed_items.msg": "沒有已完成的待辦事項.",
     "panel.wellness.todo.items.completed.clear.succeeded.msg": "已完成的待辦事項已成功刪除.",
     "panel.wellness.todo.items.completed.clear.failed.msg": "無法刪除已完成的待辦事項.",
+    "panel.wellness.todo.items.reminder.set.button": "設置提醒",
+    "panel.wellness.todo.items.reminder.set.failed.msg": "設置提醒失敗.",
 
 	"panel.wellness.resources.header.label": "健康資源",
 	"panel.wellness.resources.button.all.title": "View App",
