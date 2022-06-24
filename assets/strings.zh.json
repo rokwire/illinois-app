@@ -2779,6 +2779,7 @@
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",
 	"logic.date_time.greeting.evening": "晚上好",
+	"logic.date_time.greeting.night": "晚安",
 
 	"logic.calendar.create_event_failed": "創建活動失敗。",
 	"logic.calendar.permission_denied": "無法將事件保存到日曆。 未授予權限。",

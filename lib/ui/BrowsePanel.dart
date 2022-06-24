@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:collection/collection.dart';
@@ -31,7 +32,6 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
-import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -52,15 +52,20 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BrowsePanel extends StatefulWidget {
+
+  static const String notifyRefresh      = "edu.illinois.rokwire.browse.refresh";
 
   BrowsePanel();
 
@@ -72,13 +77,13 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
 
   List<String>? _contentCodes;
   Set<String> _expandedCodes = <String>{};
+  StreamController<String> _updateController = StreamController.broadcast();
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
       FlexUI.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
-      HomeToutWidget.notifyImageUpdate,
       Localization.notifyStringsUpdated,
       Styles.notifyChanged,
     ]);
@@ -90,6 +95,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _updateController.close();
     super.dispose();
   }
 
@@ -105,7 +111,6 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       _updateContentCodes();
     } 
     else if((name == Auth2UserPrefs.notifyFavoritesChanged) ||
-      (name == HomeToutWidget.notifyImageUpdate) ||
       (name == Localization.notifyStringsUpdated) ||
       (name == Styles.notifyChanged))
     {
@@ -121,13 +126,15 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
 
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.browse.label.title', 'Browse')),
-      body: Column(children: <Widget>[
-        Expanded(child:
-          SingleChildScrollView(child:
-            Column(children: _buildContentList(),)
-          )
-        ),
-      ]),
+      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
+        Column(children: <Widget>[
+          Expanded(child:
+            SingleChildScrollView(child:
+              Column(children: _buildContentList(),)
+            )
+          ),
+        ]),
+      ),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: null,
     );
@@ -136,20 +143,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
   List<Widget> _buildContentList() {
     List<Widget> contentList = <Widget>[];
 
-    String? toutImageUrl = Storage().homeToutImageUrl;
-    if (toutImageUrl != null) {
-      contentList.add(
-        Image.network(toutImageUrl, semanticLabel: 'tout', loadingBuilder:(  BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-          double imageWidth = MediaQuery.of(context).size.width;
-          double imageHeight = imageWidth * 810 / 1080;
-          return (loadingProgress != null) ? Container(color: Styles().colors?.fillColorPrimary, width: imageWidth, height: imageHeight, child:
-            Center(child:
-              CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white), ) 
-            ),
-          ) : child;
-        })
-      );
-    }
+    contentList.add(_BrowseToutWidget(updateController: _updateController,));
 
     List<Widget> sectionsList = <Widget>[];
     if (_contentCodes != null) {
@@ -205,6 +199,13 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
           _expandedCodes.add(sectionId);
         }
       });
+    }
+  }
+  
+  Future<void> _onPullToRefresh() async {
+    _updateController.add(BrowsePanel.notifyRefresh);
+    if (mounted) {
+      setState(() {});
     }
   }
 }
@@ -945,5 +946,108 @@ class _BrowseCampusResourcesSection extends _BrowseSection {
         HomeCampusResourcesGridWidget(favoriteCategory: contentCode, contentCodes: _entriesCodes!, promptFavorite: kReleaseMode,)
       ) :
       Container();
+  }
+}
+
+class _BrowseToutWidget extends StatefulWidget {
+
+  final StreamController<String>? updateController;
+
+  _BrowseToutWidget({Key? key, this.updateController}) : super(key: key);
+
+  @override
+  State<_BrowseToutWidget> createState() => _BrowseToutWidgetState();
+}
+
+class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements NotificationsListener {
+
+  String? _imageUrl;
+  DateTime? _imageDateTime;
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      AppLivecycle.notifyStateChanged,
+    ]);
+
+    widget.updateController?.stream.listen((String command) {
+      if (command == BrowsePanel.notifyRefresh) {
+        _refresh();
+      }
+    });
+
+    _imageUrl = Storage().browseToutImageUrl;
+    _imageDateTime = DateTime.fromMillisecondsSinceEpoch(Storage().browseToutImageTime ?? 0);
+    if (_shouldUpdateImage) {
+      _updateImage();
+    }
+ 
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return (_imageUrl != null) ? Stack(children: [
+      Image.network(_imageUrl!, semanticLabel: 'tout', loadingBuilder:(  BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+        double imageWidth = MediaQuery.of(context).size.width;
+        double imageHeight = imageWidth * 810 / 1080;
+        return (loadingProgress != null) ? Container(color: Styles().colors?.fillColorPrimary, width: imageWidth, height: imageHeight, child:
+          Center(child:
+            CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white), ) 
+          ),
+        ) : child;
+      }),
+      Positioned.fill(child:
+        Align(alignment: Alignment.bottomCenter, child:
+          Column(mainAxisSize: MainAxisSize.min, children: [
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.rightToLeft, vertDir: TriangleVertDirection.topToBottom), child:
+              Container(height: 40)
+            ),
+            Container(height: 20, color: Styles().colors?.fillColorSecondaryTransparent05),
+          ],),
+        ),
+      ),
+    ],) : Container();
+
+  }
+
+  bool get _shouldUpdateImage {
+    return (_imageUrl == null) || (_imageDateTime == null) || (DateTimeUtils.midnight(_imageDateTime)!.compareTo(DateTimeUtils.midnight(DateTime.now())!) < 0);
+  }
+
+  void _update() {
+    if (_shouldUpdateImage && mounted) {
+        setState(() {
+          _updateImage();
+        });
+    }
+  }
+
+  void _refresh() {
+    if (mounted) {
+        setState(() {
+          _updateImage();
+        });
+    }
+  }
+
+  void _updateImage() {
+    Storage().browseToutImageUrl = _imageUrl = Assets().randomStringFromListWithKey('images.random.browse.tout');
+    Storage().browseToutImageTime = (_imageDateTime = DateTime.now()).millisecondsSinceEpoch;
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
+      _update();
+    }
   }
 }
