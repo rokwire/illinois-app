@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated wellness resources [#1820](https://github.com/rokwire/illinois-app/issues/1820).
+- Updated GIES content [#1749](https://github.com/rokwire/illinois-app/issues/1749).
 
 ## [4.0.36] - 2022-06-23
 ### Added
