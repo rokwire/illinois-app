@@ -22,6 +22,7 @@ abstract class CheckList with Service implements NotificationsListener{
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
   static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
   static const String notifyContentChanged  = "edu.illinois.rokwire.gies.service.content.changed";
+  static const String notifyStudentInfoChanged  = "edu.illinois.rokwire.gies.service.content.student_info.changed";
   static const String notifyExecuteCustomWidgetAction  = "edu.illinois.rokwire.gies.service.content.execute.widget.action";
 
   //Custom actions
@@ -69,6 +70,7 @@ abstract class CheckList with Service implements NotificationsListener{
       Groups.notifyGroupCreated,
       Groups.notifyUserGroupsUpdated,
       AppLivecycle.notifyStateChanged,
+      Auth2.notifyLoginSucceeded
     ]);
     super.createService();
   }
@@ -99,8 +101,7 @@ abstract class CheckList with Service implements NotificationsListener{
     _buildProgressSteps();
     _loadPageVerification();
     _ensureNavigationPages();
-    _loadUserInfo().then(
-            (value) => _studentInfo = value);
+    _refreshUserInfo();
     if (_pages != null) {
       await super.initService();
     }
@@ -195,6 +196,15 @@ abstract class CheckList with Service implements NotificationsListener{
     return JsonUtils.decodeList(await AppBundle.loadString('assets/gies.json'));
   }
 
+  Future<void> _refreshUserInfo() async{
+    _loadUserInfo().then((value){
+      if(_studentInfo != value) {
+        _studentInfo = value;
+        NotificationService().notify(notifyStudentInfoChanged, {_contentName: ""});
+      }
+    });
+  }
+
   Future<dynamic> _loadUserInfo() async {
     if(_contentName != "gies"){
       return null;
@@ -203,10 +213,10 @@ abstract class CheckList with Service implements NotificationsListener{
       Log.e('Missing gateway url.');
       return null;
     }
-    String? contactInfoUrl = "${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}";
-    // TMP: contactInfoUrl+="&mode=1"; //Workaround to pass dummy data until we have test account to test with
+    String? contactInfoUrl = "${Config().gatewayUrl}/person/contactinfo?id=";
+        contactInfoUrl+="${Auth2().uin}";
+        // contactInfoUrl+="123456789"; //Workaround to return dummy data
     String? token = Auth2().uiucToken?.accessToken;
-    // String? token = Auth2().token?.accessToken;
 
     Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: {"External-Authorization":token});
     int? responseCode = response?.statusCode;
@@ -662,6 +672,9 @@ abstract class CheckList with Service implements NotificationsListener{
         // name == Groups.notifyGroupCreated ||
         name == Groups.notifyUserGroupsUpdated) {
       _loadPageVerification(notify: true);
+    }
+    else if (name == Auth2.notifyLoginSucceeded) {
+      _refreshUserInfo();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       if (param == AppLifecycleState.resumed) {
