@@ -1054,8 +1054,8 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [CheckList.notifyStudentInfoChanged,]);
     _loadStudentInfo();
-    NotificationService().subscribe(this, [""]); //TBD add
     super.initState();
   }
 
@@ -1072,7 +1072,14 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
 
   @override
   void onNotification(String name, param) {
-    //TBD refresh when studentInfoData is changed
+    if(name == CheckList.notifyStudentInfoChanged){
+      if(param != null&& param is Map<String, dynamic> && param.containsKey(widget.contentKey)){
+        _loadStudentInfo();
+        if(mounted){
+          setState(() {});
+        }
+      }
+    }
   }
 
   Widget _buildContent(){
@@ -1129,7 +1136,7 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
         }
       }
     }
-    //TBD implement
+
     return Container(
         child: Row( children: [
           Expanded(

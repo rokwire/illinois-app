@@ -22,6 +22,7 @@ abstract class CheckList with Service implements NotificationsListener{
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
   static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
   static const String notifyContentChanged  = "edu.illinois.rokwire.gies.service.content.changed";
+  static const String notifyStudentInfoChanged  = "edu.illinois.rokwire.gies.service.content.student_info.changed";
   static const String notifyExecuteCustomWidgetAction  = "edu.illinois.rokwire.gies.service.content.execute.widget.action";
 
   //Custom actions
@@ -69,6 +70,7 @@ abstract class CheckList with Service implements NotificationsListener{
       Groups.notifyGroupCreated,
       Groups.notifyUserGroupsUpdated,
       AppLivecycle.notifyStateChanged,
+      Auth2.notifyLoginSucceeded
     ]);
     super.createService();
   }
@@ -99,8 +101,7 @@ abstract class CheckList with Service implements NotificationsListener{
     _buildProgressSteps();
     _loadPageVerification();
     _ensureNavigationPages();
-    _loadUserInfo().then(
-            (value) => _studentInfo = value);
+    _refreshUserInfo();
     if (_pages != null) {
       await super.initService();
     }
@@ -193,6 +194,15 @@ abstract class CheckList with Service implements NotificationsListener{
   // ignore: unused_element
   Future<List<dynamic>?> _loadFromAssets() async{
     return JsonUtils.decodeList(await AppBundle.loadString('assets/gies.json'));
+  }
+
+  Future<void> _refreshUserInfo() async{
+    _loadUserInfo().then((value){
+      if(_studentInfo != value) {
+        _studentInfo = value;
+        NotificationService().notify(notifyStudentInfoChanged, {_contentName: ""});
+      }
+    });
   }
 
   Future<dynamic> _loadUserInfo() async {
@@ -662,6 +672,9 @@ abstract class CheckList with Service implements NotificationsListener{
         // name == Groups.notifyGroupCreated ||
         name == Groups.notifyUserGroupsUpdated) {
       _loadPageVerification(notify: true);
+    }
+    else if (name == Auth2.notifyLoginSucceeded) {
+      _refreshUserInfo();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       if (param == AppLifecycleState.resumed) {
