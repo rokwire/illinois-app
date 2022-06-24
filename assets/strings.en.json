@@ -2781,6 +2781,7 @@
     "logic.date_time.greeting.morning": "Good morning",
     "logic.date_time.greeting.afternoon": "Good afternoon",
     "logic.date_time.greeting.evening": "Good evening",
+    "logic.date_time.greeting.night": "Good night",
 
     "logic.calendar.create_event_failed": "Failed to create event.",
     "logic.calendar.permission_denied": "Unable to save event to calendar. Permissions not granted.",

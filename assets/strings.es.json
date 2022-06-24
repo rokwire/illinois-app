@@ -2775,6 +2775,7 @@
     "logic.date_time.greeting.morning": "Buenos días",
     "logic.date_time.greeting.afternoon": "Buenas tardes",
     "logic.date_time.greeting.evening": "Buena noches",
+    "logic.date_time.greeting.night": "Buenas noches",
 
     "logic.calendar.create_event_failed": "No se pudo crear el evento.",
     "logic.calendar.permission_denied": "No se puede guardar el evento en el calendario. Permisos no concedidos.",
