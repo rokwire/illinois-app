@@ -350,6 +350,7 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
   }
 
   void _onTapCategory(ToDoCategory? category) {
+    _hideKeyboard();
     if (_category != category) {
       _category = category;
     }

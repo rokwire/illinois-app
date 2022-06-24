@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -67,24 +68,40 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
       body: SingleChildScrollView(
           child: Padding(
               padding: EdgeInsets.all(16),
-              child: Column(
-                  children: [_buildCreateCategoryHeader(), _buildCategoryNameWidget(), _buildColorsRowWidget(), _buildRemindersWidget()]))),
+              child: Column(children: [
+                _buildToDoListHeader(),
+                _buildCreateCategoryHeader(),
+                _buildCategoryNameWidget(),
+                _buildColorsRowWidget(),
+                _buildRemindersWidget()
+              ]))),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
-  Widget _buildCreateCategoryHeader() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(Localization().getStringEx('panel.wellness.categories.create.header.label', 'Create a Category'),
+  Widget _buildToDoListHeader() {
+    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Text(Localization().getStringEx('panel.wellness.todo.header.label', 'My To-Do List'),
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
-      Padding(
-          padding: EdgeInsets.only(top: 5),
-          child: Text(
-              Localization().getStringEx('panel.wellness.categories.create.header.description',
-                  'Examples: an RSO or club, a specific class, or a miscellaneous task category.'),
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
+      HomeFavoriteButton(style: HomeFavoriteStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
     ]);
+  }
+
+  Widget _buildCreateCategoryHeader() {
+    return Padding(
+        padding: EdgeInsets.only(top: 11),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(Localization().getStringEx('panel.wellness.categories.create.header.label', 'Create a Category'),
+              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
+          Padding(
+              padding: EdgeInsets.only(top: 5),
+              child: Text(
+                  Localization().getStringEx('panel.wellness.categories.create.header.description',
+                      'Examples: an RSO or club, a specific class, or a miscellaneous task category.'),
+                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
+        ]));
   }
 
   Widget _buildCategoryNameWidget() {
@@ -289,7 +306,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   void _onTapSave() {
-    FocusScope.of(context).requestFocus(FocusNode());
+    _hideKeyboard();
     String name = _nameController.text;
     if(StringUtils.isEmpty(name)) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.categories.manage.empty.name.msg', 'Please, fill category name.'));
@@ -310,12 +327,14 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   void _onTapColor(Color? color) {
+    _hideKeyboard();
     //TBD: DD - implement custom color
     _selectedColor = color;
     _updateState();
   }
 
   void _onTapReminderType(ToDoCategoryReminderType type) {
+    _hideKeyboard();
     if (_reminderTypeDropDownValuesVisible) {
       _reminderTypeDropDownValuesVisible = false;
     }
@@ -324,6 +343,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   void _onTapSelectedReminderType() {
+    _hideKeyboard();
     _reminderTypeDropDownValuesVisible = !_reminderTypeDropDownValuesVisible;
     _updateState();
   }
@@ -342,6 +362,10 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     _selectedReminderType = ToDoCategoryReminderType.none;
     _nameController.text = '';
     _updateState();
+  }
+
+  void _hideKeyboard() {
+    FocusScope.of(context).requestFocus(FocusNode());
   }
 
   void _updateState() {
