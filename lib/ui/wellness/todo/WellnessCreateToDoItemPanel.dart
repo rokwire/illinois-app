@@ -343,6 +343,7 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
   }
 
   void _onTapCurrentCategory() {
+    _hideKeyboard();
     _categoriesDropDownVisible = !_categoriesDropDownVisible;
     if (mounted) {
       setState(() {});

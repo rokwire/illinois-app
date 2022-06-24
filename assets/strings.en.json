@@ -1699,6 +1699,8 @@
     "panel.wellness.todo.items.no_completed_items.msg": "There are no completed To-Do items.",
     "panel.wellness.todo.items.completed.clear.succeeded.msg": "Completed To-Do items are deleted successfully.",
     "panel.wellness.todo.items.completed.clear.failed.msg": "Failed to delete completed To-Do items.",
+    "panel.wellness.todo.items.reminder.set.button": "Set Reminder",
+    "panel.wellness.todo.items.reminder.set.failed.msg": "Failed to set reminder.",
 
     "panel.wellness.resources.header.label": "Wellness Resources",
     "panel.wellness.resources.button.all.title": "View App",

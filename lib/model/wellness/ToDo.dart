@@ -29,7 +29,7 @@ class ToDoItem {
   final ToDoCategory? category;
   final DateTime? dueDateTimeUtc;
   final bool? hasDueTime;
-  final DateTime? reminderDateTimeUtc;
+  DateTime? reminderDateTimeUtc;
   final List<String>? workDays;
   final ToDoItemLocation? location;
   final String? description;
