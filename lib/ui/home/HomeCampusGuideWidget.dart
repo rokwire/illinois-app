@@ -94,7 +94,7 @@ class _HomeCampusGuideWidgetState extends State<HomeCampusGuideWidget> implement
         setState(() {});
       }
     }
-    else if (name == AppLivecycle.notifyStateChanged) {
+    else if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
       if (_updateSelectedCategoryIfNeeded() && mounted) {
         setState(() {});
       }
@@ -249,7 +249,7 @@ class _HomeCampusGuideWidgetState extends State<HomeCampusGuideWidget> implement
   bool _updateSelectedCategoryIfNeeded() {
     if ((_selectedCategory == null) || _isSelectedCategoryExpired || !hasCategory(_selectedCategory)) {
       int categoriesCount = _categories?.length ?? 0;
-      int categoryIndex = Random().nextInt(categoriesCount);
+      int categoryIndex = (0 < categoriesCount) ? Random().nextInt(categoriesCount) : -1;
       if ((0 <= categoryIndex) && (categoryIndex < categoriesCount)) {
         Storage().homeCampusRemindersCategory = _selectedCategory = _categories![categoryIndex];
         Storage().homeCampusRemindersCategoryTime = (_selectedCategoryTime = DateTime.now()).millisecondsSinceEpoch;
