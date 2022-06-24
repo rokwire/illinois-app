@@ -217,16 +217,13 @@ class AppDateTimeUtils {
     return dateTimeToCompare;
   }
 
-  static String getDayGreeting() {
-    int currentHour = DateTime.now().hour;
-    if (currentHour > 7 && currentHour < 12) {
-      return Localization().getStringEx("logic.date_time.greeting.morning", "Good morning");
-    }
-    else if (currentHour >= 12 && currentHour < 19) {
-      return Localization().getStringEx("logic.date_time.greeting.afternoon", "Good afternoon");
-    }
-    else {
-      return Localization().getStringEx("logic.date_time.greeting.evening", "Good evening");
+  static String getDayPartGreeting({DayPart? dayPart}) {
+    dayPart ??= DateTimeUtils.getDayPart();
+    switch(dayPart) {
+      case DayPart.morning: return Localization().getStringEx("logic.date_time.greeting.morning", "Good morning");
+      case DayPart.afternoon: return Localization().getStringEx("logic.date_time.greeting.afternoon", "Good afternoon");
+      case DayPart.evening: return Localization().getStringEx("logic.date_time.greeting.evening", "Good evening");
+      case DayPart.night: return Localization().getStringEx("logic.date_time.greeting.night", "Good night");
     }
   }
 
