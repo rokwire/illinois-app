@@ -501,7 +501,7 @@ class _BrowseEntry extends StatelessWidget {
       case "my.my_wellness_resources": _onTapMyWellnessResources(context); break;
 
       case "polls.create_poll":  _onTapCreatePoll(context); break;
-      case "polls.view_polls":   _onTapViewPolls(context); break;
+      case "polls.recent_polls":   _onTapViewPolls(context); break;
 
       case "recent.recent_items": _onTapRecentItems(context); break;
 
