@@ -4,7 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -85,7 +87,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
           ),
 
                 
-          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: HomeFavoriteStyle.Handle, prompt: true),
+          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.Handle, prompt: true),
         ],),
       ),
 
@@ -241,7 +243,7 @@ class HomeSlantWidget extends StatelessWidget {
 
               
               Opacity(opacity: (favoriteId != null) ? 1 : 0, child:
-                HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: HomeFavoriteStyle.SlantHeader, prompt: true),
+                HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: FavoriteIconStyle.SlantHeader, prompt: true),
               ),
             ],),
         ),),
@@ -283,91 +285,93 @@ class HomeTitleIcon extends StatelessWidget {
   }
 }
 
-enum HomeFavoriteStyle { SlantHeader, Handle, Button }
 
-class HomeFavoriteStar extends StatelessWidget {
+class HomeFavoriteButton extends FavoriteButton {
 
-  final bool? selected;
-  final HomeFavoriteStyle style;
-  final EdgeInsetsGeometry padding;
-
-  HomeFavoriteStar({Key? key, this.selected, required this.style, this.padding = const EdgeInsets.all(16) }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(padding: padding, child:
-      _starImage,
-    );
-  }
-
-  Widget get _starImage {
-    if (style == HomeFavoriteStyle.SlantHeader) {
-      return (selected == true) ?
-        Image.asset('images/icon-star-orange.png', excludeFromSemantics: true) :
-        Image.asset('images/icon-star-white-frame-thin.png', excludeFromSemantics: true,);
-    }
-    else if (style == HomeFavoriteStyle.Handle) {
-      return (selected == true) ?
-        Image.asset('images/icon-star-orange.png', excludeFromSemantics: true) :
-        Image.asset('images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,);
-    }
-    else if (style == HomeFavoriteStyle.Button) {
-      if (selected == null) {
-        return Image.asset('images/icon-star-gray.png', excludeFromSemantics: true);
-      }
-      else if (selected == true) {
-        return Image.asset('images/icon-star-orange.png', excludeFromSemantics: true);
-      }
-      else if (selected == false) {
-        return Image.asset('images/icon-star-white.png', excludeFromSemantics: true);
-      }
-    }
-    
-    return Image.asset('images/icon-star-gray-frame-thin.png', excludeFromSemantics: true);
-  }
-
-}
-
-class HomeFavoriteButton extends StatelessWidget {
-
-  final Favorite? favorite;
-  final HomeFavoriteStyle style;
-  final EdgeInsetsGeometry padding;
+  final HomeFavorite? favorite;
   final bool prompt;
 
-  HomeFavoriteButton({this.favorite, required this.style, this.padding = const EdgeInsets.all(16), this.prompt = false});
+  HomeFavoriteButton({Key? key, this.favorite, required FavoriteIconStyle style, EdgeInsetsGeometry padding = const EdgeInsets.all(16), this.prompt = false}) :
+    super(key: key, favorite: favorite, style: style, padding: padding);
 
   @override
-  Widget build(BuildContext context) {
-    return Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-      InkWell(onTap: () => _onFavorite(context), child:
-        HomeFavoriteStar(selected: _isFavorite, style: style, padding: padding,)
-      ),
-    );
-  }
-
-  bool get _isFavorite => Auth2().prefs?.isFavorite(favorite) ?? false;
-
-  void _onFavorite(BuildContext context) {
+  void onFavorite(BuildContext context) {
     Analytics().logSelect(target: "Favorite: $favorite");
 
     if (prompt) {
       promptFavorite(context, favorite).then((bool? result) {
         if (result == true) {
-          Auth2().prefs?.toggleFavorite(favorite);
+          toggleFavorite();
         }
       });
     }
     else {
-      Auth2().prefs?.toggleFavorite(favorite);
+      toggleFavorite();
+    }
+  }
+
+  @override
+  void toggleFavorite() {
+    if (favorite?.id != null) {
+      if (favorite?.category == null) {
+        // process toggle home panel widget
+        List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']);
+        if (avalableSectionFavorites != null) {
+          List<Favorite> favorites = <Favorite>[favorite!];
+          for(String sectionEntry in avalableSectionFavorites) {
+            favorites.add(HomeFavorite(sectionEntry, category: favorite?.id));
+          }
+          Auth2().prefs?.setListFavorite(favorites, !isFavorite);
+        }
+        else {
+          super.toggleFavorite();
+        }
+      }
+      else { 
+        // provess toggle home widget entry
+        HomeFavorite sectionFavorite = HomeFavorite(favorite?.category);
+        if (isFavorite) {
+          // turn off home widget entry
+          int sectionFavoritesCount = 0;
+          List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.category}']);
+          if (avalableSectionFavorites != null) {
+            for(String sectionEntry in avalableSectionFavorites) {
+              if (Auth2().prefs?.isFavorite(HomeFavorite(sectionEntry, category: favorite?.category)) ?? false) {
+                sectionFavoritesCount++;
+              }
+            }
+          }
+          if (1 < sectionFavoritesCount) {
+            // turn off only home widget entry
+            super.toggleFavorite();
+          }
+          else {
+            // turn off both home widget entry and home widget itself
+            Auth2().prefs?.setListFavorite(<Favorite>[favorite!, sectionFavorite], false);
+          }
+        }
+        else {
+          // turn on home widget entry
+          if (Auth2().prefs?.isFavorite(sectionFavorite) ?? false) {
+            // turn on only home widget entry
+            super.toggleFavorite();
+          }
+          else {
+            // turn on both home widget entry and home widget itself
+            Auth2().prefs?.setListFavorite(<Favorite>[favorite!, sectionFavorite], true);
+          }
+        }
+      }
     }
   }
 
   static Future<bool?> promptFavorite(BuildContext context, Favorite? favorite) async {
     if (kReleaseMode) {
+
       String message = (Auth2().prefs?.isFavorite(favorite) ?? false) ?
         Localization().getStringEx('widget.home.prompt.remove.favorite', 'Are you sure you want to REMOVE this item from your favorites?') :
         Localization().getStringEx('widget.home.prompt.add.favorite', 'Are you sure you want to ADD this favorite?');
+      
       return await showDialog(context: context, builder: (BuildContext context) {
         return AlertDialog(
           content: Text(message),
@@ -419,7 +423,7 @@ class HomeDragFeedback extends StatelessWidget {
             ),
           ),
 
-          //HomeFavoriteStar(selected: true,),
+          //FavoriteStarIcon(selected: true,),
         ],),
       ),
     ],);
@@ -427,7 +431,7 @@ class HomeDragFeedback extends StatelessWidget {
 }
 
 class HomeCommandButton extends StatelessWidget {
-  final Favorite? favorite;
+  final HomeFavorite? favorite;
   final String? title;
   final String? description;
   final bool? loading;
@@ -456,7 +460,7 @@ class HomeCommandButton extends StatelessWidget {
                       CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2),
                     )
                 )
-                : HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, prompt: kReleaseMode)
+                : HomeFavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, prompt: kReleaseMode)
               )
             ],),
             StringUtils.isNotEmpty(description)

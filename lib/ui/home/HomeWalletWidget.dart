@@ -16,6 +16,7 @@ import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -171,7 +172,7 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
 // HomeIlliniCashWalletWidget
 
 class HomeIlliniCashWalletWidget extends StatefulWidget {
-  final Favorite? favorite;
+  final HomeFavorite? favorite;
   final StreamController<String>? updateController;
 
   HomeIlliniCashWalletWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
@@ -209,7 +210,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
                         Text(Localization().getStringEx('widget.home.wallet.illini_cash.title', 'Illini Cash'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))),
                       ),
-                    HomeFavoriteButton(favorite: widget.favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.all(12), prompt: true)
+                    HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true)
                   ])
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
@@ -263,7 +264,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
 // HomeMealPlanWalletWidget
 
 class HomeMealPlanWalletWidget extends StatefulWidget {
-  final Favorite? favorite;
+  final HomeFavorite? favorite;
   final StreamController<String>? updateController;
 
   HomeMealPlanWalletWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
@@ -302,7 +303,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
                         Text(Localization().getStringEx('widget.home.wallet.meal_plan.title', 'Meal Plan'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
                       ),
                     ),
-                    HomeFavoriteButton(favorite: widget.favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.all(12), prompt: true)
+                    HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true)
                   ]),
               ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
@@ -353,7 +354,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
 // HomeBusPassWalletWidget
 
 class HomeBusPassWalletWidget extends StatefulWidget {
-  final Favorite? favorite;
+  final HomeFavorite? favorite;
   final StreamController<String>? updateController;
 
   HomeBusPassWalletWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
@@ -392,7 +393,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
                         Text(Localization().getStringEx('widget.home.wallet.bus_pass.title', 'MTD Bus Pass'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
                       ),
                     ),
-                    HomeFavoriteButton(favorite: widget.favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.all(12), prompt: true)
+                    HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true)
                   ]),
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
@@ -438,7 +439,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
 // HomeIlliniIdWalletWidget
 
 class HomeIlliniIdWalletWidget extends StatefulWidget {
-  final Favorite? favorite;
+  final HomeFavorite? favorite;
   final StreamController<String>? updateController;
 
   HomeIlliniIdWalletWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
@@ -477,7 +478,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
                         Text(Localization().getStringEx('widget.home.wallet.illini_id.title', 'Illini ID'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
                       ),
                     ),
-                    HomeFavoriteButton(favorite: widget.favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.all(12), prompt: true),
+                    HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true),
                   ]),
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
@@ -521,7 +522,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
 // HomeLibraryCardWalletWidget
 
 class HomeLibraryCardWalletWidget extends StatefulWidget {
-  final Favorite? favorite;
+  final HomeFavorite? favorite;
   final StreamController<String>? updateController;
 
   HomeLibraryCardWalletWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
@@ -564,7 +565,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
                         Text(Localization().getStringEx('widget.home.wallet.library_card.title', 'Library Card'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))
                       ),
                     ),
-                    HomeFavoriteButton(favorite: widget.favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.all(12), prompt: true),
+                    HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true),
                   ]),
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
