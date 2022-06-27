@@ -261,15 +261,19 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   Widget _buildManageCategories() {
     return Padding(
         padding: EdgeInsets.only(top: 30),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Container(height: 1, color: Styles().colors!.mediumGray2),
           Padding(
               padding: EdgeInsets.only(top: 9),
-              child: Text(Localization().getStringEx('panel.wellness.categories.manage.existing.label', 'Manage Existing Categories'),
-                  style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary))),
+              child: Row(children: [
+                Expanded(
+                    child: Text(Localization().getStringEx('panel.wellness.categories.manage.existing.label', 'Manage Existing Categories'),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary)))
+              ])),
           Padding(
               padding: EdgeInsets.only(top: 8),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildCategoriesWidgetList()))
+              child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: _buildCategoriesWidgetList()))
         ]));
   }
 
