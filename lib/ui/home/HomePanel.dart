@@ -408,22 +408,13 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeTBDWidget(title: 'Illini News', favoriteId: code, updateController: _updateController);
       }
     }
-    else if (code == 'wellness_rings') {
+    else if (code == 'wellness') {
       if (title) {
-        return 'Wellness Rings';
+        return 'Wellness';
       } else if (handle) {
-        return HomeHandleWidget(title: 'Wellness Rings', favoriteId: code, dragAndDropHost: this, position: position,);
+        return HomeHandleWidget(title: 'Wellness', favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
-        return HomeTBDWidget(title: 'Wellness Rings', favoriteId: code, updateController: _updateController);
-      }
-    }
-    else if (code == 'wellness_todo') {
-      if (title) {
-        return 'Wellness To Do';
-      } else if (handle) {
-        return HomeHandleWidget(title: 'Wellness To Do', favoriteId: code, dragAndDropHost: this, position: position,);
-      } else {
-        return HomeTBDWidget(title: 'Wellness To Do', favoriteId: code, updateController: _updateController);
+        return HomeTBDWidget(title: 'Wellness', favoriteId: code, updateController: _updateController);
       }
     }
 

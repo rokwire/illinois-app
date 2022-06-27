@@ -363,8 +363,8 @@
     "panel.browse.entry.wallet.illini_id_card.title": "ID Card",
     "panel.browse.entry.wallet.library_card.title": "Library Card",
 
-    "panel.browse.entry.wellness.wellness_rings.title": "Rings",
-    "panel.browse.entry.wellness.wellness_todo.title": "To Do",
+    "panel.browse.entry.wellness.rings.title": "Rings",
+    "panel.browse.entry.wellness.todo.title": "To Do",
 
     "panel.search.header.title":"Buscar",
     "panel.search.label.search_for":"Buscar",
