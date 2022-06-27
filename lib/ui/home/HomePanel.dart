@@ -644,6 +644,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'state_farm_center'), null);
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'campus_links'), null);
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'wallet'), null);
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'wellness'), null);
     }
     else {
       _updateController.add(HomePanel.notifyRefresh);
