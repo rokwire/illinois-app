@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';

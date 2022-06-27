@@ -200,8 +200,8 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     );
   }
 
-  //ignore: unused_field
-  Widget get _mocButtons{
+  // ignore: unused_field
+  Widget _mocButtons(){
     List<Widget> content = [];
     for(dynamic jsonData in WellnessRingService.predefinedRings){
       WellnessRingData? data = WellnessRingData.fromJson(jsonData);
@@ -870,8 +870,8 @@ class WellnessRingService with Service{
   static const String _cacheFileName = "wellness.json";
   static const int MAX_RINGS = 4;
   static const List<Map<String,dynamic>> predefinedRings = [
-    {'name': "Hobby", 'goal': 10, 'color': 'FFF57C00' , 'id': "id_predefined_0", 'unit':'session', "description":"description"},
-    {'name': "Physical Activity", 'goal': 10, 'color': 'FF4CAF50', 'id': "id_predefined_1", 'unit':'activity', "description":"description"},
+    {'name': "Hobby", 'goal': 2, 'color': 'e45434', 'id': "id_predefined_0", 'unit':'session', "description":"description"},
+    {'name': "Physical Activity", 'goal': 16, 'color': 'FF4CAF50', 'id': "id_predefined_1", 'unit':'activity', "description":"description"},
     {'name': "Mindfulness", 'goal': 10, 'color': 'FF2196F3' , 'id': "id_predefined_2", 'unit':'moment', "description":"description"},
   ];
 
@@ -888,7 +888,7 @@ class WellnessRingService with Service{
   File? _cacheFile;
 
   List<WellnessRingData>? _wellnessRings;
-  List<WellnessRingRecord>? _wellnessRecords; //TBD implement its mocced for now
+  List<WellnessRingRecord>? _wellnessRecords;
 
   // Singletone Factory
 
@@ -914,7 +914,7 @@ class WellnessRingService with Service{
 
   Future<void> _initFromCache() async{
     _loadContentJsonFromCache().then((Map<String, dynamic>? storedValues) {
-        // _wellnessRings = storedValues?["wellness_rings_data"] ?? [];
+        _wellnessRings = WellnessRingData.listFromJson(storedValues?["wellness_rings_data"]) ?? [];
         _wellnessRecords = WellnessRingRecord.listFromJson(storedValues?["wellness_ring_records"] ?? []);
       }
     );
