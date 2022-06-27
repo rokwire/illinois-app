@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -47,6 +46,7 @@ import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -244,9 +244,13 @@ class _BrowseSection extends StatelessWidget {
                   Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
                 )
               ),
-              _hasContent ?
-                _BrowseFavoriteButton(sectionId: sectionId, selected: _isSectionFavorite, onToggle: () => _onTapSectionFavorite(context),) :
-                Container()
+              Opacity(opacity: _hasContent ? 1 : 0, child:
+                Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
+                  InkWell(onTap: () => _onTapSectionFavorite(context), child:
+                    FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,)
+                  ),
+                ),
+              ),
             ],),
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Expanded(child:
@@ -302,37 +306,14 @@ class _BrowseSection extends StatelessWidget {
     }
   }
 
-  bool get _hasContent {
-    if (_entriesCodes?.isNotEmpty ?? false) {
-      List<dynamic>? availableList = avalableSectionFavorites;
-      for (String code in _entriesCodes!) {
-        if (availableList?.contains(code) ?? false) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
+  bool get _hasContent => _entriesCodes?.isNotEmpty ?? false;
 
-  List<String> get _availableFavoriteCodes {
-    List<String> result = <String>[];
-    if (_entriesCodes?.isNotEmpty ?? false) {
-      List<dynamic>? availableList = avalableSectionFavorites;
-      for (String code in _entriesCodes!) {
-        if (availableList?.contains(code) ?? false) {
-          result.add(code);
-        }
-      }
-    }
-    return result;
-  }
-
-  List<dynamic>? get avalableSectionFavorites => FlexUI().contentSourceEntry((_favoriteCategory != null) ? 'home.$_favoriteCategory' : 'home');
+  List<dynamic>? get avalableSectionFavs => FlexUI().contentSourceEntry((_favoriteCategory != null) ? 'home.$_favoriteCategory' : 'home');
 
   bool? get _isSectionFavorite {
     int favCount = 0, unfavCount = 0, totalCount = 0;
     if (_entriesCodes?.isNotEmpty ?? false) {
-      List<dynamic>? availableList = avalableSectionFavorites;
+      List<dynamic>? availableList = avalableSectionFavs;
       for (String code in _entriesCodes!) {
         if (availableList?.contains(code) ?? false) {
           totalCount++;
@@ -368,15 +349,31 @@ class _BrowseSection extends StatelessWidget {
     }
   }
 
+  List<Favorite> get sectionFavorites {
+    List<Favorite> favorites = <Favorite>[];
+    if (_favoriteCategory != null) {
+      favorites.add(HomeFavorite(_favoriteCategory));
+    }
+    if (_entriesCodes != null) {
+      List<dynamic>? availableList = avalableSectionFavs;
+      for(String entryCode in _entriesCodes!.reversed) {
+        if (availableList?.contains(entryCode) ?? false) {
+          favorites.add(HomeFavorite(entryCode, category: _favoriteCategory));
+        }
+      }
+    }
+    return favorites;
+  }
+
   void _toggleSectionFavorite() {
     if (_favoriteCategory == null) {
-      Auth2().prefs?.applyFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), _availableFavoriteCodes.reversed, _isSectionFavorite != true);
+      Auth2().prefs?.applyFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), _entriesCodes?.reversed, _isSectionFavorite != true);
     }
     else if (_isSectionFavorite == true) {
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), LinkedHashSet<String>());
+      Auth2().prefs?.setListFavorite(sectionFavorites, false);
     }
     else {
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), LinkedHashSet<String>.from(_availableFavoriteCodes.reversed));
+      Auth2().prefs?.setListFavorite(sectionFavorites, true);
     }
   }
 
@@ -421,12 +418,8 @@ class _BrowseEntry extends StatelessWidget {
           padding: EdgeInsets.zero,
           child: 
             Row(children: [
-              _BrowseFavoriteButton(
-                sectionId: sectionId,
-                entryId: entryId,
-                selected: _isFavorite,
-                enabled: _canFavorite,
-                onToggle: () => _onTapFavorite(context)
+              Opacity(opacity: _canFavorite ? 1 : 0, child:
+                HomeFavoriteButton(favorite: HomeFavorite(entryId, category: favoriteCategory), style: FavoriteIconStyle.Button, prompt: true,),
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
@@ -444,18 +437,7 @@ class _BrowseEntry extends StatelessWidget {
 
   String get _title => Localization().getStringEx('panel.browse.entry.$sectionId.$entryId.title', StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
 
-  bool get _isFavorite => Auth2().prefs?.isFavorite(HomeFavorite(entryId, category: favoriteCategory)) ?? false;
   bool get _canFavorite => FlexUI().contentSourceEntry((favoriteCategory != null) ? 'home.$favoriteCategory' : 'home')?.contains(entryId) ?? false;
-
-  void _onTapFavorite(BuildContext context) {
-    Analytics().logSelect(target: "Favorite: $favoriteCategory:$entryId");
-    Favorite favorite = HomeFavorite(entryId, category: favoriteCategory);
-    HomeFavoriteButton.promptFavorite(context, favorite).then((bool? result) {
-      if (result == true) {
-        Auth2().prefs?.toggleFavorite(HomeFavorite(entryId, category: favoriteCategory));
-      }
-    });
-  }
 
   void _onTap(BuildContext context) {
     switch("$sectionId.$entryId") {
@@ -908,28 +890,6 @@ class _BrowseEntry extends StatelessWidget {
     AppAlert.showDialogResult(context, "Not implemented yet.");
   }
 
-}
-
-class _BrowseFavoriteButton extends StatelessWidget {
-
-  final String? sectionId;
-  final String? entryId;
-  final bool? selected;
-  final bool enabled;
-  final void Function()? onToggle;
-
-  _BrowseFavoriteButton({this.sectionId, this.entryId, this.selected, this.enabled = true, this.onToggle});
-
-  @override
-  Widget build(BuildContext context) {
-    return Opacity(opacity: enabled ? 1 : 0, child:
-      Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
-        InkWell(onTap: onToggle, child:
-          HomeFavoriteStar(selected: selected, style: HomeFavoriteStyle.Button,)
-        ),
-      ),
-    );
-  }
 }
 
 class _BrowseCampusResourcesSection extends _BrowseSection {

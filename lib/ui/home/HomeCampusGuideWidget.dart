@@ -13,6 +13,7 @@ import 'package:illinois/ui/guide/GuideCategoriesPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -111,7 +112,7 @@ class _HomeCampusGuideWidgetState extends State<HomeCampusGuideWidget> implement
               Text(HomeCampusGuideWidget.title, style: TextStyle(fontSize: 20, color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.extraBold),),
             ),
           ),
-          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: HomeFavoriteStyle.Button, prompt: true,)
+          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.Button, prompt: true,)
         ],)
       ),
       Padding(padding: EdgeInsets.symmetric(horizontal: 16),

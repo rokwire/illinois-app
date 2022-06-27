@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -420,7 +421,7 @@ class _EventsRibbonHeader extends StatelessWidget {
       titleList.add(rightIconWidget);
     }
 
-    titleList.add(HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: HomeFavoriteStyle.SlantHeader, prompt: true));
+    titleList.add(HomeFavoriteButton(favorite: HomeFavorite(favoriteId), style: FavoriteIconStyle.SlantHeader, prompt: true));
 
     Widget contentWidget = Container(color: Styles().colors?.fillColorPrimary, child: 
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: titleList,),
