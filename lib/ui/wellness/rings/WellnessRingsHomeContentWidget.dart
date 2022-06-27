@@ -18,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessReing.dart';
 import 'package:illinois/service/WellnessRings.dart';
+import 'package:illinois/ui/wellness/rings/WellnessRingCreatePane.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -181,7 +182,11 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
                     WellnessRingRecord(value: 1, timestamp: DateTime
                         .now()
                         .millisecondsSinceEpoch, wellnessRingId: data.id));
-              }));
+              },
+              onTapRightWidget: (context){
+                Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingCreatePanel(data: data, initialCreation: false,)));
+              },
+          ));
           content.add(Container(height: 10,));
         }
       }

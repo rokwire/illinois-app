@@ -110,26 +110,33 @@ class WellnessRings with Service{
     return JsonUtils.decodeMap(await _loadContentStringFromCache());
   }
 
-  void addRing(WellnessRingData data) async {
+  Future<bool> addRing(WellnessRingData data) async {
     //TBD replace network API
+    bool success = false;
     if(_wellnessRings == null){
       _wellnessRings = [];
     }
     if(canAddRing){
       _wellnessRings!.add(data);
+      success = true;
     }
     NotificationService().notify(notifyUserRingsUpdated);
     _storeWellnessRingData();
+    return success;
   }
 
-  void updateRing(WellnessRingData data) async {
+  Future<bool> updateRing(WellnessRingData data) async {
     //TBD replace network API
-    WellnessRingData? ringData = _wellnessRings?.firstWhere((ring) => ring.id == data.id);
+    bool success = false;
+    WellnessRingData? ringData;
+    try{ringData = _wellnessRings?.firstWhere((ring) => ring.id == data.id);} catch (e){}
     if(ringData != null && ringData != data){
       ringData.updateFromOther(data);
+      success = true;
+      NotificationService().notify(notifyUserRingsUpdated);
+      _storeWellnessRingData();
     }
-    NotificationService().notify(notifyUserRingsUpdated);
-    _storeWellnessRingData();
+    return success;
   }
 
   void removeRing(WellnessRingData data) async {
