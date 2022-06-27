@@ -336,7 +336,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
 
   void _deleteCategory(ToDoCategory category) {
     _setLoading(true);
-    Wellness().deleteToDoCategoryCached(category.id!).then((success) {
+    Wellness().deleteToDoCategory(category.id!).then((success) {
       late String msg;
       if (success) {
         msg =
@@ -358,7 +358,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     }
     _setLoading(true);
     _category = ToDoCategory(name: name, colorHex: UiColors.toHex(_selectedColor), reminderType: _selectedReminderType);
-    Wellness().createToDoCategoryCached(_category!).then((success) {
+    Wellness().createToDoCategory(_category!).then((success) {
       late String msg;
       if (success) {
         msg = Localization().getStringEx('panel.wellness.categories.manage.category.create.succeeded.msg', 'Category created successfully.');
@@ -399,7 +399,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
 
   void _loadCategories() {
     _setLoading(true);
-    Wellness().loadToDoCategoriesCached().then((categories) {
+    Wellness().loadToDoCategories().then((categories) {
       _categories = categories;
       _setLoading(false);
     });

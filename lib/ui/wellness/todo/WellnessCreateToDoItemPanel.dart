@@ -481,7 +481,7 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
 
   void _loadCategories() {
     _setLoading(true);
-    Wellness().loadToDoCategoriesCached().then((categories) {
+    Wellness().loadToDoCategories().then((categories) {
       _categories = categories;
       _setLoading(false);
     });

@@ -53,43 +53,7 @@ class Wellness with Service {
 
   //TBD: DD - temporary caching of categories and todo items. To be deleted when we have implemented service
   // Remove from here - start
-  List<ToDoCategory>? _toDoCategories;
   List<ToDoItem>? _toDoItems;
-
-  Future<List<ToDoCategory>?> loadToDoCategoriesCached() async {
-    return _toDoCategories;
-  }
-
-  Future<bool> createToDoCategoryCached(ToDoCategory category) async {
-    if (_toDoCategories == null) {
-      _toDoCategories = <ToDoCategory>[];
-    }
-    category.id = (_toDoCategories!.length + 1).toString();
-    _toDoCategories!.add(category);
-    NotificationService().notify(notifyToDoCategoryCreated);
-    return true;
-  }
-
-  Future<bool> deleteToDoCategoryCached(String categoryId) async {
-    if (_toDoCategories == null) {
-      return false;
-    }
-    ToDoCategory? catToDelete;
-    for (ToDoCategory cat in _toDoCategories!) {
-      if (cat.id == categoryId) {
-        catToDelete = cat;
-        break;
-      }
-    }
-    if (catToDelete != null) {
-      _toDoCategories!.remove(catToDelete);
-      NotificationService().notify(notifyToDoCategoryDeleted);
-      return true;
-    } else {
-      Log.w('No such category');
-      return false;
-    }
-  }
 
   Future<List<ToDoItem>?> loadToDoItemsCached() async {
     return _toDoItems;
@@ -157,7 +121,7 @@ class Wellness with Service {
       Log.w('Failed to load wellness todo categories. Missing wellness url.');
       return null;
     }
-    String url = '${Config().wellnessUrl}/api/user/todo_categories';
+    String url = '${Config().wellnessUrl}/user/todo_categories';
     http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -175,7 +139,7 @@ class Wellness with Service {
       Log.w('Failed to create wellness todo category. Missing wellness url.');
       return false;
     }
-    String url = '${Config().wellnessUrl}/api/user/todo_categories';
+    String url = '${Config().wellnessUrl}/user/todo_categories';
     String? categoryJson = JsonUtils.encode(category);
     http.Response? response = await Network().post(url, auth: Auth2(), body: categoryJson);
     int? responseCode = response?.statusCode;
@@ -195,7 +159,7 @@ class Wellness with Service {
       Log.w('Failed to update wellness todo category. Missing wellness url.');
       return false;
     }
-    String url = '${Config().wellnessUrl}/api/user/todo_categories/${category.id}';
+    String url = '${Config().wellnessUrl}/user/todo_categories/${category.id}';
     String? categoryJson = JsonUtils.encode(category);
     http.Response? response = await Network().put(url, auth: Auth2(), body: categoryJson);
     int? responseCode = response?.statusCode;
@@ -215,7 +179,7 @@ class Wellness with Service {
       Log.w('Failed to delete wellness todo category. Missing wellness url.');
       return false;
     }
-    String url = '${Config().wellnessUrl}/api/user/todo_categories/$categoryId';
+    String url = '${Config().wellnessUrl}/user/todo_categories/$categoryId';
     http.Response? response = await Network().delete(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
