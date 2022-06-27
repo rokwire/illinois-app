@@ -2524,6 +2524,17 @@
     "widget.home.tout.button.info.hint": "Tap for more info",
     "widget.home.tout.popup.info.content": "Illinois app uses your first name from <a href='{{student_self_service_url}}'>Student Self-Service</a>. You can change your preferred name under Personal Information and Preferred First Name.",
 
+    "widget.home.wellness.todo.title": "MY TO-DO LIST",
+    "widget.home.wellness.todo.items.today.label": "TODAY'S ITEMS",
+    "widget.home.wellness.todo.items.today.empty.msg": "You have no to-do items for today.",
+    "widget.home.wellness.todo.items.unassigned.label": "UNASSIGNED ITEMS",
+    "widget.home.wellness.todo.items.unassigned.empty.msg": "You have no unassigned to-do items.",
+    "widget.home.wellness.todo.items.completed.failed.msg": "Failed to update To-Do item.",
+    "widget.home.wellness.todo.items.add.button": "Add Item",
+    "widget.home.wellness.todo.items.view_all.label": "View all",
+
+    "widget.home.wellness.rings.title": "DAILY WELLNESS RINGS",
+
     "widget.home.favorites.title.events": "My Events",
     "widget.home.favorites.title.dining": "My Dinings",
     "widget.home.favorites.title.athletics": "My Athletics",
