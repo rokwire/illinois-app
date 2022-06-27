@@ -27,8 +27,7 @@ import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class Wellness with Service {
-  static const String notifyToDoCategoryCreated = "edu.illinois.rokwire.wellness.todo.category.created";
-  static const String notifyToDoCategoryUpdated = "edu.illinois.rokwire.wellness.todo.category.updated";
+  static const String notifyToDoCategoryChanged = "edu.illinois.rokwire.wellness.todo.category.changed";
   static const String notifyToDoCategoryDeleted = "edu.illinois.rokwire.wellness.todo.category.deleted";
   static const String notifyToDoItemCreated = "edu.illinois.rokwire.wellness.todo.item.created";
   static const String notifyToDoItemUpdated = "edu.illinois.rokwire.wellness.todo.item.updated";
@@ -134,42 +133,29 @@ class Wellness with Service {
     }
   }
 
-  Future<bool> createToDoCategory(ToDoCategory category) async {
+  Future<bool> saveToDoCategory(ToDoCategory category) async {
     if (!isEnabled) {
-      Log.w('Failed to create wellness todo category. Missing wellness url.');
+      Log.w('Failed to save wellness todo category. Missing wellness url.');
       return false;
     }
-    String url = '${Config().wellnessUrl}/user/todo_categories';
+    String? id = category.id;
+    bool createNew = StringUtils.isEmpty(id);
+    String url = createNew ? '${Config().wellnessUrl}/user/todo_categories' : '${Config().wellnessUrl}/user/todo_categories/${category.id}';
     String? categoryJson = JsonUtils.encode(category);
-    http.Response? response = await Network().post(url, auth: Auth2(), body: categoryJson);
+    http.Response? response;
+    if (createNew) {
+      response = await Network().post(url, auth: Auth2(), body: categoryJson);
+    } else {
+      response = await Network().put(url, auth: Auth2(), body: categoryJson);
+    }
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      Log.i('Wellness todo category created successfully.');
-      NotificationService().notify(notifyToDoCategoryCreated);
+      Log.i('Wellness todo category saved successfully.');
+      NotificationService().notify(notifyToDoCategoryChanged);
       return true;
     } else {
-      Log.w('Failed to create wellness todo category. Response:\n$responseCode: $responseString');
-      return false;
-    }
-  }
-
-  Future<bool> updateToDoCategory(ToDoCategory category) async {
-    if (!isEnabled) {
-      Log.w('Failed to update wellness todo category. Missing wellness url.');
-      return false;
-    }
-    String url = '${Config().wellnessUrl}/user/todo_categories/${category.id}';
-    String? categoryJson = JsonUtils.encode(category);
-    http.Response? response = await Network().put(url, auth: Auth2(), body: categoryJson);
-    int? responseCode = response?.statusCode;
-    String? responseString = response?.body;
-    if (responseCode == 200) {
-      Log.i('Wellness todo category updated successfully.');
-      NotificationService().notify(notifyToDoCategoryUpdated);
-      return true;
-    } else {
-      Log.w('Failed to update wellness todo category. Response:\n$responseCode: $responseString');
+      Log.w('Failed to save wellness todo category. Response:\n$responseCode: $responseString');
       return false;
     }
   }

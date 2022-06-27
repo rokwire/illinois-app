@@ -126,11 +126,10 @@ class ToDoItemLocation {
 }
 
 class ToDoCategory {
-  //TBD: DD - make it final again when we have backend APIs
-  String? id;
-  final String? name;
-  final String? colorHex;
-  final ToDoCategoryReminderType? reminderType;
+  final String? id;
+  String? name;
+  String? colorHex;
+  ToDoCategoryReminderType? reminderType;
 
   ToDoCategory({this.id, this.name, this.colorHex, this.reminderType});
 
