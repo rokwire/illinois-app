@@ -17,7 +17,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
-import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -506,12 +505,6 @@ class Storage extends rokwire.Storage {
   String get homeCampusRemindersCategoryTimeKey => 'edu.illinois.rokwire.home.campus_reminders.category.time';
   int? get homeCampusRemindersCategoryTime => getIntWithName(homeCampusRemindersCategoryTimeKey);
   set homeCampusRemindersCategoryTime(int? value) => setIntWithName(homeCampusRemindersCategoryTimeKey, value);
-
-  //Wellness Rings
-  
-  static const String _userWellnessRings = 'group_members_selection';
-  List<WellnessRingData>? get userWellnessRings => WellnessRingData.listFromJson(JsonUtils.decodeList(getStringWithName(_userWellnessRings)));
-  set userWellnessRings(List<WellnessRingData>? wellnessRings) => setStringWithName(_userWellnessRings, JsonUtils.encode(wellnessRings));
 
   // Wellness ToDo
 

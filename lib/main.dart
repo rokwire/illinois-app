@@ -46,6 +46,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/service/WellnessRings.dart';
 
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
@@ -53,7 +54,6 @@ import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2GetStartedPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
-import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 
 import 'package:rokwire_plugin/rokwire_plugin.dart';
@@ -134,7 +134,7 @@ void main() async {
     Rewards(),
     OnCampus(),
     Wellness(),
-    WellnessRingService(),
+    WellnessRings(),
     WPGUFMRadio(),
 
     // These do not rely on Service initialization API so they are not registered as services.
