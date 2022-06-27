@@ -363,8 +363,8 @@
     "panel.browse.entry.wallet.illini_id_card.title": "ID Card",
     "panel.browse.entry.wallet.library_card.title": "Library Card",
 
-    "panel.browse.entry.wellness.wellness_rings.title": "Rings",
-    "panel.browse.entry.wellness.wellness_todo.title": "To Do",
+    "panel.browse.entry.wellness.rings.title": "Rings",
+    "panel.browse.entry.wellness.todo.title": "To Do",
 
     "panel.search.header.title":"Buscar",
     "panel.search.label.search_for":"Buscar",
@@ -2459,6 +2459,8 @@
 
     "widget.home.wallet.label.title": "Wallet",
 
+    "widget.home.wellness.label.title": "Wellness",
+
     "widget.home.wallet.illini_cash.title": "Illini Efectivo",
     "widget.home.wallet.illini_cash.label.current_balance": "Saldo de efectivo actual de Illini",
     "widget.home.wallet.illini_cash.button.add_illini_cash.title": "Agregar efectivo Illini",
@@ -2515,6 +2517,17 @@
     "widget.home.tout.button.info.label": "Información",
     "widget.home.tout.button.info.hint": "Toca para más información",
     "widget.home.tout.popup.info.content": "La aplicación de Illinois usa su nombre de <a href='{{student_self_service_url}}'>Autoservicio para estudiantes</a>. Puede cambiar su nombre preferido en Información personal y Nombre preferido.",
+
+    "widget.home.wellness.todo.title": "MI LISTA DE TAREAS",
+    "widget.home.wellness.todo.items.today.label": "ARTÍCULOS DE HOY",
+    "widget.home.wellness.todo.items.today.empty.msg": "No tienes tareas pendientes para hoy.",
+    "widget.home.wellness.todo.items.unassigned.label": "ARTÍCULOS NO ASIGNADOS",
+    "widget.home.wellness.todo.items.unassigned.empty.msg": "No tienes tareas pendientes sin asignar.",
+    "widget.home.wellness.todo.items.completed.failed.msg": "No se pudo actualizar el elemento de tareas pendientes.",
+    "widget.home.wellness.todo.items.add.button": "Añadir artículo",
+    "widget.home.wellness.todo.items.view_all.label": "Ver todo",
+
+    "widget.home.wellness.rings.title": "ANILLOS DE BIENESTAR DIARIO",
 
     "widget.home.favorites.title.events": "Mis Eventos",
     "widget.home.favorites.title.dining": "Mis Cenas",
