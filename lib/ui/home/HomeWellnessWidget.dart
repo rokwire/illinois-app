@@ -13,6 +13,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessCreateToDoItemPanel.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -160,7 +161,7 @@ class _HomeWellnessWidgetState extends State<HomeWellnessWidget> implements Noti
 // HomeToDoWellnessWidget
 
 class HomeToDoWellnessWidget extends StatefulWidget {
-  final Favorite? favorite;
+  final HomeFavorite? favorite;
   final StreamController<String>? updateController;
 
   HomeToDoWellnessWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
@@ -204,7 +205,7 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
                         Text(Localization().getStringEx('widget.home.wellness.todo.title', 'MY TO-DO LIST'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 14))),
                       ),
-                    HomeFavoriteButton(favorite: widget.favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.all(12), prompt: true)
+                    HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true)
                   ])
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
@@ -383,7 +384,7 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
 // HomeRingsWellnessWidget
 
 class HomeRingsWellnessWidget extends StatefulWidget {
-  final Favorite? favorite;
+  final HomeFavorite? favorite;
   final StreamController<String>? updateController;
 
   HomeRingsWellnessWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
@@ -420,7 +421,7 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
                       Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
                         Text(Localization().getStringEx('widget.home.wellness.rings.title', 'DAILY WELLNESS RINGS'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 14))),
                       ),
-                    HomeFavoriteButton(favorite: widget.favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.all(12), prompt: true)
+                    HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true)
                   ])
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
