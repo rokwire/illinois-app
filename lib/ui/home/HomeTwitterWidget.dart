@@ -9,6 +9,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
@@ -148,7 +149,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
               Semantics(container: true,  button: true, child: _buildAccountDropDown(), ) :
               Container(),
 
-            HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: HomeFavoriteStyle.SlantHeader, prompt: true),
+            HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.SlantHeader, prompt: true),
             
         ],),),),);
   }

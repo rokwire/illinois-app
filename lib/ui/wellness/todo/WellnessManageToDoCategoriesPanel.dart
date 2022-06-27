@@ -17,7 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/Wellness.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -87,7 +87,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
       Text(Localization().getStringEx('panel.wellness.todo.header.label', 'My To-Do List'),
           overflow: TextOverflow.ellipsis,
           style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
-      HomeFavoriteButton(style: HomeFavoriteStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
+      FavoriteStarIcon(style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
     ]);
   }
 

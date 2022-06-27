@@ -20,8 +20,8 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/assets.dart';
@@ -196,7 +196,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
             hasExternalLink ? Padding(padding: EdgeInsets.only(left: 6, top: 18, bottom: 18), child:
               Image.asset('images/external-link.png', color: Styles().colors!.mediumGray)
             ) : Container(),
-            HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),)
+            FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),)
           ]),
         ),
       ),
@@ -206,7 +206,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
   Widget _buildRegularButton({String? label, Favorite? favorite, bool hasExternalLink = true, void Function()? onTap}) {
     return InkWell(onTap: onTap, child:
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)),
+        FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(vertical: 17), child:
             Text(label ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16))

@@ -351,7 +351,7 @@
     "panel.browse.entry.my.my_wellness_resources.title": "My Wellness Resources",
 
     "panel.browse.entry.polls.create_poll.title": "Create a Poll",
-    "panel.browse.entry.polls.view_polls.title": "View Polls",
+    "panel.browse.entry.polls.recent_polls.title": "View Polls",
 
     "panel.browse.entry.recent.recent_items.title": "Recently Viewed",
 
@@ -365,8 +365,8 @@
     "panel.browse.entry.wallet.illini_id_card.title": "ID Card",
     "panel.browse.entry.wallet.library_card.title": "Library Card",
 
-    "panel.browse.entry.wellness.wellness_rings.title": "Rings",
-    "panel.browse.entry.wellness.wellness_todo.title": "To Do",
+    "panel.browse.entry.wellness.rings.title": "Rings",
+    "panel.browse.entry.wellness.todo.title": "To Do",
 
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Searching only Events Titles",
@@ -2465,6 +2465,8 @@
 
     "widget.home.wallet.label.title": "Wallet",
 
+    "widget.home.wellness.label.title": "Wellness",
+
     "widget.home.wallet.illini_cash.title": "Illini Cash",
     "widget.home.wallet.illini_cash.label.current_balance": "Current Illini Cash Balance",
     "widget.home.wallet.illini_cash.button.add_illini_cash.title": "Add Illini Cash",
@@ -2517,10 +2519,28 @@
     "widget.home.campus_guide.button.all.title": "View All",
     "widget.home.campus_guide.button.all.hint": "Tap to view the complete Campus Guide",
 
+    "widget.home.recent_polls.text.title": "Recent Polls",
+    "widget.home.recent_polls.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.recent_polls.text.empty.description": "No Recent Polls are available right now.",
+    "widget.home.recent_polls.text.offline": "Recent Polls are not available while offline.",
+    "widget.home.recent_polls.button.all.title": "View All",
+    "widget.home.recent_polls.button.all.hint": "Tap to view all news",
+
     "widget.home.tout.customize.label": "Customize",
     "widget.home.tout.button.info.label": "Info",
     "widget.home.tout.button.info.hint": "Tap for more info",
     "widget.home.tout.popup.info.content": "Illinois app uses your first name from <a href='{{student_self_service_url}}'>Student Self-Service</a>. You can change your preferred name under Personal Information and Preferred First Name.",
+
+    "widget.home.wellness.todo.title": "MY TO-DO LIST",
+    "widget.home.wellness.todo.items.today.label": "TODAY'S ITEMS",
+    "widget.home.wellness.todo.items.today.empty.msg": "You have no to-do items for today.",
+    "widget.home.wellness.todo.items.unassigned.label": "UNASSIGNED ITEMS",
+    "widget.home.wellness.todo.items.unassigned.empty.msg": "You have no unassigned to-do items.",
+    "widget.home.wellness.todo.items.completed.failed.msg": "Failed to update To-Do item.",
+    "widget.home.wellness.todo.items.add.button": "Add Item",
+    "widget.home.wellness.todo.items.view_all.label": "View all",
+
+    "widget.home.wellness.rings.title": "DAILY WELLNESS RINGS",
 
     "widget.home.favorites.title.events": "My Events",
     "widget.home.favorites.title.dining": "My Dinings",

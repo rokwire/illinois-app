@@ -23,9 +23,9 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Wellness.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/todo/WellnessCreateToDoItemPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -97,7 +97,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       Text(Localization().getStringEx('panel.wellness.todo.header.label', 'My To-Do List'),
           overflow: TextOverflow.ellipsis,
           style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
-      HomeFavoriteButton(style: HomeFavoriteStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16)),
+      FavoriteStarIcon(style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16)),
       Expanded(child: Container()),
       RoundedButton(
           label: Localization().getStringEx('panel.wellness.todo.items.add.button', 'Add Item'),
@@ -254,6 +254,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       if (CollectionUtils.isEmpty(dayItemWidgets)) {
         dayItemWidgets.add(_buildCalendarToDoItem(null)); // Build empty transparent widget for proper horizontal adjustment
       }
+      dayItemWidgets.add(Container(height: 5)); // add empty space below
       scrollWidgets.add(SingleChildScrollView(
           scrollDirection: Axis.vertical, child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: dayItemWidgets)));
 
@@ -281,15 +282,17 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   Widget _buildManageCategoriesButton() {
-    return Padding(
-        padding: EdgeInsets.only(top: 15),
-        child: GestureDetector(
-            onTap: _onTapManageCategories,
-            child: Column(children: [
-              Text(Localization().getStringEx('panel.wellness.todo.categories.manage.button', 'Manage Categories'),
-                  style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary)),
-              Divider(color: Styles().colors!.fillColorPrimary, thickness: 2, height: 2, indent: 100, endIndent: 100)
-            ])));
+    return GestureDetector(
+        onTap: _onTapManageCategories,
+        child: Container(
+            color: Colors.transparent,
+            child: Padding(
+                padding: EdgeInsets.only(top: 15),
+                child: Column(children: [
+                  Text(Localization().getStringEx('panel.wellness.todo.categories.manage.button', 'Manage Categories'),
+                      style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary)),
+                  Divider(color: Styles().colors!.fillColorPrimary, thickness: 2, height: 2, indent: 100, endIndent: 100)
+                ]))));
   }
 
   Widget _buildItemsContent() {

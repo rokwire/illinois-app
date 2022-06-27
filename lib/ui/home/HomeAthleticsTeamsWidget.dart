@@ -7,6 +7,7 @@ import 'package:illinois/ui/athletics/AthleticsTeamsPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -50,7 +51,7 @@ class _HomeAthliticsTeamsWidgetState extends State<HomeAthliticsTeamsWidget> {
               Text(Localization().getStringEx('widget.home.athletics_teams.text.title', 'Athletics Teams'), style: TextStyle(fontSize: 20, color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.extraBold),),
             ),
           ),
-          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: HomeFavoriteStyle.Button, prompt: true,)
+          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.Button, prompt: true,)
         ],)
       ),
       Padding(padding: EdgeInsets.symmetric(horizontal: 16),

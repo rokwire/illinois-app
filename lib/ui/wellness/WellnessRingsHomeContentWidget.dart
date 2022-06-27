@@ -18,7 +18,7 @@ import 'dart:io';
 
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
@@ -76,7 +76,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
           Text(Localization().getStringEx('panel.wellness.rings.header.label', 'My Daily Wellness Rings'),
               overflow: TextOverflow.ellipsis,
               style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
-          HomeFavoriteButton(style: HomeFavoriteStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
+          FavoriteStarIcon(style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
         ]));
   }
 
