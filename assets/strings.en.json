@@ -351,7 +351,7 @@
     "panel.browse.entry.my.my_wellness_resources.title": "My Wellness Resources",
 
     "panel.browse.entry.polls.create_poll.title": "Create a Poll",
-    "panel.browse.entry.polls.view_polls.title": "View Polls",
+    "panel.browse.entry.polls.recent_polls.title": "View Polls",
 
     "panel.browse.entry.recent.recent_items.title": "Recently Viewed",
 
@@ -2518,6 +2518,13 @@
     "widget.home.campus_guide.content.empty": "Campus Guide content not available.",
     "widget.home.campus_guide.button.all.title": "View All",
     "widget.home.campus_guide.button.all.hint": "Tap to view the complete Campus Guide",
+
+    "widget.home.recent_polls.text.title": "Recent Polls",
+    "widget.home.recent_polls.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.recent_polls.text.empty.description": "No Recent Polls are available right now.",
+    "widget.home.recent_polls.text.offline": "Recent Polls are not available while offline.",
+    "widget.home.recent_polls.button.all.title": "View All",
+    "widget.home.recent_polls.button.all.hint": "Tap to view all news",
 
     "widget.home.tout.customize.label": "Customize",
     "widget.home.tout.button.info.label": "Info",

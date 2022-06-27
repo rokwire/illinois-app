@@ -349,7 +349,7 @@
 	"panel.browse.entry.my.my_wellness_resources.title": "My Wellness Resources",
 
 	"panel.browse.entry.polls.create_poll.title": "Create a Poll",
-	"panel.browse.entry.polls.view_polls.title": "View Polls",
+	"panel.browse.entry.polls.recent_polls.title": "View Polls",
 
 	"panel.browse.entry.recent.recent_items.title": "Recently Viewed",
 
@@ -2512,6 +2512,13 @@
 	"widget.home.campus_guide.content.empty": "校園指南內容不可用。",
 	"widget.home.campus_guide.button.all.title": "查看全部",
 	"widget.home.campus_guide.button.all.hint": "點擊查看完整的校園指南",
+
+	"widget.home.recent_polls.text.title": "Recent Polls",
+	"widget.home.recent_polls.text.empty": "Whoops! Nothing to see here.",
+	"widget.home.recent_polls.text.empty.description": "No Recent Polls are available right now.",
+	"widget.home.recent_polls.text.offline": "Recent Polls are not available while offline.",
+	"widget.home.recent_polls.button.all.title": "View All",
+	"widget.home.recent_polls.button.all.hint": "Tap to view all news",
 
 	"widget.home.tout.customize.label": "定制",
 	"widget.home.tout.button.info.label": "信息",
