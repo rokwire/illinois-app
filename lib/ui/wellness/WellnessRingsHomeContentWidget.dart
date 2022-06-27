@@ -17,8 +17,11 @@
 import 'dart:io';
 
 import 'package:confetti/confetti.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
@@ -41,6 +44,8 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
 
   late _WellnessRingsTab _selectedTab;
 
+  List<WellnessRingData>? _ringsData;
+
   @override
   void initState() {
     super.initState();
@@ -48,6 +53,10 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     NotificationService().subscribe(this, [
       WellnessRingService.notifyUserRingsUpdated,
     ]);
+    WellnessRingService().getWellnessRings().then((rings){
+      _ringsData = rings;
+      if(mounted) setState(() {});
+    });
   }
 
   @override
@@ -135,7 +144,11 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
             Container(height: 28,),
             _buildButtons(),
             Container(height: 16,),
-            WellnessRingButton(label: "Create New Ring", description: "Maximum of 4 total", onTapWidget: (context){}, showLeftIcon: true,),
+            _WellnessRingButton(label: "Create New Ring", description: "Maximum of 4 total", onTapWidget:
+                (context){
+                  Analytics().logSelect(target: "Create new ring");
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingSelectPredefinedPanel()));
+                }, showLeftIcon: true,),
             Container(height: 16,),
         ],
       ),
@@ -160,15 +173,40 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
   }
 
   Widget _buildButtons(){
-    return _mocButtons;
+    List<Widget> content = [];
+    if(_ringsData != null && _ringsData!.isNotEmpty) {
+      for (WellnessRingData? data  in _ringsData!) {
+        if (data != null) {
+          content.add(_WellnessRingButton(
+              label: data.name ?? "",
+              color: data.color,
+              showRightIcon: true,
+              description: "${WellnessRingService()
+                  .getRingDailyValue(data.id)
+                  .toInt()}/${data.goal.toInt()} ${data.unit}s",
+              onTapWidget: (context) {
+                WellnessRingService().addRecord(
+                    WellnessRingRecord(value: 1, timestamp: DateTime
+                        .now()
+                        .millisecondsSinceEpoch, wellnessRingId: data.id));
+              }));
+          content.add(Container(height: 10,));
+        }
+      }
+    }
+
+    return Container(
+      child: Column(children: content,),
+    );
   }
 
+  //ignore: unused_field
   Widget get _mocButtons{
     List<Widget> content = [];
     for(dynamic jsonData in WellnessRingService.predefinedRings){
       WellnessRingData? data = WellnessRingData.fromJson(jsonData);
       if(data!=null){
-        content.add(WellnessRingButton(
+        content.add(_WellnessRingButton(
             label: data.name??"",
             color: data.color,
             showRightIcon: true,
@@ -197,6 +235,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
   @override
   void onNotification(String name, param) {
     if(name == WellnessRingService.notifyUserRingsUpdated){
+      _ringsData = WellnessRingService().wellnessRings;
       if(mounted) {
         setState(() {});
       }
@@ -237,8 +276,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
         WellnessRingService.notifyUserRingsAccomplished,
     ]);
     _loadRingsData();
-    _controllerCenter =
-        ConfettiController(duration: const Duration(seconds: 5));
+    _controllerCenter = ConfettiController(duration: const Duration(seconds: 5));
     // _animateControllers();
   }
 
@@ -257,8 +295,9 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   void _loadRingsData() async {
     WellnessRingService().getWellnessRings().then((value) {
       _ringsData = value;
-      setState(() {
-      });
+      if(mounted) {
+        setState(() {});
+      }
     });
   }
 
@@ -277,7 +316,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     int fillCount = MIN_RINGS_COUNT - (_ringsData?.length ?? 0);
     if(fillCount > 0){
       for (int i=0; i<fillCount; i++){
-        data.add(WellnessRingData(id: "empty", goal: 1, timestamp: DateTime.now().millisecondsSinceEpoch));
+        data.add(WellnessRingData(id: "empty_$i", goal: 1, timestamp: DateTime.now().millisecondsSinceEpoch));
       }
     }
     if(_ringsData?.isNotEmpty ?? false){
@@ -489,7 +528,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
 }
 
 //WellnessRingButton
-class WellnessRingButton extends StatefulWidget{
+class _WellnessRingButton extends StatefulWidget{
   final String label;
   final String? description;
   final bool showLeftIcon;
@@ -498,14 +537,14 @@ class WellnessRingButton extends StatefulWidget{
   final void Function(BuildContext context) onTapWidget;
   final void Function(BuildContext context)? onTapRightWidget;
 
-  const WellnessRingButton({Key? key, required this.label, this.description, this.showLeftIcon = false, this.showRightIcon = false, this.color, required this.onTapWidget, this.onTapRightWidget}) : super(key: key);
+  const _WellnessRingButton({Key? key, required this.label, this.description, this.showLeftIcon = false, this.showRightIcon = false, this.color, required this.onTapWidget, this.onTapRightWidget}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _WellnessRingButtonState();
 
 }
 
-class _WellnessRingButtonState extends State<WellnessRingButton>{
+class _WellnessRingButtonState extends State<_WellnessRingButton>{
 
   @override
   Widget build(BuildContext context) {
@@ -830,10 +869,10 @@ class WellnessRingService with Service{
 
   static const String _cacheFileName = "wellness.json";
   static const int MAX_RINGS = 4;
-  static const List<dynamic> predefinedRings = [
-    {'name': "Hobby", 'goal': 10, 'color': 'FFF57C00' , 'id': "id_0", 'unit':'session'},
-    {'name': "Physical Activity", 'goal': 10, 'color': 'FF4CAF50', 'id': "id_1", 'unit':'activity'},
-    {'name': "Mindfulness", 'goal': 10, 'color': 'FF2196F3' , 'id': "id_2", 'unit':'moment'},
+  static const List<Map<String,dynamic>> predefinedRings = [
+    {'name': "Hobby", 'goal': 10, 'color': 'FFF57C00' , 'id': "id_predefined_0", 'unit':'session', "description":"description"},
+    {'name': "Physical Activity", 'goal': 10, 'color': 'FF4CAF50', 'id': "id_predefined_1", 'unit':'activity', "description":"description"},
+    {'name': "Mindfulness", 'goal': 10, 'color': 'FF2196F3' , 'id': "id_predefined_2", 'unit':'moment', "description":"description"},
   ];
 
   // ignore: unused_field
@@ -879,7 +918,7 @@ class WellnessRingService with Service{
         _wellnessRecords = WellnessRingRecord.listFromJson(storedValues?["wellness_ring_records"] ?? []);
       }
     );
-    _wellnessRings =  WellnessRingData.listFromJson(predefinedRings);//Storage().userWellnessRings; //TBD implement from file //TBD Moc for now
+    // _wellnessRings =  WellnessRingData.listFromJson(predefinedRings);//Storage().userWellnessRings; //TBD implement from file //TBD Moc for now
     // _wellnessRecords = []; //_mocWellnessRecords; //TBD Implement from file //TBD Moc for now
   }
   
@@ -961,7 +1000,7 @@ class WellnessRingService with Service{
     //TBD store
     bool alreadyAccomplished = _isAccomplished(record.wellnessRingId);
     _wellnessRecords?.add(record);
-    NotificationService().notify(notifyUserRingsUpdated);
+    NotificationService().notify(notifyUserRingsUpdated); //TBD add separate constant for Records updated
     if(alreadyAccomplished == false) {
       _checkForAccomplishment(record.wellnessRingId);
     }
@@ -1130,8 +1169,14 @@ class WellnessRingService with Service{
   double getRingDailyCompletion(String id) {
     double value = getRingDailyValue(id);
     double goal = 1;
-    try{ goal = getRingData(id)?.goal ?? 0;} catch (e){ print(e);}
-    return value / goal;
+    try{ goal = getRingData(id)?.goal ?? 0;
+      } catch (e){
+        print(e);
+        return 0;// if we have no records yet
+
+    }
+    return goal == 0 || value == 0 ? 0 :
+      value / goal;
   }
 
   WellnessRingData? getRingData(String id){
