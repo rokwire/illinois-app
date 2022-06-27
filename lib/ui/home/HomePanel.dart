@@ -43,6 +43,7 @@ import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
 import 'package:illinois/ui/home/HomeWelcomeWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessResourcesWidget.dart';
+import 'package:illinois/ui/home/HomeWellnessWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -410,11 +411,11 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (code == 'wellness') {
       if (title) {
-        return 'Wellness';
+        return HomeWellnessWidget.title;
       } else if (handle) {
-        return HomeHandleWidget(title: 'Wellness', favoriteId: code, dragAndDropHost: this, position: position,);
+        return HomeWellnessWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
-        return HomeTBDWidget(title: 'Wellness', favoriteId: code, updateController: _updateController);
+        return HomeWellnessWidget(favoriteId: code, updateController: _updateController,);
       }
     }
 

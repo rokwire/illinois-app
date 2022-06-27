@@ -2465,6 +2465,8 @@
 
     "widget.home.wallet.label.title": "Wallet",
 
+    "widget.home.wellness.label.title": "Wellness",
+
     "widget.home.wallet.illini_cash.title": "Illini Cash",
     "widget.home.wallet.illini_cash.label.current_balance": "Current Illini Cash Balance",
     "widget.home.wallet.illini_cash.button.add_illini_cash.title": "Add Illini Cash",

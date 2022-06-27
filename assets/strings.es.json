@@ -2459,6 +2459,8 @@
 
     "widget.home.wallet.label.title": "Wallet",
 
+    "widget.home.wellness.label.title": "Wellness",
+
     "widget.home.wallet.illini_cash.title": "Illini Efectivo",
     "widget.home.wallet.illini_cash.label.current_balance": "Saldo de efectivo actual de Illini",
     "widget.home.wallet.illini_cash.button.add_illini_cash.title": "Agregar efectivo Illini",
