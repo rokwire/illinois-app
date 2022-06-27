@@ -47,6 +47,7 @@ import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -925,7 +926,7 @@ class _BrowseFavoriteButton extends StatelessWidget {
     return Opacity(opacity: enabled ? 1 : 0, child:
       Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
         InkWell(onTap: onToggle, child:
-          HomeFavoriteStar(selected: selected, style: HomeFavoriteStyle.Button,)
+          FavoriteStarIcon(selected: selected, style: FavoriteIconStyle.Button,)
         ),
       ),
     );

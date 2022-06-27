@@ -29,6 +29,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -462,7 +463,7 @@ class CampusResourceButton extends StatelessWidget {
                     ),
                   ),
                   Opacity(opacity: _canFavorite ? 1 : 0, child:
-                    HomeFavoriteButton(favorite: favorite, style: HomeFavoriteStyle.Button, prompt: promptFavorite,)
+                    HomeFavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, prompt: promptFavorite,)
                   ),
                 ],),
                 Row(children: [

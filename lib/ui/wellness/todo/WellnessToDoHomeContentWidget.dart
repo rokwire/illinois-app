@@ -23,9 +23,9 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Wellness.dart';
-import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/todo/WellnessCreateToDoItemPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -97,7 +97,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       Text(Localization().getStringEx('panel.wellness.todo.header.label', 'My To-Do List'),
           overflow: TextOverflow.ellipsis,
           style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
-      HomeFavoriteButton(style: HomeFavoriteStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16)),
+      FavoriteStarIcon(style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16)),
       Expanded(child: Container()),
       RoundedButton(
           label: Localization().getStringEx('panel.wellness.todo.items.add.button', 'Add Item'),
