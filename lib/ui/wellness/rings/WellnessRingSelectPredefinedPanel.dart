@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/wellness/WellnessReing.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
+import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -24,7 +25,7 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      WellnessRingService.notifyUserRingsUpdated,
+      WellnessRings.notifyUserRingsUpdated,
     ]);
   }
 
@@ -74,9 +75,9 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
 
   Widget _buildPredefinedButtons(){
     List<Widget> content = [];
-    for(Map<String, dynamic> jsonData in WellnessRingService.predefinedRings){
+    for(Map<String, dynamic> jsonData in WellnessRings.predefinedRings){
       WellnessRingData? data = WellnessRingData.fromJson(jsonData);
-      bool exists = data != null && WellnessRingService().wellnessRings!= null && WellnessRingService().wellnessRings!.any((var ring) => ring.id == data.id); //TODO remove check by id if it comes from server (check by name)
+      bool exists = data != null && WellnessRings().wellnessRings!= null && WellnessRings().wellnessRings!.any((var ring) => ring.id == data.id); //TODO remove check by id if it comes from server (check by name)
       if(data!=null && ! exists){
         content.add(_WellnessRingButton(
             label: data.name??"",
@@ -108,7 +109,7 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
 
   @override
   void onNotification(String name, param) {
-    if(name == WellnessRingService.notifyUserRingsUpdated){
+    if(name == WellnessRings.notifyUserRingsUpdated){
       if(mounted) {
         setState(() {});
       }

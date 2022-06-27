@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
+import 'package:illinois/model/wellness/WellnessReing.dart';
+import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -60,7 +61,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel>{
 
   void _onTapContinue(){
     if(_data!= null)
-      WellnessRingService().addRing(_data!);
+      WellnessRings().addRing(_data!);
     Navigator.of(context).pop();
   }
 

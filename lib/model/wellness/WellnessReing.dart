@@ -1,0 +1,172 @@
+import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+
+class WellnessRingData {
+  String id;
+  double goal;
+  Color? color;
+  String? name;
+  String? unit;
+  int timestamp;
+
+  //helper property to avoid creating date everytime
+  DateTime? date;
+
+  WellnessRingData({required this.id , this.name, required this.goal, this.date, this.unit = "times" , this.color = Colors.orange, required this.timestamp});
+
+  static WellnessRingData? fromJson(Map<String, dynamic>? json){
+    if(json!=null) {
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(JsonUtils.intValue(json['timestamp'])??0);
+      return WellnessRingData(
+          id:     JsonUtils.stringValue(json['id']) ?? "",
+          goal:   JsonUtils.doubleValue(json['goal']) ?? 1.0,
+          name:   JsonUtils.stringValue(json['name']),
+          unit:   JsonUtils.stringValue(json['unit']),
+          timestamp:   JsonUtils.intValue(json['timestamp']) ?? DateTime.now().millisecondsSinceEpoch,
+          color:  UiColors.fromHex(JsonUtils.stringValue(json['color'])),
+          date: date
+      );
+    }
+    return null;
+  }
+
+  Map<String, dynamic> toJson(){
+    Map<String, dynamic> json = {};
+    json['id']     = id;
+    json['goal']   = goal;
+    json['name']   = name;
+    json['unit']   = unit;
+    json['color']  = UiColors.toHex(color);
+    json['timestamp']  = timestamp;
+    return json;
+  }
+
+  void updateFromOther(WellnessRingData other){
+    this.id = other.id;
+    this.goal = other.goal;
+    this.color = other.color;
+    this.name= other.name;
+    this.unit = other.unit;
+    this.timestamp = other.timestamp;
+    this.date = other.date != null ? DateTimeUtils().copyDateTime(other.date!): null;
+  }
+
+  @override
+  bool operator ==(dynamic other) =>
+      (other is WellnessRingData) &&
+          (id == other.id) &&
+          (goal == other.goal) &&
+          (color == other.color) &&
+          (name == other.name) &&
+          (timestamp == other.timestamp) &&
+          (unit == other.unit);
+
+  @override
+  int get hashCode =>
+      (id.hashCode) ^
+      (goal.hashCode) ^
+      (color?.hashCode ?? 0) ^
+      (name?.hashCode ?? 0) ^
+      (timestamp.hashCode) ^
+      (unit?.hashCode ?? 0);
+
+  static List<WellnessRingData>? listFromJson(List<dynamic>? json) {
+    List<WellnessRingData>? values;
+    if (json != null) {
+      values = <WellnessRingData>[];
+      for (dynamic entry in json) {
+        ListUtils.add(values, WellnessRingData.fromJson(JsonUtils.mapValue(entry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<WellnessRingData>? values) {
+    List<dynamic>? json;
+    if (values != null) {
+      json = <dynamic>[];
+      for (WellnessRingData? value in values) {
+        json.add(value?.toJson());
+      }
+    }
+    return json;
+  }
+}
+
+class WellnessRingRecord {
+  final String wellnessRingId;
+  final double value;
+  final int timestamp;
+
+  //helper property to avoid creating date everytime
+  DateTime? date;
+
+  WellnessRingRecord(
+      {required this.value, required this.timestamp, required this.wellnessRingId}){
+    if(date==null){
+      date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    }
+  }
+
+  static WellnessRingRecord? fromJson(Map<String, dynamic>? json) {
+    if (json != null) {
+      return WellnessRingRecord(
+        wellnessRingId: JsonUtils.stringValue(json['wellnessRingId']) ?? "",
+        value: JsonUtils.doubleValue(json['value']) ?? 0.0,
+        timestamp: JsonUtils.intValue(json['timestamp']) ?? 0,
+      );
+    }
+    return null;
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> json = {};
+    json['wellnessRingId'] = wellnessRingId;
+    json['value'] = value;
+    json['timestamp'] = timestamp;
+    return json;
+  }
+
+  @override
+  bool operator ==(dynamic other) =>
+      (other is WellnessRingRecord) &&
+          (wellnessRingId == other.wellnessRingId) &&
+          (value == other.value) &&
+          (timestamp == other.timestamp);
+
+  @override
+  int get hashCode =>
+      (wellnessRingId.hashCode) ^
+      (value.hashCode) ^
+      (timestamp.hashCode);
+
+  static List<WellnessRingRecord>? listFromJson(List<dynamic>? json) {
+    List<WellnessRingRecord>? values;
+    if (json != null) {
+      values = <WellnessRingRecord>[];
+      for (dynamic entry in json) {
+        ListUtils.add(values, WellnessRingRecord.fromJson(JsonUtils.mapValue(entry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<WellnessRingRecord>? values) {
+    List<dynamic>? json;
+    if (values != null) {
+      json = <dynamic>[];
+      for (WellnessRingRecord? value in values) {
+        json.add(value?.toJson());
+      }
+    }
+    return json;
+  }
+}
+
+class WellnessRingAccomplishment{
+  WellnessRingData ringData;
+  double achievedValue;
+
+  WellnessRingAccomplishment({required this.ringData, required this.achievedValue});
+}
