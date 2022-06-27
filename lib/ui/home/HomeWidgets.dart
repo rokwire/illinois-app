@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -287,10 +288,11 @@ class HomeTitleIcon extends StatelessWidget {
 
 class HomeFavoriteButton extends FavoriteButton {
 
+  final HomeFavorite? favorite;
   final bool prompt;
 
-  HomeFavoriteButton({Key? key, HomeFavorite? favorite, required FavoriteIconStyle style, EdgeInsetsGeometry padding = const EdgeInsets.all(16), this.prompt = false}) :
-  super(key: key, favorite: favorite, style: style, padding: padding);
+  HomeFavoriteButton({Key? key, this.favorite, required FavoriteIconStyle style, EdgeInsetsGeometry padding = const EdgeInsets.all(16), this.prompt = false}) :
+    super(key: key, favorite: favorite, style: style, padding: padding);
 
   @override
   void onFavorite(BuildContext context) {
@@ -308,11 +310,68 @@ class HomeFavoriteButton extends FavoriteButton {
     }
   }
 
+  @override
+  void toggleFavorite() {
+    if (favorite?.id != null) {
+      if (favorite?.category == null) {
+        // process toggle home panel widget
+        List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.id}']);
+        if (avalableSectionFavorites != null) {
+          List<Favorite> favorites = <Favorite>[favorite!];
+          for(String sectionEntry in avalableSectionFavorites) {
+            favorites.add(HomeFavorite(sectionEntry, category: favorite?.id));
+          }
+          Auth2().prefs?.setListFavorite(favorites, !isFavorite);
+        }
+        else {
+          super.toggleFavorite();
+        }
+      }
+      else { 
+        // provess toggle home widget entry
+        HomeFavorite sectionFavorite = HomeFavorite(favorite?.category);
+        if (isFavorite) {
+          // turn off home widget entry
+          int sectionFavoritesCount = 0;
+          List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.category}']);
+          if (avalableSectionFavorites != null) {
+            for(String sectionEntry in avalableSectionFavorites) {
+              if (Auth2().prefs?.isFavorite(HomeFavorite(sectionEntry, category: favorite?.category)) ?? false) {
+                sectionFavoritesCount++;
+              }
+            }
+          }
+          if (1 < sectionFavoritesCount) {
+            // turn off only home widget entry
+            super.toggleFavorite();
+          }
+          else {
+            // turn off both home widget entry and home widget itself
+            Auth2().prefs?.setListFavorite(<Favorite>[favorite!, sectionFavorite], false);
+          }
+        }
+        else {
+          // turn on home widget entry
+          if (Auth2().prefs?.isFavorite(sectionFavorite) ?? false) {
+            // turn on only home widget entry
+            super.toggleFavorite();
+          }
+          else {
+            // turn on both home widget entry and home widget itself
+            Auth2().prefs?.setListFavorite(<Favorite>[favorite!, sectionFavorite], true);
+          }
+        }
+      }
+    }
+  }
+
   static Future<bool?> promptFavorite(BuildContext context, Favorite? favorite) async {
     if (kReleaseMode) {
+
       String message = (Auth2().prefs?.isFavorite(favorite) ?? false) ?
         Localization().getStringEx('widget.home.prompt.remove.favorite', 'Are you sure you want to REMOVE this item from your favorites?') :
         Localization().getStringEx('widget.home.prompt.add.favorite', 'Are you sure you want to ADD this favorite?');
+      
       return await showDialog(context: context, builder: (BuildContext context) {
         return AlertDialog(
           content: Text(message),
