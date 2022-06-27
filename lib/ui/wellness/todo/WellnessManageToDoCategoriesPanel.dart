@@ -286,8 +286,10 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
         widgetList.add(Padding(padding: EdgeInsets.only(top: 7), child: _buildCategoryCard(category)));
       }
     } else {
-      widgetList.add(Text(Localization().getStringEx('panel.wellness.categories.manage.empty.label', 'No current categories'),
-          style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)));
+      widgetList.add(Row(children: [
+        Expanded(child: Text(Localization().getStringEx('panel.wellness.categories.manage.empty.label', 'No current categories'),
+          style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
+      ]));
     }
     return widgetList;
   }
