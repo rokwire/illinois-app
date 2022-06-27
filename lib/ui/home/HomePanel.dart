@@ -36,6 +36,7 @@ import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeDiningWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
+import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:illinois/ui/home/HomeTBDWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
@@ -43,6 +44,7 @@ import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
 import 'package:illinois/ui/home/HomeWelcomeWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessResourcesWidget.dart';
+import 'package:illinois/ui/home/HomeWellnessWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -318,6 +320,15 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeCreatePollWidget(favoriteId: code, updateController: _updateController,);
       }
     }
+    else if (code == 'recent_polls') {
+      if (title) {
+        return HomeRecentPollsWidget.title;
+      } else if (handle) {
+        return HomeRecentPollsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeRecentPollsWidget(favoriteId: code, updateController: _updateController,);
+      }
+    }
     else if (code == 'my_groups') {
       if (title) {
         return HomeMyGroupsWidget.title(contentType: GroupsContentType.my);
@@ -408,22 +419,13 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeTBDWidget(title: 'Illini News', favoriteId: code, updateController: _updateController);
       }
     }
-    else if (code == 'wellness_rings') {
+    else if (code == 'wellness') {
       if (title) {
-        return 'Wellness Rings';
+        return HomeWellnessWidget.title;
       } else if (handle) {
-        return HomeHandleWidget(title: 'Wellness Rings', favoriteId: code, dragAndDropHost: this, position: position,);
+        return HomeWellnessWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
-        return HomeTBDWidget(title: 'Wellness Rings', favoriteId: code, updateController: _updateController);
-      }
-    }
-    else if (code == 'wellness_todo') {
-      if (title) {
-        return 'Wellness To Do';
-      } else if (handle) {
-        return HomeHandleWidget(title: 'Wellness To Do', favoriteId: code, dragAndDropHost: this, position: position,);
-      } else {
-        return HomeTBDWidget(title: 'Wellness To Do', favoriteId: code, updateController: _updateController);
+        return HomeWellnessWidget(favoriteId: code, updateController: _updateController,);
       }
     }
 
@@ -652,6 +654,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'state_farm_center'), null);
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'campus_links'), null);
       Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'wallet'), null);
+      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'wellness'), null);
     }
     else {
       _updateController.add(HomePanel.notifyRefresh);

@@ -171,7 +171,7 @@ class Config extends rokwire.Config {
   int  get homeUpcomingEventsCount   => JsonUtils.intValue(settings['homeUpcomingEventsCount']) ?? 5;
   int  get homeWellnessResourcesCount=> JsonUtils.intValue(settings['homeWellnessResourcesCount']) ?? 5;
   int  get recentItemsCount          => JsonUtils.intValue(settings['recentItemsCount']) ?? 32;
-  int  get homePollsCount            => JsonUtils.intValue(settings['homePollsCount']) ?? 3;
+  int  get homeRecentPollsCount      => JsonUtils.intValue(settings['homeRecentPollsCount']) ?? 3;
   String get appPrivacyVersion       => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');
 
   @override

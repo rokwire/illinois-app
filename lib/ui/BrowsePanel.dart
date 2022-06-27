@@ -501,7 +501,7 @@ class _BrowseEntry extends StatelessWidget {
       case "my.my_wellness_resources": _onTapMyWellnessResources(context); break;
 
       case "polls.create_poll":  _onTapCreatePoll(context); break;
-      case "polls.view_polls":   _onTapViewPolls(context); break;
+      case "polls.recent_polls":   _onTapViewPolls(context); break;
 
       case "recent.recent_items": _onTapRecentItems(context); break;
 
@@ -515,8 +515,8 @@ class _BrowseEntry extends StatelessWidget {
       case "wallet.illini_id_card":   _onTapIlliniId(context); break;
       case "wallet.library_card":     _onTapLibraryCard(context); break;
 
-      case "wellness.wellness_rings": _onTapWellnessRings(context); break;
-      case "wellness.wellness_todo":  _onTapWellnessToDo(context); break;
+      case "wellness.rings": _onTapWellnessRings(context); break;
+      case "wellness.todo":  _onTapWellnessToDo(context); break;
     }
   }
 
