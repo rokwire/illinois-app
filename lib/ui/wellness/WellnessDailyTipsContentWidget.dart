@@ -38,13 +38,14 @@ class WellnessDailyTipsContentWidget extends StatefulWidget {
 class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsContentWidget> implements NotificationsListener {
   Color? _tipColor;
   bool _loading = false;
-  String? _tip;
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
-    _tip = Wellness().randomTip;
+    NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
+      Wellness.notifyDailyTipChanged,
+    ]);
     _loadTipColor();
   }
 
@@ -86,7 +87,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     return Container(
         color: (_tipColor ?? Styles().colors!.accentColor3),
         padding: EdgeInsets.all(42),
-        child: Text(_tip ?? '',
+        child: Text(Wellness().dailyTip ?? '',
             textAlign: TextAlign.center,
             style: TextStyle(color: Styles().colors!.white, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)));
   }
@@ -145,6 +146,12 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   void onNotification(String name, param) {
     if (name == Auth2.notifyLoginChanged) {
       _loadTipColor();
+    }
+    else if (name == Wellness.notifyDailyTipChanged) {
+      if (mounted) {
+        setState(() {
+        });
+      }
     }
   }
 }

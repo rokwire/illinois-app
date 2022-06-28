@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -44,6 +45,7 @@ class Wellness with Service implements NotificationsListener {
   static const String notifyToDoItemsDeleted = "edu.illinois.rokwire.wellness.todo.items.deleted";
 
   static const String notifyContentChanged = "edu.illinois.rokwire.wellness.content.changed";
+  static const String notifyDailyTipChanged = "edu.illinois.rokwire.wellness.daily_tip.changed";
 
   static const String _contentCacheFileName = "wellness.content.json";
   static const String _tipsContentCategoty = "wellness.tips";
@@ -51,6 +53,9 @@ class Wellness with Service implements NotificationsListener {
 
   File? _contentCacheFile;
   Map<String, dynamic>? _contentMap;
+
+  String? _dailyTipId;
+  DateTime? _dailyTipTime;
 
   DateTime? _pausedDateTime;
 
@@ -82,6 +87,10 @@ class Wellness with Service implements NotificationsListener {
         await _saveContentMapToCache(_contentMap);
       }
     }
+
+    _dailyTipId = Storage().wellnessDailyTipId;
+    _dailyTipTime = DateTime.fromMillisecondsSinceEpoch(Storage().wellnessDailyTipTime ?? 0);
+    _updateDailyTip(notify: false);
 
     if (_contentMap != null) {
       await super.initService();
@@ -119,6 +128,7 @@ class Wellness with Service implements NotificationsListener {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _updateContentMapFromNet();
+          _updateDailyTip();
         }
       }
     }
@@ -279,19 +289,40 @@ class Wellness with Service implements NotificationsListener {
 
   // Tips
 
-  String? get randomTip {
+  String? get dailyTip => _tipString(tipId: _dailyTipId);
+
+  void refreshDailyTip() => _updateDailyTip(force: true);
+
+  String? get _randomTipId {
     Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategoty] : null;
-    if (tipsContent != null) {
-      List<dynamic>? entries = JsonUtils.listValue(tipsContent['entries']);
-      Map<String, dynamic>? strings = JsonUtils.mapValue(tipsContent['strings']);
-      if ((entries != null) && (0 < entries.length) &&  (strings != null)) {
-        int entryIndex = Random().nextInt(entries.length);
-        Map<String, dynamic>? entry = JsonUtils.mapValue(entries[entryIndex]);
-        String? entryId = (entry != null) ? JsonUtils.stringValue(entry['id']) : null;
-        return _getContentString(strings, entryId);
-      }
+    List<dynamic>? entries = (tipsContent != null) ? JsonUtils.listValue(tipsContent['entries']) : null;
+    if ((entries != null) && (0 < entries.length)) {
+      int entryIndex = Random().nextInt(entries.length);
+      Map<String, dynamic>? entry = JsonUtils.mapValue(entries[entryIndex]);
+      return (entry != null) ? JsonUtils.stringValue(entry['id']) : null;
     }
     return null;
+  }
+
+  String? _tipString({String? tipId}) {
+    Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategoty] : null;
+    Map<String, dynamic>? strings = (tipsContent != null) ? JsonUtils.mapValue(tipsContent['strings']) : null;
+    return _getContentString(strings, tipId);
+  }
+
+  bool _hasTip({String? tipId}) {
+    Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategoty] : null;
+    List<dynamic>? entries = (tipsContent != null) ? JsonUtils.listValue(tipsContent['entries']) : null;
+    if ((entries != null) && (0 < entries.length)) {
+      for (dynamic entry in entries) {
+        Map<String, dynamic>? entryTip = JsonUtils.mapValue(entries[entry]);
+        String? entryTipId = (entryTip != null) ? JsonUtils.stringValue(entryTip['id']) : null;
+        if (entryTipId == tipId) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   static String? _getContentString(Map<String, dynamic>? strings,  String? key, {String? languageCode}) {
@@ -305,6 +336,23 @@ class Wellness with Service implements NotificationsListener {
       }
     }
     return null;
+  }
+
+
+  bool get _needsDailyTipUpdate =>
+    ((_dailyTipId == null) || (_dailyTipTime == null)|| !_hasTip(tipId: _dailyTipId)  || (DateTimeUtils.midnight(_dailyTipTime)!.compareTo(DateTimeUtils.midnight(DateTime.now())!) < 0));
+
+  void _updateDailyTip({bool notify = true, bool force = false}) {
+    if (force || _needsDailyTipUpdate) {
+      String? tipId = _randomTipId;
+      if (tipId != null) {
+        Storage().wellnessDailyTipId = _dailyTipId = tipId;
+        Storage().wellnessDailyTipTime = (_dailyTipTime = DateTime.now()).millisecondsSinceEpoch;
+        if (notify) {
+          NotificationService().notify(notifyDailyTipChanged);
+        }
+      }
+    }
   }
 
   // Getters
@@ -370,6 +418,7 @@ class Wellness with Service implements NotificationsListener {
     if ((contentMap != null) && !DeepCollectionEquality().equals(_contentMap, contentMap)) {
       _contentMap = contentMap;
       await _saveContentMapToCache(contentMap);
+      _updateDailyTip();
       NotificationService().notify(notifyContentChanged);
     }
   }
