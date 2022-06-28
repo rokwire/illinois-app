@@ -517,6 +517,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "wellness.rings": _onTapWellnessRings(context); break;
       case "wellness.todo":  _onTapWellnessToDo(context); break;
+      case "wellness.tips":  _onTapWellnessTips(context); break;
     }
   }
 
@@ -884,6 +885,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapWellnessToDo(BuildContext context) {
     Analytics().logSelect(target: "Wellness To Do");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.todo,)));
+  }
+
+  void _onTapWellnessTips(BuildContext context) {
+    Analytics().logSelect(target: "Wellness Daily Tips");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.dailyTips,)));
   }
 
   void _notImplemented(BuildContext context) {

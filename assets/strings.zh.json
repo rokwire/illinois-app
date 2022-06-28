@@ -365,6 +365,7 @@
 
 	"panel.browse.entry.wellness.rings.title": "Rings",
 	"panel.browse.entry.wellness.todo.title": "To Do",
+	"panel.browse.entry.wellness.tips.title": "Daily Tips",
 
 	"panel.search.label.search_for":"搜索",
 	"panel.search.label.results_for":"结果为",
@@ -2524,16 +2525,18 @@
 	"widget.home.tout.button.info.hint": "點擊了解更多信息",
 	"widget.home.tout.popup.info.content": "伊利諾伊州應用程序使用您來自 <a href='{{student_self_service_url}}'>學生自助服務</a> 的名字。 您可以在“個人信息”和“首選名字”下更改首選名稱。",
 
-    "widget.home.wellness.todo.title": "我的待辦事項清單",
-    "widget.home.wellness.todo.items.today.label": "今天的項目",
-    "widget.home.wellness.todo.items.today.empty.msg": "你今天沒有待辦事項.",
-    "widget.home.wellness.todo.items.unassigned.label": "未分配的項目",
-    "widget.home.wellness.todo.items.unassigned.empty.msg": "您沒有未分配的待辦事項.",
-    "widget.home.wellness.todo.items.completed.failed.msg": "更新待辦事項失敗.",
-    "widget.home.wellness.todo.items.add.button": "添加項目",
-    "widget.home.wellness.todo.items.view_all.label": "查看全部",
+	"widget.home.wellness.todo.title": "我的待辦事項清單",
+	"widget.home.wellness.todo.items.today.label": "今天的項目",
+	"widget.home.wellness.todo.items.today.empty.msg": "你今天沒有待辦事項.",
+	"widget.home.wellness.todo.items.unassigned.label": "未分配的項目",
+	"widget.home.wellness.todo.items.unassigned.empty.msg": "您沒有未分配的待辦事項.",
+	"widget.home.wellness.todo.items.completed.failed.msg": "更新待辦事項失敗.",
+	"widget.home.wellness.todo.items.add.button": "添加項目",
+	"widget.home.wellness.todo.items.view_all.label": "查看全部",
 
-    "widget.home.wellness.rings.title": "日常健康戒指",
+	"widget.home.wellness.rings.title": "日常健康戒指",
+
+	"widget.home.wellness.tips.title": "每日提示",
 
 	"widget.home.favorites.title.events": "我的活動",
 	"widget.home.favorites.title.dining": "我的餐廳",

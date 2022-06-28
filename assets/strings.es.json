@@ -365,6 +365,7 @@
 
     "panel.browse.entry.wellness.rings.title": "Rings",
     "panel.browse.entry.wellness.todo.title": "To Do",
+    "panel.browse.entry.wellness.tips.title": "Daily Tips",
 
     "panel.search.header.title":"Buscar",
     "panel.search.label.search_for":"Buscar",
@@ -2534,6 +2535,8 @@
     "widget.home.wellness.todo.items.view_all.label": "Ver todo",
 
     "widget.home.wellness.rings.title": "ANILLOS DE BIENESTAR DIARIO",
+
+    "widget.home.wellness.tips.title": "CONSEJOS DIARIOS",
 
     "widget.home.favorites.title.events": "Mis Eventos",
     "widget.home.favorites.title.dining": "Mis Cenas",

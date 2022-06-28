@@ -367,6 +367,7 @@
 
     "panel.browse.entry.wellness.rings.title": "Rings",
     "panel.browse.entry.wellness.todo.title": "To Do",
+    "panel.browse.entry.wellness.tips.title": "Daily Tips",
 
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Searching only Events Titles",
@@ -2540,6 +2541,8 @@
     "widget.home.wellness.todo.items.view_all.label": "View all",
 
     "widget.home.wellness.rings.title": "DAILY WELLNESS RINGS",
+
+    "widget.home.wellness.tips.title": "DAILY TIPS",
 
     "widget.home.favorites.title.events": "My Events",
     "widget.home.favorites.title.dining": "My Dinings",
