@@ -265,8 +265,19 @@ class Wellness with Service implements NotificationsListener {
     if (CollectionUtils.isEmpty(idList)) {
       return false;
     }
-    //TBD: DD - implement when we have API
-    return false;
+    String? body = JsonUtils.encode(idList!);
+    String url = '${Config().wellnessUrl}/user/todo_entries/clear_completed_entries';
+    http.Response? response = await Network().delete(url, auth: Auth2(), body: body);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      Log.i('Wellness todo items deleted successfully.');
+      NotificationService().notify(notifyToDoItemCreated);
+      return true;
+    } else {
+      Log.w('Failed to delete wellness todo items. Response:\n$responseCode: $responseString');
+      return false;
+    }
   }
 
   Future<List<ToDoItem>?> loadToDoItems() async {
