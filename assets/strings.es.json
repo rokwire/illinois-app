@@ -1647,6 +1647,7 @@
     "panel.wellness.sections.description.footer.dimensions.text": "bienestar físico, mental, ambiental, financiero, espiritual, vocacional, emocional y social.",
     "panel.wellness.sections.dimensions.button": "Más información sobre las 8 dimensiones",
     "panel.wellness.sections.dimensions.title": "8 dimensiones del bienestar",
+    "panel.wellness.sections.dimensions.hint": "Toca para ver las 8 Dimensiones del Bienestar",
 
     "panel.wellness.todo.header.label": "Mi lista de tareas pendientes",
     "panel.wellness.todo.tab.daily.label": "Diariamente",
