@@ -137,7 +137,9 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
             Container(height: 28,),
             _buildButtons(),
             Container(height: 16,),
-            WellnessRingButton(label: "Create New Ring", description: "Maximum of 4 total", onTapWidget:
+            WellnessRingButton(label: "Create New Ring", description: "Maximum of 4 total",
+              enabled: WellnessRings().canAddRing,
+              onTapWidget:
                 (context){
                   Analytics().logSelect(target: "Create new ring");
                   Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingSelectPredefinedPanel()));
@@ -189,29 +191,6 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
           ));
           content.add(Container(height: 10,));
         }
-      }
-    }
-
-    return Container(
-      child: Column(children: content,),
-    );
-  }
-
-  // ignore: unused_field
-  Widget mocButtons(){
-    List<Widget> content = [];
-    for(dynamic jsonData in WellnessRings.predefinedRings){
-      WellnessRingData? data = WellnessRingData.fromJson(jsonData);
-      if(data!=null){
-        content.add(WellnessRingButton(
-            label: data.name??"",
-            color: data.color,
-            showRightIcon: true,
-            description: "${WellnessRings().getRingDailyValue(data.id).toInt()}/${data.goal.toInt()} ${data.unit}s",
-            onTapWidget: (context){
-              WellnessRings().addRecord(WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: data.id));
-            }));
-        content.add(Container(height: 10,));
       }
     }
 

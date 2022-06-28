@@ -16,11 +16,6 @@ class WellnessRings with Service{
 
   static const String _cacheFileName = "wellness.json";
   static const int MAX_RINGS = 4;
-  static const List<Map<String,dynamic>> predefinedRings = [
-    {'name': "Hobby", 'goal': 2, 'color': 'e45434', 'id': "id_predefined_0", 'unit':'session', "description":"description"},
-    {'name': "Physical Activity", 'goal': 16, 'color': 'FF4CAF50', 'id': "id_predefined_1", 'unit':'activity', "description":"description"},
-    {'name': "Mindfulness", 'goal': 10, 'color': 'FF2196F3' , 'id': "id_predefined_2", 'unit':'moment', "description":"description"},
-  ];
 
   // ignore: unused_field
   final List <WellnessRingRecord> _mocWellnessRecords = [
@@ -139,14 +134,17 @@ class WellnessRings with Service{
     return success;
   }
 
-  void removeRing(WellnessRingData data) async {
+  Future<bool> removeRing(WellnessRingData data) async {
     //TBD network API
     WellnessRingData? ringData = _wellnessRings?.firstWhere((ring) => ring.id == data.id);
     if(ringData != null){
       _wellnessRings?.remove(ringData);
+      NotificationService().notify(notifyUserRingsUpdated);
+      _storeWellnessRingData();
+      return true;
     }
-    NotificationService().notify(notifyUserRingsUpdated);
-    _storeWellnessRingData();
+
+    return false;
   }
 
   void addRecord(WellnessRingRecord record){
@@ -197,10 +195,8 @@ class WellnessRings with Service{
   }
 
   Future<List<WellnessRingData>?> getWellnessRings() async {
-    if(_wellnessRings == null){ //TBD REMOVE workaround while we are not added to the Services
-      _initFromCache();
-    }
-    return _wellnessRings; //TBD load from net
+    //TBD load from net
+    return _wellnessRings;
   }
 
   List<WellnessRingData>? get wellnessRings{
@@ -208,7 +204,6 @@ class WellnessRings with Service{
   }
 
   int getTotalCompletionCount(String id){
-
     //Split records by date
     Map<String, List<WellnessRingRecord>> ringDateRecords = {};
     _wellnessRecords?.forEach((record) {
@@ -253,7 +248,8 @@ class WellnessRings with Service{
 
       for(var ringDayRecords in dayRecords.value.entries){
         String ringId = ringDayRecords.key;
-        WellnessRingData? ringData = WellnessRings()._wellnessRings?.firstWhere((element) => element.id == ringId);
+        WellnessRingData? ringData;
+        try{ ringData = WellnessRings()._wellnessRings?.firstWhere((element) => element.id == ringId);} catch(e){Log.d(e.toString());}
         if(ringData!=null) {
           double goal = ringData.goal;
           List<WellnessRingRecord>? ringRecords = dayRecords.value[ringData.id];
@@ -270,8 +266,8 @@ class WellnessRings with Service{
                 history[dayRecords.key] = accomplishmentsForThatDay;
               }
 
-              WellnessRingAccomplishment? completionData = accomplishmentsForThatDay.firstWhere((element) => element.ringData.id == ringData.id,
-                  orElse: () => WellnessRingAccomplishment(ringData: ringData, achievedValue: dayCount)
+              WellnessRingAccomplishment? completionData = accomplishmentsForThatDay.firstWhere((element) => element.ringData.id == ringData!.id,
+                  orElse: () => WellnessRingAccomplishment(ringData: ringData!, achievedValue: dayCount)
               );
 
               if(!accomplishmentsForThatDay.contains(completionData)){
