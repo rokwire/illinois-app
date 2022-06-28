@@ -1649,6 +1649,7 @@
 	"panel.wellness.sections.description.footer.dimensions.text": "身體, 心理, 環境, 財務, 精神, 職業, 情感和社會健康.",
 	"panel.wellness.sections.dimensions.button": "了解有關 8 個維度的更多信息",
 	"panel.wellness.sections.dimensions.title": "健康的 8 個維度",
+	"panel.wellness.sections.dimensions.hint": "點擊查看健康的 8 個維度",
 
 	"panel.wellness.todo.header.label": "我的待辦事項清單",
 	"panel.wellness.todo.tab.daily.label": "日常的",

@@ -1650,6 +1650,7 @@
     "panel.wellness.sections.description.footer.dimensions.text": "physical, mental, environmental, financial, spiritual, vocational, emotional and social wellness.",
     "panel.wellness.sections.dimensions.button": "Learn more about the 8 dimensions",
     "panel.wellness.sections.dimensions.title": "8 Dimensions of Wellness",
+    "panel.wellness.sections.dimensions.hint": "Tap to see the 8 Dimensions of Wellness",
 
     "panel.wellness.todo.header.label": "My To-Do List",
     "panel.wellness.todo.tab.daily.label": "Daily",
