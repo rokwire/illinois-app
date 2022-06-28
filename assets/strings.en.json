@@ -367,6 +367,7 @@
 
     "panel.browse.entry.wellness.rings.title": "Rings",
     "panel.browse.entry.wellness.todo.title": "To Do",
+    "panel.browse.entry.wellness.tips.title": "Daily Tips",
 
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Searching only Events Titles",
@@ -1641,13 +1642,15 @@
     "panel.wellness.section.rings.label": "Daily Wellness Rings",
     "panel.wellness.section.todo.label": "To-Do List",
     "panel.wellness.section.resources.label": "Wellness Resources",
+    "panel.wellness.section.podcast.label": "Healthy Podcast",
+    "panel.wellness.section.struggling.label": "I'm Struggling",
 
-    "panel.wellness.sections.description.header.text": "Learn to prioritize. Take care of what you can get done today, right now. This will help you be a better time manager and reduce the risk of procrastination.",
     "panel.wellness.sections.description.footer.wellness.text": "Wellness ",
     "panel.wellness.sections.description.footer.description.text": "is a state of optimal well-being that is oriented toward maximizing an individual's potential. This is a life-long process of moving towards enhancing your ",
     "panel.wellness.sections.description.footer.dimensions.text": "physical, mental, environmental, financial, spiritual, vocational, emotional and social wellness.",
     "panel.wellness.sections.dimensions.button": "Learn more about the 8 dimensions",
     "panel.wellness.sections.dimensions.title": "8 Dimensions of Wellness",
+    "panel.wellness.sections.dimensions.hint": "Tap to see the 8 Dimensions of Wellness",
 
     "panel.wellness.todo.header.label": "My To-Do List",
     "panel.wellness.todo.tab.daily.label": "Daily",
@@ -1671,8 +1674,8 @@
     "panel.wellness.categories.manage.existing.label": "Manage Existing Categories",
     "panel.wellness.categories.manage.empty.label": "No current categories",
     "panel.wellness.categories.manage.empty.name.msg": "Please, fill category name.",
-    "panel.wellness.categories.manage.category.create.succeeded.msg": "Category created successfully.",
-    "panel.wellness.categories.manage.category.create.failed.msg": "Failed to create category.",
+    "panel.wellness.categories.manage.category.save.succeeded.msg": "Category saved successfully.",
+    "panel.wellness.categories.manage.category.save.failed.msg": "Failed to save category.",
     "panel.wellness.categories.manage.category.delete.succeeded.msg": "Category deleted successfully.",
     "panel.wellness.categories.manage.category.delete.failed.msg": "Failed to delete category.",
     "panel.wellness.categories.manage.category.delete.confirmation.msg": "Are sure that you want to delete this category?",
@@ -2541,6 +2544,8 @@
     "widget.home.wellness.todo.items.view_all.label": "View all",
 
     "widget.home.wellness.rings.title": "DAILY WELLNESS RINGS",
+
+    "widget.home.wellness.tips.title": "DAILY TIPS",
 
     "widget.home.favorites.title.events": "My Events",
     "widget.home.favorites.title.dining": "My Dinings",

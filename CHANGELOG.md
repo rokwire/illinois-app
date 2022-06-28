@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Wellness ToDo List - hook the backend APIs [#1689](https://github.com/rokwire/illinois-app/issues/1689).
+- Wellness Tips loaded from backend [#1833](https://github.com/rokwire/illinois-app/issues/1833).
+- Added some wellness resource items to Wellness Home content selector [#1836](https://github.com/rokwire/illinois-app/issues/1836).
+- Added 8 Dimensions of wellness popup image [#1838](https://github.com/rokwire/illinois-app/issues/1838).
+
 ## [4.0.38] - 2022-06-27
 ### Fixed
 - Resolved the conflict between start/unstarr and select/deselect all in compund widgets in Browse panel [#1827](https://github.com/rokwire/illinois-app/issues/1827).

@@ -50,7 +50,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   void initState() {
     super.initState();
     NotificationService()
-        .subscribe(this, [Wellness.notifyToDoCategoryCreated, Wellness.notifyToDoCategoryUpdated, Wellness.notifyToDoCategoryDeleted]);
+        .subscribe(this, [Wellness.notifyToDoCategoryChanged, Wellness.notifyToDoCategoryDeleted]);
     _category = widget.category;
     _selectedColor = _category?.color;
     _selectedReminderType = _category?.reminderType ?? ToDoCategoryReminderType.none;
@@ -261,15 +261,19 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   Widget _buildManageCategories() {
     return Padding(
         padding: EdgeInsets.only(top: 30),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Container(height: 1, color: Styles().colors!.mediumGray2),
           Padding(
               padding: EdgeInsets.only(top: 9),
-              child: Text(Localization().getStringEx('panel.wellness.categories.manage.existing.label', 'Manage Existing Categories'),
-                  style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary))),
+              child: Row(children: [
+                Expanded(
+                    child: Text(Localization().getStringEx('panel.wellness.categories.manage.existing.label', 'Manage Existing Categories'),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary)))
+              ])),
           Padding(
               padding: EdgeInsets.only(top: 8),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _buildCategoriesWidgetList()))
+              child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: _buildCategoriesWidgetList()))
         ]));
   }
 
@@ -282,8 +286,10 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
         widgetList.add(Padding(padding: EdgeInsets.only(top: 7), child: _buildCategoryCard(category)));
       }
     } else {
-      widgetList.add(Text(Localization().getStringEx('panel.wellness.categories.manage.empty.label', 'No current categories'),
-          style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)));
+      widgetList.add(Row(children: [
+        Expanded(child: Text(Localization().getStringEx('panel.wellness.categories.manage.empty.label', 'No current categories'),
+          style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
+      ]));
     }
     return widgetList;
   }
@@ -323,7 +329,11 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   void _onTapEditCategory(ToDoCategory category) {
-    //TBD: DD - implement
+    _category = category;
+    _nameController.text = StringUtils.ensureNotEmpty(_category?.name);
+    _selectedColor = _category?.color;
+    _selectedReminderType = _category?.reminderType ?? ToDoCategoryReminderType.none;
+    _updateState();
   }
 
   void _onTapDeleteCategory(ToDoCategory category) {
@@ -336,7 +346,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
 
   void _deleteCategory(ToDoCategory category) {
     _setLoading(true);
-    Wellness().deleteToDoCategoryCached(category.id!).then((success) {
+    Wellness().deleteToDoCategory(category.id!).then((success) {
       late String msg;
       if (success) {
         msg =
@@ -352,18 +362,20 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   void _onTapSave() {
     _hideKeyboard();
     String name = _nameController.text;
-    if(StringUtils.isEmpty(name)) {
-      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.categories.manage.empty.name.msg', 'Please, fill category name.'));
+    if (StringUtils.isEmpty(name)) {
+      AppAlert.showDialogResult(
+          context, Localization().getStringEx('panel.wellness.categories.manage.empty.name.msg', 'Please, fill category name.'));
       return;
     }
     _setLoading(true);
-    _category = ToDoCategory(name: name, colorHex: UiColors.toHex(_selectedColor), reminderType: _selectedReminderType);
-    Wellness().createToDoCategoryCached(_category!).then((success) {
+    ToDoCategory cat =
+        ToDoCategory(id: _category?.id, name: name, colorHex: UiColors.toHex(_selectedColor), reminderType: _selectedReminderType);
+    Wellness().saveToDoCategory(cat).then((success) {
       late String msg;
       if (success) {
-        msg = Localization().getStringEx('panel.wellness.categories.manage.category.create.succeeded.msg', 'Category created successfully.');
+        msg = Localization().getStringEx('panel.wellness.categories.manage.category.save.succeeded.msg', 'Category saved successfully.');
       } else {
-        msg = Localization().getStringEx('panel.wellness.categories.manage.category.create.failed.msg', 'Failed to create category.');
+        msg = Localization().getStringEx('panel.wellness.categories.manage.category.save.failed.msg', 'Failed to save category.');
       }
       AppAlert.showDialogResult(context, msg);
       _setLoading(false);
@@ -399,13 +411,13 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
 
   void _loadCategories() {
     _setLoading(true);
-    Wellness().loadToDoCategoriesCached().then((categories) {
+    Wellness().loadToDoCategories().then((categories) {
       _categories = categories;
       _setLoading(false);
     });
   }
 
-  void _clearSelectedFields() {
+  void _clearCategoryFields() {
     _category = null;
     _selectedColor = null;
     _selectedReminderType = ToDoCategoryReminderType.none;
@@ -432,10 +444,8 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
 
   @override
   void onNotification(String name, param) {
-    if (name == Wellness.notifyToDoCategoryCreated) {
-      _clearSelectedFields();
-      _loadCategories();
-    } else if (name == Wellness.notifyToDoCategoryUpdated) {
+    if (name == Wellness.notifyToDoCategoryChanged) {
+      _clearCategoryFields();
       _loadCategories();
     } else if (name == Wellness.notifyToDoCategoryDeleted) {
       _loadCategories();

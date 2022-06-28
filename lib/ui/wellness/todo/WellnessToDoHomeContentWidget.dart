@@ -412,7 +412,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       return;
     }
     _setItemsLoading(true);
-    Wellness().deleteToDoItemsCached(completedItemsIds).then((success) {
+    Wellness().deleteToDoItems(completedItemsIds).then((success) {
       late String msg;
       if (success) {
         msg = Localization()
@@ -464,7 +464,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   void _loadToDoItems() {
     _setItemsLoading(true);
-    Wellness().loadToDoItemsCached().then((items) {
+    Wellness().loadToDoItems().then((items) {
       _todoItems = items;
       _sortItemsByDate();
       _setItemsLoading(false);
@@ -632,7 +632,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
   void _onTapCompleted() {
     _setLoading(true);
     widget.item.isCompleted = !widget.item.isCompleted;
-    Wellness().updateToDoItemCached(widget.item).then((success) {
+    Wellness().updateToDoItem(widget.item).then((success) {
       if (!success) {
         String msg = Localization().getStringEx('panel.wellness.todo.item.update.failed.msg', 'Failed to update To-Do item.');
         AppAlert.showDialogResult(context, msg);
@@ -651,7 +651,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
 
   void _deleteToDoItem() {
     _setLoading(true);
-    Wellness().deleteToDoItemsCached([widget.item.id!]).then((success) {
+    Wellness().deleteToDoItem(widget.item.id!).then((success) {
       late String msg;
       if (success) {
         msg = Localization().getStringEx('panel.wellness.todo.item.delete.succeeded.msg', 'To-Do item deleted successfully.');
@@ -849,7 +849,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
     }
     _setLoading(true);
     _item.reminderDateTimeUtc = _reminderDateTime.toUtc();
-    Wellness().updateToDoItemCached(_item).then((success) {
+    Wellness().updateToDoItem(_item).then((success) {
       _setLoading(false);
       if (!success) {
         String msg = Localization().getStringEx('panel.wellness.todo.items.reminder.set.failed.msg', 'Failed to set reminder.');

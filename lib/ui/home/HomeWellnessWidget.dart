@@ -8,6 +8,7 @@ import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -105,6 +106,9 @@ class _HomeWellnessWidgetState extends State<HomeWellnessWidget> implements Noti
           }
           else if (code == 'rings') {
             contentEntry = HomeRingsWellnessWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+          }
+          else if (code == 'tips') {
+            contentEntry = HomeDailyTipsWellnessWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
           }
 
           if (contentEntry != null) {
@@ -289,7 +293,7 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
 
   void _onTapToDoItem(ToDoItem item) {
     item.isCompleted = !item.isCompleted;
-    Wellness().updateToDoItemCached(item).then((success) {
+    Wellness().updateToDoItem(item).then((success) {
       if (!success) {
         AppAlert.showDialogResult(context, Localization().getStringEx('widget.home.wellness.todo.items.completed.failed.msg', 'Failed to update To-Do item.'));
       }
@@ -308,14 +312,14 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
 
   void _loadToDoItems() {
     _setLoading(true);
-    Wellness().loadToDoItemsCached().then((items) {
+    Wellness().loadToDoItems().then((items) {
       _toDoItems = items;
       _setLoading(false);
     });
   }
 
   void _refreshItems() {
-    Wellness().loadToDoItemsCached().then((items) {
+    Wellness().loadToDoItems().then((items) {
       _toDoItems = items;
       _updateState();
     });
@@ -453,4 +457,158 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
 
   void onNotification(String name, dynamic param) {
   }
+}
+
+// HomeDailyTipsWellnessWidget
+
+class HomeDailyTipsWellnessWidget extends StatefulWidget {
+  final HomeFavorite? favorite;
+  final StreamController<String>? updateController;
+
+  HomeDailyTipsWellnessWidget({Key? key, this.favorite, this.updateController}) : super(key: key);
+
+  @override
+  State<HomeDailyTipsWellnessWidget> createState() => _HomeDailyTipsWellnessWidgetState();
+}
+
+class _HomeDailyTipsWellnessWidgetState extends State<HomeDailyTipsWellnessWidget> implements NotificationsListener {
+
+  Color? _tipColor;
+  bool _loadingTipColor = false;
+  
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      Wellness.notifyDailyTipChanged,
+    ]);
+
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+          if (mounted) {
+            setState(() {
+              _loadingTipColor = true;
+            });
+
+            Wellness().refreshDailyTip();
+
+            Transportation().loadAlternateColor().then((Color? activeColor) {
+              Wellness().refreshDailyTip();
+              if (mounted) {
+                setState(() {
+                  if (activeColor != null) {
+                    _tipColor = activeColor;
+                  }
+                  _loadingTipColor = false;
+                });
+              }
+            });
+          }
+        }
+      });
+    }
+
+    _loadingTipColor = true;
+    Transportation().loadAlternateColor().then((Color? activeColor) {
+      if (mounted) {
+        setState(() {
+          if (activeColor != null) {
+            _tipColor = activeColor;
+          }
+          _loadingTipColor = false;
+        });
+      }
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  void onNotification(String name, dynamic param) {
+    if (name == Wellness.notifyDailyTipChanged) {
+      _updateTipColor();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(onTap: _onTap, child:
+      Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
+        ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
+          Row(children: <Widget>[
+            Expanded(child:
+              Column(children: <Widget>[
+                Container(color: Styles().colors!.backgroundVariant, child:
+                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    Expanded(child:
+                      Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
+                        Text(Localization().getStringEx('widget.home.wellness.tips.title', 'DAILY TIPS'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 14))),
+                      ),
+                    HomeFavoriteButton(favorite: widget.favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.all(12), prompt: true)
+                  ])
+                ),
+                Container(color: Styles().colors!.backgroundVariant, height: 1,),
+                _loadingTipColor ? _buildLoading() : _buildTip()
+              ]),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoading() {
+    return Container(color: Styles().colors?.white, child:
+      Padding(padding: EdgeInsets.all(32), child:
+        Row(children: <Widget>[
+          Expanded(child:
+            Center(child:
+              SizedBox(height: 24, width: 24, child:
+                CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_tipColor ?? Styles().colors?.fillColorSecondary), ),
+              )
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  Widget _buildTip() {
+    Color? backColor = Styles().colors?.white;
+    Color? textColor = Styles().colors?.fillColorPrimary; //_tipColor ?? Styles().colors!.accentColor3;
+    return Container(color: backColor, child:
+      Padding(padding: EdgeInsets.all(16), child:
+        Row(children: <Widget>[
+          Expanded(child:
+            Text(Wellness().dailyTip ?? '', style: TextStyle(color: textColor, fontSize: 16, fontFamily: Styles().fontFamilies?.bold)),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  void _onTap() {
+    Analytics().logSelect(target: 'Wellness Dailty Tips');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.dailyTips,)));
+  }
+
+  void _updateTipColor() {
+    Transportation().loadAlternateColor().then((Color? activeColor) {
+      if (mounted) {
+        setState(() {
+          if (activeColor != null) {
+            _tipColor = activeColor;
+          }
+        });
+      }
+    });
+  }
+
 }

@@ -20,6 +20,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Transportation.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -41,7 +42,10 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
+    NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
+      Wellness.notifyDailyTipChanged,
+    ]);
     _loadTipColor();
   }
 
@@ -83,15 +87,19 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     return Container(
         color: (_tipColor ?? Styles().colors!.accentColor3),
         padding: EdgeInsets.all(42),
-        child: Text(
-            Localization().getStringEx('panel.wellness.sections.description.header.text',
-                'Learn to prioritize. Take care of what you can get done today, right now. This will help you be a better time manager and reduce the risk of procrastination.'),
+        child: Text(Wellness().dailyTip ?? '',
             textAlign: TextAlign.center,
             style: TextStyle(color: Styles().colors!.white, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)));
   }
 
   Widget _buildEightDimensionImage() {
-    return Padding(padding: EdgeInsets.only(top: 16), child: Image.asset('images/wellness-wheel-2019.png', width: 45, height: 45));
+    return Padding(padding: EdgeInsets.only(top: 16), child:
+      Semantics(label: Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'), hint: Localization().getStringEx('panel.wellness.sections.dimensions.hint', 'Tap to see the 8 Dimensions of Wellness'), button: true, image: true, child:
+        InkWell(onTap: _onTapEightDimensionsImage, child:
+          Image.asset('images/wellness-wheel-2019.png', width: 45, height: 45),
+        ),
+      ),
+    );
   }
 
   Widget _buildFooterDescription() {
@@ -131,11 +139,60 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     }
   }
 
+  static Widget _buildEightDimensionsPopup(BuildContext context) {
+    return Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
+      ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+        Container(color: Color(0xfffffcdf), child:
+          Stack(children: [
+            Padding(padding: EdgeInsets.symmetric(vertical: 32), child:
+              Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                Row(children: [
+                  Expanded(child:
+                    Text(Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 20, fontFamily: Styles().fontFamilies?.extraBold),),
+                  ),
+                ],),
+                Container(height: 16),
+                Image.asset('images/wellness-wheel-2019.png'),
+              ],),
+            ),
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Row(children: [
+                Expanded(child: Container()),
+                Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), button: true, child:
+                  InkWell(onTap : () => _onClosePopup(context), child:
+                    Padding(padding: EdgeInsets.all(18), child: 
+                      Image.asset('images/close-orange-small.png', semanticLabel: '',),
+                    ),
+                  ),
+                ),
+              ]),
+            ],)
+          ],)
+        ),
+      ),
+    );
+  }
+
   void onTapEightDimension() {
     Analytics().logSelect(target: 'Learn more about the 8 dimensions');
     if (StringUtils.isNotEmpty(Config().wellness8DimensionsUrl)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().wellness8DimensionsUrl, title: Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'),)));
     }
+  }
+
+  void _onTapEightDimensionsImage() {
+    Analytics().logSelect(target: '8 dimensions of Wellness');
+    showDialog(context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return _buildEightDimensionsPopup(context);
+      },
+    );
+  }
+
+  static void _onClosePopup(BuildContext context) {
+    Analytics().logSelect(target: 'Close');
+    Navigator.of(context).pop();
   }
 
   // Notifications Listener
@@ -144,6 +201,12 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   void onNotification(String name, param) {
     if (name == Auth2.notifyLoginChanged) {
       _loadTipColor();
+    }
+    else if (name == Wellness.notifyDailyTipChanged) {
+      if (mounted) {
+        setState(() {
+        });
+      }
     }
   }
 }
