@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Wellness ToDo List - hook available backend APIs [#1689](https://github.com/rokwire/illinois-app/issues/1689).
+
 ## [4.0.38] - 2022-06-27
 ### Fixed
 - Resolved the conflict between start/unstarr and select/deselect all in compund widgets in Browse panel [#1827](https://github.com/rokwire/illinois-app/issues/1827).
