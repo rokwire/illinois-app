@@ -772,6 +772,34 @@
 					"events_and_workshops": "Wellness Events & Workshops",
 					"womens_healthcare": "Women’s Healthcare"
 				}
+			},
+			"tips": {
+				"entries": [
+					{"id":"tip1"},
+					{"id":"tip2"},
+					{"id":"tip3"},
+					{"id":"tip4"},
+					{"id":"tip5"},
+					{"id":"tip6"},
+					{"id":"tip7"},
+					{"id":"tip8"},
+					{"id":"tip9"},
+					{"id":"tip10"}
+				],
+				"strings": {
+					"en": {
+						"tip1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a massa vel diam vehicula commodo in tincidunt nisl.",
+						"tip2": "Phasellus gravida nibh id ipsum gravida, at fermentum magna cursus. Sed et odio ex. Sed auctor aliquam aliquam.",
+						"tip3": "Morbi ac sagittis enim, ut varius velit. Phasellus urna urna, molestie ac iaculis et, tristique in dui. Sed imperdiet nunc ac porttitor eleifend.",
+						"tip4": "Sed sed mattis nisi, quis pulvinar urna. Sed nec porttitor ipsum.",
+						"tip5": "Phasellus a nisl molestie, lobortis erat nec, rutrum mauris. Vestibulum convallis pharetra tortor in pharetra. Sed non lacus facilisis, varius tellus ut, dignissim mauris.",
+						"tip6": "Sed a euismod massa. Etiam cursus nunc vitae fermentum laoreet.",
+						"tip7": "Quisque vitae augue at lacus maximus pellentesque. In hac habitasse platea dictumst.",
+						"tip8": "Mauris non porttitor nibh. Vestibulum lobortis at magna non tincidunt. Ut dictum ex sit amet viverra blandit.",
+						"tip9": "Suspendisse sed mi convallis lectus imperdiet congue. Duis scelerisque posuere lectus vel dapibus.",
+						"tip10": "Integer egestas blandit dui a maximus. Curabitur vel dui quis lectus feugiat lobortis eu ac massa."
+					}
+				}
 			}
 		}
 	}
