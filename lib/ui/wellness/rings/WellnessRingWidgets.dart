@@ -2,7 +2,9 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessReing.dart';
 import 'package:illinois/service/WellnessRings.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -455,5 +457,16 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
 
   num _trimDecimal(double value){
     return value % 1 == 0 ? value.toInt() : value;
+  }
+}
+
+class WellnessWidgetHelper{
+  static Widget buildWellnessHeader() {
+    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Text(Localization().getStringEx('panel.wellness.ring.create.header.label', 'My Daily Wellness Rings'),
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
+      FavoriteStarIcon(style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
+    ]);
   }
 }

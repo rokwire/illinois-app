@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessReing.dart';
 import 'package:illinois/service/WellnessRings.dart';
-import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -34,8 +34,6 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
 
   @override
   void initState() {
-    // NotificationService().subscribe(this, [WellnessRings.notifyUserRingsUpdated]);
-    // _ringData = widget.data;
     _nameController.text = widget.data!=null ? widget.data!.name??"" : "";
     _quantityController.text = widget.data!=null ? _trimDecimal(widget.data!.goal).toString() : "";
     _unitController.text = widget.data!=null ? widget.data!.unit??"" : "";
@@ -52,7 +50,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: Localization().getStringEx('panel.wellness.ring.create.title', 'Create Wellness Ring')),
+      appBar: HeaderBar(title: _headingTitle),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -61,7 +59,8 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
           child: Padding(
               padding: EdgeInsets.all(16),
               child: Column(children: [
-                _buildToDoListHeader(),
+                Container(height: 14,),
+                WellnessWidgetHelper.buildWellnessHeader(),
                 _buildCreateDescriptionHeader(),
                 _buildNameWidget(),
                 _buildColorsRowWidget(),
@@ -84,23 +83,14 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
     );
   }
 
-  Widget _buildToDoListHeader() {
-    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Text(Localization().getStringEx('panel.wellness.ring.create.header.label', 'My Daily Wellness Rings'),
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
-      FavoriteStarIcon(style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
-    ]);
-  }
-
   Widget _buildCreateDescriptionHeader() {
     return Padding(
-        padding: EdgeInsets.only(top: 11),
+        padding: EdgeInsets.only(top: 14),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
               padding: EdgeInsets.only(top: 5),
               child: Text(widget.examplesText ?? "",
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
+                  style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
         ]));
   }
 
@@ -123,21 +113,45 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
   }
 
   Widget _buildColorsRowWidget() {
-    Color? lastFieldColor = widget.data?.color ?? Styles().colors!.accentColor3!;
+    final List<Color> predefinedColors = [
+      UiColors.fromHex("e45434")!,
+      UiColors.fromHex("f5821e")!,
+      UiColors.fromHex("54a747")!,
+      UiColors.fromHex("009fd4")!,
+      UiColors.fromHex("1d58a7")!]; //In normal cases this will be visible only for new custom ring
+    Color? initialColor = widget.data?.color;
+
+    //Show initial color if we have changed with default one
+    if(initialColor != null && !predefinedColors.contains(initialColor)){
+      predefinedColors.removeLast();
+      predefinedColors.add(initialColor);
+    }
+
+    //Show selected colour
+    if(_selectedColor != null && !predefinedColors.contains(_selectedColor)){
+      predefinedColors.removeLast();
+      predefinedColors.add(_selectedColor!);
+    //Or last custom color
+    } else if(_tmpColor != null && !predefinedColors.contains(_tmpColor)){
+      predefinedColors.removeLast();
+      predefinedColors.add(_tmpColor!);
+    }
+
+    List<Widget> content = [];
+    for(Color color in predefinedColors){
+      content.add(
+        _buildColorEntry(color: color, isSelected: (_selectedColor == color)),
+      );
+    }
+
+    content.add(_buildColorEntry(imageAsset: 'images/icon-color-edit.png'),);
+
     return Center(
         child: Padding(
             padding: EdgeInsets.only(top: 20),
             child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                  _buildColorEntry(
-                      color: Styles().colors!.fillColorSecondary!, isSelected: (_selectedColor == Styles().colors!.fillColorSecondary)),
-                  _buildColorEntry(color: Styles().colors!.diningColor!, isSelected: (_selectedColor == Styles().colors!.diningColor)),
-                  _buildColorEntry(color: Styles().colors!.placeColor!, isSelected: (_selectedColor == Styles().colors!.placeColor)),
-                  _buildColorEntry(color: Styles().colors!.accentColor2!, isSelected: (_selectedColor == Styles().colors!.accentColor2)),
-                  _buildColorEntry(color: lastFieldColor, isSelected: (_selectedColor == lastFieldColor)),
-                  _buildColorEntry(imageAsset: 'images/icon-color-edit.png'),
-                ]))));
+                child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: content))));
   }
 
   Widget _buildColorEntry({Color? color, String? imageAsset, bool isSelected = false}) {
@@ -217,10 +231,11 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
     return Padding(
         padding: EdgeInsets.only(top: 30),
         child: RoundedButton(
-            label: Localization().getStringEx('panel.wellness.categories.save.button', 'Save'),
+            label: _continueButtonTitle,
+            fontSize: 16,
             contentWeight: 0,
             progress: _loading,
-            padding: EdgeInsets.symmetric(horizontal: 46, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 46, vertical: 6),
             onTap: _onTapSave));
   }
 
@@ -232,6 +247,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
         padding: EdgeInsets.only(top: 30, right: 16),
         child: RoundedButton(
             label: Localization().getStringEx('panel.wellness.categories.delete.button', 'Delete'),
+            fontSize: 16,
             contentWeight: 0,
             progress: _loading,
             padding: EdgeInsets.symmetric(horizontal: 46, vertical: 8),
@@ -339,7 +355,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
     _hideKeyboard();
     if (color == null) {
       AppAlert.showCustomDialog(context: context, contentWidget: _buildColorPickerDialog()).then((_) {
-        _tmpColor = null;
+        // _tmpColor = null; do not refresh the tmp colour show it instead
       });
     } else {
       _selectedColor = color;
@@ -360,6 +376,18 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
   void _setLoading(bool loading) {
     _loading = loading;
     _updateState();
+  }
+
+  String get _continueButtonTitle{
+    return widget.initialCreation?
+      Localization().getStringEx('panel.wellness.ring,create.create.button', 'Create') :
+      Localization().getStringEx('panel.wellness.ring.create.update.button', 'Update');
+  }
+
+  String get _headingTitle{
+    return widget.initialCreation?
+    Localization().getStringEx('panel.wellness.ring.create.create.title', 'Create Wellness Ring'):
+    Localization().getStringEx('panel.wellness.ring.create.update.title', 'Update Wellness Ring');
   }
 
   // Notifications Listener

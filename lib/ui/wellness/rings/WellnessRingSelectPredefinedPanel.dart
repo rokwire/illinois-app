@@ -11,6 +11,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'WellnessRingCreatePane.dart';
+import 'WellnessRingWidgets.dart';
 
 class WellnessRingSelectPredefinedPanel extends StatefulWidget{
   @override
@@ -19,21 +20,21 @@ class WellnessRingSelectPredefinedPanel extends StatefulWidget{
 
 class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPredefinedPanel> implements NotificationsListener{
   static const List<Map<String,dynamic>> PREDEFINED_RING_BUTTONS = [
-    {"ring":{'name': "Hobby", 'goal': 2, 'color': 'e45434', 'id': "id_predefined_0", 'unit':'session'},
+    {"ring":{'name': "Hobby", 'goal': 2, 'color': 'f5821e', 'id': "id_predefined_0", 'unit':'session'},
       "name":"Hobby Ring",
-      "description":"description",
-      "example": "example"},
-    {"ring":{'name': "Physical Activity", 'goal': 16, 'color': 'FF4CAF50', 'id': "id_predefined_1", 'unit':'activity'},
+      "description":"Use this ring to motivate you to engage in your hobby in some small way every day. It’s important to have your own free time, even if it’s small some days.",
+      "example": "Examples for filling out this ring could be reading, sketching, playing an instrument, or whatever hobbies you enjoy!"},
+    {"ring":{'name': "Physical Activity", 'goal': 16, 'color': '54a747', 'id': "id_predefined_1", 'unit':'activity'},
       "name":"Movement Ring",
-      "description":"description",
-      "example":"example"},
-    {"ring":{'name': "Mindfulness", 'goal': 10, 'color': 'FF2196F3' , 'id': "id_predefined_2", 'unit':'moment'},
+      "description":"Use this ring to motivate you to do something active every day, even if it's daily stretching or taking a short walk! A small amount of physical activity every day can improve your overall mood and motivation.",
+      "example":"Examples for filling out this ring could be going on a walk, rock climbing, dancing, stretching, or whatever exercise you enjoy!"},
+    {"ring":{'name': "Mindfulness", 'goal': 10, 'color': '009fd4' , 'id': "id_predefined_2", 'unit':'moment'},
       "name":"Mindfulness",
-      "description":"description",
-      "example": "example"},
+      "description":"Use this ring to motivate you to focus on the present moment. Taking even a small amount of time for  intentional practice, like journaling or breathing exercises, can help reduce overall stress.",
+      "example": "Examples could include drinking a certain amount of water throughout the day, taking your daily vitamin, etc."},
     {"name" : "Custom Ring",
-      "description":"description",
-      "example": "Custom Ring example"},
+      "description":"Create a ring for whatever habit you want to build or maintain for yourself! Ex: use this ring to motivate you to drink water every day!",
+      "example": "Examples could include drinking a certain amount of water throughout the day, taking your daily vitamin, etc."},
   ];
 
   Map<String,dynamic>? _selectedButton;
@@ -62,25 +63,30 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
             child: SingleChildScrollView(
                 child: Padding(
                     padding: EdgeInsets.all(16),
-                    child: Column(children: [
-                      Center(child: Text("TBD \n In progress..."),),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                      Container(height: 14,),
+                      WellnessWidgetHelper.buildWellnessHeader(),
+                      Container(height: 16,),
+                      Container(
+                        child: Text(Localization().getStringEx('panel.wellness.ring.select.description', 'Select a ring type or create your own custom ring.'),
+                          style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)
+                      )),
                       Container(height: 12,),
                       _buildPredefinedButtons(),
                       Container(height: 12,),
-                      // _WellnessRingButton(
-                      //   label: "Create New Ring",
-                      //   description: "Maximum of 4 total",
-                      //   onTapWidget: (context){
-                      //     Analytics().logSelect(target: "Custom ring");
-                      //     _selectedRing = null;
-                      //     _refreshState();
-                      //   }, showLeftIcon: true,),
-
                     ]))),
           ),
           Container(height: 30,),
           Container(
-            child: SmallRoundedButton(label: 'Next', onTap: _openDetailPanel, backgroundColor: Colors.white, rightIconPadding: EdgeInsets.only(right: 16, left: 16,), padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),),
+            child: SmallRoundedButton(label: 'Next', onTap: _openDetailPanel, backgroundColor: Colors.white, rightIconPadding: EdgeInsets.only(right: 16, left: 16, ), padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+              enabled: _nextButtonEnabled,
+              borderColor: _nextButtonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColorTwo,
+              textColor: _nextButtonEnabled? Styles().colors!.fillColorPrimary : Styles().colors!.disabledTextColorTwo,
+              rightIcon: Image.asset('images/chevron-right.png', excludeFromSemantics: true,
+                color: _nextButtonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColorTwo),
+            ),
           ),
           Container(height: 50,)
         ],
@@ -103,7 +109,7 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
               _selectedButton = jsonData;
               _refreshState();
             }));
-        content.add(Container(height: 10,));
+        content.add(Container(height: 20,));
       }
     }
 
@@ -113,6 +119,9 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
   }
 
   void _openDetailPanel(){
+    if(_selectedButton == null){
+      return;
+    }
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>
         WellnessRingCreatePanel(
             data: WellnessRingData.fromJson(JsonUtils.mapValue(_selectedButton?["ring"])),
@@ -129,6 +138,10 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
     if(mounted){
       setState(() {});
     }
+  }
+
+  bool get _nextButtonEnabled{
+    return _selectedButton != null;
   }
 
   @override
@@ -165,24 +178,33 @@ class _WellnessRingButtonState extends State<_WellnessRingButton>{
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Expanded(child:
       Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
-      Column(children: [
-        Row(children: <Widget>[
+      Padding(padding: EdgeInsets.only(right: 19, left: 16, top:13, bottom: 19), child:
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
           Expanded(
-            child: Text(widget.label , style: TextStyle(color: Styles().colors!.fillColorPrimary!, fontFamily: Styles().fontFamilies!.bold, fontSize: 16), textAlign: TextAlign.start,),
-          ),
+            child:
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(widget.label , style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies!.bold, fontSize: 18), textAlign: TextAlign.start,),
+                Container(height: 12,),
+                Text(widget.description ?? "" , style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.start),
+          ])),
+          Container(width: 7,),
           Container(
             child: _buildRadioButton(color: Styles().colors!.fillColorPrimary!),
           )
         ],),
-        Row(
-          children: [
-            Expanded(
-              child: Text(widget.description ?? "" , style: TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.start),
-            ),
-          ],
-        )
-      ],)
+        // Container(height: 12,),
+        // Row(
+        //   children: [
+        //     Expanded(
+        //       child: Text(widget.description ?? "" , style: TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.start),
+        //     ),
+        //   ],
+        // )
       ),
       )
       ),
@@ -192,7 +214,7 @@ class _WellnessRingButtonState extends State<_WellnessRingButton>{
   }
 
   Widget _buildRadioButton ({required Color color, Color background = Colors.white,  Color dotColor = Colors.red,}){
-    const double WIDGET_SIZE = 25;
+    const double WIDGET_SIZE = 24;
     const double STROKE_SIZE = 2;
     const double PADDING_SIZE = 4;
 
