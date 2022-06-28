@@ -289,7 +289,7 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
 
   void _onTapToDoItem(ToDoItem item) {
     item.isCompleted = !item.isCompleted;
-    Wellness().updateToDoItemCached(item).then((success) {
+    Wellness().updateToDoItem(item).then((success) {
       if (!success) {
         AppAlert.showDialogResult(context, Localization().getStringEx('widget.home.wellness.todo.items.completed.failed.msg', 'Failed to update To-Do item.'));
       }
@@ -308,14 +308,14 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
 
   void _loadToDoItems() {
     _setLoading(true);
-    Wellness().loadToDoItemsCached().then((items) {
+    Wellness().loadToDoItems().then((items) {
       _toDoItems = items;
       _setLoading(false);
     });
   }
 
   void _refreshItems() {
-    Wellness().loadToDoItemsCached().then((items) {
+    Wellness().loadToDoItems().then((items) {
       _toDoItems = items;
       _updateState();
     });
