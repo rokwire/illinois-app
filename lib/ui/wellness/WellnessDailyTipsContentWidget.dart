@@ -20,6 +20,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Transportation.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -41,7 +42,10 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
+    NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
+      Wellness.notifyDailyTipChanged,
+    ]);
     _loadTipColor();
   }
 
@@ -83,9 +87,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     return Container(
         color: (_tipColor ?? Styles().colors!.accentColor3),
         padding: EdgeInsets.all(42),
-        child: Text(
-            Localization().getStringEx('panel.wellness.sections.description.header.text',
-                'Learn to prioritize. Take care of what you can get done today, right now. This will help you be a better time manager and reduce the risk of procrastination.'),
+        child: Text(Wellness().dailyTip ?? '',
             textAlign: TextAlign.center,
             style: TextStyle(color: Styles().colors!.white, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)));
   }
@@ -144,6 +146,12 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   void onNotification(String name, param) {
     if (name == Auth2.notifyLoginChanged) {
       _loadTipColor();
+    }
+    else if (name == Wellness.notifyDailyTipChanged) {
+      if (mounted) {
+        setState(() {
+        });
+      }
     }
   }
 }

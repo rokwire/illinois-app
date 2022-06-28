@@ -367,6 +367,7 @@
 
     "panel.browse.entry.wellness.rings.title": "Rings",
     "panel.browse.entry.wellness.todo.title": "To Do",
+    "panel.browse.entry.wellness.tips.title": "Daily Tips",
 
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Searching only Events Titles",
@@ -1642,7 +1643,6 @@
     "panel.wellness.section.todo.label": "To-Do List",
     "panel.wellness.section.resources.label": "Wellness Resources",
 
-    "panel.wellness.sections.description.header.text": "Learn to prioritize. Take care of what you can get done today, right now. This will help you be a better time manager and reduce the risk of procrastination.",
     "panel.wellness.sections.description.footer.wellness.text": "Wellness ",
     "panel.wellness.sections.description.footer.description.text": "is a state of optimal well-being that is oriented toward maximizing an individual's potential. This is a life-long process of moving towards enhancing your ",
     "panel.wellness.sections.description.footer.dimensions.text": "physical, mental, environmental, financial, spiritual, vocational, emotional and social wellness.",
@@ -2541,6 +2541,8 @@
     "widget.home.wellness.todo.items.view_all.label": "View all",
 
     "widget.home.wellness.rings.title": "DAILY WELLNESS RINGS",
+
+    "widget.home.wellness.tips.title": "DAILY TIPS",
 
     "widget.home.favorites.title.events": "My Events",
     "widget.home.favorites.title.dining": "My Dinings",

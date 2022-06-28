@@ -511,4 +511,14 @@ class Storage extends rokwire.Storage {
   static const String _userAccessedWellnessToDoKey = 'wellness.todo.user.accessed';
   bool? get isUserAccessedWellnessToDo => getBoolWithName(_userAccessedWellnessToDoKey);
   set userAccessedWellnessToDo(bool? value) => setBoolWithName(_userAccessedWellnessToDoKey, value);
+
+  // Wellness Daily Tips
+
+  String get wellnessDailyTipIdKey => 'edu.illinois.rokwire.wellness.daily_tips.id';
+  String? get wellnessDailyTipId => getStringWithName(wellnessDailyTipIdKey);
+  set wellnessDailyTipId(String? value) => setStringWithName(wellnessDailyTipIdKey, value);
+
+  String get wellnessDailyTipTimeKey => 'edu.illinois.rokwire.wellness.daily_tips.time';
+  int? get wellnessDailyTipTime => getIntWithName(wellnessDailyTipTimeKey);
+  set wellnessDailyTipTime(int? value) => setIntWithName(wellnessDailyTipTimeKey, value);
 }

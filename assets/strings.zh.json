@@ -365,6 +365,7 @@
 
 	"panel.browse.entry.wellness.rings.title": "Rings",
 	"panel.browse.entry.wellness.todo.title": "To Do",
+	"panel.browse.entry.wellness.tips.title": "Daily Tips",
 
 	"panel.search.label.search_for":"搜索",
 	"panel.search.label.results_for":"结果为",
@@ -1641,7 +1642,6 @@
 	"panel.wellness.section.todo.label": "待辦事項清單",
 	"panel.wellness.section.resources.label": "健康資源",
 
-	"panel.wellness.sections.description.header.text": "學會優先考慮。 照顧你今天可以完成的事情，現在。 這將幫助您成為更好的時間管理者並降低拖延的風險。",
 	"panel.wellness.sections.description.footer.wellness.text": "健康 ",
 	"panel.wellness.sections.description.footer.description.text": "是一種以最大化個人潛力為導向的最佳幸福狀態。 這是一個終生的過程，旨在提高你的 ",
 	"panel.wellness.sections.description.footer.dimensions.text": "身體, 心理, 環境, 財務, 精神, 職業, 情感和社會健康.",
@@ -2525,16 +2525,18 @@
 	"widget.home.tout.button.info.hint": "點擊了解更多信息",
 	"widget.home.tout.popup.info.content": "伊利諾伊州應用程序使用您來自 <a href='{{student_self_service_url}}'>學生自助服務</a> 的名字。 您可以在“個人信息”和“首選名字”下更改首選名稱。",
 
-    "widget.home.wellness.todo.title": "我的待辦事項清單",
-    "widget.home.wellness.todo.items.today.label": "今天的項目",
-    "widget.home.wellness.todo.items.today.empty.msg": "你今天沒有待辦事項.",
-    "widget.home.wellness.todo.items.unassigned.label": "未分配的項目",
-    "widget.home.wellness.todo.items.unassigned.empty.msg": "您沒有未分配的待辦事項.",
-    "widget.home.wellness.todo.items.completed.failed.msg": "更新待辦事項失敗.",
-    "widget.home.wellness.todo.items.add.button": "添加項目",
-    "widget.home.wellness.todo.items.view_all.label": "查看全部",
+	"widget.home.wellness.todo.title": "我的待辦事項清單",
+	"widget.home.wellness.todo.items.today.label": "今天的項目",
+	"widget.home.wellness.todo.items.today.empty.msg": "你今天沒有待辦事項.",
+	"widget.home.wellness.todo.items.unassigned.label": "未分配的項目",
+	"widget.home.wellness.todo.items.unassigned.empty.msg": "您沒有未分配的待辦事項.",
+	"widget.home.wellness.todo.items.completed.failed.msg": "更新待辦事項失敗.",
+	"widget.home.wellness.todo.items.add.button": "添加項目",
+	"widget.home.wellness.todo.items.view_all.label": "查看全部",
 
-    "widget.home.wellness.rings.title": "日常健康戒指",
+	"widget.home.wellness.rings.title": "日常健康戒指",
+
+	"widget.home.wellness.tips.title": "每日提示",
 
 	"widget.home.favorites.title.events": "我的活動",
 	"widget.home.favorites.title.dining": "我的餐廳",
