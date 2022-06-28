@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
-import 'package:illinois/ui/wellness/WellnessRingsHomeContentWidget.dart';
+import 'package:illinois/ui/wellness/rings/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessDailyTipsContentWidget.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
