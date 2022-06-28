@@ -14,9 +14,10 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class WellnessRingCreatePanel extends StatefulWidget{
   final WellnessRingData? data;
+  final String? examplesText;
   final bool initialCreation;
 
-  const WellnessRingCreatePanel({Key? key, this.data, this.initialCreation = true}) : super(key: key);
+  const WellnessRingCreatePanel({Key? key, this.data, this.initialCreation = true, this.examplesText}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _WellnessRingCreatePanelState();
@@ -98,9 +99,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
               padding: EdgeInsets.only(top: 5),
-              child: Text(
-                  Localization().getStringEx('panel.wellness.ring.create.header.description', //TBD description
-                      'Examples: an RSO or club, a specific class, or a miscellaneous task category.'),
+              child: Text(widget.examplesText ?? "",
                   style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
         ]));
   }

@@ -16,11 +16,6 @@ class WellnessRings with Service{
 
   static const String _cacheFileName = "wellness.json";
   static const int MAX_RINGS = 4;
-  static const List<Map<String,dynamic>> predefinedRings = [
-    {'name': "Hobby", 'goal': 2, 'color': 'e45434', 'id': "id_predefined_0", 'unit':'session', "description":"description"},
-    {'name': "Physical Activity", 'goal': 16, 'color': 'FF4CAF50', 'id': "id_predefined_1", 'unit':'activity', "description":"description"},
-    {'name': "Mindfulness", 'goal': 10, 'color': 'FF2196F3' , 'id': "id_predefined_2", 'unit':'moment', "description":"description"},
-  ];
 
   // ignore: unused_field
   final List <WellnessRingRecord> _mocWellnessRecords = [
@@ -253,7 +248,8 @@ class WellnessRings with Service{
 
       for(var ringDayRecords in dayRecords.value.entries){
         String ringId = ringDayRecords.key;
-        WellnessRingData? ringData = WellnessRings()._wellnessRings?.firstWhere((element) => element.id == ringId);
+        WellnessRingData? ringData;
+        try{ ringData = WellnessRings()._wellnessRings?.firstWhere((element) => element.id == ringId);} catch(e){Log.d(e.toString());}
         if(ringData!=null) {
           double goal = ringData.goal;
           List<WellnessRingRecord>? ringRecords = dayRecords.value[ringData.id];
@@ -270,8 +266,8 @@ class WellnessRings with Service{
                 history[dayRecords.key] = accomplishmentsForThatDay;
               }
 
-              WellnessRingAccomplishment? completionData = accomplishmentsForThatDay.firstWhere((element) => element.ringData.id == ringData.id,
-                  orElse: () => WellnessRingAccomplishment(ringData: ringData, achievedValue: dayCount)
+              WellnessRingAccomplishment? completionData = accomplishmentsForThatDay.firstWhere((element) => element.ringData.id == ringData!.id,
+                  orElse: () => WellnessRingAccomplishment(ringData: ringData!, achievedValue: dayCount)
               );
 
               if(!accomplishmentsForThatDay.contains(completionData)){

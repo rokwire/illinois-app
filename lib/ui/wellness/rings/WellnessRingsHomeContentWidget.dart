@@ -199,29 +199,6 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     );
   }
 
-  // ignore: unused_field
-  Widget mocButtons(){
-    List<Widget> content = [];
-    for(dynamic jsonData in WellnessRings.predefinedRings){
-      WellnessRingData? data = WellnessRingData.fromJson(jsonData);
-      if(data!=null){
-        content.add(WellnessRingButton(
-            label: data.name??"",
-            color: data.color,
-            showRightIcon: true,
-            description: "${WellnessRings().getRingDailyValue(data.id).toInt()}/${data.goal.toInt()} ${data.unit}s",
-            onTapWidget: (context){
-              WellnessRings().addRecord(WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: data.id));
-            }));
-        content.add(Container(height: 10,));
-      }
-    }
-
-    return Container(
-      child: Column(children: content,),
-    );
-  }
-
   void _onTabChanged({required _WellnessRingsTab tab}) {
     if (_selectedTab != tab) {
       _selectedTab = tab;
