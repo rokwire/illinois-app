@@ -463,7 +463,7 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
         description: description,
         workDays: _formattedWorkDays,
         reminderDateTimeUtc: _reminderDateTimeUtc);
-    Wellness().createToDoItemCached(item).then((success) {
+    Wellness().createToDoItem(item).then((success) {
       late String msg;
       if (success) {
         msg = Localization().getStringEx('panel.wellness.todo.item.create.succeeded.msg', 'To-Do item created successfully.');

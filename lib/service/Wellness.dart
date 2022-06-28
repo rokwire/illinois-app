@@ -50,71 +50,6 @@ class Wellness with Service {
 
   // ToDo List
 
-  //TBD: DD - temporary caching of categories and todo items. To be deleted when we have implemented service
-  // Remove from here - start
-  List<ToDoItem>? _toDoItems;
-
-  Future<List<ToDoItem>?> loadToDoItemsCached() async {
-    return _toDoItems;
-  }
-
-  Future<bool> createToDoItemCached(ToDoItem item) async {
-    if (_toDoItems == null) {
-      _toDoItems = <ToDoItem>[];
-    }
-    item.id = (_toDoItems!.length + 1).toString();
-    _toDoItems!.add(item);
-    NotificationService().notify(notifyToDoItemCreated);
-    return true;
-  }
-
-  Future<bool> updateToDoItemCached(ToDoItem item) async {
-    if (_toDoItems == null) {
-      return false;
-    }
-    ToDoItem? existing;
-    int? existingIndex;
-    for (int i = 0; i < _toDoItems!.length; i++) {
-      ToDoItem currentItem = _toDoItems![i];
-      if (item.id == currentItem.id) {
-        existing = currentItem;
-        existingIndex = i;
-        break;
-      }
-    }
-    if (existing == null) {
-      return false;
-    }
-    _toDoItems!.removeAt(existingIndex!);
-    _toDoItems!.insert(existingIndex, item);
-    NotificationService().notify(notifyToDoItemUpdated);
-    return true;
-  }
-
-  Future<bool> deleteToDoItemsCached(List<String>? idList) async {
-    if (CollectionUtils.isEmpty(_toDoItems) || CollectionUtils.isEmpty(idList)) {
-      return false;
-    }
-    List<ToDoItem> itemsToDelete = <ToDoItem>[];
-    for (ToDoItem item in _toDoItems!) {
-      if (idList!.contains(item.id)) {
-        itemsToDelete.add(item);
-      }
-    }
-    if (CollectionUtils.isNotEmpty(itemsToDelete)) {
-      for (ToDoItem itemToDelete in itemsToDelete) {
-        _toDoItems!.remove(itemToDelete);
-      }
-      NotificationService().notify(notifyToDoItemsDeleted);
-      return true;
-    } else {
-      Log.w('No items');
-      return false;
-    }
-  }
-
-  // Remove to here - end
-
   Future<List<ToDoCategory>?> loadToDoCategories() async {
     if (!isEnabled) {
       Log.w('Failed to load wellness todo categories. Missing wellness url.');
@@ -184,7 +119,7 @@ class Wellness with Service {
       Log.w('Failed to create wellness todo item. Missing wellness url.');
       return false;
     }
-    String url = '${Config().wellnessUrl}/todo/items';
+    String url = '${Config().wellnessUrl}/user/todo_entries';
     String? itemJson = JsonUtils.encode(item);
     http.Response? response = await Network().post(url, auth: Auth2(), body: itemJson);
     int? responseCode = response?.statusCode;
@@ -199,12 +134,59 @@ class Wellness with Service {
     }
   }
 
+  Future<bool> updateToDoItem(ToDoItem item) async {
+    if (!isEnabled) {
+      Log.w('Failed to update wellness todo item. Missing wellness url.');
+      return false;
+    }
+    String url = '${Config().wellnessUrl}/user/todo_entries/${item.id}';
+    String? itemJson = JsonUtils.encode(item);
+    http.Response? response = await Network().put(url, auth: Auth2(), body: itemJson);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      Log.i('Wellness todo item updated successfully.');
+      NotificationService().notify(notifyToDoItemCreated);
+      return true;
+    } else {
+      Log.w('Failed to update wellness todo item. Response:\n$responseCode: $responseString');
+      return false;
+    }
+  }
+
+  Future<bool> deleteToDoItem(String itemId) async {
+    if (!isEnabled) {
+      Log.w('Failed to delete wellness todo item. Missing wellness url.');
+      return false;
+    }
+    String url = '${Config().wellnessUrl}/user/todo_entries/$itemId';
+    http.Response? response = await Network().delete(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      Log.i('Wellness todo item deleted successfully.');
+      NotificationService().notify(notifyToDoItemCreated);
+      return true;
+    } else {
+      Log.w('Failed to delete wellness todo item. Response:\n$responseCode: $responseString');
+      return false;
+    }
+  }
+
+    Future<bool> deleteToDoItems(List<String>? idList) async {
+    if (CollectionUtils.isEmpty(idList)) {
+      return false;
+    }
+    //TBD: DD - implement when we have API
+    return false;
+  }
+
   Future<List<ToDoItem>?> loadToDoItems() async {
     if (!isEnabled) {
       Log.w('Failed to load wellness todo items. Missing wellness url.');
       return null;
     }
-    String url = '${Config().wellnessUrl}/todo/items';
+    String url = '${Config().wellnessUrl}/user/todo_entries';
     http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;

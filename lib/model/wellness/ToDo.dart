@@ -21,10 +21,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class ToDoItem {
-  static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm:ssZ';
+  static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 
-  //TBD: DD - make it final again when we have backend APIs
-  String? id;
+  final String? id;
   final String? name;
   final ToDoCategory? category;
   final DateTime? dueDateTimeUtc;
@@ -53,7 +52,7 @@ class ToDoItem {
     }
     return ToDoItem(
         id: JsonUtils.stringValue(json['id']),
-        name: JsonUtils.stringValue(json['name']),
+        name: JsonUtils.stringValue(json['title']),
         category: ToDoCategory.fromJson(JsonUtils.mapValue(json['category'])),
         dueDateTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['due_date_time']), format: _dateTimeFormat, isUtc: true),
         hasDueTime: JsonUtils.boolValue(json['has_due_time']),
@@ -65,19 +64,20 @@ class ToDoItem {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    Map<String, dynamic> json = {
       'id': id,
-      'name': name,
+      'title': name,
       'category': category?.toJson(),
-      //TBD: DD - check TZ symbol
-      'due_date_time': AppDateTime().formatDateTime(dueDateTimeUtc, format: _dateTimeFormat),
+      'due_date_time': DateTimeUtils.utcDateTimeToString(dueDateTimeUtc),
       'has_due_time': hasDueTime,
-      'reminder_date_time': AppDateTime().formatDateTime(reminderDateTimeUtc, format: _dateTimeFormat),
+      'reminder_date_time': DateTimeUtils.utcDateTimeToString(reminderDateTimeUtc),
       'work_days': workDays,
       'location': location?.toJson(),
       'description': description,
       'completed': isCompleted
     };
+    json.removeWhere((key, value) => (value == null));
+    return json;
   }
 
   DateTime? get dueDateTime {
