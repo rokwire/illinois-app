@@ -297,10 +297,11 @@ class WellnessRingButton extends StatefulWidget{
   final bool showLeftIcon;
   final bool showRightIcon;
   final Color? color;
+  final bool enabled;
   final void Function(BuildContext context) onTapWidget;
   final void Function(BuildContext context)? onTapRightWidget;
 
-  const WellnessRingButton({Key? key, required this.label, this.description, this.showLeftIcon = false, this.showRightIcon = false, this.color, required this.onTapWidget, this.onTapRightWidget}) : super(key: key);
+  const WellnessRingButton({Key? key, required this.label, this.description, this.showLeftIcon = false, this.showRightIcon = false, this.color, required this.onTapWidget, this.onTapRightWidget, this.enabled = true}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _WellnessRingButtonState();
@@ -312,7 +313,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
   @override
   Widget build(BuildContext context) {
     return Semantics(label: widget.label, hint: widget.description, button: true, excludeSemantics: true, child:
-    GestureDetector(onTap: () => widget.onTapWidget(context), child:
+    GestureDetector(onTap: () => widget.enabled? widget.onTapWidget(context): null, child:
     Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Expanded(child:
       Container(decoration: BoxDecoration(color: widget.color ?? Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
@@ -320,10 +321,14 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
       Row(children: <Widget>[
         widget.showLeftIcon ? Padding(padding: EdgeInsets.only(right: 6), child: _leftIcon) : Container(),
         Expanded(child:
-        Text(widget.label , style: TextStyle(color: widget.color!=null? Colors.white : Styles().colors!.fillColorPrimary!, fontFamily: Styles().fontFamilies!.bold, fontSize: 16), textAlign: TextAlign.start,),
+        Text(widget.label ,
+          style: TextStyle(color:widget.enabled? (widget.color!=null? Colors.white : Styles().colors!.fillColorPrimary!) :  Styles().colors!.disabledTextColor!,
+            fontFamily: Styles().fontFamilies!.bold, fontSize: 16), textAlign: TextAlign.start,),
         ),
         Expanded(child:
-        Text(widget.description ?? "" , style: TextStyle(color: widget.color!=null? Colors.white : Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.end,),
+        Text(widget.description ?? "" ,
+          style: TextStyle(color: widget.enabled? (widget.color!=null? Colors.white : Styles().colors!.textSurface!) : Styles().colors!.disabledTextColor,
+            fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.end,),
         ),
         widget.showRightIcon ? Padding(padding: EdgeInsets.only(left: 6), child: _rightIcon) : Container(),
       ],),
@@ -338,7 +343,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
   Widget get _leftIcon{
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      child: Image.asset('images/icon-create-event.png', excludeFromSemantics: true, color:  Styles().colors!.fillColorPrimary!),
+      child: Image.asset('images/icon-create-event.png', excludeFromSemantics: true, color: widget.enabled ? Styles().colors!.fillColorPrimary! : Styles().colors!.disabledTextColor),
     ); //TBD
   }
 

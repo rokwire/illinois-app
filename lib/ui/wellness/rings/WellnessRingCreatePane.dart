@@ -69,7 +69,13 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
         ])))),
         Container(
           padding: EdgeInsets.only(bottom: 50, top: 20),
-          child: _buildSaveButton()
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildDeleteButton(),
+              _buildSaveButton(),
+            ],)
         )
       ],),
       backgroundColor: Styles().colors!.background,
@@ -219,6 +225,20 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
             onTap: _onTapSave));
   }
 
+  Widget _buildDeleteButton() {
+    if(widget.data == null)
+      return Container();
+
+    return Padding(
+        padding: EdgeInsets.only(top: 30, right: 16),
+        child: RoundedButton(
+            label: Localization().getStringEx('panel.wellness.categories.delete.button', 'Delete'),
+            contentWeight: 0,
+            progress: _loading,
+            padding: EdgeInsets.symmetric(horizontal: 46, vertical: 8),
+            onTap: _onTapDelete));
+  }
+
   void _onColorChanged(Color newColor) {
     _tmpColor = newColor;
   }
@@ -271,7 +291,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
         }
         AppAlert.showDialogResult(context, msg).then((value){
           _setLoading(false);
-          Navigator.of(context).pop();
+          Navigator.of(context).pop(success);
         });
       });
     } else {
@@ -288,7 +308,29 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
         }
         AppAlert.showDialogResult(context, msg).then((value) {
           _setLoading(false);
-          Navigator.of(context).pop();
+          Navigator.of(context).pop(success);
+        });
+      });
+    }
+  }
+
+  void _onTapDelete(){
+    _hideKeyboard();
+    if(widget.data?.id != null) {
+      WellnessRings().removeRing(widget.data!).then((success){
+        late String msg;
+        if (success) {
+          msg = Localization().getStringEx(
+              'panel.wellness.ring.create.delete.succeeded.msg',
+              'Wellness Ring deleted successfully.');
+        } else {
+          msg = Localization().getStringEx(
+              'panel.wellness.ring.create.delete.failed.msg',
+              'Failed to delete Wellness Ring.');
+        }
+        AppAlert.showDialogResult(context, msg).then((value) {
+          _setLoading(false);
+          Navigator.of(context).pop(success);
         });
       });
     }

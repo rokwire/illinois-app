@@ -98,7 +98,12 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
   }
 
   void _openDetailPanel(){
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingCreatePanel(data: _selectedRing )));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingCreatePanel(data: _selectedRing ))).
+      then((success){
+        if( success == true){
+          Navigator.pop(context);
+        }
+    });
   }
 
   void _refreshState(){

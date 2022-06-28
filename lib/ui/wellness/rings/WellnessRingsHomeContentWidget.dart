@@ -137,7 +137,9 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
             Container(height: 28,),
             _buildButtons(),
             Container(height: 16,),
-            WellnessRingButton(label: "Create New Ring", description: "Maximum of 4 total", onTapWidget:
+            WellnessRingButton(label: "Create New Ring", description: "Maximum of 4 total",
+              enabled: WellnessRings().canAddRing,
+              onTapWidget:
                 (context){
                   Analytics().logSelect(target: "Create new ring");
                   Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingSelectPredefinedPanel()));

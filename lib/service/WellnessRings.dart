@@ -139,14 +139,17 @@ class WellnessRings with Service{
     return success;
   }
 
-  void removeRing(WellnessRingData data) async {
+  Future<bool> removeRing(WellnessRingData data) async {
     //TBD network API
     WellnessRingData? ringData = _wellnessRings?.firstWhere((ring) => ring.id == data.id);
     if(ringData != null){
       _wellnessRings?.remove(ringData);
+      NotificationService().notify(notifyUserRingsUpdated);
+      _storeWellnessRingData();
+      return true;
     }
-    NotificationService().notify(notifyUserRingsUpdated);
-    _storeWellnessRingData();
+
+    return false;
   }
 
   void addRecord(WellnessRingRecord record){
@@ -197,10 +200,8 @@ class WellnessRings with Service{
   }
 
   Future<List<WellnessRingData>?> getWellnessRings() async {
-    if(_wellnessRings == null){ //TBD REMOVE workaround while we are not added to the Services
-      _initFromCache();
-    }
-    return _wellnessRings; //TBD load from net
+    //TBD load from net
+    return _wellnessRings;
   }
 
   List<WellnessRingData>? get wellnessRings{
@@ -208,7 +209,6 @@ class WellnessRings with Service{
   }
 
   int getTotalCompletionCount(String id){
-
     //Split records by date
     Map<String, List<WellnessRingRecord>> ringDateRecords = {};
     _wellnessRecords?.forEach((record) {
