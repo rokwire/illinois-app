@@ -156,7 +156,8 @@
 			"emergency"                     : false,
 			"faqs"                          : false,
 			"wayfinding"                    : false,
-			"safer"                         : false
+			"safer"                         : false,
+			"campus_links"                  : false
 		}
 	}
 }
