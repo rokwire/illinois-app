@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.0.40] - 2022-06-29
 ### Changed
 - Small updates in Favorites/Browse content [#1843](https://github.com/rokwire/illinois-app/issues/1843).
 - Canvas Course Card UI changes [#1842](https://github.com/rokwire/illinois-app/issues/1842).
