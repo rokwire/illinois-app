@@ -4,12 +4,15 @@ import 'dart:collection';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
@@ -23,6 +26,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeWellnessWidget extends StatefulWidget {
   
@@ -581,13 +585,16 @@ class _HomeDailyTipsWellnessWidgetState extends State<HomeDailyTipsWellnessWidge
   }
 
   Widget _buildTip() {
-    Color? backColor = Styles().colors?.white;
-    Color? textColor = Styles().colors?.fillColorPrimary; //_tipColor ?? Styles().colors!.accentColor3;
+    Color? textColor = Styles().colors?.fillColorPrimary;
+    Color? backColor = Styles().colors?.white; // _tipColor ?? Styles().colors?.accentColor3;
     return Container(color: backColor, child:
       Padding(padding: EdgeInsets.all(16), child:
         Row(children: <Widget>[
           Expanded(child:
-            Text(Wellness().dailyTip ?? '', style: TextStyle(color: textColor, fontSize: 16, fontFamily: Styles().fontFamilies?.bold)),
+            Html(data: Wellness().dailyTip ?? '',
+              onLinkTap: (url, context, attributes, element) => _launchUrl(url),
+              style: { "body": Style(color: textColor, fontFamily: Styles().fontFamilies?.bold, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+            ),
           ),
         ]),
       ),
@@ -609,6 +616,20 @@ class _HomeDailyTipsWellnessWidgetState extends State<HomeDailyTipsWellnessWidge
         });
       }
     });
+  }
+
+  void _launchUrl(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else if (UrlUtils.launchInternal(url)){
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      }
+      else{
+        launch(url!);
+      }
+    }
   }
 
 }

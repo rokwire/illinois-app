@@ -16,9 +16,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -27,6 +29,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WellnessDailyTipsContentWidget extends StatefulWidget {
   WellnessDailyTipsContentWidget();
@@ -84,12 +87,17 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   }
 
   Widget _buildTipDescription() {
-    return Container(
-        color: (_tipColor ?? Styles().colors!.accentColor3),
-        padding: EdgeInsets.all(42),
-        child: Text(Wellness().dailyTip ?? '',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Styles().colors!.white, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)));
+    Color? textColor = Styles().colors!.white;
+    Color? backColor = _tipColor ?? Styles().colors?.accentColor3;
+    return Container(color: backColor, padding: EdgeInsets.all(42), child:
+      Html(data: Wellness().dailyTip ?? '',
+        onLinkTap: (url, context, attributes, element) => _launchUrl(url),
+        style: {
+          "body": Style(color: textColor, fontFamily: Styles().fontFamilies?.extraBold, fontSize: FontSize(22), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+          "a": Style(color: textColor),
+        },
+      ),
+    );
   }
 
   Widget _buildEightDimensionImage() {
@@ -193,6 +201,20 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   static void _onClosePopup(BuildContext context) {
     Analytics().logSelect(target: 'Close');
     Navigator.of(context).pop();
+  }
+
+  void _launchUrl(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else if (UrlUtils.launchInternal(url)){
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      }
+      else{
+        launch(url!);
+      }
+    }
   }
 
   // Notifications Listener
