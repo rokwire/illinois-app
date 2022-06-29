@@ -5,8 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-- ### Changed
+### Changed
 - Small updates in Favorites/Browse content [#1843](https://github.com/rokwire/illinois-app/issues/1843).
+- Canvas Course Card UI changes [#1842](https://github.com/rokwire/illinois-app/issues/1842).
 
 ## [4.0.39] - 2022-06-28
 ### Added
@@ -14,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Wellness Tips loaded from backend [#1833](https://github.com/rokwire/illinois-app/issues/1833).
 - Added some wellness resource items to Wellness Home content selector [#1836](https://github.com/rokwire/illinois-app/issues/1836).
 - Added 8 Dimensions of wellness popup image [#1838](https://github.com/rokwire/illinois-app/issues/1838).
-- ### Changed
+### Changed
 - Wellness Rings updates [#1692](https://github.com/rokwire/illinois-app/issues/1692).
 
 ## [4.0.38] - 2022-06-27
