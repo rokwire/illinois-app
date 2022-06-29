@@ -52,50 +52,55 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
   @override
   Widget build(BuildContext context) {
     final Color defaultColor = Colors.black;
-    final double cardHeight = (MediaQuery.of(context).textScaleFactor * 130);
+    final double cardHeight =
+        widget.isSmall ? (MediaQuery.of(context).textScaleFactor * 130) : (MediaQuery.of(context).textScaleFactor * 86);
     double cardInnerPadding = 10;
-    final double? cardWidth = widget.isSmall ? (MediaQuery.of(context).textScaleFactor * 200) : null;
+    final double? cardWidth = widget.isSmall ? (MediaQuery.of(context).textScaleFactor * 215) : null;
     const double borderRadiusValue = 6;
     return Container(
-        height: (widget.isSmall ? cardHeight : null),
+        height: cardHeight,
         width: cardWidth,
         decoration: BoxDecoration(
             borderRadius: (widget.isSmall ? BorderRadius.circular(borderRadiusValue) : null),
             boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))]),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(
-              height: (cardHeight / 2),
-              decoration: BoxDecoration(
-                  color: defaultColor, borderRadius: (widget.isSmall ? BorderRadius.vertical(top: Radius.circular(borderRadiusValue)) : null)),
-              child: Padding(
-                  padding: EdgeInsets.only(left: cardInnerPadding, top: cardInnerPadding),
-                  child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Container(
-                        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Styles().colors!.white),
-                        child: _buildGradeScoreWidget(courseColor: defaultColor))
-                  ]))),
-          Container(
-              decoration: BoxDecoration(
-                  color: Styles().colors!.white,
-                  borderRadius: (widget.isSmall ? BorderRadius.vertical(bottom: Radius.circular(borderRadiusValue)) : null)),
-              child: Padding(
-                  padding: EdgeInsets.all(cardInnerPadding),
-                  child: Row(children: [
-                    Expanded(
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(StringUtils.ensureNotEmpty(widget.course.name),
-                          maxLines: (widget.isSmall ? 2 : 5),
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: defaultColor, fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold))
-                    ]))
-                  ])))
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Column(children: [
+            Expanded(
+                child: Container(
+                    decoration: BoxDecoration(
+                        color: defaultColor,
+                        borderRadius: (widget.isSmall ? BorderRadius.horizontal(left: Radius.circular(borderRadiusValue)) : null)),
+                    child: Center(
+                        child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: cardInnerPadding),
+                            child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
+                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Styles().colors!.white),
+                                child: _buildGradeScoreWidget(courseColor: defaultColor))))))
+          ]),
+          Expanded(
+              child: Column(children: [
+            Expanded(
+                child: Container(
+                    decoration: BoxDecoration(
+                        color: Styles().colors!.white,
+                        borderRadius: (widget.isSmall ? BorderRadius.horizontal(right: Radius.circular(borderRadiusValue)) : null)),
+                    child: Padding(
+                        padding: EdgeInsets.all(cardInnerPadding),
+                        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                          Expanded(
+                              child: Text(StringUtils.ensureNotEmpty(widget.course.name),
+                                  maxLines: (widget.isSmall ? 5 : 3),
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(color: defaultColor, fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold)))
+                        ]))))
+          ]))
         ]));
   }
 
   Widget _buildGradeScoreWidget({required Color courseColor}) {
     if (_scoreLoading) {
-      double indicatorSize = 20;
+      double indicatorSize = 22;
       return SizedBox(
           width: indicatorSize,
           height: indicatorSize,
