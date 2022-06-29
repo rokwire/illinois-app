@@ -143,7 +143,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
                 (context){
                   Analytics().logSelect(target: "Create new ring");
                   Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingSelectPredefinedPanel()));
-                }, showLeftIcon: true,),
+                },),
             Container(height: 16,),
         ],
       ),
@@ -175,17 +175,22 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
           content.add(WellnessRingButton(
               label: data.name ?? "",
               color: data.color,
-              showRightIcon: true,
               description: "${WellnessRings()
                   .getRingDailyValue(data.id)
                   .toInt()}/${data.goal.toInt()} ${data.unit}s",
-              onTapWidget: (context) {
+              onTapIncrease: (context) {
                 WellnessRings().addRecord(
                     WellnessRingRecord(value: 1, timestamp: DateTime
                         .now()
                         .millisecondsSinceEpoch, wellnessRingId: data.id));
               },
-              onTapRightWidget: (context){
+            onTapDecrease: (context) {
+              WellnessRings().addRecord(
+                  WellnessRingRecord(value: -1, timestamp: DateTime
+                      .now()
+                      .millisecondsSinceEpoch, wellnessRingId: data.id));
+            },
+              onTapEdit: (context){
                 Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingCreatePanel(data: data, initialCreation: false,)));
               },
           ));
