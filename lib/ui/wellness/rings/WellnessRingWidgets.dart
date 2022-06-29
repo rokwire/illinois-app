@@ -296,14 +296,14 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
 class WellnessRingButton extends StatefulWidget{
   final String label;
   final String? description;
-  final bool showLeftIcon;
-  final bool showRightIcon;
   final Color? color;
   final bool enabled;
-  final void Function(BuildContext context) onTapWidget;
-  final void Function(BuildContext context)? onTapRightWidget;
+  final void Function(BuildContext context)? onTapWidget;
+  final void Function(BuildContext context)? onTapDecrease;
+  final void Function(BuildContext context)? onTapIncrease;
+  final void Function(BuildContext context)? onTapEdit;
 
-  const WellnessRingButton({Key? key, required this.label, this.description, this.showLeftIcon = false, this.showRightIcon = false, this.color, required this.onTapWidget, this.onTapRightWidget, this.enabled = true}) : super(key: key);
+  const WellnessRingButton({Key? key, required this.label, this.description, this.color, this.enabled = true, this.onTapIncrease, this.onTapEdit, this.onTapDecrease, this.onTapWidget}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _WellnessRingButtonState();
@@ -315,46 +315,72 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
   @override
   Widget build(BuildContext context) {
     return Semantics(label: widget.label, hint: widget.description, button: true, excludeSemantics: true, child:
-    GestureDetector(onTap: () => widget.enabled? widget.onTapWidget(context): null, child:
-    Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+    GestureDetector(onTap: () => widget.enabled && widget.onTapWidget!=null? widget.onTapWidget!(context): null, child:
+    Container(
+      // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Expanded(child:
-      Container(decoration: BoxDecoration(color: widget.color ?? Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
-      Padding(padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
-      Row(children: <Widget>[
-        widget.showLeftIcon ? Padding(padding: EdgeInsets.only(right: 6), child: _leftIcon) : Container(),
-        Expanded(child:
-        Text(widget.label ,
-          style: TextStyle(color:widget.enabled? (widget.color!=null? Colors.white : Styles().colors!.fillColorPrimary!) :  Styles().colors!.disabledTextColor!,
-            fontFamily: Styles().fontFamilies!.bold, fontSize: 16), textAlign: TextAlign.start,),
-        ),
-        Expanded(child:
-        Text(widget.description ?? "" ,
-          style: TextStyle(color: widget.enabled? (widget.color!=null? Colors.white : Styles().colors!.textSurface!) : Styles().colors!.disabledTextColor,
-            fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.end,),
-        ),
-        widget.showRightIcon ? Padding(padding: EdgeInsets.only(left: 6), child: _rightIcon) : Container(),
-      ],),
+        Container(decoration: BoxDecoration(color: widget.color ?? Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
+        Padding(padding: EdgeInsets.only(left: 8 /*+10 from icon*/, top: 8, bottom: 8, right: 8/*+10 form icon*/), child:
+          Row( crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+            Padding(padding: EdgeInsets.only(right: 16), child: _editRingButton),
+            Expanded(
+              flex: 5,
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                Text(widget.label ,
+                  style: TextStyle(color: Colors.white,
+                    fontFamily: Styles().fontFamilies!.bold, fontSize: 14), textAlign: TextAlign.start,),
+                Text(widget.description ?? "" ,
+                  style: TextStyle(color: Colors.white,
+                      fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.end,),
+                ],),)),
+              Container(
+                child: Row(
+                  children: [
+                    _decreaseValueButton,
+                    Container(width: 4,),
+                    _increaseValueButton,
+                  ],
+                ),
+              ),
+          ],),
+          ),
+        )
       ),
-      )
-      ),
-    ],),
+    ],)),
     ),
     );
   }
 
-  Widget get _leftIcon{
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      child: Image.asset('images/icon-create-event.png', excludeFromSemantics: true, color: widget.enabled ? Styles().colors!.fillColorPrimary! : Styles().colors!.disabledTextColor),
-    ); //TBD
-  }
-
-  Widget get _rightIcon{
+  Widget get _editRingButton{
     return GestureDetector(
-        onTap: (){ if (widget.onTapRightWidget!=null) widget.onTapRightWidget!(this.context);},
+        onTap: (){ if (widget.onTapEdit!=null) widget.onTapEdit!(this.context);},
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Image.asset('images/icon-gear.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+        ));
+  }
+  Widget get _increaseValueButton{
+    return GestureDetector(
+        onTap: (){ if (widget.onTapIncrease!=null) widget.onTapIncrease!(this.context);},
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+        ));
+  }
+
+  Widget get _decreaseValueButton{
+    return GestureDetector(
+        onTap: (){ if (widget.onTapDecrease!=null) widget.onTapDecrease!(this.context);},
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
         ));
   }
 }
