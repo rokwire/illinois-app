@@ -66,6 +66,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   PostDataModel? _replyEditData = PostDataModel(); //used for Reply Create / Edit; Empty data for new Reply
 
   bool _loading = false;
+  bool _isReporting = false;
 
   //Scroll and focus utils
   ScrollController _scrollController = ScrollController();
@@ -162,103 +163,38 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                             color: Styles()
                                                 .colors!
                                                 .fillColorPrimary)))),
-                            Visibility(
-                                visible: _isEditPostVisible && !widget.hidePostOptions,
-                                child: Semantics(
-                                    container: true,
-                                    sortKey: OrdinalSortKey(5),
-                                    child: Container(
-                                        child: Semantics(
-                                            label: Localization()
-                                                .getStringEx(
-                                                'panel.group.detail.post.reply.edit.label',
-                                                "Edit"),
-                                            button: true,
-                                            child: GestureDetector(
-                                                onTap: _onTapEditMainPost,
-                                                child: Container(
-                                                    color: Colors
-                                                        .transparent,
-                                                    child: Padding(
-                                                        padding: EdgeInsets.only(
-                                                            left: 16,
-                                                            top: 22,
-                                                            bottom: 10,
-                                                            right: (_isReplyVisible
-                                                                ? (_outerPadding /
-                                                                2)
-                                                                : _outerPadding)),
-                                                        child:
-                                                        Image.asset(
-                                                          'images/icon-edit.png',
-                                                          width: 20,
-                                                          height: 20,
-                                                          excludeFromSemantics:
-                                                          true,
-                                                        )))))))),
-                            Visibility(
-                                visible: _isDeletePostVisible && !widget.hidePostOptions,
-                                child: Semantics(
-                                    container: true,
-                                    sortKey: OrdinalSortKey(5),
-                                    child: Container(
-                                        child: Semantics(
-                                            label: Localization()
-                                                .getStringEx(
-                                                'panel.group.detail.post.reply.delete.label',
-                                                "Delete"),
-                                            button: true,
-                                            child: GestureDetector(
-                                                onTap: _onTapDeletePost,
-                                                child: Container(
-                                                    color: Colors
-                                                        .transparent,
-                                                    child: Padding(
-                                                        padding: EdgeInsets.only(
-                                                            left: 16,
-                                                            top: 22,
-                                                            bottom: 10,
-                                                            right: (_isReplyVisible
-                                                                ? (_outerPadding /
-                                                                2)
-                                                                : _outerPadding)),
-                                                        child:
-                                                        Image.asset(
-                                                          'images/trash.png',
-                                                          width: 20,
-                                                          height: 20,
-                                                          excludeFromSemantics:
-                                                          true,
-                                                        )))))))),
-                            Visibility(
-                                visible: _isReplyVisible && !widget.hidePostOptions,
-                                child: Semantics(
-                                    label: Localization().getStringEx(
-                                        'panel.group.detail.post.reply.reply.label',
-                                        "Reply"),
-                                    button: true,
-                                    child: GestureDetector(
-                                        onTap: _onTapHeaderReply,
-                                        child: Container(
-                                            color: Colors.transparent,
-                                            child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    left:
-                                                    (_isDeletePostVisible
-                                                        ? 8
-                                                        : 16),
-                                                    top: 22,
-                                                    bottom: 10,
-                                                    right:
-                                                    _outerPadding),
-                                                child: Image.asset(
-                                                  'images/icon-group-post-reply.png',
-                                                  width: 20,
-                                                  height: 20,
-                                                  fit: BoxFit.fill,
-                                                  excludeFromSemantics:
-                                                  true,
-                                                ))))))
+                            Visibility(visible: _isEditPostVisible && !widget.hidePostOptions, child:
+                              Semantics(container: true, sortKey: OrdinalSortKey(5), child:
+                                Container(child:
+                                  Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.edit.label', "Edit"), button: true, child:
+                                    GestureDetector(onTap: _onTapEditMainPost, child:
+                                      Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
+                                        Image.asset('images/icon-edit.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
+
+                            Visibility(visible: _isDeletePostVisible && !widget.hidePostOptions, child:
+                              Semantics(container: true, sortKey: OrdinalSortKey(5), child:
+                                Container(child:
+                                  Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.delete.label', "Delete"), button: true, child:
+                                    GestureDetector(onTap: _onTapDeletePost, child:
+                                        Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
+                                          Image.asset('images/trash.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
+
+                            Visibility(visible: _isReplyVisible && !widget.hidePostOptions, child:
+                              Semantics(label: Localization().getStringEx('panel.group.detail.post.report.label', "Report Abuse"), button: true, child:
+                                GestureDetector( onTap: _onTapHeaderReportAbuse, child:
+                                    Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
+                                      _isReporting ?
+                                        SizedBox(width: 18, height: 18, child:
+                                          CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+                                        ) :
+                                        Image.asset('images/icon-feedback.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
+
+                            Visibility(visible: _isReportAbuseVisible && !widget.hidePostOptions, child:
+                              Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"), button: true, child:
+                                GestureDetector(onTap: _onTapHeaderReply, child:
+                                    Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 16), child:
+                                      Image.asset('images/icon-group-post-reply.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
+
                           ]),
                     ]))
       ]),
@@ -635,50 +571,35 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void _onTapReplyOptions(GroupPost? reply) {
     Analytics().logSelect(target: 'Reply Options');
     showModalBottomSheet(
-        context: context,
-        backgroundColor: Styles().colors!.white,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        builder: (context) {
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Visibility(visible: _isReplyVisible, child: RibbonButton(
-                  leftIconAsset: "images/icon-group-post-reply.png",
-                  label: Localization().getStringEx(
-                      "panel.group.detail.post.reply.reply.label", "Reply"),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _onTapPostReply(reply: reply);
-                  },
-                )),
-                Visibility(visible: _isEditVisible(reply), child: RibbonButton(
-                  leftIconAsset: "images/icon-edit.png",
-                  label: Localization().getStringEx(
-                      "panel.group.detail.post.reply.edit.label", "Edit"),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _onTapEditPost(reply: reply);
-                  },
-                )),
-                Visibility(visible: _isDeleteReplyVisible(reply), child: RibbonButton(
-                  leftIconAsset: "images/trash.png",
-                  label: Localization().getStringEx(
-                      "panel.group.detail.post.reply.delete.label", "Delete"),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _onTapDeleteReply(reply);
-                  },
-                )),
-              ],
-            ),
-          );
-        });
+      context: context,
+      backgroundColor: Styles().colors!.white,
+      isScrollControlled: true,
+      isDismissible: true,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
+      builder: (context) {
+        return _ReplyOptionsMenu(
+          canReply: _isReplyVisible,
+          onReply: () {
+            Navigator.of(context).pop();
+            _onTapPostReply(reply: reply);
+          },
+
+          canEdit: _isEditVisible(reply),
+          onEdit: () {
+            Navigator.of(context).pop();
+            _onTapEditPost(reply: reply);
+          },
+
+          canDelete: _isDeleteReplyVisible(reply),
+          onDelete: () {
+            Navigator.of(context).pop();
+            _onTapDeleteReply(reply);
+          },
+
+          canReport: _isReportAbuseVisible,
+          onReport: (_ReplyOptionsMenuState state) => _onTapMenuReportAbuse(state, reply),
+        );
+      });
   }
 
   void _onTapDeleteReply(GroupPost? reply) {
@@ -739,6 +660,73 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _scrollToPostEdit();
   }
 
+  void _onTapHeaderReportAbuse() {
+    Analytics().logSelect(target: 'Report Abuse');
+    if (_isReporting == false) {
+      _confirmReportAbuse().then((bool? result) {
+        if (result == true) {
+          if (mounted) {
+            setState(() {
+              _isReporting = true;
+            });
+          }
+          Groups().reportAbuse(groupId: widget.group?.id, postId: widget.post?.id).then((bool result) {
+            if (mounted) {
+              setState(() {
+                _isReporting = false;
+              });
+            }
+            _reportReportAbuse(result);
+          });
+        }
+      });
+    }
+  }
+
+  void _onTapMenuReportAbuse(_ReplyOptionsMenuState state, GroupPost? post) {
+    Analytics().logSelect(target: 'Report Abuse');
+    if (!state.isReporting) {
+      _confirmReportAbuse().then((bool? result) {
+        if (result == true) {
+          state.isReporting = true;
+          Groups().reportAbuse(groupId: widget.group?.id, postId: post?.id).then((bool result) {
+            if (state.mounted) {
+              state.isReporting = false;
+              if (result) {
+                Navigator.of(context).pop();
+              }
+              _reportReportAbuse(result);
+            }
+          });
+        }
+      });
+    }
+  }
+
+  Future<bool?> _confirmReportAbuse() {
+    return AppAlert.showCustomDialog(context: context,
+      contentWidget: Text(Localization().getStringEx('panel.group.detail.post.report.prompt.msg', 'Are you sure you want to report this post abuse?')),
+      actions: <Widget>[
+          TextButton(child: Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+            onPressed: () {
+              Analytics().logAlert(text: 'Are you sure you want to report this post abuse?', selection: 'Yes');
+              Navigator.of(context).pop(true);
+            }),
+          TextButton(child: Text(Localization().getStringEx('dialog.no.title', 'No')),
+            onPressed: () {
+              Analytics().logAlert(text: 'Are you sure you want to report this post abuse?', selection: 'No');
+              Navigator.of(context).pop(false);
+            })
+        ]);
+  }
+
+  Future<void> _reportReportAbuse(bool result) {
+    return AppAlert.showMessage(context, result ? 
+      Localization().getStringEx("panel.group.detail.post.report.succeeded.msg", "Post reported successfully.") :
+      Localization().getStringEx("panel.group.detail.post.report.succeeded.msg", "Failed to report post."),
+    );
+  }
+  
   void _onTapEditMainPost(){
     _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl, members: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:_post?.members, upToDateMembers: _allMembersAllowedToPost));
     if(mounted){
@@ -1025,7 +1013,11 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
     return widget.group?.currentUserIsMemberOrAdmin ?? false;
   }
 
-  bool get _isEditMainPost{
+  bool get _isReportAbuseVisible {
+    return widget.group?.currentUserIsMemberOrAdmin ?? false;
+  }
+
+  bool get _isEditMainPost {
     return _mainPostUpdateData!=null;
   }
 
@@ -1036,4 +1028,80 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
       _reloadPost();
     }
   }
+}
+
+class _ReplyOptionsMenu extends StatefulWidget {
+  final bool canReply;
+  final void Function() onReply;
+
+  final bool canEdit;
+  final void Function() onEdit;
+
+  final bool canDelete;
+  final void Function() onDelete;
+
+  final bool canReport;
+  final void Function(_ReplyOptionsMenuState state) onReport;
+
+  _ReplyOptionsMenu({Key? key,
+    required this.canReply, required this.onReply,
+    required this.canEdit, required this.onEdit,
+    required this.canDelete, required this.onDelete,
+    required this.canReport, required this.onReport,
+  }) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _ReplyOptionsMenuState();
+}
+
+class _ReplyOptionsMenuState extends State<_ReplyOptionsMenu> {
+
+  bool _isReporting = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Visibility(visible: widget.canReply, child: RibbonButton(
+            leftIconAsset: "images/icon-group-post-reply.png",
+            label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
+            onTap: widget.onReply,
+          )),
+          Visibility(visible: widget.canEdit, child: RibbonButton(
+            leftIconAsset: "images/icon-edit.png",
+            label: Localization().getStringEx("panel.group.detail.post.reply.edit.label", "Edit"),
+            onTap: widget.onEdit,
+          )),
+          Visibility(visible: widget.canDelete, child: RibbonButton(
+            leftIconAsset: "images/trash.png",
+            label: Localization().getStringEx("panel.group.detail.post.reply.delete.label", "Delete"),
+            onTap: widget.onDelete,
+          )),
+          Visibility(visible: widget.canReport, child: RibbonButton(
+            leftIconAsset: "images/icon-feedback.png",
+            label: Localization().getStringEx("panel.group.detail.post.report.label", "Report Abuse"),
+            progress: _isReporting,
+            onTap: () => widget.onReport(this),
+          )),
+        ],
+      ),
+    );
+  }
+
+  bool get isReporting => _isReporting;
+
+  set isReporting(bool value) {
+    if (mounted) {
+      setState(() {
+        _isReporting = value;
+      });
+    }
+    else {
+      _isReporting = value;
+    }
+  }
+
 }

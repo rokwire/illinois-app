@@ -2192,7 +2192,7 @@
 	"panel.group.detail.post.reply.create.body.field.hint": "Write a Reply ...",
 	"panel.group.detail.post.create.validation.subject.msg": "Post subject required",
 	"panel.group.detail.post.create.validation.body.msg": "Post message required",
-    "panel.group.detail.post.create.reply.validation.body.msg": "Reply message required",
+  "panel.group.detail.post.create.reply.validation.body.msg": "Reply message required",
 	"panel.group.detail.post.create.post.failed.msg": "Failed to create new post.",
 	"panel.group.detail.post.create.reply.failed.msg": "Failed to create new reply.",
 	"panel.group.detail.post.update.reply.failed.msg": "Failed to edit reply.",
@@ -2202,6 +2202,11 @@
 	"panel.group.detail.post.create.dialog.link.url.label": "Link URL:",
 	"panel.group.detail.post.create.button.send.title": "Send",
 	"panel.group.detail.post.update.button.update.title": "Update",
+	"panel.group.detail.post.report.label": "Report Abuse",
+	"panel.group.detail.post.report.prompt.msg": "Are you sure you want to report this post abuse?",
+	"panel.group.detail.post.report.succeeded.msg": "Post reported successfully.",
+	"panel.group.detail.post.report.failed.msg": "Failed to report post.",
+
 	"panel.groups_all_events.label.heading": "Upcoming Events",
 
 	"panel.group_polls.label.heading": "All Polls",
