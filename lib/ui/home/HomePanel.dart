@@ -38,7 +38,6 @@ import 'package:illinois/ui/home/HomeDiningWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
-import 'package:illinois/ui/home/HomeTBDWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
@@ -408,15 +407,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeCampusLinksWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
         return HomeCampusLinksWidget(favoriteId: code, updateController: _updateController,);
-      }
-    }
-    else if (code == 'illini_news') {
-      if (title) {
-        return 'Illini News';
-      } else if (handle) {
-        return HomeHandleWidget(title: 'Illini News', favoriteId: code, dragAndDropHost: this, position: position,);
-      } else {
-        return HomeTBDWidget(title: 'Illini News', favoriteId: code, updateController: _updateController);
       }
     }
     else if (code == 'wellness') {
