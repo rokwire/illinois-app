@@ -56,10 +56,6 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
     double cardInnerPadding = 10;
     final double? cardWidth = widget.isSmall ? (MediaQuery.of(context).textScaleFactor * 200) : null;
     const double borderRadiusValue = 6;
-    Color? mainColor = StringUtils.isNotEmpty(widget.course.courseColor) ? UiColors.fromHex(widget.course.courseColor!) : defaultColor;
-    if (mainColor == null) {
-      mainColor = defaultColor;
-    }
     return Container(
         height: (widget.isSmall ? cardHeight : null),
         width: cardWidth,
@@ -70,14 +66,14 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
           Container(
               height: (cardHeight / 2),
               decoration: BoxDecoration(
-                  color: mainColor, borderRadius: (widget.isSmall ? BorderRadius.vertical(top: Radius.circular(borderRadiusValue)) : null)),
+                  color: defaultColor, borderRadius: (widget.isSmall ? BorderRadius.vertical(top: Radius.circular(borderRadiusValue)) : null)),
               child: Padding(
                   padding: EdgeInsets.only(left: cardInnerPadding, top: cardInnerPadding),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Container(
                         padding: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
                         decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Styles().colors!.white),
-                        child: _buildGradeScoreWidget(courseColor: mainColor))
+                        child: _buildGradeScoreWidget(courseColor: defaultColor))
                   ]))),
           Container(
               decoration: BoxDecoration(
@@ -91,7 +87,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
                       Text(StringUtils.ensureNotEmpty(widget.course.name),
                           maxLines: (widget.isSmall ? 2 : 5),
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: mainColor, fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold))
+                          style: TextStyle(color: defaultColor, fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold))
                     ]))
                   ])))
         ]));
