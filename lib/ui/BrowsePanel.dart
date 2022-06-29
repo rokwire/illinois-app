@@ -485,7 +485,6 @@ class _BrowseEntry extends StatelessWidget {
 
       case "feeds.twitter":      _onTapTwitter(context); break;
       case "feeds.wpgufm_radio": _onTapWPGUFMRadio(context); break;
-      case "feeds.illini_news":  _onTapIlliniNews(context); break;
 
       case "groups.all_groups":  _onTapAllGroups(context); break;
 
@@ -761,11 +760,6 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapWPGUFMRadio(BuildContext context) {
     Analytics().logSelect(target: "WPGU FM Radio");
     HomeWPGUFMRadioWidget.showPopup(context);
-  }
-
-  void _onTapIlliniNews(BuildContext context) {
-    Analytics().logSelect(target: "Illini News");
-    _notImplemented(context);
   }
 
   void _onTapAllGroups(BuildContext context) {
