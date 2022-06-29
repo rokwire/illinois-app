@@ -146,7 +146,8 @@
 			"settings.linked.email.remove"        : { "emailLinked": true }
 		},
 		"platform":{
-			"onboarding.notifications_auth" : { "os": "ios" }
+			"onboarding.notifications_auth" : { "os": "ios" },
+			"campus_resources": { "build": "debug" }
 		},
 		"illini_cash": {
 		},
