@@ -326,7 +326,7 @@ class Wellness with Service implements NotificationsListener {
     List<dynamic>? entries = (tipsContent != null) ? JsonUtils.listValue(tipsContent['entries']) : null;
     if ((entries != null) && (0 < entries.length)) {
       for (dynamic entry in entries) {
-        Map<String, dynamic>? entryTip = JsonUtils.mapValue(entries[entry]);
+        Map<String, dynamic>? entryTip = JsonUtils.mapValue(entry);
         String? entryTipId = (entryTip != null) ? JsonUtils.stringValue(entryTip['id']) : null;
         if (entryTipId == tipId) {
           return true;
@@ -403,6 +403,7 @@ class Wellness with Service implements NotificationsListener {
   }
 
   Future<Map<String, dynamic>?> _loadContentMapFromNet() async {
+    //return { '$_tipsContentCategoty': JsonUtils.mapValue(Assets()['wellness.tips']) } ;
     Map<String, dynamic>? result;
     if (Config().contentUrl != null) {
       Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': _contentCategories}), auth: Auth2());
@@ -429,8 +430,8 @@ class Wellness with Service implements NotificationsListener {
     if ((contentMap != null) && !DeepCollectionEquality().equals(_contentMap, contentMap)) {
       _contentMap = contentMap;
       await _saveContentMapToCache(contentMap);
-      _updateDailyTip();
       NotificationService().notify(notifyContentChanged);
+      _updateDailyTip();
     }
   }
 }
