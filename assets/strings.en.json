@@ -2188,6 +2188,7 @@
     "panel.group.detail.post.delete.failed.msg": "Failed to delete post.",
     "panel.group.detail.post.reply.delete.confirm.msg": "Are you sure that you want to delete this reply?",
     "panel.group.detail.post.reply.delete.failed.msg": "Failed to delete reply.",
+    "panel.group.detail.post.reply.report.confirm.msg": "Are you sure that you want to delete this post?",
     "panel.group.detail.post.reply.delete.label": "Delete",
     "panel.group.detail.post.reply.reply.label": "Reply",
     "panel.group.detail.post.reply.edit.label": "Edit",
@@ -2207,6 +2208,11 @@
     "panel.group.detail.post.create.dialog.link.url.label": "Link URL:",
     "panel.group.detail.post.create.button.send.title": "Send",
     "panel.group.detail.post.update.button.update.title": "Update",
+    "panel.group.detail.post.report.label": "Report Abuse",
+    "panel.group.detail.post.report.prompt.msg": "Are you sure you want to report this post abuse?",
+    "panel.group.detail.post.report.succeeded.msg": "Post reported successfully.",
+    "panel.group.detail.post.report.failed.msg": "Failed to report post.",
+
     "panel.groups_all_events.label.heading": "Upcoming Events",
 
     "panel.group_polls.label.heading": "All Polls",

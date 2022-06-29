@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Small updates in Favorites/Browse content [#1843](https://github.com/rokwire/illinois-app/issues/1843).
 - Canvas Course Card UI changes [#1842](https://github.com/rokwire/illinois-app/issues/1842).
 - Updated Wellness Tips, added HTML content support [#1833](https://github.com/rokwire/illinois-app/issues/1833).
+### Added
+- Added report abuse for group posts [#1847](https://github.com/rokwire/illinois-app/issues/1847).
 
 ## [4.0.39] - 2022-06-28
 ### Added
