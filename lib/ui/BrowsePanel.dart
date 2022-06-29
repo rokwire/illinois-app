@@ -487,6 +487,7 @@ class _BrowseEntry extends StatelessWidget {
       case "feeds.wpgufm_radio": _onTapWPGUFMRadio(context); break;
 
       case "groups.all_groups":  _onTapAllGroups(context); break;
+      case "groups.my_groups":   _onTapMyGroups(context); break;
 
       case "my.my_groups":       _onTapMyGroups(context); break;
       case "my.my_game_day":     _onTapMyGameDay(context); break;
