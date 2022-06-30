@@ -113,34 +113,36 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
   }
 
   Widget _buildColorsRowWidget() {
-    final List<Color> predefinedColors = [
-      UiColors.fromHex("FFe45434")!,
-      UiColors.fromHex("FFf5821e")!,
-      UiColors.fromHex("FF54a747")!,
-      UiColors.fromHex("FF009fd4")!,
-      UiColors.fromHex("FF1d58a7")!]; //In normal cases this will be visible only for new custom ring
-    Color? initialColor = widget.data?.color;
+    final List<String> predefinedColors = [
+      "#e45434",
+      "#f5821e",
+      "#54a747",
+      "#09fd4",
+      "#1d58a7"]; //In normal cases this will be visible only for new custom ring
+    String? initialColorHex = widget.data?.colorHex;
+    String? tmpColorHex = _tmpColor!= null ? ColorUtils.toHex(_tmpColor!) : null;
+    String? selectedColorHex = _selectedColor != null ? ColorUtils.toHex(_selectedColor!) : null;
 
     //Show initial color if we have changed with default one
-    if(initialColor != null && !predefinedColors.contains(initialColor)){
+    if(initialColorHex != null && !predefinedColors.contains(initialColorHex)){
       predefinedColors.removeLast();
-      predefinedColors.add(initialColor);
+      predefinedColors.add(initialColorHex);
     }
 
     //Show selected colour
-    if(_selectedColor != null && !predefinedColors.contains(_selectedColor)){
+    if(selectedColorHex!=null && !predefinedColors.contains(selectedColorHex)){
       predefinedColors.removeLast();
-      predefinedColors.add(_selectedColor!);
+      predefinedColors.add(selectedColorHex);
     //Or last custom color
-    } else if(_tmpColor != null && !predefinedColors.contains(_tmpColor)){
+    } else if(tmpColorHex != null && !predefinedColors.contains(tmpColorHex)){
       predefinedColors.removeLast();
-      predefinedColors.add(_tmpColor!);
+      predefinedColors.add(tmpColorHex);
     }
 
     List<Widget> content = [];
-    for(Color color in predefinedColors){
+    for(String colorHex in predefinedColors){
       content.add(
-        _buildColorEntry(color: color, isSelected: (_selectedColor == color)),
+        _buildColorEntry(color: ColorUtils.fromHex(colorHex), isSelected: (selectedColorHex == colorHex)),
       );
     }
 
@@ -279,16 +281,20 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
     }
 
     if(quantity == null) {
-      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.ring.create.empty.name.msg', 'Please, fill quantity field.'));
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.ring.create.empty.quantity.msg', 'Please, fill quantity field.'));
       return;
     }
 
     if(StringUtils.isEmpty(unit)) {
-      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.ring.create.empty.name.msg', 'Please, fill unit field.'));
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.ring.create.empty.unit.msg', 'Please, fill unit field.'));
+      return;
+    }
+    if(_selectedColor == null) {
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.ring.create.empty.color.msg', 'Please, select color.'));
       return;
     }
     _setLoading(true);
-    _ringData = WellnessRingData(name: name, color: _selectedColor, goal: quantity, unit: unit, timestamp: DateTime.now().millisecondsSinceEpoch, id: "id_${DateTime.now().millisecondsSinceEpoch}");
+    _ringData = WellnessRingData(name: name, colorHex: ColorUtils.toHex(_selectedColor!), goal: quantity, unit: unit, timestamp: DateTime.now().millisecondsSinceEpoch, id: "id_${DateTime.now().millisecondsSinceEpoch}");
     if(widget.data?.id != null) {
       _ringData!.id = widget.data!.id;
     }

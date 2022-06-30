@@ -5,7 +5,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class WellnessRingData {
   String id;
   double goal;
-  Color? color;
+  String? colorHex;
   String? name;
   String? unit;
   int timestamp;
@@ -13,7 +13,7 @@ class WellnessRingData {
   //helper property to avoid creating date everytime
   DateTime? date;
 
-  WellnessRingData({required this.id , this.name, required this.goal, this.date, this.unit = "times" , this.color = Colors.orange, required this.timestamp});
+  WellnessRingData({required this.id , this.name, required this.goal, this.date, this.unit = "times" , this.colorHex = "FF000000", required this.timestamp});
 
   static WellnessRingData? fromJson(Map<String, dynamic>? json){
     if(json!=null) {
@@ -24,7 +24,7 @@ class WellnessRingData {
           name:   JsonUtils.stringValue(json['name']),
           unit:   JsonUtils.stringValue(json['unit']),
           timestamp:   JsonUtils.intValue(json['timestamp']) ?? DateTime.now().millisecondsSinceEpoch,
-          color:  UiColors.fromHex(JsonUtils.stringValue(json['color'])),
+          colorHex:  JsonUtils.stringValue(json['color']),
           date: date
       );
     }
@@ -37,7 +37,7 @@ class WellnessRingData {
     json['goal']   = goal;
     json['name']   = name;
     json['unit']   = unit;
-    json['color']  = UiColors.toHex(color);
+    json['color']  = colorHex;
     json['timestamp']  = timestamp;
     return json;
   }
@@ -45,7 +45,7 @@ class WellnessRingData {
   void updateFromOther(WellnessRingData other){
     this.id = other.id;
     this.goal = other.goal;
-    this.color = other.color;
+    this.colorHex = other.colorHex;
     this.name= other.name;
     this.unit = other.unit;
     this.timestamp = other.timestamp;
@@ -57,7 +57,7 @@ class WellnessRingData {
       (other is WellnessRingData) &&
           (id == other.id) &&
           (goal == other.goal) &&
-          (color == other.color) &&
+          (colorHex == other.colorHex) &&
           (name == other.name) &&
           (timestamp == other.timestamp) &&
           (unit == other.unit);
@@ -66,10 +66,14 @@ class WellnessRingData {
   int get hashCode =>
       (id.hashCode) ^
       (goal.hashCode) ^
-      (color?.hashCode ?? 0) ^
+      (colorHex?.hashCode ?? 0) ^
       (name?.hashCode ?? 0) ^
       (timestamp.hashCode) ^
       (unit?.hashCode ?? 0);
+  
+  Color? get color{
+    return this.colorHex!= null ? ColorUtils.fromHex(colorHex) : null;
+  }
 
   static List<WellnessRingData>? listFromJson(List<dynamic>? json) {
     List<WellnessRingData>? values;
