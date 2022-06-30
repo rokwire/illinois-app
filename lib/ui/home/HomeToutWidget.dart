@@ -228,7 +228,7 @@ class _InfoDialog extends StatelessWidget {
     contentHtml = contentHtml.replaceAll(selfServiceUrlMacro, Config().studentSelfServiceUrl ?? '');
     return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
       Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), alignment: Alignment.center, child: 
-        Container(decoration: BoxDecoration(color: Styles().colors?.fillColorPrimary, borderRadius: BorderRadius.circular(8)), child:
+        Container(decoration: BoxDecoration(color: Styles().colors?.fillColorPrimary, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white, width: 1)), child:
     
           Padding(padding: EdgeInsets.only(left: 24, bottom: 24), child:
             Column(mainAxisSize: MainAxisSize.min, children: [

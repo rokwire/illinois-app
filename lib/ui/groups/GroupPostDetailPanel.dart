@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -66,7 +67,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   PostDataModel? _replyEditData = PostDataModel(); //used for Reply Create / Edit; Empty data for new Reply
 
   bool _loading = false;
-  bool _isReporting = false;
 
   //Scroll and focus utils
   ScrollController _scrollController = ScrollController();
@@ -180,14 +180,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                           Image.asset('images/trash.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
 
                             Visibility(visible: _isReplyVisible && !widget.hidePostOptions, child:
-                              Semantics(label: Localization().getStringEx('panel.group.detail.post.report.label', "Report Abuse"), button: true, child:
+                              Semantics(label: Localization().getStringEx('panel.group.detail.post.button.report.label', "Report"), button: true, child:
                                 GestureDetector( onTap: _onTapHeaderReportAbuse, child:
                                     Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                                      _isReporting ?
-                                        SizedBox(width: 18, height: 18, child:
-                                          CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
-                                        ) :
-                                        Image.asset('images/icon-feedback.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
+                                      Image.asset('images/icon-feedback.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
 
                             Visibility(visible: _isReportAbuseVisible && !widget.hidePostOptions, child:
                               Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"), button: true, child:
@@ -577,27 +573,45 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       isDismissible: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
       builder: (context) {
-        return _ReplyOptionsMenu(
-          canReply: _isReplyVisible,
-          onReply: () {
-            Navigator.of(context).pop();
-            _onTapPostReply(reply: reply);
-          },
-
-          canEdit: _isEditVisible(reply),
-          onEdit: () {
-            Navigator.of(context).pop();
-            _onTapEditPost(reply: reply);
-          },
-
-          canDelete: _isDeleteReplyVisible(reply),
-          onDelete: () {
-            Navigator.of(context).pop();
-            _onTapDeleteReply(reply);
-          },
-
-          canReport: _isReportAbuseVisible,
-          onReport: (_ReplyOptionsMenuState state) => _onTapMenuReportAbuse(state, reply),
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Visibility(visible: _isReplyVisible, child: RibbonButton(
+                leftIconAsset: "images/icon-group-post-reply.png",
+                label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _onTapPostReply(reply: reply);
+                },
+              )),
+              Visibility(visible: _isEditVisible(reply), child: RibbonButton(
+                leftIconAsset: "images/icon-edit.png",
+                label: Localization().getStringEx("panel.group.detail.post.reply.edit.label", "Edit"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _onTapEditPost(reply: reply);
+                },
+              )),
+              Visibility(visible: _isDeleteReplyVisible(reply), child: RibbonButton(
+                leftIconAsset: "images/trash.png",
+                label: Localization().getStringEx("panel.group.detail.post.reply.delete.label", "Delete"),
+                onTap: () {
+                Navigator.of(context).pop();
+                _onTapDeleteReply(reply);
+              },
+              )),
+              Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
+                leftIconAsset: "images/icon-feedback.png",
+                label: Localization().getStringEx("panel.group.detail.post.button.report.label", "Report"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _onTapMenuReportAbuse(reply);
+                },
+              )),
+            ],
+          ),
         );
       });
   }
@@ -662,69 +676,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _onTapHeaderReportAbuse() {
     Analytics().logSelect(target: 'Report Abuse');
-    if (_isReporting == false) {
-      _confirmReportAbuse().then((bool? result) {
-        if (result == true) {
-          if (mounted) {
-            setState(() {
-              _isReporting = true;
-            });
-          }
-          Groups().reportAbuse(groupId: widget.group?.id, postId: widget.post?.id).then((bool result) {
-            if (mounted) {
-              setState(() {
-                _isReporting = false;
-              });
-            }
-            _reportReportAbuse(result);
-          });
-        }
-      });
-    }
+    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(groupId: widget.group?.id, postId: widget.post?.id)));
   }
 
-  void _onTapMenuReportAbuse(_ReplyOptionsMenuState state, GroupPost? post) {
+  void _onTapMenuReportAbuse(GroupPost? post) {
     Analytics().logSelect(target: 'Report Abuse');
-    if (!state.isReporting) {
-      _confirmReportAbuse().then((bool? result) {
-        if (result == true) {
-          state.isReporting = true;
-          Groups().reportAbuse(groupId: widget.group?.id, postId: post?.id).then((bool result) {
-            if (state.mounted) {
-              state.isReporting = false;
-              if (result) {
-                Navigator.of(context).pop();
-              }
-              _reportReportAbuse(result);
-            }
-          });
-        }
-      });
-    }
-  }
-
-  Future<bool?> _confirmReportAbuse() {
-    return AppAlert.showCustomDialog(context: context,
-      contentWidget: Text(Localization().getStringEx('panel.group.detail.post.report.prompt.msg', 'Are you sure you want to report this post abuse?')),
-      actions: <Widget>[
-          TextButton(child: Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
-            onPressed: () {
-              Analytics().logAlert(text: 'Are you sure you want to report this post abuse?', selection: 'Yes');
-              Navigator.of(context).pop(true);
-            }),
-          TextButton(child: Text(Localization().getStringEx('dialog.no.title', 'No')),
-            onPressed: () {
-              Analytics().logAlert(text: 'Are you sure you want to report this post abuse?', selection: 'No');
-              Navigator.of(context).pop(false);
-            })
-        ]);
-  }
-
-  Future<void> _reportReportAbuse(bool result) {
-    return AppAlert.showMessage(context, result ? 
-      Localization().getStringEx("panel.group.detail.post.report.succeeded.msg", "Post reported successfully.") :
-      Localization().getStringEx("panel.group.detail.post.report.succeeded.msg", "Failed to report post."),
-    );
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(groupId: widget.group?.id, postId: post?.id)));
   }
   
   void _onTapEditMainPost(){
@@ -1030,78 +987,3 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
   }
 }
 
-class _ReplyOptionsMenu extends StatefulWidget {
-  final bool canReply;
-  final void Function() onReply;
-
-  final bool canEdit;
-  final void Function() onEdit;
-
-  final bool canDelete;
-  final void Function() onDelete;
-
-  final bool canReport;
-  final void Function(_ReplyOptionsMenuState state) onReport;
-
-  _ReplyOptionsMenu({Key? key,
-    required this.canReply, required this.onReply,
-    required this.canEdit, required this.onEdit,
-    required this.canDelete, required this.onDelete,
-    required this.canReport, required this.onReport,
-  }) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() => _ReplyOptionsMenuState();
-}
-
-class _ReplyOptionsMenuState extends State<_ReplyOptionsMenu> {
-
-  bool _isReporting = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Visibility(visible: widget.canReply, child: RibbonButton(
-            leftIconAsset: "images/icon-group-post-reply.png",
-            label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
-            onTap: widget.onReply,
-          )),
-          Visibility(visible: widget.canEdit, child: RibbonButton(
-            leftIconAsset: "images/icon-edit.png",
-            label: Localization().getStringEx("panel.group.detail.post.reply.edit.label", "Edit"),
-            onTap: widget.onEdit,
-          )),
-          Visibility(visible: widget.canDelete, child: RibbonButton(
-            leftIconAsset: "images/trash.png",
-            label: Localization().getStringEx("panel.group.detail.post.reply.delete.label", "Delete"),
-            onTap: widget.onDelete,
-          )),
-          Visibility(visible: widget.canReport, child: RibbonButton(
-            leftIconAsset: "images/icon-feedback.png",
-            label: Localization().getStringEx("panel.group.detail.post.report.label", "Report Abuse"),
-            progress: _isReporting,
-            onTap: () => widget.onReport(this),
-          )),
-        ],
-      ),
-    );
-  }
-
-  bool get isReporting => _isReporting;
-
-  set isReporting(bool value) {
-    if (mounted) {
-      setState(() {
-        _isReporting = value;
-      });
-    }
-    else {
-      _isReporting = value;
-    }
-  }
-
-}
