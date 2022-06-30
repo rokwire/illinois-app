@@ -26,6 +26,7 @@ import 'package:illinois/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dar
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessRingsHomeContentWidget extends StatefulWidget {
   WellnessRingsHomeContentWidget();
@@ -137,13 +138,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
             Container(height: 28,),
             _buildButtons(),
             Container(height: 16,),
-            WellnessRingButton(label: "Create New Ring", description: "Maximum of 4 total",
-              enabled: WellnessRings().canAddRing,
-              onTapWidget:
-                (context){
-                  Analytics().logSelect(target: "Create new ring");
-                  Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingSelectPredefinedPanel()));
-                },),
+            _buildCreateRingButton(),
             Container(height: 16,),
         ],
       ),
@@ -201,6 +196,52 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
 
     return Container(
       child: Column(children: content,),
+    );
+  }
+
+  Widget _buildCreateRingButton(){
+    bool enabled = WellnessRings().canAddRing;
+    final Color disabledTextColor = ColorUtils.fromHex("5c5c5c") ?? Colors.white; //TODO move to colors
+    final Color disabledBackgroundColor = ColorUtils.fromHex("e7e7e7") ?? Colors.white; //TODO move to colors
+    String label = "Create New Ring";
+    String description = "Maximum of 4 total";
+    return Semantics(label: label, hint: description, button: true, excludeSemantics: true, child:
+    GestureDetector(onTap: (){
+      Analytics().logSelect(target: "Create new ring");
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingSelectPredefinedPanel()));
+    },
+      child:
+    Container(
+      // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Expanded(child:
+          Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
+          Padding(padding: EdgeInsets.only(left: 18, top: 16, bottom: 16, right: 16), child:
+          Row( crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(right: 14),
+                  child: Image.asset('images/icon-gear.png', excludeFromSemantics: true, color: enabled? Colors.black : disabledTextColor,),
+              ),
+              Expanded(
+                  flex: 5,
+                  child: Container(
+                    child: Text(label ,
+                          style: TextStyle(color: enabled? Colors.black : disabledTextColor,
+                              fontFamily: Styles().fontFamilies!.bold, fontSize: 14), textAlign: TextAlign.start,),)),
+              Expanded(
+                  flex: 5,
+                  child: Container(
+                    child: Text(description ,
+                          style: TextStyle(color: enabled? Colors.black : disabledTextColor,
+                              fontFamily: Styles().fontFamilies!.regular, fontSize: 12), textAlign: TextAlign.end,),)),
+            ],),
+          ),
+          )
+          ),
+        ],)),
+    ),
     );
   }
 
