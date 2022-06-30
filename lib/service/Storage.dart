@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -158,12 +156,12 @@ class Storage extends rokwire.Storage {
 
   static const String illiniCashBallanceKey  = '_illinicash_ballance';
 
-  IlliniCashBallance? get illiniCashBallance {
-    return IlliniCashBallance.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(illiniCashBallanceKey)));
+  String? get illiniCashBallance {
+    return getEncryptedStringWithName(illiniCashBallanceKey);
   }
 
-  set illiniCashBallance(IlliniCashBallance? value) {
-    setEncryptedStringWithName(illiniCashBallanceKey, value != null ? json.encode(value.toJson()) : null);
+  set illiniCashBallance(String? value) {
+    setEncryptedStringWithName(illiniCashBallanceKey, value);
   }
 
   /////////////////////

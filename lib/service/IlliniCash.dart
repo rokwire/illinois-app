@@ -20,7 +20,7 @@ import 'dart:ui';
 
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/model/illinicash/Transaction.dart';
+import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -32,7 +32,6 @@ import 'package:convert/convert.dart';
 
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -82,7 +81,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   @override
   Future<void> initService() async {
     if (_enabled) {
-      _ballance = Storage().illiniCashBallance;
+      _ballance = IlliniCashBallance.fromJson(JsonUtils.decodeMap(Storage().illiniCashBallance));
       updateBalance();
       await super.initService();
     }
@@ -206,7 +205,8 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
         ((_ballance != null) && (ballance == null)) ||
         ((_ballance == null) && (ballance != null)))
     {
-      Storage().illiniCashBallance = _ballance = ballance;
+      _ballance = ballance;
+      Storage().illiniCashBallance = JsonUtils.encode(ballance?.toJson());
       NotificationService().notify(notifyBallanceUpdated, null);
     }
   }

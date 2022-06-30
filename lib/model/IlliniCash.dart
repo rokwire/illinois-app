@@ -16,6 +16,77 @@
 
 import 'package:intl/intl.dart';
 
+//////////////////////////////
+/// IlliniCashBallance
+
+class IlliniCashBallance {
+  String? mealPlanName;
+  double? balance;
+  double? cafeCreditBalance;
+  int? mealBalance;
+  String? status;
+  bool? housingResidenceStatus;
+
+  IlliniCashBallance(
+      {this.mealPlanName,
+      this.balance = 0.0,
+      this.cafeCreditBalance = 0.0,
+      this.mealBalance = 0,
+      this.status,
+      this.housingResidenceStatus = false});
+
+  String get balanceDisplayText {
+    return _formatBalance(balance!);
+  }
+
+  String get cafeCreditBalanceDisplayText {
+    return _formatBalance(cafeCreditBalance!);
+  }
+
+  String get mealBalanceDisplayText {
+    return mealBalance.toString();
+  }
+
+  bool equals(dynamic o) {
+    return (o is IlliniCashBallance) &&
+      (o.mealPlanName == mealPlanName) &&
+      (o.balance == balance) &&
+      (o.mealBalance == mealBalance) &&
+      (o.cafeCreditBalance == cafeCreditBalance) &&
+      (o.status == status) &&
+      (o.housingResidenceStatus == housingResidenceStatus);
+  }
+
+
+  static IlliniCashBallance? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? IlliniCashBallance(
+        mealPlanName: json['MealPlanName'],
+        balance: json['IllinCashBalance'],
+        cafeCreditBalance: json['CafeCreditBalance'],
+        mealBalance: json['MPBalance'],
+        status: json['Status'],
+        housingResidenceStatus: json['HousingResidentStatus']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'MealPlanName': mealPlanName,
+      'IllinCashBalance': balance,
+      'CafeCreditBalance': cafeCreditBalance,
+      'MPBalance': mealBalance,
+      'Status': status,
+      'HousingResidentStatus': housingResidenceStatus
+    };
+  }
+
+  String _formatBalance(double value) {
+    return '\$ ' + value.toStringAsFixed(2);
+  }
+}
+
+//////////////////////////////
+/// BaseTransaction
+
 abstract class BaseTransaction {
   String? dateString;
   String? description;
@@ -26,6 +97,9 @@ abstract class BaseTransaction {
       {this.dateString, this.description, this.location, this.amount});
 
 }
+
+//////////////////////////////
+/// IlliniCashTransaction
 
 class IlliniCashTransaction extends BaseTransaction {
 
@@ -51,6 +125,9 @@ class IlliniCashTransaction extends BaseTransaction {
   }
 }
 
+//////////////////////////////
+/// MealPlanTransaction
+
 class MealPlanTransaction extends BaseTransaction{
 
   MealPlanTransaction(
@@ -70,6 +147,9 @@ class MealPlanTransaction extends BaseTransaction{
     );
   }
 }
+
+//////////////////////////////
+/// CafeCreditTransaction
 
 class CafeCreditTransaction extends BaseTransaction{
 
