@@ -17,19 +17,10 @@ class WellnessRings with Service{
   static const String _cacheFileName = "wellness.json";
   static const int MAX_RINGS = 4;
 
-  // ignore: unused_field
-  final List <WellnessRingRecord> _mocWellnessRecords = [
-    WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: "id_0",),
-    WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: "id_0"),
-    WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: "id_0"),
-    WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: "id_1"),
-    WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: "id_1"),
-    WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: "id_2"),
-  ];
-
   File? _cacheFile;
 
-  List<WellnessRingData>? _wellnessRings;
+  Map<String,WellnessRingData>? _activeWellnessRings;
+  List<WellnessRingData>? _wellnessRingsRecords;
   List<WellnessRingRecord>? _wellnessRecords;
 
   // Singletone Factory
@@ -50,23 +41,52 @@ class WellnessRings with Service{
   Future<void> initService() async {
     _cacheFile = await _getCacheFile();
     await _initFromCache();
-    _loadFromNet();
+    await _loadFromNet();
+    _initActiveRingsData();
     return super.initService();
   }
 
-  Future<void> _initFromCache() async{
-    _loadContentJsonFromCache().then((Map<String, dynamic>? storedValues) {
-      _wellnessRings = WellnessRingData.listFromJson(storedValues?["wellness_rings_data"]) ?? [];
-      _wellnessRecords = WellnessRingRecord.listFromJson(storedValues?["wellness_ring_records"] ?? []);
+  Future<bool> _initFromCache() async{
+    return _loadContentJsonFromCache().then((Map<String, dynamic>? storedValues) {
+      if(storedValues!=null) {
+        _wellnessRingsRecords = WellnessRingData.listFromJson(storedValues["wellness_rings_data"]) ?? [];
+        _wellnessRecords = WellnessRingRecord.listFromJson(storedValues["wellness_ring_records"] ?? []);
+        return true;
+      } else {
+        return false;
+      }
     }
     );
-    // _wellnessRings =  WellnessRingData.listFromJson(predefinedRings);//Storage().userWellnessRings; //TBD implement from file //TBD Moc for now
-    // _wellnessRecords = []; //_mocWellnessRecords; //TBD Implement from file //TBD Moc for now
   }
 
-  void _loadFromNet(){
+  bool _initActiveRingsData (){
+    _activeWellnessRings = {};
+    if(_wellnessRingsRecords?.isNotEmpty ?? false){
+      for (WellnessRingData data in _wellnessRingsRecords!){
+        if(_activeWellnessRings!.containsKey(data.id)){
+          WellnessRingData? storedData = _activeWellnessRings![data.id];
+          if((storedData?.timestamp ?? 0) < data.timestamp){
+              _activeWellnessRings![data.id] = data; //TBD try storedData = data;
+          }
+        } else {
+          _activeWellnessRings![data.id] = data;
+        }
+      }
+      NotificationService().notify(notifyUserRingsUpdated); //TBD use separate key
+    }
+    return true;
+  }
+
+  void _updateActiveRingsData (){
+    _initActiveRingsData();
+    //TBD implement
+    // NotificationService().notify(notifyUserRingsUpdated); //TBD use separate key
+  }
+
+  Future<bool> _loadFromNet() async{
     //TBD network API
     // _storeWellnessRingData();
+    return true;
   }
 
   //Cashe
@@ -82,7 +102,7 @@ class WellnessRings with Service{
 
   Future<void> _saveRingsDataToCache() async{
     String? data = JsonUtils.encode({
-      "wellness_rings_data": _wellnessRings,
+      "wellness_rings_data": _wellnessRingsRecords,
       "wellness_ring_records": _wellnessRecords,
     });
 
@@ -108,13 +128,14 @@ class WellnessRings with Service{
   Future<bool> addRing(WellnessRingData data) async {
     //TBD replace network API
     bool success = false;
-    if(_wellnessRings == null){
-      _wellnessRings = [];
+    if(_wellnessRingsRecords == null){
+      _wellnessRingsRecords = [];
     }
-    if(canAddRing){
-      _wellnessRings!.add(data);
+    if(canAddRing && (!(_activeWellnessRings?.containsKey(data.id) ?? false))){
+      _wellnessRingsRecords!.add(data);
       success = true;
     }
+    _updateActiveRingsData();
     NotificationService().notify(notifyUserRingsUpdated);
     _storeWellnessRingData();
     return success;
@@ -123,10 +144,13 @@ class WellnessRings with Service{
   Future<bool> updateRing(WellnessRingData data) async {
     //TBD replace network API
     bool success = false;
-    WellnessRingData? ringData;
-    try{ringData = _wellnessRings?.firstWhere((ring) => ring.id == data.id);} catch (e){}
-    if(ringData != null && ringData != data){
-      ringData.updateFromOther(data);
+    WellnessRingData? currentRingData = _activeWellnessRings?[data.id];
+    if(currentRingData == null || currentRingData != data){
+      if(_wellnessRingsRecords == null){
+        _wellnessRingsRecords = [];
+      }
+      _wellnessRingsRecords!.add(data);
+      _updateActiveRingsData();
       success = true;
       NotificationService().notify(notifyUserRingsUpdated);
       _storeWellnessRingData();
@@ -136,11 +160,12 @@ class WellnessRings with Service{
 
   Future<bool> removeRing(WellnessRingData data) async {
     //TBD network API
-    WellnessRingData? ringData = _wellnessRings?.firstWhere((ring) => ring.id == data.id);
+    WellnessRingData? ringData = _activeWellnessRings?[data.id];
     if(ringData != null){
-      _wellnessRings?.remove(ringData);
-      NotificationService().notify(notifyUserRingsUpdated);
+      _wellnessRingsRecords?.removeWhere((ringRecord) => ringRecord.id == data.id);
       _storeWellnessRingData();
+      _updateActiveRingsData();
+      NotificationService().notify(notifyUserRingsUpdated);
       return true;
     }
 
@@ -169,7 +194,7 @@ class WellnessRings with Service{
     selection?.forEach((record) {
       value += record.value;
     });
-    return value; //TBD implement
+    return value;
   }
 
   void _checkForAccomplishment(String id){
@@ -183,7 +208,7 @@ class WellnessRings with Service{
   }
 
   bool get canAddRing{
-    return (_wellnessRings?.length ?? 0) < MAX_RINGS;
+    return (_activeWellnessRings?.length ?? 0) < MAX_RINGS;
   }
 
   void _storeWellnessRingData(){
@@ -196,11 +221,11 @@ class WellnessRings with Service{
 
   Future<List<WellnessRingData>?> getWellnessRings() async {
     //TBD load from net
-    return _wellnessRings;
+    return _activeWellnessRings?.values.toList();
   }
 
   List<WellnessRingData>? get wellnessRings{
-    return _wellnessRings;
+    return _activeWellnessRings?.values.toList();
   }
 
   int getTotalCompletionCount(String id){
@@ -220,15 +245,16 @@ class WellnessRings with Service{
 
     //
     int count = 0;
-    WellnessRingData? ringData = _wellnessRings?.firstWhere((element) => element.id == id);
-    if(ringData!=null){
-      double goal = ringData.goal;//TBD implement updated Rings(will be list of data with update time) get the Data matching the ime period
-      for (List<WellnessRingRecord> dayRecords in ringDateRecords.values){
+    for (List<WellnessRingRecord> dayRecords in ringDateRecords.values){
+      if(dayRecords.isNotEmpty) {
+        WellnessRingData? ringData = _getActiveRingDataForDay(id: id,
+            timestamp: dayRecords.first
+                .timestamp); //We've filtered per day, so all records should return the same DayRingData, so just take the first one
         int dayCount = 0;
-        for(WellnessRingRecord record in dayRecords){
+        for (WellnessRingRecord record in dayRecords) {
           dayCount += record.value.toInt();
         }
-        if(dayCount >= goal){
+        if (dayCount >= (ringData?.goal ?? 0)) {
           //Match
           count++;
         }
@@ -248,11 +274,15 @@ class WellnessRings with Service{
 
       for(var ringDayRecords in dayRecords.value.entries){
         String ringId = ringDayRecords.key;
+        List<WellnessRingRecord>? ringRecords = dayRecords.value[ringId];
         WellnessRingData? ringData;
-        try{ ringData = WellnessRings()._wellnessRings?.firstWhere((element) => element.id == ringId);} catch(e){Log.d(e.toString());}
+        try {
+          ringData = (ringRecords?.isNotEmpty ?? false) ? _getActiveRingDataForDay(id: ringId, timestamp: ringRecords!.first.timestamp) : null;
+        } catch (e){
+          print(e);
+        }
         if(ringData!=null) {
           double goal = ringData.goal;
-          List<WellnessRingRecord>? ringRecords = dayRecords.value[ringData.id];
           double dayCount = 0;
           if (ringRecords != null) {
             for (WellnessRingRecord record in ringRecords) {
@@ -307,6 +337,37 @@ class WellnessRings with Service{
     return ringDateRecords;
   }
 
+  //Required for Accomplishment History
+  List<WellnessRingData>? _findRingData({required String id, int? beforeTimestamp, int? afterTimestamp}){
+    if(_wellnessRingsRecords?.isNotEmpty ?? false){
+      List<WellnessRingData> result = [];
+      for(WellnessRingData record in _wellnessRingsRecords!){
+        if(record.id == id
+          && (beforeTimestamp == null || record.timestamp < beforeTimestamp)
+          && (afterTimestamp == null  || record.timestamp > afterTimestamp)
+        ){
+          result.add(record);
+        }
+      }
+
+      return result;
+    }
+
+    return null;
+  }
+
+  WellnessRingData? _getActiveRingDataForDay({required String id, int? timestamp}){
+    if(timestamp!=null){
+      DateTime? midnight = DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(timestamp));
+      var foundData = _findRingData(id: id, beforeTimestamp: midnight?.millisecondsSinceEpoch);
+      if(foundData?.isNotEmpty ?? false){
+        return foundData!.last; // last to be the most up to date
+      }
+    }
+
+    return null;
+  }
+
   String getTotalCompletionCountString(String id){
     int count = getTotalCompletionCount(id);
     switch(count){
@@ -330,6 +391,10 @@ class WellnessRings with Service{
   }
 
   WellnessRingData? getRingData(String id){
-    return wellnessRings?.firstWhere((ring) => ring.id == id);
+    return _activeWellnessRings?[id];
   }
+
+  //TBD Remove unnecessary public methods
+  //TBD Reorder methods
+  //TBD clan up
 }
