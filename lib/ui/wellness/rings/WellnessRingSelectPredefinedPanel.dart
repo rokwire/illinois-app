@@ -20,15 +20,15 @@ class WellnessRingSelectPredefinedPanel extends StatefulWidget{
 
 class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPredefinedPanel> implements NotificationsListener{
   static const List<Map<String,dynamic>> PREDEFINED_RING_BUTTONS = [
-    {"ring":{'name': "Hobby", 'goal': 2, 'color': 'f5821e', 'id': "id_predefined_0", 'unit':'session'},
+    {"ring":{'name': "Hobby", 'goal': 2, 'color': 'FFf5821e', 'id': "id_predefined_0", 'unit':'session'},
       "name":"Hobby Ring",
       "description":"Use this ring to motivate you to engage in your hobby in some small way every day. It’s important to have your own free time, even if it’s small some days.",
       "example": "Examples for filling out this ring could be reading, sketching, playing an instrument, or whatever hobbies you enjoy!"},
-    {"ring":{'name': "Physical Activity", 'goal': 16, 'color': '54a747', 'id': "id_predefined_1", 'unit':'activity'},
+    {"ring":{'name': "Physical Activity", 'goal': 16, 'color': 'FF54a747', 'id': "id_predefined_1", 'unit':'activity'},
       "name":"Movement Ring",
       "description":"Use this ring to motivate you to do something active every day, even if it's daily stretching or taking a short walk! A small amount of physical activity every day can improve your overall mood and motivation.",
       "example":"Examples for filling out this ring could be going on a walk, rock climbing, dancing, stretching, or whatever exercise you enjoy!"},
-    {"ring":{'name': "Mindfulness", 'goal': 10, 'color': '009fd4' , 'id': "id_predefined_2", 'unit':'moment'},
+    {"ring":{'name': "Mindfulness", 'goal': 10, 'color': 'FF009fd4' , 'id': "id_predefined_2", 'unit':'moment'},
       "name":"Mindfulness",
       "description":"Use this ring to motivate you to focus on the present moment. Taking even a small amount of time for  intentional practice, like journaling or breathing exercises, can help reduce overall stress.",
       "example": "Examples could include drinking a certain amount of water throughout the day, taking your daily vitamin, etc."},

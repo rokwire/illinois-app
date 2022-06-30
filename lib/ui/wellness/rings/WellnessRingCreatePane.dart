@@ -114,11 +114,11 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
 
   Widget _buildColorsRowWidget() {
     final List<Color> predefinedColors = [
-      UiColors.fromHex("e45434")!,
-      UiColors.fromHex("f5821e")!,
-      UiColors.fromHex("54a747")!,
-      UiColors.fromHex("009fd4")!,
-      UiColors.fromHex("1d58a7")!]; //In normal cases this will be visible only for new custom ring
+      UiColors.fromHex("FFe45434")!,
+      UiColors.fromHex("FFf5821e")!,
+      UiColors.fromHex("FF54a747")!,
+      UiColors.fromHex("FF009fd4")!,
+      UiColors.fromHex("FF1d58a7")!]; //In normal cases this will be visible only for new custom ring
     Color? initialColor = widget.data?.color;
 
     //Show initial color if we have changed with default one

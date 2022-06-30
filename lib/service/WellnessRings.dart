@@ -48,15 +48,10 @@ class WellnessRings with Service{
 
   Future<bool> _initFromCache() async{
     return _loadContentJsonFromCache().then((Map<String, dynamic>? storedValues) {
-      if(storedValues!=null) {
-        _wellnessRingsRecords = WellnessRingData.listFromJson(storedValues["wellness_rings_data"]) ?? [];
-        _wellnessRecords = WellnessRingRecord.listFromJson(storedValues["wellness_ring_records"] ?? []);
+        _wellnessRingsRecords = WellnessRingData.listFromJson(storedValues?["wellness_rings_data"]) ?? [];
+        _wellnessRecords = WellnessRingRecord.listFromJson(storedValues?["wellness_ring_records"] ?? []);
         return true;
-      } else {
-        return false;
-      }
-    }
-    );
+      });
   }
 
   bool _initActiveRingsData (){
@@ -133,11 +128,11 @@ class WellnessRings with Service{
     }
     if(canAddRing && (!(_activeWellnessRings?.containsKey(data.id) ?? false))){
       _wellnessRingsRecords!.add(data);
+      _updateActiveRingsData();
       success = true;
     }
-    _updateActiveRingsData();
-    NotificationService().notify(notifyUserRingsUpdated);
     _storeWellnessRingData();
+    NotificationService().notify(notifyUserRingsUpdated);
     return success;
   }
 
@@ -152,8 +147,8 @@ class WellnessRings with Service{
       _wellnessRingsRecords!.add(data);
       _updateActiveRingsData();
       success = true;
-      NotificationService().notify(notifyUserRingsUpdated);
       _storeWellnessRingData();
+      NotificationService().notify(notifyUserRingsUpdated);
     }
     return success;
   }
@@ -163,8 +158,8 @@ class WellnessRings with Service{
     WellnessRingData? ringData = _activeWellnessRings?[data.id];
     if(ringData != null){
       _wellnessRingsRecords?.removeWhere((ringRecord) => ringRecord.id == data.id);
-      _storeWellnessRingData();
       _updateActiveRingsData();
+      _storeWellnessRingData();
       NotificationService().notify(notifyUserRingsUpdated);
       return true;
     }
@@ -205,10 +200,6 @@ class WellnessRings with Service{
 
   bool _isAccomplished(String id){
     return(getRingData(id)?.goal ?? 0) <= getRingDailyValue(id);
-  }
-
-  bool get canAddRing{
-    return (_activeWellnessRings?.length ?? 0) < MAX_RINGS;
   }
 
   void _storeWellnessRingData(){
@@ -392,6 +383,10 @@ class WellnessRings with Service{
 
   WellnessRingData? getRingData(String id){
     return _activeWellnessRings?[id];
+  }
+
+  bool get canAddRing{
+    return (_activeWellnessRings?.length ?? 0) < MAX_RINGS;
   }
 
   //TBD Remove unnecessary public methods
