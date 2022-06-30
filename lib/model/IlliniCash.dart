@@ -15,17 +15,18 @@
  */
 
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 //////////////////////////////
 /// IlliniCashBallance
 
 class IlliniCashBallance {
-  String? mealPlanName;
-  double? balance;
-  double? cafeCreditBalance;
-  int? mealBalance;
-  String? status;
-  bool? housingResidenceStatus;
+  final String? mealPlanName;
+  final double? balance;
+  final double? cafeCreditBalance;
+  final int? mealBalance;
+  final String? status;
+  final bool? housingResidenceStatus;
 
   IlliniCashBallance(
       {this.mealPlanName,
@@ -33,16 +34,17 @@ class IlliniCashBallance {
       this.cafeCreditBalance,
       this.mealBalance,
       this.status,
-      this.housingResidenceStatus = false});
+      this.housingResidenceStatus});
 
   static IlliniCashBallance? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? IlliniCashBallance(
-        mealPlanName: json['MealPlanName'],
-        balance: json['IllinCashBalance'],
-        cafeCreditBalance: json['CafeCreditBalance'],
-        mealBalance: json['MPBalance'],
-        status: json['Status'],
-        housingResidenceStatus: json['HousingResidentStatus']) : null;
+      mealPlanName:           JsonUtils.stringValue(json['MealPlanName']) ,
+      balance:                JsonUtils.doubleValue(json['IllinCashBalance']) ,
+      cafeCreditBalance:      JsonUtils.doubleValue(json['CafeCreditBalance']),
+      mealBalance:            JsonUtils.intValue(json['MPBalance']),
+      status:                 JsonUtils.stringValue(json['Status']),
+      housingResidenceStatus: JsonUtils.boolValue(json['HousingResidentStatus'])
+    ): null;
   }
 
   Map<String, dynamic> toJson() {
