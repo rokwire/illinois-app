@@ -201,9 +201,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   }
 
   void _applyBallance(IlliniCashBallance? ballance) {
-    if (((_ballance != null) && (ballance != null) && !_ballance!.equals(ballance)) ||
-        ((_ballance != null) && (ballance == null)) ||
-        ((_ballance == null) && (ballance != null)))
+    if (_ballance != ballance)
     {
       _ballance = ballance;
       Storage().illiniCashBallance = JsonUtils.encode(ballance?.toJson());

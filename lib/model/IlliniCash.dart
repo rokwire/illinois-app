@@ -29,34 +29,11 @@ class IlliniCashBallance {
 
   IlliniCashBallance(
       {this.mealPlanName,
-      this.balance = 0.0,
-      this.cafeCreditBalance = 0.0,
-      this.mealBalance = 0,
+      this.balance,
+      this.cafeCreditBalance,
+      this.mealBalance,
       this.status,
       this.housingResidenceStatus = false});
-
-  String get balanceDisplayText {
-    return _formatBalance(balance!);
-  }
-
-  String get cafeCreditBalanceDisplayText {
-    return _formatBalance(cafeCreditBalance!);
-  }
-
-  String get mealBalanceDisplayText {
-    return mealBalance.toString();
-  }
-
-  bool equals(dynamic o) {
-    return (o is IlliniCashBallance) &&
-      (o.mealPlanName == mealPlanName) &&
-      (o.balance == balance) &&
-      (o.mealBalance == mealBalance) &&
-      (o.cafeCreditBalance == cafeCreditBalance) &&
-      (o.status == status) &&
-      (o.housingResidenceStatus == housingResidenceStatus);
-  }
-
 
   static IlliniCashBallance? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? IlliniCashBallance(
@@ -79,9 +56,31 @@ class IlliniCashBallance {
     };
   }
 
-  String _formatBalance(double value) {
-    return '\$ ' + value.toStringAsFixed(2);
-  }
+  @override
+  bool operator ==(other) =>
+      other is IlliniCashBallance &&
+          other.mealPlanName == mealPlanName &&
+          other.balance == balance &&
+          other.cafeCreditBalance == cafeCreditBalance &&
+          other.mealBalance == mealBalance &&
+          other.status == status &&
+          other.housingResidenceStatus == housingResidenceStatus;
+
+  @override
+  int get hashCode =>
+      (mealPlanName?.hashCode ?? 0) ^
+      (balance?.hashCode ?? 0) ^
+      (cafeCreditBalance?.hashCode ?? 0) ^
+      (mealBalance?.hashCode ?? 0) ^
+      (status?.hashCode ?? 0) ^
+      (housingResidenceStatus?.hashCode ?? 0);
+
+
+  String get balanceDisplayText           =>  _formatBalance(balance ?? 0);
+  String get cafeCreditBalanceDisplayText =>  _formatBalance(cafeCreditBalance ?? 0);
+  String get mealBalanceDisplayText       =>  mealBalance.toString();
+
+  String _formatBalance(double value) => '\$ ${value.toStringAsFixed(2)}';
 }
 
 //////////////////////////////
