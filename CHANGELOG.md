@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added "My Wellness Resources" entry in "Wellness" section of Browse panel [#1852](https://github.com/rokwire/illinois-app/issues/1852).
 - Created GroupPostReportAbuse panel for posting abuse reports [#1854](https://github.com/rokwire/illinois-app/issues/1854).
+- Show "cost" field in campus guide if exists [#1856](https://github.com/rokwire/illinois-app/issues/1856).
 
 ## [4.0.40] - 2022-06-29
 ### Changed
