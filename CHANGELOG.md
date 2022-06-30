@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.0.41] - 2022-06-30
 ### Changed
 - Use white background color for TabBar in dev builds [#1852](https://github.com/rokwire/illinois-app/issues/1852).
 - "Wellness Resources" Home panel widget renamed to ""My Wellness Resources"" [#1852](https://github.com/rokwire/illinois-app/issues/1852).
