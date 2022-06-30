@@ -367,6 +367,7 @@
     "panel.browse.entry.wellness.rings.title": "Rings",
     "panel.browse.entry.wellness.todo.title": "To Do",
     "panel.browse.entry.wellness.tips.title": "Daily Tips",
+    "panel.browse.entry.wellness.my_wellness_resources.title": "My Wellness Resources",
 
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Searching only Events Titles",
@@ -2366,10 +2367,6 @@
     "widget.game_detail_heading.button.roster.title":"Roster",
     "widget.game_detail_heading.button.roster.hint": "Tap to view the roster",
 
-    "widget.home.campus_reminders.label.campus_reminders": "Campus Reminders",
-    "widget.home.campus_reminders.button.all.title": "View All",
-    "widget.home.campus_reminders.button.all.hint": "Tap to view all reminders",
-
     "widget.card.button.favorite.on.title":"Add To Favorites",
     "widget.card.button.favorite.on.hint":"",
     "widget.card.button.favorite.off.title":"Remove From Favorites",
@@ -2406,6 +2403,10 @@
     "widget.voter.nrv_alert.text": "You are at the %s and can register now",
     "widget.voter.rv_alert.vote_early.text": "You are at the %s and can vote early",
     "widget.voter.rv_alert.vote_now.text": "You are at the %s and can vote now",
+
+    "widget.home.campus_reminders.label.campus_reminders": "Campus Reminders",
+    "widget.home.campus_reminders.button.all.title": "View All",
+    "widget.home.campus_reminders.button.all.hint": "Tap to view all reminders",
 
     "widget.home.suggested_events.label.events_for_you":"Suggested Events",
     "widget.home.suggested_events.label.events_for_you.sub_title":"Curated from your interests",
@@ -2586,6 +2587,8 @@
     "widget.home.favorites.all.hint.laundry": "Tap to view all favorite laundries",
     "widget.home.favorites.all.hint.campus_guide": "Tap to view all favorite campus guide articles",
     "widget.home.favorites.all.hint.inbox": "Tap to view all favorite notifications",
+
+	"widget.home.wellness_resources.header.label": "My Wellness Resources",
 
     "widget.athletics_card.button.get_tickets.title":"Get Tickets",
     "widget.athletics_card.button.get_tickets.hint":"",

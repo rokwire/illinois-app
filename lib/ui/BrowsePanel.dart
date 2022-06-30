@@ -215,13 +215,27 @@ class _BrowseSection extends StatelessWidget {
   final String sectionId;
   final bool expanded;
   final void Function()? onExpand;
-  final List<String>? _entriesCodes;
-  final String? _favoriteCategory;
+  final List<String>? _browseEntriesCodes;
+  final Set<String>? _homeSectionEntriesCodes;
+  final Set<String>? _homeRootEntriesCodes;
 
   _BrowseSection({Key? key, required this.sectionId, this.expanded = false, this.onExpand}) :
-    _entriesCodes = JsonUtils.listStringsValue(FlexUI()['browse.$sectionId']),
-    _favoriteCategory = (FlexUI().contentSourceEntry('home.$sectionId') != null) ? sectionId : null,
+    _browseEntriesCodes = JsonUtils.listStringsValue(FlexUI()['browse.$sectionId']),
+    _homeSectionEntriesCodes = JsonUtils.setStringsValue(FlexUI().contentSourceEntry('home.$sectionId')),
+    _homeRootEntriesCodes = JsonUtils.setStringsValue(FlexUI().contentSourceEntry('home')),
     super(key: key);
+
+  HomeFavorite? _favorite(String code) {
+    if (_homeSectionEntriesCodes?.contains(code) ?? false) {
+      return HomeFavorite(code, category: sectionId);
+    }
+    else if (_homeRootEntriesCodes?.contains(code) ?? false) {
+      return HomeFavorite(code);
+    }
+    else {
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +258,7 @@ class _BrowseSection extends StatelessWidget {
                   Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
                 )
               ),
-              Opacity(opacity: _hasContent ? 1 : 0, child:
+              Opacity(opacity: _hasBrowseContent ? 1 : 0, child:
                 Semantics(label: 'Favorite' /* TBD: Localization */, button: true, child:
                   InkWell(onTap: () => _onTapSectionFavorite(context), child:
                     FavoriteStarIcon(selected: _isSectionFavorite, style: FavoriteIconStyle.Button,)
@@ -265,7 +279,7 @@ class _BrowseSection extends StatelessWidget {
                   Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
                     SizedBox(width: 18, height: 18, child:
                       Center(child:
-                        _hasContent ? (
+                        _hasBrowseContent ? (
                           expanded ?
                             Image.asset('images/arrow-up-orange.png', excludeFromSemantics: true) :
                             Image.asset('images/arrow-down-orange.png', excludeFromSemantics: true)
@@ -283,12 +297,12 @@ class _BrowseSection extends StatelessWidget {
 
   Widget _buildEntries(BuildContext context) {
       List<Widget> entriesList = <Widget>[];
-      if (expanded && (_entriesCodes != null)) {
-        for (String code in _entriesCodes!) {
+      if (expanded && (_browseEntriesCodes != null)) {
+        for (String code in _browseEntriesCodes!) {
           entriesList.add(_BrowseEntry(
             sectionId: sectionId,
             entryId: code,
-            favoriteCategory: _favoriteCategory,
+            favorite: _favorite(code),
           ));
         }
       }
@@ -301,23 +315,21 @@ class _BrowseSection extends StatelessWidget {
   String get _description => Localization().getStringEx('panel.browse.section.$sectionId.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.');
 
   void _onTapExpand() {
-    if (_hasContent && (onExpand != null)) {
+    if (_hasBrowseContent && (onExpand != null)) {
       onExpand!();
     }
   }
 
-  bool get _hasContent => _entriesCodes?.isNotEmpty ?? false;
-
-  List<dynamic>? get avalableSectionFavs => FlexUI().contentSourceEntry((_favoriteCategory != null) ? 'home.$_favoriteCategory' : 'home');
+  bool get _hasBrowseContent => _browseEntriesCodes?.isNotEmpty ?? false;
 
   bool? get _isSectionFavorite {
     int favCount = 0, unfavCount = 0, totalCount = 0;
-    if (_entriesCodes?.isNotEmpty ?? false) {
-      List<dynamic>? availableList = avalableSectionFavs;
-      for (String code in _entriesCodes!) {
-        if (availableList?.contains(code) ?? false) {
+    if (_browseEntriesCodes?.isNotEmpty ?? false) {
+      for (String code in _browseEntriesCodes!) {
+        HomeFavorite? entryFavorite = _favorite(code);
+        if (entryFavorite != null) {
           totalCount++;
-          if (Auth2().prefs?.isFavorite(HomeFavorite(code, category: _favoriteCategory)) ?? false) {
+          if (Auth2().prefs?.isFavorite(entryFavorite) ?? false) {
             favCount++;
           }
           else {
@@ -349,32 +361,26 @@ class _BrowseSection extends StatelessWidget {
     }
   }
 
+  void _toggleSectionFavorite() {
+    Auth2().prefs?.setListFavorite(sectionFavorites, _isSectionFavorite != true);
+  }
+
   List<Favorite> get sectionFavorites {
     List<Favorite> favorites = <Favorite>[];
-    if (_favoriteCategory != null) {
-      favorites.add(HomeFavorite(_favoriteCategory));
-    }
-    if (_entriesCodes != null) {
-      List<dynamic>? availableList = avalableSectionFavs;
-      for(String entryCode in _entriesCodes!.reversed) {
-        if (availableList?.contains(entryCode) ?? false) {
-          favorites.add(HomeFavorite(entryCode, category: _favoriteCategory));
+
+    if (_browseEntriesCodes != null) {
+      for(String code in _browseEntriesCodes!.reversed) {
+        HomeFavorite? entryFavorite = _favorite(code);
+        if (entryFavorite != null) {
+          favorites.add(entryFavorite);
         }
       }
     }
-    return favorites;
-  }
 
-  void _toggleSectionFavorite() {
-    if (_favoriteCategory == null) {
-      Auth2().prefs?.applyFavorites(HomeFavorite.favoriteKeyName(category: _favoriteCategory), _entriesCodes?.reversed, _isSectionFavorite != true);
+    if ((_homeSectionEntriesCodes != null) && (_homeRootEntriesCodes?.contains(sectionId) ?? false)) {
+      favorites.add(HomeFavorite(sectionId));
     }
-    else if (_isSectionFavorite == true) {
-      Auth2().prefs?.setListFavorite(sectionFavorites, false);
-    }
-    else {
-      Auth2().prefs?.setListFavorite(sectionFavorites, true);
-    }
+    return favorites;
   }
 
   Future<bool?> promptSectionFavorite(BuildContext context) async {
@@ -405,9 +411,9 @@ class _BrowseEntry extends StatelessWidget {
 
   final String sectionId;
   final String entryId;
-  final String? favoriteCategory;
+  final HomeFavorite? favorite;
 
-  _BrowseEntry({required this.sectionId, required this.entryId, this.favoriteCategory});
+  _BrowseEntry({required this.sectionId, required this.entryId, this.favorite});
 
   @override
   Widget build(BuildContext context) {
@@ -418,8 +424,8 @@ class _BrowseEntry extends StatelessWidget {
           padding: EdgeInsets.zero,
           child: 
             Row(children: [
-              Opacity(opacity: _canFavorite ? 1 : 0, child:
-                HomeFavoriteButton(favorite: HomeFavorite(entryId, category: favoriteCategory), style: FavoriteIconStyle.Button, prompt: true,),
+              Opacity(opacity: (favorite != null) ? 1 : 0, child:
+                HomeFavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, prompt: true,),
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
@@ -436,8 +442,6 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   String get _title => Localization().getStringEx('panel.browse.entry.$sectionId.$entryId.title', StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
-
-  bool get _canFavorite => FlexUI().contentSourceEntry((favoriteCategory != null) ? 'home.$favoriteCategory' : 'home')?.contains(entryId) ?? false;
 
   void _onTap(BuildContext context) {
     switch("$sectionId.$entryId") {
@@ -518,6 +522,7 @@ class _BrowseEntry extends StatelessWidget {
       case "wellness.rings": _onTapWellnessRings(context); break;
       case "wellness.todo":  _onTapWellnessToDo(context); break;
       case "wellness.tips":  _onTapWellnessTips(context); break;
+      case "wellness.my_wellness_resources": _onTapMyWellnessResources(context); break;
     }
   }
 
@@ -902,9 +907,9 @@ class _BrowseCampusResourcesSection extends _BrowseSection {
 
   @override
   Widget _buildEntries(BuildContext context) {
-    return (expanded && (_entriesCodes?.isNotEmpty ?? false)) ?
+    return (expanded && (_browseEntriesCodes?.isNotEmpty ?? false)) ?
       Padding(padding: EdgeInsets.only(left: 16, bottom: 4), child:
-        HomeCampusResourcesGridWidget(favoriteCategory: contentCode, contentCodes: _entriesCodes!, promptFavorite: kReleaseMode,)
+        HomeCampusResourcesGridWidget(favoriteCategory: contentCode, contentCodes: _browseEntriesCodes!, promptFavorite: kReleaseMode,)
       ) :
       Container();
   }

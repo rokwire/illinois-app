@@ -365,6 +365,7 @@
 	"panel.browse.entry.wellness.rings.title": "Rings",
 	"panel.browse.entry.wellness.todo.title": "To Do",
 	"panel.browse.entry.wellness.tips.title": "Daily Tips",
+	"panel.browse.entry.wellness.my_wellness_resources.title": "My Wellness Resources",
 
 	"panel.search.label.search_for":"搜索",
 	"panel.search.label.results_for":"结果为",
@@ -2359,10 +2360,6 @@
 	"widget.game_detail_heading.button.roster.title":"名单",
 	"widget.game_detail_heading.button.roster.hint":"点击以查看名册",
 
-	"widget.home.campus_reminders.label.campus_reminders":"校园提醒",
-	"widget.home.campus_reminders.button.all.title": "查看全部",
-	"widget.home.campus_reminders.button.all.hint": "點按即可查看所有提醒",
-
 	"widget.card.button.favorite.on.title":"添加到收藏夹",
 	"widget.card.button.favorite.on.hint":"",
 	"widget.card.button.favorite.off.title":"从收藏夹中删除",
@@ -2399,6 +2396,10 @@
 	"widget.voter.nrv_alert.text": "您正在 %s 並可以立即註冊",
 	"widget.voter.rv_alert.vote_early.text": "您在 %s，可以提前投票",
 	"widget.voter.rv_alert.vote_now.text": "您正在 %s 上，現在可以投票",
+
+	"widget.home.campus_reminders.label.campus_reminders":"校园提醒",
+	"widget.home.campus_reminders.button.all.title": "查看全部",
+	"widget.home.campus_reminders.button.all.hint": "點按即可查看所有提醒",
 
 	"widget.home.suggested_events.label.events_for_you":"建議的事件",
 	"widget.home.suggested_events.label.events_for_you.sub_title":"从您的兴趣出发",
@@ -2579,6 +2580,8 @@
 	"widget.home.favorites.all.hint.laundry": "點擊查看所有喜歡的洗衣店",
 	"widget.home.favorites.all.hint.campus_guide": "點擊查看所有喜歡的校園指南文章",
 	"widget.home.favorites.all.hint.inbox": "點按即可查看所有收藏通知",
+
+	"widget.home.wellness_resources.header.label": "我的健康資源",
 
 	"widget.athletics_card.button.get_tickets.title":"获取门票",
 	"widget.athletics_card.button.get_tickets.hint":"",

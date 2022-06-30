@@ -34,7 +34,7 @@ class HomeWellnessResourcesWidget extends StatelessWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('panel.wellness.resources.header.label', 'Wellness Resources');
+  static String get title => Localization().getStringEx('widget.home.wellness_resources.header.label', 'My Wellness Resources');
 
   @override
   Widget build(BuildContext context) {

@@ -365,6 +365,7 @@
     "panel.browse.entry.wellness.rings.title": "Rings",
     "panel.browse.entry.wellness.todo.title": "To Do",
     "panel.browse.entry.wellness.tips.title": "Daily Tips",
+    "panel.browse.entry.wellness.my_wellness_resources.title": "My Wellness Resources",
 
     "panel.search.header.title":"Buscar",
     "panel.search.label.search_for":"Buscar",
@@ -2359,10 +2360,6 @@
     "widget.game_detail_heading.button.roster.title":"Lista",
     "widget.game_detail_heading.button.roster.hint": "Toca para ver la lista",
 
-    "widget.home.campus_reminders.label.campus_reminders": "Recordatorios de Campus",
-    "widget.home.campus_reminders.button.all.title": "Ver todo",
-    "widget.home.campus_reminders.button.all.hint": "Toca para ver todos los recordatorios",
-
     "widget.card.button.favorite.on.title":"Agregar a favoritos",
     "widget.card.button.favorite.on.hint":"",
     "widget.card.button.favorite.off.title":"Eliminar de favoritos",
@@ -2399,6 +2396,10 @@
     "widget.voter.nrv_alert.text": "Estás en %s y puedes registrarte ahora",
     "widget.voter.rv_alert.vote_early.text": "Estás en el %s y puedes votar temprano",
     "widget.voter.rv_alert.vote_now.text": "Estás en el %s y puedes votar ahora.",
+
+    "widget.home.campus_reminders.label.campus_reminders": "Recordatorios de Campus",
+    "widget.home.campus_reminders.button.all.title": "Ver todo",
+    "widget.home.campus_reminders.button.all.hint": "Toca para ver todos los recordatorios",
 
     "widget.home.suggested_events.label.events_for_you":"Eventos sugeridos",
     "widget.home.suggested_events.label.events_for_you.sub_title":"Curada por tus intereses",
@@ -2579,6 +2580,8 @@
     "widget.home.favorites.all.hint.laundry": "Toca para ver todas las lavanderías favoritas",
     "widget.home.favorites.all.hint.campus_guide": "Toque para ver todos los artículos favoritos de la guía del campus",
     "widget.home.favorites.all.hint.inbox": "Toca para ver todas las notificaciones favoritas",
+
+	"widget.home.wellness_resources.header.label": "Mis recursos de bienestar",
 
     "widget.athletics_card.button.get_tickets.title":"Obtener boletos",
     "widget.athletics_card.button.get_tickets.hint":"",
