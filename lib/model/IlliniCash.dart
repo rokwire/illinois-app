@@ -43,7 +43,7 @@ class IlliniCashBallance {
       cafeCreditBalance:      JsonUtils.doubleValue(json['CafeCreditBalance']),
       mealBalance:            JsonUtils.intValue(json['MPBalance']),
       status:                 JsonUtils.stringValue(json['Status']),
-      housingResidenceStatus: JsonUtils.boolValue(json['HousingResidentStatus'])
+      housingResidenceStatus: JsonUtils.boolValue(json['HousingResidentStatus']),
     ): null;
   }
 
@@ -60,22 +60,22 @@ class IlliniCashBallance {
 
   @override
   bool operator ==(other) =>
-      other is IlliniCashBallance &&
-          other.mealPlanName == mealPlanName &&
-          other.balance == balance &&
-          other.cafeCreditBalance == cafeCreditBalance &&
-          other.mealBalance == mealBalance &&
-          other.status == status &&
-          other.housingResidenceStatus == housingResidenceStatus;
+    other is IlliniCashBallance &&
+      other.mealPlanName == mealPlanName &&
+      other.balance == balance &&
+      other.cafeCreditBalance == cafeCreditBalance &&
+      other.mealBalance == mealBalance &&
+      other.status == status &&
+      other.housingResidenceStatus == housingResidenceStatus;
 
   @override
   int get hashCode =>
-      (mealPlanName?.hashCode ?? 0) ^
-      (balance?.hashCode ?? 0) ^
-      (cafeCreditBalance?.hashCode ?? 0) ^
-      (mealBalance?.hashCode ?? 0) ^
-      (status?.hashCode ?? 0) ^
-      (housingResidenceStatus?.hashCode ?? 0);
+    (mealPlanName?.hashCode ?? 0) ^
+    (balance?.hashCode ?? 0) ^
+    (cafeCreditBalance?.hashCode ?? 0) ^
+    (mealBalance?.hashCode ?? 0) ^
+    (status?.hashCode ?? 0) ^
+    (housingResidenceStatus?.hashCode ?? 0);
 
 
   String get balanceDisplayText           =>  _formatBalance(balance ?? 0);
@@ -83,6 +83,152 @@ class IlliniCashBallance {
   String get mealBalanceDisplayText       =>  mealBalance.toString();
 
   String _formatBalance(double value) => '\$ ${value.toStringAsFixed(2)}';
+}
+
+//////////////////////////////
+/// IlliniCashEligibility
+
+class IlliniCashEligibility {
+  final bool? eligible;
+  final String? accountStatus;
+
+  IlliniCashEligibility({this.eligible, this.accountStatus});
+
+  static IlliniCashEligibility? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? IlliniCashEligibility(
+      eligible:      JsonUtils.boolValue(json['IlliniCashEligible']),
+      accountStatus: JsonUtils.stringValue(json['AccountStatus']),
+    ): null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'IlliniCashEligible': eligible,
+      'AccountStatus': accountStatus,
+    };
+  }
+
+  @override
+  bool operator ==(other) =>
+    other is IlliniCashEligibility &&
+      other.eligible == eligible &&
+      other.accountStatus == accountStatus;
+
+  @override
+  int get hashCode =>
+    (eligible?.hashCode ?? 0) ^
+    (accountStatus?.hashCode ?? 0);
+}
+
+//////////////////////////////
+/// StudentClassification
+
+class StudentClassification {
+  final String? termCode;
+  final String? studentType;
+  final String? studentTypeCode;
+  final String? admittedTerm;
+  final String? collegeName;
+  final String? departmentName;
+  final String? studentLevelCode;
+  final String? studentLevelDescription;
+  final String? classification;
+  final bool? firstYear;
+
+  StudentClassification({this.termCode, this.studentType, this.studentTypeCode, this.admittedTerm,
+    this.collegeName, this.departmentName, this.studentLevelCode, this.studentLevelDescription, this.classification, this.firstYear});
+
+  static StudentClassification? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? StudentClassification(
+      termCode:                JsonUtils.stringValue(json['TermCode']),
+      studentType:             JsonUtils.stringValue(json['StudentTypeCode']),
+      studentTypeCode:         JsonUtils.stringValue(json['StudentType']),
+      admittedTerm:            JsonUtils.stringValue(json['AdmittedTerm']),
+      collegeName:             JsonUtils.stringValue(json['CollegeName']),
+      departmentName:          JsonUtils.stringValue(json['DepartmentName']),
+      studentLevelCode:        JsonUtils.stringValue(json['StudentLevelCode']),
+      studentLevelDescription: JsonUtils.stringValue(json['StudentLevelDescription']),
+      classification:          JsonUtils.stringValue(json['Classification']),
+      firstYear:               JsonUtils.boolValue(json['FirstYear']),
+    ): null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'TermCode': termCode,
+      'StudentType': studentType,
+      'StudentTypeCode': studentTypeCode,
+      'AdmittedTerm': admittedTerm,
+      'CollegeName': collegeName,
+      'DepartmentName': departmentName,
+      'StudentLevelCode': studentLevelCode,
+      'StudentLevelDescription': studentLevelDescription,
+      'Classification': classification,
+      'FirstYear': firstYear,
+    };
+  }
+
+  @override
+  bool operator ==(other) =>
+    other is StudentClassification &&
+      other.termCode == termCode &&
+      other.studentType == studentType &&
+      other.studentTypeCode == studentTypeCode &&
+      other.admittedTerm == admittedTerm &&
+      other.collegeName == collegeName &&
+      other.departmentName == departmentName &&
+      other.studentLevelCode == studentLevelCode &&
+      other.studentLevelDescription == studentLevelDescription &&
+      other.classification == classification &&
+      other.firstYear == firstYear;
+
+  @override
+  int get hashCode =>
+    (termCode?.hashCode ?? 0) ^
+    (studentType?.hashCode ?? 0) ^
+    (studentTypeCode?.hashCode ?? 0) ^
+    (admittedTerm?.hashCode ?? 0) ^
+    (collegeName?.hashCode ?? 0) ^
+    (departmentName?.hashCode ?? 0) ^
+    (studentLevelCode?.hashCode ?? 0) ^
+    (studentLevelDescription?.hashCode ?? 0) ^
+    (classification?.hashCode ?? 0) ^
+    (firstYear?.hashCode ?? 0);
+}
+
+//////////////////////////////
+/// StudentSummary
+
+class StudentSummary {
+  final IlliniCashEligibility? eligibility;
+  final StudentClassification? classification;
+
+  StudentSummary({this.eligibility, this.classification});
+
+  static StudentSummary? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? StudentSummary(
+      eligibility:    IlliniCashEligibility.fromJson(JsonUtils.mapValue(json['IlliniCashEligibility'])) ,
+      classification: StudentClassification.fromJson(JsonUtils.mapValue(json['StudentClassification'])),
+    ): null;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'IlliniCashEligibility': eligibility,
+      'StudentClassification': classification,
+    };
+  }
+
+  @override
+  bool operator ==(other) =>
+    other is StudentSummary &&
+      other.eligibility == eligibility &&
+      other.classification == classification;
+
+  @override
+  int get hashCode =>
+    (eligibility?.hashCode ?? 0) ^
+    (classification?.hashCode ?? 0);
 }
 
 //////////////////////////////
