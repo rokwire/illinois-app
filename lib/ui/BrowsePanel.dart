@@ -522,6 +522,7 @@ class _BrowseEntry extends StatelessWidget {
       case "wellness.rings": _onTapWellnessRings(context); break;
       case "wellness.todo":  _onTapWellnessToDo(context); break;
       case "wellness.tips":  _onTapWellnessTips(context); break;
+      case "wellness.my_wellness_resources": _onTapMyWellnessResources(context); break;
     }
   }
 
