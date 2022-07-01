@@ -25,7 +25,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/wellness/todo/WellnessCreateToDoItemPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
-import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -87,30 +86,34 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
           _buildTabButtonRow(),
           _buildCalendarWidget(),
           _buildItemsContent(),
-          _buildClearCompletedItemsButton(),
-          _buildManageCategoriesButton()
+          _buildClearCompletedItemsButton()
         ]));
   }
 
   Widget _buildToDoListHeader() {
-    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Text(Localization().getStringEx('panel.wellness.todo.header.label', 'My To-Do List'),
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
-      FavoriteStarIcon(style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16)),
-      Expanded(child: Container()),
-      RoundedButton(
-          label: Localization().getStringEx('panel.wellness.todo.items.add.button', 'Add Item'),
-          borderColor: Styles().colors!.fillColorSecondary,
-          textColor: Styles().colors!.fillColorPrimary,
-          leftIcon: Image.asset('images/icon-add-14x14.png', color: Styles().colors!.fillColorPrimary),
-          iconPadding: 8,
-          rightIconPadding: EdgeInsets.only(right: 8),
-          fontSize: 14,
-          contentWeight: 0,
-          fontFamily: Styles().fontFamilies!.regular,
-          padding: EdgeInsets.zero,
-          onTap: _onTapAddItem)
+    return Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Flexible(
+          flex: 2,
+          child: RoundedButton(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              label: Localization().getStringEx('panel.wellness.todo.items.add.button', 'Add Item'),
+              rightIconPadding: EdgeInsets.symmetric(horizontal: 12),
+              borderColor: Styles().colors!.fillColorSecondary,
+              textColor: Styles().colors!.fillColorPrimary,
+              leftIcon: Image.asset('images/icon-add-14x14.png', color: Styles().colors!.fillColorPrimary),
+              fontSize: 14,
+              fontFamily: Styles().fontFamilies!.bold,
+              onTap: _onTapAddItem)),
+      Container(width: 15),
+      Flexible(
+          flex: 3,
+          child: RoundedButton(
+              label: Localization().getStringEx('panel.wellness.todo.categories.manage.button', 'Manage Categories'),
+              borderColor: Styles().colors!.fillColorPrimary,
+              textColor: Styles().colors!.fillColorPrimary,
+              fontSize: 14,
+              fontFamily: Styles().fontFamilies!.bold,
+              onTap: _onTapManageCategories))
     ]);
   }
 
@@ -279,20 +282,6 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                     child: Stack(
                         alignment: Alignment.center,
                         children: [Image.asset('images/icon-oval-white.png'), Image.asset('images/icon-arrows.png')])))));
-  }
-
-  Widget _buildManageCategoriesButton() {
-    return GestureDetector(
-        onTap: _onTapManageCategories,
-        child: Container(
-            color: Colors.transparent,
-            child: Padding(
-                padding: EdgeInsets.only(top: 15),
-                child: Column(children: [
-                  Text(Localization().getStringEx('panel.wellness.todo.categories.manage.button', 'Manage Categories'),
-                      style: TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary)),
-                  Divider(color: Styles().colors!.fillColorPrimary, thickness: 2, height: 2, indent: 100, endIndent: 100)
-                ]))));
   }
 
   Widget _buildItemsContent() {
