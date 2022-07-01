@@ -234,7 +234,7 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
               padding: EdgeInsets.only(bottom: 5),
-              child: _buildFieldLabel(label: Localization().getStringEx('panel.wellness.todo.item.due_time.field.label', 'DUE TIME'))),
+              child: _buildFieldLabel(label: Localization().getStringEx('panel.wellness.todo.item.due_time.field.label', 'TIME DUE'))),
           GestureDetector(
               onTap: _onTapDueTime,
               child: Container(
