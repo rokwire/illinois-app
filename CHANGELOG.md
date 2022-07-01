@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Policy Info popup in Group detail panel [#1861](https://github.com/rokwire/illinois-app/issues/1861).
 ### Changed
 - "My Wellness Resources" renamed to "Wellness Resources" in Browse / Wellness section, updated content code either [#1863](https://github.com/rokwire/illinois-app/issues/1863).
+- Acknowledged new API for student classification, added FlexUI rules for first year student [#1860](https://github.com/rokwire/illinois-app/issues/1860).
 
 ## [4.0.41] - 2022-06-30
 ### Changed
