@@ -1688,7 +1688,7 @@
     "panel.wellness.todo.item.category.field.label": "CATEGORÍA",
     "panel.wellness.todo.item.due_date.field.label": "FECHA DE VENCIMIENTO",
     "panel.wellness.todo.item.due_time.field.label": "TIEMPO DEBIDO",
-    "panel.wellness.todo.item.work_days.field.label": "DÍAS DE TRABAJO",
+    "panel.wellness.todo.item.work_days.field.label": "DÍAS PARA TRABAJAR EN EL ARTÍCULO",
     "panel.wellness.todo.item.location.field.label": "UBICACIÓN",
     "panel.wellness.todo.item.description.field.label": "DESCRIPCIÓN",
     "panel.wellness.todo.item.save.button": "Ahorrar",
