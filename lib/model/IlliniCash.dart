@@ -121,9 +121,9 @@ class IlliniCashEligibility {
 }
 
 //////////////////////////////
-/// StudentClassification
+/// IlliniStudentClassification
 
-class StudentClassification {
+class IlliniStudentClassification {
   final String? termCode;
   final String? studentType;
   final String? studentTypeCode;
@@ -135,11 +135,11 @@ class StudentClassification {
   final String? classification;
   final bool? firstYear;
 
-  StudentClassification({this.termCode, this.studentType, this.studentTypeCode, this.admittedTerm,
+  IlliniStudentClassification({this.termCode, this.studentType, this.studentTypeCode, this.admittedTerm,
     this.collegeName, this.departmentName, this.studentLevelCode, this.studentLevelDescription, this.classification, this.firstYear});
 
-  static StudentClassification? fromJson(Map<String, dynamic>? json) {
-    return (json != null) ? StudentClassification(
+  static IlliniStudentClassification? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? IlliniStudentClassification(
       termCode:                JsonUtils.stringValue(json['TermCode']),
       studentType:             JsonUtils.stringValue(json['StudentTypeCode']),
       studentTypeCode:         JsonUtils.stringValue(json['StudentType']),
@@ -170,7 +170,7 @@ class StudentClassification {
 
   @override
   bool operator ==(other) =>
-    other is StudentClassification &&
+    other is IlliniStudentClassification &&
       other.termCode == termCode &&
       other.studentType == studentType &&
       other.studentTypeCode == studentTypeCode &&
@@ -197,18 +197,18 @@ class StudentClassification {
 }
 
 //////////////////////////////
-/// StudentSummary
+/// IlliniStudentSummary
 
-class StudentSummary {
+class IlliniStudentSummary {
   final IlliniCashEligibility? eligibility;
-  final StudentClassification? classification;
+  final IlliniStudentClassification? classification;
 
-  StudentSummary({this.eligibility, this.classification});
+  IlliniStudentSummary({this.eligibility, this.classification});
 
-  static StudentSummary? fromJson(Map<String, dynamic>? json) {
-    return (json != null) ? StudentSummary(
+  static IlliniStudentSummary? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? IlliniStudentSummary(
       eligibility:    IlliniCashEligibility.fromJson(JsonUtils.mapValue(json['IlliniCashEligibility'])) ,
-      classification: StudentClassification.fromJson(JsonUtils.mapValue(json['StudentClassification'])),
+      classification: IlliniStudentClassification.fromJson(JsonUtils.mapValue(json['StudentClassification'])),
     ): null;
   }
 
@@ -221,7 +221,7 @@ class StudentSummary {
 
   @override
   bool operator ==(other) =>
-    other is StudentSummary &&
+    other is IlliniStudentSummary &&
       other.eligibility == eligibility &&
       other.classification == classification;
 
