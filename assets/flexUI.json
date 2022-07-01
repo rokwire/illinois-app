@@ -6,7 +6,7 @@
 			"campus_highlights", "campus_reminders", "campus_resources", "campus_links", "campus_guide",
 			"my_game_day", "sport_events", "sport_news", "sport_teams",
 			"suggested_events", "recent_items", "dinings", "wallet",
-			"my_events", "my_dining", "my_athletics", "my_news", "my_laundry", "my_inbox", "my_campus_guide", "my_wellness_resources",
+			"my_events", "my_dining", "my_athletics", "my_news", "my_laundry", "my_inbox", "my_campus_guide", "wellness_resources",
 			"create_poll", "recent_polls", "wpgufm_radio",  "app_help", "state_farm_center", "wellness"
 		],
 		"home.system": ["tout", "welcome", "emergency", "voter_registration", "connect"],
@@ -36,12 +36,12 @@
 		"browse.events": ["suggested_events"],
 		"browse.feeds": ["twitter", "wpgufm_radio"],
 		"browse.groups": ["all_groups", "my_groups"],
-		"browse.my": ["my_groups", "my_game_day", "my_events", "my_dining", "my_athletics", "my_news", "my_laundry", "my_inbox", "my_campus_guide", "my_wellness_resources"],
+		"browse.my": ["my_groups", "my_game_day", "my_events", "my_dining", "my_athletics", "my_news", "my_laundry", "my_inbox", "my_campus_guide", "wellness_resources"],
 		"browse.polls": ["create_poll", "recent_polls"],
 		"browse.recent": ["recent_items"],
 		"browse.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
 		"browse.wallet": ["illini_cash_card", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card"],
-		"browse.wellness": ["rings", "todo", "tips", "my_wellness_resources"],
+		"browse.wellness": ["rings", "todo", "tips", "wellness_resources"],
 
 		"settings": ["connect", "connected", "link", "linked", "feedback"],
 		"settings.connect": ["netid", "phone_or_email"],
@@ -87,7 +87,9 @@
 			"calendar.on_campus"                     : ["NOT", "Gies Online Programs"],
 			"home.twitter.account.canvas"            : ["Canvas Beta", "AND", ["NOT", "Gies Online Programs"]],
 			"gies"                                   : ["Gies Online Programs"],
-			"new_student"                            : ["2022 New Students"],
+			"gies_checklist"                         : ["Gies Online Programs"],
+			"_new_student"                           : ["2022 New Students"],
+			"_new_student_checklist"                 : ["2022 New Students"],
 			"canvas"                                 : ["Canvas Beta"]
 		},
 		"locations": {
@@ -113,7 +115,9 @@
 		"auth": {
 			"connect"                             : { "loggedIn": false },
 			"gies"                                : { "shibbolethLoggedIn": true },
+			"gies_checklist"                      : { "shibbolethLoggedIn": true },
 			"new_student"                         : { "shibbolethLoggedIn": true },
+			"new_student_checklist"               : { "shibbolethLoggedIn": true },
 			"canvas"                              : { "shibbolethLoggedIn": true },
 
 			"settings.connect"                    : { "loggedIn": false },
@@ -150,6 +154,8 @@
 			"campus_resources": { "build": "debug" }
 		},
 		"illini_cash": {
+			"new_student": { "firstYearStudent": true },
+			"new_student_checklist": { "firstYearStudent": true }
 		},
 		"enable" : {
 			"library_card"                  : false,

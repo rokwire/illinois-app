@@ -149,18 +149,17 @@ abstract class CheckList with Service implements NotificationsListener{
   }
 
   Future<String?> _loadContentStringFromNet() async {
-    //TBD REMOVE
-    //TMP:
-    if(_contentName == "new_student"){
-      return AppBundle.loadString('assets/newStudent.json');
-    } else if(_contentName == "gies"){
-      return AppBundle.loadString('assets/gies.json');
-    }
+    //TMP: load from app assets
+    // if(_contentName == "new_student"){
+    //   return AppBundle.loadString('assets/newStudent.json');
+    // } else if(_contentName == "gies"){
+    //   return AppBundle.loadString('assets/gies.json');
+    // }
 
     try {
       List<dynamic> result;
-      //TBD rename bbcategory to _contentName +suffix = _checklist
-      Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': [_contentName]}), auth: Auth2());
+      String contentItemCategory = _contentName + '_checklist';
+      Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': [contentItemCategory]}), auth: Auth2());
       List<dynamic>? responseList = (response?.statusCode == 200) ? JsonUtils.decodeList(response?.body)  : null;
       if (responseList != null) {
         result = [];

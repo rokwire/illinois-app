@@ -19,6 +19,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -125,6 +126,9 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           _PersonalInfoEntry(
               title: Localization().getStringEx('panel.profile_info.email_address.title', 'Email Address'),
               value: Auth2().account?.authType?.uiucUser?.email ?? ""),
+          _PersonalInfoEntry(
+              title: Localization().getStringEx('panel.profile_info.college.title', 'College'),
+              value: IlliniCash().studentClassification?.collegeName ?? ""),
         ],
       ),
     );

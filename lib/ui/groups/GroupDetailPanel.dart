@@ -19,6 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -668,38 +669,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     }
 
-    Widget badgeOrCategoryWidget = _showMembershipBadge ?
-      Row(children: <Widget>[
-        Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
-          Center(child:
-            Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
-              Text(_group!.currentUserStatusText!.toUpperCase(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white),)
-            ),
-          ),
-        ),
-        Expanded(child: Container(),),
-      ],) :
-    
-      Row(children: <Widget>[
-        Expanded(child:
-          Text(_group?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
-        ),
-      ],);
-
     return Container(color: Colors.white, child:
       Stack(children: <Widget>[
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 12), child:
+        Padding(padding: EdgeInsets.only(top: 12), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
-                badgeOrCategoryWidget,
+              Padding(padding: EdgeInsets.only(left: 16) /* the Policy button takes vertical and right space */, child:
+                _buildBadgeOrCategoryWidget(),
               ),
 
-              Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
                 Text(_group?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32, color: Styles().colors!.fillColorPrimary),),
               ),
               
               GestureDetector(onTap: () => { if (_isMember) {_onTapMembers()} }, child:
-                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
                   Container(decoration: (_isMember ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
                     Text(members, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground))
                   ),
@@ -707,18 +690,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               ),
               
               Visibility(visible: StringUtils.isNotEmpty(pendingMembers), child:
-                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
                   Text(pendingMembers,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground,),)
                 ),
               ),
 
               Visibility(visible: StringUtils.isNotEmpty(attendedMembers), child:
-                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
                   Text(StringUtils.ensureNotEmpty(attendedMembers), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground,),)
                 ),
               ),
               
-              Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Column(children: commands,),),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+                Column(children: commands,),),
             ],),
           ),
         ],),
@@ -996,6 +980,40 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           )
         )
       ],),
+    );
+  }
+
+  Widget _buildBadgeOrCategoryWidget() {
+    return _showMembershipBadge ?
+      Row(children: <Widget>[
+        Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+          Center(child:
+            Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
+              Text(_group!.currentUserStatusText!.toUpperCase(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white),)
+            ),
+          ),
+        ),
+        Expanded(child: Container(),),
+        _buildPolicyButton(),
+      ],) :
+    
+      Row(children: <Widget>[
+        Expanded(child:
+          Text(_group?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
+        ),
+        _buildPolicyButton(),
+      ],);
+  }
+
+  Widget _buildPolicyButton() {
+    return Semantics(button: true, excludeSemantics: true,
+      label: Localization().getStringEx('panel.group_detail.button.policy.label', 'Policy'),
+      hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
+      child: InkWell(onTap: _onPolicy, child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Image.asset('images/icon-info-orange.png')
+        ),
+      ),
     );
   }
 
@@ -1320,6 +1338,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (StringUtils.isNotEmpty(url)) {
       launch(url!);
     }
+  }
+
+  void _onPolicy () {
+    Analytics().logSelect(target: 'Policy');
+    showDialog(context: context, builder: (_) =>  InfoPopup(
+      backColor: Color(0xfffffcdf), //Styles().colors?.surface ?? Colors.white,
+      padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
+      border: Border.all(color: Styles().colors!.textSurface!, width: 1),
+      alignment: Alignment.center,
+      infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The University of Illinois takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may report group names or content that are obscene, threatening, or harassing to group administrator(s). Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.'),
+      infoTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+      closeIcon: Image.asset('images/close-orange-small.png'),
+    ),);
   }
 
   void _onTapMembers(){

@@ -5,12 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added Policy Info popup in Group detail panel [#1861](https://github.com/rokwire/illinois-app/issues/1861).
+### Changed
+- "My Wellness Resources" renamed to "Wellness Resources" in Browse / Wellness section, updated content code either [#1863](https://github.com/rokwire/illinois-app/issues/1863).
+- Acknowledged new API for student classification, added FlexUI rules for first year student [#1860](https://github.com/rokwire/illinois-app/issues/1860).
+
+## [4.0.41] - 2022-06-30
 ### Changed
 - Use white background color for TabBar in dev builds [#1852](https://github.com/rokwire/illinois-app/issues/1852).
 - "Wellness Resources" Home panel widget renamed to ""My Wellness Resources"" [#1852](https://github.com/rokwire/illinois-app/issues/1852).
 ### Added
 - Added "My Wellness Resources" entry in "Wellness" section of Browse panel [#1852](https://github.com/rokwire/illinois-app/issues/1852).
 - Created GroupPostReportAbuse panel for posting abuse reports [#1854](https://github.com/rokwire/illinois-app/issues/1854).
+- Show "cost" field in campus guide if exists [#1856](https://github.com/rokwire/illinois-app/issues/1856).
+- Load gies and new student checklist content from backend [#1857](https://github.com/rokwire/illinois-app/issues/1857).
 
 ## [4.0.40] - 2022-06-29
 ### Changed
