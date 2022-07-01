@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added Policy Info popup in Group detail panel [#1861](https://github.com/rokwire/illinois-app/issues/1861).
 
 ## [4.0.41] - 2022-06-30
 ### Changed
