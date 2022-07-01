@@ -6,16 +6,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
+import 'package:illinois/model/wellness/WellnessReing.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
 import 'package:illinois/ui/wellness/todo/WellnessCreateToDoItemPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -405,6 +408,7 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
   @override
   void initState() {
     NotificationService().subscribe(this, [
+      WellnessRings.notifyUserRingsUpdated
     ]);
     super.initState();
   }
@@ -434,15 +438,45 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
                 Container(color: Styles().colors!.white, child:
-                  Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
-                    Row(children: <Widget>[
-                      Expanded(child:
-                        VerticalTitleValueSection(
-                          title: 'Wellness Rings content goes',
-                          value: 'HERE',
+                  Padding(padding: EdgeInsets.only(top: 20, right: 13, bottom: 8, left: 2), child:
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(child:
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                            // Expanded( child:
+                            Container(width: 24,),
+                            Container(
+                              child: WellnessRing(backgroundColor: Colors.white, size: 150, strokeSize: 20, accomplishmentDialogEnabled: false,),
+                            ),
+                            // ),
+                            Container(width: 24,),
+                            Expanded(
+                                child: Container(
+                                    child: _buildButtons()
+                                )
+                            )
+                          ],)
+                          ),
+                        ]),
+                        Container(
+                          child: GestureDetector(onTap: _onTapViewAll, child: Padding(padding: EdgeInsets.only(left: 15, top: 5, bottom: 5), child: Container(color: Colors.transparent, child:
+                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Text(Localization().getStringEx('widget.home.wellness.todo.items.view_all.label', 'View all'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.semiBold, fontSize: 12)),
+                            Padding(padding: EdgeInsets.only(left: 10), child: Image.asset('images/chevron-right.png'))
+                          ])
+                          ))),
                         )
-                      ),
-                    ]),
+                      ],
+                    )
                   ),
                 ),
               ]),
@@ -453,13 +487,47 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
     );
   }
 
+  Widget _buildButtons(){
+    List<Widget> content = [];
+    List<WellnessRingData>? activeRings = WellnessRings().wellnessRings;
+    if(activeRings?.isNotEmpty ?? false){
+      for(WellnessRingData data in activeRings!) {
+        content.add(SmallWellnessRingButton(label: data.name!, color: data.color,
+            onTapWidget: (context){ _onTapIncrease(data);}));
+        content.add(Container(height: 5,));
+      }
+    }
+
+    return Container(child:Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: content,
+    ));
+  }
+
   void _onTap() {
     Analytics().logSelect(target: 'Wellness Rings');
   }
 
+  void _onTapViewAll(){
+    Analytics().logSelect(target: "Wellness Rings - View all");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.rings)));
+  }
+
+  void _onTapIncrease(WellnessRingData data){
+    WellnessRings().addRecord(
+        WellnessRingRecord(value: 1, timestamp: DateTime
+            .now()
+            .millisecondsSinceEpoch, wellnessRingId: data.id));
+  }
   // NotificationsListener
 
   void onNotification(String name, dynamic param) {
+    if(name == WellnessRings.notifyUserRingsUpdated){
+      if(mounted){
+        setState(() {});
+      }
+    }
   }
 }
 

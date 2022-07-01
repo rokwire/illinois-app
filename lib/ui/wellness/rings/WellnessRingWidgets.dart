@@ -16,8 +16,11 @@ import 'package:rokwire_plugin/utils/utils.dart';
 //WellnessRing
 class WellnessRing extends StatefulWidget{
   final Color? backgroundColor;
+  final int size;
+  final int strokeSize;
+  final bool accomplishmentDialogEnabled;
 
-  WellnessRing({this.backgroundColor = Colors.white});
+  WellnessRing({this.backgroundColor = Colors.white, this.size = _WellnessRingState.OUTER_SIZE, this.strokeSize = _WellnessRingState.STROKE_SIZE, this.accomplishmentDialogEnabled = true});
 
   @override
   State<WellnessRing> createState() => _WellnessRingState();
@@ -105,7 +108,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
 
   Widget _buildRingWidget({required int level, WellnessRingData? data, Widget? childWidget}){
 
-    double? innerContentSize = (OUTER_SIZE - ((level) * (STROKE_SIZE + PADDING_SIZE))).toDouble();
+    double? innerContentSize = (widget.size - ((level) * (widget.strokeSize + PADDING_SIZE))).toDouble();
 
     if(data!=null) {
       double completion =  WellnessRings().getRingDailyCompletion(data.id);
@@ -140,7 +143,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                           height: innerContentSize,
                           width: innerContentSize,
                           child: CircularProgressIndicator(
-                            strokeWidth: STROKE_SIZE.toDouble(),
+                            strokeWidth: widget.strokeSize.toDouble(),
                             value: controller!.value >= 1 ? 0.9975 : controller.value,
                             // * (completion) >= 1 ? 0.999 : completion, // Simulate padding in the end
                             color: data.color,
@@ -217,7 +220,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
           setState(() {});
         }
       });
-    } else if( name == WellnessRings.notifyUserRingsAccomplished){
+    } else if( name == WellnessRings.notifyUserRingsAccomplished && widget.accomplishmentDialogEnabled){
       if (param != null && param is String) {
         WellnessRingData? data = WellnessRings().wellnessRings
             ?.firstWhere((element) => element.id == param);
@@ -327,20 +330,21 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
       Expanded(child:
         Container(decoration: BoxDecoration(color: widget.color ?? Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
         Padding(padding: EdgeInsets.only(left: 8 /*+10 from icon*/, top: 8, bottom: 8, right: 8/*+10 form icon*/), child:
-          Row( crossAxisAlignment: CrossAxisAlignment.start,
+          Row( crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 6), child: _editRingButton),
+            widget.onTapEdit != null ? Padding(padding: EdgeInsets.only(right: 6), child: _editRingButton) : Container(),
             Expanded(
               flex: 5,
               child: Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                 Text(widget.label ,
                   style: TextStyle(color: Colors.white,
                     fontFamily: Styles().fontFamilies!.bold, fontSize: 14), textAlign: TextAlign.start,),
+                widget.description==null ? Container():
                 Text(widget.description ?? "" ,
                   style: TextStyle(color: Colors.white,
                       fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.end,),
@@ -348,7 +352,8 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
               Container(
                 child: Row(
                   children: [
-                    _decreaseValueButton,
+                    widget.onTapDecrease == null ? Container() :
+                      _decreaseValueButton,
                     Container(width: 4,),
                     _increaseValueButton,
                   ],
@@ -390,6 +395,71 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
   }
 }
 
+class SmallWellnessRingButton extends StatefulWidget{
+  final String label;
+  final Color? color;
+  final bool enabled;
+  final void Function(BuildContext context)? onTapWidget;
+
+  const SmallWellnessRingButton({Key? key, required this.label, this.color, this.enabled = true, this.onTapWidget}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _SmallWellnessRingButtonState();
+
+}
+
+class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(label: widget.label, button: true, excludeSemantics: true, child:
+    GestureDetector(onTap: () => widget.enabled && widget.onTapWidget!=null? widget.onTapWidget!(context): null, child:
+    Container(
+      // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Expanded(child:
+          Container(decoration: BoxDecoration(color: widget.color ?? Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
+          Padding(padding: EdgeInsets.only(left: 8 /*+10 from icon*/, top: 5, bottom: 5, right: 3/*+10 form icon*/), child:
+          Row( crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                  flex: 5,
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(widget.label ,
+                          style: TextStyle(color: Colors.white,
+                              fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.start,),
+                      ],),)),
+              Container(
+                child: Row(
+                  children: [
+                    _increaseValueButton,
+                  ],
+                ),
+              ),
+            ],),
+          ),
+          )
+          ),
+        ],)),
+    ),
+    );
+  }
+
+  Widget get _increaseValueButton{
+    return GestureDetector(
+        onTap: (){},
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+        ));
+  }
+}
+
 class AccomplishmentCard extends StatefulWidget{
   final String? date; //Date at top
   final List<WellnessRingAccomplishment>? accomplishments;
@@ -406,7 +476,7 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
   @override
   Widget build(BuildContext context) {
     return CollectionUtils.isEmpty(widget.accomplishments) ? Container() :
-    Container( //TBD Draw
+    Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       decoration: BoxDecoration(color: Colors.white, border: Border.all(width: 0, color: Styles().colors!.surfaceAccent!), borderRadius: BorderRadius.circular(5),
         boxShadow:  [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]

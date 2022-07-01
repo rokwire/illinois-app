@@ -24,7 +24,7 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
       "name":"Hobby Ring",
       "description":"Use this ring to motivate you to engage in your hobby in some small way every day. It’s important to have your own free time, even if it’s small some days.",
       "example": "Examples for filling out this ring could be reading, sketching, playing an instrument, or whatever hobbies you enjoy!"},
-    {"ring":{'name': "Physical Activity", 'goal': 16, 'color': '#54a747', 'id': "id_predefined_1", 'unit':'activity'},
+    {"ring":{'name': "Movement", 'goal': 16, 'color': '#54a747', 'id': "id_predefined_1", 'unit':'activity'},
       "name":"Movement Ring",
       "description":"Use this ring to motivate you to do something active every day, even if it's daily stretching or taking a short walk! A small amount of physical activity every day can improve your overall mood and motivation.",
       "example":"Examples for filling out this ring could be going on a walk, rock climbing, dancing, stretching, or whatever exercise you enjoy!"},
