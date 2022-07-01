@@ -482,7 +482,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeFavoritesWidget(favoriteKey: GuideFavorite.favoriteKeyName, favoriteId: code, updateController: _updateController,);
       }
     }
-    else if (code == 'my_wellness_resources') {
+    else if (code == 'wellness_resources') {
       if (title) {
         return HomeWellnessResourcesWidget.title;
       } else if (handle) {
