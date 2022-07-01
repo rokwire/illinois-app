@@ -19,7 +19,6 @@ import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Wellness.dart';
-import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -28,14 +27,18 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class WellnessCreateToDoItemPanel extends StatefulWidget {
-  WellnessCreateToDoItemPanel();
+class WellnessToDoItemDetailPanel extends StatefulWidget {
+  final ToDoItem? item;
+  WellnessToDoItemDetailPanel({this.item});
 
   @override
-  State<WellnessCreateToDoItemPanel> createState() => _WellnessCreateToDoItemPanelState();
+  State<WellnessToDoItemDetailPanel> createState() => _WellnessToDoItemDetailPanelState();
 }
 
-class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPanel> {
+class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPanel> {
+  static final String _workDayFormat = 'yyyy-MM-dd';
+
+  ToDoItem? _item;
   ToDoCategory? _category;
   List<ToDoCategory>? _categories;
   TextEditingController _nameController = TextEditingController();
@@ -51,6 +54,10 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
   @override
   void initState() {
     super.initState();
+    _item = widget.item;
+    if (_item != null) {
+      _populateItemFields();
+    }
     _loadCategories();
   }
 
@@ -67,7 +74,6 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
 
   Widget _buildContent() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      _buildToDoListHeader(),
       _buildAddItemHeader(),
       _buildItemName(),
       _buildOptionalFieldsHeader(),
@@ -99,20 +105,9 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
     ]));
   }
 
-  Widget _buildToDoListHeader() {
-    return Padding(
-        padding: EdgeInsets.only(top: 16),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Text(Localization().getStringEx('panel.wellness.todo.header.label', 'My To-Do List'),
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
-          FavoriteStarIcon(style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
-        ]));
-  }
-
   Widget _buildAddItemHeader() {
     return Padding(
-        padding: EdgeInsets.only(top: 10),
+        padding: EdgeInsets.only(top: 16),
         child: Text(Localization().getStringEx('panel.wellness.todo.item.add.label', 'Add an Item'),
             style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)));
   }
@@ -350,14 +345,24 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
   }
 
   Widget _buildSaveButton() {
+    bool hasItemForEdit = (_item != null);
     return Center(
         child: Padding(
             padding: EdgeInsets.symmetric(vertical: 30),
-            child: RoundedButton(
-                label: Localization().getStringEx('panel.wellness.todo.item.save.button', 'Save'),
-                contentWeight: 0,
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Flexible(flex: (hasItemForEdit ? 1 : 0), child: Visibility(visible: hasItemForEdit, child: RoundedButton(
+                label: Localization().getStringEx('panel.wellness.todo.item.delete.button', 'Delete'),
+                borderColor: Styles().colors!.fillColorPrimary,
+                contentWeight: (hasItemForEdit ? 1 : 0),
                 padding: EdgeInsets.symmetric(horizontal: 46, vertical: 8),
-                onTap: _onTapSave)));
+                onTap: _onTapDelete))),
+              Visibility(visible: hasItemForEdit, child: Container(width: 15)),
+              Flexible(flex: (hasItemForEdit ? 1 : 0), child: RoundedButton(
+                label: Localization().getStringEx('panel.wellness.todo.item.save.button', 'Save'),
+                contentWeight: (hasItemForEdit ? 1 : 0),
+                padding: EdgeInsets.symmetric(horizontal: 46, vertical: 8),
+                onTap: _onTapSave))
+            ])));
   }
 
   void _onTapOptionalFields() {
@@ -460,6 +465,38 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
     return resultDate;
   }
 
+  void _onTapDelete() {
+    if (_item == null) {
+      AppAlert.showDialogResult(
+          context, Localization().getStringEx('panel.wellness.todo.item.delete.no_item.msg', 'There is no selected item to delete.'));
+      return;
+    }
+
+    AppAlert.showConfirmationDialog(
+        buildContext: context,
+        message: Localization()
+            .getStringEx('panel.wellness.todo.item.delete.confirmation.msg', 'Are sure that you want to delete this To-Do item?'),
+        positiveCallback: () => _deleteToDoItem());
+  }
+
+  void _deleteToDoItem() {
+    _setLoading(true);
+    Wellness().deleteToDoItem(_item!.id!).then((success) {
+      late String msg;
+      if (success) {
+        msg = Localization().getStringEx('panel.wellness.todo.item.delete.succeeded.msg', 'To-Do item deleted successfully.');
+      } else {
+        msg = Localization().getStringEx('panel.wellness.todo.item.delete.failed.msg', 'Failed to delete To-Do item.');
+      }
+      AppAlert.showDialogResult(context, msg).then((_) {
+        if (success) {
+          Navigator.of(context).pop();
+        }
+      });
+      _setLoading(false);
+    });
+  }
+
   void _onTapSave() {
     _hideKeyboard();
     String name = _nameController.text;
@@ -476,22 +513,34 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
       }
     }
     String? description = StringUtils.isNotEmpty(_descriptionController.text) ? _descriptionController.text : null;
-    ToDoItem item = ToDoItem(
+    ToDoItem itemToSave = ToDoItem(
+        id: _item?.id,
         name: name,
         category: _category,
         dueDateTimeUtc: _dueDate?.toUtc(),
         hasDueTime: hasDueTime,
         location: _location,
-        isCompleted: false,
+        isCompleted: _item?.isCompleted ?? false,
         description: description,
         workDays: _formattedWorkDays,
         reminderDateTimeUtc: _reminderDateTimeUtc);
-    Wellness().createToDoItem(item).then((success) {
-      late String msg;
+    if (_item?.id != null) {
+      Wellness().updateToDoItem(itemToSave).then((success) {
+        _onSaveCompleted(success);
+      });
+    } else {
+      Wellness().createToDoItem(itemToSave).then((success) {
+        _onSaveCompleted(success);
+      });
+    }
+  }
+
+  void _onSaveCompleted(bool success) {
+    late String msg;
       if (success) {
-        msg = Localization().getStringEx('panel.wellness.todo.item.create.succeeded.msg', 'To-Do item created successfully.');
+        msg = Localization().getStringEx('panel.wellness.todo.item.save.succeeded.msg', 'To-Do item saved successfully.');
       } else {
-        msg = Localization().getStringEx('panel.wellness.todo.item.create.failed.msg', 'Failed to create To-Do item.');
+        msg = Localization().getStringEx('panel.wellness.todo.item.save.failed.msg', 'Failed to save To-Do item.');
       }
       AppAlert.showDialogResult(context, msg).then((_) {
         if (success) {
@@ -499,7 +548,6 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
         }
       });
       _setLoading(false);
-    });
   }
 
   void _loadCategories() {
@@ -508,6 +556,26 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
       _categories = categories;
       _setLoading(false);
     });
+  }
+
+  void _populateItemFields() {
+    _category = _item?.category;
+    _nameController.text = StringUtils.ensureNotEmpty(_item?.name);
+    _descriptionController.text = StringUtils.ensureNotEmpty(_item?.description);
+    _dueDate = _item?.dueDateTime;
+    if ((_dueDate != null) && (_item?.hasDueTime ?? false) == true) {
+      _dueTime = TimeOfDay(hour: _dueDate!.hour, minute: _dueDate!.minute);
+    }
+    if (CollectionUtils.isNotEmpty(_item?.workDays)) {
+      _workDays = <DateTime>[];
+      for (String dateString in _item!.workDays!) {
+        DateTime? workDate = DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(dateString), format: _workDayFormat, isUtc: false);
+        if (workDate != null) {
+          _workDays!.add(workDate);
+        }
+      }
+    }
+    _location = _item?.location;
   }
 
   void _setLoading(bool loading) {
@@ -546,13 +614,13 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
   }
 
   List<String>? get _formattedWorkDays {
-    if(CollectionUtils.isEmpty(_workDays)) {
+    if (CollectionUtils.isEmpty(_workDays)) {
       return null;
     }
     List<String> stringList = <String>[];
-    for(DateTime day in _workDays!) {
-      String? formattedWorkDay = AppDateTime().formatDateTime(day, format: 'yyyy-MM-dd', ignoreTimeZone: true);
-      if(StringUtils.isNotEmpty(formattedWorkDay)) {
+    for (DateTime day in _workDays!) {
+      String? formattedWorkDay = AppDateTime().formatDateTime(day, format: _workDayFormat, ignoreTimeZone: true);
+      if (StringUtils.isNotEmpty(formattedWorkDay)) {
         stringList.add(formattedWorkDay!);
       }
     }

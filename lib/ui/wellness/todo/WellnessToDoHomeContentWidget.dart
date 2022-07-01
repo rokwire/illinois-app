@@ -23,7 +23,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Wellness.dart';
-import 'package:illinois/ui/wellness/todo/WellnessCreateToDoItemPanel.dart';
+import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -439,7 +439,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   void _onTapAddItem() {
     Analytics().logSelect(target: "Add Item");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessCreateToDoItemPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel()));
   }
 
   void _initCalendarDates() {
@@ -615,7 +615,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
                 child: Text(StringUtils.ensureNotEmpty(widget.item.name),
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold))),
-            GestureDetector(onTap: _onTapRemove, child: Image.asset('images/icon-x-orange.png', color: Styles().colors!.white))
+            GestureDetector(onTap: () => _onTapEdit(widget.item), child: Image.asset('images/icon-edit-white.png', color: Styles().colors!.white))
           ])),
       Visibility(visible: _loading, child: CircularProgressIndicator())
     ]);
@@ -644,26 +644,9 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
     });
   }
 
-  void _onTapRemove() {
-    AppAlert.showConfirmationDialog(
-        buildContext: context,
-        message: Localization()
-            .getStringEx('panel.wellness.todo.item.delete.confirmation.msg', 'Are sure that you want to delete this To-Do item?'),
-        positiveCallback: () => _deleteToDoItem());
-  }
-
-  void _deleteToDoItem() {
-    _setLoading(true);
-    Wellness().deleteToDoItem(widget.item.id!).then((success) {
-      late String msg;
-      if (success) {
-        msg = Localization().getStringEx('panel.wellness.todo.item.delete.succeeded.msg', 'To-Do item deleted successfully.');
-      } else {
-        msg = Localization().getStringEx('panel.wellness.todo.item.delete.failed.msg', 'Failed to delete To-Do item.');
-      }
-      AppAlert.showDialogResult(context, msg);
-      _setLoading(false);
-    });
+  void _onTapEdit(ToDoItem item) {
+    Analytics().logSelect(target: "Edit Item");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(item: item)));
   }
 
   void _setLoading(bool loading) {
