@@ -44,6 +44,7 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
   TimeOfDay? _dueTime;
   List<DateTime>? _workDays;
   ToDoItemLocation? _location;
+  bool _optionalFieldsVisible = false;
   bool _categoriesDropDownVisible = false;
   bool _loading = false;
 
@@ -70,18 +71,22 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
       _buildAddItemHeader(),
       _buildItemName(),
       _buildOptionalFieldsHeader(),
-      _buildCurrentCategoryContainer(),
-      Stack(children: [
-        Column(children: [
-          _buildDueDateContainer(),
-          _buildDueTimeContainer(),
-          _buildWorkDaysContainer(),
-          _buildLocationContainer(),
-          _buildDescriptionContainer(),
-          _buildSaveButton()
-        ]),
-        _buildCategoryDropDown()
-      ])
+      Visibility(
+          visible: _optionalFieldsVisible,
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _buildCurrentCategoryContainer(),
+            Stack(children: [
+              Column(children: [
+                _buildDueDateContainer(),
+                _buildDueTimeContainer(),
+                _buildWorkDaysContainer(),
+                _buildLocationContainer(),
+                _buildDescriptionContainer()
+              ]),
+              _buildCategoryDropDown()
+            ])
+          ])),
+      _buildSaveButton()
     ]);
   }
 
@@ -124,15 +129,26 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
   }
 
   Widget _buildOptionalFieldsHeader() {
-    return Padding(
-        padding: EdgeInsets.only(top: 22),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(height: 1, color: Styles().colors!.mediumGray2),
-          Padding(
-              padding: EdgeInsets.only(top: 4),
-              child: Text(Localization().getStringEx('panel.wellness.todo.item.optional_fields.label', 'Optional Fields'),
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold)))
-        ]));
+    return GestureDetector(
+        onTap: _onTapOptionalFields,
+        child: Container(
+            color: Colors.transparent,
+            child: Padding(
+                padding: EdgeInsets.only(top: 22),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Container(height: 1, color: Styles().colors!.mediumGray2),
+                  Padding(
+                      padding: EdgeInsets.only(top: 4),
+                      child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                        Text(Localization().getStringEx('panel.wellness.todo.item.optional_fields.label', 'Optional Fields'),
+                            style:
+                                TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold)),
+                        Padding(
+                            padding: EdgeInsets.only(left: 8),
+                            child: Image.asset(_optionalFieldsVisible ? 'images/icon-up.png' : 'images/icon-down.png',
+                                color: Styles().colors!.fillColorPrimary))
+                      ]))
+                ]))));
   }
 
   Widget _buildCurrentCategoryContainer() {
@@ -342,12 +358,19 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
                 onTap: _onTapSave)));
   }
 
+  void _onTapOptionalFields() {
+    _hideKeyboard();
+    _optionalFieldsVisible = !_optionalFieldsVisible;
+    if (_optionalFieldsVisible == false) {
+      _categoriesDropDownVisible = false;
+    }
+    _updateState();
+  }
+
   void _onTapCurrentCategory() {
     _hideKeyboard();
     _categoriesDropDownVisible = !_categoriesDropDownVisible;
-    if (mounted) {
-      setState(() {});
-    }
+    _updateState();
   }
 
   void _onTapCategory(ToDoCategory? category) {
@@ -356,9 +379,7 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
       _category = category;
     }
     _categoriesDropDownVisible = !_categoriesDropDownVisible;
-    if (mounted) {
-      setState(() {});
-    }
+    _updateState();
   }
 
   void _onTapDueDate() async {
