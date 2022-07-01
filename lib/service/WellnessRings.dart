@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessReing.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -258,10 +259,10 @@ class WellnessRings with Service{
     Map<String, List<WellnessRingAccomplishment>> history = {/*"2022-06014":[WellnessRingData(id: '0', timestamp: DateTime.now().millisecondsSinceEpoch, goal: 1, name: "Test" )]*/};
 
     //First split by day and id
-    Map<String, Map<String, List<WellnessRingRecord>>> splitedRecords = _splitRecordsByDay();
+    Map<String, Map<String, List<WellnessRingRecord>>> splitRecords = _splitRecordsByDay();
 
     //get Ring data for completed ones
-    for (var dayRecords in splitedRecords.entries){
+    for (var dayRecords in splitRecords.entries){
 
       for(var ringDayRecords in dayRecords.value.entries){
         String ringId = ringDayRecords.key;
@@ -307,7 +308,7 @@ class WellnessRings with Service{
   Map<String, Map<String, List<WellnessRingRecord>>> _splitRecordsByDay(){
     Map<String, Map<String, List<WellnessRingRecord>>> ringDateRecords = {};
     _wellnessRecords?.forEach((record) {
-      String? recordDayName = record.date != null? DateFormat("dddd,MMMM dd").format(DateUtils.dateOnly(record.date!)) : null;
+      String? recordDayName = record.date != null? DateTimeUtils.localDateTimeToString(DateTimeUtils.midnight(record.date!)) : null;
       if(recordDayName!=null) {
         Map<String, List<WellnessRingRecord>>? recordsForDay = ringDateRecords[recordDayName];
         if (recordsForDay == null) {
@@ -349,7 +350,7 @@ class WellnessRings with Service{
 
   WellnessRingData? _getActiveRingDataForDay({required String id, int? timestamp}){
     if(timestamp!=null){
-      DateTime? midnight = DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(timestamp));
+      DateTime? midnight = DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(timestamp).add(Duration(days: 1))); //Border is at midnight the next day
       var foundData = _findRingData(id: id, beforeTimestamp: midnight?.millisecondsSinceEpoch);
       if(foundData?.isNotEmpty ?? false){
         return foundData!.last; // last to be the most up to date
@@ -381,8 +382,8 @@ class WellnessRings with Service{
     value / goal;
   }
 
-  WellnessRingData? getRingData(String id){
-    return _activeWellnessRings?[id];
+  WellnessRingData? getRingData(String? id){
+    return (id != null )? (_activeWellnessRings?[id] ): null;
   }
 
   bool get canAddRing{

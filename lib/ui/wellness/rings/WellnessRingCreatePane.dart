@@ -242,7 +242,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
   }
 
   Widget _buildDeleteButton() {
-    if(widget.data == null)
+    if(widget.data == null || WellnessRings().getRingData(widget.data?.id) == null)
       return Container();
 
     return Padding(

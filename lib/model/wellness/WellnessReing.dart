@@ -3,6 +3,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessRingData {
+  static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
   String id;
   double goal;
   String? colorHex;

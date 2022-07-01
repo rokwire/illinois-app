@@ -4,6 +4,7 @@ import 'package:illinois/model/wellness/WellnessReing.dart';
 import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -25,7 +26,7 @@ class WellnessRing extends StatefulWidget{
 class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMixin implements NotificationsListener{
   static const int OUTER_SIZE = 250;
   static const int STROKE_SIZE = 35;
-  static const int PADDING_SIZE = 2;
+  static const int PADDING_SIZE = 4;
   static const int ANIMATION_DURATION_MILLISECONDS = 1500;
   static const int MIN_RINGS_COUNT = 4;
 
@@ -140,7 +141,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                           width: innerContentSize,
                           child: CircularProgressIndicator(
                             strokeWidth: STROKE_SIZE.toDouble(),
-                            value: controller!.value >= 1 ? 0.999 : controller.value,
+                            value: controller!.value >= 1 ? 0.9975 : controller.value,
                             // * (completion) >= 1 ? 0.999 : completion, // Simulate padding in the end
                             color: data.color,
                             backgroundColor: Colors.white,
@@ -184,7 +185,11 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     return
       Stack(
         children: [
-          Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true).image))),
+          Container(
+            padding: EdgeInsets.all(4),
+            decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white,),
+            child:Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true).image))),
+          ),
           Center(
               child: ConfettiWidget(
                 confettiController: _controllerCenter,
@@ -325,7 +330,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
           Row( crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 16), child: _editRingButton),
+            Padding(padding: EdgeInsets.only(right: 6), child: _editRingButton),
             Expanded(
               flex: 5,
               child: Container(
@@ -363,7 +368,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
         onTap: (){ if (widget.onTapEdit!=null) widget.onTapEdit!(this.context);},
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          child: Image.asset('images/icon-gear.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+          child: Image.asset('images/edit-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
         ));
   }
   Widget get _increaseValueButton{
@@ -380,16 +385,16 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
         onTap: (){ if (widget.onTapDecrease!=null) widget.onTapDecrease!(this.context);},
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+          child: Image.asset('images/group-decrease.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
         ));
   }
 }
 
 class AccomplishmentCard extends StatefulWidget{
-  final String? title; //Date at top
+  final String? date; //Date at top
   final List<WellnessRingAccomplishment>? accomplishments;
 
-  const AccomplishmentCard({Key? key, this.title, this.accomplishments}) : super(key: key);
+  const AccomplishmentCard({Key? key, this.date, this.accomplishments}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AccomplishmentCardState();
@@ -397,18 +402,21 @@ class AccomplishmentCard extends StatefulWidget{
 }
 
 class _AccomplishmentCardState extends State<AccomplishmentCard>{
-
+  
   @override
   Widget build(BuildContext context) {
     return CollectionUtils.isEmpty(widget.accomplishments) ? Container() :
     Container( //TBD Draw
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      decoration: BoxDecoration(color: Colors.white, border: Border.all(width: 1, color: Styles().colors!.surfaceAccent!), borderRadius: BorderRadius.circular(5), ),
-      child: _buildAccomplishmentCard(widget.title??"", widget.accomplishments),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+      decoration: BoxDecoration(color: Colors.white, border: Border.all(width: 0, color: Styles().colors!.surfaceAccent!), borderRadius: BorderRadius.circular(5),
+        boxShadow:  [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+      ),
+      child: _buildAccomplishmentCard(widget.date??"", widget.accomplishments),
     );
   }
 
   Widget _buildAccomplishmentCard(String title, List<WellnessRingAccomplishment>? accomplishedRings){
+    const int MIN_ROWS = 3;
     List<Widget> accomplishmentsTextContent = [];
     List<Widget> accomplishmentsCircleContent = [];
     if(accomplishedRings==null || accomplishedRings.isEmpty){
@@ -419,38 +427,78 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
       //TEXT
       accomplishmentsTextContent.add(
           Container( //Accomplished ring within Card
-              child: Text("${accomplishedRingData.ringData.name?? "N/A"} ${_trimDecimal(accomplishedRingData.achievedValue)}/${_trimDecimal(accomplishedRingData.ringData.goal)}")
+              child: Text("${accomplishedRingData.ringData.name?? "N/A"} Ring - ${_trimDecimal(accomplishedRingData.achievedValue)}/${_trimDecimal(accomplishedRingData.ringData.goal)} ${accomplishedRingData.ringData.unit}${accomplishedRingData.ringData.goal>1?"s":""}",
+                  style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)
+              )
           ));
-      accomplishmentsTextContent.add(Container(height: 2,));
+      accomplishmentsTextContent.add(Container(height: 4,));
       //RING
       accomplishmentsCircleContent.add(_buildRingCircle(color: accomplishedRingData.ringData.color ?? Colors.white));
       accomplishmentsCircleContent.add(Container(height: 5,));
     }
+    if(accomplishedRings.length < MIN_ROWS){
+      for( int i = accomplishedRings.length; i< MIN_ROWS; i++){
+        accomplishmentsTextContent.add(
+            Container( //Accomplished ring within Card
+                child: Text(" ")
+            ));
+        accomplishmentsTextContent.add(Container(height: 4,));
+      }
+    }
 
+    DateTime? date = DateTimeUtils.parseDateTime(widget.date ??"");
+    String weekday = date!=null? DateFormat('EEE').format(date) : "";
+    String day = date!=null? DateFormat('d').format(date) : "";
+    String month = date!=null? DateFormat('MMM').format(date) : "";
     return Container(
         child:
         Row(
+          mainAxisSize: MainAxisSize.max,
           children: [
+            Container(
+              constraints: BoxConstraints(minWidth: 60),
+               padding: EdgeInsets.only(right: 20, top: 16, bottom: 16),
+                // decoration: BoxDecoration(color: Colors.white, border: Border(right: BorderSide(color: Styles().colors!.surfaceAccent!,)),  ),
+                child:Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(weekday,
+                      style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)
+                    ),
+                    // Container(height: 4,),
+                    Text(day,
+                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32, fontFamily: Styles().fontFamilies!.regular)
+                    ),
+                    // Container(height: 4,),
+                    Text(month,
+                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)
+                    ),
+                  ],
+                )
+            ),
             Expanded(
-              child: Column(
+              child: Container(
+                  padding: EdgeInsets.only(left: 20, top: 16, bottom: 16),
+                  decoration: BoxDecoration(color: Colors.white, border: Border(left: BorderSide(color: Styles().colors!.surfaceAccent!, )),  ),
+                child:Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title),
-                  Container(height: 2,),
-                  Text("${widget.accomplishments?.length} Rings Completed!"),
+                  Text("${widget.accomplishments?.length} Rings Completed!",
+                    style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold)
+                  ),
                   Container(height: 6,),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: accomplishmentsTextContent,)
                 ],
-              ),
+              )),
             ),
-            Container(
-                child:Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: accomplishmentsCircleContent,
-                )
-            )
+            // Container(
+            //     child:Column(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: accomplishmentsCircleContent,
+            //     )
+            // )
           ],
         )
     );
