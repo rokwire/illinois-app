@@ -146,15 +146,17 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   Widget _buildClearCompletedItemsButton() {
-    return Padding(
-        padding: EdgeInsets.only(top: 40),
-        child: RoundedButton(
-            borderColor: Styles().colors!.fillColorPrimary,
-            contentWeight: 0.75,
-            padding: EdgeInsets.symmetric(vertical: 8),
-            fontSize: 18,
-            label: Localization().getStringEx('panel.wellness.todo.items.completed.clear.button', 'Clear Completed Items'),
-            onTap: _onTapClearCompletedItems));
+    return Visibility(
+        visible: _clearCompletedItemsButtonVisible,
+        child: Padding(
+            padding: EdgeInsets.only(top: 40),
+            child: RoundedButton(
+                borderColor: Styles().colors!.fillColorPrimary,
+                contentWeight: 0.75,
+                padding: EdgeInsets.symmetric(vertical: 8),
+                fontSize: 18,
+                label: Localization().getStringEx('panel.wellness.todo.items.completed.clear.button', 'Clear Completed Items'),
+                onTap: _onTapClearCompletedItems)));
   }
 
   Widget _buildCalendarWidget() {
@@ -389,12 +391,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _deleteCompletedItems() {
-    List<String> completedItemsIds = <String>[];
-    for (ToDoItem item in _todoItems!) {
-      if (item.isCompleted) {
-        completedItemsIds.add(item.id!);
-      }
-    }
+    List<String>? completedItemsIds = _completedItemIds;
     if (CollectionUtils.isEmpty(completedItemsIds)) {
       AppAlert.showDialogResult(
           context, Localization().getStringEx('panel.wellness.todo.items.no_completed_items.msg', 'There are no completed To-Do items.'));
@@ -552,6 +549,23 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     if (mounted) {
       setState(() {});
     }
+  }
+
+  List<String>? get _completedItemIds {
+    if (CollectionUtils.isEmpty(_todoItems)) {
+      return null;
+    }
+    List<String> completedItemsIds = <String>[];
+    for (ToDoItem item in _todoItems!) {
+      if (item.isCompleted) {
+        completedItemsIds.add(item.id!);
+      }
+    }
+    return completedItemsIds;
+  }
+
+  bool get _clearCompletedItemsButtonVisible {
+    return (_completedItemIds?.length ?? 0) > 0;
   }
 
   String get _formattedCalendarMonthLabel {
@@ -729,6 +743,7 @@ class _ToDoItemReminderDialog extends StatefulWidget {
   State<_ToDoItemReminderDialog> createState() => _ToDoItemReminderDialogState();
 
 }
+
 class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
   late ToDoItem _item;
   late DateTime _reminderDateTime;
