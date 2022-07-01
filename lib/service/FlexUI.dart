@@ -42,6 +42,7 @@ class FlexUI extends rokwire.FlexUI {
     NotificationService().subscribe(this,[
       Auth2.notifyCardChanged,
       IlliniCash.notifyBallanceUpdated,
+      IlliniCash.notifyStudentClassificationUpdated,
     ]);
   }
 
@@ -64,7 +65,8 @@ class FlexUI extends rokwire.FlexUI {
   void onNotification(String name, dynamic param) {
     super.onNotification(name, param);
     if ((name == Auth2.notifyCardChanged) ||
-        (name == IlliniCash.notifyBallanceUpdated))
+        (name == IlliniCash.notifyBallanceUpdated) ||
+        (name == IlliniCash.notifyStudentClassificationUpdated))
     {
       updateContent();
     }
@@ -92,6 +94,9 @@ class FlexUI extends rokwire.FlexUI {
       illiniCashRule.forEach((dynamic key, dynamic value) {
         if ((key is String) && (key == 'housingResidenceStatus') && (value is bool)) {
            result = result && (IlliniCash().ballance?.housingResidenceStatus ?? false);
+        }
+        else if ((key is String) && (key == 'firstYearStudent') && (value is bool)) {
+           result = result && (IlliniCash().studentClassification?.firstYear ?? false);
         }
       });
     }
