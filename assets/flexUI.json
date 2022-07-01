@@ -87,7 +87,9 @@
 			"calendar.on_campus"                     : ["NOT", "Gies Online Programs"],
 			"home.twitter.account.canvas"            : ["Canvas Beta", "AND", ["NOT", "Gies Online Programs"]],
 			"gies"                                   : ["Gies Online Programs"],
-			"new_student"                            : ["2022 New Students"],
+			"gies_checklist"                         : ["Gies Online Programs"],
+			"_new_student"                           : ["2022 New Students"],
+			"_new_student_checklist"                 : ["2022 New Students"],
 			"canvas"                                 : ["Canvas Beta"]
 		},
 		"locations": {
@@ -113,7 +115,9 @@
 		"auth": {
 			"connect"                             : { "loggedIn": false },
 			"gies"                                : { "shibbolethLoggedIn": true },
+			"gies_checklist"                      : { "shibbolethLoggedIn": true },
 			"new_student"                         : { "shibbolethLoggedIn": true },
+			"new_student_checklist"               : { "shibbolethLoggedIn": true },
 			"canvas"                              : { "shibbolethLoggedIn": true },
 
 			"settings.connect"                    : { "loggedIn": false },
@@ -150,6 +154,8 @@
 			"campus_resources": { "build": "debug" }
 		},
 		"illini_cash": {
+			"new_student": { "firstYearStudent": true },
+			"new_student_checklist": { "firstYearStudent": true }
 		},
 		"enable" : {
 			"library_card"                  : false,
