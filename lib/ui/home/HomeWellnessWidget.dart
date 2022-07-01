@@ -19,7 +19,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
-import 'package:illinois/ui/wellness/todo/WellnessCreateToDoItemPanel.dart';
+import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -309,7 +309,7 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
 
   void _onTapAddItem() {
     Analytics().logSelect(target: "Wellness To Do - Add Item");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessCreateToDoItemPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel()));
   }
 
   void _onTapViewAll() {

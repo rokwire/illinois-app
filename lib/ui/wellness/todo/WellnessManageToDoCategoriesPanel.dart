@@ -17,7 +17,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/Wellness.dart';
-import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
@@ -71,7 +70,6 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
           child: Padding(
               padding: EdgeInsets.all(16),
               child: Column(children: [
-                _buildToDoListHeader(),
                 _buildCreateCategoryHeader(),
                 _buildCategoryNameWidget(),
                 _buildColorsRowWidget(),
@@ -82,28 +80,17 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     );
   }
 
-  Widget _buildToDoListHeader() {
-    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Text(Localization().getStringEx('panel.wellness.todo.header.label', 'My To-Do List'),
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
-      FavoriteStarIcon(style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
-    ]);
-  }
-
   Widget _buildCreateCategoryHeader() {
-    return Padding(
-        padding: EdgeInsets.only(top: 11),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(Localization().getStringEx('panel.wellness.categories.create.header.label', 'Create a Category'),
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
-          Padding(
-              padding: EdgeInsets.only(top: 5),
-              child: Text(
-                  Localization().getStringEx('panel.wellness.categories.create.header.description',
-                      'Examples: an RSO or club, a specific class, or a miscellaneous task category.'),
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
-        ]));
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(Localization().getStringEx('panel.wellness.categories.create.header.label', 'Create a Category'),
+          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
+      Padding(
+          padding: EdgeInsets.only(top: 5),
+          child: Text(
+              Localization().getStringEx('panel.wellness.categories.create.header.description',
+                  'Examples: an RSO or club, a specific class, or a miscellaneous task category.'),
+              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
+    ]);
   }
 
   Widget _buildCategoryNameWidget() {
@@ -248,14 +235,30 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   Widget _buildSaveButton() {
+    bool hasCategoryForEdit = (_category != null);
     return Padding(
         padding: EdgeInsets.only(top: 30),
-        child: RoundedButton(
-            label: Localization().getStringEx('panel.wellness.categories.save.button', 'Save'),
-            contentWeight: 0,
-            progress: _loading,
-            padding: EdgeInsets.symmetric(horizontal: 46, vertical: 8),
-            onTap: _onTapSave));
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
+          Flexible(
+              flex: (hasCategoryForEdit ? 1 : 0),
+              child: Visibility(
+                  visible: hasCategoryForEdit,
+                  child: RoundedButton(
+                      label: Localization().getStringEx('panel.wellness.categories.delete.button', 'Delete'),
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      progress: _loading,
+                      padding: EdgeInsets.symmetric(horizontal: 46, vertical: 8),
+                      onTap: _onTapDelete))),
+          Visibility(visible: hasCategoryForEdit, child: Container(width: 15)),
+          Flexible(
+              flex: (hasCategoryForEdit ? 1 : 0),
+              child: RoundedButton(
+                  label: Localization().getStringEx('panel.wellness.categories.save.button', 'Save'),
+                  contentWeight: (hasCategoryForEdit ? 1 : 0),
+                  progress: _loading,
+                  padding: EdgeInsets.symmetric(horizontal: 46, vertical: 8),
+                  onTap: _onTapSave))
+        ]));
   }
 
   Widget _buildManageCategories() {
@@ -305,12 +308,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                   child: Text(StringUtils.ensureNotEmpty(category.name),
                       style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 14))),
               Expanded(child: Container()),
-              Image.asset('images/icon-edit-white.png'),
-              GestureDetector(
-                  onTap: () => _onTapDeleteCategory(category),
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
-                      child: Image.asset('images/icon-x-orange-small.png', color: Styles().colors!.white)))
+              Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Image.asset('images/icon-edit-white.png'))
             ])));
   }
 
@@ -336,12 +334,19 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     _updateState();
   }
 
-  void _onTapDeleteCategory(ToDoCategory category) {
+  void _onTapDelete() {
+    if (_category == null) {
+      AppAlert.showDialogResult(
+          context,
+          Localization().getStringEx(
+              'panel.wellness.categories.manage.category.delete.no_selected_category.msg', 'There is no selected category to delete.'));
+      return;
+    }
     AppAlert.showConfirmationDialog(
         buildContext: context,
         message: Localization().getStringEx(
             'panel.wellness.categories.manage.category.delete.confirmation.msg', 'Are sure that you want to delete this category?'),
-        positiveCallback: () => _deleteCategory(category));
+        positiveCallback: () => _deleteCategory(_category!));
   }
 
   void _deleteCategory(ToDoCategory category) {
@@ -448,6 +453,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
       _clearCategoryFields();
       _loadCategories();
     } else if (name == Wellness.notifyToDoCategoryDeleted) {
+      _clearCategoryFields();
       _loadCategories();
     }
   }
