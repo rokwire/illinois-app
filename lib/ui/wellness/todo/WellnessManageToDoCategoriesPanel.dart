@@ -71,7 +71,6 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
           child: Padding(
               padding: EdgeInsets.all(16),
               child: Column(children: [
-                _buildToDoListHeader(),
                 _buildCreateCategoryHeader(),
                 _buildCategoryNameWidget(),
                 _buildColorsRowWidget(),
@@ -82,28 +81,17 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     );
   }
 
-  Widget _buildToDoListHeader() {
-    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Text(Localization().getStringEx('panel.wellness.todo.header.label', 'My To-Do List'),
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
-      FavoriteStarIcon(style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
-    ]);
-  }
-
   Widget _buildCreateCategoryHeader() {
-    return Padding(
-        padding: EdgeInsets.only(top: 11),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(Localization().getStringEx('panel.wellness.categories.create.header.label', 'Create a Category'),
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
-          Padding(
-              padding: EdgeInsets.only(top: 5),
-              child: Text(
-                  Localization().getStringEx('panel.wellness.categories.create.header.description',
-                      'Examples: an RSO or club, a specific class, or a miscellaneous task category.'),
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
-        ]));
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(Localization().getStringEx('panel.wellness.categories.create.header.label', 'Create a Category'),
+          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
+      Padding(
+          padding: EdgeInsets.only(top: 5),
+          child: Text(
+              Localization().getStringEx('panel.wellness.categories.create.header.description',
+                  'Examples: an RSO or club, a specific class, or a miscellaneous task category.'),
+              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
+    ]);
   }
 
   Widget _buildCategoryNameWidget() {
