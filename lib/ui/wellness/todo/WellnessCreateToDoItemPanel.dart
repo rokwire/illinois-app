@@ -165,7 +165,9 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
                   decoration:
                       BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                    Text(StringUtils.ensureNotEmpty(_category?.name),
+                    Text(
+                        StringUtils.ensureNotEmpty(_category?.name,
+                            defaultValue: Localization().getStringEx('panel.wellness.todo.item.category.none.label', 'None')),
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)),
                     Expanded(child: Container()),
@@ -198,7 +200,7 @@ class _WellnessCreateToDoItemPanelState extends State<WellnessCreateToDoItemPane
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             decoration: BoxDecoration(color: Colors.white, border: Border(left: borderSide, right: borderSide, bottom: borderSide)),
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text(StringUtils.ensureNotEmpty(category?.name),
+              Text(StringUtils.ensureNotEmpty(category?.name, defaultValue: Localization().getStringEx('panel.wellness.todo.item.category.none.label', 'None')),
                   style: TextStyle(fontSize: 16, color: Styles().colors!.textSurfaceAccent, fontFamily: Styles().fontFamilies!.regular)),
               Image.asset(isSelected ? 'images/icon-favorite-selected.png' : 'images/icon-favorite-deselected.png')
             ])));

@@ -1689,6 +1689,7 @@
     "panel.wellness.todo.item.name.field.label": "ITEM NAME",
     "panel.wellness.todo.item.optional_fields.label": "Optional Fields",
     "panel.wellness.todo.item.category.field.label": "CATEGORY",
+    "panel.wellness.todo.item.category.none.label": "None",
     "panel.wellness.todo.item.due_date.field.label": "DUE DATE",
     "panel.wellness.todo.item.due_time.field.label": "DUE TIME",
     "panel.wellness.todo.item.work_days.field.label": "DAYS TO WORK ON ITEM",
