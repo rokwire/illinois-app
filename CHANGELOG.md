@@ -5,11 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.0.43] - 2022-07-04
 ### Changed
 - Various UI changes in Wellness To-Do list [#1865](https://github.com/rokwire/illinois-app/issues/1865).
 - Updated launch images [#1869](https://github.com/rokwire/illinois-app/issues/1869).
 - Hide State Farm Wayfinding from Explore / Map [#1872](https://github.com/rokwire/illinois-app/issues/1872).
 - Make Wellness Resources widget horizontally scrollable [#1874](https://github.com/rokwire/illinois-app/issues/1874).
+- Wellness Rings updates [#1692](https://github.com/rokwire/illinois-app/issues/1692).
 
 ## [4.0.42] - 2022-07-01
 ### Added
