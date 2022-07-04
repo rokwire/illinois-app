@@ -128,60 +128,20 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   List<Widget> _buildContent() {
     if (Connectivity().isOffline) {
-      return [_buildOffline()];
+      return [ HomeMessageCard(title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"), message: _offlineMessage,) ];
     }
     else if ((widget.favoriteKey == InboxMessage.favoriteKeyName) && !Auth2().isOidcLoggedIn) {
-      return [_buildLoggedOut()];
+      return [ HomeMessageCard(title: Localization().getStringEx("app.logged_out.message.title", "You are not logged in"), message: _loggedOutMessage,) ];
     }
     else if (_loadingFavorites) {
-      return [_buildProgress()];
+      return [ HomeProgressWidget() ];
     }
     else if ((_favorites == null) || (_favorites!.length == 0)) {
-      return [_buildEmpty()];
+      return [ HomeMessageCard(message: _emptyMessage) ];
     }
     else {
       return _buildContentList();
     }
-  }
-
-  Widget _buildProgress() {
-    return Padding(padding: EdgeInsets.symmetric(vertical: 32, horizontal: 16), child:
-      Align(alignment: Alignment.center, child:
-        CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary),),
-      ),
-    );
-  }
-
-  Widget _buildOffline() {
-    return _buildMessageCard(title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"), message: _offlineMessage,);
-  }
-
-  Widget _buildLoggedOut() {
-    return _buildMessageCard(title: Localization().getStringEx("app.logged_out.message.title", "You are not logged in"), message: _loggedOutMessage,);
-  }
-
-  Widget _buildEmpty() {
-    return _buildMessageCard(message: _emptyMessage);
-  }
-
-  Widget _buildMessageCard({String? title, String? message}) {
-    return Container(padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
-        child: Column(children: <Widget>[
-          StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
-            Expanded(child:
-              Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-                Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), semanticsLabel: '',)
-              ),
-            )
-          ]) : Container(),
-          StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
-            Expanded(child:
-              Text(message ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground), semanticsLabel: '',)
-            )
-          ]) : Container(),
-        ]),
-      );
   }
 
   List<Widget> _buildContentList() {
