@@ -454,7 +454,7 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
                             // Expanded( child:
                             Container(width: 24,),
                             Container(
-                              child: WellnessRing(backgroundColor: Colors.white, size: 150, strokeSize: 20, accomplishmentDialogEnabled: false,),
+                              child: WellnessRing(backgroundColor: Colors.white, size: 130, strokeSize: 20, accomplishmentDialogEnabled: false,),
                             ),
                             // ),
                             Container(width: 24,),

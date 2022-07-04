@@ -93,7 +93,18 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
       data.addAll(_ringsData!);
     }
 
-    return _buildRing(data: data);
+    return Container(
+        height: widget.size.toDouble() + widget.strokeSize  + PADDING_SIZE,
+        width: widget.size.toDouble() + widget.strokeSize  + PADDING_SIZE,
+        decoration: BoxDecoration(
+            // color: Colors.red,
+          borderRadius: BorderRadius.circular(360),
+          border: Border.all(width: 2, color: Styles().colors!.surfaceAccent!),
+          // shape: BoxShape.circle,
+          boxShadow:  [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]
+        ),
+      child: _buildRing(data: data)
+    );
   }
 
   Widget _buildRing({int level = 0, required List<WellnessRingData> data}){
@@ -108,7 +119,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
 
   Widget _buildRingWidget({required int level, WellnessRingData? data, Widget? childWidget}){
 
-    double? innerContentSize = (widget.size - ((level) * (widget.strokeSize + PADDING_SIZE))).toDouble();
+    double? innerContentSize = (widget.size - (level * (widget.strokeSize + PADDING_SIZE))).toDouble();
 
     if(data!=null) {
       double completion =  WellnessRings().getRingDailyCompletion(data.id);
@@ -131,15 +142,12 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
         animation: controller,
         builder: (context, child) {
           return Container(
-            // // color: Colors.green,
             width: innerContentSize,
             height: innerContentSize,
             child: Stack(
               children: [
                 Center(
-                    child: GestureDetector( //TBD REMOVE TMP TEST SOLUTION
-                      onTap: (){if(data.id!="empty") WellnessRings().addRecord(WellnessRingRecord(value: 1, timestamp: DateTime.now().millisecondsSinceEpoch, wellnessRingId: data.id));},
-                      child: SizedBox(
+                    child: SizedBox(
                           height: innerContentSize,
                           width: innerContentSize,
                           child: CircularProgressIndicator(
@@ -149,14 +157,14 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                             color: data.color,
                             backgroundColor: Colors.white,
                           )),
-                    )),
+                    ),
                 Center(
                     child:
                     Container(
                       width: innerContentSize,
                       height: innerContentSize,
                       decoration: BoxDecoration(
-                          color: Styles().colors!.background!,
+                          color: Styles().colors!.surfaceAccent!,
                           shape: BoxShape.circle
                       ),
                     )),
@@ -189,9 +197,9 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
       Stack(
         children: [
           Container(
-            padding: EdgeInsets.all(4),
+            padding: EdgeInsets.all(1),
             decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white,),
-            child:Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true).image))),
+            child:Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: Image.asset('images/wellness_ring_profile.png', excludeFromSemantics: true).image))),
           ),
           Center(
               child: ConfettiWidget(
