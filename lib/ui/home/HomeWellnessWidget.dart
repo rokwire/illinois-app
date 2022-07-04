@@ -452,12 +452,12 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                             // Expanded( child:
-                            Container(width: 24,),
+                            Container(width: 13,),
                             Container(
-                              child: WellnessRing(backgroundColor: Colors.white, size: 150, strokeSize: 20, accomplishmentDialogEnabled: false,),
+                              child: WellnessRing(backgroundColor: Colors.white, size: 130, strokeSize: 15, borderWidth: 2,accomplishmentDialogEnabled: false,),
                             ),
                             // ),
-                            Container(width: 24,),
+                            Container(width: 18,),
                             Expanded(
                                 child: Container(
                                     child: _buildButtons()
