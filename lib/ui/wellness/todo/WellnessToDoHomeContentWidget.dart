@@ -615,7 +615,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
                 child: Text(StringUtils.ensureNotEmpty(widget.item.name),
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold))),
-            GestureDetector(onTap: () => _onTapEdit(widget.item), child: Image.asset('images/icon-edit-white.png', color: Styles().colors!.white))
+            GestureDetector(onTap: () => _onTapEdit(widget.item), child: Image.asset('images/edit-white.png'))
           ])),
       Visibility(visible: _loading, child: CircularProgressIndicator())
     ]);
