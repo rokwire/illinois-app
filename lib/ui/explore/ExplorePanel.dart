@@ -270,9 +270,10 @@ class ExplorePanelState extends State<ExplorePanel>
     List<ExploreItem> exploreItems = [];
     exploreItems.add(ExploreItem.Events);
     exploreItems.add(ExploreItem.Dining);
-    if (_displayType == ListMapDisplayType.Map) {
-      exploreItems.add(ExploreItem.State_Farm);
-    }
+//  #1872 Hide State Farm Wayfinding from Map
+//  if (_displayType == ListMapDisplayType.Map) {
+//    exploreItems.add(ExploreItem.State_Farm);
+//  }
 
     if (!ListEquality().equals(_exploreItems, exploreItems)) {
       _exploreItems = exploreItems;
