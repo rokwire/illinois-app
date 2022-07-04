@@ -1692,7 +1692,7 @@
     "panel.wellness.todo.item.category.create.label": "創建類別",
 	"panel.wellness.todo.item.due_date.field.label": "截止日期",
 	"panel.wellness.todo.item.due_time.field.label": "到期時間",
-	"panel.wellness.todo.item.reminders.field.label": "提醒事項",
+	"panel.wellness.todo.item.reminder.field.label": "提醒",
 	"panel.wellness.todo.item.work_days.field.label": "工作天數",
 	"panel.wellness.todo.item.location.field.label": "地點",
 	"panel.wellness.todo.item.description.field.label": "描述",

@@ -1693,7 +1693,7 @@
     "panel.wellness.todo.item.category.create.label": "Create a Category",
     "panel.wellness.todo.item.due_date.field.label": "DUE DATE",
     "panel.wellness.todo.item.due_time.field.label": "TIME DUE",
-    "panel.wellness.todo.item.reminders.field.label": "REMINMDERS",
+    "panel.wellness.todo.item.reminder.field.label": "REMINMDER",
     "panel.wellness.todo.item.work_days.field.label": "DAYS TO WORK ON ITEM",
     "panel.wellness.todo.item.location.field.label": "LOCATION",
     "panel.wellness.todo.item.description.field.label": "DESCRIPTION",

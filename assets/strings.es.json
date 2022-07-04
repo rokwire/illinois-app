@@ -1690,7 +1690,7 @@
     "panel.wellness.todo.item.category.create.label": "Crear una categoría",
     "panel.wellness.todo.item.due_date.field.label": "FECHA DE VENCIMIENTO",
     "panel.wellness.todo.item.due_time.field.label": "TIEMPO DE VENCIMIENTO",
-    "panel.wellness.todo.item.reminders.field.label": "RECORDATORIOS",
+    "panel.wellness.todo.item.reminder.field.label": "RECORDATORIO",
     "panel.wellness.todo.item.work_days.field.label": "DÍAS PARA TRABAJAR EN EL ARTÍCULO",
     "panel.wellness.todo.item.location.field.label": "UBICACIÓN",
     "panel.wellness.todo.item.description.field.label": "DESCRIPCIÓN",

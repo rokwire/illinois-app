@@ -279,7 +279,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
               padding: EdgeInsets.only(bottom: 5),
-              child: _buildFieldLabel(label: Localization().getStringEx('panel.wellness.todo.item.reminders.field.label', 'REMINDERS'))),
+              child: _buildFieldLabel(label: Localization().getStringEx('panel.wellness.todo.item.reminder.field.label', 'REMINDER'))),
           GestureDetector(
               onTap: _onTapSelectedReminderType,
               child: Container(
