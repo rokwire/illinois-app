@@ -18,16 +18,17 @@ class WellnessRing extends StatefulWidget{
   final Color? backgroundColor;
   final int size;
   final int strokeSize;
+  final int borderWidth;
   final bool accomplishmentDialogEnabled;
 
-  WellnessRing({this.backgroundColor = Colors.white, this.size = _WellnessRingState.OUTER_SIZE, this.strokeSize = _WellnessRingState.STROKE_SIZE, this.accomplishmentDialogEnabled = true});
+  WellnessRing({this.backgroundColor = Colors.white, this.size = _WellnessRingState.OUTER_SIZE, this.strokeSize = _WellnessRingState.STROKE_SIZE, this.accomplishmentDialogEnabled = true, this.borderWidth = _WellnessRingState.PADDING_SIZE});
 
   @override
   State<WellnessRing> createState() => _WellnessRingState();
 }
 
 class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMixin implements NotificationsListener{
-  static const int OUTER_SIZE = 250;
+  static const int OUTER_SIZE = 270;
   static const int STROKE_SIZE = 35;
   static const int PADDING_SIZE = 4;
   static const int ANIMATION_DURATION_MILLISECONDS = 1500;
@@ -94,8 +95,8 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     }
 
     return Container(
-        height: widget.size.toDouble() + widget.strokeSize  + PADDING_SIZE,
-        width: widget.size.toDouble() + widget.strokeSize  + PADDING_SIZE,
+        height: widget.size.toDouble()  /*+ widget.strokeSize  + PADDING_SIZE,*/ ,
+        width: widget.size.toDouble()  /*+ widget.strokeSize  + PADDING_SIZE,*/,
         decoration: BoxDecoration(
             // color: Colors.red,
           borderRadius: BorderRadius.circular(360),
@@ -119,7 +120,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
 
   Widget _buildRingWidget({required int level, WellnessRingData? data, Widget? childWidget}){
 
-    double? innerContentSize = (widget.size - (level * (widget.strokeSize + PADDING_SIZE))).toDouble();
+    double? innerContentSize = (widget.size - ((level + 1) * (widget.strokeSize + widget.borderWidth))).toDouble();
 
     if(data!=null) {
       double completion =  WellnessRings().getRingDailyCompletion(data.id);
@@ -170,8 +171,8 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                     )),
                 Center(
                     child: Container(
-                      width: innerContentSize - PADDING_SIZE,
-                      height: innerContentSize - PADDING_SIZE,
+                      width: innerContentSize - widget.borderWidth,
+                      height: innerContentSize - widget.borderWidth,
                       decoration: BoxDecoration(
                           color: widget.backgroundColor ??
                               Styles().colors!.white!,
