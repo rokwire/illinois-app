@@ -120,6 +120,9 @@ abstract class CheckList with Service implements NotificationsListener{
     return Set.from([Storage(), Config(), Groups()]);
   }
   
+  @override
+  String get debugDisplayName => "CheckList('$_contentName')";
+
   // Implementation
 
   Future<File> _getCacheFile() async {

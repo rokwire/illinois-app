@@ -49,7 +49,7 @@ class Services extends rokwire.Services {
     }
 
     if (kDebugMode) {
-      await NativeCommunicator().setLaunchScreenStatus(service.runtimeType.toString());
+      await NativeCommunicator().setLaunchScreenStatus(service.debugDisplayName);
     }
 
     rokwire.ServiceError? error;
