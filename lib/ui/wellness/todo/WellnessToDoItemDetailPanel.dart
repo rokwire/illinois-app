@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -34,7 +38,7 @@ class WellnessToDoItemDetailPanel extends StatefulWidget {
   State<WellnessToDoItemDetailPanel> createState() => _WellnessToDoItemDetailPanelState();
 }
 
-class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPanel> {
+class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPanel> implements NotificationsListener {
   static final String _workDayFormat = 'yyyy-MM-dd';
 
   ToDoItem? _item;
@@ -56,6 +60,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   @override
   void initState() {
     super.initState();
+    NotificationService().subscribe(this, [Wellness.notifyToDoCategoryChanged, Wellness.notifyToDoCategoryDeleted]);
     _item = widget.item;
     if (_item != null) {
       _populateItemFields();
@@ -63,6 +68,12 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       _selectedReminderType = ToDoReminderType.none;
     }
     _loadCategories();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   @override
@@ -185,7 +196,8 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     List<Widget> widgetList = <Widget>[];
     if (CollectionUtils.isNotEmpty(_categories)) {
       widgetList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
-      widgetList.add(_buildCategoryItem(null));
+      widgetList.add(_buildCategoryItem(null)); // "None"
+      widgetList.add(_buildCategoryItem(ToDoCategory())); // "Create a Category"
       for (ToDoCategory category in _categories!) {
         widgetList.add(_buildCategoryItem(category));
       }
@@ -196,6 +208,14 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
 
   Widget _buildCategoryItem(ToDoCategory? category) {
     bool isSelected = (category == _category);
+    late String categoryName;
+    if (category == null) {
+      categoryName = Localization().getStringEx('panel.wellness.todo.item.category.none.label', 'None');
+    } else if (category.id == null) {
+      categoryName = Localization().getStringEx('panel.wellness.todo.item.category.create.label', 'Create a Category');
+    } else {
+      categoryName = category.name!;
+    }
     BorderSide borderSide = BorderSide(color: Styles().colors!.fillColorPrimary!, width: 1);
     return GestureDetector(
         onTap: () => _onTapCategory(category),
@@ -203,7 +223,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             decoration: BoxDecoration(color: Colors.white, border: Border(left: borderSide, right: borderSide, bottom: borderSide)),
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text(StringUtils.ensureNotEmpty(category?.name, defaultValue: Localization().getStringEx('panel.wellness.todo.item.category.none.label', 'None')),
+              Text(StringUtils.ensureNotEmpty(categoryName),
                   style: TextStyle(fontSize: 16, color: Styles().colors!.textSurfaceAccent, fontFamily: Styles().fontFamilies!.regular)),
               Image.asset(isSelected ? 'images/icon-favorite-selected.png' : 'images/icon-favorite-deselected.png')
             ])));
@@ -449,7 +469,10 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
 
   void _onTapCategory(ToDoCategory? category) {
     _hideKeyboard();
-    if (_category != category) {
+    if ((category != null) && (category.id == null)) {
+      Analytics().logSelect(target: 'Create a Category');
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessManageToDoCategoriesPanel()));
+    } else if (_category != category) {
       _category = category;
     }
     _categoriesDropDownVisible = !_categoriesDropDownVisible;
@@ -725,5 +748,16 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       }
     }
     return stringList;
+  }
+
+  // Notifications Listener
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Wellness.notifyToDoCategoryChanged) {
+      _loadCategories();
+    } else if (name == Wellness.notifyToDoCategoryDeleted) {
+      _loadCategories();
+    }
   }
 }

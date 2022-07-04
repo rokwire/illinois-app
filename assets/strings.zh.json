@@ -1689,6 +1689,7 @@
 	"panel.wellness.todo.item.optional_fields.label": "可選字段",
 	"panel.wellness.todo.item.category.field.label": "類別",
     "panel.wellness.todo.item.category.none.label": "沒有任何",
+    "panel.wellness.todo.item.category.create.label": "創建類別",
 	"panel.wellness.todo.item.due_date.field.label": "截止日期",
 	"panel.wellness.todo.item.due_time.field.label": "到期時間",
 	"panel.wellness.todo.item.reminders.field.label": "提醒事項",

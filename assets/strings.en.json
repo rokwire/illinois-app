@@ -1690,6 +1690,7 @@
     "panel.wellness.todo.item.optional_fields.label": "Optional Fields",
     "panel.wellness.todo.item.category.field.label": "CATEGORY",
     "panel.wellness.todo.item.category.none.label": "None",
+    "panel.wellness.todo.item.category.create.label": "Create a Category",
     "panel.wellness.todo.item.due_date.field.label": "DUE DATE",
     "panel.wellness.todo.item.due_time.field.label": "TIME DUE",
     "panel.wellness.todo.item.reminders.field.label": "REMINMDERS",

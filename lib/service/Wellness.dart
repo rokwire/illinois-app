@@ -38,7 +38,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class Wellness with Service implements NotificationsListener {
   static const String notifyToDoCategoryChanged = "edu.illinois.rokwire.wellness.todo.category.changed";
-  static const String notifyToDoCategoryUpdated = "edu.illinois.rokwire.wellness.todo.category.updated";
   static const String notifyToDoCategoryDeleted = "edu.illinois.rokwire.wellness.todo.category.deleted";
   static const String notifyToDoItemCreated = "edu.illinois.rokwire.wellness.todo.item.created";
   static const String notifyToDoItemUpdated = "edu.illinois.rokwire.wellness.todo.item.updated";
