@@ -13,6 +13,9 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
+////////////////////////////
+// HomeHandleWidget
+
 class HomeHandleWidget extends StatefulWidget {
   final String? title;
   final int? position;
@@ -120,6 +123,9 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
   }
 }
 
+////////////////////////////
+// HomeDropTargetWidget
+
 class HomeDropTargetWidget extends StatefulWidget {
 
   final String? favoriteId;
@@ -191,6 +197,9 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
     }
   }
 }
+
+////////////////////////////
+// HomeSlantWidget
 
 class HomeSlantWidget extends StatelessWidget {
 
@@ -272,6 +281,9 @@ class HomeSlantWidget extends StatelessWidget {
 
 }
 
+////////////////////////////
+// HomeTitleIcon
+
 class HomeTitleIcon extends StatelessWidget {
 
   final Image? image;
@@ -285,6 +297,8 @@ class HomeTitleIcon extends StatelessWidget {
   }
 }
 
+////////////////////////////
+// HomeFavoriteButton
 
 class HomeFavoriteButton extends FavoriteButton {
 
@@ -396,6 +410,9 @@ class HomeFavoriteButton extends FavoriteButton {
   }
 }
 
+////////////////////////////
+// HomeDragFeedback
+
 class HomeDragFeedback extends StatelessWidget {
   final String? title;
   final CrossAxisAlignment headerAxisAlignment;
@@ -429,6 +446,9 @@ class HomeDragFeedback extends StatelessWidget {
     ],);
   }
 }
+
+////////////////////////////
+// HomeCommandButton
 
 class HomeCommandButton extends StatelessWidget {
   final HomeFavorite? favorite;
@@ -472,4 +492,53 @@ class HomeCommandButton extends StatelessWidget {
       );
   }
 
+}
+
+////////////////////////////
+// HomeMessageCard
+
+class HomeMessageCard extends StatelessWidget {
+
+  final String? title;
+  final String? message;
+
+  HomeMessageCard({Key? key, this.title, this.message}) : super(key: key);
+  
+  @override
+  Widget build(BuildContext context) {
+    return Container(padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+      child: Column(children: <Widget>[
+        StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
+          Expanded(child:
+            Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
+              Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), semanticsLabel: '',)
+            ),
+          )
+        ]) : Container(),
+        StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
+          Expanded(child:
+            Text(message ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground), semanticsLabel: '',)
+          )
+        ]) : Container(),
+      ]),
+    );
+  }
+}
+
+////////////////////////////
+// HomeProgressWidget
+
+class HomeProgressWidget extends StatelessWidget {
+  
+  @override
+  Widget build(BuildContext context) {
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 48), child:
+      Center(child:
+        SizedBox(height: 24, width: 24, child:
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
+        ),
+      ),
+    );
+  }
 }

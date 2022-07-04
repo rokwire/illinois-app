@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Various UI changes in Wellness To-Do list [#1865](https://github.com/rokwire/illinois-app/issues/1865).
 - Updated launch images [#1869](https://github.com/rokwire/illinois-app/issues/1869).
 - Hide State Farm Wayfinding from Explore / Map [#1872](https://github.com/rokwire/illinois-app/issues/1872).
+- Make Wellness Resources widget horizontally scrollable [#1874](https://github.com/rokwire/illinois-app/issues/1874).
 
 ## [4.0.42] - 2022-07-01
 ### Added

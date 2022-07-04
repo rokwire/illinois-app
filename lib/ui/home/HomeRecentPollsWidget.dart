@@ -3,7 +3,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -19,7 +18,6 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeRecentPollsWidget extends StatefulWidget {
@@ -125,60 +123,22 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
 
   Widget _buildContent() {
     if (Connectivity().isOffline) {
-      return _buildOfflineContent();
+      return HomeMessageCard(
+        title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"),
+        message: Localization().getStringEx("widget.home.recent_polls.text.offline", "Recent Polls are not available while offline"),);
     }
     else if (_loadingPolls) {
-      return _buildLoadingContent();
+      return HomeProgressWidget();
     }
     else if (CollectionUtils.isEmpty(_recentPolls)) {
-      return _buildEmptyContent();
+      return HomeMessageCard(
+        title: Localization().getStringEx("widget.home.recent_polls.text.empty", "Whoops! Nothing to see here."),
+        message: Localization().getStringEx("widget.home.recent_polls.text.empty.description", "No Recent Polls are available right now."),);
     }
     else {
       return _buildPollsContent();
     }
 
-  }
-
-  Widget _buildOfflineContent() {
-    return _buildMessageCard(
-      title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"),
-      message: Localization().getStringEx("widget.home.recent_polls.text.offline", "Recent Polls are not available while offline"),);
-  }
-
-  Widget _buildEmptyContent() {
-    return _buildMessageCard(
-      title: Localization().getStringEx("widget.home.recent_polls.text.empty", "Whoops! Nothing to see here."),
-      message: Localization().getStringEx("widget.home.recent_polls.text.empty.description", "No Recent Polls are available right now."),);
-  }
-
-  Widget _buildMessageCard({String? title, String? message}) {
-    return Container(padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
-        child: Column(children: <Widget>[
-          StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
-            Expanded(child:
-              Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-                Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), semanticsLabel: '',)
-              ),
-            )
-          ]) : Container(),
-          StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
-            Expanded(child:
-              Text(message ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground), semanticsLabel: '',)
-            )
-          ]) : Container(),
-        ]),
-      );
-  }
-
-  Widget _buildLoadingContent() {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 48), child:
-      Center(child:
-        SizedBox(height: 24, width: 24, child:
-          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-        ),
-      ),
-    );
   }
 
   Widget _buildPollsContent() {
