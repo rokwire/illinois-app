@@ -30,7 +30,7 @@ class ToDoItem {
   final bool? hasDueTime;
   DateTime? reminderDateTimeUtc;
   final List<String>? workDays;
-  final ToDoItemLocation? location;
+  final String? location;
   final String? description;
   bool isCompleted;
 
@@ -58,7 +58,7 @@ class ToDoItem {
         hasDueTime: JsonUtils.boolValue(json['has_due_time']),
         reminderDateTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['reminder_date_time']), format: _dateTimeFormat, isUtc: true),
         workDays: JsonUtils.listStringsValue(json['work_days']),
-        location: ToDoItemLocation.fromJson(JsonUtils.mapValue(json['location'])),
+        location: JsonUtils.stringValue(json['location']),
         description: JsonUtils.stringValue(json['description']),
         isCompleted: JsonUtils.boolValue(json['completed']) ?? false);
   }
@@ -72,7 +72,7 @@ class ToDoItem {
       'has_due_time': hasDueTime,
       'reminder_date_time': DateTimeUtils.utcDateTimeToString(reminderDateTimeUtc),
       'work_days': workDays,
-      'location': location?.toJson(),
+      'location': location,
       'description': description,
       'completed': isCompleted
     };
@@ -104,24 +104,6 @@ class ToDoItem {
       }
     }
     return items;
-  }
-}
-
-class ToDoItemLocation {
-  double? latitude;
-  double? longitude;
-
-  ToDoItemLocation({this.latitude, this.longitude});
-
-  static ToDoItemLocation? fromJson(Map<String, dynamic>? json) {
-    if (json == null) {
-      return null;
-    }
-    return ToDoItemLocation(latitude: JsonUtils.doubleValue(json['latitude']), longitude: JsonUtils.doubleValue(json['longitude']));
-  }
-
-  Map<String, dynamic> toJson() {
-    return {'latitude': latitude, 'longitude': longitude};
   }
 }
 

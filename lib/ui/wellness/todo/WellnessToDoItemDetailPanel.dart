@@ -17,7 +17,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -43,10 +42,10 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   List<ToDoCategory>? _categories;
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _locationController = TextEditingController();
   DateTime? _dueDate;
   TimeOfDay? _dueTime;
   List<DateTime>? _workDays;
-  ToDoItemLocation? _location;
   bool _optionalFieldsVisible = false;
   bool _categoriesDropDownVisible = false;
   bool _loading = false;
@@ -303,18 +302,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
           Padding(
               padding: EdgeInsets.only(bottom: 5),
               child: _buildFieldLabel(label: Localization().getStringEx('panel.wellness.todo.item.location.field.label', 'LOCATION'))),
-          GestureDetector(
-              onTap: _onTapLocation,
-              child: Row(children: [
-                Expanded(
-                    child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                        decoration:
-                            BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
-                        child: Text(StringUtils.ensureNotEmpty(_formattedLocation),
-                            style:
-                                TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface))))
-              ]))
+          _buildInputField(controller: _locationController)
         ]));
   }
 
@@ -430,23 +418,6 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     }
   }
 
-  void _onTapLocation() async {
-    _setLoading(true);
-    String? location = await NativeCommunicator().launchSelectLocation();
-    if (location != null) {
-      Map<String, dynamic>? locationSelectionResult = JsonUtils.decodeMap(location);
-      if (locationSelectionResult != null && locationSelectionResult.isNotEmpty) {
-        Map<String, dynamic>? locationData = locationSelectionResult["location"];
-        if (locationData != null) {
-          double? lat = JsonUtils.doubleValue(locationData['latitude']);
-          double? long = JsonUtils.doubleValue(locationData['longitude']);
-          _location = ToDoItemLocation(latitude: lat, longitude: long);
-        }
-      }
-    }
-    _setLoading(false);
-  }
-
   Future<DateTime?> _pickDate({DateTime? initialDate}) async {
     if (initialDate == null) {
       initialDate = DateTime.now();
@@ -512,6 +483,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
         _dueDate = DateTime(_dueDate!.year, _dueDate!.month, _dueDate!.day, _dueTime!.hour, _dueTime!.minute);
       }
     }
+    String? location = StringUtils.isNotEmpty(_locationController.text) ? _locationController.text : null;
     String? description = StringUtils.isNotEmpty(_descriptionController.text) ? _descriptionController.text : null;
     ToDoItem itemToSave = ToDoItem(
         id: _item?.id,
@@ -519,7 +491,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
         category: _category,
         dueDateTimeUtc: _dueDate?.toUtc(),
         hasDueTime: hasDueTime,
-        location: _location,
+        location: location,
         isCompleted: _item?.isCompleted ?? false,
         description: description,
         workDays: _formattedWorkDays,
@@ -562,6 +534,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     _category = _item?.category;
     _nameController.text = StringUtils.ensureNotEmpty(_item?.name);
     _descriptionController.text = StringUtils.ensureNotEmpty(_item?.description);
+    _locationController.text = StringUtils.ensureNotEmpty(_item?.location);
     _dueDate = _item?.dueDateTime;
     if ((_dueDate != null) && (_item?.hasDueTime ?? false) == true) {
       _dueTime = TimeOfDay(hour: _dueDate!.hour, minute: _dueDate!.minute);
@@ -575,7 +548,6 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
         }
       }
     }
-    _location = _item?.location;
   }
 
   void _setLoading(bool loading) {
@@ -603,14 +575,6 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     }
     DateTime time = DateTime(_dueDate!.year, _dueDate!.month, _dueDate!.day, _dueTime!.hour, _dueTime!.minute);
     return AppDateTime().formatDateTime(time, format: 'h:mm a', ignoreTimeZone: true);
-  }
-
-  String? get _formattedLocation {
-    if (_location != null) {
-      return '${_location?.latitude}, ${_location?.longitude}';
-    } else {
-      return null;
-    }
   }
 
   List<String>? get _formattedWorkDays {
