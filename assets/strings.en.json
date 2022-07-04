@@ -2588,13 +2588,13 @@
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide are not available while offline.",
     "widget.home.favorites.message.offline.inbox": "My Notifications are not available while offline.",
 
-    "widget.home.favorites.message.empty.events": "Tap the \u2606 on on items in Events so you can quickly find them here.",
-    "widget.home.favorites.message.empty.dining": "Tap the \u2606 on on items in Dinings so you can quickly find them here.",
-    "widget.home.favorites.message.empty.athletics": "Tap the \u2606 on on items in Athletics Events so you can quickly find them here.",
-    "widget.home.favorites.message.empty.news": "Tap the \u2606 on on items in Athletics News so you can quickly find them here.",
-    "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on on items in Laundry so you can quickly find them here.",
-    "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on on items in Campus Guide so you can quickly find them here.",
-    "widget.home.favorites.message.empty.inbox": "Tap the \u2606 on on items in Notifications so you can quickly find them here.",
+    "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in Events so you can quickly find them here.",
+    "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in Dinings so you can quickly find them here.",
+    "widget.home.favorites.message.empty.athletics": "Tap the \u2606 on items in Athletics Events so you can quickly find them here.",
+    "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in Athletics News so you can quickly find them here.",
+    "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in Laundry so you can quickly find them here.",
+    "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in Campus Guide so you can quickly find them here.",
+    "widget.home.favorites.message.empty.inbox": "Tap the \u2606 on items in Notifications so you can quickly find them here.",
 
     "widget.home.favorites.message.logged_out.inbox": "You need to be logged in to access My Notifications.",
 
@@ -2608,6 +2608,10 @@
     "widget.home.favorites.all.hint.inbox": "Tap to view all favorite notifications",
 
 	"widget.home.wellness_resources.header.label": "My Wellness Resources",
+    "widget.home.wellness_resources.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in Wellness Resources so you can quickly find them here.",
+    "widget.home.wellness_resources.button.all.title": "View All",
+    "widget.home.wellness_resources.button.all.hint": "Tap to view all wellness resources",
 
     "widget.athletics_card.button.get_tickets.title":"Get Tickets",
     "widget.athletics_card.button.get_tickets.hint":"",

@@ -2601,6 +2601,10 @@
 	"widget.home.favorites.all.hint.inbox": "點按即可查看所有收藏通知",
 
 	"widget.home.wellness_resources.header.label": "我的健康資源",
+	"widget.home.wellness_resources.text.empty": "哎呀！ 這沒東西看。",
+	"widget.home.wellness_resources.text.empty.description": "在健康資源中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
+	"widget.home.wellness_resources.button.all.title": "查看全部",
+	"widget.home.wellness_resources.button.all.hint": "點擊查看所有健康資源",
 
 	"widget.athletics_card.button.get_tickets.title":"获取门票",
 	"widget.athletics_card.button.get_tickets.hint":"",
