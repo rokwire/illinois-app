@@ -1667,7 +1667,6 @@
     "panel.wellness.categories.create.header.label": "Crear una categoría",
     "panel.wellness.categories.create.header.description": "Ejemplos: una RSO o club, una clase específica o una categoría de tarea miscelánea.",
     "panel.wellness.categories.name.field.label": "NOMBRE",
-    "panel.wellness.categories.reminders.field.label": "RECORDATORIOS",
     "panel.wellness.todo.items.this_week.label": "Esta semana",
     "panel.wellness.categories.save.button": "Ahorrar",
     "panel.wellness.categories.delete.button": "Borrar",
@@ -1690,6 +1689,7 @@
     "panel.wellness.todo.item.category.none.label": "Ninguno",
     "panel.wellness.todo.item.due_date.field.label": "FECHA DE VENCIMIENTO",
     "panel.wellness.todo.item.due_time.field.label": "TIEMPO DE VENCIMIENTO",
+    "panel.wellness.todo.item.reminders.field.label": "RECORDATORIOS",
     "panel.wellness.todo.item.work_days.field.label": "DÍAS PARA TRABAJAR EN EL ARTÍCULO",
     "panel.wellness.todo.item.location.field.label": "UBICACIÓN",
     "panel.wellness.todo.item.description.field.label": "DESCRIPCIÓN",
@@ -2825,6 +2825,7 @@
     "model.wellness.todo.category.reminder.type.none.label": "Ninguno",
     "model.wellness.todo.category.reminder.type.morning_of.label": "Mañana de",
     "model.wellness.todo.category.reminder.type.night_before.label": "La noche anterior",
+    "model.wellness.todo.category.reminder.type.specific_time.label": "Tiempo específico",
 
     "logic.date_time.greeting.morning": "Buenos días",
     "logic.date_time.greeting.afternoon": "Buenas tardes",

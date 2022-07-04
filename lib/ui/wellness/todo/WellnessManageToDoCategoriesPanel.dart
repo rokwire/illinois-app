@@ -38,11 +38,9 @@ class WellnessManageToDoCategoriesPanel extends StatefulWidget {
 class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCategoriesPanel> implements NotificationsListener {
   ToDoCategory? _category;
   List<ToDoCategory>? _categories;
-  late ToDoCategoryReminderType _selectedReminderType;
   Color? _selectedColor;
   Color? _tmpColor;
   TextEditingController _nameController = TextEditingController();
-  bool _reminderTypeDropDownValuesVisible = false;
   bool _loading = false;
 
   @override
@@ -52,7 +50,6 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
         .subscribe(this, [Wellness.notifyToDoCategoryChanged, Wellness.notifyToDoCategoryDeleted]);
     _category = widget.category;
     _selectedColor = _category?.color;
-    _selectedReminderType = _category?.reminderType ?? ToDoCategoryReminderType.none;
     _loadCategories();
   }
 
@@ -73,7 +70,8 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                 _buildCreateCategoryHeader(),
                 _buildCategoryNameWidget(),
                 _buildColorsRowWidget(),
-                _buildRemindersWidget()
+                _buildEditCategoryButtons(),
+                _buildManageCategories()
               ]))),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: uiuc.TabBar(),
@@ -162,79 +160,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     ]));
   }
 
-  Widget _buildRemindersWidget() {
-    String? selectedTypeLabel = ToDoCategory.reminderTypeToDisplayString(_selectedReminderType);
-    return Padding(
-        padding: EdgeInsets.only(top: 20),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Padding(
-              padding: EdgeInsets.only(bottom: 5),
-              child: Text(Localization().getStringEx('panel.wellness.categories.reminders.field.label', 'REMINDERS'),
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold))),
-          GestureDetector(
-              onTap: _onTapSelectedReminderType,
-              child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  height: 48,
-                  decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
-                  child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                    Text(StringUtils.ensureNotEmpty(selectedTypeLabel),
-                        style:
-                            TextStyle(fontSize: 16, color: Styles().colors!.textSurfaceAccent, fontFamily: Styles().fontFamilies!.regular)),
-                    Image.asset(_reminderTypeDropDownValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png')
-                  ]))),
-          Stack(children: [
-            Column(children: [_buildSaveButton(), _buildManageCategories()]),
-            _buildReminderTypesWidget()
-          ])
-        ]));
-  }
-
-  Widget _buildReminderTypesWidget() {
-    return Visibility(
-        visible: _reminderTypeDropDownValuesVisible,
-        child: Positioned.fill(
-            child: Stack(children: <Widget>[_buildReminderTypeDropDownDismissLayer(), _buildReminderTypeDropDownItemsWidget()])));
-  }
-
-  Widget _buildReminderTypeDropDownDismissLayer() {
-    return Positioned.fill(
-        child: BlockSemantics(
-            child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _reminderTypeDropDownValuesVisible = false;
-                  });
-                },
-                child: Container(color: Colors.transparent))));
-  }
-
-  Widget _buildReminderTypeDropDownItemsWidget() {
-    List<Widget> sectionList = <Widget>[];
-    sectionList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
-    for (ToDoCategoryReminderType type in ToDoCategoryReminderType.values) {
-      sectionList.add(_buildReminderTypeItem(type));
-    }
-    return Column(children: sectionList);
-  }
-
-  Widget _buildReminderTypeItem(ToDoCategoryReminderType type) {
-    bool isSelected = (type == _selectedReminderType);
-    BorderSide borderSide = BorderSide(color: Styles().colors!.fillColorPrimary!, width: 1);
-    return GestureDetector(
-        onTap: () => _onTapReminderType(type),
-        child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            height: 48,
-            decoration: BoxDecoration(color: Colors.white, border: Border(left: borderSide, right: borderSide, bottom: borderSide)),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text(StringUtils.ensureNotEmpty(ToDoCategory.reminderTypeToDisplayString(type)),
-                  style: TextStyle(fontSize: 16, color: Styles().colors!.textSurfaceAccent, fontFamily: Styles().fontFamilies!.regular)),
-              Image.asset(isSelected ? 'images/icon-favorite-selected.png' : 'images/icon-favorite-deselected.png')
-            ])));
-  }
-
-  Widget _buildSaveButton() {
+  Widget _buildEditCategoryButtons() {
     bool hasCategoryForEdit = (_category != null);
     return Padding(
         padding: EdgeInsets.only(top: 30),
@@ -330,7 +256,6 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     _category = category;
     _nameController.text = StringUtils.ensureNotEmpty(_category?.name);
     _selectedColor = _category?.color;
-    _selectedReminderType = _category?.reminderType ?? ToDoCategoryReminderType.none;
     _updateState();
   }
 
@@ -373,8 +298,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
       return;
     }
     _setLoading(true);
-    ToDoCategory cat =
-        ToDoCategory(id: _category?.id, name: name, colorHex: UiColors.toHex(_selectedColor), reminderType: _selectedReminderType);
+    ToDoCategory cat = ToDoCategory(id: _category?.id, name: name, colorHex: UiColors.toHex(_selectedColor));
     Wellness().saveToDoCategory(cat).then((success) {
       late String msg;
       if (success) {
@@ -399,21 +323,6 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     }
   }
 
-  void _onTapReminderType(ToDoCategoryReminderType type) {
-    _hideKeyboard();
-    if (_reminderTypeDropDownValuesVisible) {
-      _reminderTypeDropDownValuesVisible = false;
-    }
-    _selectedReminderType = type;
-    _updateState();
-  }
-
-  void _onTapSelectedReminderType() {
-    _hideKeyboard();
-    _reminderTypeDropDownValuesVisible = !_reminderTypeDropDownValuesVisible;
-    _updateState();
-  }
-
   void _loadCategories() {
     _setLoading(true);
     Wellness().loadToDoCategories().then((categories) {
@@ -425,7 +334,6 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   void _clearCategoryFields() {
     _category = null;
     _selectedColor = null;
-    _selectedReminderType = ToDoCategoryReminderType.none;
     _nameController.text = '';
     _updateState();
   }

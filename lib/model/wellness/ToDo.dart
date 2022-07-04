@@ -28,6 +28,7 @@ class ToDoItem {
   final ToDoCategory? category;
   final DateTime? dueDateTimeUtc;
   final bool? hasDueTime;
+  ToDoReminderType? reminderType;
   DateTime? reminderDateTimeUtc;
   final List<String>? workDays;
   final String? location;
@@ -40,6 +41,7 @@ class ToDoItem {
       this.category,
       this.dueDateTimeUtc,
       this.hasDueTime,
+      this.reminderType,
       this.reminderDateTimeUtc,
       this.workDays,
       this.location,
@@ -56,6 +58,7 @@ class ToDoItem {
         category: ToDoCategory.fromJson(JsonUtils.mapValue(json['category'])),
         dueDateTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['due_date_time']), format: _dateTimeFormat, isUtc: true),
         hasDueTime: JsonUtils.boolValue(json['has_due_time']),
+        reminderType: reminderTypeFromString(JsonUtils.stringValue(json['reminder_type'])),
         reminderDateTimeUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['reminder_date_time']), format: _dateTimeFormat, isUtc: true),
         workDays: JsonUtils.listStringsValue(json['work_days']),
         location: JsonUtils.stringValue(json['location']),
@@ -70,6 +73,7 @@ class ToDoItem {
       'category': category?.toJson(),
       'due_date_time': DateTimeUtils.utcDateTimeToString(dueDateTimeUtc),
       'has_due_time': hasDueTime,
+      'reminder_type': reminderTypeToKeyString(reminderType),
       'reminder_date_time': DateTimeUtils.utcDateTimeToString(reminderDateTimeUtc),
       'work_days': workDays,
       'location': location,
@@ -91,6 +95,10 @@ class ToDoItem {
     return AppDateTime().formatDateTime(dueDateTime, format: 'EEEE, MM/dd', ignoreTimeZone: true);
   }
 
+  DateTime? get reminderDateTime {
+    return AppDateTime().getDeviceTimeFromUtcTime(reminderDateTimeUtc);
+  }
+
   Color get color {
     return category?.color ?? Styles().colors!.fillColorPrimary!;
   }
@@ -105,15 +113,61 @@ class ToDoItem {
     }
     return items;
   }
+
+  static ToDoReminderType? reminderTypeFromString(String? typeValue) {
+    switch (typeValue) {
+      case 'night_before':
+        return ToDoReminderType.night_before;
+      case 'morning_of':
+        return ToDoReminderType.morning_of;
+      case 'specific_time':
+        return ToDoReminderType.specific_time;
+      case 'none':
+        return ToDoReminderType.none;
+      default:
+        return null;
+    }
+  }
+
+  static String? reminderTypeToKeyString(ToDoReminderType? type) {
+    switch (type) {
+      case ToDoReminderType.night_before:
+        return 'night_before';
+      case ToDoReminderType.morning_of:
+        return 'morning_of';
+      case ToDoReminderType.specific_time:
+        return 'specific_time';
+      case ToDoReminderType.none:
+        return 'none';
+      default:
+        return null;
+    }
+  }
+
+  static String? reminderTypeToDisplayString(ToDoReminderType? type) {
+    switch (type) {
+      case ToDoReminderType.none:
+        return Localization().getStringEx('model.wellness.todo.category.reminder.type.none.label', 'None');
+      case ToDoReminderType.morning_of:
+        return Localization().getStringEx('model.wellness.todo.category.reminder.type.morning_of.label', 'Morning Of');
+      case ToDoReminderType.night_before:
+        return Localization().getStringEx('model.wellness.todo.category.reminder.type.night_before.label', 'Night Before');
+      case ToDoReminderType.specific_time:
+        return Localization().getStringEx('model.wellness.todo.category.reminder.type.specific_time.label', 'Specific Time');
+      default:
+        return null;
+    }
+  }
 }
+
+enum ToDoReminderType { morning_of, night_before, specific_time, none }
 
 class ToDoCategory {
   final String? id;
   String? name;
   String? colorHex;
-  ToDoCategoryReminderType? reminderType;
 
-  ToDoCategory({this.id, this.name, this.colorHex, this.reminderType});
+  ToDoCategory({this.id, this.name, this.colorHex});
 
   static ToDoCategory? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -122,8 +176,7 @@ class ToDoCategory {
     return ToDoCategory(
         id: JsonUtils.stringValue(json['id']),
         name: JsonUtils.stringValue(json['name']),
-        colorHex: JsonUtils.stringValue(json['color']),
-        reminderType: reminderTypeFromString(JsonUtils.stringValue(json['reminder_type'])));
+        colorHex: JsonUtils.stringValue(json['color']));
   }
 
   Color get color {
@@ -142,47 +195,6 @@ class ToDoCategory {
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'name': name, 'color': colorHex, 'reminder_type': reminderTypeToKeyString(reminderType)};
-  }
-
-  static ToDoCategoryReminderType? reminderTypeFromString(String? typeValue) {
-    switch (typeValue) {
-      case 'night_before':
-        return ToDoCategoryReminderType.night_before;
-      case 'morning_of':
-        return ToDoCategoryReminderType.morning_of;
-      case 'none':
-        return ToDoCategoryReminderType.none;
-      default:
-        return null;
-    }
-  }
-
-  static String? reminderTypeToKeyString(ToDoCategoryReminderType? type) {
-    switch (type) {
-      case ToDoCategoryReminderType.night_before:
-        return 'night_before';
-      case ToDoCategoryReminderType.morning_of:
-        return 'morning_of';
-      case ToDoCategoryReminderType.none:
-        return 'none';
-      default:
-        return null;
-    }
-  }
-
-  static String? reminderTypeToDisplayString(ToDoCategoryReminderType? type) {
-    switch (type) {
-      case ToDoCategoryReminderType.none:
-        return Localization().getStringEx('model.wellness.todo.category.reminder.type.none.label', 'None');
-      case ToDoCategoryReminderType.morning_of:
-        return Localization().getStringEx('model.wellness.todo.category.reminder.type.morning_of.label', 'Morning Of');
-      case ToDoCategoryReminderType.night_before:
-        return Localization().getStringEx('model.wellness.todo.category.reminder.type.night_before.label', 'Night Before');
-      default:
-        return null;
-    }
+    return {'id': id, 'name': name, 'color': colorHex};
   }
 }
-
-enum ToDoCategoryReminderType { night_before, morning_of, none }

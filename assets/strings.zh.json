@@ -1669,7 +1669,6 @@
 	"panel.wellness.categories.create.header.label": "創建類別",
 	"panel.wellness.categories.create.header.description": "示例：RSO 或俱樂部、特定班級或雜項任務類別.",
 	"panel.wellness.categories.name.field.label": "姓名",
-	"panel.wellness.categories.reminders.field.label": "提醒事項",
 	"panel.wellness.todo.items.this_week.label": "本星期",
 	"panel.wellness.categories.save.button": "節省",
     "panel.wellness.categories.delete.button": "刪除",
@@ -1692,6 +1691,7 @@
     "panel.wellness.todo.item.category.none.label": "沒有任何",
 	"panel.wellness.todo.item.due_date.field.label": "截止日期",
 	"panel.wellness.todo.item.due_time.field.label": "到期時間",
+	"panel.wellness.todo.item.reminders.field.label": "提醒事項",
 	"panel.wellness.todo.item.work_days.field.label": "工作天數",
 	"panel.wellness.todo.item.location.field.label": "地點",
 	"panel.wellness.todo.item.description.field.label": "描述",
@@ -2825,6 +2825,7 @@
     "model.wellness.todo.category.reminder.type.none.label": "沒有任何",
     "model.wellness.todo.category.reminder.type.morning_of.label": "早上的",
     "model.wellness.todo.category.reminder.type.night_before.label": "前一天晚上",
+    "model.wellness.todo.category.reminder.type.specific_time.label": "特定的時間",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",
