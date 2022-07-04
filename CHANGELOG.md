@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Various UI changes in Wellness To-Do list [#1865](https://github.com/rokwire/illinois-app/issues/1865).
+- Updated launch images [#1869](https://github.com/rokwire/illinois-app/issues/1869).
 
 ## [4.0.42] - 2022-07-01
 ### Added
