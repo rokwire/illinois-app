@@ -497,7 +497,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
 
   void _onTapDueDate() async {
     _hideKeyboard();
-    DateTime? resultDate = await _pickDate(initialDate: _dueDate);
+    DateTime? resultDate = await _pickDate();
     if (resultDate != null) {
       _dueDate = resultDate;
       if (_selectedReminderType != ToDoReminderType.specific_time) {
@@ -512,7 +512,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       return;
     }
     _hideKeyboard();
-    TimeOfDay? resultTime = await _pickTime(initialTime: _dueTime);
+    TimeOfDay? resultTime = await _pickTime();
     if (resultTime != null) {
       _dueTime = resultTime;
       _updateState();
@@ -520,7 +520,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   void _onTapWorkDays() async {
-    DateTime? resultDate = await _pickDate(initialDate: _workDays?.last);
+    DateTime? resultDate = await _pickDate();
     if ((resultDate != null) && !(_workDays?.contains(resultDate) ?? false)) {
       if (_workDays == null) {
         _workDays = <DateTime>[];
@@ -538,10 +538,8 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     }
   }
 
-  Future<DateTime?> _pickDate({DateTime? initialDate}) async {
-    if (initialDate == null) {
-      initialDate = DateTime.now();
-    }
+  Future<DateTime?> _pickDate() async {
+    final DateTime initialDate = DateTime.now();
     final int oneYearInDays = 365;
     DateTime firstDate = DateTime.fromMillisecondsSinceEpoch(initialDate.subtract(Duration(days: oneYearInDays)).millisecondsSinceEpoch);
     DateTime lastDate = DateTime.fromMillisecondsSinceEpoch(initialDate.add(Duration(days: oneYearInDays)).millisecondsSinceEpoch);
@@ -556,10 +554,8 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     return resultDate;
   }
 
-  Future<TimeOfDay?> _pickTime({TimeOfDay? initialTime}) async {
-    if (initialTime == null) {
-      initialTime = TimeOfDay.now();
-    }
+  Future<TimeOfDay?> _pickTime() async {
+    TimeOfDay initialTime = TimeOfDay.now();
     return await showTimePicker(context: context, initialTime: initialTime);
   }
 
@@ -697,7 +693,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
             DateTime(_dueDate!.year, _dueDate!.month, (_dueDate!.day), 17).subtract(Duration(days: 1)); // 17 o'clock the night before
         break;
       case ToDoReminderType.specific_time:
-        TimeOfDay? pickedTime = await _pickTime(initialTime: _dueTime);
+        TimeOfDay? pickedTime = await _pickTime();
         if (pickedTime == null) {
           return;
         }
