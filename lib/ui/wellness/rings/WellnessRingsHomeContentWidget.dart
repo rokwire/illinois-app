@@ -40,7 +40,7 @@ class WellnessRingsHomeContentWidget extends StatefulWidget {
 class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeContentWidget> implements NotificationsListener{
 
   late _WellnessRingsTab _selectedTab;
-  List<WellnessRingData>? _ringsData;
+  List<WellnessRingDefinition>? _ringsData;
 
   @override
   void initState() {
@@ -49,7 +49,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     NotificationService().subscribe(this, [
       WellnessRings.notifyUserRingsUpdated,
     ]);
-    WellnessRings().getWellnessRings().then((rings){
+    WellnessRings().loadWellnessRings().then((rings){
       _ringsData = rings;
       if(mounted) setState(() {});
     });
@@ -172,7 +172,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
   Widget _buildButtons(){
     List<Widget> content = [];
     if(_ringsData != null && _ringsData!.isNotEmpty) {
-      for (WellnessRingData? data  in _ringsData!) {
+      for (WellnessRingDefinition? data  in _ringsData!) {
         if (data != null) {
           content.add(WellnessRingButton(
               label: data.name ?? "",
@@ -214,8 +214,11 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     String description = "Maximum of 4 total";
     return Semantics(label: label, hint: description, button: true, excludeSemantics: true, child:
     GestureDetector(onTap: (){
-      Analytics().logSelect(target: "Create new ring");
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingSelectPredefinedPanel()));
+      if(enabled) {
+        Analytics().logSelect(target: "Create new ring");
+        Navigator.push(context, CupertinoPageRoute(
+            builder: (context) => WellnessRingSelectPredefinedPanel()));
+      }
     },
       child:
     Container(

@@ -13,7 +13,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class WellnessRingCreatePanel extends StatefulWidget{
-  final WellnessRingData? data;
+  final WellnessRingDefinition? data;
   final String? examplesText;
   final bool initialCreation;
 
@@ -24,7 +24,7 @@ class WellnessRingCreatePanel extends StatefulWidget{
 }
 
 class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> implements NotificationsListener {
-  WellnessRingData? _ringData;
+  WellnessRingDefinition? _ringData;
   Color? _selectedColor;
   Color? _tmpColor;
   TextEditingController _nameController = TextEditingController();
@@ -294,7 +294,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
       return;
     }
     _setLoading(true);
-    _ringData = WellnessRingData(name: name, colorHex: ColorUtils.toHex(_selectedColor!), goal: quantity, unit: unit, timestamp: DateTime.now().millisecondsSinceEpoch, id: "id_${DateTime.now().millisecondsSinceEpoch}");
+    _ringData = WellnessRingDefinition(name: name, colorHex: ColorUtils.toHex(_selectedColor!), goal: quantity, unit: unit, timestamp: DateTime.now().millisecondsSinceEpoch, id: "id_${DateTime.now().millisecondsSinceEpoch}");
     if(widget.data?.id != null) {
       _ringData!.id = widget.data!.id;
     }
