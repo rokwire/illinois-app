@@ -501,27 +501,34 @@ class HomeMessageCard extends StatelessWidget {
 
   final String? title;
   final String? message;
+  final EdgeInsetsGeometry margin;
 
-  HomeMessageCard({Key? key, this.title, this.message}) : super(key: key);
+  HomeMessageCard({Key? key,
+    this.title,
+    this.message,
+    this.margin = const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
+  }) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
-    return Container(padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
-      child: Column(children: <Widget>[
-        StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
-          Expanded(child:
-            Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-              Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), semanticsLabel: '',)
-            ),
-          )
-        ]) : Container(),
-        StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
-          Expanded(child:
-            Text(message ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground), semanticsLabel: '',)
-          )
-        ]) : Container(),
-      ]),
+    return Padding(padding: margin, child:
+      Container(padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        child: Column(children: <Widget>[
+          StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
+            Expanded(child:
+              Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
+                Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), semanticsLabel: '',)
+              ),
+            )
+          ]) : Container(),
+          StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
+            Expanded(child:
+              Text(message ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground), semanticsLabel: '',)
+            )
+          ]) : Container(),
+        ]),
+      ),
     );
   }
 }
@@ -533,10 +540,10 @@ class HomeProgressWidget extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 48), child:
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 96, bottom: 32), child:
       Center(child:
-        SizedBox(height: 24, width: 24, child:
-          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
+        Container(height: 24, width: 24, child:
+          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
         ),
       ),
     );

@@ -74,6 +74,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   @override
   void dispose() {
     super.dispose();
+    _pageController?.dispose();
     NotificationService().unsubscribe(this);
   }
 
@@ -90,32 +91,34 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(visible: _haveGroups, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId,
-          title: widget._title,
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-          child: _buildContent(),
-          childPadding: const EdgeInsets.only(top: 8),
-        ),
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
+      title: widget._title,
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      childPadding: EdgeInsets.zero,
+      child: _haveGroups ? _buildContent() : _buildEmpty(),
     );
   }
 
+
   Widget _buildContent() {
+    final double spacing = 16;
+
     List<Widget> pages = <Widget>[];
     if(_groups?.isNotEmpty ?? false) {
       for (Group? group in _groups!) {
         if (group != null) {
-          pages.add(GroupCard(
-            group: group, displayType: GroupCardDisplayType.homeGroups,));
+          pages.add(Padding(padding: EdgeInsets.only(right: spacing), child:
+            GroupCard(group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+          ));
         }
       }
     }
 
-    double screenWidth = MediaQuery.of(context).size.width * 2/3;
     double pageHeight = 90 * 2 * MediaQuery.of(context).textScaleFactor;
-    double pageViewport = (screenWidth - 40) / screenWidth;
 
     if (_pageController == null) {
+      double screenWidth = MediaQuery.of(context).size.width;
+      double pageViewport = (screenWidth - 2 * spacing) / screenWidth;
       _pageController = PageController(viewportFraction: pageViewport);
     }
 
@@ -147,6 +150,23 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
     }
 
     return groups;
+  }
+
+  Widget _buildEmpty() {
+    String title, message;
+    switch(widget.contentType) {
+      
+      case GroupsContentType.my:
+        title = Localization().getStringEx('widget.home.groups.my.text.empty', 'Whoops! Nothing to see here.');
+        message = Localization().getStringEx('widget.home.groups.my.text.description', 'You have not created any groups yet.');
+        break;
+      
+      case GroupsContentType.all:
+        title = Localization().getStringEx('widget.home.groups.all.text.empty', 'Whoops! Nothing to see here.');
+        message = Localization().getStringEx('widget.home.groups.all.text.description', 'Failed to load groups.');
+        break;
+    }
+    return HomeMessageCard(title: title, message: message,);
   }
 
 

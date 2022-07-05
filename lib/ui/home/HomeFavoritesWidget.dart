@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
 
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Favorite.dart';
@@ -68,6 +69,7 @@ class HomeFavoritesWidget extends StatefulWidget {
 class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements NotificationsListener {
 
   List<Favorite>? _favorites;
+  PageController? _pageController;
   bool _loadingFavorites = false;
   
   @override
@@ -95,6 +97,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _pageController?.dispose();
     super.dispose();
   }
 
@@ -117,55 +120,73 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   @override
   Widget build(BuildContext context) {
-    return 
-      HomeSlantWidget(favoriteId: widget.favoriteId,
-        title: headingTitle,
-        titleIcon: headingIcon,
-        child: Column(children: _buildContent()
-      ),
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
+      title: headingTitle,
+      titleIcon: headingIcon,
+      childPadding: EdgeInsets.zero,
+      child: _buildContent()
     );
   }
 
-  List<Widget> _buildContent() {
+  Widget _buildContent() {
     if (Connectivity().isOffline) {
-      return [ HomeMessageCard(title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"), message: _offlineMessage,) ];
+      return HomeMessageCard(title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"), message: _offlineMessage,);
     }
     else if ((widget.favoriteKey == InboxMessage.favoriteKeyName) && !Auth2().isOidcLoggedIn) {
-      return [ HomeMessageCard(title: Localization().getStringEx("app.logged_out.message.title", "You are not logged in"), message: _loggedOutMessage,) ];
+      return HomeMessageCard(title: Localization().getStringEx("app.logged_out.message.title", "You are not logged in"), message: _loggedOutMessage,);
     }
     else if (_loadingFavorites) {
-      return [ HomeProgressWidget() ];
+      return HomeProgressWidget();
     }
     else if ((_favorites == null) || (_favorites!.length == 0)) {
-      return [ HomeMessageCard(message: _emptyMessage) ];
+      return HomeMessageCard(message: _emptyMessage);
     }
     else {
-      return _buildContentList();
+      return _buildFavorites();
     }
   }
 
-  List<Widget> _buildContentList() {
-    List<Widget> widgets = [];
-    if (CollectionUtils.isNotEmpty(_favorites)) {
-      int itemsCount = _favorites!.length;
-      int visibleCount = min(Config().homeFavoriteItemsCount, itemsCount);
-      for (int i = 0; i < visibleCount; i++) {
-        Favorite? item = _favorites![i];
-        if (0 < widgets.length) {
-          widgets.add(Container(height: 12,));
-        }
-        widgets.add(_buildItemCard(item));
+  Widget _buildFavorites() {
+    Widget contentWidget;
+    int visibleCount = min(Config().homeFavoriteItemsCount, _favorites?.length ?? 0);
+    if (1 < visibleCount) {
+      final double spacing = 16;
+
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        _pageController = PageController(viewportFraction: (screenWidth - 2 * spacing) / screenWidth);
       }
 
-      if (visibleCount < itemsCount) {
-        widgets.add(LinkButton(
-          title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
-          hint: _viewAllHint,
-          onTap: _onSeeAll,
-        ));
+      double pageHeight = (20 + 16) * MediaQuery.of(context).textScaleFactor + 7 + 2 * 16 + 12;
+
+      List<Widget> pages = [];
+      for (int i = 0; i < visibleCount; i++) {
+        pages.add(Padding(padding: EdgeInsets.only(right: spacing), child:
+          _buildItemCard(_favorites![i])),
+        );
       }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
+        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+      );
     }
-    return widgets;
+    else {
+      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        _buildItemCard(_favorites!.first),
+      );
+    }
+
+
+    return Column(children: <Widget>[
+      Padding(padding: EdgeInsets.only(top: 8), child:
+        contentWidget,
+      ),
+      LinkButton(
+        title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
+        hint: _viewAllHint,
+        onTap: _onSeeAll,
+      )      
+    ]);
   }
 
   Widget _buildItemCard(Favorite? item) {

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Twitter.dart';
@@ -11,9 +12,11 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 //import 'package:rokwire_plugin/service/config.dart' as rokwire;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -34,7 +37,7 @@ class HomeTwitterWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => 'Twitter' /* TBD: Localization */;
+  static String get title => Localization().getStringEx('widget.home.twitter.header.label', 'Twitter');
   
   @override
   _HomeTwitterWidgetState createState() => _HomeTwitterWidgetState();
@@ -84,6 +87,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   @override
   void dispose() {
     super.dispose();
+    _pageController?.dispose();
     NotificationService().unsubscribe(this);
   }
 
@@ -139,8 +143,8 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
             Expanded(child:
               Padding(padding: EdgeInsets.only(top: 14), child:
-                Semantics(label: 'Twitter' /* TBD: Localization */, header: true, excludeSemantics: true, child:
-                  Text('Twitter' /* TBD: Localization */, style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                Semantics(label: HomeTwitterWidget.title, header: true, excludeSemantics: true, child:
+                  Text(HomeTwitterWidget.title, style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
                 )
               )
             ),
@@ -197,6 +201,8 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   }
 
   Widget _buildContent() {
+    final double spacing = 16;
+
     List<Widget> pages = <Widget>[];
     for (TweetsPage tweetsPage in _tweetsPages) {
       if (tweetsPage.tweets != null) {
@@ -204,7 +210,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
           bool isFirst = pages.isEmpty;
           pages.add(_TweetWidget(
             tweet: tweet,
-            margin: EdgeInsets.only(bottom: 5, right: 20),
+            margin: EdgeInsets.only(right: spacing),
             onTapPrevious: isFirst? null : _onTapPrevious,
             onTapNext: _onTapNext,
           ));
@@ -219,21 +225,44 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       ));
     }
 
-    double screenWidth = MediaQuery.of(context).size.width;
-    double pageHeight = screenWidth - 20 * 2 + 5;
-    double pageViewport = (screenWidth - 40) / screenWidth;
-    
-    if (_pageController == null) {
-      _pageController = PageController(viewportFraction: pageViewport, keepPage: true, initialPage: 0);
-    }
-
-    return
-      Padding(padding: EdgeInsets.only(top: 10, bottom: 50), child:
-        Container(
-          constraints: BoxConstraints(minHeight: 20),
-          child: ExpandablePageView(key: _viewPagerKey, controller: _pageController, onPageChanged: _onPageChanged, children: pages, estimatedPageSize: pageHeight,)
-        )
+    if (pages.isEmpty) {
+      return HomeMessageCard(
+        title: Localization().getStringEx('widget.home.twitter.text.empty', 'Whoops! Nothing to see here.'),
+        message: Localization().getStringEx('widget.home.twitter.text.empty.description', 'Failed to load tweets.'),
       );
+    }
+    else {
+
+      Widget contentWidget;
+      if (1 < pages.length) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageHeight = screenWidth - 20 * 2 + 5;
+        double pageViewport = (screenWidth - 2 * spacing) / screenWidth;
+        
+        if (_pageController == null) {
+          _pageController = PageController(viewportFraction: pageViewport, keepPage: true, initialPage: 0);
+        }
+        
+        contentWidget = Container(
+          constraints: BoxConstraints(minHeight: pageHeight),
+          child: ExpandablePageView(key: _viewPagerKey, controller: _pageController, onPageChanged: _onPageChanged, children: pages, estimatedPageSize: pageHeight,)
+        );
+      }
+      else {
+        contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: pages.first);
+      }
+
+      return Column(children: [
+        Padding(padding: EdgeInsets.only(top: 8), child:
+          contentWidget,
+        ),
+        LinkButton(
+          title: Localization().getStringEx('widget.home.twitter.button.all.title', 'View All'),
+          hint: Localization().getStringEx('widget.home.twitter.button.all.hint', 'Tap to view all tweets'),
+          onTap: _onViewAll,
+        ),
+      ],);
+    }
   }
 
   int get _tweetsCount {
@@ -326,6 +355,11 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     }
   }
 
+  void _onViewAll() {
+    Analytics().logSelect(target: "Home Twitter Widget View All");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => TwitterPanel()));
+  }
+
   void _setState(VoidCallback fn) {
     if (mounted) {
       setState(fn);
@@ -403,7 +437,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(
-        title: 'Twitter' /* TBD: Localization */,
+        title: HomeTwitterWidget.title,
         actions: _buildActions(),
       ),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
@@ -470,7 +504,8 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
       else {
         return Column(children: <Widget>[
           Expanded(child: Container(), flex: 1),
-          Text('No tweets' /* TBD: Localization */, textAlign: TextAlign.center,),
+          Text(Localization().getStringEx('widget.home.twitter.text.empty.description', 'Failed to load tweets.'),
+            textAlign: TextAlign.center,),
           Expanded(child: Container(), flex: 3),
         ]);
       }
