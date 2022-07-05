@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -47,6 +49,7 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
 
   List<String>? _displayCodes;
   Set<String>? _availableCodes;
+  PageController? _pageController;
 
   @override
   void initState() {
@@ -71,6 +74,7 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _pageController?.dispose();
     super.dispose();
   }
 
@@ -88,46 +92,82 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> commandsList = _buildCommandsList();
-    return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.wallet.label.title', 'Wallet'),
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      child: Column(children: commandsList,),
-    ) : Container();
+      childPadding: EdgeInsets.zero,
+      child: _buildContent(),
+    );
   }
 
+  Widget _buildContent() {
+    List<Widget> commandsList = _buildCommandsList();
+    if (commandsList.isEmpty) {
+      return HomeMessageCard(
+        title: Localization().getStringEx("widget.home.wallet.text.empty", "Whoops! Nothing to see here."),
+        message: Localization().getStringEx("widget.home.wallet.text.empty.description", "Tap the \u2606 on items in Wallet so you can quickly find them here."),
+      );
+    }
+    else if (commandsList.length == 1) {
+      return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: commandsList.first);
+    }
+    else {
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        _pageController = PageController(viewportFraction: (screenWidth - 32) / screenWidth);
+      }
+
+      double pageHeight = max(20 * MediaQuery.of(context).textScaleFactor + 2 * 8, 18 + 2 * 16) + 1 + 24 * MediaQuery.of(context).textScaleFactor + 3 * 8;
+
+      List<Widget> pages = <Widget>[];
+      for (Widget command in commandsList) {
+        pages.add(Padding(padding: EdgeInsets.only(right: 8), child: command));
+      }
+
+      return Padding(padding: EdgeInsets.only(top: 8, bottom: 16), child:
+        Container(constraints: BoxConstraints(minHeight: pageHeight), child:
+          ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+        ),
+      );
+    }
+
+  }
+
+  // Column(children: commandsList,)
   List<Widget> _buildCommandsList() {
     List<Widget> contentList = <Widget>[];
     if (_displayCodes != null) {
       for (String code in _displayCodes!.reversed) {
         if ((_availableCodes == null) || _availableCodes!.contains(code)) {
-          Widget? contentEntry;
-          if (code == 'illini_cash_card') {
-            contentEntry = HomeIlliniCashWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-          }
-          else if (code == 'meal_plan_card') {
-            contentEntry = HomeMealPlanWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-          }
-          else if (code == 'bus_pass_card') {
-            contentEntry = HomeBusPassWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-          }
-          else if (code == 'illini_id_card') {
-            contentEntry = HomeIlliniIdWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-          }
-          else if (code == 'library_card') {
-            contentEntry = HomeLibraryCardWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-          }
-
+          Widget? contentEntry = _widgetFromCode(code);
           if (contentEntry != null) {
-            if (contentList.isNotEmpty) {
-              contentList.add(Container(height: 8,));
-            }
             contentList.add(contentEntry);
           }
         }
       }
     }
     return contentList;
+  }
+
+  Widget? _widgetFromCode(String code) {
+    if (code == 'illini_cash_card') {
+      return HomeIlliniCashWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+    }
+    else if (code == 'meal_plan_card') {
+      return HomeMealPlanWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+    }
+    else if (code == 'bus_pass_card') {
+      return HomeBusPassWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+    }
+    else if (code == 'illini_id_card') {
+      return HomeIlliniIdWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+    }
+    else if (code == 'library_card') {
+      return HomeLibraryCardWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
+    }
+    else {
+      return null;
+    }
   }
 
   //  List<dynamic>? contentListCodes = FlexUI()['home.wallet'];
