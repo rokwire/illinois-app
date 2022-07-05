@@ -65,7 +65,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   }
 
   void _loadRingsData() async {
-    WellnessRings().getWellnessRings().then((value) {
+    WellnessRings().loadWellnessRings().then((value) {
       _ringsData = value;
       if(mounted) {
         setState(() {});
@@ -224,7 +224,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   @override
   void onNotification(String name, param) {
     if(name == WellnessRings.notifyUserRingsUpdated){
-      WellnessRings().getWellnessRings().then((value){
+      WellnessRings().loadWellnessRings().then((value){
         _ringsData = value;
         if(mounted) {
           try { //Unhandled Exception: 'package:flutter/src/widgets/framework.dart': Failed assertion: line 4234 pos 12: '_lifecycleState != _ElementLifecycle.defunct': is not true.

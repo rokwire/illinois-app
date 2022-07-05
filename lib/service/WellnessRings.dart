@@ -46,6 +46,7 @@ class WellnessRings with Service{
     return super.initService();
   }
 
+  //Init
   Future<bool> _initFromCache() async{
     return _loadContentJsonFromCache().then((Map<String, dynamic>? storedValues) {
         _wellnessRingsRecords = WellnessRingData.listFromJson(storedValues?["wellness_rings_data"]) ?? [];
@@ -83,43 +84,9 @@ class WellnessRings with Service{
     // _storeWellnessRingData();
     return true;
   }
+  /////
 
-  //Cashe
-  Future<File> _getCacheFile() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String cacheFilePath = join(appDocDir.path, _cacheFileName);
-    return File(cacheFilePath);
-  }
-
-  Future<String?> _loadContentStringFromCache() async {
-    return (await _cacheFile?.exists() == true) ? await _cacheFile?.readAsString() : null;
-  }
-
-  Future<void> _saveRingsDataToCache() async{
-    String? data = JsonUtils.encode({
-      "wellness_rings_data": _wellnessRingsRecords,
-      "wellness_ring_records": _wellnessRecords,
-    });
-
-    return _saveContentStringToCache(data);
-  }
-
-  Future<void> _saveContentStringToCache(String? value) async {
-    try {
-      if (value != null) {
-        await _cacheFile?.writeAsString(value, flush: true);
-      }
-      else {
-        await _cacheFile?.delete();
-      }
-    }
-    catch(e) { print(e.toString()); }
-  }
-
-  Future<Map<String, dynamic>?> _loadContentJsonFromCache() async {
-    return JsonUtils.decodeMap(await _loadContentStringFromCache());
-  }
-
+  //APIS
   Future<bool> addRing(WellnessRingData data) async {
     //TBD replace network API
     bool success = false;
@@ -158,6 +125,7 @@ class WellnessRings with Service{
     WellnessRingData? ringData = _activeWellnessRings?[data.id];
     if(ringData != null){
       _wellnessRingsRecords?.removeWhere((ringRecord) => ringRecord.id == data.id);
+      _wellnessRecords?.removeWhere((ringRecord) => ringRecord.wellnessRingId == data.id);
       _updateActiveRingsData();
       _storeWellnessRingData();
       NotificationService().notify(notifyUserRingsUpdated);
@@ -179,19 +147,13 @@ class WellnessRings with Service{
     _storeWellnessRecords();
   }
 
-  double getRingDailyValue(String wellnessRingId){
-    Iterable<WellnessRingRecord>? selection = _wellnessRecords?.where((record) =>
-    ((record.wellnessRingId == wellnessRingId)
-        && ((DateTimeUtils.midnight(DateTime.now())?.millisecondsSinceEpoch ?? 0) < record.timestamp)));
-    // ?.where((record) => ((DateTimeUtils.midnight(DateTime.now())?.millisecondsSinceEpoch ?? 0) < record.timestamp));// Today records
-
-    double value = 0.0;
-    selection?.forEach((record) {
-      value += record.value;
-    });
-    return value;
+  Future<List<WellnessRingData>?> loadWellnessRings() async {
+    //TBD load from net
+    return _activeWellnessRings?.values.toList();
   }
+  /////
 
+  //Accomplishment
   void _checkForAccomplishment(String id){
     if(_isAccomplished(id)){
       NotificationService().notify(notifyUserRingsAccomplished, id);
@@ -202,58 +164,7 @@ class WellnessRings with Service{
     return(getRingData(id)?.goal ?? 0) <= getRingDailyValue(id);
   }
 
-  void _storeWellnessRingData(){
-    _saveRingsDataToCache();
-  }
-
-  void _storeWellnessRecords(){
-    _saveRingsDataToCache();
-  }
-
-  Future<List<WellnessRingData>?> getWellnessRings() async {
-    //TBD load from net
-    return _activeWellnessRings?.values.toList();
-  }
-
-  List<WellnessRingData>? get wellnessRings{
-    return _activeWellnessRings?.values.toList();
-  }
-
-  int getTotalCompletionCount(String id){
-    //Split records by date
-    Map<String, List<WellnessRingRecord>> ringDateRecords = {};
-    _wellnessRecords?.forEach((record) {
-      String? recordDayName = record.date != null? DateFormat("yyyy-MM-dd").format(DateUtils.dateOnly(record.date!)) : null;
-      if(recordDayName!=null) {
-        List<WellnessRingRecord>? recordsForDay = ringDateRecords[recordDayName];
-        if (recordsForDay == null) {
-          recordsForDay = [];
-          ringDateRecords[recordDayName] = recordsForDay;
-        }
-        recordsForDay.add(record);
-      }
-    });
-
-    //
-    int count = 0;
-    for (List<WellnessRingRecord> dayRecords in ringDateRecords.values){
-      if(dayRecords.isNotEmpty) {
-        WellnessRingData? ringData = _getActiveRingDataForDay(id: id,
-            timestamp: dayRecords.first
-                .timestamp); //We've filtered per day, so all records should return the same DayRingData, so just take the first one
-        int dayCount = 0;
-        for (WellnessRingRecord record in dayRecords) {
-          dayCount += record.value.toInt();
-        }
-        if (dayCount >= (ringData?.goal ?? 0)) {
-          //Match
-          count++;
-        }
-      }
-    }
-    return count;
-  }
-
+  //Accomplishment History
   Map<String, List<WellnessRingAccomplishment>>? getAccomplishmentsHistory(){
     Map<String, List<WellnessRingAccomplishment>> history = {/*"2022-06014":[WellnessRingData(id: '0', timestamp: DateTime.now().millisecondsSinceEpoch, goal: 1, name: "Test" )]*/};
 
@@ -328,7 +239,6 @@ class WellnessRings with Service{
     return ringDateRecords;
   }
 
-  //Required for Accomplishment History
   List<WellnessRingData>? _findRingData({required String id, int? beforeTimestamp, int? afterTimestamp}){
     if(_wellnessRingsRecords?.isNotEmpty ?? false){
       List<WellnessRingData> result = [];
@@ -359,6 +269,46 @@ class WellnessRings with Service{
     return null;
   }
 
+  WellnessRingData? getRingData(String? id){
+    return (id != null )? (_activeWellnessRings?[id] ): null;
+  }
+
+  //Total Completion
+  int getTotalCompletionCount(String id){
+    //Split records by date
+    Map<String, List<WellnessRingRecord>> ringDateRecords = {};
+    _wellnessRecords?.forEach((record) {
+      String? recordDayName = record.date != null? DateFormat("yyyy-MM-dd").format(DateUtils.dateOnly(record.date!)) : null;
+      if(recordDayName!=null) {
+        List<WellnessRingRecord>? recordsForDay = ringDateRecords[recordDayName];
+        if (recordsForDay == null) {
+          recordsForDay = [];
+          ringDateRecords[recordDayName] = recordsForDay;
+        }
+        recordsForDay.add(record);
+      }
+    });
+
+    //
+    int count = 0;
+    for (List<WellnessRingRecord> dayRecords in ringDateRecords.values){
+      if(dayRecords.isNotEmpty) {
+        WellnessRingData? ringData = _getActiveRingDataForDay(id: id,
+            timestamp: dayRecords.first
+                .timestamp); //We've filtered per day, so all records should return the same DayRingData, so just take the first one
+        int dayCount = 0;
+        for (WellnessRingRecord record in dayRecords) {
+          dayCount += record.value.toInt();
+        }
+        if (dayCount >= (ringData?.goal ?? 0)) {
+          //Match
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
   String getTotalCompletionCountString(String id){
     int count = getTotalCompletionCount(id);
     switch(count){
@@ -368,26 +318,87 @@ class WellnessRings with Service{
     }
   }
 
+  //Getters
   double getRingDailyCompletion(String id) {
     double value = getRingDailyValue(id);
     double goal = 1;
-    try{ goal = getRingData(id)?.goal ?? 0;
+    try{
+      goal = getRingData(id)?.goal ?? 0;
     } catch (e){
       print(e);
       return 0;// if we have no records yet
-
     }
     return goal == 0 || value == 0 ? 0 :
     value / goal;
   }
 
-  WellnessRingData? getRingData(String? id){
-    return (id != null )? (_activeWellnessRings?[id] ): null;
+  double getRingDailyValue(String wellnessRingId){
+    Iterable<WellnessRingRecord>? selection = _wellnessRecords?.where((record) =>
+    ((record.wellnessRingId == wellnessRingId)
+        && ((DateTimeUtils.midnight(DateTime.now())?.millisecondsSinceEpoch ?? 0) < record.timestamp)));
+    // ?.where((record) => ((DateTimeUtils.midnight(DateTime.now())?.millisecondsSinceEpoch ?? 0) < record.timestamp));// Today records
+
+    double value = 0.0;
+    selection?.forEach((record) {
+      value += record.value;
+    });
+    return value;
+  }
+
+  List<WellnessRingData>? get wellnessRings{
+    return _activeWellnessRings?.values.toList();
   }
 
   bool get canAddRing{
     return (_activeWellnessRings?.length ?? 0) < MAX_RINGS;
   }
+
+  //Cashe
+  Future<File> _getCacheFile() async {
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String cacheFilePath = join(appDocDir.path, _cacheFileName);
+    return File(cacheFilePath);
+  }
+
+  Future<String?> _loadContentStringFromCache() async {
+    return (await _cacheFile?.exists() == true) ? await _cacheFile?.readAsString() : null;
+  }
+
+  Future<void> _saveRingsDataToCache() async{
+    String? data = JsonUtils.encode({
+      "wellness_rings_data": _wellnessRingsRecords,
+      "wellness_ring_records": _wellnessRecords,
+    });
+
+    return _saveContentStringToCache(data);
+  }
+
+  Future<void> _saveContentStringToCache(String? value) async {
+    try {
+      if (value != null) {
+        await _cacheFile?.writeAsString(value, flush: true);
+      }
+      else {
+        await _cacheFile?.delete();
+      }
+    }
+    catch(e) { print(e.toString()); }
+  }
+
+  Future<Map<String, dynamic>?> _loadContentJsonFromCache() async {
+    return JsonUtils.decodeMap(await _loadContentStringFromCache());
+  }
+///////
+
+  //Store
+  void _storeWellnessRingData(){
+    _saveRingsDataToCache();
+  }
+
+  void _storeWellnessRecords(){
+    _saveRingsDataToCache();
+  }
+///////
 
   //TBD Remove unnecessary public methods
   //TBD Reorder methods

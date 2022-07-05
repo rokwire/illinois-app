@@ -49,7 +49,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     NotificationService().subscribe(this, [
       WellnessRings.notifyUserRingsUpdated,
     ]);
-    WellnessRings().getWellnessRings().then((rings){
+    WellnessRings().loadWellnessRings().then((rings){
       _ringsData = rings;
       if(mounted) setState(() {});
     });
