@@ -19,8 +19,8 @@ class WellnessRings with Service{
 
   File? _cacheFile;
 
-  Map<String,WellnessRingData>? _activeWellnessRings;
-  List<WellnessRingData>? _wellnessRingsRecords;
+  Map<String,WellnessRingDefinition>? _activeWellnessRings;
+  List<WellnessRingDefinition>? _wellnessRingsRecords;
   List<WellnessRingRecord>? _wellnessRecords;
 
   // Singletone Factory
@@ -49,7 +49,7 @@ class WellnessRings with Service{
   //Init
   Future<bool> _initFromCache() async{
     return _loadContentJsonFromCache().then((Map<String, dynamic>? storedValues) {
-        _wellnessRingsRecords = WellnessRingData.listFromJson(storedValues?["wellness_rings_data"]) ?? [];
+        _wellnessRingsRecords = WellnessRingDefinition.listFromJson(storedValues?["wellness_rings_data"]) ?? [];
         _wellnessRecords = WellnessRingRecord.listFromJson(storedValues?["wellness_ring_records"] ?? []);
         return true;
       });
@@ -58,9 +58,9 @@ class WellnessRings with Service{
   bool _initActiveRingsData (){
     _activeWellnessRings = {};
     if(_wellnessRingsRecords?.isNotEmpty ?? false){
-      for (WellnessRingData data in _wellnessRingsRecords!){
+      for (WellnessRingDefinition data in _wellnessRingsRecords!){
         if(_activeWellnessRings!.containsKey(data.id)){
-          WellnessRingData? storedData = _activeWellnessRings![data.id];
+          WellnessRingDefinition? storedData = _activeWellnessRings![data.id];
           if((storedData?.timestamp ?? 0) < data.timestamp){
               _activeWellnessRings![data.id] = data; //TBD try storedData = data;
           }
@@ -87,7 +87,7 @@ class WellnessRings with Service{
   /////
 
   //APIS
-  Future<bool> addRing(WellnessRingData data) async {
+  Future<bool> addRing(WellnessRingDefinition data) async {
     //TBD replace network API
     bool success = false;
     if(_wellnessRingsRecords == null){
@@ -103,10 +103,10 @@ class WellnessRings with Service{
     return success;
   }
 
-  Future<bool> updateRing(WellnessRingData data) async {
+  Future<bool> updateRing(WellnessRingDefinition data) async {
     //TBD replace network API
     bool success = false;
-    WellnessRingData? currentRingData = _activeWellnessRings?[data.id];
+    WellnessRingDefinition? currentRingData = _activeWellnessRings?[data.id];
     if(currentRingData == null || currentRingData != data){
       if(_wellnessRingsRecords == null){
         _wellnessRingsRecords = [];
@@ -120,9 +120,9 @@ class WellnessRings with Service{
     return success;
   }
 
-  Future<bool> removeRing(WellnessRingData data) async {
+  Future<bool> removeRing(WellnessRingDefinition data) async {
     //TBD network API
-    WellnessRingData? ringData = _activeWellnessRings?[data.id];
+    WellnessRingDefinition? ringData = _activeWellnessRings?[data.id];
     if(ringData != null){
       _wellnessRingsRecords?.removeWhere((ringRecord) => ringRecord.id == data.id);
       _wellnessRecords?.removeWhere((ringRecord) => ringRecord.wellnessRingId == data.id);
@@ -147,7 +147,7 @@ class WellnessRings with Service{
     _storeWellnessRecords();
   }
 
-  Future<List<WellnessRingData>?> loadWellnessRings() async {
+  Future<List<WellnessRingDefinition>?> loadWellnessRings() async {
     //TBD load from net
     return _activeWellnessRings?.values.toList();
   }
@@ -177,7 +177,7 @@ class WellnessRings with Service{
       for(var ringDayRecords in dayRecords.value.entries){
         String ringId = ringDayRecords.key;
         List<WellnessRingRecord>? ringRecords = dayRecords.value[ringId];
-        WellnessRingData? ringData;
+        WellnessRingDefinition? ringData;
         try {
           ringData = (ringRecords?.isNotEmpty ?? false) ? _getActiveRingDataForDay(id: ringId, timestamp: ringRecords!.first.timestamp) : null;
         } catch (e){
@@ -239,10 +239,10 @@ class WellnessRings with Service{
     return ringDateRecords;
   }
 
-  List<WellnessRingData>? _findRingData({required String id, int? beforeTimestamp, int? afterTimestamp}){
+  List<WellnessRingDefinition>? _findRingData({required String id, int? beforeTimestamp, int? afterTimestamp}){
     if(_wellnessRingsRecords?.isNotEmpty ?? false){
-      List<WellnessRingData> result = [];
-      for(WellnessRingData record in _wellnessRingsRecords!){
+      List<WellnessRingDefinition> result = [];
+      for(WellnessRingDefinition record in _wellnessRingsRecords!){
         if(record.id == id
           && (beforeTimestamp == null || record.timestamp < beforeTimestamp)
           && (afterTimestamp == null  || record.timestamp > afterTimestamp)
@@ -257,7 +257,7 @@ class WellnessRings with Service{
     return null;
   }
 
-  WellnessRingData? _getActiveRingDataForDay({required String id, int? timestamp}){
+  WellnessRingDefinition? _getActiveRingDataForDay({required String id, int? timestamp}){
     if(timestamp!=null){
       DateTime? midnight = DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(timestamp).add(Duration(days: 1))); //Border is at midnight the next day
       var foundData = _findRingData(id: id, beforeTimestamp: midnight?.millisecondsSinceEpoch);
@@ -269,7 +269,7 @@ class WellnessRings with Service{
     return null;
   }
 
-  WellnessRingData? getRingData(String? id){
+  WellnessRingDefinition? getRingData(String? id){
     return (id != null )? (_activeWellnessRings?[id] ): null;
   }
 
@@ -293,7 +293,7 @@ class WellnessRings with Service{
     int count = 0;
     for (List<WellnessRingRecord> dayRecords in ringDateRecords.values){
       if(dayRecords.isNotEmpty) {
-        WellnessRingData? ringData = _getActiveRingDataForDay(id: id,
+        WellnessRingDefinition? ringData = _getActiveRingDataForDay(id: id,
             timestamp: dayRecords.first
                 .timestamp); //We've filtered per day, so all records should return the same DayRingData, so just take the first one
         int dayCount = 0;
@@ -345,7 +345,7 @@ class WellnessRings with Service{
     return value;
   }
 
-  List<WellnessRingData>? get wellnessRings{
+  List<WellnessRingDefinition>? get wellnessRings{
     return _activeWellnessRings?.values.toList();
   }
 

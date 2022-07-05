@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class WellnessRingData {
+class WellnessRingDefinition {
 //  static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
   String id;
   double goal;
@@ -13,12 +13,12 @@ class WellnessRingData {
   //helper property to avoid creating date everytime
   DateTime? date;
 
-  WellnessRingData({required this.id , this.name, required this.goal, this.date, this.unit = "times" , this.colorHex = "FF000000", required this.timestamp});
+  WellnessRingDefinition({required this.id , this.name, required this.goal, this.date, this.unit = "times" , this.colorHex = "FF000000", required this.timestamp});
 
-  static WellnessRingData? fromJson(Map<String, dynamic>? json){
+  static WellnessRingDefinition? fromJson(Map<String, dynamic>? json){
     if(json!=null) {
       DateTime date = DateTime.fromMillisecondsSinceEpoch(JsonUtils.intValue(json['timestamp'])??0);
-      return WellnessRingData(
+      return WellnessRingDefinition(
           id:     JsonUtils.stringValue(json['id']) ?? "",
           goal:   JsonUtils.doubleValue(json['goal']) ?? 1.0,
           name:   JsonUtils.stringValue(json['name']),
@@ -42,7 +42,7 @@ class WellnessRingData {
     return json;
   }
 
-  void updateFromOther(WellnessRingData other){
+  void updateFromOther(WellnessRingDefinition other){
     this.id = other.id;
     this.goal = other.goal;
     this.colorHex = other.colorHex;
@@ -54,7 +54,7 @@ class WellnessRingData {
 
   @override
   bool operator ==(dynamic other) =>
-      (other is WellnessRingData) &&
+      (other is WellnessRingDefinition) &&
           (id == other.id) &&
           (goal == other.goal) &&
           (colorHex == other.colorHex) &&
@@ -75,22 +75,22 @@ class WellnessRingData {
     return this.colorHex!= null ? ColorUtils.fromHex(colorHex) : null;
   }
 
-  static List<WellnessRingData>? listFromJson(List<dynamic>? json) {
-    List<WellnessRingData>? values;
+  static List<WellnessRingDefinition>? listFromJson(List<dynamic>? json) {
+    List<WellnessRingDefinition>? values;
     if (json != null) {
-      values = <WellnessRingData>[];
+      values = <WellnessRingDefinition>[];
       for (dynamic entry in json) {
-        ListUtils.add(values, WellnessRingData.fromJson(JsonUtils.mapValue(entry)));
+        ListUtils.add(values, WellnessRingDefinition.fromJson(JsonUtils.mapValue(entry)));
       }
     }
     return values;
   }
 
-  static List<dynamic>? listToJson(List<WellnessRingData>? values) {
+  static List<dynamic>? listToJson(List<WellnessRingDefinition>? values) {
     List<dynamic>? json;
     if (values != null) {
       json = <dynamic>[];
-      for (WellnessRingData? value in values) {
+      for (WellnessRingDefinition? value in values) {
         json.add(value?.toJson());
       }
     }
@@ -169,7 +169,7 @@ class WellnessRingRecord {
 }
 
 class WellnessRingAccomplishment{
-  WellnessRingData ringData;
+  WellnessRingDefinition ringData;
   double achievedValue;
 
   WellnessRingAccomplishment({required this.ringData, required this.achievedValue});
