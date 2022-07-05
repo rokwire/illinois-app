@@ -2651,6 +2651,10 @@
 	"widget.home_prefered_sports.label.offline.sports":"离线时无法查看运动。",
     
 	"widget.home_canvas_courses.header.label": "培訓班",
+	"widget.home.home_canvas_courses.text.empty": "Whoops! Nothing to see here.",
+	"widget.home.home_canvas_courses.text.empty.description": "You do not enroll in any courses.",
+	"widget.home.home_canvas_courses.button.all.title": "View All",
+	"widget.home.home_canvas_courses.button.all.hint": "Tap to view all courses",
 
 	"widget.food_detail.label.loading.title":"正在加载菜单数据",
 	"widget.food_detail.label.loading.hint":"",

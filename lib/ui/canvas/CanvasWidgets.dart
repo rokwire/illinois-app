@@ -29,6 +29,9 @@ class CanvasCourseCard extends StatefulWidget {
 
   @override
   State<CanvasCourseCard> createState() => _CanvasCourseCardState();
+
+  static double height(BuildContext context, { bool isSmall = false }) =>
+    MediaQuery.of(context).textScaleFactor * (isSmall ? 130 : 86);
 }
 
 class _CanvasCourseCardState extends State<CanvasCourseCard> {
@@ -52,14 +55,11 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
   @override
   Widget build(BuildContext context) {
     final Color defaultColor = Colors.black;
-    final double cardHeight =
-        widget.isSmall ? (MediaQuery.of(context).textScaleFactor * 130) : (MediaQuery.of(context).textScaleFactor * 86);
-    double cardInnerPadding = 10;
-    final double? cardWidth = widget.isSmall ? (MediaQuery.of(context).textScaleFactor * 215) : null;
+    final double cardHeight = CanvasCourseCard.height(context, isSmall: widget.isSmall);
+    final double cardInnerPadding = 10;
     const double borderRadiusValue = 6;
     return Container(
         height: cardHeight,
-        width: cardWidth,
         decoration: BoxDecoration(
             borderRadius: (widget.isSmall ? BorderRadius.circular(borderRadiusValue) : null),
             boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))]),

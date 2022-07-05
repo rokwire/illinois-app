@@ -2650,7 +2650,11 @@
     "widget.home_prefered_sports.label.womens_sports.hint":"Encabezado 2",
     "widget.home_prefered_sports.label.offline.sports":"Los deportes no están disponibles sin conexión.",
     
-    "widget.home.canvas_courses.header.label": "Cursos",
+    "widget.home_canvas_courses.header.label": "Cursos",
+	"widget.home.home_canvas_courses.text.empty": "Whoops! Nothing to see here.",
+	"widget.home.home_canvas_courses.text.empty.description": "You do not enroll in any courses.",
+    "widget.home.home_canvas_courses.button.all.title": "View All",
+    "widget.home.home_canvas_courses.button.all.hint": "Tap to view all courses",
 
     "widget.food_detail.label.loading.title": "Cargando datos del menú",
     "widget.food_detail.label.loading.hint": "",

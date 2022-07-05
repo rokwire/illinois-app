@@ -5,8 +5,10 @@ import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/canvas/CanvasCourseHomePanel.dart';
@@ -34,6 +36,7 @@ class HomeCanvasCoursesWidget extends StatefulWidget {
 class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> implements NotificationsListener {
 
   List<CanvasCourse>? _courses;
+  PageController? _pageController;
   DateTime? _pausedDateTime;
 
   @override
@@ -60,8 +63,9 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
   @override
   void dispose() {
-    super.dispose();
     NotificationService().unsubscribe(this);
+    _pageController?.dispose();
+    super.dispose();
   }
 
   // NotificationsListener
@@ -90,29 +94,53 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   @override
   Widget build(BuildContext context) {
 
-    return Visibility(visible: _hasCourses, child:
-        HomeSlantWidget(favoriteId: widget.favoriteId,
-          title: Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses'),
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-          child: _buildCoursesContent(),
-          childPadding: const EdgeInsets.only(top: 8, bottom: 16),
-        ),
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
+      title: Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses'),
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      childPadding: EdgeInsets.zero,
+      child: _hasCourses ? _buildCoursesContent() : _buildEmptyContent(),
     );
   }
 
   Widget _buildCoursesContent() {
-    List<Widget> courseWidgets = <Widget>[];
+    final double spacing = 16;
+
+    List<Widget> coursePages = <Widget>[];
     if (CollectionUtils.isNotEmpty(_courses)) {
       for (CanvasCourse course in _courses!) {
-        courseWidgets.add(_buildCourseCard(course));
+        coursePages.add(Padding(padding: EdgeInsets.only(right: spacing), child:
+          GestureDetector(onTap: () => _onTapCourse(course), child:
+            CanvasCourseCard(course: course, isSmall: true)
+          ),
+        ),);
       }
     }
 
-    return SingleChildScrollView(scrollDirection: Axis.horizontal, child: Padding(padding: EdgeInsets.only(right: 10, bottom: 6), child: Row(children: courseWidgets)));
+    double pageHeight = CanvasCourseCard.height(context, isSmall: true);
+
+    if (_pageController == null) {
+      double screenWidth = MediaQuery.of(context).size.width;
+      double pageViewport = (screenWidth - 2 * spacing) / screenWidth;
+      _pageController = PageController(viewportFraction: pageViewport);
+    }
+
+    return Column(children: [
+      Container(height: pageHeight, child:
+        PageView(controller: _pageController, children: coursePages,)
+      ),
+      LinkButton(
+        title: Localization().getStringEx('widget.home.home_canvas_courses.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.home_canvas_courses.button.all.hint', 'Tap to view all courses'),
+        onTap: _onViewAll,
+      ),
+    ],);
   }
 
-  Widget _buildCourseCard(CanvasCourse course) {
-    return Padding(padding: EdgeInsets.only(left: 10), child: GestureDetector(onTap: () => _onTapCourse(course), child: CanvasCourseCard(course: course, isSmall: true)));
+  Widget _buildEmptyContent() {
+    return HomeMessageCard(
+      title: Localization().getStringEx('widget.home.home_canvas_courses.text.empty', 'Whoops! Nothing to see here.'),
+      message: Localization().getStringEx('widget.home.home_canvas_courses.text.empty.description', 'You do not enroll in any courses.'),
+    );
   }
 
   void _loadCourses() {
@@ -129,6 +157,12 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
     Analytics().logSelect(target: "Home Canvas Course");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseHomePanel(courseId: course.id)));
   }
+
+  void _onViewAll() {
+    Analytics().logSelect(target: "Home Canvas Courses View All");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.courses,)));
+  }
+
 
   bool get _hasCourses {
     return CollectionUtils.isNotEmpty(_courses);
