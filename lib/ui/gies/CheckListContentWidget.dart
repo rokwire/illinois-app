@@ -785,6 +785,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
   @override
   void dispose() {
     super.dispose();
+    _pageController?.dispose();
     NotificationService().unsubscribe(this);
   }
 

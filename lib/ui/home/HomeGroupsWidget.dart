@@ -74,6 +74,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   @override
   void dispose() {
     super.dispose();
+    _pageController?.dispose();
     NotificationService().unsubscribe(this);
   }
 
