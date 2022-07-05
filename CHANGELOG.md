@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.0.44] - 2022-07-05
 ### Changed
 - "Healthy Podcast" renamed to "Healthy Illini Podcast" [#1878](https://github.com/rokwire/illinois-app/issues/1878).
 - Default date picker to today in Wellness To-Do list [#1881](https://github.com/rokwire/illinois-app/issues/1881).
