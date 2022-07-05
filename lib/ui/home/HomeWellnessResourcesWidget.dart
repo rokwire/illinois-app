@@ -127,9 +127,11 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
       _pageController = PageController(viewportFraction: (screenWidth - 32) / screenWidth);
     }
 
+    double pageHeight = 18 * MediaQuery.of(context).textScaleFactor + 2 * 16;
+
     return Column(children: [
-      Container(constraints: BoxConstraints(minHeight: 48), child:
-        ExpandablePageView(controller: _pageController, children: _buildResourcePages(), estimatedPageSize: 48),
+      Container(constraints: BoxConstraints(minHeight: pageHeight), child:
+        ExpandablePageView(controller: _pageController, children: _buildResourcePages(), estimatedPageSize: pageHeight),
       ),
       LinkButton(
         title: Localization().getStringEx('widget.home.wellness_resources.button.all.title', 'View All'),
