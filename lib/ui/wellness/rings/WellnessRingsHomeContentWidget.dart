@@ -214,8 +214,11 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     String description = "Maximum of 4 total";
     return Semantics(label: label, hint: description, button: true, excludeSemantics: true, child:
     GestureDetector(onTap: (){
-      Analytics().logSelect(target: "Create new ring");
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingSelectPredefinedPanel()));
+      if(enabled) {
+        Analytics().logSelect(target: "Create new ring");
+        Navigator.push(context, CupertinoPageRoute(
+            builder: (context) => WellnessRingSelectPredefinedPanel()));
+      }
     },
       child:
     Container(
