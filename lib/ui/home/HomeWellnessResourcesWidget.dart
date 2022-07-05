@@ -90,16 +90,12 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Assets.notifyChanged) {
+    if ((name == Assets.notifyChanged) ||
+        (name == Auth2UserPrefs.notifyFavoritesChanged)) {
       if (mounted) {
         setState(() {
           _initContent();
         });
-      }
-    }
-    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      if (mounted) {
-        setState(() {});
       }
     }
   }
@@ -109,52 +105,57 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessResourcesWidget.title,
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      childPadding: const EdgeInsets.only(top: 8),
+      childPadding: EdgeInsets.zero,
       child: _buildContent(),
     );
   }
 
   Widget _buildContent() {
-    return  (_commands?.isEmpty ?? true) ? HomeMessageCard(
+    return  (_commands?.isNotEmpty ?? true) ? HomeMessageCard(
       title: Localization().getStringEx("widget.home.wellness_resources.text.empty", "Whoops! Nothing to see here."),
       message: Localization().getStringEx("widget.home.wellness_resources.text.empty.description", "Tap the \u2606 on items in Wellness Resources so you can quickly find them here."),
     ) : _buildResourceContent();
   }
 
   Widget _buildResourceContent() {
-    if (_pageController == null) {
-      double screenWidth = MediaQuery.of(context).size.width;
-      _pageController = PageController(viewportFraction: (screenWidth - 32) / screenWidth);
-    }
+    Widget contentWidget;
+    int visibleCount = min(Config().homeWellnessResourcesCount, _commands?.length ?? 0);
+    if (1 < visibleCount) {
 
-    double pageHeight = 18 * MediaQuery.of(context).textScaleFactor + 2 * 16;
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        _pageController = PageController(viewportFraction: (screenWidth - 32) / screenWidth);
+      }
 
-    return Column(children: [
-      Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        ExpandablePageView(controller: _pageController, children: _buildResourcePages(), estimatedPageSize: pageHeight),
-      ),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.wellness_resources.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.wellness_resources.button.all.hint', 'Tap to view all wellness resources'),
-        onTap: _onViewAll,
-      ),
-    ],);
-  }
+      double pageHeight = 18 * MediaQuery.of(context).textScaleFactor + 2 * 16;
 
-  List<Widget> _buildResourcePages() {
-    // Config().homeWellnessResourcesCount
-    List<Widget> pages = <Widget>[];
-    if (_commands != null) {
-      int commandsCount = min(Config().homeWellnessResourcesCount, _commands!.length);
-      for (int index = 0; index < commandsCount; index++) {
+      List<Widget> pages = <Widget>[];
+      for (int index = 0; index < visibleCount; index++) {
         Map<String, dynamic>? command = JsonUtils.mapValue(_commands![index]);
         Widget? button = (command != null) ? _buildResourceButton(command) : null;
         if (button != null) {
           pages.add(Padding(padding: EdgeInsets.only(right: 8), child: button));
         }
       }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
+        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+      );
     }
-    return pages;
+    else {
+      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        _buildResourceButton(JsonUtils.mapValue(_commands?.first) ?? {})
+      );
+    }
+
+    return Column(children: [
+      contentWidget,
+      LinkButton(
+        title: Localization().getStringEx('widget.home.wellness_resources.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.wellness_resources.button.all.hint', 'Tap to view all wellness resources'),
+        onTap: _onViewAll,
+      ),
+    ],);
   }
 
   Widget? _buildResourceButton(Map<String, dynamic> command) {
