@@ -1441,6 +1441,19 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
     _linkTextController.dispose();
     _linkUrlController.dispose();
   }
+
+  @override
+  void didUpdateWidget(PostInputField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    String? oldBodyInitialText = oldWidget.text;
+    String? newBodyInitialText = widget.text;
+    if (oldBodyInitialText != newBodyInitialText) {
+      _bodyController.text = StringUtils.ensureNotEmpty(newBodyInitialText);
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
