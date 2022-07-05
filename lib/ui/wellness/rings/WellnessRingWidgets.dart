@@ -20,8 +20,9 @@ class WellnessRing extends StatefulWidget{
   final int strokeSize;
   final int borderWidth;
   final bool accomplishmentDialogEnabled;
+  final bool accomplishmentConfettiEnabled;
 
-  WellnessRing({this.backgroundColor = Colors.white, this.size = _WellnessRingState.OUTER_SIZE, this.strokeSize = _WellnessRingState.STROKE_SIZE, this.accomplishmentDialogEnabled = true, this.borderWidth = _WellnessRingState.PADDING_SIZE});
+  WellnessRing({this.backgroundColor = Colors.white, this.size = _WellnessRingState.OUTER_SIZE, this.strokeSize = _WellnessRingState.STROKE_SIZE, this.accomplishmentDialogEnabled = false, this.borderWidth = _WellnessRingState.PADDING_SIZE, this.accomplishmentConfettiEnabled = true});
 
   @override
   State<WellnessRing> createState() => _WellnessRingState();
@@ -34,7 +35,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   static const int ANIMATION_DURATION_MILLISECONDS = 1500;
   static const int MIN_RINGS_COUNT = 4;
 
-  List<WellnessRingData>? _ringsData ;
+  List<WellnessRingDefinition>? _ringsData ;
   Map<String, AnimationController> _animationControllers = {};
 
   late ConfettiController _controllerCenter;
@@ -64,7 +65,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   }
 
   void _loadRingsData() async {
-    WellnessRings().getWellnessRings().then((value) {
+    WellnessRings().loadWellnessRings().then((value) {
       _ringsData = value;
       if(mounted) {
         setState(() {});
@@ -83,11 +84,11 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   }
 
   Widget _buildRingsContent(){
-    List<WellnessRingData> data = [];
+    List<WellnessRingDefinition> data = [];
     int fillCount = MIN_RINGS_COUNT - (_ringsData?.length ?? 0);
     if(fillCount > 0){
       for (int i=0; i<fillCount; i++){
-        data.add(WellnessRingData(id: "empty_$i", goal: 1, timestamp: DateTime.now().millisecondsSinceEpoch));
+        data.add(WellnessRingDefinition(id: "empty_$i", goal: 1, timestamp: DateTime.now().millisecondsSinceEpoch));
       }
     }
     if(_ringsData?.isNotEmpty ?? false){
@@ -108,8 +109,8 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     );
   }
 
-  Widget _buildRing({int level = 0, required List<WellnessRingData> data}){
-    WellnessRingData? ringData = data.length > level? data[level] : null;
+  Widget _buildRing({int level = 0, required List<WellnessRingDefinition> data}){
+    WellnessRingDefinition? ringData = data.length > level? data[level] : null;
     return ringData != null ? //Recursion bottom
     _buildRingWidget(
         level: level,
@@ -118,7 +119,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     _buildProfilePicture();
   }
 
-  Widget _buildRingWidget({required int level, WellnessRingData? data, Widget? childWidget}){
+  Widget _buildRingWidget({required int level, WellnessRingDefinition? data, Widget? childWidget}){
 
     double? innerContentSize = (widget.size - ((level + 1) * (widget.strokeSize + widget.borderWidth))).toDouble();
 
@@ -223,15 +224,17 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
   @override
   void onNotification(String name, param) {
     if(name == WellnessRings.notifyUserRingsUpdated){
-      WellnessRings().getWellnessRings().then((value){
+      WellnessRings().loadWellnessRings().then((value){
         _ringsData = value;
         if(mounted) {
-          setState(() {});
+          try { //Unhandled Exception: 'package:flutter/src/widgets/framework.dart': Failed assertion: line 4234 pos 12: '_lifecycleState != _ElementLifecycle.defunct': is not true.
+            setState(() {});
+          } catch (e) {print(e);}
         }
       });
-    } else if( name == WellnessRings.notifyUserRingsAccomplished && widget.accomplishmentDialogEnabled){
-      if (param != null && param is String) {
-        WellnessRingData? data = WellnessRings().wellnessRings
+    } else if( name == WellnessRings.notifyUserRingsAccomplished){
+      if (widget.accomplishmentDialogEnabled && param != null && param is String) {
+        WellnessRingDefinition? data = WellnessRings().wellnessRings
             ?.firstWhere((element) => element.id == param);
         if (data != null) {
           AppAlert.showCustomDialog(context: this.context, contentPadding: EdgeInsets.all(0),
@@ -300,7 +303,9 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                   )));
         }
       }
-      _playConfetti();
+      if(widget.accomplishmentConfettiEnabled) {
+        _playConfetti();
+      }
     }
   }
 

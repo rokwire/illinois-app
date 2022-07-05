@@ -98,7 +98,7 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
 
   Widget _buildPredefinedButtons(){
     List<Widget> content = [];
-    for(Map<String, dynamic> jsonData in PREDEFINED_RING_BUTTONS){  WellnessRingData? data = WellnessRingData.fromJson(JsonUtils.mapValue(jsonData["ring"]));
+    for(Map<String, dynamic> jsonData in PREDEFINED_RING_BUTTONS){  WellnessRingDefinition? data = WellnessRingDefinition.fromJson(JsonUtils.mapValue(jsonData["ring"]));
       bool exists = data != null && WellnessRings().wellnessRings!= null && WellnessRings().wellnessRings!.any((var ring) => ring.id == data.id); //TODO remove check by id if it comes from server (check by name)
       if((data!=null && !exists)|| data == null){
         content.add(_WellnessRingButton(
@@ -124,7 +124,7 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
     }
     Navigator.push(context, CupertinoPageRoute(builder: (context) =>
         WellnessRingCreatePanel(
-            data: WellnessRingData.fromJson(JsonUtils.mapValue(_selectedButton?["ring"])),
+            data: WellnessRingDefinition.fromJson(JsonUtils.mapValue(_selectedButton?["ring"])),
             examplesText: JsonUtils.stringValue(_selectedButton?["example"]),
         ))).
       then((success){
