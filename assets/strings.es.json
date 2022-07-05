@@ -2433,6 +2433,10 @@
 
     "widget.home.groups.my.label.header.title":"Mis grupos",
     "widget.home.groups.all.label.header.title":"Todos los grupos",
+	"widget.home.groups.my.text.empty": "Whoops! Nothing to see here.",
+	"widget.home.groups.my.text.empty.description": "You have not created any groups yet.",
+	"widget.home.groups.all.text.empty": "Whoops! Nothing to see here.",
+	"widget.home.groups.all.text.empty.description": "Failed to load groups.",
     "widget.home.my_groups.button.all.title":"Ver todo",
     "widget.home.my_groups.button.all.hint":"Toca para ver todos los grupos",
 

@@ -2433,7 +2433,11 @@
 
 	"widget.home.groups.my.label.header.title":"我的群組",
 	"widget.home.groups.all.label.header.title":"所有組",
-	"widget.home.my_groups.button.all.title":"查看全部",
+	"widget.home.groups.my.text.empty": "Whoops! Nothing to see here.",
+	"widget.home.groups.my.text.empty.description": "You have not created any groups yet.",
+	"widget.home.groups.all.text.empty": "Whoops! Nothing to see here.",
+	"widget.home.groups.all.text.empty.description": "Failed to load groups.",
+"widget.home.my_groups.button.all.title":"查看全部",
 	"widget.home.my_groups.button.all.hint":"點按即可查看所有群組",
 
 	"widget.home.campus_resources.label.campus_tools":"校园资源",

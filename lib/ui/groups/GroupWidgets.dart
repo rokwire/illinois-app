@@ -789,8 +789,13 @@ class GroupCard extends StatefulWidget {
   final Group? group;
   final GroupCardDisplayType displayType;
   final Function? onImageTap;
+  final EdgeInsets margin;
 
-  GroupCard({required this.group, this.displayType = GroupCardDisplayType.allGroups, this.onImageTap});
+  GroupCard({required this.group,
+    this.displayType = GroupCardDisplayType.allGroups,
+    this.margin = const EdgeInsets.symmetric(horizontal: 16),
+    this.onImageTap,
+  });
 
   @override
   _GroupCardState createState() => _GroupCardState();
@@ -816,7 +821,7 @@ class _GroupCardState extends State<GroupCard> {
   Widget build(BuildContext context) {
     String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), [StringUtils.ensureNotEmpty(widget.group?.pendingCount.toString())]);
     return GestureDetector(onTap: () => _onTapCard(context), child:
-      Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:
+      Padding(padding: widget.margin, child:
         Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
           Stack(children: [
             Column(key: _contentKey, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
