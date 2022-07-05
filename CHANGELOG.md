@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- "Healthy Podcast" renamed to "Healthy Illini Podcast" [#1878](https://github.com/rokwire/illinois-app/issues/1878).
+- Default date picker to today in Wellness To-Do list [#1881](https://github.com/rokwire/illinois-app/issues/1881).
+### Added
+- Display predefined group post templates for group admins when creating post [#1877](https://github.com/rokwire/illinois-app/issues/1877).
+
 ## [4.0.43] - 2022-07-04
 ### Changed
 - Various UI changes in Wellness To-Do list [#1865](https://github.com/rokwire/illinois-app/issues/1865).
