@@ -135,16 +135,17 @@ class WellnessRings with Service{
     return false;
   }
 
-  void addRecord(WellnessRingRecord record){
+  Future<bool> addRecord(WellnessRingRecord record) async {
     Log.d("addRecord ${record.toJson()}");
-    //TBD store
+    //TBD store to BB
     bool alreadyAccomplished = _isAccomplished(record.wellnessRingId);
     _wellnessRecords?.add(record);
-    NotificationService().notify(notifyUserRingsUpdated); //TBD add separate constant for Records updated
+    NotificationService().notify(notifyUserRingsUpdated);
     if(alreadyAccomplished == false) {
       _checkForAccomplishment(record.wellnessRingId);
     }
     _storeWellnessRecords();
+    return true;
   }
 
   Future<List<WellnessRingDefinition>?> loadWellnessRings() async {
