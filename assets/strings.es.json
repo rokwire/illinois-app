@@ -2212,6 +2212,8 @@
     "panel.group.detail.post.create.button.send.title": "Send",
     "panel.group.detail.post.update.button.update.title": "Update",
     "panel.group.detail.post.button.report.label": "Report",
+    "panel.group.detail.post.create.templates.custom.label": "Custom",
+    "panel.group.detail.post.create.templates.label": "Templates",
 
     "panel.group.detail.post.report_abuse.header.title": "Report",
     "panel.group.detail.post.report_abuse.description.text": "Report violation of Student Code to Dean of Students",

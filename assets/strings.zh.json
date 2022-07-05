@@ -2201,7 +2201,7 @@
 	"panel.group.detail.post.reply.create.body.field.hint": "Write a Reply ...",
 	"panel.group.detail.post.create.validation.subject.msg": "Post subject required",
 	"panel.group.detail.post.create.validation.body.msg": "Post message required",
-  "panel.group.detail.post.create.reply.validation.body.msg": "Reply message required",
+	"panel.group.detail.post.create.reply.validation.body.msg": "Reply message required",
 	"panel.group.detail.post.create.post.failed.msg": "Failed to create new post.",
 	"panel.group.detail.post.create.reply.failed.msg": "Failed to create new reply.",
 	"panel.group.detail.post.update.reply.failed.msg": "Failed to edit reply.",
@@ -2212,6 +2212,8 @@
 	"panel.group.detail.post.create.button.send.title": "Send",
 	"panel.group.detail.post.update.button.update.title": "Update",
 	"panel.group.detail.post.button.report.label": "Report",
+    "panel.group.detail.post.create.templates.custom.label": "Custom",
+    "panel.group.detail.post.create.templates.label": "Templates",
 
 	"panel.group.detail.post.report_abuse.header.title": "Report",
 	"panel.group.detail.post.report_abuse.description.text": "Report violation of Student Code to Dean of Students",
