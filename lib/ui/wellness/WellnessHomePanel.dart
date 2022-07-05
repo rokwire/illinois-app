@@ -224,7 +224,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
       case WellnessContent.resources:
         return _loadContentString('panel.wellness.section.resources.label', 'Wellness Resources', language: language);
       case WellnessContent.podcast:
-        return _loadContentString('panel.wellness.section.podcast.label', 'Healthy Podcast', language: language);
+        return _loadContentString('panel.wellness.section.podcast.label', 'Healthy Illini Podcast', language: language);
       case WellnessContent.struggling:
         return _loadContentString('panel.wellness.section.struggling.label', 'I\'m Struggling', language: language);
     }
