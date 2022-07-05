@@ -2663,6 +2663,12 @@
     "widget.home.home_canvas_courses.button.all.title": "View All",
     "widget.home.home_canvas_courses.button.all.hint": "Tap to view all courses",
 
+    "widget.home.twitter.header.label": "Twitter",
+	"widget.home.twitter.text.empty": "Whoops! Nothing to see here.",
+	"widget.home.twitter.text.empty.description": "Failed to load tweets.",
+    "widget.home.twitter.button.all.title": "View All",
+    "widget.home.twitter.button.all.hint": "Tap to view all tweets",
+
     "widget.food_detail.label.loading.title": "Loading menu data",
     "widget.food_detail.label.loading.hint": "",
     "widget.food_detail.button.filters_empty.title": "Add Food Filters",
