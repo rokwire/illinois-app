@@ -112,16 +112,18 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: commandsList.first);
     }
     else {
+      final double spacing = 16;
+
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        _pageController = PageController(viewportFraction: (screenWidth - 32) / screenWidth);
+        _pageController = PageController(viewportFraction: (screenWidth - 2 * spacing) / screenWidth);
       }
 
       double pageHeight = max(20 * MediaQuery.of(context).textScaleFactor + 2 * 8, 18 + 2 * 16) + 1 + 24 * MediaQuery.of(context).textScaleFactor + 3 * 8;
 
       List<Widget> pages = <Widget>[];
       for (Widget command in commandsList) {
-        pages.add(Padding(padding: EdgeInsets.only(right: 8), child: command));
+        pages.add(Padding(padding: EdgeInsets.only(right: spacing), child: command));
       }
 
       return Padding(padding: EdgeInsets.only(top: 8, bottom: 16), child:

@@ -121,10 +121,11 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     Widget contentWidget;
     int visibleCount = min(Config().homeWellnessResourcesCount, _commands?.length ?? 0);
     if (1 < visibleCount) {
+      final double spacing = 16;
 
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        _pageController = PageController(viewportFraction: (screenWidth - 32) / screenWidth);
+        _pageController = PageController(viewportFraction: (screenWidth - 2 * spacing) / screenWidth);
       }
 
       double pageHeight = 18 * MediaQuery.of(context).textScaleFactor + 2 * 16;
@@ -134,7 +135,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
         Map<String, dynamic>? command = JsonUtils.mapValue(_commands![index]);
         Widget? button = (command != null) ? _buildResourceButton(command) : null;
         if (button != null) {
-          pages.add(Padding(padding: EdgeInsets.only(right: 8), child: button));
+          pages.add(Padding(padding: EdgeInsets.only(right: spacing), child: button));
         }
       }
 

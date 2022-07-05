@@ -150,16 +150,18 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     Widget contentWidget;
     int visibleCount = min(Config().homeFavoriteItemsCount, _favorites?.length ?? 0);
     if (1 < visibleCount) {
+      final double spacing = 16;
+
       if (_pageController == null) {
         double screenWidth = MediaQuery.of(context).size.width;
-        _pageController = PageController(viewportFraction: (screenWidth - 32) / screenWidth);
+        _pageController = PageController(viewportFraction: (screenWidth - 2 * spacing) / screenWidth);
       }
 
       double pageHeight = (20 + 16) * MediaQuery.of(context).textScaleFactor + 7 + 2 * 16 + 12;
 
       List<Widget> pages = [];
       for (int i = 0; i < visibleCount; i++) {
-        pages.add(Padding(padding: EdgeInsets.only(right: 8), child:
+        pages.add(Padding(padding: EdgeInsets.only(right: spacing), child:
           _buildItemCard(_favorites![i])),
         );
       }
