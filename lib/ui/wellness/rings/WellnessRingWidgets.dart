@@ -20,8 +20,9 @@ class WellnessRing extends StatefulWidget{
   final int strokeSize;
   final int borderWidth;
   final bool accomplishmentDialogEnabled;
+  final bool accomplishmentConfettiEnabled;
 
-  WellnessRing({this.backgroundColor = Colors.white, this.size = _WellnessRingState.OUTER_SIZE, this.strokeSize = _WellnessRingState.STROKE_SIZE, this.accomplishmentDialogEnabled = true, this.borderWidth = _WellnessRingState.PADDING_SIZE});
+  WellnessRing({this.backgroundColor = Colors.white, this.size = _WellnessRingState.OUTER_SIZE, this.strokeSize = _WellnessRingState.STROKE_SIZE, this.accomplishmentDialogEnabled = false, this.borderWidth = _WellnessRingState.PADDING_SIZE, this.accomplishmentConfettiEnabled = true});
 
   @override
   State<WellnessRing> createState() => _WellnessRingState();
@@ -226,11 +227,13 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
       WellnessRings().getWellnessRings().then((value){
         _ringsData = value;
         if(mounted) {
-          setState(() {});
+          try { //Unhandled Exception: 'package:flutter/src/widgets/framework.dart': Failed assertion: line 4234 pos 12: '_lifecycleState != _ElementLifecycle.defunct': is not true.
+            setState(() {});
+          } catch (e) {print(e);}
         }
       });
-    } else if( name == WellnessRings.notifyUserRingsAccomplished && widget.accomplishmentDialogEnabled){
-      if (param != null && param is String) {
+    } else if( name == WellnessRings.notifyUserRingsAccomplished){
+      if (widget.accomplishmentDialogEnabled && param != null && param is String) {
         WellnessRingData? data = WellnessRings().wellnessRings
             ?.firstWhere((element) => element.id == param);
         if (data != null) {
@@ -300,7 +303,9 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                   )));
         }
       }
-      _playConfetti();
+      if(widget.accomplishmentConfettiEnabled) {
+        _playConfetti();
+      }
     }
   }
 
