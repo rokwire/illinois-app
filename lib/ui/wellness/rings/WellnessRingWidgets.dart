@@ -2,7 +2,6 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessReing.dart';
 import 'package:illinois/service/WellnessRings.dart';
-import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -54,7 +53,6 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
 
   @override
   void dispose() {
-    super.dispose();
     NotificationService().unsubscribe(this);
     if(_animationControllers.isNotEmpty) {
       _animationControllers.values.forEach((controller) {
@@ -62,6 +60,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
       });
     }
     _controllerCenter.dispose();
+    super.dispose();
   }
 
   void _loadRingsData() async {

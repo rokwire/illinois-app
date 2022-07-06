@@ -13,11 +13,11 @@ class WellnessRingDefinition {
 
   WellnessRingDefinition({required this.id , this.name, required this.goal, this.dateCreatedUtc, this.unit = "times" , this.colorHex = "FF000000"});
 
-  static WellnessRingDefinition? fromJson(Map<String, dynamic>? json){
-    if(json!=null) {
+  static WellnessRingDefinition? fromJson(dynamic json){
+    if(json!=null && json is Map) {
       return WellnessRingDefinition(
           id:     JsonUtils.stringValue(json['id']) ?? "",
-          goal:   JsonUtils.doubleValue(json['goal']) ?? 1.0,
+          goal:   JsonUtils.doubleValue(json['value']) ?? 1.0,
           name:   JsonUtils.stringValue(json['name']),
           unit:   JsonUtils.stringValue(json['unit']),
           colorHex:  JsonUtils.stringValue(json['color_hex']),
@@ -30,7 +30,7 @@ class WellnessRingDefinition {
   Map<String, dynamic> toJson(){
     Map<String, dynamic> json = {};
     json['id']     = id;
-    json['goal']   = goal;
+    json['value']   = goal;
     json['name']   = name;
     json['unit']   = unit;
     json['color_hex']  = colorHex;
@@ -68,6 +68,10 @@ class WellnessRingDefinition {
   
   Color? get color{
     return this.colorHex!= null ? ColorUtils.fromHex(colorHex) : null;
+  }
+
+  DateTime get date{
+    return dateCreatedUtc?.toLocal() ?? DateTime.fromMillisecondsSinceEpoch(0);
   }
 
   int get timestamp{
@@ -136,6 +140,10 @@ class WellnessRingRecord {
       (wellnessRingId.hashCode) ^
       (value.hashCode) ^
       (dateCreatedUtc.hashCode);
+
+  DateTime get date{
+    return dateCreatedUtc?.toLocal() ?? DateTime.fromMillisecondsSinceEpoch(0);
+  }
 
   static List<WellnessRingRecord>? listFromJson(List<dynamic>? json) {
     List<WellnessRingRecord>? values;
