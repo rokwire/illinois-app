@@ -73,22 +73,12 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Container(height: 8,),
-          _buildHeader(),
+          WellnessWidgetHelper.buildWellnessHeader(),
           Container(height: 12,),
           _buildTabButtonRow(),
           _buildContent()
         ]));
 
-  }
-
-  Widget _buildHeader() {
-    return Container(
-        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Text(Localization().getStringEx('panel.wellness.rings.header.label', 'My Daily Wellness Rings'),
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
-          FavoriteStarIcon(style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
-        ]));
   }
 
   Widget _buildTabButtonRow() {
