@@ -162,28 +162,24 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
   Widget _buildButtons(){
     List<Widget> content = [];
     if(_ringsData != null && _ringsData!.isNotEmpty) {
-      for (WellnessRingDefinition? data  in _ringsData!) {
-        if (data != null) {
+      for (WellnessRingDefinition? definition  in _ringsData!) {
+        if (definition != null) {
           content.add(WellnessRingButton(
-              label: data.name ?? "",
-              color: data.color,
+              label: definition.name ?? "",
+              color: definition.color,
               description: "${WellnessRings()
-                  .getRingDailyValue(data.id)
-                  .toInt()}/${data.goal.toInt()} ${data.unit}s",
+                  .getRingDailyValue(definition.id)
+                  .toInt()}/${definition.goal.toInt()} ${definition.unit}s",
               onTapIncrease: (context) {
                 WellnessRings().addRecord(
-                    WellnessRingRecord(value: 1, timestamp: DateTime
-                        .now()
-                        .millisecondsSinceEpoch, wellnessRingId: data.id));
+                    WellnessRingRecord(value: 1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
               },
             onTapDecrease: (context) {
               WellnessRings().addRecord(
-                  WellnessRingRecord(value: -1, timestamp: DateTime
-                      .now()
-                      .millisecondsSinceEpoch, wellnessRingId: data.id));
+                  WellnessRingRecord(value: -1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
             },
               onTapEdit: (context){
-                Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingCreatePanel(data: data, initialCreation: false,)));
+                Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingCreatePanel(data: definition, initialCreation: false,)));
               },
           ));
           content.add(Container(height: 15,));

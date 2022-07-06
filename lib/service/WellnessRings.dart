@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessReing.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -180,7 +181,7 @@ class WellnessRings with Service{
         List<WellnessRingRecord>? ringRecords = dayRecords.value[ringId];
         WellnessRingDefinition? ringData;
         try {
-          ringData = (ringRecords?.isNotEmpty ?? false) ? _getActiveRingDataForDay(id: ringId, date: ringRecords!.first.date) : null;
+          ringData = (ringRecords?.isNotEmpty ?? false) ? _getActiveRingDataForDay(id: ringId, date: ringRecords!.first.dateCreatedUtc) : null;
         } catch (e){
           print(e);
         }
@@ -219,7 +220,7 @@ class WellnessRings with Service{
   Map<String, Map<String, List<WellnessRingRecord>>> _splitRecordsByDay(){
     Map<String, Map<String, List<WellnessRingRecord>>> ringDateRecords = {};
     _wellnessRecords?.forEach((record) {
-      String? recordDayName = record.date != null? DateTimeUtils.localDateTimeToString(DateTimeUtils.midnight(record.date!)) : null;
+      String? recordDayName = record.dateCreatedUtc != null? DateTimeUtils.localDateTimeToString(DateTimeUtils.midnight(record.dateCreatedUtc?.toLocal())) : null;
       if(recordDayName!=null) {
         Map<String, List<WellnessRingRecord>>? recordsForDay = ringDateRecords[recordDayName];
         if (recordsForDay == null) {
@@ -279,7 +280,7 @@ class WellnessRings with Service{
     //Split records by date
     Map<String, List<WellnessRingRecord>> ringDateRecords = {};
     _wellnessRecords?.forEach((record) {
-      String? recordDayName = record.date != null? DateFormat("yyyy-MM-dd").format(DateUtils.dateOnly(record.date!)) : null;
+      String? recordDayName = record.dateCreatedUtc != null? DateTimeUtils.localDateTimeToString(DateTimeUtils.midnight(record.dateCreatedUtc?.toLocal())) : null;
       if(recordDayName!=null) {
         List<WellnessRingRecord>? recordsForDay = ringDateRecords[recordDayName];
         if (recordsForDay == null) {
@@ -294,7 +295,7 @@ class WellnessRings with Service{
     int count = 0;
     for (List<WellnessRingRecord> dayRecords in ringDateRecords.values){
       if(dayRecords.isNotEmpty) {
-        WellnessRingDefinition? ringData = _getActiveRingDataForDay(id: id, date: dayRecords.first.date); //We've filtered per day, so all records should return the same DayRingData, so just take the first one
+        WellnessRingDefinition? ringData = _getActiveRingDataForDay(id: id, date: dayRecords.first.dateCreatedUtc); //We've filtered per day, so all records should return the same DayRingData, so just take the first one
         int dayCount = 0;
         for (WellnessRingRecord record in dayRecords) {
           dayCount += record.value.toInt();
@@ -334,8 +335,8 @@ class WellnessRings with Service{
   double getRingDailyValue(String wellnessRingId){
     Iterable<WellnessRingRecord>? selection = _wellnessRecords?.where((record) =>
     ((record.wellnessRingId == wellnessRingId)
-        && ((DateTimeUtils.midnight(DateTime.now())?.millisecondsSinceEpoch ?? 0) < record.timestamp)));
-    // ?.where((record) => ((DateTimeUtils.midnight(DateTime.now())?.millisecondsSinceEpoch ?? 0) < record.timestamp));// Today records
+        // && (DateTimeUtils.midnight(DateTime.now())?.isBefore(record.dateCreatedUtc ?? DateTime.now()) ?? false))); //records before midnight
+        && (record.dateCreatedUtc?.isAfter(/*today's start*/DateTimeUtils.midnight(DateTime.now()) ?? DateTime.now()) ?? false))); //records after midnight
 
     double value = 0.0;
     selection?.forEach((record) {

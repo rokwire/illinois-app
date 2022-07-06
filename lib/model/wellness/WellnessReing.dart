@@ -98,26 +98,19 @@ class WellnessRingDefinition {
 }
 
 class WellnessRingRecord {
+  static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
   final String wellnessRingId;
   final double value;
-  final int timestamp;
+  final DateTime? dateCreatedUtc;
 
-  //helper property to avoid creating date everytime
-  DateTime? date;
-
-  WellnessRingRecord(
-      {required this.value, required this.timestamp, required this.wellnessRingId}){
-    if(date==null){
-      date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    }
-  }
+  WellnessRingRecord({required this.value, required this.wellnessRingId, this.dateCreatedUtc,});
 
   static WellnessRingRecord? fromJson(Map<String, dynamic>? json) {
     if (json != null) {
       return WellnessRingRecord(
         wellnessRingId: JsonUtils.stringValue(json['wellnessRingId']) ?? "",
         value: JsonUtils.doubleValue(json['value']) ?? 0.0,
-        timestamp: JsonUtils.intValue(json['timestamp']) ?? 0,
+        dateCreatedUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_created']), format: _dateTimeFormat, isUtc: true),
       );
     }
     return null;
@@ -127,7 +120,7 @@ class WellnessRingRecord {
     Map<String, dynamic> json = {};
     json['wellnessRingId'] = wellnessRingId;
     json['value'] = value;
-    json['timestamp'] = timestamp;
+    json['date_created']  = DateTimeUtils.utcDateTimeToString(dateCreatedUtc);
     return json;
   }
 
@@ -136,13 +129,13 @@ class WellnessRingRecord {
       (other is WellnessRingRecord) &&
           (wellnessRingId == other.wellnessRingId) &&
           (value == other.value) &&
-          (timestamp == other.timestamp);
+          (dateCreatedUtc == other.dateCreatedUtc);
 
   @override
   int get hashCode =>
       (wellnessRingId.hashCode) ^
       (value.hashCode) ^
-      (timestamp.hashCode);
+      (dateCreatedUtc.hashCode);
 
   static List<WellnessRingRecord>? listFromJson(List<dynamic>? json) {
     List<WellnessRingRecord>? values;
