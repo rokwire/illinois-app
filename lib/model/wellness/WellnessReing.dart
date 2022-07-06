@@ -2,30 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessRingDefinition {
-//  static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
+  static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
+
   String id;
   double goal;
   String? colorHex;
   String? name;
   String? unit;
-  int timestamp;
+  DateTime? dateCreatedUtc;
 
-  //helper property to avoid creating date everytime
-  DateTime? date;
-
-  WellnessRingDefinition({required this.id , this.name, required this.goal, this.date, this.unit = "times" , this.colorHex = "FF000000", required this.timestamp});
+  WellnessRingDefinition({required this.id , this.name, required this.goal, this.dateCreatedUtc, this.unit = "times" , this.colorHex = "FF000000"});
 
   static WellnessRingDefinition? fromJson(Map<String, dynamic>? json){
     if(json!=null) {
-      DateTime date = DateTime.fromMillisecondsSinceEpoch(JsonUtils.intValue(json['timestamp'])??0);
       return WellnessRingDefinition(
           id:     JsonUtils.stringValue(json['id']) ?? "",
           goal:   JsonUtils.doubleValue(json['goal']) ?? 1.0,
           name:   JsonUtils.stringValue(json['name']),
           unit:   JsonUtils.stringValue(json['unit']),
-          timestamp:   JsonUtils.intValue(json['timestamp']) ?? DateTime.now().millisecondsSinceEpoch,
-          colorHex:  JsonUtils.stringValue(json['color']),
-          date: date
+          colorHex:  JsonUtils.stringValue(json['color_hex']),
+          dateCreatedUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_created']), format: _dateTimeFormat, isUtc: true),
       );
     }
     return null;
@@ -37,8 +33,8 @@ class WellnessRingDefinition {
     json['goal']   = goal;
     json['name']   = name;
     json['unit']   = unit;
-    json['color']  = colorHex;
-    json['timestamp']  = timestamp;
+    json['color_hex']  = colorHex;
+    json['date_created']  = DateTimeUtils.utcDateTimeToString(dateCreatedUtc);
     return json;
   }
 
@@ -48,8 +44,7 @@ class WellnessRingDefinition {
     this.colorHex = other.colorHex;
     this.name= other.name;
     this.unit = other.unit;
-    this.timestamp = other.timestamp;
-    this.date = other.date != null ? DateTimeUtils().copyDateTime(other.date!): null;
+    this.dateCreatedUtc = other.dateCreatedUtc != null ? DateTimeUtils().copyDateTime(other.dateCreatedUtc!): null;
   }
 
   @override
@@ -59,7 +54,7 @@ class WellnessRingDefinition {
           (goal == other.goal) &&
           (colorHex == other.colorHex) &&
           (name == other.name) &&
-          (timestamp == other.timestamp) &&
+          (dateCreatedUtc == other.dateCreatedUtc) &&
           (unit == other.unit);
 
   @override
@@ -68,11 +63,15 @@ class WellnessRingDefinition {
       (goal.hashCode) ^
       (colorHex?.hashCode ?? 0) ^
       (name?.hashCode ?? 0) ^
-      (timestamp.hashCode) ^
+      (dateCreatedUtc.hashCode) ^
       (unit?.hashCode ?? 0);
   
   Color? get color{
     return this.colorHex!= null ? ColorUtils.fromHex(colorHex) : null;
+  }
+
+  int get timestamp{
+    return this.dateCreatedUtc?.millisecondsSinceEpoch ?? 0;
   }
 
   static List<WellnessRingDefinition>? listFromJson(List<dynamic>? json) {

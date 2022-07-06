@@ -60,8 +60,8 @@ class WellnessRings with Service{
     if(_wellnessRingsRecords?.isNotEmpty ?? false){
       for (WellnessRingDefinition data in _wellnessRingsRecords!){
         if(_activeWellnessRings!.containsKey(data.id)){
-          WellnessRingDefinition? storedData = _activeWellnessRings![data.id];
-          if((storedData?.timestamp ?? 0) < data.timestamp){
+          WellnessRingDefinition? storedDefinition = _activeWellnessRings![data.id];
+          if((storedDefinition?.timestamp ?? 0) < data.timestamp){
               _activeWellnessRings![data.id] = data; //TBD try storedData = data;
           }
         } else {
@@ -180,7 +180,7 @@ class WellnessRings with Service{
         List<WellnessRingRecord>? ringRecords = dayRecords.value[ringId];
         WellnessRingDefinition? ringData;
         try {
-          ringData = (ringRecords?.isNotEmpty ?? false) ? _getActiveRingDataForDay(id: ringId, timestamp: ringRecords!.first.timestamp) : null;
+          ringData = (ringRecords?.isNotEmpty ?? false) ? _getActiveRingDataForDay(id: ringId, date: ringRecords!.first.date) : null;
         } catch (e){
           print(e);
         }
@@ -258,9 +258,9 @@ class WellnessRings with Service{
     return null;
   }
 
-  WellnessRingDefinition? _getActiveRingDataForDay({required String id, int? timestamp}){
-    if(timestamp!=null){
-      DateTime? midnight = DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(timestamp).add(Duration(days: 1))); //Border is at midnight the next day
+  WellnessRingDefinition? _getActiveRingDataForDay({required String id, DateTime? date}){
+    if(date!=null){
+      DateTime? midnight = DateTimeUtils.midnight(date.toLocal().add(Duration(days: 1))); //Border is at midnight the next day (Local Time)
       var foundData = _findRingData(id: id, beforeTimestamp: midnight?.millisecondsSinceEpoch);
       if(foundData?.isNotEmpty ?? false){
         return foundData!.last; // last to be the most up to date
@@ -294,9 +294,7 @@ class WellnessRings with Service{
     int count = 0;
     for (List<WellnessRingRecord> dayRecords in ringDateRecords.values){
       if(dayRecords.isNotEmpty) {
-        WellnessRingDefinition? ringData = _getActiveRingDataForDay(id: id,
-            timestamp: dayRecords.first
-                .timestamp); //We've filtered per day, so all records should return the same DayRingData, so just take the first one
+        WellnessRingDefinition? ringData = _getActiveRingDataForDay(id: id, date: dayRecords.first.date); //We've filtered per day, so all records should return the same DayRingData, so just take the first one
         int dayCount = 0;
         for (WellnessRingRecord record in dayRecords) {
           dayCount += record.value.toInt();

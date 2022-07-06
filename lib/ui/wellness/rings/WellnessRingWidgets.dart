@@ -88,7 +88,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     int fillCount = MIN_RINGS_COUNT - (_ringsData?.length ?? 0);
     if(fillCount > 0){
       for (int i=0; i<fillCount; i++){
-        data.add(WellnessRingDefinition(id: "empty_$i", goal: 1, timestamp: DateTime.now().millisecondsSinceEpoch));
+        data.add(WellnessRingDefinition(id: "empty_$i", goal: 1));
       }
     }
     if(_ringsData?.isNotEmpty ?? false){
