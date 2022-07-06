@@ -130,10 +130,10 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
 
       List<Widget> pages = <Widget>[];
       for (String code in _displayCodes!) {
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child: _widgetFromCode(code) ?? Container()));
+        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child: _widgetFromCode(code) ?? Container()));
       }
 
-      return Padding(padding: EdgeInsets.only(top: 8, bottom: 16), child:
+      return Padding(padding: EdgeInsets.only(top: 8), child:
         Container(constraints: BoxConstraints(minHeight: pageHeight), child:
           ExpandablePageView(
             controller: _pageController,
