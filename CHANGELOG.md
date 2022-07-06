@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.0.45] - 2022-07-06
 ### Changed
 - Show checkmark for current CheckList step if completed [#1889](https://github.com/rokwire/illinois-app/issues/1889).
 - Show 3 state favorite status in HomeFavoriteButton [#1891](https://github.com/rokwire/illinois-app/issues/1891).
@@ -12,7 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make Athletics News and Events widgets horizontally scrollable [#1874](https://github.com/rokwire/illinois-app/issues/1874).
 ### Fixed
 - Fixed content update in HomeWalletWidget [#1874](https://github.com/rokwire/illinois-app/issues/1874).
-
 
 ## [4.0.44] - 2022-07-05
 ### Changed
