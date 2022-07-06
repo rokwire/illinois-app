@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -46,6 +47,7 @@ class HomeMyGroupsWidget extends StatefulWidget {
 class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements NotificationsListener{
   List<Group>? _groups;
   PageController? _pageController;
+  final double _pageSpacing = 16;
   DateTime? _pausedDateTime;
 
   @override
@@ -67,6 +69,10 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
         }
       });
     }
+
+    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
+    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+    _pageController = PageController(viewportFraction: pageViewport);
 
     _loadGroups();
   }
@@ -101,13 +107,12 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
 
 
   Widget _buildContent() {
-    final double spacing = 16;
 
     List<Widget> pages = <Widget>[];
     if(_groups?.isNotEmpty ?? false) {
       for (Group? group in _groups!) {
         if (group != null) {
-          pages.add(Padding(padding: EdgeInsets.only(right: spacing), child:
+          pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
             GroupCard(group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
           ));
         }
@@ -115,12 +120,6 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
     }
 
     double pageHeight = 90 * 2 * MediaQuery.of(context).textScaleFactor;
-
-    if (_pageController == null) {
-      double screenWidth = MediaQuery.of(context).size.width;
-      double pageViewport = (screenWidth - 2 * spacing) / screenWidth;
-      _pageController = PageController(viewportFraction: pageViewport);
-    }
 
     return Column(children: [
       Container(height: pageHeight, child:

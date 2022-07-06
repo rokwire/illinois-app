@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:math';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Favorite.dart';
+import 'package:illinois/main.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
@@ -71,6 +71,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   List<Favorite>? _favorites;
   PageController? _pageController;
   bool _loadingFavorites = false;
+  final double _pageSpacing = 16;
   
   @override
   void initState() {
@@ -89,6 +90,10 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         }
       });
     }
+
+    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
+    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+    _pageController = PageController(viewportFraction: pageViewport);
 
     _refreshFavorites();
     super.initState();
@@ -148,20 +153,14 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   Widget _buildFavorites() {
     Widget contentWidget;
-    int visibleCount = min(Config().homeFavoriteItemsCount, _favorites?.length ?? 0);
+    int visibleCount = _favorites?.length ?? 0; // min(Config().homeFavoriteItemsCount, ...)
     if (1 < visibleCount) {
-      final double spacing = 16;
-
-      if (_pageController == null) {
-        double screenWidth = MediaQuery.of(context).size.width;
-        _pageController = PageController(viewportFraction: (screenWidth - 2 * spacing) / screenWidth);
-      }
 
       double pageHeight = (20 + 16) * MediaQuery.of(context).textScaleFactor + 7 + 2 * 16 + 12;
 
       List<Widget> pages = [];
       for (int i = 0; i < visibleCount; i++) {
-        pages.add(Padding(padding: EdgeInsets.only(right: spacing), child:
+        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
           _buildItemCard(_favorites![i])),
         );
       }
