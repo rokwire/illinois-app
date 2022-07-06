@@ -22,29 +22,29 @@ class FavoriteStarIcon extends StatelessWidget {
   }
 
   Widget get _starImage {
+    String? imageName;
     if (style == FavoriteIconStyle.SlantHeader) {
-      return (selected == true) ?
-        Image.asset('images/icon-star-orange.png', excludeFromSemantics: true) :
-        Image.asset('images/icon-star-white-frame-thin.png', excludeFromSemantics: true,);
+      switch (selected) {
+        case true:  imageName = 'images/icon-star-orange.png'; break;
+        case false: imageName = 'images/icon-star-white-frame-thin.png'; break;
+        default:    imageName = 'images/icon-star-gray.png'; break;
+      }
     }
     else if (style == FavoriteIconStyle.Handle) {
-      return (selected == true) ?
-        Image.asset('images/icon-star-orange.png', excludeFromSemantics: true) :
-        Image.asset('images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,);
+      switch (selected) {
+        case true:  imageName = 'images/icon-star-orange.png'; break;
+        default:    imageName = 'images/icon-star-gray-frame-thin.png'; break;
+      }
     }
     else if (style == FavoriteIconStyle.Button) {
-      if (selected == null) {
-        return Image.asset('images/icon-star-gray.png', excludeFromSemantics: true);
-      }
-      else if (selected == true) {
-        return Image.asset('images/icon-star-orange.png', excludeFromSemantics: true);
-      }
-      else if (selected == false) {
-        return Image.asset('images/icon-star-white.png', excludeFromSemantics: true);
+      switch (selected) {
+        case true:  imageName = 'images/icon-star-orange.png'; break;
+        case false: imageName = 'images/icon-star-white.png'; break;
+        default:    imageName = 'images/icon-star-gray.png'; break;
       }
     }
     
-    return Image.asset('images/icon-star-gray-frame-thin.png', excludeFromSemantics: true);
+    return Image.asset(imageName ?? 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true);
   }
 }
 
@@ -66,7 +66,7 @@ class FavoriteButton extends StatelessWidget {
     );
   }
 
-  bool get isFavorite => Auth2().prefs?.isFavorite(favorite) ?? false;
+  bool? get isFavorite => Auth2().prefs?.isFavorite(favorite) ?? false;
   void toggleFavorite() => Auth2().prefs?.toggleFavorite(favorite);
 
   void onFavorite(BuildContext context) {
