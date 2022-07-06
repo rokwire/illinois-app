@@ -5,6 +5,7 @@ import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/main.dart';
 import 'package:illinois/model/Twitter.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
@@ -52,6 +53,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   DateTime? _pausedDateTime;
   PageController? _pageController;
   GlobalKey _viewPagerKey = GlobalKey();
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -70,8 +72,13 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       });
     }
 
+    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
+    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+    _pageController = PageController(viewportFraction: pageViewport);
+
     _selectedAccountKey = Storage().selectedTwitterAccount;
     _loadingPage = true;
+    
     String? accountKey = _currentAccountKey;
     Twitter().loadTweetsPage(count: Config().twitterTweetsCount, accountKey: accountKey).then((TweetsPage? tweetsPage) {
       _setState(() {
@@ -201,8 +208,6 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   }
 
   Widget _buildContent() {
-    final double spacing = 16;
-
     List<Widget> pages = <Widget>[];
     for (TweetsPage tweetsPage in _tweetsPages) {
       if (tweetsPage.tweets != null) {
@@ -210,7 +215,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
           bool isFirst = pages.isEmpty;
           pages.add(_TweetWidget(
             tweet: tweet,
-            margin: EdgeInsets.only(right: spacing),
+            margin: EdgeInsets.only(right: _pageSpacing),
             onTapPrevious: isFirst? null : _onTapPrevious,
             onTapNext: _onTapNext,
           ));
@@ -235,13 +240,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
       Widget contentWidget;
       if (1 < pages.length) {
-        double screenWidth = MediaQuery.of(context).size.width;
-        double pageHeight = screenWidth - 20 * 2 + 5;
-        double pageViewport = (screenWidth - 2 * spacing) / screenWidth;
-        
-        if (_pageController == null) {
-          _pageController = PageController(viewportFraction: pageViewport, keepPage: true, initialPage: 0);
-        }
+        double pageHeight = MediaQuery.of(context).size.width - 16 * 2 + 5;
         
         contentWidget = Container(
           constraints: BoxConstraints(minHeight: pageHeight),
@@ -311,8 +310,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
           });
         // Future.delayed((Duration.zero),(){
         if (mounted && (tweetsPage != null)) {
-          _pageController!.animateToPage(
-              0, duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+          _pageController?.animateToPage(0, duration: Duration(milliseconds: 500), curve: Curves.easeIn);
         }
         // });
       });

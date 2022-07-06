@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/main.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -38,6 +39,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   List<CanvasCourse>? _courses;
   PageController? _pageController;
   DateTime? _pausedDateTime;
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -57,6 +59,10 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
         }
       });
     }
+
+    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
+    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+    _pageController = PageController(viewportFraction: pageViewport);
 
     _loadCourses();
   }
@@ -103,12 +109,11 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   }
 
   Widget _buildCoursesContent() {
-    final double spacing = 16;
 
     List<Widget> coursePages = <Widget>[];
     if (CollectionUtils.isNotEmpty(_courses)) {
       for (CanvasCourse course in _courses!) {
-        coursePages.add(Padding(padding: EdgeInsets.only(right: spacing), child:
+        coursePages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
           GestureDetector(onTap: () => _onTapCourse(course), child:
             CanvasCourseCard(course: course, isSmall: true)
           ),
@@ -117,12 +122,6 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
     }
 
     double pageHeight = CanvasCourseCard.height(context, isSmall: true);
-
-    if (_pageController == null) {
-      double screenWidth = MediaQuery.of(context).size.width;
-      double pageViewport = (screenWidth - 2 * spacing) / screenWidth;
-      _pageController = PageController(viewportFraction: pageViewport);
-    }
 
     return Column(children: [
       Container(height: pageHeight, child:

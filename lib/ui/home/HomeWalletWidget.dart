@@ -54,7 +54,7 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
   PageController? _pageController;
   String? _currentCode;
   int _currentIndex = -1;
-  final double pageSpacing = 16;
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -80,7 +80,7 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
     }
     
     double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * pageSpacing) / screenWidth;
+    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
     _pageController = PageController(viewportFraction: pageViewport);
 
     super.initState();
@@ -130,7 +130,7 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
 
       List<Widget> pages = <Widget>[];
       for (String code in _displayCodes!) {
-        pages.add(Padding(padding: EdgeInsets.only(right: pageSpacing), child: _widgetFromCode(code) ?? Container()));
+        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child: _widgetFromCode(code) ?? Container()));
       }
 
       return Padding(padding: EdgeInsets.only(top: 8, bottom: 16), child:

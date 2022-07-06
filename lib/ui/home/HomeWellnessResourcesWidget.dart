@@ -18,6 +18,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -59,6 +60,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   List<dynamic>? _commands;
   Map<String, dynamic>? _strings;
   PageController? _pageController;
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -74,6 +76,10 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
         });
       });
     }
+
+    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
+    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+    _pageController = PageController(viewportFraction: pageViewport);
 
     _initContent();
     super.initState();
@@ -121,12 +127,6 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     Widget contentWidget;
     int visibleCount = min(Config().homeWellnessResourcesCount, _commands?.length ?? 0);
     if (1 < visibleCount) {
-      final double spacing = 16;
-
-      if (_pageController == null) {
-        double screenWidth = MediaQuery.of(context).size.width;
-        _pageController = PageController(viewportFraction: (screenWidth - 2 * spacing) / screenWidth);
-      }
 
       double pageHeight = 18 * MediaQuery.of(context).textScaleFactor + 2 * 16;
 
@@ -135,7 +135,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
         Map<String, dynamic>? command = JsonUtils.mapValue(_commands![index]);
         Widget? button = (command != null) ? _buildResourceButton(command) : null;
         if (button != null) {
-          pages.add(Padding(padding: EdgeInsets.only(right: spacing), child: button));
+          pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child: button));
         }
       }
 
