@@ -83,6 +83,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _pageController?.dispose();
     super.dispose();
   }
 
@@ -145,7 +146,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
 
       List<Widget> pages = <Widget>[];
       for (Game game in _games!) {
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
+        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
           AthleticsCard(game: game, onTap: () => _onTapGame(game), showInterests: true, margin: EdgeInsets.zero,),),
         );
       }
@@ -155,7 +156,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
         AthleticsCard(game: _games!.first, onTap: () => _onTapGame( _games!.first), showInterests: true, margin: EdgeInsets.zero)
       );
     }
