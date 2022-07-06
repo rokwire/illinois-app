@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show checkmark for current CheckList step if completed [#1889](https://github.com/rokwire/illinois-app/issues/1889).
 - Show 3 state favorite status in HomeFavoriteButton [#1891](https://github.com/rokwire/illinois-app/issues/1891).
 - Wellness Rings updates [#1692](https://github.com/rokwire/illinois-app/issues/1692).
+### Fixed
+- Fixed content update in HomeWalletWidget [#1874](https://github.com/rokwire/illinois-app/issues/1874).
+
 
 ## [4.0.44] - 2022-07-05
 ### Changed
