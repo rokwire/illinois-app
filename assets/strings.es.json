@@ -2419,6 +2419,8 @@
     "widget.voter.rv_alert.vote_now.text": "Estás en el %s y puedes votar ahora.",
 
     "widget.home.campus_reminders.label.campus_reminders": "Recordatorios de Campus",
+    "widget.home.campus_reminders.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.campus_reminders.text.empty.description": "There are no active Campus Reminders.",
     "widget.home.campus_reminders.button.all.title": "Ver todo",
     "widget.home.campus_reminders.button.all.hint": "Toca para ver todos los recordatorios",
 
