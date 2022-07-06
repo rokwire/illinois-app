@@ -141,18 +141,18 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
         if (currentStep) {
           textColor = Styles().colors!.fillColorPrimary!;
           textFamily = Styles().fontFamilies!.extraBold;
-          showCheckIcon = false;
+          // showCheckIcon = false;
         }
 
         progressWidgets.add(
             Semantics(label: "Page ${progressStep.toString()}", button: true, hint: progressStepCompleted? "Completed" :((progressStep == currentPageProgress)? "Current page":"Not Completed"), child:
             InkWell(onTap: () => _onTapProgress(progressStep), child:
             Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
-            Container(width: 28, height: 28, child:
+            Container(width: 32, height: 32, child:
             Stack(children:<Widget>[
               Visibility(
                 visible: currentStep,
-                child:  Align(alignment: Alignment.center, child: Container(width: 27, height: 27, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white))),
+                child:  Align(alignment: Alignment.center, child: Container(width: 32, height: 32, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white))),
               ),
               Container(child:
                 Align(alignment: Alignment.center, child:
