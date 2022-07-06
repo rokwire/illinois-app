@@ -541,12 +541,22 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 class AthleticsCard extends StatefulWidget {
   final Game game;
   final GestureTapCallback? onTap;
+  final EdgeInsetsGeometry margin;
   final bool showImage;
   final bool showDescription;
   final bool showInterests;
   final bool showGetTickets;
 
-  AthleticsCard({required this.game, this.onTap, this.showImage = false, this.showDescription = false, this.showInterests = false, this.showGetTickets = false});
+  static const EdgeInsetsGeometry imageMargin = const EdgeInsets.only(left: 20, right: 20);
+  static const EdgeInsetsGeometry regularMargin = const EdgeInsets.only(left: 20, right: 20, top: 20);
+
+  AthleticsCard({required this.game, this.onTap,
+    EdgeInsetsGeometry? margin,
+    this.showImage = false,
+    this.showDescription = false,
+    this.showInterests = false,
+    this.showGetTickets = false}) :
+    margin = margin ?? (showImage ? imageMargin : regularMargin);
 
   @override
   _AthleticsCardState createState() => _AthleticsCardState();
@@ -606,7 +616,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
           ) : Container(),
           showImage ? Container(height: 140, color: Styles().colors!.background,) : Container()
         ],),
-        Padding(padding: EdgeInsets.only(left: 20, right: 20, top: (showImage ? 0 : 20)), child:
+        Padding(padding: widget.margin, child:
           Stack(alignment: Alignment.topCenter, children: [
             Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [const BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
               Padding(padding: EdgeInsets.only(bottom: ((showInterests && !isTicketedSport) ? 0 : 12)), child:
