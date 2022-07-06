@@ -202,47 +202,48 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     final Color disabledBackgroundColor = ColorUtils.fromHex("e7e7e7") ?? Colors.white; //TODO move to colors
     String label = "Create New Ring";
     String description = "Maximum of 4 total";
-    return Semantics(label: label, hint: description, button: true, excludeSemantics: true, child:
-    GestureDetector(onTap: (){
-      if(enabled) {
-        Analytics().logSelect(target: "Create new ring");
-        Navigator.push(context, CupertinoPageRoute(
-            builder: (context) => WellnessRingSelectPredefinedPanel()));
-      }
-    },
-      child:
-    Container(
-      // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Expanded(child:
-          Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
-          Padding(padding: EdgeInsets.only(left: 18, top: 16, bottom: 16, right: 16), child:
-          Row( crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(right: 14),
-                  child: Image.asset('images/icons-control-add-blue.png', excludeFromSemantics: true, color: enabled? Colors.black : disabledTextColor,),
+    return Visibility(
+        visible: WellnessRings().canAddRing,
+        child: Semantics(label: label, hint: description, button: true, excludeSemantics: true,
+          child: GestureDetector(onTap: (){
+            if(enabled) {
+              Analytics().logSelect(target: "Create new ring");
+              Navigator.push(context, CupertinoPageRoute(
+                  builder: (context) => WellnessRingSelectPredefinedPanel()));
+            }
+          },
+          child: Container(
+          // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Expanded(child:
+              Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
+              Padding(padding: EdgeInsets.only(left: 18, top: 16, bottom: 16, right: 16), child:
+              Row( crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(right: 14),
+                      child: Image.asset('images/icons-control-add-blue.png', excludeFromSemantics: true, color: enabled? Colors.black : disabledTextColor,),
+                  ),
+                  Expanded(
+                      flex: 5,
+                      child: Container(
+                        child: Text(label ,
+                              style: TextStyle(color: enabled? Colors.black : disabledTextColor,
+                                  fontFamily: Styles().fontFamilies!.bold, fontSize: 14), textAlign: TextAlign.start,),)),
+                  Expanded(
+                      flex: 5,
+                      child: Container(
+                        child: Text(description ,
+                              style: TextStyle(color: enabled? Colors.black : disabledTextColor,
+                                  fontFamily: Styles().fontFamilies!.regular, fontSize: 12), textAlign: TextAlign.end,),)),
+                ],),
               ),
-              Expanded(
-                  flex: 5,
-                  child: Container(
-                    child: Text(label ,
-                          style: TextStyle(color: enabled? Colors.black : disabledTextColor,
-                              fontFamily: Styles().fontFamilies!.bold, fontSize: 14), textAlign: TextAlign.start,),)),
-              Expanded(
-                  flex: 5,
-                  child: Container(
-                    child: Text(description ,
-                          style: TextStyle(color: enabled? Colors.black : disabledTextColor,
-                              fontFamily: Styles().fontFamilies!.regular, fontSize: 12), textAlign: TextAlign.end,),)),
-            ],),
-          ),
-          )
-          ),
-        ],)),
-    ),
-    );
+              )
+              ),
+            ],)),
+      ),
+    ));
   }
 
   void _showWelcomePopup() {
