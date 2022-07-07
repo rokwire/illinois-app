@@ -28,14 +28,14 @@ abstract class CheckList with Service implements NotificationsListener{
   //Custom actions
   static const String widgetActionRequestGroup  = "edu.illinois.rokwire.checklist.gies.widget.action.request.group";
 
-  static const String giesOnboardingChecklist = "gies_onboarding";
-  static const String uiucOnboardingChecklist = "uiuc_onboarding";
+  static const String giesOnboarding = "gies_onboarding";
+  static const String uiucOnboarding = "uiuc_onboarding";
 
   // Singleton instance wrapper
   factory CheckList(String serviceName){
     switch (serviceName){
-      case giesOnboardingChecklist : return _GiesCheckListInstanceWrapper();
-      case uiucOnboardingChecklist : return _StudentCheckListInstanceWrapper();
+      case giesOnboarding : return _GiesCheckListInstanceWrapper();
+      case uiucOnboarding : return _StudentCheckListInstanceWrapper();
     }
     return _GiesCheckListInstanceWrapper(); //default
   }
@@ -211,7 +211,7 @@ abstract class CheckList with Service implements NotificationsListener{
   }
 
   Future<dynamic> _loadUserInfo() async {
-    if(_contentName != giesOnboardingChecklist){
+    if(_contentName != giesOnboarding){
       return null;
     }
     if (StringUtils.isEmpty(Config().gatewayUrl)) {
@@ -709,7 +709,7 @@ class _GiesCheckListInstanceWrapper extends CheckList{
 
   factory _GiesCheckListInstanceWrapper() => _instance;
 
-  _GiesCheckListInstanceWrapper._internal() : super.fromName(CheckList.giesOnboardingChecklist);
+  _GiesCheckListInstanceWrapper._internal() : super.fromName(CheckList.giesOnboarding);
 }
 
 class _StudentCheckListInstanceWrapper extends CheckList{
@@ -717,5 +717,5 @@ class _StudentCheckListInstanceWrapper extends CheckList{
 
   factory _StudentCheckListInstanceWrapper() => _instance;
 
-  _StudentCheckListInstanceWrapper._internal() : super.fromName(CheckList.uiucOnboardingChecklist);
+  _StudentCheckListInstanceWrapper._internal() : super.fromName(CheckList.uiucOnboarding);
 }

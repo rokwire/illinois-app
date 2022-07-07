@@ -529,12 +529,12 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapGiesChecklist(BuildContext context) {
     Analytics().logSelect(target: "Gies Checklist");
-    CheckListPanel.present(context, contentKey: CheckList.giesOnboardingChecklist);
+    CheckListPanel.present(context, contentKey: CheckList.giesOnboarding);
   }
 
   void _onTapNewStudentChecklist(BuildContext context) {
     Analytics().logSelect(target: "New Student Checklist");
-    CheckListPanel.present(context, contentKey: CheckList.uiucOnboardingChecklist);
+    CheckListPanel.present(context, contentKey: CheckList.uiucOnboarding);
   }
 
   void _onTapCanvasCourses(BuildContext context) {

@@ -286,20 +286,20 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (code == 'gies_checklist') {
       if (title) {
-        return HomeCheckListWidget.title(contentKey: CheckList.giesOnboardingChecklist);
+        return HomeCheckListWidget.title(contentKey: CheckList.giesOnboarding);
       } else if (handle) {
-        return HomeCheckListWidget.handle(contentKey: CheckList.giesOnboardingChecklist, favoriteId: code, dragAndDropHost: this, position: position);
+        return HomeCheckListWidget.handle(contentKey: CheckList.giesOnboarding, favoriteId: code, dragAndDropHost: this, position: position);
       } else {
-        return HomeCheckListWidget(contentKey: CheckList.giesOnboardingChecklist, favoriteId: code, updateController: _updateController);
+        return HomeCheckListWidget(contentKey: CheckList.giesOnboarding, favoriteId: code, updateController: _updateController);
       }
     }
     else if (code == 'new_student_checklist') {
       if (title) {
-        return HomeCheckListWidget.title(contentKey: CheckList.uiucOnboardingChecklist);
+        return HomeCheckListWidget.title(contentKey: CheckList.uiucOnboarding);
       } else if (handle) {
-        return HomeCheckListWidget.handle(contentKey: CheckList.uiucOnboardingChecklist, favoriteId: code, dragAndDropHost: this, position: position);
+        return HomeCheckListWidget.handle(contentKey: CheckList.uiucOnboarding, favoriteId: code, dragAndDropHost: this, position: position);
       } else {
-        return HomeCheckListWidget(contentKey: CheckList.uiucOnboardingChecklist, favoriteId: code, updateController: _updateController);
+        return HomeCheckListWidget(contentKey: CheckList.uiucOnboarding, favoriteId: code, updateController: _updateController);
       }
     }
     else if (code == 'canvas_courses') {

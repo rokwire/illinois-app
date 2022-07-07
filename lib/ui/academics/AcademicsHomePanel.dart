@@ -167,7 +167,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     AcademicsContent? initialContent = widget.content ?? _lastSelectedContent;
     if (initialContent == null) {
       if (CollectionUtils.isNotEmpty(_contentValues)) {
-        if (_contentValues!.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(CheckList.giesOnboardingChecklist)) {
+        if (_contentValues!.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(CheckList.giesOnboarding)) {
           initialContent = AcademicsContent.gies_checklist;
         } else if (_contentValues!.contains(AcademicsContent.courses)) {
           initialContent = AcademicsContent.courses;
@@ -243,9 +243,9 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContent.events:
         return AcademicsEventsContentWidget();
       case AcademicsContent.gies_checklist:
-        return CheckListContentWidget(contentKey: CheckList.giesOnboardingChecklist);
+        return CheckListContentWidget(contentKey: CheckList.giesOnboarding);
       case AcademicsContent.uiuc_checklist:
-        return CheckListContentWidget(contentKey: CheckList.uiucOnboardingChecklist);
+        return CheckListContentWidget(contentKey: CheckList.uiucOnboarding);
       case AcademicsContent.courses:
         return CanvasCoursesContentWidget();
       default:

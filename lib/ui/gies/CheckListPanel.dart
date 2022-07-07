@@ -42,17 +42,17 @@ class CheckListPanel extends StatefulWidget {
   }
 
   static String? _offlineMessage(String contentKey) {
-    if (contentKey == CheckList.giesOnboardingChecklist) {
+    if (contentKey == CheckList.giesOnboarding) {
       return Localization().getStringEx('widget.checklist.gies.offline', 'iDegrees New Student Checklist not available while offline.');
-    } else if (contentKey == CheckList.uiucOnboardingChecklist) {
+    } else if (contentKey == CheckList.uiucOnboarding) {
       return Localization().getStringEx('widget.checklist.uiuc.offline', 'New Student Checklist not available while offline.');
     }
   }
 
   static String? _loggedOutMessage(String contentKey) {
-    if (contentKey == CheckList.giesOnboardingChecklist) {
+    if (contentKey == CheckList.giesOnboarding) {
       return Localization().getStringEx('widget.checklist.gies.logged_out', 'You need to be logged in to access iDegrees New Student Checklist.');
-    } else if (contentKey == CheckList.uiucOnboardingChecklist) {
+    } else if (contentKey == CheckList.uiucOnboarding) {
       return Localization().getStringEx('widget.checklist.uiuc.logged_out', 'You need to be logged in to access New Student Checklist.');
     }
   }
@@ -69,9 +69,9 @@ class _CheckListPanelState extends State<CheckListPanel> {
   }
 
   String get _title {
-    if (widget.contentKey == CheckList.giesOnboardingChecklist) {
+    if (widget.contentKey == CheckList.giesOnboarding) {
       return Localization().getStringEx('widget.checklist.gies.title', 'iDegrees New Student Checklist');
-    } else if (widget.contentKey == CheckList.uiucOnboardingChecklist) {
+    } else if (widget.contentKey == CheckList.uiucOnboarding) {
       return Localization().getStringEx('widget.checklist.uiuc.title', 'New Student Checklist');
     }
 
