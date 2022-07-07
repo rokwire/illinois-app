@@ -1,7 +1,13 @@
 
 
+import 'dart:collection';
+import 'dart:math';
+
+import 'package:collection/collection.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -9,6 +15,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -585,4 +592,191 @@ class HomeProgressWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+////////////////////////////
+// HomeCompoundWidgetState
+
+abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T> implements NotificationsListener {
+
+  List<String>? _favoriteCodes;
+  Set<String>? _availableCodes;
+  List<String>? _displayCodes;
+  PageController? _pageController;
+  String? _currentCode;
+  int _currentIndex = -1;
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      FlexUI.notifyChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
+    ]);
+
+    _availableCodes = _buildAvailableCodes();
+    _favoriteCodes = _buildFavoriteCodes();
+    _displayCodes = _buildDisplayCodes();
+
+    if (_displayCodes?.isNotEmpty ?? false) {
+      _currentIndex = 0;
+      _currentCode = _displayCodes?.first;
+    }
+    
+    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? super.context).size.width;
+    double pageViewport = (screenWidth - 2 * pageSpacing) / screenWidth;
+    _pageController = PageController(viewportFraction: pageViewport);
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    _pageController?.dispose();
+    super.dispose();
+  }
+
+  
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == FlexUI.notifyChanged) {
+      _updateAvailableCodes();
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      _updateFavoriteCodes();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return HomeSlantWidget(favoriteId: favoriteId,
+      title: title,
+      titleIcon: titleIcon,
+      childPadding: EdgeInsets.zero,
+      child: _buildContent(),
+    );
+  }
+
+  Widget _buildContent() {
+    if (CollectionUtils.isEmpty(_displayCodes)) {
+      return HomeMessageCard(title: emptyTitle, message: emptyMessage,);
+    }
+    else if (_displayCodes?.length == 1) {
+      return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child:
+        widgetFromCode(_displayCodes?.first) ?? Container()
+      );
+    }
+    else {
+      List<Widget> pages = <Widget>[];
+      for (String code in _displayCodes!) {
+        pages.add(Padding(padding: EdgeInsets.only(right: pageSpacing, bottom: 16), child: widgetFromCode(code) ?? Container()));
+      }
+
+      return Padding(padding: EdgeInsets.only(top: 8), child:
+        Container(constraints: BoxConstraints(minHeight: pageHeight), child:
+          ExpandablePageView(
+            controller: _pageController,
+            estimatedPageSize: pageHeight,
+            onPageChanged: _onCurrentPageChanged,
+            children: pages,
+          ),
+        ),
+      );
+    }
+
+  }
+
+
+  Set<String>? _buildAvailableCodes() => JsonUtils.setStringsValue(FlexUI()[contentKey]);
+
+  void _updateAvailableCodes() {
+    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()[contentKey]);
+    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
+      setState(() {
+        _availableCodes = availableCodes;
+        _displayCodes = _buildDisplayCodes();
+        _updateCurrentPage();
+      });
+    }
+  }
+
+  List<String>? _buildFavoriteCodes() {
+    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: favoriteId));
+    if (favorites == null) {
+      // Build a default set of favorites
+      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry(contentKey));
+      if (fullContent != null) {
+        favorites = LinkedHashSet<String>.from(fullContent.reversed);
+        Future.delayed(Duration(), () {
+          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: favoriteId), favorites);
+        });
+      }
+    }
+    
+    return (favorites != null) ? List.from(favorites) : null;
+  }
+
+  void _updateFavoriteCodes() {
+    List<String>? favoriteCodes = _buildFavoriteCodes();
+    if ((favoriteCodes != null) && !DeepCollectionEquality().equals(_favoriteCodes, favoriteCodes) && mounted) {
+      setState(() {
+        _favoriteCodes = favoriteCodes;
+        _displayCodes = _buildDisplayCodes();
+        _updateCurrentPage();
+      });
+    }
+  }
+
+  List<String> _buildDisplayCodes() {
+    List<String> displayCodes = <String>[];
+    if (_favoriteCodes != null) {
+      for (String code in _favoriteCodes!.reversed) {
+        if ((_availableCodes == null) || _availableCodes!.contains(code)) {
+          Widget? contentEntry = widgetFromCode(code);
+          if (contentEntry != null) {
+            displayCodes.add(code);
+          }
+        }
+      }
+    }
+    return displayCodes;
+  }
+
+  void _onCurrentPageChanged(int index) {
+    _currentCode = ListUtils.entry(_displayCodes, _currentIndex = index);
+  }
+
+  void _updateCurrentPage() {
+    if (_displayCodes?.isNotEmpty ?? false) {
+      int currentPage = (_currentCode != null) ? _displayCodes!.indexOf(_currentCode!) : -1;
+      if (currentPage < 0) {
+        currentPage = max(0, min(_currentIndex, _displayCodes!.length - 1));
+      }
+
+      _currentCode = _displayCodes![_currentIndex = currentPage];
+
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        if (_pageController?.hasClients ?? false) {
+          _pageController?.jumpToPage(currentPage);
+        }
+      });
+    }
+  }
+
+  String? get favoriteId;
+  String  get contentKey => 'home.$favoriteId';
+  
+  String? get title;
+  Image?  get titleIcon => Image.asset('images/campus-tools.png', excludeFromSemantics: true);
+  
+  String? get emptyTitle;
+  String? get emptyMessage;
+
+  double  get pageHeight;
+  double  get pageSpacing => 16;
+
+  @protected
+  Widget? widgetFromCode(String? code);
 }
