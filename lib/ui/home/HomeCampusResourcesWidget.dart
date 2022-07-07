@@ -66,7 +66,7 @@ class HomeCampusResourcesWidget extends StatefulWidget {
 
 class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> implements NotificationsListener {
 
-  List<String>? _displayCodes;
+  List<String>? _favoriteCodes;
   Set<String>? _availableCodes;
 
   @override
@@ -84,8 +84,8 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
       });
     }
 
+    _favoriteCodes = _buildFavoriteCodes();
     _availableCodes = _buildAvailableCodes();
-    _displayCodes = _buildDisplayCodes();
 
     super.initState();
   }
@@ -103,7 +103,7 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
       _updateAvailableCodes();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _updateDisplayCodes();
+      _updateFavoriteCodes();
     }
   }
 
@@ -122,8 +122,8 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
 
   List<String> _buildContentCodes() {
     List<String> contentCodesList = <String>[];
-    if (_displayCodes != null) {
-      for (String code in _displayCodes!.reversed) {
+    if (_favoriteCodes != null) {
+      for (String code in _favoriteCodes!.reversed) {
         if ((_availableCodes == null) || _availableCodes!.contains(code)) {
           contentCodesList.add(code);
         }
@@ -144,7 +144,7 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
     }
   }
 
-  List<String>? _buildDisplayCodes() {
+  List<String>? _buildFavoriteCodes() {
     LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
     if (favorites == null) {
       // Build a default set of favorites
@@ -160,11 +160,11 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
     return (favorites != null) ? List.from(favorites) : null;
   }
 
-  void _updateDisplayCodes() {
-    List<String>? displayCodes = _buildDisplayCodes();
-    if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes) && mounted) {
+  void _updateFavoriteCodes() {
+    List<String>? favoriteCodes = _buildFavoriteCodes();
+    if ((favoriteCodes != null) && !DeepCollectionEquality().equals(_favoriteCodes, favoriteCodes) && mounted) {
       setState(() {
-        _displayCodes = displayCodes;
+        _favoriteCodes = favoriteCodes;
       });
     }
   }

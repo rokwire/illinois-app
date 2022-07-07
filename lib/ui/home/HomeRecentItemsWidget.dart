@@ -15,11 +15,12 @@
  */
 
 import 'dart:async';
-import 'dart:math';
 
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:illinois/main.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Config.dart';
@@ -62,7 +63,7 @@ class HomeRecentItemsWidget extends StatefulWidget {
     HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
-  static String get title => Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed');
+  static String get title => Localization().getStringEx('widget.home.recent_items.label.header.title', 'Recently Viewed');
 
   @override
   _HomeRecentItemsWidgetState createState() => _HomeRecentItemsWidgetState();
@@ -71,6 +72,8 @@ class HomeRecentItemsWidget extends StatefulWidget {
 class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implements NotificationsListener {
 
   Iterable<RecentItem>? _recentItems;
+  PageController? _pageController;
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -93,13 +96,18 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
       });
     }
 
+    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
+    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+    _pageController = PageController(viewportFraction: pageViewport);
+
     _recentItems = RecentItems().recentItems;
   }
 
   @override
   void dispose() {
-    super.dispose();
     NotificationService().unsubscribe(this);
+    _pageController?.dispose();
+    super.dispose();
   }
 
   // NotificationsListener
@@ -126,50 +134,53 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
   @override
   Widget build(BuildContext context) {
-    
-    return Visibility(visible: CollectionUtils.isNotEmpty(_recentItems), child:
-      HomeSlantWidget(favoriteId: widget.favoriteId,
-          title: Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed'),
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-          child: Column(children: _buildListItems(),)
-      ),
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
+      title: HomeRecentItemsWidget.title,
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      childPadding: EdgeInsets.zero,
+      child: _buildContent(),
     );
-
+  }
+    
+  Widget _buildContent() {
+    return (_recentItems?.isEmpty ?? true) ? HomeMessageCard(
+      title: Localization().getStringEx("widget.home.recent_items.text.empty", "Whoops! Nothing to see here."),
+      message: Localization().getStringEx("widget.home.recent_items.text.empty.description", "There are no recently viewed items available."),
+    ) : _buildRecentContent();
   }
 
-  List<Widget> _buildListItems() {
-    List<Widget> widgets =  [];
-    if (_recentItems?.isNotEmpty ?? false) {
-      
-      int itemsCount = _recentItems!.length;
-      int visibleCount = min(Config().homeRecentItemsCount, itemsCount);
+  Widget _buildRecentContent() {
+    Widget contentWidget;
 
+    if (1 < (_recentItems?.length ?? 0)) {
+      double pageHeight = (18 + 12) * MediaQuery.of(context).textScaleFactor + 2 * 16 + 10 + 8;
+
+      // Config().homeRecentItemsCount
+      List<Widget> pages = <Widget>[];
       for (RecentItem item in _recentItems!) {
-        if (0 < visibleCount) {
-          if (0 < widgets.length) {
-            widgets.add(Container(height: 4));
-          }
-          widgets.add(HomeRecentItemCard(recentItem: item));
-          visibleCount--;
-        }
-        else {
-          break;
-        }
-      }
-
-      if (Config().homeRecentItemsCount < itemsCount) {
-        widgets.add(LinkButton(
-          title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'View All'),
-          hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to view all items'),
-          onTap: _onSeeAll,
+        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
+          HomeRecentItemCard(recentItem: item),
         ));
       }
-      else {
-        widgets.add(Container(height: 16,));
-      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
+        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+      );
+    }
+    else {
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
+        HomeRecentItemCard(recentItem: _recentItems!.first)
+      );
     }
 
-    return widgets;
+    return Column(children: <Widget>[
+      contentWidget,
+      LinkButton(
+        title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to view all items'),
+        onTap: _onSeeAll,
+      ),
+    ]);
   }
 
   void _onSeeAll() {

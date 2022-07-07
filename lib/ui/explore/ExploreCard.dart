@@ -104,101 +104,80 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     String imageUrl = StringUtils.ensureNotEmpty(widget.explore?.exploreImageUrl);
     String interestsLabelValue = _getInterestsLabelValue();
 
-    return Semantics(
-      label: semanticLabel,
-      button: true,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: widget.onTap,
-        child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[Padding(padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding),child: Stack(
-          alignment: Alignment.topCenter,
-          children: [
+    return Semantics(label: semanticLabel, button: true, child:
+      GestureDetector(behavior: HitTestBehavior.opaque, onTap: widget.onTap, child:
+        Stack(alignment: Alignment.bottomCenter, children: <Widget>[
+          Padding(padding: EdgeInsets.symmetric(horizontal: widget.horizontalPadding), child:
+            Stack(alignment: Alignment.topCenter, children: [
             Container(
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
-                  border: widget.border,
-                  boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(4)),
+                border: widget.border,
+                boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  _exploreTop(),
-                  Container(
-                    child: Semantics(excludeSemantics: true,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                            Expanded(child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Visibility(
-                                  visible: (isEvent || isGame),
-                                  child: _exploreName(),
-                                ),
-                                _exploreDetails(),
-                              ],)),
-                            Visibility(visible: ((widget.showSmallImage ?? false) &&
-                                StringUtils.isNotEmpty(imageUrl)),
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 16, right: 16, bottom: 4),
-                                  child: SizedBox(
-                                    width: _smallImageSize,
-                                    height: _smallImageSize,
-                                    child: Image.network(
-                                      imageUrl, excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),),)),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                _exploreTop(),
+                Semantics(excludeSemantics: true, child:
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                      Expanded(child:
+                        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                          Visibility(visible: (isEvent || isGame), child:
+                            _exploreName(),
+                          ),
+                          _exploreDetails(),
+                        ],)
+                      ),
+                      Visibility(visible: ((widget.showSmallImage ?? false) && StringUtils.isNotEmpty(imageUrl)), child:
+                        Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 4), child:
+                          SizedBox(width: _smallImageSize, height: _smallImageSize, child:
+                            Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),
+                          ),
+                        )
+                      ),
+                    ],),
+                    _explorePaymentTypes(),
+                    _buildConvergeButton(),
+                    Visibility(visible: _showInterests(), child:
+                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                        Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                        Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+                          Row(children: <Widget>[
+                            Flexible(flex: 8, child:
+                              Container(width: double.infinity, child:
+                                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                                  Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style:
+                                    TextStyle(color: Styles().colors!.textBackground, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),
+                                  ),
+                                  Text(StringUtils.ensureNotEmpty(interestsLabelValue), style:
+                                    TextStyle(color: Styles().colors!.textBackground, fontSize: 12, fontFamily: Styles().fontFamilies!.medium),
+                                  )
+                                ],),
+                              ),
+                            ),
+                            Flexible(flex: 2, child:
+                              Container(width: double.infinity, alignment: Alignment.centerRight, child:
+                                ExploreConvergeDetailItem(eventConvergeScore: _getConvergeScore(), eventConvergeUrl: _getConvergeUrl(),)
+                              ),
+                            )
                           ],),
-                          _explorePaymentTypes(),
-                          _buildConvergeButton(),
-                          Visibility(visible: _showInterests(),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Container(
-                                    height: 1, color: Styles().colors!.surfaceAccent,),
-                                  Padding(padding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 12),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Flexible(flex: 8,
-                                            child: Container(width: double.infinity, child:
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(Localization().getStringEx(
-                                                    'widget.card.label.interests',
-                                                    'Because of your interest in:'),
-                                                  style: TextStyle(
-                                                      color: Styles().colors!.textBackground,
-                                                      fontSize: 12,
-                                                      fontFamily: Styles().fontFamilies!.bold),),
-                                                Text(StringUtils.ensureNotEmpty(
-                                                    interestsLabelValue), style: TextStyle(
-                                                    color: Styles().colors!.textBackground,
-                                                    fontSize: 12,
-                                                    fontFamily: Styles().fontFamilies!.medium),)
-                                              ],)),
-                                          ),
-                                          Flexible(flex: 2,
-                                            child: Container(width: double.infinity, alignment: Alignment.centerRight,
-                                                child: ExploreConvergeDetailItem(eventConvergeScore: _getConvergeScore(), eventConvergeUrl: _getConvergeUrl(),)
-
-                                            ),
-                                          )
-                                        ],
-                                      ))
-                              ],)),
-                  Visibility(visible: isCompositeEvent, child: Container(height: _EventSmallCard._getScaledCardHeight(context),),)
-                  ])))
-                ],
-              ),
-            ),
-          _topBorder(),
-          ]),),
-        _buildCompositeEventsContent(isCompositeEvent)
-      ],),
-    ));
+                        )
+                      ],),
+                    ),
+                    Visibility(visible: isCompositeEvent, child:
+                      Container(height: _EventSmallCard._getScaledCardHeight(context),),
+                    ),
+                  ]),
+                )
+              ],),),
+              _topBorder(),
+            ]),
+          ),
+          _buildCompositeEventsContent(isCompositeEvent)
+        ],),
+      ),
+    );
   }
 
   bool _showInterests() {

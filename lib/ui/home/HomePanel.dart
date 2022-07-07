@@ -83,8 +83,8 @@ class HomePanel extends StatefulWidget {
 
 class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixin<HomePanel> implements NotificationsListener, HomeDragAndDropHost {
   
+  List<String>? _favoriteCodes;
   Set<String>? _availableCodes;
-  List<String>? _displayCodes;
   StreamController<String> _updateController = StreamController.broadcast();
   GlobalKey _saferKey = GlobalKey();
   GlobalKey _contentWrapperKey = GlobalKey();
@@ -104,8 +104,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       Assets.notifyChanged,
       HomeSaferWidget.notifyNeedsVisiblity,
     ]);
+    _favoriteCodes = _buildFavoriteCodes();
     _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
-    _displayCodes = _buildDisplayCodes();
     super.initState();
   }
 
@@ -149,7 +149,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   List<Widget> _buildRegularContentList() {
     List<Widget> widgets = [];
     widgets.addAll(_buildWidgetsFromCodes(JsonUtils.listStringsValue(FlexUI()['home.system'])));
-    widgets.addAll(_buildWidgetsFromCodes(_displayCodes?.reversed, availableCodes: _availableCodes));
+    widgets.addAll(_buildWidgetsFromCodes(_favoriteCodes?.reversed, availableCodes: _availableCodes));
     return widgets;
   }
 
@@ -600,7 +600,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
   }
 
-  List<String>? _buildDisplayCodes() {
+  List<String>? _buildFavoriteCodes() {
     LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
     if (homeFavorites == null) {
       // Build a default set of favorites
@@ -615,19 +615,19 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     return (homeFavorites != null) ? List.from(homeFavorites) : null;
   }
 
-  void _updateDisplayCodes() {
+  void _updateFavoriteCodes() {
     if (mounted) {
-      List<String>? displayCodes = _buildDisplayCodes();
+      List<String>? favoriteCodes = _buildFavoriteCodes();
       if (_isEditing) {
-        if (displayCodes != null) {
-          _displayCodes = displayCodes;
+        if (favoriteCodes != null) {
+          _favoriteCodes = favoriteCodes;
         }
         setState(() {});
       }
       else {
-        if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes)) {
+        if ((favoriteCodes != null) && !DeepCollectionEquality().equals(_favoriteCodes, favoriteCodes)) {
           setState(() {
-            _displayCodes = displayCodes;
+            _favoriteCodes = favoriteCodes;
           });
         }
       }
@@ -837,7 +837,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       _updateAvailableCodes();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _updateDisplayCodes();
+      _updateFavoriteCodes();
     }
     else if (name == HomeSaferWidget.notifyNeedsVisiblity) {
       _ensureSaferWidgetVisibiity();
