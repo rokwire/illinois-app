@@ -45,9 +45,6 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     with AutomaticKeepAliveClientMixin<AcademicsHomePanel>
     implements NotificationsListener {
 
-  static final String _giesChecklistContentKey = 'gies';
-  static final String _uiucChecklistContentKey = 'new_student';
-
   static AcademicsContent? _lastSelectedContent;
   late AcademicsContent _selectedContent;
   List<AcademicsContent>? _contentValues;
@@ -170,7 +167,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     AcademicsContent? initialContent = widget.content ?? _lastSelectedContent;
     if (initialContent == null) {
       if (CollectionUtils.isNotEmpty(_contentValues)) {
-        if (_contentValues!.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(_giesChecklistContentKey)) {
+        if (_contentValues!.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(CheckList.giesOnboardingChecklist)) {
           initialContent = AcademicsContent.gies_checklist;
         } else if (_contentValues!.contains(AcademicsContent.courses)) {
           initialContent = AcademicsContent.courses;
@@ -246,9 +243,9 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContent.events:
         return AcademicsEventsContentWidget();
       case AcademicsContent.gies_checklist:
-        return CheckListContentWidget(contentKey: _giesChecklistContentKey);
+        return CheckListContentWidget(contentKey: CheckList.giesOnboardingChecklist);
       case AcademicsContent.uiuc_checklist:
-        return CheckListContentWidget(contentKey: _uiucChecklistContentKey);
+        return CheckListContentWidget(contentKey: CheckList.uiucOnboardingChecklist);
       case AcademicsContent.courses:
         return CanvasCoursesContentWidget();
       default:

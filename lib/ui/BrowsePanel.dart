@@ -10,6 +10,7 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
@@ -528,12 +529,12 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapGiesChecklist(BuildContext context) {
     Analytics().logSelect(target: "Gies Checklist");
-    CheckListPanel.present(context, contentKey: 'gies');
+    CheckListPanel.present(context, contentKey: CheckList.giesOnboardingChecklist);
   }
 
   void _onTapNewStudentChecklist(BuildContext context) {
     Analytics().logSelect(target: "New Student Checklist");
-    CheckListPanel.present(context, contentKey: 'new_student');
+    CheckListPanel.present(context, contentKey: CheckList.uiucOnboardingChecklist);
   }
 
   void _onTapCanvasCourses(BuildContext context) {
