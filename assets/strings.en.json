@@ -2728,10 +2728,6 @@
     "widget.privacy_level_slider.label.left.title": "Highest Privacy",
     "widget.privacy_level_slider.label.right.title": "Most Features",
 
-    "widget.favorites_saved_dialog.title":"This starred item has been added to your saved list" ,
-    "widget.favorites_saved_dialog.calendar.title": " and if it is an event, also your calendar" ,
-    "widget.favorites_saved_dialog.button.view":"View saved" ,
-
     "widget.explore_card.small.view_all.title": "View all events",
 
     "widget.explore_display_type.header.list.title":"List",

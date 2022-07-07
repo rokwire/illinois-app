@@ -188,19 +188,6 @@ class Storage extends rokwire.Storage {
 
   @override String get currentLanguageKey => 'current_language';
 
-  //////////////////
-  // Favorites
-
-  static const String favoritesDialogWasVisibleKey  = 'favorites_dialog_was_visible';
-
-  bool? get favoritesDialogWasVisible {
-    return getBoolWithName(favoritesDialogWasVisibleKey, defaultValue: false);
-  }
-
-  set favoritesDialogWasVisible(bool? value) {
-    setBoolWithName(favoritesDialogWasVisibleKey, value);
-  }
-
   //////////////
   // Recent Items - backward compatability
 

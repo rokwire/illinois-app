@@ -2721,10 +2721,6 @@
 	"widget.privacy_level_slider.label.left.title":"最高隐私权",
 	"widget.privacy_level_slider.label.right.title":"大多数功能",
 
-	"widget.favorites_saved_dialog.title":"This starred item has been added to your saved list" ,
-	"widget.favorites_saved_dialog.calendar.title": " and if it is an event, also your calendar" ,
-	"widget.favorites_saved_dialog.button.view":"View saved" ,
-
 	"widget.explore_card.small.view_all.title": "查看所有活動",
 
 	"widget.explore_display_type.header.list.title":"清单",
