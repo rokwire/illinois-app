@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.0.46] - 2022-07-07
 ### Changed
 - Replace Lorem Ipsum strings for Dinings and Groups sections in Browse panel [#1906](https://github.com/rokwire/illinois-app/issues/1906).
 - Make Suggested Events, Recent Items, Recent Polls and Campus Highlights widgets horizontally scrollable [#1874](https://github.com/rokwire/illinois-app/issues/1874).
