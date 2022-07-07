@@ -2562,7 +2562,7 @@
 	"widget.home.tout.customize.label": "定制",
 	"widget.home.tout.button.info.label": "信息",
 	"widget.home.tout.button.info.hint": "點擊了解更多信息",
-	"widget.home.tout.popup.info.content": "伊利諾伊州應用程序使用您來自 <a href='{{student_self_service_url}}'>學生自助服務</a> 的名字。 您可以在“個人信息”和“首選名字”下更改首選名稱。",
+	"widget.home.tout.popup.info.content": "要在伊利諾伊州應用程序中更改您的名字，請查看<a href='{{preferred_first_name_url}}'>首選名稱說明</a>。",
 
 	"widget.home.wellness.todo.title": "我的待辦事項清單",
 	"widget.home.wellness.todo.items.today.label": "今天的項目",

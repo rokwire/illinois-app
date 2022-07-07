@@ -223,9 +223,9 @@ class _InfoDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String selfServiceUrlMacro = '{{student_self_service_url}}';
-    String contentHtml = Localization().getStringEx("widget.home.tout.popup.info.content", "Illinois app uses your first name from <a href='{{student_self_service_url}}'>Student Self-Service</a>. You can change your preferred name under Personal Information and Preferred First Name.");
-    contentHtml = contentHtml.replaceAll(selfServiceUrlMacro, Config().studentSelfServiceUrl ?? '');
+    final String preferredFirstNameUrlMacro = '{{preferred_first_name_url}}';
+    String contentHtml = Localization().getStringEx("widget.home.tout.popup.info.content", "To change your first name in the Illinois app, review the <a href='{{preferred_first_name_url}}'>preferred name instructions</a>.");
+    contentHtml = contentHtml.replaceAll(preferredFirstNameUrlMacro, Config().preferredFirstNameStmntUrl ?? '');
     return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
       Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), alignment: Alignment.center, child: 
         Container(decoration: BoxDecoration(color: Styles().colors?.fillColorPrimary, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white, width: 1)), child:

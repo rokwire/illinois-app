@@ -2569,7 +2569,7 @@
     "widget.home.tout.customize.label": "Customize",
     "widget.home.tout.button.info.label": "Info",
     "widget.home.tout.button.info.hint": "Tap for more info",
-    "widget.home.tout.popup.info.content": "Illinois app uses your first name from <a href='{{student_self_service_url}}'>Student Self-Service</a>. You can change your preferred name under Personal Information and Preferred First Name.",
+    "widget.home.tout.popup.info.content": "To change your first name in the Illinois app, review the <a href='{{preferred_first_name_url}}'>preferred name instructions</a>.",
 
     "widget.home.wellness.todo.title": "MY TO-DO LIST",
     "widget.home.wellness.todo.items.today.label": "TODAY'S ITEMS",
