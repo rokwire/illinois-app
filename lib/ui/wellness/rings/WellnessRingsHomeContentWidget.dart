@@ -21,7 +21,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingCreatePane.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
-import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';

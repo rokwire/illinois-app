@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -47,9 +48,13 @@ class HomeWalletWidget extends StatefulWidget {
 
 class _HomeWalletWidgetState extends State<HomeWalletWidget> implements NotificationsListener {
 
-  List<String>? _displayCodes;
+  List<String>? _favoriteCodes;
   Set<String>? _availableCodes;
+  List<String>? _displayCodes;
   PageController? _pageController;
+  String? _currentCode;
+  int _currentIndex = -1;
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -66,7 +71,17 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
     }
 
     _availableCodes = _buildAvailableCodes();
+    _favoriteCodes = _buildFavoriteCodes();
     _displayCodes = _buildDisplayCodes();
+
+    if (_displayCodes?.isNotEmpty ?? false) {
+      _currentIndex = 0;
+      _currentCode = _displayCodes?.first;
+    }
+    
+    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
+    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+    _pageController = PageController(viewportFraction: pageViewport);
 
     super.initState();
   }
@@ -86,7 +101,7 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
       _updateAvailableCodes();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _updateDisplayCodes();
+      _updateFavoriteCodes();
     }
   }
 
@@ -101,57 +116,38 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
   }
 
   Widget _buildContent() {
-    List<Widget> commandsList = _buildCommandsList();
-    if (commandsList.isEmpty) {
+    if (CollectionUtils.isEmpty(_displayCodes)) {
       return HomeMessageCard(
         title: Localization().getStringEx("widget.home.wallet.text.empty", "Whoops! Nothing to see here."),
         message: Localization().getStringEx("widget.home.wallet.text.empty.description", "Tap the \u2606 on items in Wallet so you can quickly find them here."),
       );
     }
-    else if (commandsList.length == 1) {
-      return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: commandsList.first);
+    else if (_displayCodes?.length == 1) {
+      return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child: _widgetFromCode(_displayCodes?.first) ?? Container());
     }
     else {
-      final double spacing = 16;
-
-      if (_pageController == null) {
-        double screenWidth = MediaQuery.of(context).size.width;
-        _pageController = PageController(viewportFraction: (screenWidth - 2 * spacing) / screenWidth);
-      }
-
-      double pageHeight = max(20 * MediaQuery.of(context).textScaleFactor + 2 * 8, 18 + 2 * 16) + 1 + 24 * MediaQuery.of(context).textScaleFactor + 3 * 8;
+      double pageHeight = max(20 * MediaQuery.of(context).textScaleFactor + 2 * 8, 18 + 2 * 16) + 1 + 24 * MediaQuery.of(context).textScaleFactor + 3 * 8 + 2;
 
       List<Widget> pages = <Widget>[];
-      for (Widget command in commandsList) {
-        pages.add(Padding(padding: EdgeInsets.only(right: spacing), child: command));
+      for (String code in _displayCodes!) {
+        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child: _widgetFromCode(code) ?? Container()));
       }
 
-      return Padding(padding: EdgeInsets.only(top: 8, bottom: 16), child:
+      return Padding(padding: EdgeInsets.only(top: 8), child:
         Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-          ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+          ExpandablePageView(
+            controller: _pageController,
+            estimatedPageSize: pageHeight,
+            onPageChanged: _onCurrentPageChanged,
+            children: pages,
+          ),
         ),
       );
     }
 
   }
 
-  // Column(children: commandsList,)
-  List<Widget> _buildCommandsList() {
-    List<Widget> contentList = <Widget>[];
-    if (_displayCodes != null) {
-      for (String code in _displayCodes!.reversed) {
-        if ((_availableCodes == null) || _availableCodes!.contains(code)) {
-          Widget? contentEntry = _widgetFromCode(code);
-          if (contentEntry != null) {
-            contentList.add(contentEntry);
-          }
-        }
-      }
-    }
-    return contentList;
-  }
-
-  Widget? _widgetFromCode(String code) {
+  Widget? _widgetFromCode(String? code) {
     if (code == 'illini_cash_card') {
       return HomeIlliniCashWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
     }
@@ -181,11 +177,13 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
     if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
       setState(() {
         _availableCodes = availableCodes;
+        _displayCodes = _buildDisplayCodes();
+        _updateCurrentPage();
       });
     }
   }
 
-  List<String>? _buildDisplayCodes() {
+  List<String>? _buildFavoriteCodes() {
     LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
     if (favorites == null) {
       // Build a default set of favorites
@@ -201,12 +199,51 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
     return (favorites != null) ? List.from(favorites) : null;
   }
 
-  void _updateDisplayCodes() {
-    List<String>? displayCodes = _buildDisplayCodes();
-    if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes) && mounted) {
+  void _updateFavoriteCodes() {
+    List<String>? favoriteCodes = _buildFavoriteCodes();
+    if ((favoriteCodes != null) && !DeepCollectionEquality().equals(_favoriteCodes, favoriteCodes) && mounted) {
       setState(() {
-        _displayCodes = displayCodes;
+        _favoriteCodes = favoriteCodes;
+        _displayCodes = _buildDisplayCodes();
+        _updateCurrentPage();
       });
+    }
+  }
+
+  List<String> _buildDisplayCodes() {
+    List<String> displayCodes = <String>[];
+    if (_favoriteCodes != null) {
+      for (String code in _favoriteCodes!.reversed) {
+        if ((_availableCodes == null) || _availableCodes!.contains(code)) {
+          Widget? contentEntry = _widgetFromCode(code);
+          if (contentEntry != null) {
+            displayCodes.add(code);
+          }
+        }
+      }
+    }
+    return displayCodes;
+  }
+
+  void _onCurrentPageChanged(int index) {
+    _currentCode = ListUtils.entry(_displayCodes, _currentIndex = index);
+  }
+
+  void _updateCurrentPage() {
+    if (_displayCodes?.isNotEmpty ?? false) {
+      int currentPage = (_currentCode != null) ? _displayCodes!.indexOf(_currentCode!) : -1;
+      if (currentPage < 0) {
+        currentPage = max(0, min(_currentIndex, _displayCodes!.length - 1));
+      }
+      _currentCode = _displayCodes![currentPage];
+      if (currentPage != _currentIndex) {
+        _currentIndex = currentPage;
+        WidgetsBinding.instance?.addPostFrameCallback((_) {
+          if (_pageController?.hasClients ?? false) {
+            _pageController?.jumpToPage(currentPage);
+          }
+        });
+      }
     }
   }
 }

@@ -1,8 +1,9 @@
 
 import 'dart:async';
 
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:illinois/main.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -18,8 +19,6 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeAthliticsNewsWidget extends StatefulWidget {
@@ -43,6 +42,8 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
 
   List<News>? _news;
   bool _loadingNews = false;
+  final double _pageSpacing = 16;
+  PageController? _pageController;
   DateTime? _pausedDateTime;
 
   @override
@@ -62,6 +63,10 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
       });
     }
 
+    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
+    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+    _pageController = PageController(viewportFraction: pageViewport);
+
     if (Connectivity().isOnline) {
       _loadingNews = true;
       Sports().loadNews(null, Config().homeAthleticsNewsCount).then((List<News>? news) {
@@ -78,6 +83,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _pageController?.dispose();
     super.dispose();
   }
 
@@ -103,7 +109,6 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
     return HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home.athletics_news.text.title', 'Athletics News'),
         titleIcon: Image.asset('images/icon-news.png'),
-        flatHeight: 0, slantHeight: 0,
         childPadding: EdgeInsets.zero,
         child: _buildContent(),
     );
@@ -111,13 +116,19 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
 
   Widget _buildContent() {
     if (Connectivity().isOffline) {
-      return _buildOfflineContent();
+      return HomeMessageCard(
+        title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"),
+        message: Localization().getStringEx("widget.home.athletics_news.text.offline", "Athletics News are not available while offline"),
+      );
     }
     else if (_loadingNews) {
-      return _buildLoadingContent();
+      return HomeProgressWidget();
     }
     else if (CollectionUtils.isEmpty(_news)) {
-      return _buildEmptyContent();
+      return HomeMessageCard(
+        title: Localization().getStringEx("widget.home.athletics_news.text.empty", "Whoops! Nothing to see here."),
+        message: Localization().getStringEx("widget.home.athletics_news.text.empty.description", "No Athletics News are available right now."),
+      );
     }
     else {
       return _buildNewsContent();
@@ -125,67 +136,39 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
 
   }
 
-  Widget _buildOfflineContent() {
-    return Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 48, bottom: 48), child:
-      Column(children: <Widget>[
-        Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
-        Container(height:8),
-        Text(Localization().getStringEx("widget.home.athletics_news.text.offline", "Athletics News are not available while offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
-    ],),);
-  }
-
-  Widget _buildEmptyContent() {
-    return Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 48, bottom: 48), child:
-      Column(children: [
-        Text(Localization().getStringEx("widget.home.athletics_news.text.empty", "Whoops! Nothing to see here."), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
-        Container(height:8),
-        Text(Localization().getStringEx("widget.home.athletics_news.text.empty.description", "No Athletics News are available right now."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
-      ],)
-    );
-  }
-
-  Widget _buildLoadingContent() {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 48), child:
-      Center(child:
-        SizedBox(height: 24, width: 24, child:
-          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-        ),
-      ),
-    );
-  }
-
   Widget _buildNewsContent() {
-    List<Widget> contentList = [];
-    if (_news != null) {
-      for (News news in _news!) {
-        if (contentList.isEmpty && StringUtils.isNotEmpty(news.imageUrl)) {
-          contentList.add(ImageSlantHeader(
-            slantImageColor: Styles().colors!.fillColorPrimaryTransparent03,
-            slantImageAsset: 'images/slant-down-right-blue.png',
-            child: _buildNewsCard(news),
-            imageUrl: news.imageUrl
-          ));
-        }
-        else {
-          contentList.add(_buildNewsCard(news),);
-        }
-      }
-      contentList.add(
-          LinkButton(
-            title: Localization().getStringEx('widget.home.athletics_news.button.all.title', 'View All'),
-            hint: Localization().getStringEx('widget.home.athletics_news.button.all.hint', 'Tap to view all news'),
-            onTap: _onTapSeeAll,
-          ),
+    Widget contentWidget;
+    int visibleCount = _news?.length ?? 0;
 
+    if (1 < visibleCount) {
+
+      double pageHeight = (14 + 24 * 2) * MediaQuery.of(context).textScaleFactor + 2 * 24 + 10 + 12 + 12 + 16;
+
+      List<Widget> pages = <Widget>[];
+      for (News news in _news!) {
+        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
+          AthleticsNewsCard(news: news, onTap: () => _onTapNews(news))
+        ));
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
+        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
       );
     }
-    return Column(children: contentList,);
-  }
+    else {
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+        AthleticsNewsCard(news: _news!.first, onTap: () => _onTapNews(_news!.first))
+      );
+    }
 
-  Widget _buildNewsCard(News news) {
-    return Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child:
-      AthleticsNewsCard(news: news, onTap: () => _onTapNews(news)),
-    );
+    return Column(children: <Widget>[
+      contentWidget,
+      LinkButton(
+        title: Localization().getStringEx('widget.home.athletics_news.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.athletics_news.button.all.hint', 'Tap to view all news'),
+        onTap: _onTapSeeAll,
+      ),
+    ]);
   }
 
   void _onTapNews(News news) {

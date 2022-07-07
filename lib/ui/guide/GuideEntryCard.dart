@@ -84,7 +84,6 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
           boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
       ),
-      clipBehavior: Clip.none,
       child: Stack(children: [
         GestureDetector(onTap: _onTapEntry, child:
           Semantics(button: true, child:

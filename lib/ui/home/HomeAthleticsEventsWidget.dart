@@ -1,8 +1,9 @@
 
 import 'dart:async';
 
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:illinois/main.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -18,8 +19,6 @@ import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeAthliticsEventsWidget extends StatefulWidget {
@@ -43,6 +42,8 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
 
   List<Game>? _games;
   bool _loadingGames = false;
+  final double _pageSpacing = 16;
+  PageController? _pageController;
   DateTime? _pausedDateTime;
 
   @override
@@ -62,6 +63,10 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
       });
     }
 
+    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
+    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+    _pageController = PageController(viewportFraction: pageViewport);
+
     if (Connectivity().isOnline) {
       _loadingGames = true;
       Sports().loadGames(limit: Config().homeAthleticsEventsCount).then((List<Game>? games) {
@@ -78,6 +83,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _pageController?.dispose();
     super.dispose();
   }
 
@@ -103,7 +109,6 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.athletics_events.text.title', 'Athletics Events'),
       titleIcon: Image.asset('images/icon-calendar.png'),
-      flatHeight: 0, slantHeight: 0,
       childPadding: EdgeInsets.zero,
       child: _buildContent(),
     );
@@ -111,13 +116,19 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
 
   Widget _buildContent() {
     if (Connectivity().isOffline) {
-      return _buildOfflineContent();
+      return HomeMessageCard(
+        title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"),
+        message: Localization().getStringEx("widget.home.athletics_events.text.offline", "Athletics Events are not available while offline"),
+      );
     }
     else if (_loadingGames) {
-      return _buildLoadingContent();
+      return HomeProgressWidget();
     }
     else if (CollectionUtils.isEmpty(_games)) {
-      return _buildEmptyContent();
+      return HomeMessageCard(
+        title: Localization().getStringEx("widget.home.athletics_events.text.empty", "Whoops! Nothing to see here."),
+        message: Localization().getStringEx("widget.home.athletics_events.text.empty.description", "No Athletics Events are available right now."),
+      );
     }
     else {
       return _buildEventsContent();
@@ -125,62 +136,39 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
 
   }
 
-  Widget _buildOfflineContent() {
-    return Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 48, bottom: 48), child:
-      Column(children: <Widget>[
-        Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
-        Container(height:8),
-        Text(Localization().getStringEx("widget.home.athletics_events.text.offline", "Athletics Events are not available while offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
-    ],),);
-  }
-
-  Widget _buildEmptyContent() {
-    return Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 48, bottom: 48), child:
-      Column(children: [
-        Text(Localization().getStringEx("widget.home.athletics_events.text.empty", "Whoops! Nothing to see here."), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
-        Container(height:8),
-        Text(Localization().getStringEx("widget.home.athletics_events.text.empty.description", "No Athletics Events are available right now."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
-      ],)
-    );
-  }
-
-  Widget _buildLoadingContent() {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 48), child:
-      Center(child:
-        SizedBox(height: 24, width: 24, child:
-          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-        ),
-      ),
-    );
-  }
-
   Widget _buildEventsContent() {
-    List<Widget> contentList = [];
-    if (_games != null) {
-      for (Game game in _games!) {
-        //contentList.add(AthleticsCard(game: game, onTap: () => _onTapGame(game), showImage: contentList.isEmpty, showInterests: false,),);
-        if (contentList.isEmpty && StringUtils.isNotEmpty(game.imageUrl)) {
-          contentList.add(ImageSlantHeader(
-            slantImageColor: Styles().colors!.fillColorSecondaryTransparent05,
-            slantImageAsset: 'images/slant-down-right.png',
-            child: AthleticsCard(game: game, onTap: () => _onTapGame(game), showInterests: true,),
-            imageUrl: game.imageUrl
-          ));
-        }
-        else {
-          contentList.add(AthleticsCard(game: game, onTap: () => _onTapGame(game), showInterests: true),);
-        }
-      }
-      contentList.add(
-          LinkButton(
-            title: Localization().getStringEx('widget.home.athletics_events.button.all.title', 'View All'),
-            hint: Localization().getStringEx('widget.home.athletics_events.button.all.hint', 'Tap to view all events'),
-            onTap: _onTapSeeAll,
-          ),
+    Widget contentWidget;
+    int visibleCount = _games?.length ?? 0;
 
+    if (1 < visibleCount) {
+      
+      double pageHeight = (24 + 16) * MediaQuery.of(context).textScaleFactor + 20 + (24 + 8 + 18) + 12 + 10 + 12 + 24 + 12;
+
+      List<Widget> pages = <Widget>[];
+      for (Game game in _games!) {
+        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
+          AthleticsCard(game: game, onTap: () => _onTapGame(game), showInterests: true, margin: EdgeInsets.zero,),),
+        );
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
+        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
       );
     }
-    return Column(children: contentList,);
+    else {
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+        AthleticsCard(game: _games!.first, onTap: () => _onTapGame( _games!.first), showInterests: true, margin: EdgeInsets.zero)
+      );
+    }
+    
+    return Column(children: <Widget>[
+      contentWidget,
+      LinkButton(
+        title: Localization().getStringEx('widget.home.athletics_events.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.athletics_events.button.all.hint', 'Tap to view all events'),
+        onTap: _onTapSeeAll,
+      ),
+    ],);
   }
 
 
