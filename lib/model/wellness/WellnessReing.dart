@@ -2,30 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessRingDefinition {
-//  static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
+  static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
+
   String id;
   double goal;
   String? colorHex;
   String? name;
   String? unit;
-  int timestamp;
+  DateTime? dateCreatedUtc;
 
-  //helper property to avoid creating date everytime
-  DateTime? date;
+  WellnessRingDefinition({required this.id , this.name, required this.goal, this.dateCreatedUtc, this.unit = "times" , this.colorHex = "FF000000"});
 
-  WellnessRingDefinition({required this.id , this.name, required this.goal, this.date, this.unit = "times" , this.colorHex = "FF000000", required this.timestamp});
-
-  static WellnessRingDefinition? fromJson(Map<String, dynamic>? json){
-    if(json!=null) {
-      DateTime date = DateTime.fromMillisecondsSinceEpoch(JsonUtils.intValue(json['timestamp'])??0);
+  static WellnessRingDefinition? fromJson(dynamic json){
+    if(json!=null && json is Map) {
       return WellnessRingDefinition(
           id:     JsonUtils.stringValue(json['id']) ?? "",
-          goal:   JsonUtils.doubleValue(json['goal']) ?? 1.0,
+          goal:   JsonUtils.doubleValue(json['value']) ?? 1.0,
           name:   JsonUtils.stringValue(json['name']),
           unit:   JsonUtils.stringValue(json['unit']),
-          timestamp:   JsonUtils.intValue(json['timestamp']) ?? DateTime.now().millisecondsSinceEpoch,
-          colorHex:  JsonUtils.stringValue(json['color']),
-          date: date
+          colorHex:  JsonUtils.stringValue(json['color_hex']),
+          dateCreatedUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_created']), format: _dateTimeFormat, isUtc: true),
       );
     }
     return null;
@@ -34,11 +30,11 @@ class WellnessRingDefinition {
   Map<String, dynamic> toJson(){
     Map<String, dynamic> json = {};
     json['id']     = id;
-    json['goal']   = goal;
+    json['value']   = goal;
     json['name']   = name;
     json['unit']   = unit;
-    json['color']  = colorHex;
-    json['timestamp']  = timestamp;
+    json['color_hex']  = colorHex;
+    json['date_created']  = DateTimeUtils.utcDateTimeToString(dateCreatedUtc);
     return json;
   }
 
@@ -48,8 +44,7 @@ class WellnessRingDefinition {
     this.colorHex = other.colorHex;
     this.name= other.name;
     this.unit = other.unit;
-    this.timestamp = other.timestamp;
-    this.date = other.date != null ? DateTimeUtils().copyDateTime(other.date!): null;
+    this.dateCreatedUtc = other.dateCreatedUtc != null ? DateTimeUtils().copyDateTime(other.dateCreatedUtc!): null;
   }
 
   @override
@@ -59,7 +54,7 @@ class WellnessRingDefinition {
           (goal == other.goal) &&
           (colorHex == other.colorHex) &&
           (name == other.name) &&
-          (timestamp == other.timestamp) &&
+          (dateCreatedUtc == other.dateCreatedUtc) &&
           (unit == other.unit);
 
   @override
@@ -68,11 +63,19 @@ class WellnessRingDefinition {
       (goal.hashCode) ^
       (colorHex?.hashCode ?? 0) ^
       (name?.hashCode ?? 0) ^
-      (timestamp.hashCode) ^
+      (dateCreatedUtc.hashCode) ^
       (unit?.hashCode ?? 0);
   
   Color? get color{
     return this.colorHex!= null ? ColorUtils.fromHex(colorHex) : null;
+  }
+
+  DateTime get date{
+    return dateCreatedUtc?.toLocal() ?? DateTime.fromMillisecondsSinceEpoch(0);
+  }
+
+  int get timestamp{
+    return this.dateCreatedUtc?.millisecondsSinceEpoch ?? 0;
   }
 
   static List<WellnessRingDefinition>? listFromJson(List<dynamic>? json) {
@@ -99,26 +102,19 @@ class WellnessRingDefinition {
 }
 
 class WellnessRingRecord {
+  static final String _dateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
   final String wellnessRingId;
   final double value;
-  final int timestamp;
+  final DateTime? dateCreatedUtc;
 
-  //helper property to avoid creating date everytime
-  DateTime? date;
-
-  WellnessRingRecord(
-      {required this.value, required this.timestamp, required this.wellnessRingId}){
-    if(date==null){
-      date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    }
-  }
+  WellnessRingRecord({required this.value, required this.wellnessRingId, this.dateCreatedUtc,});
 
   static WellnessRingRecord? fromJson(Map<String, dynamic>? json) {
     if (json != null) {
       return WellnessRingRecord(
         wellnessRingId: JsonUtils.stringValue(json['wellnessRingId']) ?? "",
         value: JsonUtils.doubleValue(json['value']) ?? 0.0,
-        timestamp: JsonUtils.intValue(json['timestamp']) ?? 0,
+        dateCreatedUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_created']), format: _dateTimeFormat, isUtc: true),
       );
     }
     return null;
@@ -128,7 +124,7 @@ class WellnessRingRecord {
     Map<String, dynamic> json = {};
     json['wellnessRingId'] = wellnessRingId;
     json['value'] = value;
-    json['timestamp'] = timestamp;
+    json['date_created']  = DateTimeUtils.utcDateTimeToString(dateCreatedUtc);
     return json;
   }
 
@@ -137,13 +133,17 @@ class WellnessRingRecord {
       (other is WellnessRingRecord) &&
           (wellnessRingId == other.wellnessRingId) &&
           (value == other.value) &&
-          (timestamp == other.timestamp);
+          (dateCreatedUtc == other.dateCreatedUtc);
 
   @override
   int get hashCode =>
       (wellnessRingId.hashCode) ^
       (value.hashCode) ^
-      (timestamp.hashCode);
+      (dateCreatedUtc.hashCode);
+
+  DateTime get date{
+    return dateCreatedUtc?.toLocal() ?? DateTime.fromMillisecondsSinceEpoch(0);
+  }
 
   static List<WellnessRingRecord>? listFromJson(List<dynamic>? json) {
     List<WellnessRingRecord>? values;

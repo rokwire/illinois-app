@@ -24,7 +24,6 @@ class WellnessRingCreatePanel extends StatefulWidget{
 }
 
 class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> implements NotificationsListener {
-  WellnessRingDefinition? _ringData;
   Color? _selectedColor;
   Color? _tmpColor;
   TextEditingController _nameController = TextEditingController();
@@ -294,12 +293,12 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
       return;
     }
     _setLoading(true);
-    _ringData = WellnessRingDefinition(name: name, colorHex: ColorUtils.toHex(_selectedColor!), goal: quantity, unit: unit, timestamp: DateTime.now().millisecondsSinceEpoch, id: "id_${DateTime.now().millisecondsSinceEpoch}");
+    WellnessRingDefinition _ringData = WellnessRingDefinition(name: name, colorHex: ColorUtils.toHex(_selectedColor!), goal: quantity, unit: unit, dateCreatedUtc: DateTime.now().toUtc(), id: "id_${DateTime.now().millisecondsSinceEpoch}");
     if(widget.data?.id != null) {
-      _ringData!.id = widget.data!.id;
+      _ringData.id = widget.data!.id;
     }
     if(widget.initialCreation) {
-      WellnessRings().addRing(_ringData!).then((success) {
+      WellnessRings().addRing(_ringData).then((success) {
         late String msg;
         if (success) {
           msg = Localization().getStringEx(
@@ -316,7 +315,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
         });
       });
     } else {
-      WellnessRings().updateRing(_ringData!).then((success){
+      WellnessRings().updateRing(_ringData).then((success){
         late String msg;
         if (success) {
           msg = Localization().getStringEx(

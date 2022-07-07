@@ -2,13 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessReing.dart';
-import 'package:intl/intl.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:http/http.dart' as http;
 
 class WellnessRings with Service{
   static const String notifyUserRingsUpdated = "edu.illinois.rokwire.wellness.user.ring.updated";
@@ -60,8 +63,8 @@ class WellnessRings with Service{
     if(_wellnessRingsRecords?.isNotEmpty ?? false){
       for (WellnessRingDefinition data in _wellnessRingsRecords!){
         if(_activeWellnessRings!.containsKey(data.id)){
-          WellnessRingDefinition? storedData = _activeWellnessRings![data.id];
-          if((storedData?.timestamp ?? 0) < data.timestamp){
+          WellnessRingDefinition? storedDefinition = _activeWellnessRings![data.id];
+          if((storedDefinition?.timestamp ?? 0) < data.timestamp){
               _activeWellnessRings![data.id] = data; //TBD try storedData = data;
           }
         } else {
@@ -87,24 +90,24 @@ class WellnessRings with Service{
   /////
 
   //APIS
-  Future<bool> addRing(WellnessRingDefinition data) async {
-    //TBD replace network API
+  Future<bool> addRing(WellnessRingDefinition definition) async {
     bool success = false;
     if(_wellnessRingsRecords == null){
       _wellnessRingsRecords = [];
     }
-    if(canAddRing && (!(_activeWellnessRings?.containsKey(data.id) ?? false))){
-      _wellnessRingsRecords!.add(data);
-      _updateActiveRingsData();
-      success = true;
+    if(canAddRing && (!(_activeWellnessRings?.containsKey(definition.id) ?? false))){
+      var updatedDefinition = await _requestAddRingDefinition(definition);
+      if(updatedDefinition != null){
+        _wellnessRingsRecords!.add(updatedDefinition); //TBD make refresh from net
+        _updateActiveRingsData();
+        success = true;
+      }
+
     }
-    _storeWellnessRingData();
-    NotificationService().notify(notifyUserRingsUpdated);
     return success;
   }
 
   Future<bool> updateRing(WellnessRingDefinition data) async {
-    //TBD replace network API
     bool success = false;
     WellnessRingDefinition? currentRingData = _activeWellnessRings?[data.id];
     if(currentRingData == null || currentRingData != data){
@@ -180,7 +183,7 @@ class WellnessRings with Service{
         List<WellnessRingRecord>? ringRecords = dayRecords.value[ringId];
         WellnessRingDefinition? ringData;
         try {
-          ringData = (ringRecords?.isNotEmpty ?? false) ? _getActiveRingDataForDay(id: ringId, timestamp: ringRecords!.first.timestamp) : null;
+          ringData = (ringRecords?.isNotEmpty ?? false) ? _getActiveRingDataForDay(id: ringId, date: ringRecords!.first.date) : null;
         } catch (e){
           print(e);
         }
@@ -219,7 +222,7 @@ class WellnessRings with Service{
   Map<String, Map<String, List<WellnessRingRecord>>> _splitRecordsByDay(){
     Map<String, Map<String, List<WellnessRingRecord>>> ringDateRecords = {};
     _wellnessRecords?.forEach((record) {
-      String? recordDayName = record.date != null? DateTimeUtils.localDateTimeToString(DateTimeUtils.midnight(record.date!)) : null;
+      String? recordDayName =  DateTimeUtils.localDateTimeToString(DateTimeUtils.midnight(record.date));
       if(recordDayName!=null) {
         Map<String, List<WellnessRingRecord>>? recordsForDay = ringDateRecords[recordDayName];
         if (recordsForDay == null) {
@@ -240,13 +243,13 @@ class WellnessRings with Service{
     return ringDateRecords;
   }
 
-  List<WellnessRingDefinition>? _findRingData({required String id, int? beforeTimestamp, int? afterTimestamp}){
+  List<WellnessRingDefinition>? _findRingData({required String id, DateTime? beforeTimestamp, DateTime? afterTimestamp}){
     if(_wellnessRingsRecords?.isNotEmpty ?? false){
       List<WellnessRingDefinition> result = [];
       for(WellnessRingDefinition record in _wellnessRingsRecords!){
         if(record.id == id
-          && (beforeTimestamp == null || record.timestamp < beforeTimestamp)
-          && (afterTimestamp == null  || record.timestamp > afterTimestamp)
+          && (beforeTimestamp == null || record.timestamp < beforeTimestamp.millisecondsSinceEpoch)
+          && (afterTimestamp == null  || record.timestamp > afterTimestamp.millisecondsSinceEpoch)
         ){
           result.add(record);
         }
@@ -258,10 +261,10 @@ class WellnessRings with Service{
     return null;
   }
 
-  WellnessRingDefinition? _getActiveRingDataForDay({required String id, int? timestamp}){
-    if(timestamp!=null){
-      DateTime? midnight = DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(timestamp).add(Duration(days: 1))); //Border is at midnight the next day
-      var foundData = _findRingData(id: id, beforeTimestamp: midnight?.millisecondsSinceEpoch);
+  WellnessRingDefinition? _getActiveRingDataForDay({required String id, DateTime? date}){
+    if(date!=null){
+      DateTime? midnight = DateTimeUtils.midnight(date.toLocal().add(Duration(days: 1))); //Border is at midnight the next day (Local Time)
+      var foundData = _findRingData(id: id, beforeTimestamp: midnight);
       if(foundData?.isNotEmpty ?? false){
         return foundData!.last; // last to be the most up to date
       }
@@ -279,7 +282,7 @@ class WellnessRings with Service{
     //Split records by date
     Map<String, List<WellnessRingRecord>> ringDateRecords = {};
     _wellnessRecords?.forEach((record) {
-      String? recordDayName = record.date != null? DateFormat("yyyy-MM-dd").format(DateUtils.dateOnly(record.date!)) : null;
+      String? recordDayName = DateTimeUtils.localDateTimeToString(DateTimeUtils.midnight(record.date));
       if(recordDayName!=null) {
         List<WellnessRingRecord>? recordsForDay = ringDateRecords[recordDayName];
         if (recordsForDay == null) {
@@ -294,9 +297,7 @@ class WellnessRings with Service{
     int count = 0;
     for (List<WellnessRingRecord> dayRecords in ringDateRecords.values){
       if(dayRecords.isNotEmpty) {
-        WellnessRingDefinition? ringData = _getActiveRingDataForDay(id: id,
-            timestamp: dayRecords.first
-                .timestamp); //We've filtered per day, so all records should return the same DayRingData, so just take the first one
+        WellnessRingDefinition? ringData = _getActiveRingDataForDay(id: id, date: dayRecords.first.date); //We've filtered per day, so all records should return the same DayRingData, so just take the first one
         int dayCount = 0;
         for (WellnessRingRecord record in dayRecords) {
           dayCount += record.value.toInt();
@@ -336,8 +337,8 @@ class WellnessRings with Service{
   double getRingDailyValue(String wellnessRingId){
     Iterable<WellnessRingRecord>? selection = _wellnessRecords?.where((record) =>
     ((record.wellnessRingId == wellnessRingId)
-        && ((DateTimeUtils.midnight(DateTime.now())?.millisecondsSinceEpoch ?? 0) < record.timestamp)));
-    // ?.where((record) => ((DateTimeUtils.midnight(DateTime.now())?.millisecondsSinceEpoch ?? 0) < record.timestamp));// Today records
+        // && (DateTimeUtils.midnight(DateTime.now())?.isBefore(record.date ?? DateTime.now()) ?? false)));
+        && (record.date.isAfter(/*today's start*/DateTimeUtils.midnight(DateTime.now()) ?? DateTime.now())))); //records after midnight
 
     double value = 0.0;
     selection?.forEach((record) {
@@ -400,6 +401,51 @@ class WellnessRings with Service{
     _saveRingsDataToCache();
   }
 ///////
+
+  //BB APIS
+  Future<WellnessRingDefinition?> _requestAddRingDefinition(WellnessRingDefinition definition) async {
+    //TBD ENABLED
+    String url = '${Config().wellnessUrl}/user/rings';
+
+    String? definitionJson = JsonUtils.encode(definition);
+
+    http.Response? response = await Network().post(url, auth: Auth2(), body: definitionJson);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      //TBD handle response
+      // List<ToDoCategory>? categories = ToDoCategory.listFromJson(JsonUtils.decodeList(responseString));
+      Map<String, dynamic>? responseData = JsonUtils.decodeMap(responseString);
+      List<dynamic>? history = JsonUtils.listValue(responseData?["history"]);
+      return (history?.isNotEmpty ?? false) ? WellnessRingDefinition.fromJson(history!.last ): null;
+    } else {
+      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  // ignore: do_not_use_environment TBD make it private 
+  Future<WellnessRingDefinition?> requestGetRingDefinition({String? ringId}) async {
+    //TBD ENABLED
+    String url = '${Config().wellnessUrl}/user/rings';
+    if(ringId!=null){
+      url += "/$ringId";
+    }
+
+    http.Response? response = await Network().get(url, auth: Auth2(),);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      //TBD handle response
+      // List<ToDoCategory>? categories = ToDoCategory.listFromJson(JsonUtils.decodeList(responseString));
+      return null;
+    } else {
+      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+//////
 
   //TBD Remove unnecessary public methods
   //TBD Reorder methods

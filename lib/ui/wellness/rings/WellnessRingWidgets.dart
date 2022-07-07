@@ -53,7 +53,6 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
 
   @override
   void dispose() {
-    super.dispose();
     NotificationService().unsubscribe(this);
     if(_animationControllers.isNotEmpty) {
       _animationControllers.values.forEach((controller) {
@@ -61,6 +60,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
       });
     }
     _controllerCenter.dispose();
+    super.dispose();
   }
 
   void _loadRingsData() async {
@@ -87,7 +87,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
     int fillCount = MIN_RINGS_COUNT - (_ringsData?.length ?? 0);
     if(fillCount > 0){
       for (int i=0; i<fillCount; i++){
-        data.add(WellnessRingDefinition(id: "empty_$i", goal: 1, timestamp: DateTime.now().millisecondsSinceEpoch));
+        data.add(WellnessRingDefinition(id: "empty_$i", goal: 1));
       }
     }
     if(_ringsData?.isNotEmpty ?? false){

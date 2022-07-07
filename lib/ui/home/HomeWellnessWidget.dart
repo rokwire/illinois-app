@@ -515,9 +515,8 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
 
   void _onTapIncrease(WellnessRingDefinition data){
     WellnessRings().addRecord(
-        WellnessRingRecord(value: 1, timestamp: DateTime
-            .now()
-            .millisecondsSinceEpoch, wellnessRingId: data.id));
+        WellnessRingRecord(value: 1, dateCreatedUtc: DateTime
+            .now(), wellnessRingId: data.id));
   }
   // NotificationsListener
 
