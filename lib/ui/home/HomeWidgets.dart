@@ -563,13 +563,24 @@ class HomeMessageCard extends StatelessWidget {
 // HomeProgressWidget
 
 class HomeProgressWidget extends StatelessWidget {
+  final EdgeInsetsGeometry padding;
+  final Size progessSize;
+  final double progessWidth;
+  final Color? progressColor;
+
+  HomeProgressWidget({Key? key,
+    this.padding = const EdgeInsets.only(left: 16, right: 16, top: 96, bottom: 32),
+    this.progessSize = const Size(24, 24),
+    this.progessWidth = 3,
+    this.progressColor,
+  }) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 96, bottom: 32), child:
+    return Padding(padding: padding, child:
       Center(child:
-        Container(height: 24, width: 24, child:
-          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+        Container(width: progessSize.width, height: progessSize.height, child:
+          CircularProgressIndicator(strokeWidth: progessWidth, valueColor: AlwaysStoppedAnimation<Color?>(progressColor ?? Styles().colors?.fillColorSecondary), )
         ),
       ),
     );
