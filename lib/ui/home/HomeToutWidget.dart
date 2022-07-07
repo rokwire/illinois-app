@@ -154,7 +154,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
         return "$greeting,";
       }
       else {
-        return StringUtils.capitalize("$greeting!", allWords: true);
+        return StringUtils.capitalize("$greeting!", allWords: false);
       }
     }
     else {
