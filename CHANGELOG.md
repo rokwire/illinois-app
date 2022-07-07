@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Replace Lorem Ipsum strings for Dinings and Groups sections in Browse panel [#1906](https://github.com/rokwire/illinois-app/issues/1906).
+- Make Suggested Events, Recent Items, Recent Polls and Campus Highlights widgets horizontally scrollable [#1874](https://github.com/rokwire/illinois-app/issues/1874).
+- Standardize compound widgets in Favorites panel [#1874](https://github.com/rokwire/illinois-app/issues/1874).
 ### Fixed
 - Do not push the same panel on top when tapping on the root header bar [#1909](https://github.com/rokwire/illinois-app/issues/1909).
 - Various fixes in the UI [#1910](https://github.com/rokwire/illinois-app/issues/1910).
