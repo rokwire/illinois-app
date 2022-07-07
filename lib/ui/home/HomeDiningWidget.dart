@@ -42,7 +42,7 @@ class HomeDiningWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widgets.home.dinings.header.title', 'Dining');
+  static String get title => Localization().getStringEx('widget.home.dinings.header.title', 'Dining');
 
   @override
   State<StatefulWidget> createState() => _HomeDiningWidgetState();
@@ -109,16 +109,16 @@ class _HomeDiningWidgetState extends State<HomeDiningWidget> implements Notifica
           Widget? contentEntry;
           if (code == 'dinings_all') {
             contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widgets.home.dinings.all.button.title', 'Residence Hall Dining'),
-              description: Localization().getStringEx('widgets.home.dinings.all.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
+              title: Localization().getStringEx('widget.home.dinings.all.button.title', 'Residence Hall Dining'),
+              description: Localization().getStringEx('widget.home.dinings.all.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
               favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onTapDiningsAll,
             );
           }
           else if (code == 'dinings_open') {
             contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widgets.home.dinings.open.button.title', 'Residence Hall Dining Open Now'),
-              description: Localization().getStringEx('widgets.home.dinings.open.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
+              title: Localization().getStringEx('widget.home.dinings.open.button.title', 'Residence Hall Dining Open Now'),
+              description: Localization().getStringEx('widget.home.dinings.open.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
               favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onTapDiningsOpen,
             );

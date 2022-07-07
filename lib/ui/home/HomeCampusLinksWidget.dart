@@ -45,7 +45,7 @@ class HomeCampusLinksWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widgets.home.campus_links.header.title', 'Campus Links');
+  static String get title => Localization().getStringEx('widget.home.campus_links.header.title', 'Campus Links');
 
   @override
   State<StatefulWidget> createState() => _HomeCampusLinksWidgetState();
@@ -97,7 +97,7 @@ class _HomeCampusLinksWidgetState extends State<HomeCampusLinksWidget> implement
   Widget build(BuildContext context) {
     List<Widget> commandsList = _buildCommandsList();
     return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: Localization().getStringEx('widgets.home.campus_links.header.title', 'Campus Links'),
+      title: Localization().getStringEx('widget.home.campus_links.header.title', 'Campus Links'),
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
       child: Column(children: commandsList,),
       //flatHeight: 0, slantHeight: 0, childPadding: EdgeInsets.all(16),
@@ -112,8 +112,8 @@ class _HomeCampusLinksWidgetState extends State<HomeCampusLinksWidget> implement
           Widget? contentEntry;
           if ((code == 'due_date_catalog') && _canDueDateCatalog) {
             contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widgets.home.campus_links.date_cat.button.title', 'Due Date Catalog'),
-              description: Localization().getStringEx('widgets.home.campus_links.date_cat.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
+              title: Localization().getStringEx('widget.home.campus_links.date_cat.button.title', 'Due Date Catalog'),
+              description: Localization().getStringEx('widget.home.campus_links.date_cat.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
               favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onDueDateCatalog,
             );
@@ -174,7 +174,7 @@ class _HomeCampusLinksWidgetState extends State<HomeCampusLinksWidget> implement
     Analytics().logSelect(target: "HomeCampusLinksWidget: Due Date Catalog");
     
     if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('widgets.home.campus_links.date_cat.label.offline', 'Due Date Catalog not available while offline.'));
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.campus_links.date_cat.label.offline', 'Due Date Catalog not available while offline.'));
     }
     else if (_canDueDateCatalog) {
       url_launcher.launch(Config().dateCatalogUrl!);

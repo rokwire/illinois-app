@@ -46,7 +46,7 @@ class HomeAppHelpWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widgets.home.app_help.header.title',  'App Help');
+  static String get title => Localization().getStringEx('widget.home.app_help.header.title',  'App Help');
 
   @override
   State<StatefulWidget> createState() => _HomeAppHelpWidgetState();
@@ -98,7 +98,7 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
   Widget build(BuildContext context) {
     List<Widget> commandsList = _buildCommandsList();
     return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: Localization().getStringEx('widgets.home.app_help.header.title',  'App Help'),
+      title: Localization().getStringEx('widget.home.app_help.header.title',  'App Help'),
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
       child: Column(children: commandsList,),
       //flatHeight: 0, slantHeight: 0, childPadding: EdgeInsets.all(16),
@@ -113,24 +113,24 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
           Widget? contentEntry;
           if ((code == 'video_tutorial') && _canVideoTutorial) {
             contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widgets.home.app_help.video_tutorial.button.title', 'Video Tutorial'),
-              description: Localization().getStringEx('widgets.home.app_help.video_tutorial.button.description', 'Play video tutorial to learn great new features.'),
+              title: Localization().getStringEx('widget.home.app_help.video_tutorial.button.title', 'Video Tutorial'),
+              description: Localization().getStringEx('widget.home.app_help.video_tutorial.button.description', 'Play video tutorial to learn great new features.'),
               favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onVideoTutorial,
             );
           }
           else if ((code == 'feedback') && _canFeedback) {
             contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widgets.home.app_help.feedback.button.title', 'Provide Feedback'),
-              description: Localization().getStringEx('widgets.home.app_help.feedback.button.description', 'Enjoying the app? Missing something? The University of Illinois Smart, Healthy Communities Initiative needs your ideas and input. Thank you!'),
+              title: Localization().getStringEx('widget.home.app_help.feedback.button.title', 'Provide Feedback'),
+              description: Localization().getStringEx('widget.home.app_help.feedback.button.description', 'Enjoying the app? Missing something? The University of Illinois Smart, Healthy Communities Initiative needs your ideas and input. Thank you!'),
               favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onFeedback,
             );
           }
           else if ((code == 'faqs') && _canFAQs) {
             contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widgets.home.app_help.faqs.button.title', 'FAQs'),
-              description: Localization().getStringEx('widgets.home.app_help.faqs.button.description', 'Check your question in frequently asked questions.'),
+              title: Localization().getStringEx('widget.home.app_help.faqs.button.title', 'FAQs'),
+              description: Localization().getStringEx('widget.home.app_help.faqs.button.description', 'Check your question in frequently asked questions.'),
               favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onFAQs,
             );
@@ -190,7 +190,7 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
   void _onVideoTutorial() {
     Analytics().logSelect(target: "HomeAppHelpWidget: Video Tutorial");
     if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('widgets.home.app_help.video_tutorial.label.offline', 'Video Tutorial not available while offline.'));
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.app_help.video_tutorial.label.offline', 'Video Tutorial not available while offline.'));
     }
     else if (_canVideoTutorial) {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel()));
@@ -202,7 +202,7 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
   void _onFeedback() {
     Analytics().logSelect(target: "HomeAppHelpWidget: Feebdack");
     if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('widgets.home.app_help.feedback.label.offline', 'Providing a Feedback is not available while offline.'));
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.app_help.feedback.label.offline', 'Providing a Feedback is not available while offline.'));
     }
     else if (_canFeedback) {
       String email = Uri.encodeComponent(Auth2().email ?? '');
@@ -210,7 +210,7 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
       String phone = Uri.encodeComponent(Auth2().phone ?? '');
       String feedbackUrl = "${Config().feedbackUrl}?email=$email&phone=$phone&name=$name";
 
-      String? panelTitle = Localization().getStringEx('widgets.home.app_help.feedback.panel.title', 'PROVIDE FEEDBACK');
+      String? panelTitle = Localization().getStringEx('widget.home.app_help.feedback.panel.title', 'PROVIDE FEEDBACK');
       Navigator.push(
           context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
     }
@@ -222,12 +222,12 @@ class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements Notifi
     Analytics().logSelect(target: "HomeAppHelpWidget: FAQs");
 
     if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('widgets.home.app_help.faqs.label.offline', 'FAQs is not available while offline.'));
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.app_help.faqs.label.offline', 'FAQs is not available while offline.'));
     }
     else if (_canFAQs) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
         url: Config().faqsUrl,
-        title: Localization().getStringEx('widgets.home.app_help.faqs.panel.title', 'FAQs'),
+        title: Localization().getStringEx('widget.home.app_help.faqs.panel.title', 'FAQs'),
       )));
     }
   }

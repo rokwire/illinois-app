@@ -45,7 +45,7 @@ class HomeStateFarmCenterWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widgets.home.state_farm_center.header.title',  'State Farm Center');
+  static String get title => Localization().getStringEx('widget.home.state_farm_center.header.title',  'State Farm Center');
 
   @override
   State<StatefulWidget> createState() => _HomeStateFarmCenterWidgetState();
@@ -97,7 +97,7 @@ class _HomeStateFarmCenterWidgetState extends State<HomeStateFarmCenterWidget> i
   Widget build(BuildContext context) {
     List<Widget> commandsList = _buildCommandsList();
     return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: Localization().getStringEx('widgets.home.state_farm_center.header.title', 'State Farm Center'),
+      title: Localization().getStringEx('widget.home.state_farm_center.header.title', 'State Farm Center'),
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
       child: Column(children: commandsList,),
       //flatHeight: 0, slantHeight: 0, childPadding: EdgeInsets.all(16),
@@ -112,24 +112,24 @@ class _HomeStateFarmCenterWidgetState extends State<HomeStateFarmCenterWidget> i
           Widget? contentEntry;
           if (code == 'parking') {
             contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widgets.home.state_farm_center.parking.button.title', 'Parking'),
-              description: Localization().getStringEx('widgets.home.state_farm_center.parking.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
+              title: Localization().getStringEx('widget.home.state_farm_center.parking.button.title', 'Parking'),
+              description: Localization().getStringEx('widget.home.state_farm_center.parking.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
               favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onParking,
             );
           }
           else if (code == 'wayfinding') {
             contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widgets.home.state_farm_center.wayfinding.button.title', 'Wayfinding'),
-              description: Localization().getStringEx('widgets.home.state_farm_center.wayfinding.button.description', 'Aenean commodo faucibus sem, id finibus tortor rutrum consectetur.'),
+              title: Localization().getStringEx('widget.home.state_farm_center.wayfinding.button.title', 'Wayfinding'),
+              description: Localization().getStringEx('widget.home.state_farm_center.wayfinding.button.description', 'Aenean commodo faucibus sem, id finibus tortor rutrum consectetur.'),
               favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onWayfinding,
             );
           }
           else if (code == 'create_stadium_poll') {
             contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widgets.home.state_farm_center.create_stadium_poll.button.title', 'Create Stadium Poll'),
-              description: Localization().getStringEx('widgets.home.state_farm_center.create_stadium_poll.button.description', 'Vivamus aliquam hendrerit risus eget accumsan.'),
+              title: Localization().getStringEx('widget.home.state_farm_center.create_stadium_poll.button.title', 'Create Stadium Poll'),
+              description: Localization().getStringEx('widget.home.state_farm_center.create_stadium_poll.button.description', 'Vivamus aliquam hendrerit risus eget accumsan.'),
               favorite: HomeFavorite(code, category: widget.favoriteId),
               onTap: _onCreateStadiumPoll,
             );
