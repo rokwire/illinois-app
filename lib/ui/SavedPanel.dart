@@ -55,7 +55,19 @@ import 'package:notification_permissions/notification_permissions.dart';
 
 class SavedPanel extends StatefulWidget {
 
-  SavedPanel();
+  static const List<String> allFavoriteCategories = <String>[
+    Event.favoriteKeyName,
+    Dining.favoriteKeyName,
+    Game.favoriteKeyName,
+    News.favoriteKeyName,
+    LaundryRoom.favoriteKeyName,
+    InboxMessage.favoriteKeyName,
+    GuideFavorite.favoriteKeyName,
+  ];
+
+  final List<String> favoriteCategories;
+
+  SavedPanel({this.favoriteCategories : allFavoriteCategories});
 
   @override
   _SavedPanelState createState() => _SavedPanelState();
@@ -101,19 +113,17 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       _refreshFavorites(showProgress: false);
     }
     else if (name == Assets.notifyChanged) {
-      _refreshFavorites(favoriteCategories: [Dining.favoriteKeyName], showProgress: false);
+      _refreshFavorites(favoriteCategories: {Dining.favoriteKeyName}, showProgress: false);
     }
     else if (name == Guide.notifyChanged) {
-      _refreshFavorites(favoriteCategories: [GuideFavorite.favoriteKeyName], showProgress: false);
+      _refreshFavorites(favoriteCategories: {GuideFavorite.favoriteKeyName}, showProgress: false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx('panel.saved.header.label', 'Saved'),
-      ),
+      appBar: HeaderBar(title: _headerBarTitle,),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
         Column(children: <Widget>[
           _buildNotificationPermision(),
@@ -174,34 +184,33 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   Widget _buildFavoritesContent() {
+    List<Widget> contentList = <Widget>[];
+    EdgeInsetsGeometry padding = EdgeInsets.zero;
+    if (widget.favoriteCategories.length > 1) {
+      for (String favoriteCategory in widget.favoriteCategories) {
+        contentList.add(_SavedItemsList(headingTitle: _favoriteCategoryTitle(favoriteCategory),
+          headingIconResource: _favoriteCategoryIconResource(favoriteCategory),
+          items: _favorites[favoriteCategory])
+        );
+      }
+      padding = EdgeInsets.zero;
+    }
+    else if (widget.favoriteCategories.length == 1) {
+      List<Favorite>? favorites = _favorites[widget.favoriteCategories.first];
+      if (0 < (favorites?.length ?? 0)) {
+        for (int index = 0; index < favorites!.length; index++) {
+          contentList.add(Padding(padding: EdgeInsets.only(top: (0 < index) ? 8 : 0), child:
+            _SavedItem(favorites[index])
+          ));
+        }
+      }
+      padding = EdgeInsets.symmetric(horizontal: 16, vertical: 16);
+    }
+    
     return SingleChildScrollView(child:
-      Column(children: [
-        _SavedItemsList(headingTitle: Localization().getStringEx('panel.favorites.label.events', 'Events'),
-          headingIconResource: 'images/icon-calendar.png',
-          items: _favorites[Event.favoriteKeyName]),
-        _SavedItemsList(headingTitle: Localization().getStringEx('panel.favorites.label.dining', "Dining"),
-          headingIconResource: 'images/icon-dining-orange.png',
-          items: _favorites[Dining.favoriteKeyName],),
-        _SavedItemsList(headingTitle: Localization().getStringEx('panel.favorites.label.athletics', 'Athletics'),
-          headingIconResource: 'images/icon-calendar.png',
-          items: _favorites[Game.favoriteKeyName]),
-        _SavedItemsList(
-          headingTitle: Localization().getStringEx('panel.favorites.label.news', 'News'),
-          headingIconResource: 'images/icon-news.png',
-          items: _favorites[News.favoriteKeyName],),
-        _SavedItemsList(
-          headingTitle: Localization().getStringEx('panel.favorites.label.laundry', 'Laundry'),
-          headingIconResource: 'images/icon-news.png',
-          items: _favorites[LaundryRoom.favoriteKeyName],),
-        _SavedItemsList(
-          headingTitle: Localization().getStringEx('panel.favorites.label.campus_guide', 'Campus Guide'),
-          headingIconResource: 'images/icon-news.png',
-          items: _favorites[GuideFavorite.favoriteKeyName],),
-        _SavedItemsList(
-          headingTitle: Localization().getStringEx('panel.favorites.label.inbox', 'Inbox'),
-          headingIconResource: 'images/icon-news.png',
-          items: _favorites[InboxMessage.favoriteKeyName],),
-      ],)
+      Padding(padding: padding, child:
+        Column(children: contentList,)
+      ,)
     );
   }
 
@@ -256,29 +265,41 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   // Content
 
-  static const List<String> _favoriteCategories = <String>[
-    Event.favoriteKeyName,
-    Dining.favoriteKeyName,
-    Game.favoriteKeyName,
-    News.favoriteKeyName,
-    LaundryRoom.favoriteKeyName,
-    InboxMessage.favoriteKeyName,
-    GuideFavorite.favoriteKeyName,
-  ];
+  void _refreshFavorites({Set<String>? favoriteCategories, bool showProgress = true}) {
+    if (Connectivity().isOnline) {
+      if (showProgress && mounted) {
+        setState(() {
+          _loadingFavorites = true;
+        });
+      }
+      _loadFavorites(favoriteCategories: favoriteCategories).then((Map<String, List<Favorite>?> favorites) {
+        if (mounted) {
+          setState(() {
+            _favorites = favorites;
+            _loadingFavorites = false;
+          });
+        }
+      }); 
+    }
+  }
 
-  Future<Map<String, List<Favorite>?>> _loadFavorites({List<String> favoriteCategories = _favoriteCategories}) async {
+  Future<Map<String, List<Favorite>?>> _loadFavorites({Set<String>? favoriteCategories}) async {
 
+    List<String> futuresCategories = <String>[];
     List<Future<List<Favorite>?>> futures = <Future<List<Favorite>?>>[];
-    for (String favoriteCategory in favoriteCategories) {
-      futures.add(_favoriteCategoryLoader(favoriteCategory)(Auth2().prefs?.getFavorites(favoriteCategory)));
+    for (String favoriteCategory in widget.favoriteCategories) {
+      if ((favoriteCategories == null) || favoriteCategories.contains(favoriteCategory)) {
+        futures.add(_favoriteCategoryLoader(favoriteCategory)(Auth2().prefs?.getFavorites(favoriteCategory)));
+        futuresCategories.add(favoriteCategory);
+      }
     }
 
     List<List<Favorite>?> results = await Future.wait(futures);
     
     Map<String, List<Favorite>?> result = <String, List<Favorite>?>{};
-    for (int index = 0; index < favoriteCategories.length; index++) {
+    for (int index = 0; index < futuresCategories.length; index++) {
       if (index < results.length) {
-        result[favoriteCategories[index]] = results[index];
+        result[futuresCategories[index]] = results[index];
       }
     }
     return result;
@@ -371,22 +392,34 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return null;
   }
 
-  void _refreshFavorites({List<String> favoriteCategories = _favoriteCategories, bool showProgress = true}) {
-    if (Connectivity().isOnline) {
-      if (showProgress && mounted) {
-        setState(() {
-          _loadingFavorites = true;
-        });
-      }
-      _loadFavorites(favoriteCategories: favoriteCategories).then((Map<String, List<Favorite>?> favorites) {
-        if (mounted) {
-          setState(() {
-            _favorites = favorites;
-            _loadingFavorites = false;
-          });
-        }
-      }); 
+  String get _headerBarTitle => (widget.favoriteCategories.length == 1) ?
+    (_favoriteCategoryTitle(widget.favoriteCategories.first) ?? '') :
+    Localization().getStringEx('panel.saved.header.label', 'Saved');
+
+  String? _favoriteCategoryTitle(String favoriteCategory) {
+    switch(favoriteCategory) {
+      case Event.favoriteKeyName:         return Localization().getStringEx('panel.saved.label.events', 'My Events');
+      case Dining.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.dining', "My Dining");
+      case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Athletics');
+      case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My News');
+      case LaundryRoom.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
+      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
+      case InboxMessage.favoriteKeyName:  return Localization().getStringEx('panel.saved.label.inbox', 'My Notifications');
     }
+    return null;
+  }
+
+  String? _favoriteCategoryIconResource(String favoriteCategory) {
+    switch(favoriteCategory) {
+      case Event.favoriteKeyName:         return 'images/icon-calendar.png';
+      case Dining.favoriteKeyName:        return 'images/icon-dining-orange.png';
+      case Game.favoriteKeyName:          return 'images/icon-calendar.png';
+      case News.favoriteKeyName:          return 'images/icon-news.png';
+      case LaundryRoom.favoriteKeyName:   return 'images/icon-news.png';
+      case GuideFavorite.favoriteKeyName: return 'images/icon-news.png';
+      case InboxMessage.favoriteKeyName:  return 'images/icon-news.png';
+    }
+    return null;
   }
 
   bool get _isFavoritesEmpty {
@@ -488,7 +521,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     if (CollectionUtils.isEmpty(widget.items)) {
       return Container();
     }
-    bool showMoreButton = widget.limit < widget.items!.length;
+    bool showMoreButton = (0 < widget.limit) && (widget.limit < widget.items!.length);
     return Column(
       children: <Widget>[
         SectionSlantHeader(
@@ -496,7 +529,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
             titleIconAsset: widget.headingIconResource,
             slantImageAsset: widget.slantImageResource,
             slantColor: widget.slantColor ?? Styles().colors!.fillColorPrimary,
-            children: _buildListItems(context)),
+            children: (0 <  widget.items!.length) ? _buildListItems(context) : _buildEmptyContent(context),),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(
           label: _showAll ? Localization().getStringEx('panel.saved.events.button.less', "Show Less") : Localization().getStringEx('panel.saved.events.button.all', "Show All"),
           onTap: _onViewAllTapped,
@@ -509,10 +542,9 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     List<Widget> widgets = [];
     if (CollectionUtils.isNotEmpty(widget.items)) {
       int itemsCount = widget.items!.length;
-      int visibleCount = (_showAll ? itemsCount : min(widget.limit, itemsCount));
+      int visibleCount = (((widget.limit <= 0) || _showAll) ? itemsCount : min(widget.limit, itemsCount));
       for (int i = 0; i < visibleCount; i++) {
-        Favorite? item = widget.items![i];
-        widgets.add(_buildItemCard(item));
+        widgets.add(_SavedItem(widget.items![i]));
         if (i < (visibleCount - 1)) {
           widgets.add(Container(height: 12,));
         }
@@ -521,19 +553,45 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     return widgets;
   }
 
-  Widget _buildItemCard(Favorite? item) {
-    //Custom layout for super events before release
-    if(item is Event && item.isComposite){
-      return _buildCompositEventCard(item);
-    }
+  List<Widget> _buildEmptyContent(BuildContext context) {
+    return <Widget>[Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
+      Column(children: <Widget>[
+        Expanded(child: Container(), flex: 1),
+        Text(Localization().getStringEx("panel.saved.message.no_items", "Whoops! Nothing to see here."), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
+        Container(height:8),
+        Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+        Expanded(child: Container(), flex: 3),
+    ],),)];
+  
+  }
 
-    bool favorite = Auth2().isFavorite(item);
-    Color? headerColor = item?.favoriteHeaderColor;
-    String? title = item?.favoriteTitle;
-    String? cardDetailText = item?.favoriteDetailText;
-    Image? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? item?.favoriteDetailIcon : null;
+  void _onViewAllTapped() {
+    setState(() {
+      _showAll = !_showAll;
+    });
+  }
+}
+
+class _SavedItem extends StatelessWidget {
+  final Favorite favorite;
+  
+  _SavedItem(this.favorite, {Key ? key}) : super(key: key);
+
+  Event? get _favoriteEvent => (favorite is Event) ? (favorite as Event) : null;
+
+  @override
+  Widget build(BuildContext context) {
+    return  (_favoriteEvent?.isComposite ?? false) ? _buildCompositEventCard(context) : _buildFavoriteCard(context);
+  }
+
+  Widget _buildFavoriteCard(BuildContext context) {
+    bool isFavorite = Auth2().isFavorite(favorite);
+    Color? headerColor = favorite.favoriteHeaderColor;
+    String? title = favorite.favoriteTitle;
+    String? cardDetailText = favorite.favoriteDetailText;
+    Image? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? favorite.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
-    return GestureDetector(onTap: () => _onTapItem(item), child:
+    return GestureDetector(onTap: () => _onTapFavorite(context), child:
       Semantics(label: title, child:
         Column(children: <Widget>[
           Container(height: 7, color: headerColor,),
@@ -549,19 +607,19 @@ class _SavedItemsListState extends State<_SavedItemsList>{
                         GestureDetector(behavior: HitTestBehavior.opaque,
                           onTap: () {
                             Analytics().logSelect(target: "Favorite: $title");
-                            Auth2().prefs?.toggleFavorite(item);
+                            Auth2().prefs?.toggleFavorite(favorite);
                           }, child:
                           Semantics(container: true,
-                            label: favorite
+                            label: isFavorite
                                 ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
                                 : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-                            hint: favorite
+                            hint: isFavorite
                                 ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
                                 : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                             button: true,
                             excludeSemantics: true,
                             child:
-                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Image.asset(favorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true)))),
+                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)))),
                           )
                         ],
                       )
@@ -586,28 +644,22 @@ class _SavedItemsListState extends State<_SavedItemsList>{
         )),);
   }
 
-  void _onTapItem(Favorite? item) {
-    Analytics().logSelect(target: item?.favoriteTitle);
-    item?.favoriteLaunchDetail(context);
+  Widget _buildCompositEventCard(BuildContext context) {
+      return ExploreCard(explore: favorite as Event, showTopBorder: true, horizontalPadding: 0, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        onTap:() => _onTapCompositeEvent(context));
   }
 
-  void _onViewAllTapped() {
-    setState(() {
-      _showAll = !_showAll;
-    });
+  void _onTapFavorite(BuildContext context) {
+    Analytics().logSelect(target: favorite.favoriteTitle);
+    favorite.favoriteLaunchDetail(context);
   }
-
-  Widget _buildCompositEventCard(Event? item){
-      return ExploreCard(explore: item,showTopBorder: true, horizontalPadding: 0,border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        onTap:(){
-          if (item != null) {
-            if (item.isComposite) {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: item)));
-            } else {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-                  ExploreDetailPanel(explore: item)));
-            }
-          }
-        });
+  void _onTapCompositeEvent(BuildContext context) {
+    Analytics().logSelect(target: favorite.favoriteTitle);
+    if (_favoriteEvent?.isComposite ?? false) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: _favoriteEvent)));
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: _favoriteEvent)));
+    }
   }
 }

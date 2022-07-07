@@ -16,6 +16,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/laundry/LaundryRequestIssuePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -58,6 +60,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
   void initState() {
     super.initState();
     NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    RecentItems().addRecentItem(RecentItem.fromSource(widget.room));
     Analytics().logMapShow();
     _load();
   }
@@ -174,7 +177,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
       Localization().getStringEx('widget.card.button.favorite.off.hint', '') :
       Localization().getStringEx('widget.card.button.favorite.on.hint', '');
 
-    String favoriteIcon = isFavorite? 'images/icon-star-selected.png' : 'images/icon-star.png';
+    String favoriteIcon = isFavorite? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png';
     return Container(color: Colors.white, child:
       Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 11, bottom: 24), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[

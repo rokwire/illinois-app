@@ -19,7 +19,6 @@ import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
@@ -154,7 +153,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
       String? groupId = widget.group.id;
       if (StringUtils.isNotEmpty(groupId)) {
         _setGroupPollsLoading(true);
-        Groups().loadGroupPolls({groupId!}, cursor: _pollsCursor)?.then((PollsChunk? result) {
+        Polls().getGroupPolls(groupIds: {groupId!}, cursor: _pollsCursor)?.then((PollsChunk? result) {
           if (result != null) {
             if (_polls == null) {
               _polls = [];

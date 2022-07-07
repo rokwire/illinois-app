@@ -3,39 +3,102 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:illinois/service/WPGUFMRadio.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:audio_session/audio_session.dart';
-import 'package:just_audio/just_audio.dart';
 
-class HomeWPGUFMRadioWidget extends StatefulWidget {
-  final StreamController<void>? refreshController;
+class HomeWPGUFMRadioWidget extends StatelessWidget {
+  final String? favoriteId;
+  final StreamController<String>? updateController;
 
-  const HomeWPGUFMRadioWidget({Key? key, this.refreshController}) : super(key: key);
+  const HomeWPGUFMRadioWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: title,
+    );
+
+  static String get title => Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio');
 
   @override
-  State<HomeWPGUFMRadioWidget> createState() => _HomeWPGUFMRadioWidgetState();
+  Widget build(BuildContext context) {
+    return Visibility(visible: _isEnabled, child:
+        HomeSlantWidget(favoriteId: favoriteId,
+          title: Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'),
+          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+          childPadding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 32),
+          child: _WPGUFMRadioControl(borderRadius: BorderRadius.all(Radius.circular(6)),),
+        ),
+    );
+  }
+
+  bool get _isEnabled => StringUtils.isNotEmpty(Config().wpgufmRadioUrl);
+
+  static void showPopup(BuildContext context) {
+    showDialog(context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return _buildPopup(context);
+      },
+    );
+  }
+
+  static Widget _buildPopup(BuildContext context) {
+    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
+      Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
+        Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          Container(color: Styles().colors!.fillColorPrimary, child:
+            Row(children: <Widget>[
+              Expanded(child:
+                Padding(padding: EdgeInsets.all(8), child:
+                  Center(child:
+                    Text(Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'), style: TextStyle(fontSize: 20, color: Colors.white),),
+                  ),
+                ),
+              ),
+              Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), button: true, child:
+                InkWell(onTap : () => _onClosePopup(context), child:
+                  Padding(padding: EdgeInsets.all(16), child: 
+                    Image.asset('images/close-white.png', semanticLabel: '',),
+                  ),
+                ),
+              ),
+            ],),
+          ),
+          _WPGUFMRadioControl(borderRadius: BorderRadius.vertical(bottom: Radius.circular(6))),
+        ],),
+      ),
+    );
+  }
+
+  static void _onClosePopup(BuildContext context) {
+    Analytics().logSelect(target: 'Close');
+    Navigator.of(context).pop();
+  }
 }
 
-class _HomeWPGUFMRadioWidgetState extends State<HomeWPGUFMRadioWidget> implements NotificationsListener {
-  AudioPlayer? _player;
-  bool _initalizingPlayer = false;
+class _WPGUFMRadioControl extends StatefulWidget {
+
+  final BorderRadius borderRadius;
+
+  const _WPGUFMRadioControl({Key? key, required this.borderRadius}) : super(key: key);
+
+  @override
+  State<_WPGUFMRadioControl> createState() => _WPGUFMRadioControlState();
+}
+
+class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements NotificationsListener {
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
-      Config.notifyConfigChanged,
+      WPGUFMRadio.notifyInitializeStatusChanged,
+      WPGUFMRadio.notifyPlayerStateChanged,
     ]);
-
-    _initAudioSession().then((_) {
-      if (_isEnabled) {
-        _initPlayer();
-      }
-    });
 
     super.initState();
   }
@@ -43,196 +106,89 @@ class _HomeWPGUFMRadioWidgetState extends State<HomeWPGUFMRadioWidget> implement
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _player?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isEnabled) {
-      String? buttonTitle, iconAsset;
-      if (_player != null) {
-        buttonTitle = _isPlaying ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'Play');
-        iconAsset = _isPlaying ? 'images/button-pause-orange.png' : 'images/button-play-orange.png';
-      }
-      else if (_initalizingPlayer) {
-        buttonTitle = Localization().getStringEx('widget.home.radio.button.initalize.title', 'Initializing');
-      }
-      else {
-        buttonTitle = Localization().getStringEx('widget.home.radio.button.fail.title', 'Not Available');
-      }
+    return Visibility(visible: WPGUFMRadio().isEnabled, child:
+      _buildContentCard(),
+    );
+  }
 
-      return GestureDetector(onTap: _onTapPlayPause, child:
+  Widget _buildContentCard() {
+    String? buttonTitle, iconAsset;
+    if (WPGUFMRadio().isInitialized) {
+      buttonTitle = WPGUFMRadio().isPlaying ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'Play');
+      iconAsset = WPGUFMRadio().isPlaying ? 'images/button-pause-orange.png' : 'images/button-play-orange.png';
+    }
+    else if (WPGUFMRadio().isInitializing) {
+      buttonTitle = Localization().getStringEx('widget.home.radio.button.initalize.title', 'Initializing');
+    }
+    else if (!WPGUFMRadio().isEnabled) {
+      buttonTitle = Localization().getStringEx('widget.home.radio.button.fail.title', 'Not Available');
+    }
+
+    return GestureDetector(onTap: _onTapPlayPause, child:
       Container(
-        margin: EdgeInsets.only(left: 16, right: 16, bottom: 20),
         decoration: BoxDecoration(boxShadow: [
-          BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3),
-              spreadRadius: 2.0,
-              blurRadius: 8.0,
-              offset: Offset(0, 2))
+          BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))
         ]),
         child:
-        ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
-        Row(children: <Widget>[
-          Expanded(child:
-          Column(children: <Widget>[
-            Container(color: Styles().colors!.fillColorPrimary, child:
-            Padding(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Expanded(child: Text(Localization().getStringEx(
-                  'widget.home.radio.title', 'WPGU FM Radio'),
-                  style: TextStyle(color: Styles().colors!.white,
-                      fontFamily: Styles().fontFamilies!.extraBold,
-                      fontSize: 20))),
-            ])
-            ),
-            ),
-            Container(color: Styles().colors!.white, child:
-            Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
-            Row(children: <Widget>[
-              Expanded(child:
+        ClipRRect(borderRadius: widget.borderRadius, child:
+          Row(children: <Widget>[
+            Expanded(child:
+              Column(children: <Widget>[
                 Container(color: Styles().colors!.white, child:
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Padding(padding: EdgeInsets.all(16), child:
-                          Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors!.fillColorSecondary! , width: 3))), child:
-                            Padding(padding: EdgeInsets.only(left: 10), child:
-                            Row(children: [Expanded(child: Text(buttonTitle, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 24, color: Styles().colors?.fillColorPrimary)))]))))),
-                    ],),
+                        Container(color: Styles().colors!.white, child:
+                          Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
+                            Row(children: <Widget>[
+                              Expanded(child:
+                                Padding(padding: EdgeInsets.all(16), child:
+                                  Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors!.fillColorSecondary! , width: 3))), child:
+                                    Padding(padding: EdgeInsets.only(left: 10), child:
+                                    Row(children: [Expanded(child: Text(buttonTitle ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 24, color: Styles().colors?.fillColorPrimary)))]))))),
+                            ],),
+                          ),
+                        ),
+                      ),
+                      (iconAsset != null) ? Semantics(button: true,
+                          excludeSemantics: true,
+                          label: buttonTitle,
+                          hint: Localization().getStringEx('widget.home.radio.button.add_radio.hint', ''),
+                          child:  IconButton(color: Styles().colors!.fillColorPrimary,
+                            icon: Image.asset(iconAsset, excludeFromSemantics: true),
+                            onPressed: _onTapPlayPause)
+                      ) : Container(),
+                    ]),
                   ),
                 ),
-              ),
-              (iconAsset != null) ? Semantics(button: true,
-                  excludeSemantics: true,
-                  label: buttonTitle,
-                  hint: Localization().getStringEx(
-                      'widget.home.radio.button.add_radio.hint', ''),
-                  child: 
-                  IconButton(color: Styles().colors!.fillColorPrimary,
-                    icon: Image.asset(iconAsset, excludeFromSemantics: true),
-                    onPressed: _onTapPlayPause)
-              ) : Container(),
-            ]),
-            ),
+              ]),
             ),
           ]),
-          ),
-        ]),
         ),
       ),
-      );
-    }
-    else {
-      return Container();
-    }
+    );
   }
 
-  bool get _isEnabled => StringUtils.isNotEmpty(Config().wpgufmRadioUrl);
-  bool get _isPlaying => (_player?.playing == true);
 
   void _onTapPlayPause() {
     Analytics().logSelect(target: 'Play/Pause');
-    if (_player != null) {
-      if (_isPlaying) {
-        _player?.pause();
-      }
-      else {
-        _player?.play();
-      }
-    }
+    WPGUFMRadio().togglePlayPause();
   }
 
-  Future<void> _initAudioSession() async {
-    AudioSession session = await AudioSession.instance;
-    session.configure(const AudioSessionConfiguration.speech());
-  }
-
-  void _initPlayer() async {
-    if (mounted) {
-      setState(() {
-        _initalizingPlayer = true;
-      });
-    }
-
-    _createPlayer().then((AudioPlayer? player) {
-      if (mounted) {
-        setState(() {
-          _player = player;
-          _initalizingPlayer = false;
-        });
-      }
-    });
-  }
-
-  Future<AudioPlayer?> _createPlayer() async {
-    AudioPlayer player = AudioPlayer();
-
-    try {
-      await player.setAudioSource(AudioSource.uri(Uri.parse(Config().wpgufmRadioUrl!)));
-
-      player.playbackEventStream.listen((PlaybackEvent event) {
-        print('PlaybackEvent: ${event.processingState.toString()}');
-        _onPlaybackEvent(event);
-      },
-      onError: (Object e, StackTrace stackTrace) {
-        print('A stream error occurred: $e');
-      });
-
-      player.playerStateStream.listen((PlayerState state) {
-        print('PlayerState: ${state.playing}');
-        _onPlayerState(state);
-      });
-
-      return player;
-    } catch (e) {
-      print("Error loading audio source: $e");
-    }
-
-    player.dispose();
-    return null;
-  }
-
-  void _onPlaybackEvent(PlaybackEvent event) {
-  }
-
-
-  void _onPlayerState(PlayerState state) {
-    if (mounted) {
-      setState(() {
-      });
-    }
-  }
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
-    }
-    else if (name == Config.notifyConfigChanged) {
-      _onConfigChnaged();
-    }
-  }
-
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
-    if (state == AppLifecycleState.paused) {
-    }
-    else if (state == AppLifecycleState.resumed) {
-    }
-  }
-  void _onConfigChnaged() {
-    if (_isEnabled && (_player == null)) {
-      _initPlayer();
-    }
-    else if (!_isEnabled && (_player != null)) {
-      _player?.dispose();
-      _player = null;
+    if ((name == WPGUFMRadio.notifyInitializeStatusChanged) ||
+        (name == WPGUFMRadio.notifyPlayerStateChanged)) {
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
     }
   }

@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -162,103 +163,34 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                             color: Styles()
                                                 .colors!
                                                 .fillColorPrimary)))),
-                            Visibility(
-                                visible: _isEditPostVisible && !widget.hidePostOptions,
-                                child: Semantics(
-                                    container: true,
-                                    sortKey: OrdinalSortKey(5),
-                                    child: Container(
-                                        child: Semantics(
-                                            label: Localization()
-                                                .getStringEx(
-                                                'panel.group.detail.post.reply.edit.label',
-                                                "Edit"),
-                                            button: true,
-                                            child: GestureDetector(
-                                                onTap: _onTapEditMainPost,
-                                                child: Container(
-                                                    color: Colors
-                                                        .transparent,
-                                                    child: Padding(
-                                                        padding: EdgeInsets.only(
-                                                            left: 16,
-                                                            top: 22,
-                                                            bottom: 10,
-                                                            right: (_isReplyVisible
-                                                                ? (_outerPadding /
-                                                                2)
-                                                                : _outerPadding)),
-                                                        child:
-                                                        Image.asset(
-                                                          'images/icon-edit.png',
-                                                          width: 20,
-                                                          height: 20,
-                                                          excludeFromSemantics:
-                                                          true,
-                                                        )))))))),
-                            Visibility(
-                                visible: _isDeletePostVisible && !widget.hidePostOptions,
-                                child: Semantics(
-                                    container: true,
-                                    sortKey: OrdinalSortKey(5),
-                                    child: Container(
-                                        child: Semantics(
-                                            label: Localization()
-                                                .getStringEx(
-                                                'panel.group.detail.post.reply.delete.label',
-                                                "Delete"),
-                                            button: true,
-                                            child: GestureDetector(
-                                                onTap: _onTapDeletePost,
-                                                child: Container(
-                                                    color: Colors
-                                                        .transparent,
-                                                    child: Padding(
-                                                        padding: EdgeInsets.only(
-                                                            left: 16,
-                                                            top: 22,
-                                                            bottom: 10,
-                                                            right: (_isReplyVisible
-                                                                ? (_outerPadding /
-                                                                2)
-                                                                : _outerPadding)),
-                                                        child:
-                                                        Image.asset(
-                                                          'images/trash.png',
-                                                          width: 20,
-                                                          height: 20,
-                                                          excludeFromSemantics:
-                                                          true,
-                                                        )))))))),
-                            Visibility(
-                                visible: _isReplyVisible && !widget.hidePostOptions,
-                                child: Semantics(
-                                    label: Localization().getStringEx(
-                                        'panel.group.detail.post.reply.reply.label',
-                                        "Reply"),
-                                    button: true,
-                                    child: GestureDetector(
-                                        onTap: _onTapHeaderReply,
-                                        child: Container(
-                                            color: Colors.transparent,
-                                            child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    left:
-                                                    (_isDeletePostVisible
-                                                        ? 8
-                                                        : 16),
-                                                    top: 22,
-                                                    bottom: 10,
-                                                    right:
-                                                    _outerPadding),
-                                                child: Image.asset(
-                                                  'images/icon-group-post-reply.png',
-                                                  width: 20,
-                                                  height: 20,
-                                                  fit: BoxFit.fill,
-                                                  excludeFromSemantics:
-                                                  true,
-                                                ))))))
+                            Visibility(visible: _isEditPostVisible && !widget.hidePostOptions, child:
+                              Semantics(container: true, sortKey: OrdinalSortKey(5), child:
+                                Container(child:
+                                  Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.edit.label', "Edit"), button: true, child:
+                                    GestureDetector(onTap: _onTapEditMainPost, child:
+                                      Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
+                                        Image.asset('images/icon-edit.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
+
+                            Visibility(visible: _isDeletePostVisible && !widget.hidePostOptions, child:
+                              Semantics(container: true, sortKey: OrdinalSortKey(5), child:
+                                Container(child:
+                                  Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.delete.label', "Delete"), button: true, child:
+                                    GestureDetector(onTap: _onTapDeletePost, child:
+                                        Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
+                                          Image.asset('images/trash.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
+
+                            Visibility(visible: _isReplyVisible && !widget.hidePostOptions, child:
+                              Semantics(label: Localization().getStringEx('panel.group.detail.post.button.report.label', "Report"), button: true, child:
+                                GestureDetector( onTap: _onTapHeaderReportAbuse, child:
+                                    Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
+                                      Image.asset('images/icon-feedback.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
+
+                            Visibility(visible: _isReportAbuseVisible && !widget.hidePostOptions, child:
+                              Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"), button: true, child:
+                                GestureDetector(onTap: _onTapHeaderReply, child:
+                                    Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 16), child:
+                                      Image.asset('images/icon-group-post-reply.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
+
                           ]),
                     ]))
       ]),
@@ -635,50 +567,53 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void _onTapReplyOptions(GroupPost? reply) {
     Analytics().logSelect(target: 'Reply Options');
     showModalBottomSheet(
-        context: context,
-        backgroundColor: Styles().colors!.white,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        builder: (context) {
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Visibility(visible: _isReplyVisible, child: RibbonButton(
-                  leftIconAsset: "images/icon-group-post-reply.png",
-                  label: Localization().getStringEx(
-                      "panel.group.detail.post.reply.reply.label", "Reply"),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _onTapPostReply(reply: reply);
-                  },
-                )),
-                Visibility(visible: _isEditVisible(reply), child: RibbonButton(
-                  leftIconAsset: "images/icon-edit.png",
-                  label: Localization().getStringEx(
-                      "panel.group.detail.post.reply.edit.label", "Edit"),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _onTapEditPost(reply: reply);
-                  },
-                )),
-                Visibility(visible: _isDeleteReplyVisible(reply), child: RibbonButton(
-                  leftIconAsset: "images/trash.png",
-                  label: Localization().getStringEx(
-                      "panel.group.detail.post.reply.delete.label", "Delete"),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _onTapDeleteReply(reply);
-                  },
-                )),
-              ],
-            ),
-          );
-        });
+      context: context,
+      backgroundColor: Styles().colors!.white,
+      isScrollControlled: true,
+      isDismissible: true,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Visibility(visible: _isReplyVisible, child: RibbonButton(
+                leftIconAsset: "images/icon-group-post-reply.png",
+                label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _onTapPostReply(reply: reply);
+                },
+              )),
+              Visibility(visible: _isEditVisible(reply), child: RibbonButton(
+                leftIconAsset: "images/icon-edit.png",
+                label: Localization().getStringEx("panel.group.detail.post.reply.edit.label", "Edit"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _onTapEditPost(reply: reply);
+                },
+              )),
+              Visibility(visible: _isDeleteReplyVisible(reply), child: RibbonButton(
+                leftIconAsset: "images/trash.png",
+                label: Localization().getStringEx("panel.group.detail.post.reply.delete.label", "Delete"),
+                onTap: () {
+                Navigator.of(context).pop();
+                _onTapDeleteReply(reply);
+              },
+              )),
+              Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
+                leftIconAsset: "images/icon-feedback.png",
+                label: Localization().getStringEx("panel.group.detail.post.button.report.label", "Report"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _onTapMenuReportAbuse(reply);
+                },
+              )),
+            ],
+          ),
+        );
+      });
   }
 
   void _onTapDeleteReply(GroupPost? reply) {
@@ -739,6 +674,16 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _scrollToPostEdit();
   }
 
+  void _onTapHeaderReportAbuse() {
+    Analytics().logSelect(target: 'Report Abuse');
+    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(groupId: widget.group?.id, postId: widget.post?.id)));
+  }
+
+  void _onTapMenuReportAbuse(GroupPost? post) {
+    Analytics().logSelect(target: 'Report Abuse');
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(groupId: widget.group?.id, postId: post?.id)));
+  }
+  
   void _onTapEditMainPost(){
     _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl, members: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:_post?.members, upToDateMembers: _allMembersAllowedToPost));
     if(mounted){
@@ -1025,7 +970,11 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
     return widget.group?.currentUserIsMemberOrAdmin ?? false;
   }
 
-  bool get _isEditMainPost{
+  bool get _isReportAbuseVisible {
+    return widget.group?.currentUserIsMemberOrAdmin ?? false;
+  }
+
+  bool get _isEditMainPost {
     return _mainPostUpdateData!=null;
   }
 
@@ -1037,3 +986,4 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
     }
   }
 }
+

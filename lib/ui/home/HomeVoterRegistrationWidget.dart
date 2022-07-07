@@ -37,9 +37,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class HomeVoterRegistrationWidget extends StatefulWidget {
-  final StreamController<void>? refreshController;
+  final String? favoriteId;
+  final StreamController<String>? updateController;
 
-  HomeVoterRegistrationWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeVoterRegistrationWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
   @override
   _HomeVoterRegistrationWidgetState createState() => _HomeVoterRegistrationWidgetState();

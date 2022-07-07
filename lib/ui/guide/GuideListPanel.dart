@@ -334,17 +334,17 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateBusPass() {
     Analytics().logSelect(target: "Bus Pass");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDBusPassPanel()));
+    MTDBusPassPanel.present(context);
   }
 
   void _navigateDining() {
     Analytics().logSelect(target: "Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining)));
   }
 
   void _navigateEvents() {
     Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events)));
   }
 
   void _navigateGroups() {
@@ -354,17 +354,12 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateIlliniCash() {
     Analytics().logSelect(target: "Illini Cash");
-    Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
-        settings: RouteSettings(name: SettingsIlliniCashPanel.routeName),
-        builder: (context){
-          return SettingsIlliniCashPanel();
-        }
-    ));
+    SettingsIlliniCashPanel.present(context);
   }
 
   void _navigateIlliniId() {
     Analytics().logSelect(target: "Illini ID");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => IDCardPanel()));
+    IDCardPanel.present(context);
   }
 
   void _navigateLaundry() {
@@ -379,11 +374,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateMealPlan() {
     Analytics().logSelect(target: "Meal Plan");
-    Navigator.of(context, rootNavigator: false).push(CupertinoPageRoute(
-        builder: (context){
-          return SettingsMealPlanPanel();
-        }
-    ));
+    SettingsMealPlanPanel.present(context);
   }
 
   void _navigateMyIllini() {

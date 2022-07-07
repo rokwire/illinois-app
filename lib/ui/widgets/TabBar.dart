@@ -16,8 +16,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/tab_bar.dart' as rokwire;
 
 class TabBar extends rokwire.TabBar {
@@ -68,10 +70,10 @@ class TabBar extends rokwire.TabBar {
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
     }
-    else if (code == 'navigate') {
+    else if (code == 'maps') {
       return rokwire.TabWidget(
-        label: Localization().getStringEx('tabbar.navigate.title', 'Navigate'),
-        hint: Localization().getStringEx('tabbar.navigate.hint', ''),
+        label: Localization().getStringEx('tabbar.map.title', 'Map'),
+        hint: Localization().getStringEx('tabbar.map.hint', 'Map Page'),
         iconAsset: 'images/tab-navigate.png',
         selectedIconAsset: 'images/tab-navigate-selected.png',
         selected: (tabController?.index == index),
@@ -106,5 +108,18 @@ class TabBar extends rokwire.TabBar {
   void _onSwitchTab(int tabIndex, rokwire.TabWidget tabWidget) {
     Analytics().logSelect(target: tabWidget.label);
     NotificationService().notify(TabBar.notifySelectionChanged, tabIndex);
+  }
+
+
+  // 1.1.1 Can you make the Nav bar white please for Dev builds for now. I'll let you know when we can go back to yellow.
+  // (https://github.com/rokwire/illinois-app/issues/1852)
+  @override
+  Color? get backgroundColor {
+    switch(Config().configEnvironment) {
+      case ConfigEnvironment.test:       return Colors.lightGreenAccent;
+      case ConfigEnvironment.dev:        //return Colors.yellowAccent;
+      case ConfigEnvironment.production: return Styles().colors?.surface ?? Colors.white;
+      default:                           return Colors.white;
+    }
   }
 }

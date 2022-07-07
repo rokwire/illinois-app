@@ -74,7 +74,57 @@ class AppAlert {
         ],
       );
     },);
+  }
 
+  static Future<void> showMessage(BuildContext context, String? message) async {
+    return showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          Text(message!, textAlign: TextAlign.center,),
+        ],),
+        actions: <Widget>[
+          TextButton(
+              child: Text(Localization().getStringEx("dialog.ok.title", "OK")),
+              onPressed: (){
+                Analytics().logAlert(text: message, selection: "OK");
+                  Navigator.pop(context);
+              }
+          ) //return dismissed 'true'
+        ],
+      );
+    },);
+  }
+
+  static Future<bool> showConfirmationDialog(
+      {required BuildContext buildContext,
+      required String message,
+      String? positiveButtonLabel,
+      required VoidCallback positiveCallback,
+      VoidCallback? negativeCallback,
+      String? negativeButtonLabel}) async {
+    bool alertDismissed = await showDialog(
+        context: buildContext,
+        builder: (context) {
+          return AlertDialog(content: Text(message), actions: <Widget>[
+            TextButton(
+                child: Text(
+                    StringUtils.ensureNotEmpty(positiveButtonLabel, defaultValue: Localization().getStringEx('dialog.yes.title', 'Yes'))),
+                onPressed: () {
+                  Navigator.pop(context, true);
+                  positiveCallback();
+                }),
+            TextButton(
+                child: Text(
+                    StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx('dialog.no.title', 'No'))),
+                onPressed: () {
+                  Navigator.pop(context, true);
+                  if (negativeCallback != null) {
+                    negativeCallback();
+                  }
+                })
+          ]);
+        });
+    return alertDismissed;
   }
 }
 
@@ -167,16 +217,13 @@ class AppDateTimeUtils {
     return dateTimeToCompare;
   }
 
-  static String getDayGreeting() {
-    int currentHour = DateTime.now().hour;
-    if (currentHour > 7 && currentHour < 12) {
-      return Localization().getStringEx("logic.date_time.greeting.morning", "Good morning");
-    }
-    else if (currentHour >= 12 && currentHour < 19) {
-      return Localization().getStringEx("logic.date_time.greeting.afternoon", "Good afternoon");
-    }
-    else {
-      return Localization().getStringEx("logic.date_time.greeting.evening", "Good evening");
+  static String getDayPartGreeting({DayPart? dayPart}) {
+    dayPart ??= DateTimeUtils.getDayPart();
+    switch(dayPart) {
+      case DayPart.morning: return Localization().getStringEx("logic.date_time.greeting.morning", "Good morning");
+      case DayPart.afternoon: return Localization().getStringEx("logic.date_time.greeting.afternoon", "Good afternoon");
+      case DayPart.evening: return Localization().getStringEx("logic.date_time.greeting.evening", "Good evening");
+      case DayPart.night: return Localization().getStringEx("logic.date_time.greeting.night", "Good night");
     }
   }
 
@@ -203,4 +250,14 @@ class AppDateTimeUtils {
     }
   }
 
+}
+
+extension StateExt on State {
+  @protected
+  void setStateIfMounted(VoidCallback fn) {
+    if (mounted) {
+      // ignore: invalid_use_of_protected_member
+      setState(fn);
+    }
+  }
 }

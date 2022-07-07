@@ -1,199 +1,231 @@
 [
-{
-  "id":"setup.university.accounts",
-  "progress": 1,
-  "step_title": "Step 1",
-  "title":"Set up your University Accounts",
-  "text":"<p><i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i></p><p>Throughout your program, you will use a variety of platforms to complete your courses and connect with your peers. The steps below are essential to utilizing with these platforms and should only take 5-10 minutes each to setup.</p><p>You should complete Step 2 of your checklist within 1-2 weeks of accepting your offer.</p>",
-  "steps":[
-    {"key":"a", "page_id": "setup.email.account"},
-    {"key":"b", "page_id": "verify.personal.information"},
-    {"key":"c", "page_id": "setup.zoom.account"}
-  ]
-},{
-  "id":"setup.email.account",
-  "progress": 1,
-  "group_name" : "GIES Onboarding Step 1A",
-  "step_title": "Step 1A",
-  "title":"Setup Your University Email Account",
-  "text":"Most correspondence is sent to your Illinois email address, so it is imperative you set up your email and check it regularly. Microsoft Office 365 is a service used for email, calendaring, and contact and task management at the University of Illinois and is vital for receiving emails and information from the University. Approximately one hour after claiming your Net ID and setting your password, you will be able to login to and start using your <a href='https://outlook.office365.com/'>Office 365 Email Account</a>. If you have questions about your email or your Exchange account, please visit the <a href='http://techservices.illinois.edu/services/email'>Technology Services Website</a>, or email <a href='mailto:consult@illinois.edu'>consult@illinois.edu</a>.",
-  "navigation_buttons":[
-    {"title":">","position":"right", "swipe_page":"verify.personal.information", "completes": true}
-  ]
-},{
-  "id":"verify.personal.information",
-  "progress": 1,
-  "group_name" : "GIES Onboarding Step 1B",
-  "step_title": "Step 1B",
-  "title":"Verify Your Personal Information in Student Self-Service",
-  "text":"Once you have established your NetID, use it to log into the online <a href='https://apps.uillinois.edu/selfservice/'>Student Self-Service</a> and verify your personal information, such as your contact information. Keeping this information up to date is extremely important and ensures proper delivery of important documents.",
-  "navigation_buttons":[
-    {"title":"<","position":"left", "swipe_page":"setup.email.account"},
-    {"title":">","position":"right", "swipe_page":"setup.zoom.account", "completes": true}
-  ]
-},{
-  "id":"setup.zoom.account",
-  "progress": 1,
-  "group_name" : "GIES Onboarding Step 1C",
-  "step_title": "Step 1C",
-  "title":"Set Up Your Illinois Zoom Pro Account",
-  "text":"Zoom Pro is the way you will participate in your live sessions (lectures) for each course, office hours and more. Follow these <a href='https://uofi.box.com/s/j168hch5ro8188wkyhykunff84wwenps'>step-by-step instructions</a> to get setup with Zoom.",
-  "_buttons":[
-    {"title":"Done", "page":"setup.coursera.account", "completes": true}
-  ],
-  "navigation_buttons":[
-    {"title":"<","position":"left", "swipe_page":"verify.personal.information"},
-    {"title":">","position":"right", "page":"setup.coursera.account", "completes": true}
-  ]
-},{
-  "id":"setup.coursera.account",
-  "progress": 2,
-  "step_title": "Step 2",
-  "title":"Set up your Coursera Account",
-  "text":"<p><i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, your accounts should already be connected. Skip this step and head straight to Step 4.</i></p><p></p>",
-  "steps":[
-    {"key":"a", "page_id":"claim.coursera.account"}
-  ]
-},{
-  "id":"claim.coursera.account",
-  "progress": 2,
-  "group_name" : "GIES Onboarding Step 2",
-  "step_title": "Step 2A",
-  "title":"Set up your Coursera Account",
-  "content":[{
-    "heading":"The University of Illinois partners with Coursera to offer our Gies online programs’ massive open online courses (MOOCs) that accompany the Canvas component of your online course. Setting up your Coursera account is a two-step process that is outlined below.",
-    "numbers":[
-      "<b>Link your Coursera account:</b> Within a few days of accepting your offer, you will receive an email from Coursera for Illinois regarding information on how to set-up and link your Coursera account with the University of Illinois. Linking your account ensures that the work you do in the Coursera MOOCs is transferred to your online course to be counted towards your grade. Once you have linked your Coursera account, you will see your program name displayed at the top of your dashboard.<p><b>The linking email will be sent to your Illinois email account.</b> If you do not see your linking email after four days of accepting your admission, send an email to <a href='mailto:i-support@illinois.edu'>i-support@illinois.edu</a> requesting to have your Coursera linking email re-sent.",
-      "<b>Join Coursera for Illinois:</b> Coursera for Illinois is a perk of being a student at the University of Illinois. Carefully follow these <a href='https://uofi.app.box.com/file/624565567278?s=6cyz7pxaqlwcjxyz1gf1p35mxah392p6'>step-by-step instructions</a> to successfully add your Coursera for Illinois dashboard. Coursera for Illinois ensures that you can access the University of Illinois Coursera MOOCs for free. If you previously had an account with Coursera then you will still need to enroll in Coursera for Illinois in order to avoid paying the MOOC enrollment fees."
-    ]}],
-  "_buttons":[
-    {"title":"Done", "page":"connect.workspace.and.student.guide", "completes": true}
-  ],
-  "navigation_buttons":[
-    {"title":"<","position":"left", "page":"setup.university.accounts"},
-    {"title":">","position":"right", "page":"connect.workspace.and.student.guide", "completes": true}
-  ]
-},{
-  "id":"connect.workspace.and.student.guide",
-  "progress": 3,
-  "step_title": "Step 3",
-  "title":"Connect with your New Student Guide and Fellow Classmates",
-  "steps":[
-    {"key":"a", "page_id":"join.workspace"},
-    {"key":"b", "page_id":"connect.student.guide"}
-  ]
-},{
-  "id":"join.workspace",
-  "progress": 3,
-  "group_name" : "GIES Onboarding Step 3A",
-  "step_title": "Step 3A",
-  "title":"Join Workplace",
-  "content":[{
-    "heading":"Workplace is an online platform designed by Facebook exclusively for organizations’ members to network and develop excellent professional partnerships. You will receive an invitation to join Workplace at your Illinois email address approximately one week after you accept your offer letter, and you can log in at <a href='https://giesonline.workplace.com/'>giesonline.facebook.com</a>. Make sure to create your profile and get started exploring Workplace. If you choose to join us, you can begin by:",
-    "bullets":[
-      "Saying hello and introducing yourself to your fellow Gies Online Students",
-      "Explore interest, location and course-based groups, or create your own to connect with your classmates!"
-    ]},{
-    "heading":"Make sure to check your junk mail if you have not received an email regarding Workplace."
-  }],
-  "navigation_buttons":[
-    {"title":"<","position":"left", "page":"setup.coursera.account"},
-    {"title":">","position":"right", "swipe_page":"connect.student.guide", "completes": true}
-  ]
-},{
-  "id":"connect.student.guide",
-  "group_name" : "GIES Onboarding Step 3B",
-  "progress": 3,
-  "step_title": "Step 3B",
-  "title":"Connect with your New Student Guide",
-  "text":"Pairing with your Gies Online New Student Guide begins approximately four weeks prior to the term start. You will receive an email notifying you of your New Student Guide. Your guide will be able to assist you with orientation to the program and will be a resource moving forward for general questions and more.",
-  "_buttons":[
-    {"title":"Done", "page":"complete.onboarding.course", "completes": true}
-  ],
-  "navigation_buttons":[
-    {"title":"<","position":"left", "swipe_page":"join.workspace"},
-    {"title":">","position":"right", "page":"complete.onboarding.course", "completes": true}
-  ]
-},{
-  "id":"complete.onboarding.course",
-  "group_name" : "GIES Onboarding Step 4",
-  "step_title": "Step 4",
-  "progress": 4,
-  "title":"Complete Your Onboarding Course",
-  "text":"<i>If you have previously completed high engagement, for-credit coursework through Gies Online Programs, you should have already completed the onboarding course. Feel free to review this information or skip this step and head straight to Step 5.</i>",
-  "content":[{
-    "heading":"Our online courses are delivered on two platforms: Coursera & Canvas.  Each course has two structural components:",
-    "bullets":[
-      "A Foundational Component on Coursera (MOOCs)",
-      "Weekly Live Class Sessions, Graded Assignments and Exams on Canvas (High Engagement/HE)"
-    ]},{
-    "heading":"To help students become familiar with both platforms and other important aspects of the program, we have created an Onboarding Course.",
-    "bullets":[
-      "<a href='https://canvas.illinois.edu/courses/14157'>Access Your Onboarding Course</a>"
-    ]},{
-    "heading":"This onboarding course takes approximately 3-4 hours to complete but is essential in your success as a Gies online student. Please be sure to complete well in advance of starting your coursework."
-  }],
-  "_buttons":[
-    {"title":"Done", "page":"review.course.recommendations.and.register.for.courses", "completes": true}
-  ],
-  "navigation_buttons":[
-    {"title":"<","position":"left", "page":"connect.workspace.and.student.guide"},
-    {"title":">","position":"right", "page":"review.course.recommendations.and.register.for.courses", "completes": true}
-  ]
-},{
-  "id":"review.course.recommendations.and.register.for.courses",
-  "group_name" : "GIES Onboarding Step 5",
-  "step_title": "Step 5",
-  "progress": 5,
-  "title":"Review Course Recommendations and Register for Courses",
-  "text":"<b>Spring 2022 registration will open on Thursday, November 18 for all new students. Check back soon for details regarding course recommendations for your first semester.</b><p>We are excited to begin this journey with you, and our team is prepared to help along the way. While you may want to create a full degree plan at this time, it is important to focus on your first set of courses. After courses begin, you will have an opportunity to attend a Degree Planning workshop offered by the Student & Academic Success Team.</p>",
-  "content":[{
-    "heading":"<b>iMBA Students</b>",
-    "bullets":[
-      "<a href='https://onlinestudents.giesbusiness.illinois.edu/current-students/course-offerings/imba'>iMBA Course Offerings</a>",
-      "<a href='https://uofi.box.com/s/yjrfig0kimlosurpx6jpdcsx80xrhp6o'>New Student Course Recommendations for August 2021</a>",
-      "<a href='https://uofi.box.com/s/zzxxxp447gq7e6fou3pho4sc4hw6ysh5'>New Student Course Recommendations for October 2021</a>",
-      "<a href='https://onlinestudents.giesbusiness.illinois.edu/newly-admitted/registration'>iMBA Course Registration</a>"
-    ]},{
-    "heading":"<b>iMSM Students:</b>",
-    "bullets":[
-      "<a href='https://onlinestudents.giesbusiness.illinois.edu/current-students/course-offerings/imsm'>iMSM Course Offerings</a>",
-      "<a href='https://uofi.box.com/s/axqw2r24qsu4woa2cof63mqnsrumnswq'>New Student Course Recommendations for August 2021</a>",
-      "<a href='https://uofi.box.com/s/wxsbl4alzzet3s00t8r7firnhutl3kr0'>New Student Course Recommendations for October 2021</a>",
-      "<a href='https://onlinestudents.giesbusiness.illinois.edu/newly-admitted/registration'>iMSM Course Registration</a>"
-    ]},{
-    "heading":"<b>iMSA Students:</b>",
-    "bullets":[
-      "<a href='https://onlinestudents.giesbusiness.illinois.edu/current-students/course-offerings/imsa'>iMSA Course Offerings</a>",
-      "<a href='https://onlinestudents.giesbusiness.illinois.edu/newly-admitted/registration'>iMSA Course Registration</a>"
-    ]}],
-  "_buttons":[
-    {"title":"Done", "page":"sumbit.official.credentials", "completes": true}
-  ],
-  "navigation_buttons":[
-    {"title":"<","position":"left", "page":"complete.onboarding.course"},
-    {"title":">","position":"right", "page":"sumbit.official.credentials","completes": true}
-  ]
-},{
-  "id":"sumbit.official.credentials",
-  "group_name" : "GIES Onboarding Step 6",
-  "progress": 6,
-  "step_title": "Step 6",
-  "title":"Submit Your Official Credentials",
-  "text":"Original credentials (transcripts, mark sheets, academic records, certificates of degree, etc.) need to be sent from your previous institution(s) to complete your admission. Please note that the credentials you provided as scans in your application are considered unofficial.<p><b>Electronic credentials can be sent to <a href='mailto:grad@illinois.edu'>grad@illinois.edu</a> from your institution. This is the preferred and fastest method.</b> Electronic credentials sent from a student are not official.</p><p><b>If you have international credentials that need to be returned because you have only one original copy:</b> you can send the credentials to the Graduate College (address below) but you must include a postage-paid return envelope (or label, if the envelope can be re-used) using FedEx or UPS. If you do not include a postage-paid return envelope or label, the Graduate College will not be able to return your credentials. Please make sure that you include all mark sheets, transcripts, and certificates of degrees in both English and native language (if applicable).</p><p><b>Please have your paper academic credentials sent to the following address:</b></p><p><b>Graduate College Admissions, Registration and Enrollment Services</b></p><p>507 E. Green Street</p><p>Suite 101, MC-434</p><p>Champaign, IL 61820</p><p>If you would like to visit campus to submit your credentials, you must email grad@illinois.edu to set up a time.</p>",
-  "buttons":[
-    {"title":"Done", "page":"new.student.office.hours", "completes": true}
-  ],
-  "navigation_buttons":[
-    {"title":"<","position":"left", "page":"review.course.recommendations.and.register.for.courses"}
-  ]
-},{
-  "id":"new.student.office.hours",
-  "progress-possition": 7,
-  "title":"Checklist completed",
-  "content":[{
-    "heading":"If you have questions as you work through your New Student Checklist, please email <a href='mailto:i-support@illinois.edu'>i-support@illinois.edu</a> or join our team for weekly new student office hours.",
-    "bullets":[
-      "Fridays from 9:00 – 10:00 AM CST: <a href='https://illinois.zoom.us/meeting/register/tZEqdu6sqzIvHNLI_abCyDrnxHZQgJiddf2s'>Register Here</a>"
-    ]}]
-}]
+  {
+    "content":[
+      {
+        "heading":"<h1>Setup Your University Email Account</h1>Most correspondence is sent to your Illinois email address, so it is imperative you set up your email and check it regularly. Microsoft Office 365 is a service used for email, calendaring, and contact and task management at the University of Illinois and is vital for receiving emails and information from the University. Approximately one hour after claiming your Net ID and setting your password, you will be able to login to and start using your <a href='https://outlook.office365.com/'>Office 365 Email Account</a>. If you have questions about your email or your Exchange account, please visit the <a href='http://techservices.illinois.edu/services/email'>Technology Services Website</a>, or email <a href='mailto:consult@illinois.edu'>consult@illinois.edu</a>."
+      }
+    ],
+    "group_name":"GIES Onboarding Step 1",
+    "id":"setup.university.accounts",
+    "progress":1,
+    "step_title":"Step 1",
+    "text":"<p><i>If this step is marked as complete, we've confirmed that you've set up your University Email Account and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
+    "title":"Set Up Your University Email Account"
+  },
+  {
+    "content":[
+      {
+        "heading":"<h1>Verify Your Personal Information in Student Self-Service</h1>Once you have established your NetID, use it to log into the online <a href='https://apps.uillinois.edu/selfservice/'>Student Self-Service</a> and verify your personal information, such as your contact information. Keeping this information up to date is extremely important and ensures proper delivery of important documents."
+      },
+      {"widget": "student_info"}
+    ],
+    "group_name":"GIES Onboarding Step 2",
+    "id":"verify.personal.information",
+    "buttons":[
+      {
+        "completes":true,
+        "page":"setup.zoom.accounts",
+        "title":"My information is correct",
+        "widget_action": {
+          "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
+          "params": {"group_name":"GIES Onboarding Step 2"}
+        }
+      }
+    ],
+    "_navigation_buttons":[
+      {
+        "page":"setup.university.accounts",
+        "position":"left",
+        "title":"<"
+      },
+      {
+        "completes":true,
+        "page":"setup.zoom.accounts",
+        "position":"right",
+        "title":">"
+      }
+    ],
+    "progress":2,
+    "step_title":"Step 2",
+    "text":"<p>This the information we currently show for your Personal Information. If any of it is incorrect, please use the instructions below to correct it. If it's correct, please click the My information is correct button below.",
+    "title":"Verify Your Personal Information in Student Self-Service"
+  },
+  {
+    "content":[
+      {
+        "heading":"<h1>Set Up Your Illinois Zoom Pro Account</h1>Zoom Pro is the way you will participate in your live sessions (lectures) for each course, office hours and more. Follow these <a href='https://answers.uillinois.edu/96159'>step-by-step instructions</a> to get setup with Zoom."
+      }
+    ],
+    "group_name":"GIES Onboarding Step 3",
+    "id":"setup.zoom.accounts",
+    "progress":3,
+    "step_title":"Step 3",
+    "text":"<p><i>If this step is marked as complete, we've confirmed that you've set up your Illinois Zoom Pro account and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
+    "title":"Set Up Your Illinois Zoom Pro Account"
+  },
+  {
+    "content":[
+      {
+        "heading":"<h1>Set up your Coursera Account</h1>The University of Illinois partners with Coursera to offer our Gies online programs’ massive open online courses (MOOCs) that accompany the Canvas component of your online course. Setting up your Coursera account is a two-step process that is outlined below.",
+        "numbers":[
+          "<b>Link your Coursera account:</b> Within a few days of accepting your offer, you will receive an email from Coursera for Illinois regarding information on how to set-up and link your Coursera account with the University of Illinois. Linking your account ensures that the work you do in the Coursera MOOCs is transferred to your online course to be counted towards your grade. Once you have linked your Coursera account, you will see your program name displayed at the top of your dashboard.<p><b>The linking email will be sent to your Illinois email account.</b> If you do not see your linking email after four days of accepting your admission, send an email to <a href='mailto:i-support@illinois.edu'>i-support@illinois.edu</a> requesting to have your Coursera linking email re-sent.",
+          "<b>Join Coursera for Illinois:</b> Coursera for Illinois is a perk of being a student at the University of Illinois. Carefully follow these <a href='https://uofi.app.box.com/file/624565567278?s=6cyz7pxaqlwcjxyz1gf1p35mxah392p6'>step-by-step instructions</a> to successfully add your Coursera for Illinois dashboard. Coursera for Illinois ensures that you can access the University of Illinois Coursera MOOCs for free. If you previously had an account with Coursera then you will still need to enroll in Coursera for Illinois in order to avoid paying the MOOC enrollment fees."
+        ]
+      }
+    ],
+    "group_name":"GIES Onboarding Step 4",
+    "id":"setup.coursera.account",
+    "progress":4,
+    "step_title":"Step 4",
+    "text":"<p><i>If this step is marked as complete, we've confirmed that you've set up your Coursera account and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
+    "title":"Set up your Coursera Account"
+  },
+  {
+    "content":[
+      {
+        "bullets":[
+          "Saying hello and introducing yourself to your fellow Gies Online Students",
+          "Explore interest, location and course-based groups, or create your own to connect with your classmates!"
+        ],
+        "heading":"<h1>Join Workplace</h1>Workplace is an online platform designed by Facebook exclusively for organizations’ members to network and develop excellent professional partnerships. You will receive an invitation to join Workplace at your Illinois email address approximately one week after you accept your offer letter, and you can log in at <a href='https://giesonline.workplace.com/'>giesonline.facebook.com</a>. Make sure to create your profile and get started exploring Workplace. If you choose to join us, you can begin by:"
+      },
+      {
+        "heading":"Make sure to check your junk mail if you have not received an email regarding Workplace."
+      }
+    ],
+    "group_name":"GIES Onboarding Step 5",
+    "id":"join.workspace",
+    "progress":5,
+    "step_title":"Step 5",
+    "text":"<p><i>If this step is marked as complete, we've confirmed that you've set up your Workplace account and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
+    "title":"Join Workplace"
+  },
+  {
+    "content":[
+      {
+        "heading":"<h1>Connect with your New Student Guide</h1>Pairing with your Gies Online New Student Guide begins approximately four weeks prior to the term start. You will receive an email notifying you of your New Student Guide. Your guide will be able to assist you with orientation to the program and will be a resource moving forward for general questions and more."
+      }
+    ],
+    "group_name":"GIES Onboarding Step 6",
+    "id":"connect.workspace.and.student.guide",
+    "buttons":[
+      {
+        "completes":true,
+        "page":"complete.onboarding.course",
+        "title":"Completed",
+        "widget_action": {
+          "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
+          "params": {"group_name":"GIES Onboarding Step 6"}
+        }
+      }
+    ],
+    "progress":6,
+    "step_title":"Step 6",
+    "title":"Connect with your New Student Guide"
+  },
+  {
+    "content":[
+      {
+        "bullets":[
+          "A Foundational Component on Coursera (MOOCs)",
+          "Weekly Live Class Sessions, Graded Assignments and Exams on Canvas (High Engagement/HE)"
+        ],
+        "heading":"<h1>Complete Your Onboarding Course</h1>Our online courses are delivered on two platforms: Coursera & Canvas.  Each course has two structural components:"
+      },
+      {
+        "bullets":[
+          "<a href='https://canvas.illinois.edu/courses/14157'>Access Your Onboarding Course</a>"
+        ],
+        "heading":"To help students become familiar with both platforms and other important aspects of the program, we have created an Onboarding Course."
+      },
+      {
+        "heading":"This onboarding course takes approximately 3-4 hours to complete but is essential in your success as a Gies online student. Please be sure to complete well in advance of starting your coursework."
+      }
+    ],
+    "group_name":"GIES Onboarding Step 7",
+    "id":"complete.onboarding.course",
+    "progress":7,
+    "step_title":"Step 7",
+    "text":"<p><i>If this step is marked as complete, we've confirmed that you've completed your Onboarding Course and you can go to the next step. If not, please follow the instructions below. This step will automatically be marked complete within 24 hours of completion.</i></p>",
+    "title":"Complete Coursera Onboarding Course"
+  },
+  {
+    "content":[
+      {
+        "bullets":[
+          "<a href='https://onlinestudents.giesbusiness.illinois.edu/current-students/course-offerings/imba'>iMBA Course Offerings</a>",
+          "<a href='https://uofi.box.com/s/yjrfig0kimlosurpx6jpdcsx80xrhp6o'>New Student Course Recommendations for August 2021</a>",
+          "<a href='https://uofi.box.com/s/zzxxxp447gq7e6fou3pho4sc4hw6ysh5'>New Student Course Recommendations for October 2021</a>",
+          "<a href='https://onlinestudents.giesbusiness.illinois.edu/newly-admitted/registration'>iMBA Course Registration</a>"
+        ],
+        "heading":"<b>iMBA Students</b>"
+      },
+      {
+        "bullets":[
+          "<a href='https://onlinestudents.giesbusiness.illinois.edu/current-students/course-offerings/imsm'>iMSM Course Offerings</a>",
+          "<a href='https://uofi.box.com/s/axqw2r24qsu4woa2cof63mqnsrumnswq'>New Student Course Recommendations for August 2021</a>",
+          "<a href='https://uofi.box.com/s/wxsbl4alzzet3s00t8r7firnhutl3kr0'>New Student Course Recommendations for October 2021</a>",
+          "<a href='https://onlinestudents.giesbusiness.illinois.edu/newly-admitted/registration'>iMSM Course Registration</a>"
+        ],
+        "heading":"<b>iMSM Students:</b>"
+      },
+      {
+        "bullets":[
+          "<a href='https://onlinestudents.giesbusiness.illinois.edu/current-students/course-offerings/imsa'>iMSA Course Offerings</a>",
+          "<a href='https://onlinestudents.giesbusiness.illinois.edu/newly-admitted/registration'>iMSA Course Registration</a>"
+        ],
+        "heading":"<b>iMSA Students:</b>"
+      }
+    ],
+
+    "group_name":"GIES Onboarding Step 8",
+    "id":"review.course.recommendations.and.register.for.courses",
+    "buttons":[
+      {
+        "completes":true,
+        "page":"sumbit.official.credentials",
+        "title":"Completed",
+        "widget_action": {
+          "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
+          "params": {"group_name":"GIES Onboarding Step 8"}
+        }
+      }
+    ],
+    "progress":8,
+    "step_title":"Step 8",
+    "text":"<p><b>Fall 2022 registration will open on Thursday, _________ for all new students. Check back soon for details regarding course recommendations for your first semester.</b></p><p>We are excited to begin this journey with you, and our team is prepared to help along the way. While you may want to create a full degree plan at this time, it is important to focus on your first set of courses. After courses begin, you will have an opportunity to attend a Degree Planning workshop offered by the Student & Academic Success Team.</p><p>If you are already registered for any courses, they are listed below.</p>",
+    "title":"Review Course Recommendations and Register for Courses"
+  },
+  {
+    "group_name":"GIES Onboarding Step 9",
+    "id":"sumbit.official.credentials",
+    "buttons":[
+      {
+        "completes":true,
+        "page":"new.student.office.hours",
+        "title":"I completed this",
+        "widget_action": {
+          "name":"edu.illinois.rokwire.checklist.gies.widget.action.request.group",
+          "params": {"group_name":"GIES Onboarding Step 9"}
+        }
+      }
+    ],
+    "progress":9,
+    "step_title":"Step 9",
+    "text":"Original credentials (transcripts, mark sheets, academic records, certificates of degree, etc.) need to be sent from your previous institution(s) to complete your admission. Please note that the credentials you provided as scans in your application are considered unofficial.<p><b>Electronic credentials can be sent to <a href='mailto:grad@illinois.edu'>grad@illinois.edu</a> from your institution. This is the preferred and fastest method.</b> Electronic credentials sent from a student are not official.</p><p><b>If you have international credentials that need to be returned because you have only one original copy:</b> you can send the credentials to the Graduate College (address below) but you must include a postage-paid return envelope (or label, if the envelope can be re-used) using FedEx or UPS. If you do not include a postage-paid return envelope or label, the Graduate College will not be able to return your credentials. Please make sure that you include all mark sheets, transcripts, and certificates of degrees in both English and native language (if applicable).</p><p><b>Please have your paper academic credentials sent to the following address:</b></p><p><b>Graduate College Admissions, Registration and Enrollment Services</b></p><p>507 E. Green Street</p><p>Suite 101, MC-434</p><p>Champaign, IL 61820</p><p>If you would like to visit campus to submit your credentials, you must email grad@illinois.edu to set up a time.</p>",
+    "title":"Submit Your Official Credentials"
+  },
+  {
+    "content":[
+      {
+        "bullets":[
+          "Fridays from 9:00 – 10:00 AM CST: <a href='https://illinois.zoom.us/meeting/register/tZEqdu6sqzIvHNLI_abCyDrnxHZQgJiddf2s'>Register Here</a>"
+        ],
+        "heading":"If you have questions as you work through your New Student Checklist, please email <a href='mailto:i-support@illinois.edu'>i-support@illinois.edu</a> or join our team for weekly new student office hours."
+      }
+    ],
+    "id":"new.student.office.hours",
+    "progress-possition":10,
+    "title":"Checklist completed"
+  }
+]

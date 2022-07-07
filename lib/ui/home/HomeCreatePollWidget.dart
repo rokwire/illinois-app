@@ -19,6 +19,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -28,9 +30,17 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class HomeCreatePollWidget extends StatefulWidget {
-  final StreamController<void>? refreshController;
+  final String? favoriteId;
+  final StreamController<String>? updateController;
 
-  HomeCreatePollWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeCreatePollWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: title,
+    );
+
+  static String get title => Localization().getStringEx("widget.home_create_poll.heading.title", "Polls");
 
   @override
   _HomeCreatePollWidgetState createState() => _HomeCreatePollWidgetState();
@@ -55,50 +65,25 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   @override
   Widget build(BuildContext context) {
 
-    return Visibility(visible: _visible, child: Semantics(container: true, child:Container(
-        color: Styles().colors!.background,
-        child: Row(children: <Widget>[Expanded(child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            _buildHeader(),
-            _buildContent(),
-          ]),
-/*          Container(alignment: Alignment.topRight, child: Semantics(
-              label: Localization().getStringEx("widget.home_create_poll.button.close.label","Close"),
-              button: true,
-              excludeSemantics: true,
-              child: InkWell(
-                  onTap : _onClose,
-                  child: Container(width: 48, height: 48, alignment: Alignment.center, child: Image.asset('images/close-orange.png'))))),
-*/
-        )],)
-    )));
-  }
-
-  Widget _buildHeader() {
-    return Container(color: Styles().colors!.fillColorPrimary, child:
-      Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Expanded(child: 
-          Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child:
-            Text(Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"), style:
-              TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20,),),),),
-        Semantics(label: Localization().getStringEx("widget.home_create_poll.button.close.label","Close"), button: true, excludeSemantics: true, child:
-          InkWell(onTap : _onClose, child:
-            Container(width: 48, height: 56, alignment: Alignment.center, child:
-              Image.asset('images/close-orange.png')))),
-
-      ],),);
+    return Visibility(visible: _visible, child:
+        HomeSlantWidget(favoriteId: widget.favoriteId,
+          title: Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"),
+          titleIcon: Image.asset('images/icon-browse-quick-polls.png', scale: 32 / 18,),
+          flatHeight: 0, slantHeight: 0,
+          child: _buildContent(),
+          childPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+      ));
   }
 
   Widget _buildContent() {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30), child: 
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly Create and Share Polls."), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, ),),
         Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
         Text((_canCreatePoll?Localization().getStringEx("widget.home_create_poll.text.description","People near you will be notified to vote through the Illinois app or you can provide them with the 4 Digit Poll #."):
         Localization().getStringEx("widget.home_create_poll.text.description.login","You need to be logged in to create and share polls with people near you.")),
           style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies!.medium, fontSize: 16,),),),
         _buildButtons()
-      ],),);
+      ],);
   }
 
   Widget _buildButtons(){
@@ -128,12 +113,6 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   void _onCreatePoll() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));
 
-  }
-
-  void _onClose() {
-    setState(() {
-      _visible = false;
-    });
   }
 
   bool get _canCreatePoll {

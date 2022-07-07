@@ -6,9 +6,252 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Replace Lorem Ipsum strings for Dinings and Groups sections in Browse panel [#1906](https://github.com/rokwire/illinois-app/issues/1906).
+### Fixed
+- Do not push the same panel on top when tapping on the root header bar [#1909](https://github.com/rokwire/illinois-app/issues/1909).
+
+## [4.0.45] - 2022-07-06
+### Changed
+- Show checkmark for current CheckList step if completed [#1889](https://github.com/rokwire/illinois-app/issues/1889).
+- Show 3 state favorite status in HomeFavoriteButton [#1891](https://github.com/rokwire/illinois-app/issues/1891).
+- Wellness Rings updates [#1692](https://github.com/rokwire/illinois-app/issues/1692).
+- Make Athletics News and Events widgets horizontally scrollable [#1874](https://github.com/rokwire/illinois-app/issues/1874).
+### Fixed
+- Fixed content update in HomeWalletWidget [#1874](https://github.com/rokwire/illinois-app/issues/1874).
+
+## [4.0.44] - 2022-07-05
+### Changed
+- "Healthy Podcast" renamed to "Healthy Illini Podcast" [#1878](https://github.com/rokwire/illinois-app/issues/1878).
+- Default date picker to today in Wellness To-Do list [#1881](https://github.com/rokwire/illinois-app/issues/1881).
+- Make Favorites and Wallet widgets horizontally scrollable [#1874](https://github.com/rokwire/illinois-app/issues/1874).
+- Updated Twitter, Canvas Courses and Groups widgets to match standard UI [#1874](https://github.com/rokwire/illinois-app/issues/1874).
+### Added
+- Display predefined group post templates for group admins when creating post [#1877](https://github.com/rokwire/illinois-app/issues/1877).
+
+## [4.0.43] - 2022-07-04
+### Changed
+- Various UI changes in Wellness To-Do list [#1865](https://github.com/rokwire/illinois-app/issues/1865).
+- Updated launch images [#1869](https://github.com/rokwire/illinois-app/issues/1869).
+- Hide State Farm Wayfinding from Explore / Map [#1872](https://github.com/rokwire/illinois-app/issues/1872).
+- Make Wellness Resources widget horizontally scrollable [#1874](https://github.com/rokwire/illinois-app/issues/1874).
+- Wellness Rings updates [#1692](https://github.com/rokwire/illinois-app/issues/1692).
+
+## [4.0.42] - 2022-07-01
+### Added
+- Added Policy Info popup in Group detail panel [#1861](https://github.com/rokwire/illinois-app/issues/1861).
+### Changed
+- "My Wellness Resources" renamed to "Wellness Resources" in Browse / Wellness section, updated content code either [#1863](https://github.com/rokwire/illinois-app/issues/1863).
+- Acknowledged new API for student classification, added FlexUI rules for first year student [#1860](https://github.com/rokwire/illinois-app/issues/1860).
+- Various UI changes in Wellness To-Do list [#1865](https://github.com/rokwire/illinois-app/issues/1865).
+
+## [4.0.41] - 2022-06-30
+### Changed
+- Use white background color for TabBar in dev builds [#1852](https://github.com/rokwire/illinois-app/issues/1852).
+- "Wellness Resources" Home panel widget renamed to ""My Wellness Resources"" [#1852](https://github.com/rokwire/illinois-app/issues/1852).
+### Added
+- Added "My Wellness Resources" entry in "Wellness" section of Browse panel [#1852](https://github.com/rokwire/illinois-app/issues/1852).
+- Created GroupPostReportAbuse panel for posting abuse reports [#1854](https://github.com/rokwire/illinois-app/issues/1854).
+- Show "cost" field in campus guide if exists [#1856](https://github.com/rokwire/illinois-app/issues/1856).
+- Load gies and new student checklist content from backend [#1857](https://github.com/rokwire/illinois-app/issues/1857).
+
+## [4.0.40] - 2022-06-29
+### Changed
+- Small updates in Favorites/Browse content [#1843](https://github.com/rokwire/illinois-app/issues/1843).
+- Canvas Course Card UI changes [#1842](https://github.com/rokwire/illinois-app/issues/1842).
+- Updated Wellness Tips, added HTML content support [#1833](https://github.com/rokwire/illinois-app/issues/1833).
+### Added
+- Added report abuse for group posts [#1847](https://github.com/rokwire/illinois-app/issues/1847).
+
+## [4.0.39] - 2022-06-28
+### Added
+- Wellness ToDo List - hook the backend APIs [#1689](https://github.com/rokwire/illinois-app/issues/1689).
+- Wellness Tips loaded from backend [#1833](https://github.com/rokwire/illinois-app/issues/1833).
+- Added some wellness resource items to Wellness Home content selector [#1836](https://github.com/rokwire/illinois-app/issues/1836).
+- Added 8 Dimensions of wellness popup image [#1838](https://github.com/rokwire/illinois-app/issues/1838).
+### Changed
+- Wellness Rings updates [#1692](https://github.com/rokwire/illinois-app/issues/1692).
+
+## [4.0.38] - 2022-06-27
+### Fixed
+- Resolved the conflict between start/unstarr and select/deselect all in compund widgets in Browse panel [#1827](https://github.com/rokwire/illinois-app/issues/1827).
+### Added
+- Wellness To-Do home/favorite widget [#1828](https://github.com/rokwire/illinois-app/issues/1828).
+- Created Recent Polls home/favorite widget [#1792](https://github.com/rokwire/illinois-app/issues/1792).
+- Wellness Rings updates [#1692](https://github.com/rokwire/illinois-app/issues/1692).
+
+## [4.0.37] - 2022-06-24
+### Changed
+- Updated wellness resources [#1820](https://github.com/rokwire/illinois-app/issues/1820).
+- Updated GIES content [#1749](https://github.com/rokwire/illinois-app/issues/1749).
+- Updated home and browse tout images [#1822](https://github.com/rokwire/illinois-app/issues/1822).
+### Added
+- Wellness ToDo List - possibility for overriding item reminder and caegory color picker [#1689](https://github.com/rokwire/illinois-app/issues/1689).
+
+## [4.0.36] - 2022-06-23
+### Added
+- Created Campus Guide home widget [#1808](https://github.com/rokwire/illinois-app/issues/1808).
+- Created Dining home widget [#1814](https://github.com/rokwire/illinois-app/issues/1814).
+- Updated GIES content [#1749](https://github.com/rokwire/illinois-app/issues/1749).
+- Wellness ToDo List - Add/remove category, add/update/remove item (Task in progress) [#1689](https://github.com/rokwire/illinois-app/issues/1689).
+### Changed
+- Wellness updates [#1816](https://github.com/rokwire/illinois-app/issues/1816).
+
+## [4.0.35] - 2022-06-22
+### Fixed
+- Fixed section toggle from Browse panel [#1798](https://github.com/rokwire/illinois-app/issues/1798).
+- Fixed typo in "iDegrees New Student Checklist" from Browse / Academics [#1800](https://github.com/rokwire/illinois-app/issues/1800).
+- Acknowledge favorites content when building HomeWalletWidget content.
+- Do not build command list twice in compound widgets in HomePanel.
+### Changed
+- Removed FlexUI rules for filtering Favorites panel content [#1802](https://github.com/rokwire/illinois-app/issues/1802).
+- Hide Building access from Favorites and Browse [#1804](https://github.com/rokwire/illinois-app/issues/1804).
+- Hide the building access status and image from IDCardPanel [#1806](https://github.com/rokwire/illinois-app/issues/1806).
+- Updated WellnessRingContent [#1749](https://github.com/rokwire/illinois-app/issues/1749).
+### Added
+- Wellness ToDo List - UI updates (Task in progress) [#1689](https://github.com/rokwire/illinois-app/issues/1689).
+
+## [4.0.34] - 2022-06-21
+### Added
+- Update GIES Step 2 [#1749](https://github.com/rokwire/illinois-app/issues/1749).
+- Created All Groups widget [#1786](https://github.com/rokwire/illinois-app/issues/1786).
+- Load wellness tip color from the new day color API [#1788](https://github.com/rokwire/illinois-app/issues/1788).
+- Wellness ToDo List - UI updates (Task in progress) [#1689](https://github.com/rokwire/illinois-app/issues/1689).
+### Changed
+- Disable wayfinding in State Farm Center [#1790](https://github.com/rokwire/illinois-app/issues/1790).
+
+## [4.0.33] - 2022-06-20
+### Changed
+- Do not change header bar title based on the drop down selection in Wellness [#1776](https://github.com/rokwire/illinois-app/issues/1776).
+- Header bar title from "Maps" to "Map" [#1778](https://github.com/rokwire/illinois-app/issues/1778).
+- Rename from "Setting Sections" to "Sign In/Sign Out" [#1780](https://github.com/rokwire/illinois-app/issues/1780).
+- Text and behavior updates in Favorites and Browse panels [#1782](https://github.com/rokwire/illinois-app/issues/1782).
+### Added
+- Wellness ToDo List - UI updates (Task in progress) [#1689](https://github.com/rokwire/illinois-app/issues/1689).
+
+## [4.0.32] - 2022-06-17
+### Fixed
+- Color of the current selected drop down item in Notifications [#1760](https://github.com/rokwire/illinois-app/issues/1760).
+### Changed
+- Do not change header bar title based on the drop down selection [#1762](https://github.com/rokwire/illinois-app/issues/1762).
+- Text updates in Browse / Athletics [#1765](https://github.com/rokwire/illinois-app/issues/1765).
+- Text updates in Favorites panel [#1767](https://github.com/rokwire/illinois-app/issues/1767).
+- Text updates in Favorites and Browse panels [#1770](https://github.com/rokwire/illinois-app/issues/1770).
+- Text updates in Reorder/Customize panel [#1774](https://github.com/rokwire/illinois-app/issues/1774).
+- Renamed Maps tabbar button to Map [#1772](https://github.com/rokwire/illinois-app/issues/1772).
+- Make Wellness 8 Dimensions part of the drop down items [#1764](https://github.com/rokwire/illinois-app/issues/1764).
+
+## [4.0.31] - 2022-06-16
+### Added
+- Created HomeAthleticsNewsWidget [#1752](https://github.com/rokwire/illinois-app/issues/1752).
+- Created HomeAthliticsEventsWidget [#1754](https://github.com/rokwire/illinois-app/issues/1754).
+- Created HomeAthliticsTeamsWidget [#1757](https://github.com/rokwire/illinois-app/issues/1757).
+- Wellness ToDo List - UI updates (Task in progress) [#1689](https://github.com/rokwire/illinois-app/issues/1689).
+
+## [4.0.30] - 2022-06-15
+### Changed
+- Gies content updated  [#1749](https://github.com/rokwire/illinois-app/issues/1749).
+- Cleaned up FlexUI rules [#1742](https://github.com/rokwire/illinois-app/issues/1742).
+- Updated icnos from Zeplin desgin [#1748](https://github.com/rokwire/illinois-app/issues/1748).
+### Added
+- Wellness Resources drop down item [#1741](https://github.com/rokwire/illinois-app/issues/1741).
+- Wellness tip background color is color of the day [#1746](https://github.com/rokwire/illinois-app/issues/1746).
+
+## [4.0.29] - 2022-06-14
+### Changed
+- Default drop down selection in Academics panel [#1726](https://github.com/rokwire/illinois-app/issues/1726).
+- Favorites panel UI changes [#1729](https://github.com/rokwire/illinois-app/issues/1729).
+- Updated tab icons [#1737](https://github.com/rokwire/illinois-app/issues/1737).
+- Texts in Favorites panel [#1736](https://github.com/rokwire/illinois-app/issues/1736).
+### Added
+- Added "See All" to all home list widgets, openes the corresponding content panel [#1727](https://github.com/rokwire/illinois-app/issues/1727).
+- Added "WPGU FM Radio" button to header bar title if radio is playing [#1731](https://github.com/rokwire/illinois-app/issues/1731).
+- Added more entries to different browse sections [#1733](https://github.com/rokwire/illinois-app/issues/1733).
+
+## [4.0.28] - 2022-06-13
+### Added
+- Created Recent Items panel, linked to Browse panel [#1701](https://github.com/rokwire/illinois-app/issues/1701).
+- Created HomeWelcomeWidget [#1718](https://github.com/rokwire/illinois-app/issues/1718).
+- Added Favorite buttons to HomeWalletWidget items [#1718](https://github.com/rokwire/illinois-app/issues/1718).
+### Changed
+- Cleaned up recent items handling [#1708](https://github.com/rokwire/illinois-app/issues/1708).
+- Better processing of Home editing headers as drop targets [#1718](https://github.com/rokwire/illinois-app/issues/1718).
+- Updated Wellness health rings (Work in progress)  [#1692](https://github.com/rokwire/illinois-app/issues/1692).
+- Academics Panel UI [#1714](https://github.com/rokwire/illinois-app/issues/1714).
+### Fixed
+- Fixed HomeFavoritesWidget titles for Notifications and Guide Items [#1718](https://github.com/rokwire/illinois-app/issues/1718).
+- Store user's drop down selection in each panel [#1721](https://github.com/rokwire/illinois-app/issues/1721).
+
+## [4.0.27] - 2022-06-10
+### Added
+- Content for Academics Panel [#1701](https://github.com/rokwire/illinois-app/issues/1701).
+- Store user selection for Settings, Profile, Notifications and Wellness [#1706](https://github.com/rokwire/illinois-app/issues/1706).
+### Changed
+- Handled properly different "My ___" types from Browse panel [#1705](https://github.com/rokwire/illinois-app/issues/1705).
+- Handled Twitter and WPGU FM Radio entries from Browse panel, linked Canvas Courses, Sport Prefs, Wellness Rings and ToDo [#1708](https://github.com/rokwire/illinois-app/issues/1708).
+- Place RootHeaderBar in Settings, Profile and Notifications content panels [#1710](https://github.com/rokwire/illinois-app/issues/1710).
+
+## [4.0.26] - 2022-06-09
+### Added
+- Various updates in Maps, Events and Dinings [#1699](https://github.com/rokwire/illinois-app/issues/1699).
+### Changed
+- Implemnted new Browse panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+
+## [4.0.25] - 2022-06-08
+### Changed
+- Use LongPressDraggable instead of Draggable in HomeHandleWidget [#1696](https://github.com/rokwire/illinois-app/issues/1696).
+- Rename "Navigate" tab to "Maps" [#1695](https://github.com/rokwire/illinois-app/issues/1695).
+- Explore tabs in ExplorePanel to dropdown items [#1695](https://github.com/rokwire/illinois-app/issues/1695).
+### Added
+- Show Explore panel on "Maps" tab [#1695](https://github.com/rokwire/illinois-app/issues/1695).
+
+## [4.0.24] - 2022-06-07
+### Added
+- Show Wellness ToDo items in a plain list (Task in progress) [#1689](https://github.com/rokwire/illinois-app/issues/1689).
+- Show Wellness Ring prototype (Task in progress) [#1692](https://github.com/rokwire/illinois-app/issues/1692).
+
+## [4.0.23] - 2022-06-06
+### Added
+- New Wellness home panel (Task in progress) [#1689](https://github.com/rokwire/illinois-app/issues/1689).
+
+## [4.0.22] - 2022-06-03
+### Changed
+- Various updates in HomePanel and HomeTout [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+
+## [4.0.21] - 2022-06-02
+### Added
+- Settings Content - Calendar settings and My Notifications (Done) [#1670](https://github.com/rokwire/illinois-app/issues/1670).
+- HomeToutWidget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+### Changed
+- Cleaned up Drag & Drop in Home panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+- Removed Group polls hook methods [#1679](https://github.com/rokwire/app-flutter-plugin/issues/1679).
+
+## [4.0.20] - 2022-06-01
+### Added
+- Load and display user's grade for each canvas course [#1681](https://github.com/rokwire/illinois-app/issues/1681).
+- Implemented edit mode in Home panel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+- Settings Content - Interests, Food Filters and Sports. (Task in progress) [#1670](https://github.com/rokwire/illinois-app/issues/1670).
+
+## [4.0.19] - 2022-05-31
+### Added
+- Settings Content for Profile and Notifications. (Task in progress) [#1670](https://github.com/rokwire/illinois-app/issues/1670).
+### Fixed
+- Fixed scrolling in Home panel after drag and drop operation [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+### Changed
+- Prompt before unfavorite home widget [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+
+## [4.0.18] - 2022-05-30
+### Added
+- Store HomePanel widgets order in user favorites, handled Favorite start on Home panel widgets [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+- New UI for Settings - Home and My Profile. (Task in progress) [#1670](https://github.com/rokwire/illinois-app/issues/1670).
+
+## [4.0.17] - 2022-05-27
+### Changed
 - Buttons for "On Campus" [#1664](https://github.com/rokwire/illinois-app/issues/1664).
 - Fix typo in HomeRadioWidget [#1666](https://github.com/rokwire/illinois-app/issues/1666).
 - Change comply message when creating a Group [#1668](https://github.com/rokwire/illinois-app/issues/1668).
+- Implemented drag and drop capability in HomePanel [#1629](https://github.com/rokwire/illinois-app/issues/1629).
+### Added
+- Regular Student onboarding checklist (in progress) [#1671](https://github.com/rokwire/illinois-app/issues/1671).
 
 ## [4.0.16] - 2022-05-25
 ### Changed

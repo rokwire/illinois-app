@@ -40,6 +40,17 @@
 				"wten": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/0a965cd0-d374-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/61c1817d-d815-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/85318155-d815-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/ac9c35c6-d815-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/tennis/tout/cfc157cf-d815-11e9-88b6-0a58a9feac2a.webp"],
 				"wtrack": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/3912674b-d374-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/55934f55-d374-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/6f84a592-d374-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/trackandfield/tout/85507adb-d374-11e9-88b6-0a58a9feac2a.webp"],
 				"wvball": ["https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/b5b2c188-d29e-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/gimnastics/tout/e25bc8f6-d29e-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/642c5674-d814-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/907ac2c7-d814-11e9-88b6-0a58a9feac2a.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/athletics/basketball/tout/b6963a95-d814-11e9-88b6-0a58a9feac2a.webp"]
+			},
+			"home": {
+				"tout": {
+					"morning": ["https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-02-140617-134.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-02-150411-043.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-02-150604-060.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-02-200614-281.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-02-200925-200.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-02-210802-032.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-02-210902-025.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-08-190905-001.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-08-190905-023.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-08-200116-026-sunrise.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-08-201006-001.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-08-201014-001.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-08-210405-003.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-08-210715-009.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-08-210728-003.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-08-210803-074.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-08-210823-012-Boneyard.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-08-210823-013.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-08-211108-072.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-10-220316-mh-99.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-FZ-220414-025.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/morning/UI-FZ-220421-006.webp"],
+					"afternoon": ["https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-02-130812-167.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-02-140805-380.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-02-160107-117.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-02-180720-962.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-02-200724-209.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-02-200923-105.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-02-200923-132.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-03-150908-000.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-04-140723-003.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-04-191020-932.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-08-190429-014.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-08-191013-142.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-08-200428-051.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-08-200924-001.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-08-210413-039.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-08-210413-057.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-08-210430-021.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-08-210430-045.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-08-210616-014.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-08-210803-078.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-FZ-220414-020.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-FZ-220421-004.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-FZ-220421-019.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-FZ-220509-039.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/afternoon/UI-FZ-220509-042.webp"],
+					"evening": ["https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-02-170424-061.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-02-170827-183.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-02-210702-200.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-02-210930-035.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-03-171021-162.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-04-140527-993.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-04-140723-029.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-190920-000.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200116-007.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200116-030.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200607-009-sunsetting.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200612-011.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200612-020.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200723-002.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200911-023.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200925-022.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-201109-003.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-210803-015.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-210814-058.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-210819-103-evening.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-210917-004.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-220118-001.webp"],
+					"night": ["https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-02-170424-061.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-02-170827-183.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-02-210702-200.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-02-210930-035.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-03-171021-162.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-04-140527-993.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-04-140723-029.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-190920-000.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200116-007.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200116-030.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200607-009-sunsetting.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200612-011.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200612-020.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200723-002.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200911-023.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-200925-022.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-201109-003.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-210803-015.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-210814-058.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-210819-103-evening.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-210917-004.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/favorites/tout/evening/UI-08-220118-001.webp"]
+				}
+			},
+			"browse": {
+				"tout": ["https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-01-090611-004.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-02-090428-104.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-02-090805-329.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-02-140813-815.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-02-150930-435.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-02-190619-053.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-02-210726-677.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-03-190627-057.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-03-200210-145.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-08-190214-034.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-08-190402-004.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-08-190402-017.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-08-190610-074.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-08-190612-013.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-08-190612-017.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-08-191002-006.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-08-191108-010.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-08-200127-001.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-08-210730-052.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-FZ-220408-034.webp", "https://rokwire-images.s3.us-east-2.amazonaws.com/browse/tout/UI-FZ-220420-001.webp"]
 			}
 		}
 	},
@@ -692,378 +703,271 @@
 	},
 
 	"wellness": {
-		"panels": {
-			"home": {
-				"header": { "title": "panel.wellness.home.header.title", "image": "group-4.png" },
-				"description": { "main_text": "panel.wellness.home.description.main_text", "secondary_text": "panel.wellness.home.description.secondary_text" },
-				"activities": [
-					{ "header": { "title": "panel.wellness.home.eight_dimensions.header.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.home.activities.physical", "font_size": 20, "image": "physical.png", "action": { "name": "panel", "source": "physical" } },
-							{ "title": "panel.wellness.home.activities.mental", "font_size": 20, "image": "mental.png", "action": { "name": "panel", "source": "mental" } },
-							{ "title": "panel.wellness.home.activities.environmental", "image": "environmental.png", "action": { "name": "panel", "source": "environmental" } },
-							{ "title": "panel.wellness.home.activities.financial", "font_size": 20, "image": "financial-2.png", "action": { "name": "panel", "source": "financial" } },
-							{ "title": "panel.wellness.home.activities.spiritual", "font_size": 20, "image": "spiritual.png", "action": { "name": "panel", "source": "spiritual" } },
-							{ "title": "panel.wellness.home.activities.vocational", "font_size": 20, "image": "vocational.png", "action": { "name": "panel", "source": "vocational" } },
-							{ "title": "panel.wellness.home.activities.emotional", "font_size": 20, "image": "emotional.png", "action": { "name": "panel", "source": "emotional" } },
-							{ "title": "panel.wellness.home.activities.social", "font_size": 20, "image": "social.png", "action": { "name": "panel", "source": "social" } }
-						]
-					},
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "icon-schedule.png" },
-						"items": [
-							{ "title": "panel.wellness.home.activities.interactive_mood_meter", "image": "group-7.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/interactive-mood-meter" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.home.activities.memory_mix_up", "image": "group-2.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/memory-mixup" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.kognito_at_risk", "image": "kognito.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito" } }
-						]
-					}
-				]
-			},
-			"physical": {
-				"header": { "title": "panel.wellness.physical.header.title", "image": "group.png" },
-				"description": { "main_text": "panel.wellness.physical.description.main_text", "secondary_text": "panel.wellness.physical.description.secondary_text", "bullet": "panel.wellness.common.description.bullet" },
-				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
-						]
-					}
-				],
-				"resources": [
-					{
-						"title": "panel.wellness.common.resources.campus_recreation.title",
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.physical.resources.personal_training", "url": "https://campusrec.illinois.edu/programs/personal-training/", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.physical.resources.group_fitness", "url": "https://campusrec.illinois.edu/programs/group-fitness/", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.physical.resources.aquatics", "url": "https://campusrec.illinois.edu/programs/aquatics/", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.physical.resources.food_nutrition", "url": "https://campusrec.illinois.edu/programs/student-wellness/nutrition-food/", "icon": "link-out.png", "hint": "" }
-						],
-						"social_media": [
-							{ "type": "instagram", "url": "https://www.instagram.com/illinoiscampusrec/" }
-						]
-					},
-					{
-						"title": "panel.wellness.common.resources.mckinley_health_center.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.physical.resources.mymckinley.title", "url":"https://mymckinley.illinois.edu/", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.appointments_mckinley", "url":"http://mckinley.illinois.edu/medical-services/appointments", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.immunization", "url":"http://mckinley.illinois.edu/medical-services/immunization-allergy-travel-clinic", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.womens_health", "url":"http://mckinley.illinois.edu/medical-services/womens-health", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.fitness", "url":"http://mckinley.illinois.edu/health-education/fitness", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.nutrition", "url":"http://mckinley.illinois.edu/health-education/nutrition", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.sexual_health", "url":"http://mckinley.illinois.edu/health-education/sexual-health", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.lgbtq", "url":"http://mckinley.illinois.edu/health-education/sexual-health/lgbtq-health", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.lab", "url":"http://mckinley.illinois.edu/medical-services/laboratory", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.radiology", "url":"http://mckinley.illinois.edu/medical-services/radiology", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.pharmacy", "url":"http://mckinley.illinois.edu/pharmacy/about-pharmacy", "icon": "link-out.png", "hint": "" }
-						],
-						"social_media": [
-							{ "type":"youtube", "url":"https://www.youtube.com/user/MHCMcTV" },
-							{ "type":"facebook", "url":"https://www.facebook.com/MckinleyHC/" },
-							{ "type":"instagram", "url":"https://www.instagram.com/mckinleyhealthcenter/" }
-						]
-					},
-					{
-						"title": "panel.wellness.common.resources.mckinley_wellness_app.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.physical.resources.first_time_visitors", "url":"http://mhcwellness.illinois.edu/first-time-visitors", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.primary_care", "url":"http://mhcwellness.illinois.edu/primary-care", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.schedule_appointment", "url":"http://mhcwellness.illinois.edu/mymckinley-schedule-appointment", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.dial_nurse", "url":"http://mhcwellness.illinois.edu/dial-nurse", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.health_resource_centers", "url":"http://mhcwellness.illinois.edu/health-resource-centers", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.exercise", "url":"http://mhcwellness.illinois.edu/exercise", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.physical.resources.eat_well", "url":"http://mhcwellness.illinois.edu/eat-well", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.sexual_health", "url":"http://mhcwellness.illinois.edu/sexual-health", "icon": "link-out.png", "hint": "" }
-						]
-					}
-				]
-			},
-			"mental": {
-				"header": { "title": "panel.wellness.mental.header.title", "image": "group-444.png" },
-				"description": { "main_text": "panel.wellness.mental.description.main_text", "secondary_text": "panel.wellness.mental.description.secondary_text", "bullet": "panel.wellness.common.description.bullet",
-					"ribbon_buttons": [
-						{ "title": "panel.wellness.mental.description.buttons.appointment", "url": "https://wellness.web.illinois.edu/help/i-want-to-make-an-appointment/", "icon": "link-out.png", "hint": "" },
-						{ "title": "panel.wellness.mental.description.buttons.help_friend", "url": "https://wellness.web.illinois.edu/help/i-want-to-help-a-friend-student-or-coworker/", "icon": "link-out.png", "hint": "" },
-						{ "title": "panel.wellness.mental.description.buttons.where_to_start", "url": "https://wellness.web.illinois.edu/help/im-not-sure-where-to-start", "icon": "link-out.png", "hint": "" }
-					]
-				},
-				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.mood_meter", "image": "group-7.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/interactive-mood-meter" } },
-							{ "title": "panel.wellness.mental.interactive_activities.activity.mixup", "image": "group-2.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/memory-mixup" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.kognito_at_risk_center", "image": "kognito.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito" } }
-						]
-					}
-				],
-				"resources": [
-					{ "title": "panel.wellness.common.resources.counseling_center.title",
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.mental.resources.counseling", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=Counseling.center", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.mental.resources.outreach", "url": "https://counselingcenter.illinois.edu/outreach-and-prevention-services", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.common.resources.ace_it", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=drugs.alcohol.help", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_health_center.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.mental.resources.mental_services", "url":"http://mckinley.illinois.edu/medical-services/mental-health", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.stress_management", "url":"http://mckinley.illinois.edu/health-education/stress-management", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.relaxation_techniques", "url":"http://mckinley.illinois.edu/health-education/stress-management/relaxation-techniques", "icon": "link-out.png", "hint": "" }
-						],
-						"social_media": [
-							{ "type":"youtube", "url":"https://www.youtube.com/user/MHCMcTV" },
-							{ "type":"facebook", "url":"https://www.facebook.com/MckinleyHC/" },
-							{ "type":"instagram", "url":"https://www.instagram.com/mckinleyhealthcenter/" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_wellness_app.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.resources.mental_health", "url":"http://mhcwellness.illinois.edu/mental-health", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.mental.resources.manage_stress", "url":"http://mhcwellness.illinois.edu/manage-stress", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.mental.resources.get_sleep", "url":"http://mhcwellness.illinois.edu/get-sleep", "icon": "link-out.png", "hint": "" }
-						]
-					}
-				]
-			},
-			"environmental": {
-				"header": { "title": "panel.wellness.environmental.header.title", "image": "group-9.png" },
-				"description": { "main_text": "panel.wellness.environmental.description.main_text", "secondary_text": "panel.wellness.environmental.description.secondary_text", "bullet": "panel.wellness.common.description.bullet"
-				},
-				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
-						]
-					}
-				],
-				"resources": [
-					{
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.environmental.resources.arboretum", "url": "http://arboretum.illinois.edu/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.campus_recreation.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.environmental.resources.campus_bike_center", "url":"https://campusrec.illinois.edu/programs/campus-bike-center/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_wellness_app.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.environmental.resources.transportation_safety", "url":"http://mhcwellness.illinois.edu/safety-transportation", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.environmental.resources.late_night_studying", "url":"http://mhcwellness.illinois.edu/studying-late-night", "icon": "link-out.png", "hint": "" }
-						]
-					}
-				]
-			},
-			"financial": {
-				"header": { "title": "panel.wellness.financial.header.title", "image": "financial.png" },
-				"description": { "main_text": "panel.wellness.financial.description.main_text", "secondary_text": "panel.wellness.financial.description.secondary_text", "bullet": "panel.wellness.common.description.bullet" },
-				"resources": [
-					{
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.financial.resources.financial_wellness_program", "url": "https://extension.illinois.edu/cfiv/financial-wellness-college-students", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.financial.resources.your_legal_health", "url": "https://odos.illinois.edu/sls/resources/brochures/docs/your-legal-health.pdf", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.financial.resources.student_money_management", "url": "https://www.studentmoney.uillinois.edu/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_wellness_app.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.financial.resources.budgets", "url":"http://mhcwellness.illinois.edu/budget-finances", "icon": "link-out.png", "hint": "" }
-						]
-					}
-				]
-			},
-			"spiritual": {
-				"header": { "title": "panel.wellness.spiritual.header.title", "image": "group-44.png" },
-				"description": { "main_text": "panel.wellness.spiritual.description.main_text", "secondary_text": "panel.wellness.spiritual.description.secondary_text", "bullet": "panel.wellness.common.description.bullet" },
-				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
-						]
-					}
-				],
-				"resources": [
-					{
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.spiritual.resources.reflection_rooms", "url": "https://www.library.illinois.edu/ugl/about/reflection-rooms/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.office_inclusion.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.resources.programs", "url":"https://oiir.illinois.edu/programs", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.bnaacc", "url":"https://oiir.illinois.edu/bnaacc", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.aacc", "url":"https://oiir.illinois.edu/aacc", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.la_casa", "url":"https://oiir.illinois.edu/la-casa-cultural-latina", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.native_american_house", "url":"https://oiir.illinois.edu/native-american-house", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.spiritual.resources.dean_students.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.spiritual.resources.religious_worker", "url":"https://odos.illinois.edu/resources/rwa/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_health_center.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.resources.relaxation_techniques", "url":"http://mckinley.illinois.edu/health-education/stress-management/relaxation-techniques", "icon": "link-out.png", "hint": "" }
-						],
-						"social_media": [
-							{ "type":"youtube", "url":"https://www.youtube.com/user/MHCMcTV" },
-							{ "type":"facebook", "url":"https://www.facebook.com/MckinleyHC/" },
-							{ "type":"instagram", "url":"https://www.instagram.com/mckinleyhealthcenter/" }
-						]
-					}
-				]
-			},
-			"vocational": {
-				"header": { "title": "panel.wellness.vocational.header.title", "image": "group-15.png" },
-				"description": { "main_text": "panel.wellness.vocational.description.main_text", "secondary_text": "panel.wellness.vocational.description.secondary_text", "bullet": "panel.wellness.common.description.bullet" },
-				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
-						]
-					}
-				],
-				"resources": [
-					{
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.vocational.resources.career_center", "url": "https://www.careercenter.illinois.edu/", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.vocational.resources.student_job_board", "url": "https://secure.osfa.illinois.edu/vjb/", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.vocational.resources.top_scholars", "url": "https://topscholars.illinois.edu/", "icon": "link-out.png", "hint": "" },
-							{ "title": "panel.wellness.vocational.resources.i_programs", "url": "http://leadership.illinois.edu/i-programs", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_wellness_app.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.vocational.resources.networking", "url":"http://mhcwellness.illinois.edu/networking", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.vocational.resources.student_assistance_center", "url":"http://mhcwellness.illinois.edu/student-assistance-center%E2%80%A8", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.vocational.resources.academic_advisement", "url":"http://mhcwellness.illinois.edu/academic-advisement", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.vocational.resources.faqs", "url":"http://mhcwellness.illinois.edu/faq", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.vocational.resources.study_tips", "url":"http://mhcwellness.illinois.edu/study-tips", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.vocational.resources.compass", "url":"http://mhcwellness.illinois.edu/what-compass", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.vocational.resources.tutoring", "url":"http://mhcwellness.illinois.edu/tutoring", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.involved", "url":"http://mhcwellness.illinois.edu/getting-involved", "icon": "link-out.png", "hint": "" }
-						]
-					}
-				]
-			},
-			"emotional": {
-				"header": { "title": "panel.wellness.emotional.header.title", "image": "path.png" },
-				"description": { "main_text": "panel.wellness.emotional.description.main_text", "secondary_text": "panel.wellness.emotional.description.secondary_text", "bullet": "panel.wellness.common.description.bullet" },
-				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.mood_meter", "image": "group-7.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/interactive-mood-meter" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
-						]
-					}
-				],
-				"resources": [
-					{
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.emotional.resources.community_care", "url": "https://odos.uiuc.edu/community-of-care/resources/students/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{
-						"title": "panel.wellness.common.resources.office_inclusion.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.resources.programs", "url":"https://oiir.illinois.edu/programs", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.women_center", "url":"https://oiir.illinois.edu/womens-center", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.lgbt_center", "url":"https://oiir.illinois.edu/lgbt-resource-center", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{
-						"title": "panel.wellness.common.resources.counseling_center.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.interactive_activities.activity.kognito_at_risk_center", "url":"edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.ace_it", "url":"edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=drugs.alcohol.help", "icon": "link-out.png", "hint": "" }
-						],
-						"social_media": [
-							{ "type":"twitter", "url":"http://twitter.com/UI_Counseling" },
-							{ "type":"facebook", "url":"https://www.facebook.com/IllinoisCounselingCenter" },
-							{ "type":"youtube", "url":"https://www.youtube.com/channel/UCyxUtefuFNxkk2MuwhcDgig" },
-							{ "type":"instagram", "url":"https://www.instagram.com/illinoiscounselingcenter/" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_health_center.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.resources.stress_management", "url":"http://mckinley.illinois.edu/health-education/stress-management", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.mental_health", "url":"http://mckinley.illinois.edu/medical-services/mental-health", "icon": "link-out.png", "hint": "" }
-						],
-						"social_media": [
-							{ "type":"youtube", "url":"https://www.youtube.com/user/MHCMcTV" },
-							{ "type":"facebook", "url":"https://www.facebook.com/MckinleyHC/" },
-							{ "type":"instagram", "url":"https://www.instagram.com/mckinleyhealthcenter/" }
-						]
-					}
-				]
-			},
-			"social": {
-				"header": { "title": "panel.wellness.social.header.title", "image": "group-16.png" },
-				"description": { "main_text": "panel.wellness.social.description.main_text", "secondary_text": "panel.wellness.social.description.secondary_text", "bullet": "panel.wellness.common.description.bullet" },
-				"activities": [
-					{ "header": { "title": "panel.wellness.common.interactive_activities.title", "icon": "campus-tools.png" },
-						"items": [
-							{ "title": "panel.wellness.common.interactive_activities.activity.mood_meter", "image": "group-7.png", "action": { "name": "web", "source": "http://mhcwellness.illinois.edu/interactive-mood-meter" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.reflection", "image": "reflection.png", "action": { "name": "web", "source": "https://campusrec.illinois.edu/programs/student-wellness/wellness-reflection-start/" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.pledge", "image": "pledge.png", "action": { "name": "guide", "source": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=wellness.pledge_37" } },
-							{ "title": "panel.wellness.common.interactive_activities.activity.podcast", "image": "podcast.png", "action": { "name": "web", "source": "https://anchor.fm/mckinley-health-center" } }
-						]
-					}
-				],
-				"resources": [
-					{
-						"ribbon_buttons": [
-							{ "title": "panel.wellness.social.resources.engage", "url": "https://illinois.campuslabs.com/engage/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.campus_recreation.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.social.resources.intramural_sports", "url":"https://campusrec.illinois.edu/programs/intramural/", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.social.resources.illini_union.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.social.resources.rso", "url":"https://union.illinois.edu/get-involved/office-of-registered-organizations", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.social.resources.master_calendar", "url":"https://mastercalendar.union.illinois.edu/MasterCalendar/MasterCalendar.aspx", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.office_inclusion.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.resources.bnaacc", "url":"https://oiir.illinois.edu/bnaacc", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.aacc", "url":"https://oiir.illinois.edu/aacc", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.la_casa", "url":"https://oiir.illinois.edu/la-casa-cultural-latina", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.native_american_house", "url":"https://oiir.illinois.edu/native-american-house", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.women_center", "url":"https://oiir.illinois.edu/womens-center", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.common.resources.lgbt_center", "url":"https://oiir.illinois.edu/lgbt-resource-center", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.social.resources.international_education", "url":"https://oiir.illinois.edu/cultural-resource-centers/international-education", "icon": "link-out.png", "hint": "" }
-						]
-					},
-					{ "title": "panel.wellness.common.resources.mckinley_wellness_app.title",
-						"ribbon_buttons": [
-							{ "title":"panel.wellness.common.resources.involved", "url":"http://mhcwellness.illinois.edu/getting-involved", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.social.resources.going_out", "url":"http://mhcwellness.illinois.edu/going-out", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.social.resources.peer_pressure", "url":"http://mhcwellness.illinois.edu/peer-pressure", "icon": "link-out.png", "hint": "" },
-							{ "title":"panel.wellness.social.resources.roommates", "url":"http://mhcwellness.illinois.edu/roommates", "icon": "link-out.png", "hint": "" }
-						]
-					}
-				]
+		"resources": {
+			"commands": [
+				{"id":"appointment", "type": "large", "url": "https://wellness.web.illinois.edu/help/i-want-to-make-an-appointment"},
+				{"id":"help", "type": "large", "url": "https://wellness.web.illinois.edu/help/i-want-to-help-a-friend-student-or-coworker"},
+				{"id":"where_to_start", "type": "large", "url": "https://wellness.web.illinois.edu/help/im-not-sure-where-to-start"},
+				{"id":"securing_food", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=1361dee2-a8de-4c5f-a9fd-511e491e295e"},
+				{"id":"telehealth", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=8f7dd377-e09b-4de2-b2af-212dc4b7adda"},
+				{"id":"podcast", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=866a3d66-83c2-47f4-89f5-c514d31766c7"},
+	
+				{"id":"crisis_resources", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id="},
+				{"id":"accessibility_and_accommodations", "type": "regular", "url": "https://wellness.illinois.edu/mental-health-resources/accessibility-and-accommodations"},
+				{"id":"after_hours", "type": "regular", "url": "https://odos.illinois.edu/community-of-care/emergency-dean"},
+				{"id":"campus_service_units", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units"},
+				{"id":"core_campus_resources", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id="},
+				{"id":"counseling_center", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=65b51137-bf11-45e8-bdc7-93c160560dcd"},
+				{"id":"financial_assistance", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/financial"},
+				{"id":"fitness_and_recreation", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/fitness-recreation"},
+				{"id":"flu_clinics", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=d59ed997-9c7c-4fd4-a2b9-781ef312ab7a"},
+				{"id":"food_and_nutrition", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/food-nutrition"},
+				{"id":"immunization_requirement", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=immunizations"},
+				{"id":"lgbtq_healthcare", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=lgbtq.health"},
+				{"id":"health_center", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=mckinley.health"},
+				{"id":"mental_health_and_counseling", "type": "regular", "url": "https://wellness.illinois.edu/mental-health-resources/students"},
+				{"id":"pharmacy", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=pharmacy"},
+				{"id":"nature_and_culture", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/faculty-and-staff/nature-and-culture"},
+				{"id":"other", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/resources"},
+				{"id":"sexual_health", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=sexual.health"},
+				{"id":"sexual_misconduct", "type": "regular", "url": "https://wellness.illinois.edu/mental-health-resources/sexual-misconduct"},
+				{"id":"sleep_quality", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=sleep"},
+				{"id":"stress_management", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=manage.stress"},
+				{"id":"health_insurance", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=health.insurance"},
+				{"id":"suicide_prevention", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=kognito"},
+				{"id":"events_and_workshops", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/workshops-and-events"},
+				{"id":"womens_healthcare", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=womens.health"}
+			],
+			"strings": {
+				"en": {
+					"appointment": "I want to make an appointment",
+					"help": "I want to help a friend, student, or co-worker",
+					"where_to_start": "I’m not sure where to start",
+					"securing_food": "I need help securing food",
+					"telehealth": "I want to learn about HealthiestYou Telehealth",
+					"podcast": "Listen to the Healthy Illini podcast",
+					"crisis_resources": "24-Hour Crisis Resources",
+					"accessibility_and_accommodations": "Accessibility and Accommodations",
+					"after_hours": "After Hours Support",
+					"campus_service_units": "Campus Service Units",
+					"core_campus_resources": "Core Campus Resources",
+					"counseling_center": "Counseling Center",
+					"financial_assistance": "Financial Assistance",
+					"fitness_and_recreation": "Fitness and Recreation",
+					"flu_clinics": "Flu Clinics",
+					"food_and_nutrition": "Food and Nutrition",
+					"immunization_requirement": "Immunization Requirement",
+					"lgbtq_healthcare": "LGBTQ Healthcare",
+					"health_center": "McKinley Health Center",
+					"mental_health_and_counseling": "Mental Health & Counseling",
+					"pharmacy": "McKinley Pharmacy",
+					"nature_and_culture": "Nature & Culture",
+					"other": "Other Wellness Resources",
+					"sexual_health": "Sexual Health Information",
+					"sexual_misconduct": "Sexual Misconduct",
+					"sleep_quality": "Sleep Quality",
+					"stress_management": "Stress Management",
+					"health_insurance": "Student Health Insurance",
+					"suicide_prevention": "Suicide Prevention",
+					"events_and_workshops": "Wellness Events & Workshops",
+					"womens_healthcare": "Women’s Healthcare"
+				}
+			}
+		},
+		"tips": {
+			"entries": [
+				{"id": "mental.1", "category":"mental"},
+				{"id": "mental.2", "category":"mental"},
+				{"id": "mental.3", "category":"mental"},
+				{"id": "mental.4", "category":"mental"},
+				{"id": "mental.5", "category":"mental"},
+				{"id": "mental.6", "category":"mental"},
+				{"id": "mental.7", "category":"mental"},
+				{"id": "mental.8", "category":"mental"},
+				{"id": "mental.9", "category":"mental"},
+				{"id": "mental.10", "category":"mental"},
+				{"id": "mental.11", "category":"mental"},
+				{"id": "mental.12", "category":"mental"},
+				{"id": "mental.13", "category":"mental"},
+				{"id": "mental.14", "category":"mental"},
+				{"id": "mental.15", "category":"mental"},
+				{"id": "mental.16", "category":"mental"},
+				{"id": "mental.17", "category":"mental"},
+				{"id": "mental.18", "category":"mental"},
+				{"id": "mental.19", "category":"mental"},
+				{"id": "mental.20", "category":"mental"},
+				{"id": "mental.21", "category":"mental"},
+				{"id": "mental.22", "category":"mental"},
+				{"id": "mental.23", "category":"mental"},
+				{"id": "mental.23", "category":"mental"},
+	
+				{"id": "emotional.1", "category":"emotional"},
+				{"id": "emotional.2", "category":"emotional"},
+				{"id": "emotional.3", "category":"emotional"},
+				{"id": "emotional.4", "category":"emotional"},
+				{"id": "emotional.5", "category":"emotional"},
+				{"id": "emotional.6", "category":"emotional"},
+				{"id": "emotional.7", "category":"emotional"},
+				{"id": "emotional.8", "category":"emotional"},
+				{"id": "emotional.9", "category":"emotional"},
+				{"id": "emotional.10", "category":"emotional"},
+				{"id": "emotional.11", "category":"emotional"},
+				{"id": "emotional.12", "category":"emotional"},
+				{"id": "emotional.13", "category":"emotional"},
+				{"id": "emotional.14", "category":"emotional"},
+				{"id": "emotional.15", "category":"emotional"},
+				{"id": "emotional.16", "category":"emotional"},
+				{"id": "emotional.17", "category":"emotional"},
+	
+				{"id": "social.1", "category":"social"},
+				{"id": "social.2", "category":"social"},
+				{"id": "social.3", "category":"social"},
+				{"id": "social.4", "category":"social"},
+				{"id": "social.5", "category":"social"},
+				{"id": "social.6", "category":"social"},
+				{"id": "social.7", "category":"social"},
+				{"id": "social.8", "category":"social"},
+				{"id": "social.9", "category":"social"},
+				{"id": "social.10", "category":"social"},
+				{"id": "social.11", "category":"social"},
+				{"id": "social.12", "category":"social"},
+	
+				{"id": "spiritual.1", "category":"spiritual"},
+				{"id": "spiritual.2", "category":"spiritual"},
+				{"id": "spiritual.3", "category":"spiritual"},
+				{"id": "spiritual.4", "category":"spiritual"},
+				{"id": "spiritual.5", "category":"spiritual"},
+				{"id": "spiritual.6", "category":"spiritual"},
+				{"id": "spiritual.7", "category":"spiritual"},
+				{"id": "spiritual.8", "category":"spiritual"},
+				{"id": "spiritual.9", "category":"spiritual"},
+				{"id": "spiritual.10", "category":"spiritual"},
+				{"id": "spiritual.11", "category":"spiritual"},
+				{"id": "spiritual.12", "category":"spiritual"},
+	
+				{"id": "physical.1", "category":"physical"},
+				{"id": "physical.2", "category":"physical"},
+				{"id": "physical.3", "category":"physical"},
+				{"id": "physical.4", "category":"physical"},
+				{"id": "physical.5", "category":"physical"},
+				{"id": "physical.6", "category":"physical"},
+				{"id": "physical.7", "category":"physical"},
+				{"id": "physical.8", "category":"physical"},
+				{"id": "physical.9", "category":"physical"},
+				{"id": "physical.10", "category":"physical"},
+				{"id": "physical.11", "category":"physical"},
+				{"id": "physical.12", "category":"physical"},
+				{"id": "physical.13", "category":"physical"},
+				{"id": "physical.14", "category":"physical"},
+	
+				{"id": "environmental.1", "category":"environmental"},
+				{"id": "environmental.2", "category":"environmental"},
+				{"id": "environmental.3", "category":"environmental"},
+				{"id": "environmental.4", "category":"environmental"},
+				{"id": "environmental.5", "category":"environmental"},
+				{"id": "environmental.6", "category":"environmental"},
+				{"id": "environmental.7", "category":"environmental"},
+				{"id": "environmental.8", "category":"environmental"},
+				{"id": "environmental.9", "category":"environmental"},
+				{"id": "environmental.10", "category":"environmental"}
+			],
+			"strings": {
+				"en": {
+					"mental.1": "Find outlets that are intellectually stimulating like puzzles, social and news media, books, etc.",
+					"mental.2": "Set realistic and reasonable goals academically, personally, and professionally. Start small and build from there as you successfully accomplish various tasks.",
+					"mental.3": "Focus on things within your control. Avoid wasting time and energy on worries that – at the end of the day – you can’t do anything about.",
+					"mental.4": "Learn to prioritize. Take care of what you can do today, right now. This mindset will help you manage your time better and reduce the risk of procrastination.",
+					"mental.5": "Take breaks throughout the day to refresh and rejuvenate your mind and body.",
+					"mental.6": "Keep learning! Don’t get into a rut or slip into a comfort zone that keeps you from trying new experiences. Explore the activities, events, and programs offered around campus and in the community.",
+					"mental.7": "Realize you don’t have to please everyone. Concentrate on nurturing your own needs and wants.",
+					"mental.8": "When you feel confident and strong, you are able to meet day to day demands.",
+					"mental.9": "Don’t be afraid to ask for help. There are many units across campus such as McKinley Health",
+					"mental.10": "Center and the Counseling Center to support and guide you through challenging times. Major depression is one of the most common mental health illnesses in the US, and when treated it can be managed well.",
+					"mental.11": "Change can be exciting. College offers opportunities for growth. Take advantage of these experiences and use the resources to broaden your perspective and vision for the future.",
+					"mental.12": "Be patient with yourself and others. As you navigate your way through classes and other commitments, your social connections will fall into place.",
+					"mental.13": "Recognize your positive qualities! These strengths helped get you where you are now. Build upon those strengths and discover new ones as you indulge in your college experiences.",
+					"mental.14": "Take care of YOU! High levels of stress, particularly around exam times, are bound to happen. Consistent self-care will enable you to manage these moments calmly and productively.",
+					"mental.15": "Take a personal “time out” when things feel overwhelming. Change your surroundings if you can, and clear your head before you say or do something you might regret. Taking a few moments to settle down can help you reflect on your thoughts and feelings.",
+					"mental.16": "Clear the clutter! Keeping yourself organized and focused will also help you feel relaxed, which leads to increased productivity and your best work.",
+					"mental.17": "Get six to eight hours of sleep when possible. Quality rest can help you manage multiple demands, remain focused and productive, and meet your daily goals.",
+					"mental.18": "Create a bedtime routine to help you wind down from the day.",
+					"mental.19": "Figure out what helps you stay organized – whether it is a schedule, sticky notes, or a digital calendar. Give the Wellness Rings or the To-Do List Tool a try.",
+					"mental.20": "Good task management will also strengthen your skills in prioritization and stress management. These strengths will all help you excel.",
+					"mental.21": "Know your limits and set boundaries. Know when to say NO respectfully so you can stay on top of taking care of yourself and your well-being.",
+					"mental.22": "Be open-minded. Explore and experience new things and meet new people.",
+					"mental.23": "Learn from your mistakes. Ask yourself: What is the take-away? Turn it into something positive. Part of growing up is acknowledging when things didn’t go the way you expected. Learn from those experiences.",
+					"mental.24": "Slow down! Identify a technique or activity that helps calm your mind and unpack your thoughts. Whether it is through meditation, music, yoga, a walk in the park – whatever. Be sure to make it a part of your daily or weekly routine. Consistency is key!",
+					
+					"emotional.1": "Express needs, feelings, and opinions openly, honestly, and appropriately. Avoid keeping thoughts bottled up.",
+					"emotional.2": "Use laughter to reduce tension and promote a positive attitude.",
+					"emotional.3": "Take breaks throughout the day to refresh and rejuvenate your mind and body.",
+					"emotional.4": "Wind down your day with calming activities such as listening to music, reading a book, journaling, or sitting outside.",
+					"emotional.5": "Encourage respectful and meaningful relationships. Eliminate relationships that carry negativity and pull you down.",
+					"emotional.6": "Stay connected with those you love and care about. Talk with friends and family regularly, even when everything is fine. Having a strong social support system can help you stay positive and empowered to do your best.",
+					"emotional.7": "Get involved with interesting activities that feel like a good fit. This will build your confidence and ability to manage stressful situations when and if they arise.",
+					"emotional.8": "If it doesn’t feel right, it probably isn’t. Make the right choice for you. Make choices that fit your values and beliefs, not someone else’s.",
+					"emotional.9": "Embrace all the good you have in your life. Avoid dwelling on what you don’t have.",
+					"emotional.10": "A positive attitude changes everything.",
+					"emotional.11": "Be optimistic. Believe in yourself and your abilities.",
+					"emotional.12": "Use journaling as a way to purge your thoughts and feelings. It is a great portable technique to help you stay calm and relaxed throughout the day or week.",
+					"emotional.13": "Self-care is more important now than ever. Identify a variety of ways to take care of your overall well-being. Do them consistently.. Make yourself a priority. This attention will help you be and do your best in all other things that are important to you.",
+					"emotional.14": "Let go of worries you can’t control. Focus on the positive aspects of your life, or change only what you have the power to affect.",
+					"emotional.15": "Remember: Don’t sweat the small stuff.",
+					"emotional.16": "Ask for help! If you are feeling down and out, take advantage of the many campus resources available to help support you. McKinley Health Center or the Counseling Center is a great place to start.",
+					"emotional.17": "Deep breathing exercises can help you slow your pace and keep your thoughts and feelings in check. It is a great portable technique and it’s easy to do sitting, standing, walking, or lying down.",
+					
+					"social.1": "Meeting new people is a part of your college experience. Embrace opportunities to learn from someone who is different from you. Introduce yourself and start a conversation. You never know where it will lead. Check out the cultural houses and their calendar of events.",
+					"social.2": "Join an organization or club. These interactions are a great way to meet people, gain new skills, and build your resume.",
+					"social.3": "Volunteering is a great way to get connected with others on campus and in the community. You can enhance your own skills and abilities while developing new ones. It also can be rewarding and bring a sense of fulfillment. The Office of Volunteer Programs is a good place to start.",
+					"social.4": "When it comes to going out and having a good time there is nothing better than spending that time with friends. Look out for each other, be safe, and make good choices.",
+					"social.5": "Socializing doesn’t always mean you have to go out. Be creative and have fun doing activities with others in your residence hall or right around you.",
+					"social.6": "Talk with a trusted friend about problems or concerns. Building a strong support system can help you deal with difficult situations.",
+					"social.7": "Develop positive and meaningful relationships. Be genuine and true to your values and beliefs.",
+					"social.8": "Find a balance between socializing and taking care of your academics. Be sure to prioritize activities appropriately.",
+					"social.9": "New situations and people can feel uncomfortable, but give everything a chance before you move on. You may be missing out on an opportunity to grow and meet new people if you give up too quickly.",
+					"social.10": "Encourage good communication, trust, and honesty in your relationships. This will help set boundaries and reduce conflict.",
+					"social.11": "To learn more about programs and services that offer social engagement check out the different <a href='https://studentaffairs.illinois.edu/get-involved'>Student Affairs<a> Unit’s calendar of events and peer opportunities.",
+					"social.12": "Talk with your partner openly about your needs and wants. Individuals that are respectful to one another cultivate healthy, happy, nurturing relationships.",
+	
+					"spiritual.1": "Develop a philosophy of life you want to live by – and live it.",
+					"spiritual.2": "Find purpose in life and meaning in the little things you do every day.",
+					"spiritual.3": "Nurture your values, beliefs, and morals. These are the foundations that keep you feeling grounded and supported in good and bad times.",
+					"spiritual.4": "Explore mindful activities that help you feel connected to yourself and others. These may include meditation, deep breathing, guided imagery, or yoga – to name a few. Incorporate the activity into your everyday life when possible.",
+					"spiritual.5": "Take time to be alone and quiet with your thoughts and feelings. It can be a time of reflection and discovery.",
+					"spiritual.6": "Engage in acts of kindness and good will without expecting something in return.",
+					"spiritual.7": "Take action in helping others when you can. It’s a good thing to do and it builds character.",
+					"spiritual.8": "Stay connected with your thoughts and feelings. These can help guide you in making sound decisions that you feel good about.",
+					"spiritual.9": "Nurture your faith in something or someone. There are numerous campus-wide and community <a href='https://diversity.illinois.edu/diversity-campus-culture/religious-inclusion/'>resources</a> in place to support the religious, spiritual, and secular identities of members of the Illinois community.",
+					"spiritual.10": "Most smiles are started by another. They are simple but powerful.",
+					"spiritual.11": "Give a compliment to someone today. It may just make their day and be exactly what they needed at that moment.",
+					"spiritual.12": "Each day is a new day. Celebrate it!",
+	
+					"physical.1": "Sunscreen will protect your skin from the harmful rays of the sun, which can lead to skin cancer. While getting a tan may look great, you want to be sure you are taking steps to protect yourself.",
+					"physical.2": "Learn strategies to manage your stress. 70-80% of all physical illness is stress related, which means it can be eased with the right mental exercises. Meet individually with McKinley’s Stress Management Educator to help get you started.",
+					"physical.3": "Flip flops may be great for public showers or the beach, but not for everyday footwear. Your feet need proper support throughout the day, particularly when you are on them all day. Be sure to wear comfortable and appropriately fitted shoes to get around campus.",
+					"physical.4": "Physicals, dental and eye exams, and immunizations are all important in keeping your body well. College life often means tight quarters, so keep yourself and others healthy by staying up to date on medical exams.",
+					"physical.5": "Sexual health is an important part of overall health. It is normal to have questions about sexuality, intimacy, and/or reproductive healthcare. Meet with McKinley’s sexual health educator one-on-one for a confidential appointment. Call <a href='tel:+1-217-333-2700'>217-333-2700</a> to schedule a time to meet.",
+					"physical.6": "Avoid overloading your backpack. The weight can lead to poor posture, back problems, and fatigue. Only take with you what you absolutely need each day. If you are feeling back discomfort, you may want to evaluate what you need to carry. Consider a professional back massage to help you stay relaxed and loose.",
+					"physical.7": "Stay home if you are ill. If you have COVID-19 symptoms, you can utilize free on-campus COVID testing. Get rest and drink plenty of water. If symptoms persist, schedule an appointment with a provider at McKinley Health Center through <a href='https://mymckinley.illinois.edu/'>MyMcKinley</a>.",
+					"physical.8": "Protect yourself if you are sexually active! Reduce your risk of contracting a disease. <a href='https://www.mckinley.illinois.edu/health-education/health-resource-centers'>McKinley’s Health Resource Centers</a> provide over the counter self-care supplies such as condoms, latex barriers, etc. Visit one of their locations.",
+					"physical.9": "Wash your hands and dry them well! Regular hand washing can help prevent the spread of COVID and other illnesses. The average person’s hands can carry 3,000 different bacteria.",
+					"physical.10": "Think about everything you touch in a day that is also handled by someone else. Now – go wash your hands and sing happy birthday. That is about the recommended length of time to take to wash your hands.",
+					"physical.11": "Stay active in at least one or more ways. If you are able to, walk to class and take the stairs. Try some water aerobics. Participate in sports or a group fitness class. Ride a bike or roll around campus. These activities and many more can help keep you physically fit, relieve stress, and feel great.",
+					"physical.12": "Learn how to eat intuitively! Meals and snacks are essential throughout the day to keep your mind and body fueled, but listen to your body to avoid overeating or undereating.",
+					"physical.13": "Many sexually transmitted diseases (STDs) do not show signs or symptoms. Get yourself tested! Anyone who is sexually active and having unprotected sex should get tested. Sexually active women should receive an annual chlamydia screening. Men who have sex with men or who have multiple or anonymous partners should be screened for STDs more frequently than once a year. Call McKinley Health Center to schedule an appointment at <a href='tel:+1-217-333-2700'>217-333-2700</a>.",
+					"physical.14": "Napping can be a quick and refreshing way to get reenergized if the nap is about 20-30 minutes in length. Much beyond that, you are no longer napping. You should wake up from a nap feeling like you can get back to your day and tasks at hand. Napping should be avoided too close to bedtime and should not be used as a substitute for a good night’s sleep.",
+	
+					"environmental.1": "Appreciate and respect the environment. Experience the beauty around you.",
+					"environmental.2": "Do your part to preserve and improve environmental conditions. Recycle and/or pick up trash when you can.",
+					"environmental.3": "Pollen and weather conditions can be a trigger for many with allergies. It may cause itching, watery eyes, nasal congestion, runny nose, and throat irritation. Check the weather for pollen and allergy reports so you can be prepared. Allergies are treated in a variety of ways. Consult with your physician about what methods will work best for you.",
+					"environmental.4": "Take cover when you hear sirens and a tornado warning has been issued. Move to an interior room on the lowest floor of a sturdy building. Avoid windows. A tornado is a rotating, funnel-shaped cloud that extends from a thunderstorm to the ground with whirling winds that can reach 300 mph. Damage paths of tornadoes can be in excess of one mile wide and 50 miles long.",
+					"environmental.5": "Clear the clutter! Keep your space around you clean and tidy. It can have an effect on how you think and feel, so have a welcoming and comfortable space for yourself and others.",
+					"environmental.6": "Wear and/or use safety equipment to reduce the risk of injury to yourself or others. Investigate proper attire for different activities such as a face mask, helmets, goggles, and knee pads.",
+					"environmental.7": "Be aware of crosswalks on campus. These are for the safety of pedestrians as well as drivers. Stay off your phone and be aware of your surroundings. Wait for vehicles to stop before you step out into the path of a crosswalk. In the evening, wear reflective gear such as something on your backpack or bright clothing so you can be seen by others.",
+					"environmental.8": "Champaign-Urbana has many parks. Go explore them, and have fun!",
+					"environmental.9": "Stay alert when you are out on campus, particularly in the evening. Travel in groups when possible. Limit distractions such as talking on your phone. Stay in well-lit areas and public places.",
+					"environmental.10": "Put out the flame! U of I is a smoke-free campus. If you smoke, now is a good time to consider quitting. Contact <a href='https://mckinley.illinois.edu/health-education/nicotine-cessation'>McKinley Health Education</a> for resources and support."
+				}
 			}
 		}
 	}

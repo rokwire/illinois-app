@@ -20,6 +20,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:http/http.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Config.dart';
@@ -34,6 +35,22 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 class IDCardPanel extends StatefulWidget {
   IDCardPanel();
+
+  static void present(BuildContext context) {
+    if (!Auth2().isOidcLoggedIn) {
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.illini_id', 'You need to be logged in to access Illini ID.'));
+    }
+    else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.no_card.illini_id', 'You need a valid Illini Identity card to access Illini ID.'));
+    }
+    else {
+      showModalBottomSheet(context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+        builder: (context) => IDCardPanel());
+    }
+  }
 
   _IDCardPanelState createState() => _IDCardPanelState();
 }
@@ -118,7 +135,7 @@ class _IDCardPanelState extends State<IDCardPanel>
   }
 
   Future<bool?> _loadBuildingAccess() async {
-    if (StringUtils.isNotEmpty(Config().padaapiUrl) && StringUtils.isNotEmpty(Config().padaapiApiKey) && StringUtils.isNotEmpty(Auth2().authCard?.uin)) {
+    if (_hasBuildingAccess && StringUtils.isNotEmpty(Config().padaapiUrl) && StringUtils.isNotEmpty(Config().padaapiApiKey) && StringUtils.isNotEmpty(Auth2().authCard?.uin)) {
       String url = "${Config().padaapiUrl}/access/${Auth2().authCard?.uin}";
       Map<String, String> headers = {
         HttpHeaders.acceptHeader : 'application/json',
@@ -211,6 +228,7 @@ class _IDCardPanelState extends State<IDCardPanel>
     String? buildingAccessTime = AppDateTime().formatDateTime(_buildingAccessTime, format: 'MMM dd, yyyy HH:mm a');
     double buildingAccessStatusHeight = 24;
     double qrCodeImageSize = _buildingAccessIconSize + buildingAccessStatusHeight - 2;
+    bool hasQrCode = (0 < (_userQRCodeContent?.length ?? 0));
 
     if (_loadingBuildingAccess) {
       buildingAccessIcon = Container(width: _buildingAccessIconSize, height: _buildingAccessIconSize, child:
@@ -229,6 +247,8 @@ class _IDCardPanelState extends State<IDCardPanel>
       buildingAccessIcon = Container(height: (qrCodeImageSize / 2 - buildingAccessStatusHeight - 6));
       buildingAccessStatus = Localization().getString('widget.id_card.label.building_access.not_available', defaults: 'NOT\nAVAILABLE', language: 'en');
     }
+    bool hasBuildingAccess = _hasBuildingAccess && (0 < (Auth2().authCard?.uin?.length ?? 0));
+
     
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
     Column(children: <Widget>[
@@ -288,15 +308,17 @@ class _IDCardPanelState extends State<IDCardPanel>
 
       Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
         
-        Visibility(visible: (0 < (_userQRCodeContent?.length ?? 0)), child: Column(children: [
+        Visibility(visible: hasQrCode, child: Column(children: [
           Text(Auth2().authCard!.cardNumber ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
           Container(height: 8),
           QrImage(data: _userQRCodeContent ?? "", size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ),
         ],),),
 
-        Container(width: 20),
+        Visibility(visible: hasQrCode && hasBuildingAccess, child:
+          Container(width: 20),
+        ),
 
-        Visibility(visible: (0 < (Auth2().authCard?.uin?.length ?? 0)), child: Column(children: [
+        Visibility(visible: hasBuildingAccess, child: Column(children: [
           Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
           Container(height: 8),
           buildingAccessIcon,
@@ -352,6 +374,9 @@ class _IDCardPanelState extends State<IDCardPanel>
     String? qrCodeContent = Auth2().authCard!.magTrack2;
     return ((qrCodeContent != null) && (0 < qrCodeContent.length)) ? qrCodeContent : Auth2().authCard?.uin;
   }
+
+  bool get _hasBuildingAccess => FlexUI().hasFeature('safer');
+
 }
 
 

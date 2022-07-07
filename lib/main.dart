@@ -22,12 +22,12 @@ import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Gies.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/LiveStats.dart';
@@ -44,6 +44,9 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Voter.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/service/WPGUFMRadio.dart';
+import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/service/WellnessRings.dart';
 
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
@@ -125,10 +128,14 @@ void main() async {
     DeviceCalendar(),
     Events(),
     Groups(),
-    Gies(),
+    CheckList("gies"),
+    CheckList("new_student"),
     Canvas(),
     Rewards(),
     OnCampus(),
+    Wellness(),
+    WellnessRings(),
+    WPGUFMRadio(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // Laundries(),

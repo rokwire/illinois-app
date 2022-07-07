@@ -377,6 +377,9 @@
 	} else if ([[call method] isEqualToString:@"enableMyLocation"]) {
 		bool enableMyLocation = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;
 		[_mapView enableMyLocation:enableMyLocation];
+	} else if ([[call method] isEqualToString:@"viewPoi"]) {
+		//TBD: implement
+		result(@(true));
 	} else {
 		result(FlutterMethodNotImplemented);
 	}

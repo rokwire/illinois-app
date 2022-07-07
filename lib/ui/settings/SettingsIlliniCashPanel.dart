@@ -19,9 +19,10 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/model/illinicash/Transaction.dart';
+import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -45,6 +46,18 @@ class SettingsIlliniCashPanel extends StatefulWidget {
 
   @override
   _SettingsIlliniCashPanelState createState() => _SettingsIlliniCashPanelState();
+
+  static void present(BuildContext context) {
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.illini_cash', 'Illini Cash is not available while offline.'));
+    }
+    else if (!Auth2().isOidcLoggedIn) {
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.illini_cash', 'You need to be logged in to access Illini Cash.'));
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: SettingsIlliniCashPanel.routeName), builder: (context) => SettingsIlliniCashPanel()));
+    }
+  }
 }
 
 class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> implements NotificationsListener {

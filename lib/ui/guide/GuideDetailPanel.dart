@@ -106,7 +106,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                 button: true,
                 child: GestureDetector(onTap: _onTapFavorite, child:
                   Container(padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
-                    Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true,)
+                    Image.asset(_isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,)
                   )
             ),),),),
           ],)
@@ -214,6 +214,16 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
           }
         }
       }
+    }
+
+    String? costHtml = JsonUtils.stringValue(Guide().entryValue(_guideEntry, 'cost'));
+    if (StringUtils.isNotEmpty(costHtml)) {
+      contentList.add(
+        Padding(padding: EdgeInsets.only(top: 15, bottom: 5), child:
+          Html(data: costHtml,
+            onLinkTap: (url, context, attributes, element) => _onTapLink(url),
+            style: { "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero), },
+      ),),);
     }
 
     return (0 < contentList.length) ? 

@@ -61,7 +61,6 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
     super.initState();
 
     NotificationService().subscribe(this,[
-      Assets.notifyChanged,
       Localization.notifyLocaleChanged,
       Assets.notifyChanged
     ]);
@@ -93,12 +92,6 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
       //We need to refresh because the text fields are preloaded with the locale
       _data?.reload();
       setState(() {});
-    }
-    else if (name == Assets.notifyChanged) {
-      setState(() {
-        _loadPrivacyData();
-      });
-
     }
   }
 
@@ -897,7 +890,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                     Container(width: 9,),
                     Container(padding: EdgeInsets.only(right: 20), child: RotationTransition(
                         turns: _iconTurns,
-                        child: Image.asset(isEnabled? "images/down-arrow-orange.png": "images/down-arrow-orange-off.png", excludeFromSemantics: true))),
+                        child: Image.asset(isEnabled? "images/arrow-down-orange.png": "images/arrow-down-orange-off.png", excludeFromSemantics: true))),
                   ],
                 )))),
         !infoExpanded? Container():

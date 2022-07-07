@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -32,6 +34,19 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 
 class CreateStadiumPollPanel extends StatefulWidget {
+  
+  static void present(BuildContext context) {
+    if (!Auth2().isOidcLoggedIn) {
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.create_stadium_poll', 'You need to be logged in to create Stadium Poll.'));
+    }
+    else if (!Auth2().hasRole('stadium poll manager')) {
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.no_rights.create_stadium_poll', 'You have no rights to create a Stadium Poll.'));
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => CreateStadiumPollPanel()));
+    }
+  }
+
   _CreateStadiumPollPanelState createState() => _CreateStadiumPollPanelState();
 }
 

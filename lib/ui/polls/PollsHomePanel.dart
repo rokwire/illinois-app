@@ -305,7 +305,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     if (0 < pols1Len) {
       polls1!.forEach((poll){
         Group? group = _getGroup(poll.groupId);
-        content.add(_PollCard(poll: poll, group: group));
+        content.add(PollCard(poll: poll, group: group));
         content.add(_constructListSeparator());
       });
     }
@@ -313,7 +313,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     if (0 < pols2Len) {
       polls2!.forEach((poll){
         Group? group = _getGroup(poll.groupId);
-        content.add(_PollCard(poll: poll, group: group));
+        content.add(PollCard(poll: poll, group: group));
         content.add(_constructListSeparator());
       });
     }
@@ -631,7 +631,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       _loadMyGroupsIfNeeded().then((_) {
         Set<String>? groupIds = _myGroupIds;
         if (CollectionUtils.isNotEmpty(groupIds)) {
-          Groups().loadGroupPolls(groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
+          Polls().getGroupPolls(groupIds: groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
             if (result != null) {
               if (_groupPolls == null) {
                 _groupPolls = [];
@@ -660,7 +660,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Future<void> _reloadMyGroups() async {
-    _myGroups = await Groups().loadGroups(myGroups: true);
+    _myGroups = await Groups().loadGroups(contentType: GroupsContentType.my);
   }
 
   Set<String>? get _myGroupIds {
@@ -837,15 +837,15 @@ enum _PollType { myPolls, recentPolls, groupPolls }
 
 enum _PollFilterTabPosition { left, center, right }
 
-class _PollCard extends StatefulWidget{
+class PollCard extends StatefulWidget{
   final Poll? poll;
   final Group? group;
 
-  const _PollCard({Key? key, this.poll, this.group}) : super(key: key);
+  const PollCard({Key? key, this.poll, this.group}) : super(key: key);
   _PollCardState createState() => _PollCardState();
 }
 
-class _PollCardState extends State<_PollCard>{
+class _PollCardState extends State<PollCard>{
   List<GlobalKey>? _progressKeys;
   double? _progressWidth;
 

@@ -21,10 +21,11 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/ui/AcademicsPanel.dart';
-import 'package:illinois/ui/NavigatePanel.dart';
-import 'package:illinois/ui/WellnessPanel.dart';
+import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
+import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -50,7 +51,6 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
-import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
@@ -61,7 +61,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/service/Canvas.dart';
 
-enum RootTab { Home, Favorites, Athletics, Explore, Browse, Navigate, Academics, Wellness }
+enum RootTab { Home, Favorites, Athletics, Explore, Browse, Maps, Academics, Wellness }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -589,14 +589,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (rootTab == RootTab.Browse) {
       return BrowsePanel();
     }
-    else if (rootTab == RootTab.Navigate) {
-      return NavigatePanel();
+    else if (rootTab == RootTab.Maps) {
+      return ExplorePanel(rootTabDisplay: true, mapDisplayType: ListMapDisplayType.Map);
     }
     else if (rootTab == RootTab.Academics) {
-      return AcademicsPanel();
+      return AcademicsHomePanel();
     }
     else if (rootTab == RootTab.Wellness) {
-      return WellnessPanel(rootTabDisplay: true,);
+      return WellnessHomePanel(rootTabDisplay: true,);
     }
     else {
       return null;
@@ -634,7 +634,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebaseInboxNotification() {
-    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => InboxHomePanel()));
+    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
   }
 }
 
@@ -655,8 +655,8 @@ RootTab? rootTabFromString(String? value) {
     else if (value == 'browse') {
       return RootTab.Browse;
     }
-    else if (value == 'navigate') {
-      return RootTab.Navigate;
+    else if (value == 'maps') {
+      return RootTab.Maps;
     }
     else if (value == 'academics') {
       return RootTab.Academics;

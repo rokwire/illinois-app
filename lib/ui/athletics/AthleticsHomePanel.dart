@@ -16,7 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/ui/settings/SettingsHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -141,10 +141,8 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                             itemCount: (_visibleGames != null) ? _visibleGames!.length : 0,
                             itemBuilder: (context, index) {
                               Game game = _visibleGames![index];
-                              return _AthleticsCard(
-                                game: game,
-                                onTap: () => _onTapAthleticsGame(context, game),
-                              );
+                              return AthleticsCard(game: game, onTap: () => _onTapAthleticsGame(context, game),
+                                showImage: true, showDescription: true, showInterests: true, showGetTickets: true,);
                             },
                             controller: ScrollController(),
                           ),
@@ -233,7 +231,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                 children: <Widget>[
                                   Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 16),
-                                    child: AthleticsTeamsWidget(handleLabelClick: true,),
+                                    child: AthleticsTeamsWidget(handleTeamTap: true,),
                                   ),
                                   Container(
                                     height: 40,
@@ -437,14 +435,14 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   void _onTapSettings() {
     Analytics().logSelect(target: "Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomePanel()));
+    SettingsHomeContentPanel.present(context);
   }
 
   void _onTapMoreUpcomingEvents() {
     Analytics().logSelect(target: "More Events");
     if (Connectivity().isNotOffline) {
       ExploreFilter initialFilter = ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3});
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events, initialFilter: initialFilter)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events, initialFilter: initialFilter)));
     }
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.see_more_events', 'See more events is not available while offline.'));
@@ -540,17 +538,31 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
   }
 }
 
-class _AthleticsCard extends StatefulWidget {
+class AthleticsCard extends StatefulWidget {
   final Game game;
   final GestureTapCallback? onTap;
+  final EdgeInsetsGeometry margin;
+  final bool showImage;
+  final bool showDescription;
+  final bool showInterests;
+  final bool showGetTickets;
 
-  _AthleticsCard({required this.game, this.onTap});
+  static const EdgeInsetsGeometry imageMargin = const EdgeInsets.only(left: 20, right: 20);
+  static const EdgeInsetsGeometry regularMargin = const EdgeInsets.only(left: 20, right: 20, top: 20);
+
+  AthleticsCard({required this.game, this.onTap,
+    EdgeInsetsGeometry? margin,
+    this.showImage = false,
+    this.showDescription = false,
+    this.showInterests = false,
+    this.showGetTickets = false}) :
+    margin = margin ?? (showImage ? imageMargin : regularMargin);
 
   @override
   _AthleticsCardState createState() => _AthleticsCardState();
 }
 
-class _AthleticsCardState extends State<_AthleticsCard> implements NotificationsListener {
+class _AthleticsCardState extends State<AthleticsCard> implements NotificationsListener {
 
   static const EdgeInsets _detailPadding = EdgeInsets.only(bottom: 12, left: 24, right: 24);
   static const EdgeInsets _iconPadding = EdgeInsets.only(right: 5);
@@ -580,205 +592,106 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
   Widget build(BuildContext context) {
     String? sportKey = widget.game.sport?.shortName;
     SportDefinition? sport = Sports().getSportByShortName(sportKey);
-    String sportName = (sport != null) ? sport.name! : '';
-    bool isTicketedSport = (sport != null) ? sport.ticketed! : false;
-    bool isGetTicketsVisible = isTicketedSport && (widget.game.links?.tickets != null);
-    bool showImage =
-        (isTicketedSport && !StringUtils.isEmpty(widget.game.imageUrl));
+    String sportName = sport?.name ?? '';
+    bool isTicketedSport = sport?.ticketed ?? false;
+    bool showImage = widget.showImage && StringUtils.isNotEmpty(widget.game.imageUrl) && isTicketedSport;
+    bool isGetTicketsVisible = widget.showGetTickets &&  StringUtils.isNotEmpty(widget.game.links?.tickets) && isTicketedSport;
     bool isFavorite = Auth2().isFavorite(widget.game);
     String? interestsLabelValue = _getInterestsLabelValue();
     bool showInterests = StringUtils.isNotEmpty(interestsLabelValue);
+    String? description = widget.game.shortDescription;
+    bool showDescription = widget.showDescription && StringUtils.isNotEmpty(description);
 
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: widget.onTap,
-      child: Stack(
-        alignment:
-        showImage ? Alignment.bottomCenter : Alignment.topCenter,
-        children: <Widget>[
-          Container(
-            child: Column(
-              children: <Widget>[
-                Stack(
-                  alignment: showImage
-                      ? Alignment.bottomCenter
-                      : Alignment.topCenter,
-                  children: <Widget>[
-                    showImage
-                        ? Positioned(
-                        child: Image.network(
-                          widget.game.imageUrl!,
-                          semanticLabel: "Sports",
-                        ))
-                        : Container(height: 0),
-                    showImage
-                        ? Container(
-                      height: 72,
-                      color: Styles().colors!.fillColorSecondaryTransparent05,
-                    )
-                        : Container(height: 0)
-                  ],
-                ),
-                showImage
-                    ? Container(
-                  height: 112,
-                  width: double.infinity,
-                  child: Image.asset('images/slant-down-right.png',
-                    color: Styles().colors!.fillColorSecondary,
-                    fit: BoxFit.fill,
-                    excludeFromSemantics: true
+    return GestureDetector(behavior: HitTestBehavior.translucent, onTap: widget.onTap, child:
+      Stack(alignment: showImage ? Alignment.bottomCenter : Alignment.topCenter, children: <Widget>[
+        Column(children: <Widget>[
+          Stack(alignment: showImage ? Alignment.bottomCenter : Alignment.topCenter, children: <Widget>[
+            showImage? Positioned(child:
+              Image.network(widget.game.imageUrl!, semanticLabel: "Sports",)
+            ) : Container(),
+            showImage ? Container(height: 72, color: Styles().colors!.fillColorSecondaryTransparent05,) : Container(height: 0)
+          ],),
+          showImage ? Container(height: 112, width: double.infinity, child:
+            Image.asset('images/slant-down-right.png', color: Styles().colors!.fillColorSecondary, fit: BoxFit.fill, excludeFromSemantics: true),
+          ) : Container(),
+          showImage ? Container(height: 140, color: Styles().colors!.background,) : Container()
+        ],),
+        Padding(padding: widget.margin, child:
+          Stack(alignment: Alignment.topCenter, children: [
+            Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [const BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
+              Padding(padding: EdgeInsets.only(bottom: ((showInterests && !isTicketedSport) ? 0 : 12)), child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Padding(padding: EdgeInsets.only(left: 20, right: 0), child:
+                    Row(children: <Widget>[
+                      Semantics(button: true, child:
+                        GestureDetector(onTap: () => _onTapSportCategory(sport!), child:
+                          Padding(padding: EdgeInsets.only(top:24), child:
+                            Container(color: Styles().colors!.fillColorPrimary, child:
+                              Padding(padding: EdgeInsets.all(5), child:
+                                Text(sportName.toUpperCase(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, letterSpacing: 1.0, color: Colors.white),),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(child: Container(),),
+                      Visibility(visible: Auth2().canFavorite, child:
+                        GestureDetector(behavior: HitTestBehavior.opaque, onTap: _onTapSave, child:
+                          Semantics(
+                            label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx( 'widget.card.button.favorite.on.title', 'Add To Favorites'),
+                            hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx( 'widget.card.button.favorite.on.hint', ''),
+                            excludeSemantics: true, child:
+                            Padding(padding: EdgeInsets.only(right: 24, top: 24, left: 24, bottom: 8), child:
+                              Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],),
                   ),
-                )
-                    : Container(height: 0),
-                Container(
-                  height: 140,
-                  color: Styles().colors!.background,
-                )
-              ],
-            ),
-          ),
-          Padding(
-              padding: EdgeInsets.only(
-                  left: 20, right: 20, top: (showImage ? 0 : 20)),
-              child: Stack(alignment: Alignment.topCenter, children: [
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(4))),
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: ((showInterests &&
-                        !(isTicketedSport)) ? 0 : 12)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 20, right: 0),
-                          child: Row(
-                            children: <Widget>[
-                              Semantics(button: true,child:
-                              GestureDetector(
-                                  onTap: () => _onTapSportCategory(sport!),
-                                  child: Padding(
-                                    padding: EdgeInsets.only(top:24),
-                                    child:Container(
-                                      color: Styles().colors!.fillColorPrimary,
-                                      child: Padding(
-                                        padding: EdgeInsets.all(5),
-                                        child: Text(
-                                          sportName.toUpperCase(),
-                                          style: TextStyle(
-                                              fontFamily: Styles().fontFamilies!.bold,
-                                              fontSize: 14,
-                                              letterSpacing: 1.0,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                    ),))),
-                              Expanded(
-                                child: Container(),
-                              ),
-                              Visibility(visible: Auth2().canFavorite,
-                                child: GestureDetector(
-                                    behavior: HitTestBehavior.opaque,
-                                    onTap: _onTapSave,
-                                    child: Semantics(
-                                        label: isFavorite
-                                            ? Localization().getStringEx(
-                                            'widget.card.button.favorite.off.title',
-                                            'Remove From Favorites')
-                                            : Localization().getStringEx(
-                                            'widget.card.button.favorite.on.title',
-                                            'Add To Favorites'),
-                                        hint: isFavorite ? Localization()
-                                            .getStringEx(
-                                            'widget.card.button.favorite.off.hint',
-                                            '') : Localization().getStringEx(
-                                            'widget.card.button.favorite.on.hint',
-                                            ''),
-                                        excludeSemantics: true,
-                                        child: Container(child: Padding(
-                                            padding: EdgeInsets.only(
-                                                right: 24,
-                                                top: 24,
-                                                left: 24,
-                                                bottom: 8),
-                                            child: Image.asset(isFavorite
-                                                ? 'images/icon-star-selected.png'
-                                                : 'images/icon-star.png',
-                                                excludeFromSemantics: true)
-                                        ))
-                                    )),)
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 24),
-                          child: Text(
-                            widget.game.title,
-                            style: TextStyle(
-                                fontSize: 24,
-                                color: Styles().colors!.fillColorPrimary,
-                                fontWeight: FontWeight.w900),
-                          ),
-                        ),
-                        _athleticsDetails(),
-                        _athleticsDescription(),
-                        Visibility(visible: showInterests,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment
-                                  .start,
-                              children: <Widget>[
-                                Container(
-                                  height: 1,
-                                  color: Styles().colors!.surfaceAccent,),
-                                Padding(padding: EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .start,
-                                    children: <Widget>[
-                                      Text(Localization().getStringEx(
-                                          'widget.card.label.interests',
-                                          'Because of your interest in:'),
-                                        style: TextStyle(
-                                            color: Styles().colors!.textBackground,
-                                            fontSize: 12,
-                                            fontFamily: Styles().fontFamilies!.bold),),
-                                      Text(StringUtils.ensureNotEmpty(interestsLabelValue),
-                                        style: TextStyle(
-                                            color: Styles().colors!.textBackground,
-                                            fontSize: 12,
-                                            fontFamily: Styles().fontFamilies!.medium),)
-                                    ],),)
-                              ],)),
-                        Visibility(
-                            visible: isGetTicketsVisible,
-                            child: Padding(
-                              padding:
-                              EdgeInsets.symmetric(horizontal: 20),
-                              child: RoundedButton(
-                                label: Localization().getStringEx('widget.athletics_card.button.get_tickets.title', 'Get Tickets'),
-                                hint: Localization().getStringEx('widget.athletics_card.button.get_tickets.hint', ''),
-                                backgroundColor: Colors.white,
-                                fontSize: 16,
-                                borderColor: Styles().colors!.fillColorSecondary,
-                                textColor: Styles().colors!.fillColorPrimary,
-                                onTap: _onTapGetTickets,
-                              ),
-                            ))
-                      ],
+                  Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
+                    Text(widget.game.title, style: TextStyle(fontSize: 24, color: Styles().colors!.fillColorPrimary, fontWeight: FontWeight.w900),),
+                  ),
+                  _athleticsDetails(),
+                  Visibility(visible: showDescription, child:
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                      _divider(),
+                      Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
+                        Text(description ?? '', style: TextStyle( fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground),),
+                      )
+                    ]),
+                  ),
+                  Visibility(visible: showInterests, child:
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                      Container(height: 1,color: Styles().colors!.surfaceAccent,),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+                        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                          Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style: TextStyle(color: Styles().colors!.textBackground, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),),
+                          Text(StringUtils.ensureNotEmpty(interestsLabelValue), style: TextStyle(color: Styles().colors!.textBackground, fontSize: 12, fontFamily: Styles().fontFamilies!.medium),)
+                        ],),
+                      )
+                    ],),
+                  ),
+                  Visibility(visible: isGetTicketsVisible, child:
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 20), child:
+                      RoundedButton(
+                        label: Localization().getStringEx('widget.athletics_card.button.get_tickets.title', 'Get Tickets'),
+                        hint: Localization().getStringEx('widget.athletics_card.button.get_tickets.hint', ''),
+                        backgroundColor: Colors.white,
+                        fontSize: 16,
+                        borderColor: Styles().colors!.fillColorSecondary,
+                        textColor: Styles().colors!.fillColorPrimary,
+                        onTap: _onTapGetTickets,
+                      ),
                     ),
                   ),
-                ),
-                !showImage
-                    ? Container(
-                    height: 7, color: Styles().colors!.fillColorPrimary)
-                    : Container(),
-              ])),
-        ],
-      ),
+                ],),
+              ),
+            ),
+            !showImage ? Container(height: 7, color: Styles().colors!.fillColorPrimary) : Container(),
+          ]),
+        ),
+      ],),
     );
   }
 
@@ -871,27 +784,6 @@ class _AthleticsCardState extends State<_AthleticsCard> implements Notifications
     } else {
       return null;
     }
-  }
-
-  Widget _athleticsDescription() {
-    String? description = widget.game.shortDescription;
-    return ((description != null) && description.isNotEmpty)
-        ? Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-                _divider(),
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                    child: Text(
-                      description,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.medium,
-                          fontSize: 16,
-                          color: Styles().colors!.textBackground),
-                    ))
-              ])
-        : Container();
   }
 
   Widget _divider() {

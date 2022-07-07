@@ -223,7 +223,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                         'widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true)
+                    child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)
                 )))
         )),)
       ],
@@ -770,7 +770,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   void _addRecentItem(){
     if(!widget.previewMode)
-      RecentItems().addRecentItem(RecentItem.fromOriginalType(widget.event));
+      RecentItems().addRecentItem(RecentItem.fromSource(widget.event));
   }
 
   void _onTapGetTickets(String? ticketsUrl) {

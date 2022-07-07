@@ -84,7 +84,6 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
           boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
       ),
-      clipBehavior: Clip.none,
       child: Stack(children: [
         GestureDetector(onTap: _onTapEntry, child:
           Semantics(button: true, child:
@@ -105,7 +104,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
             child:
             GestureDetector(onTap: _onTapFavorite, child:
               Container(padding: EdgeInsets.only(top:16, right:16, left: 20, bottom: 20), child:
-                Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true,)
+                Image.asset(_isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,)
           ),)),),),
       ],),
     );

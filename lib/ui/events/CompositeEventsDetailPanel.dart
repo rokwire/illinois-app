@@ -200,7 +200,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                         'widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
+                    child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png')
                 ))
         )),)
       ],
@@ -524,7 +524,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   void _addRecentItem() {
-    RecentItems().addRecentItem(RecentItem.fromOriginalType(widget.parentEvent));
+    RecentItems().addRecentItem(RecentItem.fromSource(widget.parentEvent));
   }
 
   void _onTapGetTickets(String? ticketsUrl) {
@@ -743,7 +743,7 @@ class _EventEntry extends StatelessWidget {
                       hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                           'widget.card.button.favorite.on.hint', ''),
                       button: true,
-                      child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
+                      child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png')
                   ))
           )),)
         ],),),

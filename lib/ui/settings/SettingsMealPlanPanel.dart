@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/model/illinicash/Transaction.dart';
+import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -38,6 +41,18 @@ class SettingsMealPlanPanel extends StatefulWidget {
 
   @override
   _SettingsMealPlanPanelState createState() => _SettingsMealPlanPanelState();
+
+  static void present(BuildContext context) {
+    if (Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.meal_plan', 'University Housing Meal Plan is not available while offline.'));
+    }
+    else if (!Auth2().isOidcLoggedIn) {
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.illini_cash', 'You need to be logged in to access University Housing Meal Plan.'));
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: SettingsIlliniCashPanel.routeName), builder: (context) => SettingsMealPlanPanel()));
+    }
+  }
 }
 
 class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implements NotificationsListener {

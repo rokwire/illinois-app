@@ -3,6 +3,10 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -10,26 +14,29 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeCampusHighlightsWidget extends StatefulWidget {
 
-  final StreamController<void>? refreshController;
+  final String? favoriteId;
+  final StreamController<String>? updateController;
 
-  HomeCampusHighlightsWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeCampusHighlightsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: title,
+    );
+
+  static String get title => Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Guide Highlights');
+  
   @override
   _HomeCampusHighlightsWidgetState createState() => _HomeCampusHighlightsWidgetState();
 }
 
 class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget> implements NotificationsListener {
-
-  static const int _maxItems = 3;
 
   List<Map<String, dynamic>>? _promotedItems;
 
@@ -38,15 +45,18 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     super.initState();
 
     NotificationService().subscribe(this, [
+      Config.notifyConfigChanged,
       Guide.notifyChanged,
       Auth2UserPrefs.notifyRolesChanged,
       AppLivecycle.notifyStateChanged,
       Auth2.notifyCardChanged,
     ]);
 
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-        _updatePromotedItems();
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+          _updatePromotedItems();
+        }
       });
     }
 
@@ -63,7 +73,12 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Guide.notifyChanged) {
+    if (name == Config.notifyConfigChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if (name == Guide.notifyChanged) {
       _updatePromotedItems();
     }
     else if (name == Auth2UserPrefs.notifyRolesChanged) {
@@ -82,13 +97,11 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   @override
   Widget build(BuildContext context) {
     return Visibility(visible: CollectionUtils.isNotEmpty(_promotedItems), child:
-      Column(children: [
-          SectionSlantHeader(
-            title: Localization().getStringEx('widget.home_campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
-            titleIconAsset: 'images/campus-tools.png',
-            children: _buildPromotedList()
-          ),
-        ]),
+        HomeSlantWidget(favoriteId: widget.favoriteId,
+          title: Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
+          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+          child: Column(children: _buildPromotedList(),) 
+        ),
     );
   }
 
@@ -104,7 +117,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   List<Widget> _buildPromotedList() {
     List<Widget> contentList = <Widget>[];
     if (_promotedItems != null) {
-      int promotedCount = min(_promotedItems!.length, _maxItems);
+      int promotedCount = min(_promotedItems!.length, Config().homeCampusHighlightsCount);
       for (int index = 0; index < promotedCount; index++) {
         Map<String, dynamic>? promotedItem = _promotedItems![index];
         if (contentList.isNotEmpty) {
@@ -112,22 +125,18 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
         }
         contentList.add(GuideEntryCard(promotedItem));
       }
-      if (_maxItems < _promotedItems!.length) {
-        contentList.add(Container(height: 16,));
-        contentList.add(RoundedButton(
-          label: Localization().getStringEx('widget.home_campus_guide_highlights.button.more.title', 'View All'),
-          hint: Localization().getStringEx('widget.home_campus_guide_highlights.button.more.hint', 'Tap to view all highlights'),
-          borderColor: Styles().colors!.fillColorSecondary,
-          textColor: Styles().colors!.fillColorPrimary,
-          backgroundColor: Styles().colors!.white,
-          onTap: () => _showAll(),
-        ));
+      if (promotedCount < _promotedItems!.length) {
+          contentList.add(LinkButton(
+            title: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.title', 'View All'),
+            hint: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.hint', 'Tap to view all highlights'),
+            onTap: _onSeeAll,
+          ));
       }
     }
     return contentList;
   }
 
-  void _showAll() {
+  void _onSeeAll() {
     Analytics().logSelect(target: "HomeCampusHighlightsWidget View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _promotedItems, contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'))));
   }
