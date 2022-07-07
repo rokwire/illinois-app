@@ -904,38 +904,65 @@ class _PollCardState extends State<PollCard>{
       Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends."), style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 15, fontWeight: FontWeight.w500),) :
       Column(children: _buildCheckboxOptions(),);
 
-    return Container(child:
-      Semantics(
-        container: true,
-        child: Column(children: <Widget>[ Container(padding: EdgeInsets.symmetric(),
-          decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(5)),
-          child: Padding(padding: EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-          <Widget>[
-            Visibility(visible: (widget.group != null), child: Padding(padding: EdgeInsets.only(bottom: 10), child: Row(children: [
-              Padding(padding: EdgeInsets.only(right: 3), child: Text(Localization().getStringEx('panel.polls_home.card.group.label', 'Group:'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14))),
-              Expanded(child: Text(StringUtils.ensureNotEmpty(groupName), overflow: TextOverflow.ellipsis, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
-            ]))),
-            Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus",
-            child: Padding(padding: EdgeInsets.only(bottom: 12), child: Row(children: <Widget>[
-              Text(StringUtils.ensureNotEmpty(pollVotesStatus), style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),),
-              Text('  ', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12,),),
-              Expanded(child:
-              Text(pollStatus ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, ),),
+    return Semantics(container: true, child:
+      Column(children: <Widget>[
+        Container(decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(5)), child:
+          Padding(padding: EdgeInsets.all(16), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Visibility(visible: (widget.group != null), child:
+                Padding(padding: EdgeInsets.only(bottom: 10), child:
+                  Row(children: [
+                    Padding(padding: EdgeInsets.only(right: 3), child:
+                      Text(Localization().getStringEx('panel.polls_home.card.group.label', 'Group:'), style:
+                        TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14),
+                      ),
+                    ),
+                    Expanded(child:
+                      Text(StringUtils.ensureNotEmpty(groupName), overflow: TextOverflow.ellipsis, style:
+                        TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)
+                      ),
+                    ),
+                  ]),
+                ),
               ),
-              Expanded(child: Container()),
-              Text(pin, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12, ),)
-            ],),),
-            ),
-            Row(children: <Widget>[Expanded(child: Container(),)],),
-            Padding(padding: EdgeInsets.symmetric(vertical: 0),child:
-            Text(poll.title!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, height: 1.2 ),),),
-            Container(height:12),
-            cardBody,
-            Container(height:25),
-            Column(children: footerWidgets,),
-          ]
-            ,),),
-      ),],)));
+              Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus", child:
+                Padding(padding: EdgeInsets.only(bottom: 12), child:
+                  Row(children: <Widget>[
+                    Text(StringUtils.ensureNotEmpty(pollVotesStatus), style:
+                      TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),
+                    ),
+                    Text('  ', style:
+                      TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12,),
+                    ),
+                    Expanded(child:
+                      Text(pollStatus ?? '', style:
+                        TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, ),
+                      ),
+                    ),
+                    Expanded(child: Container()),
+                    Text(pin, style:
+                      TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12, ),
+                    )
+                  ],),
+                ),
+              ),
+              Row(children: <Widget>[
+                Expanded(child: Container(),)
+              ],),
+              Padding(padding: EdgeInsets.symmetric(vertical: 0),child:
+                Text(poll.title!, style:
+                  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, height: 1.2 ),
+                ),
+              ),
+              Container(height:12),
+              cardBody,
+              Container(height:25),
+              Column(children: footerWidgets,),
+            ]),
+          ),
+        ),
+      ],),
+    );
   }
 
   List<Widget> _buildCheckboxOptions() {
