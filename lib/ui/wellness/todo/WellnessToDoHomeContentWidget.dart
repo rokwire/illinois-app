@@ -402,7 +402,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       late String msg;
       if (success) {
         msg = Localization()
-            .getStringEx('panel.wellness.todo.items.completed.clear.succeeded.msg', 'Completed To-Do items are deleted successfully.');
+            .getStringEx('panel.wellness.todo.items.completed.clear.succeeded.msg', 'Completed To-Do items were deleted successfully.');
       } else {
         msg = Localization().getStringEx('panel.wellness.todo.items.completed.clear.failed.msg', 'Failed to delete completed To-Do items.');
       }
