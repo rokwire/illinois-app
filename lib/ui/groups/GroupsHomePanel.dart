@@ -638,7 +638,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   void _onTapUserProfileImage() {
     Analytics().logSelect(target: "User Profile Image");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsProfileContentPanel()));
+    SettingsProfileContentPanel.present(context);
   }
   
   bool get _canCreateGroup {
