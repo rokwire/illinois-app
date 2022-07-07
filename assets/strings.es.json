@@ -2426,6 +2426,8 @@
 
     "widget.home.suggested_events.label.events_for_you":"Eventos sugeridos",
     "widget.home.suggested_events.label.events_for_you.sub_title":"Curada por tus intereses",
+    "widget.home.suggested_events.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.suggested_events.text.empty.description": "There are no suggested events available.",
     "widget.home.suggested_events.button.all.title":"Ver todo",
     "widget.home.suggested_events.button.all.hint":"Toca para ver todos los eventos",
 

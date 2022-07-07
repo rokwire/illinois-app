@@ -2426,7 +2426,9 @@
 
 	"widget.home.suggested_events.label.events_for_you":"建議的事件",
 	"widget.home.suggested_events.label.events_for_you.sub_title":"从您的兴趣出发",
-	"widget.home.suggested_events.button.all.title":"查看全部",
+	"widget.home.suggested_events.text.empty": "Whoops! Nothing to see here.",
+	"widget.home.suggested_events.text.empty.description": "There are no suggested events available.",
+"widget.home.suggested_events.button.all.title":"查看全部",
 	"widget.home.suggested_events.button.all.hint":"點按即可查看所有活動",
 
 	"widget.home.recent_items.label.header.title":"最近瀏覽過的",
