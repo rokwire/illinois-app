@@ -424,7 +424,8 @@ class WellnessRings with Service{
     }
   }
 
-  Future<WellnessRingDefinition?> _requestGetRingDefinition({String? ringId}) async {
+  // ignore: do_not_use_environment TBD make it private 
+  Future<WellnessRingDefinition?> requestGetRingDefinition({String? ringId}) async {
     //TBD ENABLED
     String url = '${Config().wellnessUrl}/user/rings';
     if(ringId!=null){
