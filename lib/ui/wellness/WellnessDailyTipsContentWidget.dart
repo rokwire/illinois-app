@@ -104,7 +104,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     return Padding(padding: EdgeInsets.only(top: 16), child:
       Semantics(label: Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'), hint: Localization().getStringEx('panel.wellness.sections.dimensions.hint', 'Tap to see the 8 Dimensions of Wellness'), button: true, image: true, child:
         InkWell(onTap: _onTapEightDimensionsImage, child:
-          Image.asset('images/wellness-wheel-2019.png', width: 45, height: 45),
+          Image.asset('images/wellness-wheel-thumbnail.png', width: 45, height: 45),
         ),
       ),
     );
