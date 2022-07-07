@@ -252,24 +252,27 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   Widget _buildDueTimeContainer() {
-    return Padding(
-        padding: EdgeInsets.only(top: 17),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Padding(
-              padding: EdgeInsets.only(bottom: 5),
-              child: _buildFieldLabel(label: Localization().getStringEx('panel.wellness.todo.item.due_time.field.label', 'TIME DUE'))),
-          GestureDetector(
-              onTap: _onTapDueTime,
-              child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                  decoration:
-                      BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
-                  child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                    Text(StringUtils.ensureNotEmpty(_formattedDueTime),
-                        style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)),
-                    Expanded(child: Container())
-                  ])))
-        ]));
+    return Visibility(
+        visible: (_dueDate != null),
+        child: Padding(
+            padding: EdgeInsets.only(top: 17),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Padding(
+                  padding: EdgeInsets.only(bottom: 5),
+                  child: _buildFieldLabel(label: Localization().getStringEx('panel.wellness.todo.item.due_time.field.label', 'TIME DUE'))),
+              GestureDetector(
+                  onTap: _onTapDueTime,
+                  child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                      decoration:
+                          BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
+                      child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                        Text(StringUtils.ensureNotEmpty(_formattedDueTime),
+                            style:
+                                TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)),
+                        Expanded(child: Container())
+                      ])))
+            ])));
   }
 
   Widget _buildSelectedReminderTypeContainer() {

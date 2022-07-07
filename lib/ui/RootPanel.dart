@@ -26,7 +26,6 @@ import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:rokwire_plugin/service/events.dart';
@@ -37,12 +36,10 @@ import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -100,7 +97,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Guide.notifyGuideDetail,
       Canvas.notifyCanvasEventDetail,
       Localization.notifyStringsUpdated,
-      Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
       Polls.notifyPresentVote,
@@ -172,9 +168,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       if (mounted) {
         setState(() { });
       }
-    }
-    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _FavoritesSavedDialog.show(context);
     }
     else if (name == FlexUI.notifyChanged) {
       _updateContent();
@@ -666,94 +659,4 @@ RootTab? rootTabFromString(String? value) {
     }
   }
   return null;
-}
-
-class _FavoritesSavedDialog extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _FavoritesSavedDialogState();
-  }
-
-  static void show(BuildContext? context) {
-    bool favoriteDialogWasShown = (Storage().favoritesDialogWasVisible == true);
-    if (favoriteDialogWasShown || context == null) {
-      return;
-    }
-
-    Storage().favoritesDialogWasVisible = true;
-    showDialog(
-        context: context,
-        builder: (_) => Material(
-              type: MaterialType.transparency,
-              child: _FavoritesSavedDialog(),
-            ));
-  }
-}
-
-class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-      Container(
-        height: 50,
-      ),
-      Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15),
-          child: Container(
-              decoration: BoxDecoration(
-                color: Styles().colors!.fillColorPrimary,
-                border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2.0),
-                borderRadius: BorderRadius.circular(4.0),
-              ),
-              child: Padding(
-                  padding: EdgeInsets.all(24),
-                  child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-                      Expanded(
-                          flex: 5,
-                          child: Text(
-                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')
-                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title", " and if it is an event, also your calendar") :"") + ".",
-                            style: TextStyle(
-                              color: Styles().colors!.white,
-                              fontSize: 16,
-                              fontFamily: Styles().fontFamilies!.bold,
-                            ),
-                          )),
-                      InkWell(onTap: _onTapClose, child:
-                        Semantics(button: true, label: Localization().getStringEx("dialog.close.title","Close"), child:
-                          Image.asset('images/close-white.png', excludeFromSemantics: true,)))
-                    ]),
-                    Semantics(button: true, child:
-                    Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: GestureDetector(
-                        onTap: _onViewAll,
-                        child: Text(
-                          Localization().getStringEx("widget.favorites_saved_dialog.button.view", "View"),
-                          style: TextStyle(
-                              color: Styles().colors!.white,
-                              fontSize: 14,
-                              fontFamily: Styles().fontFamilies!.medium,
-                              decoration: TextDecoration.underline,
-                              decorationThickness: 1,
-                              decorationColor: Styles().colors!.fillColorSecondary),
-                        ),
-                      ),
-                    ))
-                  ]))))
-    ]));
-  }
-
-  void _onTapClose() {
-    Analytics().logAlert(text: "Event Saved", selection: "close");
-    Navigator.pop(context, "");
-  }
-
-  void _onViewAll() {
-    Analytics().logAlert(text: "Event Saved", selection: "View All");
-    Navigator.pop(context, "");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
-  }
 }

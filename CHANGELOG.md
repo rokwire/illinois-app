@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace Lorem Ipsum strings for Dinings and Groups sections in Browse panel [#1906](https://github.com/rokwire/illinois-app/issues/1906).
 ### Fixed
 - Do not push the same panel on top when tapping on the root header bar [#1909](https://github.com/rokwire/illinois-app/issues/1909).
+- Various fixes in the UI [#1910](https://github.com/rokwire/illinois-app/issues/1910).
 
 ## [4.0.45] - 2022-07-06
 ### Changed

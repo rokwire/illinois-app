@@ -800,7 +800,7 @@
 	"panel.onboarding2.email.sign_up.title.text": "Sign Up with Email",
     "panel.onboarding2.email.link.title.text": "Add Your Email Address",
 	"panel.onboarding2.email.sign_in.description.text": "Please enter your password to sign in with your email.",
-	"panel.onboarding2.email.sign_up.description.text": "Please enter a password to create a new account for your email.",
+	"panel.onboarding2.email.sign_up.description.text": "Please enter a password to create a new account with your email.",
     "panel.onboarding2.email.link.description.text": "Please enter a password to add your email address.",
 	"panel.onboarding2.email.label.email.text": "Email Address:",
 	"panel.onboarding2.email.label.email.hint": "",
@@ -818,8 +818,9 @@
     "panel.onboarding2.email.button.sign_up.hint": "",
     "panel.onboarding2.email.button.link.text": "Add",
     "panel.onboarding2.email.button.link.hint": "",
+    "panel.onboarding2.email.password_instructions.text": "Use 8 or more characters containing a mix of lowercase letters, uppercase letters, a number, and a special character.",
     "panel.onboarding2.email.validation.password_empty.text": "Please enter your password.",
-    "panel.onboarding2.email.validation.password_weak.text": "Password must be at least 8 characters long and must contain a lowercase letter, uppercase letter, number, and a special character.",
+    "panel.onboarding2.email.validation.password_weak.text": "Password must use 8 or more characters containing a mix of lowercase letters, uppercase letters, a number, and a special character.",
     "panel.onboarding2.email.validation.passwords_dont_match.text": "Passwords do not match.",
     "panel.onboarding2.email.sign_in.failed.text": "Sign in failed. An unexpected error occurred.",
     "panel.onboarding2.email.sign_up.failed.text": "Sign up failed. An unexpected error occurred.",
@@ -1638,7 +1639,7 @@
     "panel.bus_pass.error.default.text": "No se puede cargar el pase de autobús",
 
     "panel.wellness.home.header.sections.title": "Bienestar",
-    "panel.wellness.section.daily_tips.label": "Consejos diarios de bienestar",
+    "panel.wellness.section.daily_tips.label": "Consejo de bienestar de hoy",
     "panel.wellness.section.rings.label": "Anillos de bienestar diarios",
     "panel.wellness.section.todo.label": "Lista de quehaceres",
     "panel.wellness.section.resources.label": "Recursos de bienestar",
@@ -2568,7 +2569,7 @@
     "widget.home.tout.customize.label": "personalizar",
     "widget.home.tout.button.info.label": "Información",
     "widget.home.tout.button.info.hint": "Toca para más información",
-    "widget.home.tout.popup.info.content": "La aplicación de Illinois usa su nombre de <a href='{{student_self_service_url}}'>Autoservicio para estudiantes</a>. Puede cambiar su nombre preferido en Información personal y Nombre preferido.",
+    "widget.home.tout.popup.info.content": "Para cambiar su nombre en la aplicación de Illinois, revise las <a href='{{preferred_first_name_url}}'>instrucciones de nombre preferido</a>.",
 
     "widget.home.wellness.todo.title": "MI LISTA DE TAREAS",
     "widget.home.wellness.todo.items.today.label": "ARTÍCULOS DE HOY",
@@ -2726,10 +2727,6 @@
 
     "widget.privacy_level_slider.label.left.title": "Máxima privacidad",
     "widget.privacy_level_slider.label.right.title": "La mayoría de las funciones",
-
-    "widget.favorites_saved_dialog.title":"This starred item has been added to your saved list" ,
-    "widget.favorites_saved_dialog.calendar.title": " and if it is an event, also your calendar" ,
-    "widget.favorites_saved_dialog.button.view":"View saved" ,
 
     "widget.explore_card.small.view_all.title": "Ver todos los eventos",
 
