@@ -82,66 +82,66 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          _buildToDoListHeader(),
           _buildTabButtonRow(),
+          _buildManageButtonsRow(),
           _buildCalendarWidget(),
           _buildItemsContent(),
           _buildClearCompletedItemsButton()
         ]));
   }
 
-  Widget _buildToDoListHeader() {
-    return Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Flexible(
-          flex: 2,
-          child: RoundedButton(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              label: Localization().getStringEx('panel.wellness.todo.items.add.button', 'Add Item'),
-              rightIconPadding: EdgeInsets.symmetric(horizontal: 12),
-              borderColor: Styles().colors!.fillColorSecondary,
-              textColor: Styles().colors!.fillColorPrimary,
-              leftIcon: Image.asset('images/icon-add-14x14.png', color: Styles().colors!.fillColorPrimary),
-              fontSize: 14,
-              fontFamily: Styles().fontFamilies!.bold,
-              onTap: _onTapAddItem)),
-      Container(width: 15),
-      Flexible(
-          flex: 3,
-          child: RoundedButton(
-              label: Localization().getStringEx('panel.wellness.todo.categories.manage.button', 'Manage Categories'),
-              borderColor: Styles().colors!.fillColorPrimary,
-              textColor: Styles().colors!.fillColorPrimary,
-              fontSize: 14,
-              fontFamily: Styles().fontFamilies!.bold,
-              onTap: _onTapManageCategories))
+  Widget _buildTabButtonRow() {
+    return Row(children: [
+      Expanded(
+          child: _TabButton(
+              position: _TabButtonPosition.first,
+              selected: (_selectedTab == _ToDoTab.daily),
+              label: Localization().getStringEx('panel.wellness.todo.tab.daily.label', 'Daily'),
+              hint: Localization().getStringEx('panel.wellness.todo.tab.daily.hint', ''),
+              onTap: () => _onTabChanged(tab: _ToDoTab.daily))),
+      Expanded(
+          child: _TabButton(
+              position: _TabButtonPosition.middle,
+              selected: (_selectedTab == _ToDoTab.category),
+              label: Localization().getStringEx('panel.wellness.todo.tab.category.label', 'Category'),
+              hint: Localization().getStringEx('panel.wellness.todo.tab.category.hint', ''),
+              onTap: () => _onTabChanged(tab: _ToDoTab.category))),
+      Expanded(
+          child: _TabButton(
+              position: _TabButtonPosition.last,
+              selected: (_selectedTab == _ToDoTab.reminders),
+              label: Localization().getStringEx('panel.wellness.todo.tab.reminders.label', 'Reminders'),
+              hint: Localization().getStringEx('panel.wellness.todo.tab.reminders.hint', ''),
+              onTap: () => _onTabChanged(tab: _ToDoTab.reminders)))
     ]);
   }
 
-  Widget _buildTabButtonRow() {
+  Widget _buildManageButtonsRow() {
     return Padding(
         padding: EdgeInsets.only(top: 14),
-        child: Row(children: [
-          Expanded(
-              child: _TabButton(
-                  position: _TabButtonPosition.first,
-                  selected: (_selectedTab == _ToDoTab.daily),
-                  label: Localization().getStringEx('panel.wellness.todo.tab.daily.label', 'Daily'),
-                  hint: Localization().getStringEx('panel.wellness.todo.tab.daily.hint', ''),
-                  onTap: () => _onTabChanged(tab: _ToDoTab.daily))),
-          Expanded(
-              child: _TabButton(
-                  position: _TabButtonPosition.middle,
-                  selected: (_selectedTab == _ToDoTab.category),
-                  label: Localization().getStringEx('panel.wellness.todo.tab.category.label', 'Category'),
-                  hint: Localization().getStringEx('panel.wellness.todo.tab.category.hint', ''),
-                  onTap: () => _onTabChanged(tab: _ToDoTab.category))),
-          Expanded(
-              child: _TabButton(
-                  position: _TabButtonPosition.last,
-                  selected: (_selectedTab == _ToDoTab.reminders),
-                  label: Localization().getStringEx('panel.wellness.todo.tab.reminders.label', 'Reminders'),
-                  hint: Localization().getStringEx('panel.wellness.todo.tab.reminders.hint', ''),
-                  onTap: () => _onTabChanged(tab: _ToDoTab.reminders)))
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Flexible(
+              flex: 2,
+              child: RoundedButton(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  label: Localization().getStringEx('panel.wellness.todo.items.add.button', 'Add Item'),
+                  rightIconPadding: EdgeInsets.symmetric(horizontal: 12),
+                  borderColor: Styles().colors!.fillColorSecondary,
+                  textColor: Styles().colors!.fillColorPrimary,
+                  leftIcon: Image.asset('images/icon-add-14x14.png', color: Styles().colors!.fillColorPrimary),
+                  fontSize: 14,
+                  fontFamily: Styles().fontFamilies!.bold,
+                  onTap: _onTapAddItem)),
+          Container(width: 15),
+          Flexible(
+              flex: 3,
+              child: RoundedButton(
+                  label: Localization().getStringEx('panel.wellness.todo.categories.manage.button', 'Manage Categories'),
+                  borderColor: Styles().colors!.fillColorPrimary,
+                  textColor: Styles().colors!.fillColorPrimary,
+                  fontSize: 14,
+                  fontFamily: Styles().fontFamilies!.bold,
+                  onTap: _onTapManageCategories))
         ]));
   }
 
