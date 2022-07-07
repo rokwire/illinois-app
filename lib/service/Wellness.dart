@@ -47,8 +47,8 @@ class Wellness with Service implements NotificationsListener {
   static const String notifyDailyTipChanged = "edu.illinois.rokwire.wellness.daily_tip.changed";
 
   static const String _contentCacheFileName = "wellness.content.json";
-  static const String _tipsContentCategoty = "wellness.tips";
-  static const List<String> _contentCategories = [_tipsContentCategoty];
+  static const String _tipsContentCategory = "wellness_tips";
+  static const List<String> _contentCategories = [_tipsContentCategory];
 
   File? _contentCacheFile;
   Map<String, dynamic>? _contentMap;
@@ -304,7 +304,7 @@ class Wellness with Service implements NotificationsListener {
   void refreshDailyTip() => _updateDailyTip(force: true);
 
   String? get _randomTipId {
-    Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategoty] : null;
+    Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategory] : null;
     List<dynamic>? entries = (tipsContent != null) ? JsonUtils.listValue(tipsContent['entries']) : null;
     if ((entries != null) && (0 < entries.length)) {
       int entryIndex = Random().nextInt(entries.length);
@@ -315,13 +315,13 @@ class Wellness with Service implements NotificationsListener {
   }
 
   String? _tipString({String? tipId}) {
-    Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategoty] : null;
+    Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategory] : null;
     Map<String, dynamic>? strings = (tipsContent != null) ? JsonUtils.mapValue(tipsContent['strings']) : null;
     return _getContentString(strings, tipId);
   }
 
   bool _hasTip({String? tipId}) {
-    Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategoty] : null;
+    Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategory] : null;
     List<dynamic>? entries = (tipsContent != null) ? JsonUtils.listValue(tipsContent['entries']) : null;
     if ((entries != null) && (0 < entries.length)) {
       for (dynamic entry in entries) {

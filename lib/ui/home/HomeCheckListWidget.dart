@@ -32,10 +32,10 @@ class HomeCheckListWidget extends StatefulWidget{
   static String? title({required String contentKey}) => titleForKey(contentKey);
 
   static String? titleForKey(String contentKey) {
-    if (contentKey == "gies") {
+    if (contentKey == CheckList.giesOnboarding) {
       return Localization().getStringEx( 'widget.checklist.gies.title', 'iDegrees New Student Checklist');
     }
-    else if (contentKey == "new_student") {
+    else if (contentKey == CheckList.uiucOnboarding) {
       return Localization().getStringEx( 'widget.checklist.uiuc.title', 'New Student Checklist');
     }
     else {
