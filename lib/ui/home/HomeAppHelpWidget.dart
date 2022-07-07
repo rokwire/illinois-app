@@ -15,23 +15,18 @@
  */
 
 import 'dart:async';
-import 'dart:collection';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeAppHelpWidget extends StatefulWidget {
@@ -52,136 +47,41 @@ class HomeAppHelpWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeAppHelpWidgetState();
 }
 
-class _HomeAppHelpWidgetState extends State<HomeAppHelpWidget> implements NotificationsListener{
+class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget> {
 
-  List<String>? _displayCodes;
-  Set<String>? _availableCodes;
-
-  @override
-  void initState() {
-    super.initState();
-
-    NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
-      Auth2UserPrefs.notifyFavoritesChanged,
-    ]);
-
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-        }
-      });
-    }
-
-    _availableCodes = _buildAvailableCodes();
-    _displayCodes = _buildDisplayCodes();
-  }
+  @override String? get favoriteId => widget.favoriteId;
+  @override String? get title => HomeAppHelpWidget.title;
+  @override String? get emptyTitle => Localization().getStringEx("widget.home.app_help.text.empty", "Whoops! Nothing to see here.");
+  @override String? get emptyMessage => Localization().getStringEx("widget.home.app_help.text.empty.description", "Tap the \u2606 on items in App Help so you can quickly find them here.");
 
   @override
-  void dispose() {
-    NotificationService().unsubscribe(this);
-    super.dispose();
-  }
-
-  // NotificationsListener
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      _updateAvailableCodes();
+  Widget? widgetFromCode(String? code) {
+    if ((code == 'video_tutorial') && _canVideoTutorial) {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.app_help.video_tutorial.button.title', 'Video Tutorial'),
+        description: Localization().getStringEx('widget.home.app_help.video_tutorial.button.description', 'Play video tutorial to learn great new features.'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        onTap: _onVideoTutorial,
+      );
     }
-    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _updateDisplayCodes();
+    else if ((code == 'feedback') && _canFeedback) {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.app_help.feedback.button.title', 'Provide Feedback'),
+        description: Localization().getStringEx('widget.home.app_help.feedback.button.description', 'Enjoying the app? Missing something? The University of Illinois Smart, Healthy Communities Initiative needs your ideas and input. Thank you!'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        onTap: _onFeedback,
+      );
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> commandsList = _buildCommandsList();
-    return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: Localization().getStringEx('widget.home.app_help.header.title',  'App Help'),
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      child: Column(children: commandsList,),
-      //flatHeight: 0, slantHeight: 0, childPadding: EdgeInsets.all(16),
-    ) : Container();
-  }
-
-  List<Widget> _buildCommandsList() {
-    List<Widget> contentList = <Widget>[];
-    if (_displayCodes != null) {
-      for (String code in _displayCodes!.reversed) {
-        if ((_availableCodes == null) || _availableCodes!.contains(code)) {
-          Widget? contentEntry;
-          if ((code == 'video_tutorial') && _canVideoTutorial) {
-            contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widget.home.app_help.video_tutorial.button.title', 'Video Tutorial'),
-              description: Localization().getStringEx('widget.home.app_help.video_tutorial.button.description', 'Play video tutorial to learn great new features.'),
-              favorite: HomeFavorite(code, category: widget.favoriteId),
-              onTap: _onVideoTutorial,
-            );
-          }
-          else if ((code == 'feedback') && _canFeedback) {
-            contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widget.home.app_help.feedback.button.title', 'Provide Feedback'),
-              description: Localization().getStringEx('widget.home.app_help.feedback.button.description', 'Enjoying the app? Missing something? The University of Illinois Smart, Healthy Communities Initiative needs your ideas and input. Thank you!'),
-              favorite: HomeFavorite(code, category: widget.favoriteId),
-              onTap: _onFeedback,
-            );
-          }
-          else if ((code == 'faqs') && _canFAQs) {
-            contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widget.home.app_help.faqs.button.title', 'FAQs'),
-              description: Localization().getStringEx('widget.home.app_help.faqs.button.description', 'Check your question in frequently asked questions.'),
-              favorite: HomeFavorite(code, category: widget.favoriteId),
-              onTap: _onFAQs,
-            );
-          }
-
-          if (contentEntry != null) {
-            if (contentList.isNotEmpty) {
-              contentList.add(Container(height: 6,));
-            }
-            contentList.add(contentEntry);
-          }
-        }
-      }
-
+    else if ((code == 'faqs') && _canFAQs) {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.app_help.faqs.button.title', 'FAQs'),
+        description: Localization().getStringEx('widget.home.app_help.faqs.button.description', 'Check your question in frequently asked questions.'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        onTap: _onFAQs,
+      );
     }
-   return contentList;
-  }
-
-  Set<String>? _buildAvailableCodes() => JsonUtils.setStringsValue(FlexUI()['home.app_help']);
-
-  void _updateAvailableCodes() {
-    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home.app_help']);
-    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
-      setState(() {
-        _availableCodes = availableCodes;
-      });
-    }
-  }
-
-  List<String>? _buildDisplayCodes() {
-    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
-    if (favorites == null) {
-      // Build a default set of favorites
-      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.app_help'));
-      if (fullContent != null) {
-        favorites = LinkedHashSet<String>.from(fullContent.reversed);
-        Future.delayed(Duration(), () {
-          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites);
-        });
-      }
-    }
-    
-    return (favorites != null) ? List.from(favorites) : null;
-  }
-
-  void _updateDisplayCodes() {
-    List<String>? displayCodes = _buildDisplayCodes();
-    if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes) && mounted) {
-      setState(() {
-        _displayCodes = displayCodes;
-      });
+    else {
+      return null;
     }
   }
 

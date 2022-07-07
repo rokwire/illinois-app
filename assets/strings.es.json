@@ -2788,6 +2788,8 @@
     "widget.checklist.uiuc.logged_out": "You need to be logged in to access New Student Checklist.",
 
     "widget.home.app_help.header.title": "App Help",
+    "widget.home.app_help.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.app_help.text.empty.description": "Tap the \u2606 on items in App Help so you can quickly find them here.",
     "widget.home.app_help.video_tutorial.button.title": "Video Tutorial",
     "widget.home.app_help.video_tutorial.button.description": "Play video tutorial to learn great new features.",
     "widget.home.app_help.video_tutorial.label.offline": "Video Tutorial not available while offline.",
