@@ -123,7 +123,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconAsset: (contentItem == WellnessContent.struggling) ? 'images/external-link.png' : null,
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));
   }
