@@ -28,11 +28,14 @@ abstract class CheckList with Service implements NotificationsListener{
   //Custom actions
   static const String widgetActionRequestGroup  = "edu.illinois.rokwire.checklist.gies.widget.action.request.group";
 
+  static const String giesOnboarding = "gies_onboarding";
+  static const String uiucOnboarding = "uiuc_onboarding";
+
   // Singleton instance wrapper
   factory CheckList(String serviceName){
     switch (serviceName){
-      case "gies" : return _GiesCheckListInstanceWrapper();
-      case "new_student" : return _StudentCheckListInstanceWrapper();
+      case giesOnboarding : return _GiesCheckListInstanceWrapper();
+      case uiucOnboarding : return _StudentCheckListInstanceWrapper();
     }
     return _GiesCheckListInstanceWrapper(); //default
   }
@@ -161,7 +164,7 @@ abstract class CheckList with Service implements NotificationsListener{
 
     try {
       List<dynamic> result;
-      String contentItemCategory = _contentName + '_checklist';
+      String contentItemCategory = _contentName + '_checklists';
       Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': [contentItemCategory]}), auth: Auth2());
       List<dynamic>? responseList = (response?.statusCode == 200) ? JsonUtils.decodeList(response?.body)  : null;
       if (responseList != null) {
@@ -208,7 +211,7 @@ abstract class CheckList with Service implements NotificationsListener{
   }
 
   Future<dynamic> _loadUserInfo() async {
-    if(_contentName != "gies"){
+    if(_contentName != giesOnboarding){
       return null;
     }
     if (StringUtils.isEmpty(Config().gatewayUrl)) {
@@ -706,7 +709,7 @@ class _GiesCheckListInstanceWrapper extends CheckList{
 
   factory _GiesCheckListInstanceWrapper() => _instance;
 
-  _GiesCheckListInstanceWrapper._internal() : super.fromName("gies");
+  _GiesCheckListInstanceWrapper._internal() : super.fromName(CheckList.giesOnboarding);
 }
 
 class _StudentCheckListInstanceWrapper extends CheckList{
@@ -714,5 +717,5 @@ class _StudentCheckListInstanceWrapper extends CheckList{
 
   factory _StudentCheckListInstanceWrapper() => _instance;
 
-  _StudentCheckListInstanceWrapper._internal() : super.fromName("new_student");
+  _StudentCheckListInstanceWrapper._internal() : super.fromName(CheckList.uiucOnboarding);
 }
