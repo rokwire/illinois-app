@@ -216,7 +216,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   static String _getContentLabel(WellnessContent section, { String? language }) {
     switch (section) {
       case WellnessContent.dailyTips:
-        return _loadContentString('panel.wellness.section.daily_tips.label', 'Wellness Daily Tips', language: language);
+        return _loadContentString('panel.wellness.section.daily_tips.label', 'Today\'s Wellness Tip', language: language);
       case WellnessContent.rings:
         return _loadContentString('panel.wellness.section.rings.label', 'Daily Wellness Rings', language: language);
       case WellnessContent.todo:
