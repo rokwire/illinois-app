@@ -2496,6 +2496,8 @@
     "widget.home.campus_guide_highlights.button.all.hint": "Tap to view all highlights",
 
     "widget.home.safer.label.title": "Building Access",
+	"widget.home.safer.text.empty": "Whoops! Nothing to see here.",
+	"widget.home.safer.text.empty.description": "Tap the \u2606 on items in Building Access so you can quickly find them here.",
     "widget.home.safer.button.building_access.title": "Building Access",
     "widget.home.safer.button.building_access.description": "Check your current building access.",
     "widget.home.safer.button.test_locations.title": "Test Locations",
@@ -2506,13 +2508,13 @@
     "widget.home.safer.button.wellness_answer_center.description": "Get answers to your questions.",
     "widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
 
-    "widget.home.wallet.label.title": "Wallet",
-    "widget.home.wallet.text.empty": "Whoops! Nothing to see here.",
-    "widget.home.wallet.text.empty.description": "Tap the \u2606 on items in Wallet so you can quickly find them here.",
-
     "widget.home.wellness.label.title": "Wellness",
     "widget.home.wellness.text.empty": "Whoops! Nothing to see here.",
     "widget.home.wellness.text.empty.description": "Tap the \u2606 on items in Wellness so you can quickly find them here.",
+
+    "widget.home.wallet.label.title": "Wallet",
+    "widget.home.wallet.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.wallet.text.empty.description": "Tap the \u2606 on items in Wallet so you can quickly find them here.",
 
     "widget.home.wallet.illini_cash.title": "Illini Cash",
     "widget.home.wallet.illini_cash.label.current_balance": "Current Illini Cash Balance",
@@ -2810,6 +2812,8 @@
     "widget.home.app_help.faqs.panel.title": "FAQs",
 
     "widget.home.state_farm_center.header.title": "State Farm Center",
+    "widget.home.state_farm_center.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.state_farm_center.text.empty.description": "Tap the \u2606 on items in State Farm Center so you can quickly find them here.",
     "widget.home.state_farm_center.parking.button.title": "Parking",
     "widget.home.state_farm_center.parking.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     "widget.home.state_farm_center.wayfinding.button.title": "Wayfinding",
@@ -2818,11 +2822,15 @@
     "widget.home.state_farm_center.create_stadium_poll.button.description": "Vivamus aliquam hendrerit risus eget accumsan.",
 
     "widget.home.campus_links.header.title": "Campus Links",
+    "widget.home.campus_links.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.campus_links.text.empty.description": "Tap the \u2606 on items in Campus Links so you can quickly find them here.",
     "widget.home.campus_links.date_cat.button.title": "Due Date Catalog",
     "widget.home.campus_links.date_cat.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     "widget.home.campus_links.date_cat.label.offline": "Due Date Catalog not available while offline.",
 
     "widget.home.dinings.header.title": "Dining",
+    "widget.home.dinings.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.dinings.text.empty.description": "Tap the \u2606 on items in Dinings so you can quickly find them here.",
     "widget.home.dinings.all.button.title": "Residence Hall Dining",
     "widget.home.dinings.all.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     "widget.home.dinings.open.button.title": "Residence Hall Dining Open Now",

@@ -1,15 +1,11 @@
 import 'dart:async';
-import 'dart:collection';
-import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -41,147 +37,54 @@ class HomeSaferWidget extends StatefulWidget {
   _HomeSaferWidgetState createState() => _HomeSaferWidgetState();
 }
 
-class _HomeSaferWidgetState extends State<HomeSaferWidget> implements NotificationsListener {
+class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
 
   bool _buildingAccessAuthLoading = false;
-  List<String>? _displayCodes;
-  Set<String>? _availableCodes;
+
+  @override String? get favoriteId => widget.favoriteId;
+  @override String? get title => HomeSaferWidget.title;
+  @override String? get emptyTitle => Localization().getStringEx("widget.home.safer.text.empty", "Whoops! Nothing to see here.");
+  @override String? get emptyMessage => Localization().getStringEx("widget.home.safer.text.empty.description", "Tap the \u2606 on items in Building Access so you can quickly find them here.");
 
   @override
-  void initState() {
-    super.initState();
-
-    NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
-      Auth2UserPrefs.notifyFavoritesChanged,
-    ]);
-
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-        }
-      });
+  Widget? widgetFromCode(String? code) {
+    if (code == 'building_access') {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access'),
+        description: Localization().getStringEx('widget.home.safer.button.building_access.description', 'Check your current building access.'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        loading: _buildingAccessAuthLoading,
+        onTap: _onBuildingAccess,
+      );
+    }
+    else if (code == 'test_locations') {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.safer.button.test_locations.title', 'Test Locations'),
+        description: Localization().getStringEx('widget.home.safer.button.test_locations.description', 'Find test locations'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        onTap: _onTestLocations,
+      );
+    }
+    else if (code == 'my_mckinley') {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley'),
+        description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'MyMcKinley Patient Health Portal'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        onTap: _onMyMcKinley,
+      );
+    }
+    else if (code == 'wellness_answer_center') {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.title', 'Answer Center'),
+        description: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.description', 'Get answers to your questions.'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        onTap: _onWellnessAnswerCenter,
+      );
+    }
+    else {
+      return null;
     }
 
-    _availableCodes = _buildAvailableCodes();
-    _displayCodes = _buildDisplayCodes();
-  }
-
-  @override
-  void dispose() {
-    NotificationService().unsubscribe(this);
-    super.dispose();
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      _updateAvailableCodes();
-    }
-    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _updateDisplayCodes();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> commandsList = _buildCommandsList();
-    return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
-        title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
-        titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-        child: Column(children: commandsList,),
-    ) : Container();
-  }
-
-  List<Widget> _buildCommandsList() {
-    List<Widget> contentList = <Widget>[];
-    if (_displayCodes != null) {
-      for (String code in _displayCodes!.reversed) {
-        if ((_availableCodes == null) || _availableCodes!.contains(code)) {
-          Widget? contentEntry;
-          if (code == 'building_access') {
-            contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access'),
-              description: Localization().getStringEx('widget.home.safer.button.building_access.description', 'Check your current building access.'),
-              favorite: HomeFavorite(code, category: widget.favoriteId),
-              loading: _buildingAccessAuthLoading,
-              onTap: _onBuildingAccess,
-            );
-          }
-          else if (code == 'test_locations') {
-            contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widget.home.safer.button.test_locations.title', 'Test Locations'),
-              description: Localization().getStringEx('widget.home.safer.button.test_locations.description', 'Find test locations'),
-              favorite: HomeFavorite(code, category: widget.favoriteId),
-              onTap: _onTestLocations,
-            );
-          }
-          else if (code == 'my_mckinley') {
-            contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley'),
-              description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'MyMcKinley Patient Health Portal'),
-              favorite: HomeFavorite(code, category: widget.favoriteId),
-              onTap: _onMyMcKinley,
-            );
-          }
-          else if (code == 'wellness_answer_center') {
-            contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.title', 'Answer Center'),
-              description: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.description', 'Get answers to your questions.'),
-              favorite: HomeFavorite(code, category: widget.favoriteId),
-              onTap: _onWellnessAnswerCenter,
-            );
-          }
-
-          if (contentEntry != null) {
-            if (contentList.isNotEmpty) {
-              contentList.add(Container(height: 6,));
-            }
-            contentList.add(contentEntry);
-          }
-        }
-      }
-
-    }
-   return contentList;
-  }
-
-  Set<String>? _buildAvailableCodes() => JsonUtils.setStringsValue(FlexUI()['home.safer']);
-
-  void _updateAvailableCodes() {
-    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home.safer']);
-    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
-      setState(() {
-        _availableCodes = availableCodes;
-      });
-    }
-  }
-
-  List<String>? _buildDisplayCodes() {
-    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
-    if (favorites == null) {
-      // Build a default set of favorites
-      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.safer'));
-      if (fullContent != null) {
-        favorites = LinkedHashSet<String>.from(fullContent.reversed);
-        Future.delayed(Duration(), () {
-          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites);
-        });
-      }
-    }
-    
-    return (favorites != null) ? List.from(favorites) : null;
-  }
-
-  void _updateDisplayCodes() {
-    List<String>? displayCodes = _buildDisplayCodes();
-    if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes) && mounted) {
-      setState(() {
-        _displayCodes = displayCodes;
-      });
-    }
   }
 
   void _onBuildingAccess() {

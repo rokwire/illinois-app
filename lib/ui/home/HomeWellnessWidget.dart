@@ -1,16 +1,11 @@
 import 'dart:async';
-import 'dart:collection';
-
-import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/model/wellness/WellnessReing.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Transportation.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/service/WellnessRings.dart';
@@ -22,7 +17,6 @@ import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -48,122 +42,28 @@ class HomeWellnessWidget extends StatefulWidget {
   State<HomeWellnessWidget> createState() => _HomeWellnessWidgetState();
 }
 
-class _HomeWellnessWidgetState extends State<HomeWellnessWidget> implements NotificationsListener {
+class _HomeWellnessWidgetState extends HomeCompoundWidgetState<HomeWellnessWidget> {
 
-  List<String>? _displayCodes;
-  Set<String>? _availableCodes;
+  //_HomeWellnessWidgetState() : super(direction: Axis.horizontal);
 
-  @override
-  void initState() {
-    NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
-      Auth2UserPrefs.notifyFavoritesChanged,
-    ]);
-
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-        }
-      });
-    }
-
-    _availableCodes = _buildAvailableCodes();
-    _displayCodes = _buildDisplayCodes();
-
-    super.initState();
-  }
+  @override String? get favoriteId => widget.favoriteId;
+  @override String? get title => HomeWellnessWidget.title;
+  @override String? get emptyTitle => Localization().getStringEx("widget.home.wellness.text.empty", "Whoops! Nothing to see here.");
+  @override String? get emptyMessage => Localization().getStringEx("widget.home.wellness.text.empty.description", "Tap the \u2606 on items in Wellness so you can quickly find them here.");
 
   @override
-  void dispose() {
-    NotificationService().unsubscribe(this);
-    super.dispose();
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      _updateAvailableCodes();
+  Widget? widgetFromCode(String? code) {
+    if (code == 'todo') {
+      return HomeToDoWellnessWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
     }
-    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _updateDisplayCodes();
+    else if (code == 'rings') {
+      return HomeRingsWellnessWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> commandsList = _buildCommandsList();
-    return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: HomeWellnessWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      child: Column(children: commandsList,),
-    ) : Container();
-  }
-
-  List<Widget> _buildCommandsList() {
-    List<Widget> contentList = <Widget>[];
-    if (_displayCodes != null) {
-      for (String code in _displayCodes!.reversed) {
-        if ((_availableCodes == null) || _availableCodes!.contains(code)) {
-          Widget? contentEntry;
-          if (code == 'todo') {
-            contentEntry = HomeToDoWellnessWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-          }
-          else if (code == 'rings') {
-            contentEntry = HomeRingsWellnessWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-          }
-          else if (code == 'tips') {
-            contentEntry = HomeDailyTipsWellnessWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
-          }
-
-          if (contentEntry != null) {
-            if (contentList.isNotEmpty) {
-              contentList.add(Container(height: 8,));
-            }
-            contentList.add(contentEntry);
-          }
-        }
-      }
+    else if (code == 'tips') {
+      return HomeDailyTipsWellnessWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
     }
-    return contentList;
-  }
-
-  //  List<dynamic>? contentListCodes = FlexUI()['home.wellness'];
-
-  Set<String>? _buildAvailableCodes() => JsonUtils.setStringsValue(FlexUI()['home.wellness']);
-
-  void _updateAvailableCodes() {
-    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home.wellness']);
-    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
-      setState(() {
-        _availableCodes = availableCodes;
-      });
-    }
-  }
-
-  List<String>? _buildDisplayCodes() {
-    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
-    if (favorites == null) {
-      // Build a default set of favorites
-      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.wellness'));
-      if (fullContent != null) {
-        favorites = LinkedHashSet<String>.from(fullContent.reversed);
-        Future.delayed(Duration(), () {
-          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites);
-        });
-      }
-    }
-    
-    return (favorites != null) ? List.from(favorites) : null;
-  }
-
-  void _updateDisplayCodes() {
-    List<String>? displayCodes = _buildDisplayCodes();
-    if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes) && mounted) {
-      setState(() {
-        _displayCodes = displayCodes;
-      });
+    else {
+      return null;
     }
   }
 }
