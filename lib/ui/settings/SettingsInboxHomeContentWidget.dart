@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -207,7 +206,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
       visible: _showBanner,
       child:GestureDetector(
         onTap: (){
-          Navigator.of(context).push(CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.preferences)));
+          SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.preferences);
         },
         child:Container(
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),

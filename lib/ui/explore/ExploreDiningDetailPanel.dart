@@ -759,7 +759,7 @@ class _DiningDetailState extends State<_DiningDetail> implements NotificationsLi
 
   void _onFoodFilersTapped(){
     Analytics().logSelect(target: "Food filters");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel(content: SettingsContent.food_filters)));
+    SettingsHomeContentPanel.present(context, content: SettingsContent.food_filters);
   }
 
 

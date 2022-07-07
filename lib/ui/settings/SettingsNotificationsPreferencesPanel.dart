@@ -80,7 +80,7 @@ class SettingsNotificationsPreferencesPanel extends StatelessWidget{
 
   void _onTapNotifications(BuildContext context) {
     Analytics().logSelect(target: "Notifications");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: SettingsNotificationsContent.preferences)));
+    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.preferences);
   }
 
   void _onTapBluetooth(BuildContext context) {

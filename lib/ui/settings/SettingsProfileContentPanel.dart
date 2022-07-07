@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInfoContentWidget.dart';
@@ -27,13 +28,21 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class SettingsProfileContentPanel extends StatefulWidget {
+  static final String routeName = 'settings_profile_content_panel';
 
   final SettingsProfileContent? content;
 
-  SettingsProfileContentPanel({this.content});
+  SettingsProfileContentPanel._({this.content});
 
   @override
   _SettingsProfileContentPanelState createState() => _SettingsProfileContentPanelState();
+
+  static void present(BuildContext context, {SettingsProfileContent? content}) {
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            settings: RouteSettings(name: routeName), builder: (context) => SettingsProfileContentPanel._(content: content)));
+  }
 }
 
 class _SettingsProfileContentPanelState extends State<SettingsProfileContentPanel> implements NotificationsListener {

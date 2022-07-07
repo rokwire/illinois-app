@@ -31,12 +31,19 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class SettingsHomeContentPanel extends StatefulWidget {
+  static final String routeName = 'settings_home_content_panel';
+  
   final SettingsContent? content;
 
-  SettingsHomeContentPanel({this.content});
+  SettingsHomeContentPanel._({this.content});
 
   @override
   _SettingsHomeContentPanelState createState() => _SettingsHomeContentPanelState();
+
+  static void present(BuildContext context, {SettingsContent? content}) {
+    Navigator.push(context,
+        CupertinoPageRoute(settings: RouteSettings(name: routeName), builder: (context) => SettingsHomeContentPanel._(content: content)));
+  }
 }
 
 class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {

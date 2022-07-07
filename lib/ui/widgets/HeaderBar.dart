@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -327,18 +326,27 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
   }
 
   void onTapSettings(BuildContext context) {
-    Analytics().logSelect(target: "Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel()));
+    String? currentRouteName = ModalRoute.of(context)?.settings.name;
+    if (currentRouteName != SettingsHomeContentPanel.routeName) {
+      Analytics().logSelect(target: "Settings");
+      SettingsHomeContentPanel.present(context);
+    }
   }
 
   void onTapNotifications(BuildContext context) {
-    Analytics().logSelect(target: "Notifications");
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+    String? currentRouteName = ModalRoute.of(context)?.settings.name;
+    if (currentRouteName != SettingsNotificationsContentPanel.routeName) {
+      Analytics().logSelect(target: "Notifications");
+      SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+    }
   }
 
   void onTapPersonalInformations(BuildContext context) {
-    Analytics().logSelect(target: "Personal Information");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsProfileContentPanel()));
+    String? currentRouteName = ModalRoute.of(context)?.settings.name;
+    if (currentRouteName != SettingsProfileContentPanel.routeName) {
+      Analytics().logSelect(target: "Personal Information");
+      SettingsProfileContentPanel.present(context);
+    }
   }
 
 }

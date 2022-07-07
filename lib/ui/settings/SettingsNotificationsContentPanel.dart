@@ -33,9 +33,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 enum SettingsNotificationsContent { inbox, preferences }
 
 class SettingsNotificationsContentPanel extends StatefulWidget {
+  static final String routeName = 'settings_notifications_content_panel';
+
   final SettingsNotificationsContent? content;
 
-  SettingsNotificationsContentPanel({this.content});
+  SettingsNotificationsContentPanel._({this.content});
 
   static void present(BuildContext context, { SettingsNotificationsContent? content}) {
     if (content == SettingsNotificationsContent.inbox) {
@@ -46,11 +48,11 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
         AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.inbox', 'You need to be logged in to access Notifications.'));
       }
       else {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: content)));
+        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: routeName), builder: (context) => SettingsNotificationsContentPanel._(content: content)));
       }
     }
     else {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsNotificationsContentPanel(content: content)));
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: routeName), builder: (context) => SettingsNotificationsContentPanel._(content: content)));
     }
   }
 

@@ -435,7 +435,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   void _onTapSettings() {
     Analytics().logSelect(target: "Settings");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsHomeContentPanel()));
+    SettingsHomeContentPanel.present(context);
   }
 
   void _onTapMoreUpcomingEvents() {
