@@ -2439,6 +2439,8 @@
     "widget.home.suggested_events.button.all.hint":"Tap to view all events",
 
     "widget.home.recent_items.label.header.title":"Recently Viewed",
+    "widget.home.recent_items.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.recent_items.text.empty.description": "There are no recently viewed items available.",
     "widget.home.recent_items.button.all.title":"View All",
     "widget.home.recent_items.button.all.hint":"Tap to view all items",
 
