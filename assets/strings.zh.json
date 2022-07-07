@@ -2482,7 +2482,9 @@
 	"widget.home_create_poll.button.login.label":"登录",
 
 	"widget.home.campus_guide_highlights.label.heading": "校園指南亮點",
-	"widget.home.campus_guide_highlights.button.all.title": "查看全部",
+	"widget.home.campus_guide_highlights.text.empty": "Whoops! Nothing to see here.",
+	"widget.home.campus_guide_highlights.text.empty.description": "There are no active Campus Guide Highlights.",
+"widget.home.campus_guide_highlights.button.all.title": "查看全部",
 	"widget.home.campus_guide_highlights.button.all.hint": "點按即可查看所有亮點",
 
 	"widget.home.safer.label.title": "Building Access",

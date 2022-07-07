@@ -2482,6 +2482,8 @@
     "widget.home_create_poll.button.login.label":"Iniciar sesión",
 
     "widget.home.campus_guide_highlights.label.heading": "Puntos destacados de la guía del campus",
+    "widget.home.campus_guide_highlights.text.empty": "Whoops! Nothing to see here.",
+    "widget.home.campus_guide_highlights.text.empty.description": "There are no active Campus Guide Highlights.",
     "widget.home.campus_guide_highlights.button.all.title": "Ver todo",
     "widget.home.campus_guide_highlights.button.all.hint": "Toca para ver todos los aspectos destacados",
 
