@@ -116,12 +116,11 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
             child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                  _buildColorEntry(
-                      color: Styles().colors!.fillColorSecondary!, isSelected: (_selectedColor == Styles().colors!.fillColorSecondary)),
-                  _buildColorEntry(color: Styles().colors!.diningColor!, isSelected: (_selectedColor == Styles().colors!.diningColor)),
-                  _buildColorEntry(color: Styles().colors!.placeColor!, isSelected: (_selectedColor == Styles().colors!.placeColor)),
-                  _buildColorEntry(color: Styles().colors!.accentColor2!, isSelected: (_selectedColor == Styles().colors!.accentColor2)),
-                  _buildColorEntry(color: Styles().colors!.accentColor3!, isSelected: (_selectedColor == Styles().colors!.accentColor3)),
+                  _buildColorEntry(color: UiColors.fromHex('#E45434'), isSelected: (_selectedColor == UiColors.fromHex('#E45434'))),
+                  _buildColorEntry(color: UiColors.fromHex('#F5821E'), isSelected: (_selectedColor == UiColors.fromHex('#F5821E'))),
+                  _buildColorEntry(color: UiColors.fromHex('#54A747'), isSelected: (_selectedColor == UiColors.fromHex('#54A747'))),
+                  _buildColorEntry(color: UiColors.fromHex('#009FD4'), isSelected: (_selectedColor == UiColors.fromHex('#009FD4'))),
+                  _buildColorEntry(color: UiColors.fromHex('#1D58A7'), isSelected: (_selectedColor == UiColors.fromHex('#1D58A7'))),
                   _buildColorEntry(imageAsset: 'images/icon-color-edit.png'),
                 ]))));
   }

@@ -92,7 +92,6 @@ class Config extends rokwire.Config {
   String? get illiniCashTosUrl       => JsonUtils.stringValue(otherUniversityServices['illini_cash_tos_url']);
   String? get myIlliniUrl            => JsonUtils.stringValue(otherUniversityServices['myillini_url']);
   String? get feedbackUrl            => JsonUtils.stringValue(otherUniversityServices['feedback_url']);
-  String? get studentSelfServiceUrl  => JsonUtils.stringValue(otherUniversityServices['student_self_service_url']);
   String? get crisisHelpUrl          => JsonUtils.stringValue(otherUniversityServices['crisis_help_url']);
   String? get privacyPolicyUrl       => JsonUtils.stringValue(otherUniversityServices['privacy_policy_url']);
   String? get padaapiUrl             => JsonUtils.stringValue(otherUniversityServices['padaapi_url']);
@@ -103,6 +102,7 @@ class Config extends rokwire.Config {
   String? get videoTutorialCcUrl     => JsonUtils.stringValue(otherUniversityServices['video_tutorial_cc_url']);
   String? get wellness8DimensionsUrl => JsonUtils.stringValue(otherUniversityServices['wellness_8_dimensions_url']);
   String? get wpgufmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['wpgufm_radio_url']);
+  String? get preferredFirstNameStmntUrl => JsonUtils.stringValue(otherUniversityServices['preferred_first_name_stmnt_url']);
 
   // Getters: Platform Building Blocks
   String? get gatewayUrl             => JsonUtils.stringValue(platformBuildingBlocks['gateway_url']);
