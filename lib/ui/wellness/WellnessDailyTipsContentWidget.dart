@@ -150,7 +150,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   static Widget _buildEightDimensionsPopup(BuildContext context) {
     return Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
       ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
-        Container(color: Color(0xfffffcdf), child:
+        Container(color: Styles().colors!.white, child:
           Stack(children: [
             Padding(padding: EdgeInsets.symmetric(vertical: 32), child:
               Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
