@@ -67,7 +67,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   @override
   Widget build(BuildContext context) {
     String? imageUrl = _imageUrl;
-    String? title2 = _title2;
+    String? title2 = _firstName;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       (imageUrl != null) ? _buildImageWidget(imageUrl) : Container(),
       Container(padding: EdgeInsets.only(bottom: 16,), color: Styles().colors?.fillColorPrimary, child:
@@ -150,7 +150,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   String? get _title1 {
     if (_dayPart != null) {
       String greeting = AppDateTimeUtils.getDayPartGreeting(dayPart: _dayPart);
-      if (Auth2().firstName?.isNotEmpty ?? false) {
+      if (_firstName?.isNotEmpty ?? false) {
         return "$greeting,";
       }
       else {
@@ -162,8 +162,8 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
     }
   }
 
-  String? get _title2 {
-    return Auth2().firstName;
+  String? get _firstName {
+    return Auth2().account?.authType?.uiucUser?.firstName ?? Auth2().profile?.firstName;
   }
 
   bool _shouldUpdateImage({DayPart? dayPart}) {
