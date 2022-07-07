@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -42,11 +41,12 @@ class HomeWalletWidget extends StatefulWidget {
 
 class _HomeWalletWidgetState extends HomeCompoundWidgetState<HomeWalletWidget> {
 
+  _HomeWalletWidgetState() : super(direction: Axis.horizontal);
+
   @override String? get favoriteId => widget.favoriteId;
   @override String? get title => HomeWalletWidget.title;
   @override String? get emptyTitle => Localization().getStringEx("widget.home.wallet.text.empty", "Whoops! Nothing to see here.");
   @override String? get emptyMessage => Localization().getStringEx("widget.home.wallet.text.empty.description", "Tap the \u2606 on items in Wallet so you can quickly find them here.");
-  @override double  get pageHeight => max(20 * MediaQuery.of(context).textScaleFactor + 2 * 8, 18 + 2 * 16) + 1 + 24 * MediaQuery.of(context).textScaleFactor + 3 * 8 + 2;
 
   @override
   Widget? widgetFromCode(String? code) {

@@ -539,7 +539,7 @@ class HomeMessageCard extends StatelessWidget {
   HomeMessageCard({Key? key,
     this.title,
     this.message,
-    this.margin = const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
+    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
   }) : super(key: key);
   
   @override
@@ -599,9 +599,34 @@ class HomeProgressWidget extends StatelessWidget {
 
 abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T> implements NotificationsListener {
 
+  final Axis direction;
+  HomeCompoundWidgetState({this.direction = Axis.vertical});
+
+  // Overrides
+
+  String? get favoriteId;
+  String  get contentKey => 'home.$favoriteId';
+  
+  String? get title;
+  Image?  get titleIcon => Image.asset('images/campus-tools.png', excludeFromSemantics: true);
+  
+  String? get emptyTitle;
+  String? get emptyMessage;
+
+  double  get pageHeight => 0;
+  double  get pageSpacing => 16;
+  double  get contentSpacing => 16;
+  double  get contentInnerSpacing => 8;
+
+  @protected
+  Widget? widgetFromCode(String? code);
+
+  // Data
+
   List<String>? _favoriteCodes;
   Set<String>? _availableCodes;
   List<String>? _displayCodes;
+  
   PageController? _pageController;
   String? _currentCode;
   int _currentIndex = -1;
@@ -616,15 +641,17 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
     _availableCodes = _buildAvailableCodes();
     _favoriteCodes = _buildFavoriteCodes();
     _displayCodes = _buildDisplayCodes();
-
-    if (_displayCodes?.isNotEmpty ?? false) {
-      _currentIndex = 0;
-      _currentCode = _displayCodes?.first;
-    }
     
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? super.context).size.width;
-    double pageViewport = (screenWidth - 2 * pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
+    if (direction == Axis.horizontal) {
+      if (_displayCodes?.isNotEmpty ?? false) {
+        _currentIndex = 0;
+        _currentCode = _displayCodes?.first;
+      }
+
+      double screenWidth = MediaQuery.of(App.instance?.currentContext ?? super.context).size.width;
+      double pageViewport = (screenWidth - 2 * pageSpacing) / screenWidth;
+      _pageController = PageController(viewportFraction: pageViewport);
+    }
 
     super.initState();
   }
@@ -649,6 +676,8 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
     }
   }
 
+  // Content
+
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: favoriteId,
@@ -664,28 +693,35 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
       return HomeMessageCard(title: emptyTitle, message: emptyMessage,);
     }
     else if (_displayCodes?.length == 1) {
-      return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child:
+      return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: contentSpacing), child:
         widgetFromCode(_displayCodes?.first) ?? Container()
       );
     }
-    else {
+    else if (direction == Axis.horizontal) {
       List<Widget> pages = <Widget>[];
       for (String code in _displayCodes!) {
-        pages.add(Padding(padding: EdgeInsets.only(right: pageSpacing, bottom: 16), child: widgetFromCode(code) ?? Container()));
+        pages.add(Padding(padding: EdgeInsets.only(right: pageSpacing, bottom: contentSpacing), child: widgetFromCode(code) ?? Container()));
       }
 
-      return Padding(padding: EdgeInsets.only(top: 8), child:
-        Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-          ExpandablePageView(
-            controller: _pageController,
-            estimatedPageSize: pageHeight,
-            onPageChanged: _onCurrentPageChanged,
-            children: pages,
-          ),
+      return Container(constraints: BoxConstraints(minHeight: pageHeight), child:
+        ExpandablePageView(
+          controller: _pageController,
+          estimatedPageSize: pageHeight,
+          onPageChanged: _onCurrentPageChanged,
+          children: pages,
         ),
       );
     }
+    else { // (direction == Axis.vertical)
+      List<Widget> contentList = <Widget>[];
+      for (String code in _displayCodes!) {
+        contentList.add(Padding(padding: EdgeInsets.only(bottom: contentInnerSpacing), child: widgetFromCode(code) ?? Container()));
+      }
 
+      return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: max(contentSpacing - contentInnerSpacing, 0), ), child:
+        Column(children: contentList,),
+      );
+    }
   }
 
 
@@ -749,7 +785,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   }
 
   void _updateCurrentPage() {
-    if (_displayCodes?.isNotEmpty ?? false) {
+    if ((_displayCodes?.isNotEmpty ?? false) && (direction == Axis.horizontal)) {
       int currentPage = (_currentCode != null) ? _displayCodes!.indexOf(_currentCode!) : -1;
       if (currentPage < 0) {
         currentPage = max(0, min(_currentIndex, _displayCodes!.length - 1));
@@ -764,19 +800,4 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
       });
     }
   }
-
-  String? get favoriteId;
-  String  get contentKey => 'home.$favoriteId';
-  
-  String? get title;
-  Image?  get titleIcon => Image.asset('images/campus-tools.png', excludeFromSemantics: true);
-  
-  String? get emptyTitle;
-  String? get emptyMessage;
-
-  double  get pageHeight;
-  double  get pageSpacing => 16;
-
-  @protected
-  Widget? widgetFromCode(String? code);
 }
