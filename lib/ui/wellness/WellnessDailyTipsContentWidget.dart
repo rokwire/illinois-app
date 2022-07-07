@@ -126,7 +126,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
                           'is a state of optimal well-being that is oriented toward maximizing an individual\'s potential. This is a life-long process of moving towards enhancing your ')),
                   TextSpan(
                       text: Localization().getStringEx('panel.wellness.sections.description.footer.dimensions.text',
-                          'physical, mental, environmental, financial, spiritual, vocational, emotional and social wellness.'),
+                          'physical, mental, environmental, financial, spiritual, vocational, emotional, and social wellness.'),
                       style: TextStyle(fontFamily: Styles().fontFamilies!.bold))
                 ])));
   }
