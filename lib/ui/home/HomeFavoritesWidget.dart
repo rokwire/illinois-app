@@ -52,7 +52,7 @@ class HomeFavoritesWidget extends StatefulWidget {
     switch(favoriteKey) {
       case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.events', 'My Events');
       case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.dining', 'My Dining Locations');
-      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.athletics', 'My Athletics');
+      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.athletics', 'My Athletics Events');
       case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.news', 'My News');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.laundry', 'My Laundry');
       case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.inbox', 'My Notifications');
@@ -392,7 +392,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     switch(widget.favoriteKey) {
       case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.events', 'My Events are not available while offline.');
       case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.dining', 'My Dining Locations are not available while offline.');
-      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.athletics', 'My Athletics are not available while offline.');
+      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.athletics', 'My Athletics Events are not available while offline.');
       case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.news', 'My News are not available while offline.');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.laundry', 'My Laundry are not available while offline.');
       case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.inbox', 'My Notifications are not available while offline.');

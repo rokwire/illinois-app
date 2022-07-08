@@ -344,7 +344,7 @@
     "panel.browse.entry.my.my_game_day.title": "My Game Day",
     "panel.browse.entry.my.my_events.title": "My Events",
     "panel.browse.entry.my.my_dining.title": "My Dining Locations",
-    "panel.browse.entry.my.my_athletics.title": "My Athletics",
+    "panel.browse.entry.my.my_athletics.title": "My Athletics Events",
     "panel.browse.entry.my.my_news.title": "My News",
     "panel.browse.entry.my.my_laundry.title": "My Laundry",
     "panel.browse.entry.my.my_inbox.title": "My Notifications",
@@ -1066,7 +1066,7 @@
 
     "panel.saved.header.label": "Saved",
     "panel.saved.label.events": "My Events",
-    "panel.saved.label.athletics": "My Athletics",
+    "panel.saved.label.athletics": "My Athletics Events",
     "panel.saved.label.reminders": "My Reminders",
     "panel.saved.label.dining": "My Dining Locations",
     "panel.saved.label.news": "My News",
@@ -2587,7 +2587,7 @@
 
     "widget.home.favorites.title.events": "My Events",
     "widget.home.favorites.title.dining": "My Dining Locations",
-    "widget.home.favorites.title.athletics": "My Athletics",
+    "widget.home.favorites.title.athletics": "My Athletics Events",
     "widget.home.favorites.title.news": "My News",
     "widget.home.favorites.title.laundry": "My Laundry",
     "widget.home.favorites.title.campus_guide": "My Campus Guide",
@@ -2595,7 +2595,7 @@
 
     "widget.home.favorites.message.offline.events": "My Events are not available while offline.",
     "widget.home.favorites.message.offline.dining": "My Dining Locations are not available while offline.",
-    "widget.home.favorites.message.offline.athletics": "My Athletics are not available while offline.",
+    "widget.home.favorites.message.offline.athletics": "My Athletics Events are not available while offline.",
     "widget.home.favorites.message.offline.news": "My News are not available while offline.",
     "widget.home.favorites.message.offline.laundry": "My Laundry are not available while offline.",
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide are not available while offline.",

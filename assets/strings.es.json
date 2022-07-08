@@ -342,7 +342,7 @@
     "panel.browse.entry.my.my_game_day.title": "Mi dia de juego",
     "panel.browse.entry.my.my_events.title": "Mis eventos",
     "panel.browse.entry.my.my_dining.title": "Mis lugares para comer",
-    "panel.browse.entry.my.my_athletics.title": "Mi atletismo",
+    "panel.browse.entry.my.my_athletics.title": "Mis eventos de atletismo",
     "panel.browse.entry.my.my_news.title": "Mis noticias",
     "panel.browse.entry.my.my_laundry.title": "Mi colada",
     "panel.browse.entry.my.my_inbox.title": "Mis Notificaciones",
@@ -1064,7 +1064,7 @@
 
     "panel.saved.header.label": "Guardado",
     "panel.saved.label.events": "My Events",
-    "panel.saved.label.athletics": "My Athletics",
+    "panel.saved.label.athletics": "My Athletics Events",
     "panel.saved.label.reminders": "My Reminders",
     "panel.saved.label.dining": "My Dining Locations",
     "panel.saved.label.news": "My News",
@@ -2580,7 +2580,7 @@
 
     "widget.home.favorites.title.events": "Mis Eventos",
     "widget.home.favorites.title.dining": "Mis lugares para comer",
-    "widget.home.favorites.title.athletics": "Mi Atletismo",
+    "widget.home.favorites.title.athletics": "Mis eventos de atletismo",
     "widget.home.favorites.title.news": "Mis Noticias",
     "widget.home.favorites.title.laundry": "Mi Colada",
     "widget.home.favorites.title.campus_guide": "Guía de Mi Campus",
@@ -2588,7 +2588,7 @@
 
     "widget.home.favorites.message.offline.events": "Mis Eventos no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.dining": "Mis ubicaciones para cenar no están disponibles sin conexión.",
-    "widget.home.favorites.message.offline.athletics": "My Athletics no está disponible sin conexión.",
+    "widget.home.favorites.message.offline.athletics": "Mis eventos de atletismo no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.news": "Mis Noticias no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.laundry": "Mi Lavandería no está disponible sin conexión.",
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide no está disponible sin conexión.",
