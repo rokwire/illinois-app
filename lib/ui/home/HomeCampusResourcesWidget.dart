@@ -113,10 +113,8 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
     return contentCodes.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home.campus_resources.label.campus_tools', 'Campus Resources'),
         titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-        child: Padding(padding: EdgeInsets.only(bottom: 24), child:
-          HomeCampusResourcesGridWidget(favoriteCategory: widget.favoriteId, contentCodes: contentCodes, promptFavorite: true,)
-        )
-        ,
+        childPadding: HomeSlantWidget.defaultChildPadding,
+        child: HomeCampusResourcesGridWidget(favoriteCategory: widget.favoriteId, contentCodes: contentCodes, promptFavorite: true,)
     ) : Container();
   }
 

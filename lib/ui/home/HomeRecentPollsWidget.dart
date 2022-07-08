@@ -129,7 +129,6 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeRecentPollsWidget.title,
       titleIcon: Image.asset('images/icon-news.png'),
-      childPadding: EdgeInsets.zero,
       child: _buildContent(),
     );
   }

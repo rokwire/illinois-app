@@ -100,7 +100,6 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: widget._title,
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      childPadding: EdgeInsets.zero,
       child: _haveGroups ? _buildContent() : _buildEmpty(),
     );
   }

@@ -137,7 +137,6 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeRecentItemsWidget.title,
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      childPadding: EdgeInsets.zero,
       child: _buildContent(),
     );
   }

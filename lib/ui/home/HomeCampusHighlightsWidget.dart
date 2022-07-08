@@ -107,7 +107,6 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      childPadding: EdgeInsets.zero,
       child: _buildContent() 
     );
   }

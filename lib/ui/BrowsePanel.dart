@@ -166,6 +166,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
         HomeSlantWidget(
           title: Localization().getStringEx('panel.browse.label.sections.title', 'App Sections'),
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+          childPadding: HomeSlantWidget.defaultChildPadding,
           child: Column(children: sectionsList,),
         )    
       );

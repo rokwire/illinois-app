@@ -122,7 +122,6 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.campus_reminders.label.campus_reminders', 'Campus Reminders'),
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      childPadding: EdgeInsets.zero,
       child: _buildContent()
     );
   }
