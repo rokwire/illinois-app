@@ -376,7 +376,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     } else {
       Image profileImage = _hasProfilePicture
           ? Image.memory(_profileImageBytes!)
-          : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true);
+          : Image.asset('images/missing-profile-photo-placeholder.png', excludeFromSemantics: true);
       contentWidget = Padding(
           padding: EdgeInsets.only(bottom: 25),
           child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -387,7 +387,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
                       padding: EdgeInsets.only(right: 24),
                       child: _buildProfileImageButton(
                           Localization().getStringEx("panel.profile_info.button.picture.edit.title", "Edit"),
-                          Localization().getStringEx("panel.profile_info.button.picture.edit.hint", "Edit profile picture"),
+                          Localization().getStringEx("panel.profile_info.button.picture.edit.hint", "Edit profile photo"),
                           _onTapEditPicture))),
               Expanded(child: Container(
                   width: 189,
@@ -399,14 +399,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
-                          image: DecorationImage(fit: BoxFit.cover, image: profileImage.image)))))),
+                          image: DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage.image)))))),
               Visibility(
                   visible: _hasProfilePicture,
                   child: Padding(
                       padding: EdgeInsets.only(left: 24),
                       child: _buildProfileImageButton(
                           Localization().getStringEx("panel.profile_info.button.picture.delete.title", "Delete"),
-                          Localization().getStringEx("panel.profile_info.button.picture.delete.hint", "Delete profile picture"),
+                          Localization().getStringEx("panel.profile_info.button.picture.delete.hint", "Delete profile photo"),
                           _onTapDeletePicture)))
             ]),
             Visibility(
@@ -414,7 +414,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
                 child: Padding(
                     padding: EdgeInsets.only(top: 10),
                     child: _buildProfileImageButton(
-                        Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Set Profile Picture"),
+                        Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Set Profile Photo"),
                         Localization().getStringEx("panel.profile_info.button.profile_picture.hint", ""),
                         _onTapProfilePicture)))
           ]));
