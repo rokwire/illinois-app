@@ -1,16 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsPanel.dart';
-import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/widgets/FavoriteButton.dart';
-import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 
 class HomeAthliticsTeamsWidget extends StatefulWidget {
 
@@ -43,27 +39,20 @@ class _HomeAthliticsTeamsWidgetState extends State<HomeAthliticsTeamsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      Padding(padding: EdgeInsets.only(left: 18, right: 4, top: 4, bottom: 4), child:
-        Row(children: [
-          Expanded(child:
-            Align(alignment: Alignment.centerLeft, child:
-              Text(Localization().getStringEx('widget.home.athletics_teams.text.title', 'Athletics Teams'), style: TextStyle(fontSize: 20, color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.extraBold),),
-            ),
+    String description = Localization().getStringEx('widget.home.athletics_teams.text.description', 'See all sports and select your favorite sports.');
+    String descriptionHint = Localization().getStringEx('widget.home.athletics_teams.text.description.hint', 'Tap to see all sports and select your favorite sports.');
+
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
+      title: HomeAthliticsTeamsWidget.title,
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      child: Padding(padding: EdgeInsets.only(top: 24, bottom: 16),
+        child: Semantics(container: true, excludeSemantics: true, label: description, hint: descriptionHint,
+          child: InkWell(onTap: _onTapSeeAll, 
+            child: HomeMessageCard(message: description,)
           ),
-          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.Button, prompt: true,)
-        ],)
+        )
       ),
-      Padding(padding: EdgeInsets.symmetric(horizontal: 16),
-        child: AthleticsTeamsWidget(handleTeamTap: true, sportsLimit: Config().homeAthleticsTeamsCount, updateSportPrefs: false),
-      ),
-      LinkButton(
-        title: Localization().getStringEx('widget.home.athletics_teams.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.athletics_teams.button.all.hint', 'Tap to view all teams'),
-        onTap: _onTapSeeAll,
-      ),
-      
-    ],);
+    );
   }
 
   void _onTapSeeAll() {
