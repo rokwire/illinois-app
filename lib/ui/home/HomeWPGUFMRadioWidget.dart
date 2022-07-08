@@ -26,13 +26,14 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(visible: _isEnabled, child:
-        HomeSlantWidget(favoriteId: favoriteId,
-          title: Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'),
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-          childPadding: HomeSlantWidget.defaultChildPadding,
-          child: _WPGUFMRadioControl(borderRadius: BorderRadius.all(Radius.circular(6)),),
-        ),
+    return HomeSlantWidget(favoriteId: favoriteId,
+      title: HomeWPGUFMRadioWidget.title,
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      childPadding: HomeSlantWidget.defaultChildPadding,
+      child: _isEnabled ? _WPGUFMRadioControl(borderRadius: BorderRadius.all(Radius.circular(6)),) : HomeMessageCard(
+        message: Localization().getStringEx('widget.home.radio.disabled.message', 'WPGU FM Radio is not enabled'),
+        margin: EdgeInsets.only(top: 8, bottom: 16),
+      ),
     );
   }
 

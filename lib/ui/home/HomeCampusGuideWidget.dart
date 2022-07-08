@@ -13,7 +13,6 @@ import 'package:illinois/ui/guide/GuideCategoriesPanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -104,21 +103,12 @@ class _HomeCampusGuideWidgetState extends State<HomeCampusGuideWidget> implement
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      Padding(padding: EdgeInsets.only(left: 18, right: 4, top: 4, bottom: 4), child:
-        Row(children: [
-          Expanded(child:
-            Align(alignment: Alignment.centerLeft, child:
-              Text(HomeCampusGuideWidget.title, style: TextStyle(fontSize: 20, color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.extraBold),),
-            ),
-          ),
-          HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.Button, prompt: true,)
-        ],)
-      ),
-      Padding(padding: EdgeInsets.symmetric(horizontal: 16),
-        child: _buildContent(),
-      ),
-    ],);
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
+      title: HomeCampusGuideWidget.title,
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      childPadding: HomeSlantWidget.defaultChildPadding,
+      child: _buildContent()
+    );
   }
 
 
@@ -148,12 +138,12 @@ class _HomeCampusGuideWidgetState extends State<HomeCampusGuideWidget> implement
   Widget _buildHeading(String category) {
 
     return GestureDetector(onTap: () => _onTapCategory(category), child:
-      Container(decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))), child:
+      Container(decoration: BoxDecoration(color: Styles().colors!.backgroundVariant, borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))), child:
         Semantics(label: 'Heading', header: true, excludeSemantics: true, child:
           Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 10, bottom: 10), child:
             Row(children: <Widget>[
               Expanded(child:
-                Text(category, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, color: Colors.white, fontSize: 16, letterSpacing: 1.0),),
+                Text(category, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16, letterSpacing: 1.0),),
               ),
            ]),
           ),

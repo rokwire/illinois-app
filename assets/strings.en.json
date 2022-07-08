@@ -2524,6 +2524,7 @@
     "widget.home.wallet.library_card.title": "Library Card",
 
     "widget.home.radio.title": "WPGU FM Radio",
+    "widget.home.radio.disabled.message": "WPGU FM Radio is not enabled.",
     "widget.home.radio.button.pause.title": "Pause",
     "widget.home.radio.button.play.title": "Play",
     "widget.home.radio.button.initalize.title": "Initializing",
