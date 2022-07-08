@@ -140,7 +140,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         Container(height: 32,),
         Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
           Padding(padding: EdgeInsets.only(bottom: 8), child:
-            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
+            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: _formFieldLabelTextStyle)
           )
         ),
         Semantics(
@@ -167,7 +167,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             header: true, excludeSemantics: true,
                child: Padding(padding: EdgeInsets.only(bottom: 8),
                  child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.email.title","Email Address"), textAlign: TextAlign.left,
-                    style: TextStyle( color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
+                    style: _formFieldLabelTextStyle)
               )
           ),
           Semantics(
@@ -202,7 +202,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         Container(height: 32,),
         Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
           Padding(padding: EdgeInsets.only(bottom: 8), child:
-            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
+            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: _formFieldLabelTextStyle)
           )
         ),
         Semantics(
@@ -228,7 +228,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             //hint: Localization().getStringEx("panel.profile_info.phone_or_email.phone.hint", ""),
             header: true, excludeSemantics: true,
                child: Padding(padding: EdgeInsets.only(bottom: 8),
-                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.phone.title","Phone Number"), textAlign: TextAlign.left, style: TextStyle( color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
+                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.phone.title","Phone Number"), textAlign: TextAlign.left, style: _formFieldLabelTextStyle)
               )
           ),
           Semantics(
@@ -683,6 +683,10 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   bool get _hasProfilePicture {
     return (_profileImageBytes != null);
   }
+
+  TextStyle get _formFieldLabelTextStyle {
+    return TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.textBackground);
+  }
 }
 
 class _PersonalInfoEntry extends StatelessWidget {
@@ -705,11 +709,7 @@ class _PersonalInfoEntry extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       title!,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.medium,
-                          fontSize: 14,
-                          letterSpacing: 0.5,
-                          color: Styles().colors!.textBackground),
+                      style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.textBackground),
                     ),
                     Container(
                       height: 5,
