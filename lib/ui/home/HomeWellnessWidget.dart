@@ -16,6 +16,7 @@ import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -119,7 +120,7 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
                 Container(color: Styles().colors!.white, child:
-                  Padding(padding: EdgeInsets.all(16), child:
+                  Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Row(children: [Expanded(child: Text(Localization().getStringEx('widget.home.wellness.todo.items.today.label', 'TODAY\'S ITEMS'), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold)))]),
                       Stack(alignment: Alignment.center, children: [
@@ -138,12 +139,12 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
                           leftIcon: Image.asset('images/icon-add-14x14.png', color: Styles().colors!.fillColorPrimary),
                           iconPadding: 8, rightIconPadding: EdgeInsets.only(right: 8), fontSize: 14, contentWeight: 0, 
                           fontFamily: Styles().fontFamilies!.regular, padding: EdgeInsets.zero, onTap: _onTapAddItem),
-                        GestureDetector(onTap: _onTapViewAll, child: Padding(padding: EdgeInsets.only(left: 15, top: 5, bottom: 5), child: Container(color: Colors.transparent, child: 
-                          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                            Text(Localization().getStringEx('widget.home.wellness.todo.items.view_all.label', 'View all'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.semiBold, fontSize: 12)),
-                            Padding(padding: EdgeInsets.only(left: 10), child: Image.asset('images/chevron-right.png'))
-                          ])
-                        )))
+                        LinkButton(
+                          title: Localization().getStringEx('widget.home.wellness.todo.items.view_all.label', 'View All'),
+                          hint: Localization().getStringEx('widget.home.wellness.todo.items.view_all.hint', 'Tap to view all To Do items'),
+                          fontSize: 14,
+                          onTap: _onTapViewAll,
+                        ),
                       ]))
                     ]),
                   ),
@@ -211,7 +212,7 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
   }
 
   void _onTapViewAll() {
-    Analytics().logSelect(target: "Wellness To Do - View all");
+    Analytics().logSelect(target: "Wellness To Do - View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.todo)));
   }
 
@@ -336,7 +337,7 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
                 Container(color: Styles().colors!.white, child:
-                  Padding(padding: EdgeInsets.only(top: 20, right: 13, bottom: 8, left: 2), child:
+                  Padding(padding: EdgeInsets.only(top: 20, right: 13, bottom: 0, left: 2), child:
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -365,14 +366,12 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
                           ],)
                           ),
                         ]),
-                        Container(
-                          child: GestureDetector(onTap: _onTapViewAll, child: Padding(padding: EdgeInsets.only(left: 15, top: 5, bottom: 5), child: Container(color: Colors.transparent, child:
-                          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Text(Localization().getStringEx('widget.home.wellness.todo.items.view_all.label', 'View all'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.semiBold, fontSize: 12)),
-                            Padding(padding: EdgeInsets.only(left: 10), child: Image.asset('images/chevron-right.png'))
-                          ])
-                          ))),
-                        )
+                        LinkButton(
+                          title: Localization().getStringEx('widget.home.wellness.rings.view_all.label', 'View All'),
+                          hint: Localization().getStringEx('widget.home.wellness.rings.view_all.hint', 'Tap to view all rings'),
+                          fontSize: 14,
+                          onTap: _onTapViewAll,
+                        ),
                       ],
                     )
                   ),

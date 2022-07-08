@@ -2575,8 +2575,11 @@
 	"widget.home.wellness.todo.items.completed.failed.msg": "更新待辦事項失敗.",
 	"widget.home.wellness.todo.items.add.button": "添加項目",
 	"widget.home.wellness.todo.items.view_all.label": "查看全部",
+	"widget.home.wellness.todo.items.view_all.hint": "點按即可查看所有待辦事項",
 
 	"widget.home.wellness.rings.title": "日常健康戒指",
+	"widget.home.wellness.rings.view_all.label": "查看全部",
+	"widget.home.wellness.rings.view_all.hint": "點按即可查看所有戒指",
 
 	"widget.home.wellness.tips.title": "每日提示",
 

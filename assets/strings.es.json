@@ -2575,8 +2575,11 @@
     "widget.home.wellness.todo.items.completed.failed.msg": "No se pudo actualizar el elemento de tareas pendientes.",
     "widget.home.wellness.todo.items.add.button": "Añadir artículo",
     "widget.home.wellness.todo.items.view_all.label": "Ver todo",
+    "widget.home.wellness.todo.items.view_all.hint": "Toque para ver todas las tareas pendientes",
 
     "widget.home.wellness.rings.title": "ANILLOS DE BIENESTAR DIARIO",
+    "widget.home.wellness.rings.view_all.label": "Ver todo",
+    "widget.home.wellness.rings.view_all.hint": "Toca para ver todos los anillos",
 
     "widget.home.wellness.tips.title": "CONSEJOS DIARIOS",
 

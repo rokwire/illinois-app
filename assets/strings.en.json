@@ -2581,9 +2581,12 @@
     "widget.home.wellness.todo.items.unassigned.empty.msg": "You have no unassigned to-do items.",
     "widget.home.wellness.todo.items.completed.failed.msg": "Failed to update To-Do item.",
     "widget.home.wellness.todo.items.add.button": "Add Item",
-    "widget.home.wellness.todo.items.view_all.label": "View all",
+    "widget.home.wellness.todo.items.view_all.label": "View All",
+    "widget.home.wellness.todo.items.view_all.hint": "Tap to view all To Do items",
 
     "widget.home.wellness.rings.title": "DAILY WELLNESS RINGS",
+    "widget.home.wellness.rings.view_all.label": "View All",
+    "widget.home.wellness.rings.view_all.hint": "Tap to view all rings",
 
     "widget.home.wellness.tips.title": "DAILY TIPS",
 
