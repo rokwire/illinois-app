@@ -116,7 +116,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   fontFamily: Styles().fontFamilies!.extraBold,
                   letterSpacing: 1),
             ),
-            centerTitle: true),
+            centerTitle: false),
         backgroundColor: Styles().colors!.background,
         bottomNavigationBar: uiuc.TabBar(),
         body: _buildContent(),

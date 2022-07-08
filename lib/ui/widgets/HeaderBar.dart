@@ -48,7 +48,7 @@ class HeaderBar extends rokwire.HeaderBar {
     double? letterSpacing = 1.0,
     int? maxLines,
     TextAlign? textAlign,
-    bool? centerTitle = true,
+    bool? centerTitle = false,
 
     List<Widget>? actions,
   }) : super(key: key,
@@ -164,7 +164,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     double? letterSpacing = 1.0,
     int? maxLines,
     TextAlign? textAlign,
-    bool? centerTitle = true,
+    bool? centerTitle = false,
 
     List<Widget>? actions,
   }) : super(key: key,
@@ -232,7 +232,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
                     }
                 })),),
         title: titleWidget,
-        centerTitle: true,
+        centerTitle: false,
         actions: actions,
       );
 }*/

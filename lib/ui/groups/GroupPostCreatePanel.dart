@@ -57,7 +57,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
               fontFamily: Styles().fontFamilies!.extraBold,
               letterSpacing: 1),
           ),
-          centerTitle: true),
+          centerTitle: false),
         backgroundColor: Styles().colors!.background,
         bottomNavigationBar: uiuc.TabBar(),
         body: Stack(alignment: Alignment.topCenter, children: [
