@@ -1633,7 +1633,7 @@
 
     "panel.bus_pass.header.title": "Pase de autobús MTD",
     "panel.bus_pass.button.close.title": "Cerrar",
-    "panel.bus_pass.description.text": "Muestre esta pantalla al conductor del autobús mientras aborda.",
+    "panel.bus_pass.description.text": "Muestra esta pantalla al operador del autobús mientras subes.",
     "panel.bus_pass.error.duplicate.text": "Este pase de bus MTD ya se ha mostrado en otro dispositivo.\n\nSolo un dispositivo puede mostrar el pase de bus MTD por ID de Illini.",
     "panel.bus_pass.error.default.text": "No se puede cargar el pase de autobús",
 

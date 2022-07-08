@@ -1636,7 +1636,7 @@
 
     "panel.bus_pass.header.title": "MTD Bus Pass",
     "panel.bus_pass.button.close.title": "close",
-    "panel.bus_pass.description.text": "Show this screen to the bus driver as you board.",
+    "panel.bus_pass.description.text": "Show this screen to the bus operator as you board.",
     "panel.bus_pass.error.duplicate.text": "This MTD bus pass has already been displayed on another device.\n\nOnly one device can display the MTD bus pass per Illini ID.",
     "panel.bus_pass.error.default.text": "Unable to load bus pass",
 
