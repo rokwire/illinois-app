@@ -41,8 +41,13 @@ class SettingsHomeContentPanel extends StatefulWidget {
   _SettingsHomeContentPanelState createState() => _SettingsHomeContentPanelState();
 
   static void present(BuildContext context, {SettingsContent? content}) {
-    Navigator.push(context,
-        CupertinoPageRoute(settings: RouteSettings(name: routeName), builder: (context) => SettingsHomeContentPanel._(content: content)));
+    Navigator.push(
+        context,
+        PageRouteBuilder(
+            settings: RouteSettings(name: routeName),
+            pageBuilder: (context, animation1, animation2) => SettingsHomeContentPanel._(content: content),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero));
   }
 }
 

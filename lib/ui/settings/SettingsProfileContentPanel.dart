@@ -40,8 +40,11 @@ class SettingsProfileContentPanel extends StatefulWidget {
   static void present(BuildContext context, {SettingsProfileContent? content}) {
     Navigator.push(
         context,
-        CupertinoPageRoute(
-            settings: RouteSettings(name: routeName), builder: (context) => SettingsProfileContentPanel._(content: content)));
+        PageRouteBuilder(
+            settings: RouteSettings(name: routeName),
+            pageBuilder: (context, animation1, animation2) => SettingsProfileContentPanel._(content: content),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero));
   }
 }
 
