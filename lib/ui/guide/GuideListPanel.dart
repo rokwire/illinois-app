@@ -35,8 +35,9 @@ class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final GuideSection? section;
   final List<Map<String, dynamic>>? contentList;
   final String? contentTitle;
+  final String? contentEmptyMessage;
 
-  GuideListPanel({ this.guide, this.category, this.section, this.contentList, this.contentTitle});
+  GuideListPanel({ this.guide, this.category, this.section, this.contentList, this.contentTitle, this.contentEmptyMessage});
 
   @override
   _GuideListPanelState createState() => _GuideListPanelState();
@@ -84,6 +85,24 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     }
   }
 
+  @override
+  Widget build(BuildContext context) {
+
+    String? title;
+    if (widget.category != null) {
+      title = widget.category;
+    }
+    else if (widget.contentList?.isEmpty ?? true) {
+      title = widget.contentTitle;
+    }
+    
+    return Scaffold(
+      appBar: HeaderBar(title: title ?? Localization().getStringEx('panel.guide_list.label.highlights.heading', 'Campus Guide')),
+      body: Column(children: _buildContent()),
+      backgroundColor: Styles().colors!.background,
+    );
+  }
+
   void _buildGuideContent() {
     if (widget.contentList != null) {
       _guideItems = List.from(widget.contentList!);
@@ -119,24 +138,6 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     else {
       _features = null;
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    String? title;
-    if (widget.category != null) {
-      title = widget.category;
-    }
-    else if (widget.contentList != null) {
-      title = Localization().getStringEx('panel.guide_list.label.highlights.heading', 'Campus Guide');
-    }
-    
-    return Scaffold(
-      appBar: HeaderBar(title: title),
-      body: Column(children: _buildContent()),
-      backgroundColor: Styles().colors!.background,
-    );
   }
 
   List<Widget> _buildContent() {
@@ -185,7 +186,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         Expanded(child:
           Padding(padding: EdgeInsets.all(32), child:
             Center(child:
-              Text(Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+              Text(widget.contentEmptyMessage ?? Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
             ,)
           ),
         ),

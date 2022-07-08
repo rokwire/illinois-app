@@ -2250,8 +2250,10 @@
     "panel.inbox.label.time.last_month": "El mes pasado",
 
     "panel.guide_list.label.highlights.heading": "Campus Guide",
+    "panel.guide_list.label.highlights.empty": "No hay Destacados de la Guía del Campus activos.",
     "panel.guide_list.label.highlights.section": "Reflejos",
     "panel.guide_list.label.campus_reminders.section": "Recordatorios del campus",
+    "panel.guide_list.label.campus_reminders.empty": "No hay recordatorios de campus activos.",
     "panel.guide_list.label.content.empty": "Contenido de la guía vacía",
     "panel.guide_list.button.athletics.title": "Atletismo",
     "panel.guide_list.button.bus_pass.title": "Pase de autobus",
@@ -2421,7 +2423,7 @@
 
     "widget.home.campus_reminders.label.campus_reminders": "Recordatorios de Campus",
     "widget.home.campus_reminders.text.empty": "Whoops! Nothing to see here.",
-    "widget.home.campus_reminders.text.empty.description": "There are no active Campus Reminders.",
+    "widget.home.campus_reminders.text.empty.description": "No hay recordatorios de campus activos.",
     "widget.home.campus_reminders.button.all.title": "Ver todo",
     "widget.home.campus_reminders.button.all.hint": "Toca para ver todos los recordatorios",
 
@@ -2484,7 +2486,7 @@
 
     "widget.home.campus_guide_highlights.label.heading": "Puntos destacados de la guía del campus",
     "widget.home.campus_guide_highlights.text.empty": "Whoops! Nothing to see here.",
-    "widget.home.campus_guide_highlights.text.empty.description": "There are no active Campus Guide Highlights.",
+    "widget.home.campus_guide_highlights.text.empty.description": "No hay Destacados de la Guía del Campus activos.",
     "widget.home.campus_guide_highlights.button.all.title": "Ver todo",
     "widget.home.campus_guide_highlights.button.all.hint": "Toca para ver todos los aspectos destacados",
 

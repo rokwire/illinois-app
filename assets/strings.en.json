@@ -2258,7 +2258,9 @@
     "panel.guide_list.label.highlights.heading": "Campus Guide",
 
     "panel.guide_list.label.highlights.section": "Highlights",
+    "panel.guide_list.label.highlights.empty": "There are no active Campus Guide Highlights.",
     "panel.guide_list.label.campus_reminders.section": "Campus Reminders",
+    "panel.guide_list.label.campus_reminders.empty": "There are no active Campus Reminders.",
     "panel.guide_list.label.content.empty": "Empty guide content",
     "panel.guide_list.button.athletics.title": "Athletics",
     "panel.guide_list.button.bus_pass.title": "Bus Pass",

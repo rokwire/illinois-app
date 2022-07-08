@@ -166,6 +166,10 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
 
   void _onSeeAll() {
     Analytics().logSelect(target: "HomeCampusHighlightsWidget View All");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _promotedItems, contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
+      contentList: _promotedItems,
+      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Guide Highlights."),
+    )));
   }
 }

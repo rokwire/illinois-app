@@ -573,7 +573,11 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapCampusReminders(BuildContext context) {
     Analytics().logSelect(target: "Campus Reminders");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: Guide().remindersList, contentTitle: Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
+      contentList: Guide().remindersList,
+      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_reminders.empty", "There are no active Campus Reminders."),
+    )));
   }
 
   bool get _canVideoTutorial => StringUtils.isNotEmpty(Config().videoTutorialUrl);
@@ -668,7 +672,11 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapCampusHighlights(BuildContext context) {
     Analytics().logSelect(target: 'Campus Highlights');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: Guide().promotedList, contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
+      contentList: Guide().promotedList,
+      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Guide Highlights."),
+    )));
   }
 
   bool get _canDueDateCatalog => StringUtils.isNotEmpty(Config().dateCatalogUrl);
