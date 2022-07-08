@@ -109,7 +109,6 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.athletics_events.text.title', 'Athletics Events'),
       titleIcon: Image.asset('images/icon-calendar.png'),
-      childPadding: EdgeInsets.zero,
       child: _buildContent(),
     );
   }

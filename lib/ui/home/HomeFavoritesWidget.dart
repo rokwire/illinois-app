@@ -128,7 +128,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: headingTitle,
       titleIcon: headingIcon,
-      childPadding: EdgeInsets.zero,
       child: _buildContent()
     );
   }

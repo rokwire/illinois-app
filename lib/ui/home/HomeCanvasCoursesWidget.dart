@@ -103,7 +103,6 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses'),
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      childPadding: EdgeInsets.zero,
       child: _hasCourses ? _buildCoursesContent() : _buildEmptyContent(),
     );
   }
