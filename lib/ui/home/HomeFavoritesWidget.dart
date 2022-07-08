@@ -410,13 +410,13 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   String? get _emptyMessage {
     switch(widget.favoriteKey) {
-      case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.events', 'Tap the \u2606 on on items in Events so you can quickly find them here.');
-      case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.dining', 'Tap the \u2606 on on items in Dinings so you can quickly find them here.');
-      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.athletics', 'Tap the \u2606 on on items in Athletics Events so you can quickly find them here.');
-      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.news', 'Tap the \u2606 on on items in Athletics News so you can quickly find them here.');
-      case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.laundry', 'Tap the \u2606 on on items in Laundry so you can quickly find them here.');
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.inbox', 'Tap the \u2606 on on items in Notifications so you can quickly find them here.');
-      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.campus_guide', 'Tap the \u2606 on on items in Campus Guide so you can quickly find them here.');
+      case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.events', 'Tap the \u2606 on items in Events so you can quickly find them here.');
+      case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.dining', 'Tap the \u2606 on items in Dinings so you can quickly find them here.');
+      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.athletics', 'Tap the \u2606 on items in Athletics Events so you can quickly find them here.');
+      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.news', 'Tap the \u2606 on items in Athletics News so you can quickly find them here.');
+      case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.laundry', 'Tap the \u2606 on items in Laundry so you can quickly find them here.');
+      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.inbox', 'Tap the \u2606 on items in Notifications so you can quickly find them here.');
+      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.campus_guide', 'Tap the \u2606 on items in Campus Guide so you can quickly find them here.');
     }
     return null;
   }
