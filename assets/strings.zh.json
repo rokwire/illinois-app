@@ -958,7 +958,7 @@
 	"panel.settings.illini_cash.label.title":"Illini现金",
 	"panel.settings.illini_cash.label.history":"历史",
 	"panel.settings.illini_cash.label.buy_illini_cash":"购买Illini现金",
-	"panel.settings.illini_cash.label.for_yourself_or":"为自己或他人",
+	"panel.settings.illini_cash.label.for_yourself_or":"使用 Illini Cash 通過您的 Illinois 應用程序或 i-card 購買食品、書籍、印刷和<a href='{{services_url}}'>其他選定服務</a>。",
 	"panel.settings.illini_cash.label.custom_period":"自定义期间",
 	"panel.settings.illini_cash.label.current_balance":"当前Illini现金余额",
 	"panel.settings.illini_cash.label.start_date":"开始日期",
@@ -981,7 +981,7 @@
 	"panel.settings.illini_cash.button.end_date.hint":"点击以选择结束日期",
 	"panel.settings.illini_cash.transactions.message.start_end_validation.text":"开始日期必须早于结束日期",
 	"panel.settings.illini_cash.transactions.message.start_end_validation.hint":"",
-	"panel.settings.illini_cash.transactions.message.no_transactions.text":"所选期间没有交易",
+	"panel.settings.illini_cash.transactions.message.no_transactions.text":"所选期间没有交易.",
 	"panel.settings.illini_cash.transactions.message.no_transactions.hint":"",
 	"panel.settings.illini_cash.label.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can't sign in. To view your balance, you must set your privacy level to 4 and sign in.",
 

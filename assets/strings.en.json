@@ -960,7 +960,7 @@
     "panel.settings.illini_cash.label.title": "Illini Cash",
     "panel.settings.illini_cash.label.history": "History",
     "panel.settings.illini_cash.label.buy_illini_cash": "Buy Illini Cash",
-    "panel.settings.illini_cash.label.for_yourself_or": "Add Illini Cash to an i-card to purchase food, books, printing, and other services on campus.",
+    "panel.settings.illini_cash.label.for_yourself_or": "Use Illini Cash to purchase food, books, printing, and <a href='{{services_url}}'>other selected services</a> with your Illinois app or i-card.",
     "panel.settings.illini_cash.label.custom_period": "Custom Period",
     "panel.settings.illini_cash.label.current_balance": "Current Illini Cash Balance",
     "panel.settings.illini_cash.label.start_date": "Start Date",
@@ -983,7 +983,7 @@
     "panel.settings.illini_cash.button.end_date.hint": "Tap to select end date",
     "panel.settings.illini_cash.transactions.message.start_end_validation.text": "Start date must be before end date",
     "panel.settings.illini_cash.transactions.message.start_end_validation.hint": "",
-    "panel.settings.illini_cash.transactions.message.no_transactions.text": "There are no transactions for the selected period",
+    "panel.settings.illini_cash.transactions.message.no_transactions.text": "There are no transactions for the selected period.",
     "panel.settings.illini_cash.transactions.message.no_transactions.hint": "",
     "panel.settings.illini_cash.label.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can't sign in. To view your balance, you must set your privacy level to 4 and sign in.",
 
