@@ -240,7 +240,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
                 decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
 //                height: 48,
                 child: TextField(
-                  controller: _emailController,
+                  controller: _phoneController,
                   onChanged: (text) { setState(() {});},
                   decoration: InputDecoration(border: InputBorder.none),
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
