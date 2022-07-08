@@ -210,6 +210,8 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
 
 class HomeSlantWidget extends StatelessWidget {
 
+  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 24);
+
   final String? title;
   final Image? titleIcon;
   final CrossAxisAlignment headerAxisAlignment;
@@ -231,7 +233,7 @@ class HomeSlantWidget extends StatelessWidget {
     this.slantHeight = 65,
 
     this.child,
-    this.childPadding = const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 24),
+    this.childPadding = EdgeInsets.zero,
     
     this.favoriteId,
   }) : super(key: key);

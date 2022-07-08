@@ -66,8 +66,9 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
         HomeSlantWidget(favoriteId: widget.favoriteId,
           title: widget._title,
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-          child: _buildContent(),
           headerAxisAlignment: CrossAxisAlignment.start,
+          childPadding: HomeSlantWidget.defaultChildPadding,
+          child: _buildContent(),
         ),
     );
   }

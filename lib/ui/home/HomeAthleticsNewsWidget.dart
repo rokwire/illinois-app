@@ -109,7 +109,6 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
     return HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home.athletics_news.text.title', 'Athletics News'),
         titleIcon: Image.asset('images/icon-news.png'),
-        childPadding: EdgeInsets.zero,
         child: _buildContent(),
     );
   }

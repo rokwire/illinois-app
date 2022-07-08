@@ -30,7 +30,7 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
         HomeSlantWidget(favoriteId: favoriteId,
           title: Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'),
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-          childPadding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 32),
+          childPadding: HomeSlantWidget.defaultChildPadding,
           child: _WPGUFMRadioControl(borderRadius: BorderRadius.all(Radius.circular(6)),),
         ),
     );

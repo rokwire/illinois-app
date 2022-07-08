@@ -60,6 +60,7 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
       return HomeSlantWidget(favoriteId: widget.favoriteId,
           title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
           titleIcon: Image.asset('images/icon-member.png', excludeFromSemantics: true,),
+          childPadding: HomeSlantWidget.defaultChildPadding,
           child: Column(children: content,),
       );
     }
