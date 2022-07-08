@@ -712,11 +712,11 @@
 				{"id":"telehealth", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=8f7dd377-e09b-4de2-b2af-212dc4b7adda", "favorite": true },
 				{"id":"podcast", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=866a3d66-83c2-47f4-89f5-c514d31766c7", "favorite": true},
 	
-				{"id":"crisis_resources", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=", "favorite": true},
+				{"id":"crisis_resources", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=ddd2f4e7-b976-4bd0-9998-f2e16c0f7823", "favorite": true},
 				{"id":"accessibility_and_accommodations", "type": "regular", "url": "https://wellness.illinois.edu/mental-health-resources/accessibility-and-accommodations"},
 				{"id":"after_hours", "type": "regular", "url": "https://odos.illinois.edu/community-of-care/emergency-dean"},
 				{"id":"campus_service_units", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units"},
-				{"id":"core_campus_resources", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id="},
+				{"id":"core_campus_resources", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=3e126184-5a08-47d2-a1ec-ce39d887c84e"},
 				{"id":"counseling_center", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=65b51137-bf11-45e8-bdc7-93c160560dcd", "favorite": true},
 				{"id":"financial_assistance", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/financial"},
 				{"id":"fitness_and_recreation", "type": "regular", "url": "https://wellness.illinois.edu/campus-service-units/wellness/students/fitness-recreation"},
