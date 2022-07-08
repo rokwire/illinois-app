@@ -210,7 +210,7 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
 
 class HomeSlantWidget extends StatelessWidget {
 
-  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 24);
+  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 16);
 
   final String? title;
   final Image? titleIcon;

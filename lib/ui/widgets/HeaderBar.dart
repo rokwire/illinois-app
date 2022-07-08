@@ -48,7 +48,7 @@ class HeaderBar extends rokwire.HeaderBar {
     double? letterSpacing = 1.0,
     int? maxLines,
     TextAlign? textAlign,
-    bool? centerTitle = true,
+    bool? centerTitle = false,
 
     List<Widget>? actions,
   }) : super(key: key,
@@ -164,7 +164,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     double? letterSpacing = 1.0,
     int? maxLines,
     TextAlign? textAlign,
-    bool? centerTitle = true,
+    bool? centerTitle = false,
 
     List<Widget>? actions,
   }) : super(key: key,
@@ -232,7 +232,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
                     }
                 })),),
         title: titleWidget,
-        centerTitle: true,
+        centerTitle: false,
         actions: actions,
       );
 }*/
@@ -270,7 +270,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
   }
 
   Widget buildHeaderRadioButton(BuildContext context) {
-    return Semantics(label: Localization().getStringEx('headerbar.radio.title', 'WPGU FM Radio'), hint: Localization().getStringEx('headerbar.radio.hint', ''), button: true, excludeSemantics: true, child:
+    return Semantics(label: Localization().getStringEx('headerbar.radio.title', 'WPGU 107.1 FM'), hint: Localization().getStringEx('headerbar.radio.hint', ''), button: true, excludeSemantics: true, child:
       IconButton(icon: Image.asset('images/radio-white.png', excludeFromSemantics: true), onPressed: () => onTapRadio(context),),);
   }
 
@@ -307,7 +307,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
   Widget buildHeaderPersonalInfoButton(BuildContext context) {
     return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
 //    IconButton(icon: Image.asset('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations(context))
-      InkWell(onTap: () => onTapPersonalInformations(context), child:
+      InkWell(onTap: () => onTapPersonalInformation(context), child:
         Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
           Image.asset('images/person-white.png', excludeFromSemantics: true,),
         )
@@ -341,7 +341,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
     }
   }
 
-  void onTapPersonalInformations(BuildContext context) {
+  void onTapPersonalInformation(BuildContext context) {
     String? currentRouteName = ModalRoute.of(context)?.settings.name;
     if (currentRouteName != SettingsProfileContentPanel.routeName) {
       Analytics().logSelect(target: "Personal Information");

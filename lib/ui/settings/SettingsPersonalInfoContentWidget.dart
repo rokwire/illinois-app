@@ -140,7 +140,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         Container(height: 32,),
         Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
           Padding(padding: EdgeInsets.only(bottom: 8), child:
-            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
+            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: _formFieldLabelTextStyle)
           )
         ),
         Semantics(
@@ -167,7 +167,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             header: true, excludeSemantics: true,
                child: Padding(padding: EdgeInsets.only(bottom: 8),
                  child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.email.title","Email Address"), textAlign: TextAlign.left,
-                    style: TextStyle( color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
+                    style: _formFieldLabelTextStyle)
               )
           ),
           Semantics(
@@ -202,7 +202,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         Container(height: 32,),
         Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
           Padding(padding: EdgeInsets.only(bottom: 8), child:
-            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
+            Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: _formFieldLabelTextStyle)
           )
         ),
         Semantics(
@@ -228,7 +228,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             //hint: Localization().getStringEx("panel.profile_info.phone_or_email.phone.hint", ""),
             header: true, excludeSemantics: true,
                child: Padding(padding: EdgeInsets.only(bottom: 8),
-                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.phone.title","Phone Number"), textAlign: TextAlign.left, style: TextStyle( color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1),)
+                 child: Text(Localization().getStringEx("panel.profile_info.phone_or_email.phone.title","Phone Number"), textAlign: TextAlign.left, style: _formFieldLabelTextStyle)
               )
           ),
           Semantics(
@@ -240,7 +240,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
                 decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
 //                height: 48,
                 child: TextField(
-                  controller: _emailController,
+                  controller: _phoneController,
                   onChanged: (text) { setState(() {});},
                   decoration: InputDecoration(border: InputBorder.none),
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -308,20 +308,6 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             ),
           ),
         ),
-        Container(width: 12,),
-        Expanded(child:
-          Padding(padding: EdgeInsets.symmetric(vertical: 5), child:
-            RoundedButton(
-              label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
-              hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
-              backgroundColor: Styles().colors!.white,
-              fontSize: 16.0,
-              textColor: Styles().colors!.fillColorPrimary,
-              borderColor: Styles().colors!.fillColorSecondary,
-              onTap: _onSignOutClicked,
-            ),
-          ),
-        ),
       ],),
     );
   }
@@ -376,7 +362,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     } else {
       Image profileImage = _hasProfilePicture
           ? Image.memory(_profileImageBytes!)
-          : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true);
+          : Image.asset('images/missing-profile-photo-placeholder.png', excludeFromSemantics: true);
       contentWidget = Padding(
           padding: EdgeInsets.only(bottom: 25),
           child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -387,7 +373,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
                       padding: EdgeInsets.only(right: 24),
                       child: _buildProfileImageButton(
                           Localization().getStringEx("panel.profile_info.button.picture.edit.title", "Edit"),
-                          Localization().getStringEx("panel.profile_info.button.picture.edit.hint", "Edit profile picture"),
+                          Localization().getStringEx("panel.profile_info.button.picture.edit.hint", "Edit profile photo"),
                           _onTapEditPicture))),
               Expanded(child: Container(
                   width: 189,
@@ -399,14 +385,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
-                          image: DecorationImage(fit: BoxFit.cover, image: profileImage.image)))))),
+                          image: DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage.image)))))),
               Visibility(
                   visible: _hasProfilePicture,
                   child: Padding(
                       padding: EdgeInsets.only(left: 24),
                       child: _buildProfileImageButton(
                           Localization().getStringEx("panel.profile_info.button.picture.delete.title", "Delete"),
-                          Localization().getStringEx("panel.profile_info.button.picture.delete.hint", "Delete profile picture"),
+                          Localization().getStringEx("panel.profile_info.button.picture.delete.hint", "Delete profile photo"),
                           _onTapDeletePicture)))
             ]),
             Visibility(
@@ -414,7 +400,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
                 child: Padding(
                     padding: EdgeInsets.only(top: 10),
                     child: _buildProfileImageButton(
-                        Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Set Profile Picture"),
+                        Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Set Profile Photo"),
                         Localization().getStringEx("panel.profile_info.button.profile_picture.hint", ""),
                         _onTapProfilePicture)))
           ]));
@@ -683,6 +669,10 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   bool get _hasProfilePicture {
     return (_profileImageBytes != null);
   }
+
+  TextStyle get _formFieldLabelTextStyle {
+    return TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.textBackground);
+  }
 }
 
 class _PersonalInfoEntry extends StatelessWidget {
@@ -705,11 +695,7 @@ class _PersonalInfoEntry extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       title!,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.medium,
-                          fontSize: 14,
-                          letterSpacing: 0.5,
-                          color: Styles().colors!.textBackground),
+                      style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.textBackground),
                     ),
                     Container(
                       height: 5,

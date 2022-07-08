@@ -89,6 +89,7 @@ class Config extends rokwire.Config {
   String? get illiniCashTrustcommerceHost => JsonUtils.stringValue(otherUniversityServices['illini_cash_trustcommerce_host']);
   String? get illiniCashTokenHost    => JsonUtils.stringValue(otherUniversityServices['illini_cash_token_host']);
   String? get illiniCashPaymentHost  => JsonUtils.stringValue(otherUniversityServices['illini_cash_payment_host']);
+  String? get illiniCashServicesUrl  => JsonUtils.stringValue(otherUniversityServices['illini_cash_services_url']);
   String? get illiniCashTosUrl       => JsonUtils.stringValue(otherUniversityServices['illini_cash_tos_url']);
   String? get myIlliniUrl            => JsonUtils.stringValue(otherUniversityServices['myillini_url']);
   String? get feedbackUrl            => JsonUtils.stringValue(otherUniversityServices['feedback_url']);

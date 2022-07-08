@@ -205,7 +205,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
                 width: _photoSize,
                 padding: EdgeInsets.only(top: 12, left: 6, right: 6),
                 child: Text(
-                  Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus driver as you board."),
+                  Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus operator as you board."),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies!.regular,

@@ -2951,15 +2951,16 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
 
   @override
   Widget build(BuildContext context) {
-    Image profileImage = (_imageBytes != null)
+    bool hasProfilePhoto = (_imageBytes != null);
+    Image profileImage = hasProfilePhoto
         ? Image.memory(_imageBytes!)
-        : Image.asset('images/missing-photo-placeholder.png', excludeFromSemantics: true);
+        : Image.asset('images/missing-profile-photo-placeholder.png', excludeFromSemantics: true);
 
     return GestureDetector(
         onTap: widget.onTap ?? _onImageTap,
         child: Stack(alignment: Alignment.center, children: [
           Container(
-              decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: profileImage.image))),
+              decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: (hasProfilePhoto ? BoxFit.cover : BoxFit.contain), image: profileImage.image))),
           Visibility(
               visible: _loading,
               child: SizedBox(

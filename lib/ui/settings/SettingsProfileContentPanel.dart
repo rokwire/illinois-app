@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInfoContentWidget.dart';
@@ -40,8 +39,11 @@ class SettingsProfileContentPanel extends StatefulWidget {
   static void present(BuildContext context, {SettingsProfileContent? content}) {
     Navigator.push(
         context,
-        CupertinoPageRoute(
-            settings: RouteSettings(name: routeName), builder: (context) => SettingsProfileContentPanel._(content: content)));
+        PageRouteBuilder(
+            settings: RouteSettings(name: routeName),
+            pageBuilder: (context, animation1, animation2) => SettingsProfileContentPanel._(content: content),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero));
   }
 }
 
@@ -66,7 +68,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: RootHeaderBar(title: Localization().getStringEx('panel.settings.profile.header.profile.label', 'My Profile')),
+        appBar: RootHeaderBar(title: Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile')),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(

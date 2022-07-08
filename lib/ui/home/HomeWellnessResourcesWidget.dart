@@ -57,7 +57,7 @@ class HomeWellnessResourcesWidget extends StatefulWidget {
 
 class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidget> implements NotificationsListener {
 
-  List<dynamic>? _commands;
+  List<dynamic>? _favoriteCommands;
   Map<String, dynamic>? _strings;
   PageController? _pageController;
   final double _pageSpacing = 16;
@@ -116,21 +116,21 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   }
 
   Widget _buildContent() {
-    return  (_commands?.isEmpty ?? true) ? HomeMessageCard(
+    return  (_favoriteCommands?.isEmpty ?? true) ? HomeMessageCard(
       message: Localization().getStringEx("widget.home.wellness_resources.text.empty.description", "Tap the \u2606 on items in Wellness Resources so you can quickly find them here."),
     ) : _buildResourceContent();
   }
 
   Widget _buildResourceContent() {
     Widget contentWidget;
-    int visibleCount = min(Config().homeWellnessResourcesCount, _commands?.length ?? 0);
+    int visibleCount = min(Config().homeWellnessResourcesCount, _favoriteCommands?.length ?? 0);
     if (1 < visibleCount) {
 
       double pageHeight = 18 * MediaQuery.of(context).textScaleFactor + 2 * 16;
 
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
-        Map<String, dynamic>? command = JsonUtils.mapValue(_commands![index]);
+        Map<String, dynamic>? command = JsonUtils.mapValue(_favoriteCommands![index]);
         Widget? button = (command != null) ? _buildResourceButton(command) : null;
         if (button != null) {
           pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child: button));
@@ -143,7 +143,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        _buildResourceButton(JsonUtils.mapValue(_commands?.first) ?? {})
+        _buildResourceButton(JsonUtils.mapValue(_favoriteCommands?.first) ?? {})
       );
     }
 
@@ -187,21 +187,27 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   void _initContent() {
     Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${WellnessResourcesContentWidget.wellnessCategoryKey}']) ;
     _strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
-    _commands = null;
     List<dynamic>? commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
+    WellnessResourcesContentWidget.ensureDefaultFavorites(commands);
+    _favoriteCommands = _filterFavoriteCommands(commands);
+  }
+
+  static List<dynamic>? _filterFavoriteCommands(List<dynamic>? commands) {
+    List<dynamic>? favoriteCommands;
     if (commands != null) {
-      _commands = [];
+      favoriteCommands = [];
       for (dynamic entry in commands) {
         Map<String, dynamic>? command = JsonUtils.mapValue(entry);
         if (command != null) {
           String? id = JsonUtils.stringValue(command['id']);
           Favorite favorite = WellnessFavorite(id, category: WellnessResourcesContentWidget.wellnessCategoryKey);
           if (Auth2().prefs?.isFavorite(favorite) ?? false) {
-            _commands?.add(entry);
+            favoriteCommands.add(entry);
           }
         }
       }
     }
+    return favoriteCommands;
   }
 
   String? _getString(String? key, {String? languageCode}) {

@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
@@ -37,6 +40,24 @@ class WellnessResourcesContentWidget extends StatefulWidget {
 
   @override
   State<WellnessResourcesContentWidget> createState() => _WellnessResourcesContentWidgetState();
+
+  static void ensureDefaultFavorites(List<dynamic>? commands) {
+    String favoriteKey = WellnessFavorite.favoriteKeyName(category: wellnessCategoryKey);
+    if ((Auth2().prefs?.getFavorites(favoriteKey) == null) && (commands != null)) {
+      LinkedHashSet<String> favoriteIds = LinkedHashSet<String>();
+      for (dynamic entry in commands.reversed) {
+        Map<String, dynamic>? command = JsonUtils.mapValue(entry);
+        if (command != null) {
+          String? id = JsonUtils.stringValue(command['id']);
+          bool? isFavorite = JsonUtils.boolValue(command['favorite']);
+          if ((id != null) && (isFavorite == true)) {
+            favoriteIds.add(id);
+          }
+        }
+      }
+      Auth2().prefs?.setFavorites(favoriteKey, favoriteIds);
+    }
+  }
 }
 
 class _WellnessResourcesContentWidgetState extends State<WellnessResourcesContentWidget> implements NotificationsListener {
@@ -164,6 +185,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
     Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${widget.wellnessCategory}']) ;
     _commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
     _strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
+    WellnessResourcesContentWidget.ensureDefaultFavorites(_commands);
   }
 
   String? _getString(String? key, {String? languageCode}) {

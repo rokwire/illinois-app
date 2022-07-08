@@ -51,9 +51,9 @@ class HomeFavoritesWidget extends StatefulWidget {
   static String? titleFromKey({required String favoriteKey}) {
     switch(favoriteKey) {
       case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.events', 'My Events');
-      case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.dining', 'My Dinings');
-      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.athletics', 'My Athletics');
-      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.news', 'My News');
+      case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.dining', 'My Dining Locations');
+      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.athletics', 'My Athletics Events');
+      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.news', 'My Athletics News');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.laundry', 'My Laundry');
       case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.inbox', 'My Notifications');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.campus_guide', 'My Campus Guide');
@@ -391,9 +391,9 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   String? get _offlineMessage {
     switch(widget.favoriteKey) {
       case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.events', 'My Events are not available while offline.');
-      case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.dining', 'My Dinings are not available while offline.');
-      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.athletics', 'My Athletics are not available while offline.');
-      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.news', 'My News are not available while offline.');
+      case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.dining', 'My Dining Locations are not available while offline.');
+      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.athletics', 'My Athletics Events are not available while offline.');
+      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.news', 'My Athletics News are not available while offline.');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.laundry', 'My Laundry are not available while offline.');
       case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.inbox', 'My Notifications are not available while offline.');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.campus_guide', 'My Campus Guide are not available while offline.');
@@ -410,13 +410,13 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   String? get _emptyMessage {
     switch(widget.favoriteKey) {
-      case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.events', 'Tap the \u2606 on on items in Events so you can quickly find them here.');
-      case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.dining', 'Tap the \u2606 on on items in Dinings so you can quickly find them here.');
-      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.athletics', 'Tap the \u2606 on on items in Athletics Events so you can quickly find them here.');
-      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.news', 'Tap the \u2606 on on items in Athletics News so you can quickly find them here.');
-      case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.laundry', 'Tap the \u2606 on on items in Laundry so you can quickly find them here.');
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.inbox', 'Tap the \u2606 on on items in Notifications so you can quickly find them here.');
-      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.campus_guide', 'Tap the \u2606 on on items in Campus Guide so you can quickly find them here.');
+      case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.events', 'Tap the \u2606 on items in Events so you can quickly find them here.');
+      case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.dining', 'Tap the \u2606 on items in Dinings so you can quickly find them here.');
+      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.athletics', 'Tap the \u2606 on items in Athletics Events so you can quickly find them here.');
+      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.news', 'Tap the \u2606 on items in Athletics News so you can quickly find them here.');
+      case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.laundry', 'Tap the \u2606 on items in Laundry so you can quickly find them here.');
+      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.inbox', 'Tap the \u2606 on items in Notifications so you can quickly find them here.');
+      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.campus_guide', 'Tap the \u2606 on items in Campus Guide so you can quickly find them here.');
     }
     return null;
   }

@@ -58,7 +58,7 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
     if ((code == 'video_tutorial') && _canVideoTutorial) {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.app_help.video_tutorial.button.title', 'Video Tutorial'),
-        description: Localization().getStringEx('widget.home.app_help.video_tutorial.button.description', 'Play video tutorial to learn great new features.'),
+        description: Localization().getStringEx('widget.home.app_help.video_tutorial.button.description', 'Watch video tutorials to learn about app features.'),
         favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onVideoTutorial,
       );
