@@ -2827,7 +2827,7 @@
     "widget.home.dinings.all.button.title": "Residence Hall Dining",
     "widget.home.dinings.all.button.description": "Find a place to eat at one of the many residence hall dining locations.",
     "widget.home.dinings.open.button.title": "Residence Hall Dining Open Now",
-    "widget.home.dinings.open.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "widget.home.dinings.open.button.description": "Eat at a residence hall dining location that is open now.",
 
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",
