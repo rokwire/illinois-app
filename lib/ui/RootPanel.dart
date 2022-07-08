@@ -22,7 +22,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
-import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
@@ -56,7 +55,6 @@ import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/service/Canvas.dart';
 
 enum RootTab { Home, Favorites, Athletics, Explore, Browse, Maps, Academics, Wellness }
 
@@ -95,7 +93,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
       Guide.notifyGuideDetail,
-      Canvas.notifyCanvasEventDetail,
       Localization.notifyStringsUpdated,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
@@ -160,9 +157,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Guide.notifyGuideDetail) {
       _onGuideDetail(param);
-    }
-    else if (name == Canvas.notifyCanvasEventDetail) {
-      _onCanvasEventDetail(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
@@ -441,16 +435,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       });
       if (mounted) {
         setState(() {}); // Force the postFrameCallback invokation.
-      }
-    }
-  }
-
-  Future<void> _onCanvasEventDetail(Map<String, dynamic>? content) async {
-    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) : null;
-    if (StringUtils.isNotEmpty(eventId)) {
-      int? eventIdValue = int.tryParse(eventId!);
-      if (eventIdValue != null) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(eventId: eventIdValue)));
       }
     }
   }
