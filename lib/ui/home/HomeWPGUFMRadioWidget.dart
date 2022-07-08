@@ -120,7 +120,7 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
   Widget _buildContentCard() {
     String? buttonTitle, iconAsset;
     if (WPGUFMRadio().isInitialized) {
-      buttonTitle = WPGUFMRadio().isPlaying ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'Play');
+      buttonTitle = WPGUFMRadio().isPlaying ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'TUNE IN');
       iconAsset = WPGUFMRadio().isPlaying ? 'images/button-pause-orange.png' : 'images/button-play-orange.png';
     }
     else if (WPGUFMRadio().isInitializing) {

@@ -2528,7 +2528,7 @@
     "widget.home.radio.title": "WPGU 107.1 FM",
     "widget.home.radio.disabled.message": "WPGU 107.1 FM is not enabled.",
     "widget.home.radio.button.pause.title": "Pause",
-    "widget.home.radio.button.play.title": "Play",
+    "widget.home.radio.button.play.title": "TUNE IN",
     "widget.home.radio.button.initalize.title": "Initializing",
     "widget.home.radio.button.fail.title": "Not Available",
     "widget.home.radio.button.add_radio.hint": "",

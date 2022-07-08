@@ -2521,7 +2521,7 @@
 	"widget.home.radio.title": "WPGU 107.1 調頻",
 	"widget.home.radio.disabled.message": "WPGU 107.1 FM 未啟用。",
 	"widget.home.radio.button.pause.title": "暫停",
-	"widget.home.radio.button.play.title": "玩",
+	"widget.home.radio.button.play.title": "收聽",
 	"widget.home.radio.button.initalize.title": "初始化",
 	"widget.home.radio.button.fail.title": "無法使用",
 	"widget.home.radio.button.add_radio.hint": "",
