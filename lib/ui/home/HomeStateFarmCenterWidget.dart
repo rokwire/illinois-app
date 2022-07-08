@@ -56,7 +56,7 @@ class _HomeStateFarmCenterWidgetState extends HomeCompoundWidgetState<HomeStateF
     if (code == 'parking') {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.state_farm_center.parking.button.title', 'Parking'),
-        description: Localization().getStringEx('widget.home.state_farm_center.parking.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
+        description: Localization().getStringEx('widget.home.state_farm_center.parking.button.description', 'Get help parking.'),
         favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onParking,
       );
