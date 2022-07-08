@@ -111,7 +111,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: RootHeaderBar(
-            key: _headerBarKey, title: Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'My Notifications')),
+            key: _headerBarKey, title: Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications')),
         body: Column(children: <Widget>[
           Expanded(
               child:

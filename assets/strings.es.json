@@ -1250,7 +1250,7 @@
 
     "panel.settings.notifications.content.inbox.label": "Mis Notificaciones",
     "panel.settings.notifications.content.preferences.label": "Mis preferencias de notificación",
-    "panel.settings.notifications.header.inbox.label": "Mis Notificaciones",
+    "panel.settings.notifications.header.inbox.label": "Notificaciones",
 
     "panel.settings.home.calendar.settings.add_events.label": "Agregar eventos guardados al calendario",
     "panel.settings.home.calendar.settings.prompt.label": "Preguntar al guardar eventos en el calendario",

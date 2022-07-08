@@ -1250,7 +1250,7 @@
 
     "panel.settings.notifications.content.inbox.label": "我的通知",
     "panel.settings.notifications.content.preferences.label": "我的通知偏好",
-    "panel.settings.notifications.header.inbox.label": "我的通知",
+    "panel.settings.notifications.header.inbox.label": "通知",
 
     "panel.settings.home.calendar.settings.add_events.label": "將保存的事件添加到日曆",
     "panel.settings.home.calendar.settings.prompt.label": "將事件保存到日曆時提示",

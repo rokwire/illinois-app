@@ -1252,7 +1252,7 @@
 
     "panel.settings.notifications.content.inbox.label": "My Notifications",
     "panel.settings.notifications.content.preferences.label": "My Notification Preferences",
-    "panel.settings.notifications.header.inbox.label": "My Notifications",
+    "panel.settings.notifications.header.inbox.label": "Notifications",
 
     "panel.settings.home.calendar.settings.add_events.label": "Add saved events to calendar",
     "panel.settings.home.calendar.settings.prompt.label": "Prompt when saving events to calendar",
