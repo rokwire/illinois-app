@@ -841,7 +841,9 @@
     "panel.onboarding2.email.button.link.cancel.hint": "",
     "panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
 
-    "panel.explore.label.title":"Explorar",
+    "panel.explore.header.events.title":"Eventos",
+    "panel.explore.header.dining.title":"Comedor de la residencia",
+    "panel.explore.header.state_farm.title":"Orientación de State Farm",
     "panel.explore.button.events.title":"Eventos",
     "panel.explore.button.events.hint":"",
     "panel.explore.button.dining.title":"Comedor de la residencia",

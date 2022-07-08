@@ -843,7 +843,9 @@
     "panel.onboarding2.email.button.link.cancel.hint": "",
     "panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
 
-    "panel.explore.label.title":"Explore",
+    "panel.explore.header.events.title":"Events",
+    "panel.explore.header.dining.title":"Residence Hall Dining",
+    "panel.explore.header.state_farm.title":"State Farm Wayfinding",
     "panel.explore.button.events.title":"Events",
     "panel.explore.button.events.hint":"",
     "panel.explore.button.dining.title":"Residence Hall Dining",

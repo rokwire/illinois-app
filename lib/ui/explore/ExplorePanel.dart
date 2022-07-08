@@ -209,16 +209,18 @@ class ExplorePanelState extends State<ExplorePanel>
         body: RefreshIndicator(
             onRefresh: () => _loadExplores(progress: false),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Padding(
-                  padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-                  child: RibbonButton(
-                      textColor: Styles().colors!.fillColorSecondary,
-                      backgroundColor: Styles().colors!.white,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                      rightIconAsset: (_dropDownValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-                      label: exploreItemName(_selectedItem!),
-                      onTap: _changeDropDownValuesVisibility)),
+              Visibility(
+                  visible: (_displayType == ListMapDisplayType.Map),
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 16, top: 16, right: 16),
+                      child: RibbonButton(
+                          textColor: Styles().colors!.fillColorSecondary,
+                          backgroundColor: Styles().colors!.white,
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                          rightIconAsset: (_dropDownValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+                          label: exploreItemName(_selectedItem!),
+                          onTap: _changeDropDownValuesVisibility))),
               Expanded(
                   child: Stack(children: [
                 Stack(children: <Widget>[
@@ -297,8 +299,7 @@ class ExplorePanelState extends State<ExplorePanel>
     _itemToFilterMap = {
       ExploreItem.Events: <ExploreFilter>[
         ExploreFilter(type: ExploreFilterType.categories),
-        ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {2}),
-        ExploreFilter(type: ExploreFilterType.event_tags)
+        ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {2})
       ],
       ExploreItem.Dining: <ExploreFilter>[
         ExploreFilter(type: ExploreFilterType.work_time),
@@ -727,7 +728,7 @@ class ExplorePanelState extends State<ExplorePanel>
     String? headerLabel;
     switch (_displayType) {
       case ListMapDisplayType.List:
-        headerLabel = Localization().getStringEx("panel.explore.label.title", "Explore");
+        headerLabel = _headerBarListTitle(_selectedItem);
         break;
       case ListMapDisplayType.Map:
         headerLabel = Localization().getStringEx("panel.maps.header.title", "Map");
@@ -1236,6 +1237,15 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Events:      return Localization().getStringEx('panel.explore.button.events.hint', '');
       case ExploreItem.Dining:      return Localization().getStringEx('panel.explore.button.dining.hint', '');
       case ExploreItem.State_Farm:  return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
+      default:                      return null;
+    }
+  }
+
+  static String? _headerBarListTitle(ExploreItem? exploreItem) {
+    switch (exploreItem) {
+      case ExploreItem.Events:      return Localization().getStringEx('panel.explore.header.events.title', 'Events');
+      case ExploreItem.Dining:      return Localization().getStringEx('panel.explore.header.dining.title', 'Residence Hall Dining');
+      case ExploreItem.State_Farm:  return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
       default:                      return null;
     }
   }

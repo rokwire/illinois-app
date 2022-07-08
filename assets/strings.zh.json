@@ -841,7 +841,9 @@
 	"panel.onboarding2.email.button.link.cancel.hint": "",
 	"panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
 
-	"panel.explore.label.title":"探索",
+    "panel.explore.header.events.title":"活动",
+    "panel.explore.header.dining.title":"宿舍餐廳",
+    "panel.explore.header.state_farm.title":"國營農場尋路",
 	"panel.explore.button.events.title":"活动",
 	"panel.explore.button.events.hint":"",
 	"panel.explore.button.dining.title":"宿舍餐廳",
