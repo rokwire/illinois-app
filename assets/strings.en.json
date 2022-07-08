@@ -140,9 +140,9 @@
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
     "panel.home.connect.not_logged_in.phone_or_email.title": "Continue",
     "panel.home.edit.favorites.header.title": "Your Favorites",
-    "panel.home.edit.favorites.header.description": "Below is the content currently on your favorites screen. To reorder your favorites, tap, hold, and drag an item. To remove an item from your favorites, click on the star.",
+    "panel.home.edit.favorites.header.description": "Below is the content currently on your favorites screen. To reorder your favorites, tap, hold, and drag an item. To remove an item from your favorites, tap on the star.",
     "panel.home.edit.unused.header.title": "Unused Favorites",
-    "panel.home.edit.unused.header.description": "To add one of the below items to your favorites, click on the star.",
+    "panel.home.edit.unused.header.description": "To add one of the below items to your favorites, tap on the star.",
     "panel.label.offline.phone_or_email": "Feature not available when offline.",
 
     "panel.browse.label.title": "Browse",

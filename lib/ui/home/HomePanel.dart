@@ -510,7 +510,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       widgets.add(_buildEditingHeader(
         favoriteId: _favoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
         title: Localization().getStringEx('panel.home.edit.favorites.header.title', 'Your Favorites'),
-        description: Localization().getStringEx('panel.home.edit.favorites.header.description', 'Below is the content currently on your favorites screen. To reorder your favorites, tap, hold, and drag an item. To remove an item from your favorites, click on the star.'),
+        description: Localization().getStringEx('panel.home.edit.favorites.header.description', 'Below is the content currently on your favorites screen. To reorder your favorites, tap, hold, and drag an item. To remove an item from your favorites, tap on the star.'),
       ));
        
       int position = 0;
@@ -531,7 +531,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       widgets.add(_buildEditingHeader(
         favoriteId: _unfavoritesHeaderId, dropAnchorAlignment: null,
         title: Localization().getStringEx('panel.home.edit.unused.header.title', 'Unused Favorites'),
-        description: Localization().getStringEx('panel.home.edit.unused.header.description', 'To add one of the below items to your favorites, click on the star.'),
+        description: Localization().getStringEx('panel.home.edit.unused.header.description', 'To add one of the below items to your favorites, tap on the star.'),
       ));
 
       List<Map<String, dynamic>> unusedList = <Map<String, dynamic>>[];

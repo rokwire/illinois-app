@@ -139,9 +139,9 @@
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
 	"panel.home.connect.not_logged_in.phone_or_email.title": "Continue",
 	"panel.home.edit.favorites.header.title": "你的最愛",
-	"panel.home.edit.favorites.header.description": "以下是當前收藏夾屏幕上的內容。 要重新排序您的收藏夾，請點按、按住並拖動項目。 要從收藏夾中刪除項目，請單擊星號。",
+	"panel.home.edit.favorites.header.description": "以下是當前收藏夾屏幕上的內容。 要重新排序您的收藏夾，請點按、按住並拖動項目。 要從收藏夾中刪除項目，請點擊星號。",
 	"panel.home.edit.unused.header.title": "未使用的收藏夾",
-	"panel.home.edit.unused.header.description": "要將以下項目之一添加到您的收藏夾，請單擊星號。",
+	"panel.home.edit.unused.header.description": "要將以下項目之一添加到您的收藏夾，請點擊星號。",
 	"panel.label.offline.phone_or_email": "離線時功能不可用。",
 
 	"panel.browse.label.title":"浏览",
