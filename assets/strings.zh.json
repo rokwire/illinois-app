@@ -2517,6 +2517,7 @@
 	"widget.home.wallet.library_card.title": "借書卡",
 
 	"widget.home.radio.title": "WPGU 調頻收音機",
+	"widget.home.radio.disabled.message": "未啟用 WPGU FM 收音機。",
 	"widget.home.radio.button.pause.title": "暫停",
 	"widget.home.radio.button.play.title": "玩",
 	"widget.home.radio.button.initalize.title": "初始化",
