@@ -708,9 +708,9 @@
 				{"id":"appointment", "type": "large", "url": "https://wellness.web.illinois.edu/help/i-want-to-make-an-appointment"},
 				{"id":"help", "type": "large", "url": "https://wellness.web.illinois.edu/help/i-want-to-help-a-friend-student-or-coworker"},
 				{"id":"where_to_start", "type": "large", "url": "https://wellness.web.illinois.edu/help/im-not-sure-where-to-start"},
-				{"id":"securing_food", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=1361dee2-a8de-4c5f-a9fd-511e491e295e"},
+				{"id":"securing_food", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=fresh.fruit"},
 				{"id":"telehealth", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=8f7dd377-e09b-4de2-b2af-212dc4b7adda", "favorite": true },
-				{"id":"podcast", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=866a3d66-83c2-47f4-89f5-c514d31766c7", "favorite": true},
+				{"id":"podcast", "type": "large", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=158589f4-9ed4-4728-b1ff-e1754cfe7939", "favorite": true},
 	
 				{"id":"crisis_resources", "type": "regular", "url": "edu.illinois.rokwire://rokwire.illinois.edu/guide_detail?guide_id=ddd2f4e7-b976-4bd0-9998-f2e16c0f7823", "favorite": true},
 				{"id":"accessibility_and_accommodations", "type": "regular", "url": "https://wellness.illinois.edu/mental-health-resources/accessibility-and-accommodations"},
