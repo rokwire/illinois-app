@@ -631,16 +631,11 @@ class _SettingsAddIlliniCashPanelState
                                                           color: Styles().colors!.fillColorSecondary!))),
                                               child: GestureDetector(
                                                 onTap: _onTermsAndConditionsTapped,
-                                                child: Text(
-                                                  Localization().getStringEx(
-                                                      "panel.settings.add_illini_cash.label.agree",
-                                                      "terms & conditions"),
-                                                  style: TextStyle(
-                                                    fontFamily: Styles().fontFamilies!.regular,
-                                                    fontSize: 16,
-                                                    color: Styles().colors!.fillColorPrimary,
-                                                  ),
-                                                ),
+                                                child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                                                  Text(Localization().getStringEx("panel.settings.add_illini_cash.label.agree", "terms & conditions"),
+                                                   style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
+                                                  Padding(padding: EdgeInsets.only(left: 3), child: Image.asset('images/external-link.png'))
+                                                ]),
                                               ))),
                                     ],
                                   ),
