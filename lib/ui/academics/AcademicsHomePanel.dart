@@ -76,32 +76,26 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     return Scaffold(
         appBar: RootHeaderBar(title: Localization().getStringEx('panel.academics.header.title', 'Academics')),
         body: Column(children: <Widget>[
+          Padding(
+              padding: EdgeInsets.only(left: 16, top: 16, right: 16),
+              child: RibbonButton(
+                  textColor: Styles().colors!.fillColorSecondary,
+                  backgroundColor: Styles().colors!.white,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                  rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+                  label: _getContentLabel(_selectedContent),
+                  onTap: _changeSettingsContentValuesVisibility)),
           Expanded(
-              child: SingleChildScrollView(
-                  physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null),
-                  child: Container(
-                      color: Styles().colors!.background,
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Padding(
-                            padding: EdgeInsets.only(top: 16),
-                            child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 16),
-                                child: RibbonButton(
-                                    textColor: Styles().colors!.fillColorSecondary,
-                                    backgroundColor: Styles().colors!.white,
-                                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                                    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                                    rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-                                    label: _getContentLabel(_selectedContent),
-                                    onTap: _changeSettingsContentValuesVisibility))),
-                        _buildContent()
-                      ]))))
+              child: Stack(children: [
+            Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: SingleChildScrollView(
+                    child: Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child: _contentWidget))),
+            _buildContentValuesContainer()
+          ]))
         ]),
         backgroundColor: Styles().colors!.background);
-  }
-
-  Widget _buildContent() {
-    return Stack(children: [Padding(padding: EdgeInsets.all(16), child: _contentWidget), _buildContentValuesContainer()]);
   }
 
   Widget _buildContentValuesContainer() {
