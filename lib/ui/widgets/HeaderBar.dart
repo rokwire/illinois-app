@@ -307,7 +307,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
   Widget buildHeaderPersonalInfoButton(BuildContext context) {
     return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
 //    IconButton(icon: Image.asset('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations(context))
-      InkWell(onTap: () => onTapPersonalInformations(context), child:
+      InkWell(onTap: () => onTapPersonalInformation(context), child:
         Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
           Image.asset('images/person-white.png', excludeFromSemantics: true,),
         )
@@ -341,7 +341,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
     }
   }
 
-  void onTapPersonalInformations(BuildContext context) {
+  void onTapPersonalInformation(BuildContext context) {
     String? currentRouteName = ModalRoute.of(context)?.settings.name;
     if (currentRouteName != SettingsProfileContentPanel.routeName) {
       Analytics().logSelect(target: "Personal Information");
