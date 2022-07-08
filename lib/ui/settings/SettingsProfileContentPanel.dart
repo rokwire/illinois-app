@@ -66,7 +66,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: RootHeaderBar(title: Localization().getStringEx('panel.settings.profile.header.profile.label', 'My Profile')),
+        appBar: RootHeaderBar(title: Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile')),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
