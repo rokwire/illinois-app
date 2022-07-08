@@ -2793,7 +2793,7 @@
     "widget.home.app_help.header.title": "App Help",
     "widget.home.app_help.text.empty.description": "Tap the \u2606 on items in App Help so you can quickly find them here.",
     "widget.home.app_help.video_tutorial.button.title": "Video Tutorial",
-    "widget.home.app_help.video_tutorial.button.description": "Play video tutorial to learn great new features.",
+    "widget.home.app_help.video_tutorial.button.description": "Watch video tutorials to learn about app features.",
     "widget.home.app_help.video_tutorial.label.offline": "Video Tutorial not available while offline.",
     "widget.home.app_help.feedback.button.title": "Provide Feedback",
     "widget.home.app_help.feedback.button.description": "Enjoying the app? Missing something? The University of Illinois Smart, Healthy Communities Initiative needs your ideas and input. Thank you!",
