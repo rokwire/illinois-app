@@ -126,7 +126,6 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
     }
     else if (CollectionUtils.isEmpty(_news)) {
       return HomeMessageCard(
-        title: Localization().getStringEx("widget.home.athletics_news.text.empty", "Whoops! Nothing to see here."),
         message: Localization().getStringEx("widget.home.athletics_news.text.empty.description", "No Athletics News are available right now."),
       );
     }

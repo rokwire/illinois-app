@@ -1081,7 +1081,6 @@
     "panel.saved.button.all.hint": "Tap to see all favorite items",
     "panel.saved.button.event_reminders":"Event reminders",
     "panel.saved.button.dining_specials":"Dining specials",
-    "panel.saved.message.no_items":"Whoops! Nothing to see here.",
     "panel.saved.message.no_items.description": "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here.",
     "panel.saved.message.offline":"Saved Items are not available while offline",
 
@@ -2429,29 +2428,24 @@
     "widget.voter.rv_alert.vote_now.text": "You are at the %s and can vote now",
 
     "widget.home.campus_reminders.label.campus_reminders": "Campus Reminders",
-    "widget.home.campus_reminders.text.empty": "Whoops! Nothing to see here.",
     "widget.home.campus_reminders.text.empty.description": "There are no active Campus Reminders.",
     "widget.home.campus_reminders.button.all.title": "View All",
     "widget.home.campus_reminders.button.all.hint": "Tap to view all reminders",
 
     "widget.home.suggested_events.label.events_for_you":"Suggested Events",
     "widget.home.suggested_events.label.events_for_you.sub_title":"Curated from your interests",
-    "widget.home.suggested_events.text.empty": "Whoops! Nothing to see here.",
     "widget.home.suggested_events.text.empty.description": "There are no suggested events available.",
     "widget.home.suggested_events.button.all.title":"View All",
     "widget.home.suggested_events.button.all.hint":"Tap to view all events",
 
     "widget.home.recent_items.label.header.title":"Recently Viewed",
-    "widget.home.recent_items.text.empty": "Whoops! Nothing to see here.",
     "widget.home.recent_items.text.empty.description": "There are no recently viewed items available.",
     "widget.home.recent_items.button.all.title":"View All",
     "widget.home.recent_items.button.all.hint":"Tap to view all items",
 
     "widget.home.groups.my.label.header.title":"My Groups",
     "widget.home.groups.all.label.header.title":"All Groups",
-	"widget.home.groups.my.text.empty": "Whoops! Nothing to see here.",
 	"widget.home.groups.my.text.empty.description": "You have not created any groups yet.",
-	"widget.home.groups.all.text.empty": "Whoops! Nothing to see here.",
 	"widget.home.groups.all.text.empty.description": "Failed to load groups.",
     "widget.home.my_groups.button.all.title":"View All",
     "widget.home.my_groups.button.all.hint":"Tap to view all groups",
@@ -2492,13 +2486,11 @@
     "widget.home_create_poll.button.login.label":"Login",
 
     "widget.home.campus_guide_highlights.label.heading": "Campus Guide Highlights",
-    "widget.home.campus_guide_highlights.text.empty": "Whoops! Nothing to see here.",
     "widget.home.campus_guide_highlights.text.empty.description": "There are no active Campus Guide Highlights.",
     "widget.home.campus_guide_highlights.button.all.title": "View All",
     "widget.home.campus_guide_highlights.button.all.hint": "Tap to view all highlights",
 
     "widget.home.safer.label.title": "Building Access",
-	"widget.home.safer.text.empty": "Whoops! Nothing to see here.",
 	"widget.home.safer.text.empty.description": "Tap the \u2606 on items in Building Access so you can quickly find them here.",
     "widget.home.safer.button.building_access.title": "Building Access",
     "widget.home.safer.button.building_access.description": "Check your current building access.",
@@ -2511,11 +2503,9 @@
     "widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
 
     "widget.home.wellness.label.title": "Wellness",
-    "widget.home.wellness.text.empty": "Whoops! Nothing to see here.",
     "widget.home.wellness.text.empty.description": "Tap the \u2606 on items in Wellness so you can quickly find them here.",
 
     "widget.home.wallet.label.title": "Wallet",
-    "widget.home.wallet.text.empty": "Whoops! Nothing to see here.",
     "widget.home.wallet.text.empty.description": "Tap the \u2606 on items in Wallet so you can quickly find them here.",
 
     "widget.home.wallet.illini_cash.title": "Illini Cash",
@@ -2533,12 +2523,12 @@
 
     "widget.home.wallet.library_card.title": "Library Card",
 
+    "widget.home.radio.title": "WPGU FM Radio",
     "widget.home.radio.button.pause.title": "Pause",
     "widget.home.radio.button.play.title": "Play",
     "widget.home.radio.button.initalize.title": "Initializing",
     "widget.home.radio.button.fail.title": "Not Available",
     "widget.home.radio.button.add_radio.hint": "",
-    "widget.home.radio.title": "WPGU FM Radio",
 
     "widget.home.prompt.add.favorite": "Are you sure you want to ADD this favorite?",
     "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this item from your favorites?",
@@ -2548,14 +2538,12 @@
     "widget.home.welcome.button.close.label": "Close",
 
     "widget.home.athletics_news.text.title": "Athletics News",
-    "widget.home.athletics_news.text.empty": "Whoops! Nothing to see here.",
     "widget.home.athletics_news.text.empty.description": "No Athletics News are available right now.",
     "widget.home.athletics_news.text.offline": "Athletics News are not available while offline.",
     "widget.home.athletics_news.button.all.title": "View All",
     "widget.home.athletics_news.button.all.hint": "Tap to view all news",
 
     "widget.home.athletics_events.text.title": "Athletics Events",
-    "widget.home.athletics_events.text.empty": "Whoops! Nothing to see here.",
     "widget.home.athletics_events.text.empty.description": "No Athletics Events are available right now.",
     "widget.home.athletics_events.text.offline": "Athletics Events are not available while offline",
     "widget.home.athletics_events.button.all.title": "View All",
@@ -2571,11 +2559,10 @@
     "widget.home.campus_guide.button.all.hint": "Tap to view the complete Campus Guide",
 
     "widget.home.recent_polls.text.title": "Recent Polls",
-    "widget.home.recent_polls.text.empty": "Whoops! Nothing to see here.",
     "widget.home.recent_polls.text.empty.description": "No Recent Polls are available right now.",
     "widget.home.recent_polls.text.offline": "Recent Polls are not available while offline.",
     "widget.home.recent_polls.button.all.title": "View All",
-    "widget.home.recent_polls.button.all.hint": "Tap to view all news",
+    "widget.home.recent_polls.button.all.hint": "Tap to view all polls",
 
     "widget.home.tout.customize.label": "Customize",
     "widget.home.tout.button.info.label": "Info",
@@ -2631,7 +2618,6 @@
     "widget.home.favorites.all.hint.inbox": "Tap to view all favorite notifications",
 
 	"widget.home.wellness_resources.header.label": "My Wellness Resources",
-    "widget.home.wellness_resources.text.empty": "Whoops! Nothing to see here.",
     "widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in Wellness Resources so you can quickly find them here.",
     "widget.home.wellness_resources.button.all.title": "View All",
     "widget.home.wellness_resources.button.all.hint": "Tap to view all wellness resources",
@@ -2671,13 +2657,11 @@
     "widget.home_prefered_sports.label.offline.sports":"Sports are not available while offline.",
     
     "widget.home_canvas_courses.header.label": "Courses",
-	"widget.home.home_canvas_courses.text.empty": "Whoops! Nothing to see here.",
 	"widget.home.home_canvas_courses.text.empty.description": "You do not enroll in any courses.",
     "widget.home.home_canvas_courses.button.all.title": "View All",
     "widget.home.home_canvas_courses.button.all.hint": "Tap to view all courses",
 
     "widget.home.twitter.header.label": "Twitter",
-	"widget.home.twitter.text.empty": "Whoops! Nothing to see here.",
 	"widget.home.twitter.text.empty.description": "Failed to load tweets.",
     "widget.home.twitter.button.all.title": "View All",
     "widget.home.twitter.button.all.hint": "Tap to view all tweets",
@@ -2799,7 +2783,6 @@
     "widget.checklist.uiuc.logged_out": "You need to be logged in to access New Student Checklist.",
 
     "widget.home.app_help.header.title": "App Help",
-    "widget.home.app_help.text.empty": "Whoops! Nothing to see here.",
     "widget.home.app_help.text.empty.description": "Tap the \u2606 on items in App Help so you can quickly find them here.",
     "widget.home.app_help.video_tutorial.button.title": "Video Tutorial",
     "widget.home.app_help.video_tutorial.button.description": "Play video tutorial to learn great new features.",
@@ -2814,24 +2797,21 @@
     "widget.home.app_help.faqs.panel.title": "FAQs",
 
     "widget.home.state_farm_center.header.title": "State Farm Center",
-    "widget.home.state_farm_center.text.empty": "Whoops! Nothing to see here.",
     "widget.home.state_farm_center.text.empty.description": "Tap the \u2606 on items in State Farm Center so you can quickly find them here.",
     "widget.home.state_farm_center.parking.button.title": "Parking",
     "widget.home.state_farm_center.parking.button.description": "Get help parking.",
     "widget.home.state_farm_center.wayfinding.button.title": "Wayfinding",
-    "widget.home.state_farm_center.wayfinding.button.description": "Aenean commodo faucibus sem, id finibus tortor rutrum consectetur.",
+    "widget.home.state_farm_center.wayfinding.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     "widget.home.state_farm_center.create_stadium_poll.button.title": "Create Stadium Poll",
-    "widget.home.state_farm_center.create_stadium_poll.button.description": "Vivamus aliquam hendrerit risus eget accumsan.",
+    "widget.home.state_farm_center.create_stadium_poll.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 
     "widget.home.campus_links.header.title": "Campus Links",
-    "widget.home.campus_links.text.empty": "Whoops! Nothing to see here.",
     "widget.home.campus_links.text.empty.description": "Tap the \u2606 on items in Campus Links so you can quickly find them here.",
     "widget.home.campus_links.date_cat.button.title": "Due Date Catalog",
     "widget.home.campus_links.date_cat.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     "widget.home.campus_links.date_cat.label.offline": "Due Date Catalog not available while offline.",
 
     "widget.home.dinings.header.title": "Dining",
-    "widget.home.dinings.text.empty": "Whoops! Nothing to see here.",
     "widget.home.dinings.text.empty.description": "Tap the \u2606 on items in Dinings so you can quickly find them here.",
     "widget.home.dinings.all.button.title": "Residence Hall Dining",
     "widget.home.dinings.all.button.description": "Find a place to eat at one of the many residence hall dining locations.",

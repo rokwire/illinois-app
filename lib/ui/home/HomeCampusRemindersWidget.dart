@@ -129,7 +129,6 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
 
   Widget _buildContent() {
     return  (_reminderItems?.isEmpty ?? true) ? HomeMessageCard(
-      title: Localization().getStringEx("widget.home.campus_reminders.text.empty", "Whoops! Nothing to see here."),
       message: Localization().getStringEx("widget.home.campus_reminders.text.empty.description", "There are no active Campus Reminders."),
     ) : _buildRemindersContent();
   }

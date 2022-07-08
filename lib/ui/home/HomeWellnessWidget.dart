@@ -48,7 +48,6 @@ class _HomeWellnessWidgetState extends HomeCompoundWidgetState<HomeWellnessWidge
 
   @override String? get favoriteId => widget.favoriteId;
   @override String? get title => HomeWellnessWidget.title;
-  @override String? get emptyTitle => Localization().getStringEx("widget.home.wellness.text.empty", "Whoops! Nothing to see here.");
   @override String? get emptyMessage => Localization().getStringEx("widget.home.wellness.text.empty.description", "Tap the \u2606 on items in Wellness so you can quickly find them here.");
 
   @override
