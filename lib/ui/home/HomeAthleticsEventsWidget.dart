@@ -126,7 +126,6 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
     }
     else if (CollectionUtils.isEmpty(_games)) {
       return HomeMessageCard(
-        title: Localization().getStringEx("widget.home.athletics_events.text.empty", "Whoops! Nothing to see here."),
         message: Localization().getStringEx("widget.home.athletics_events.text.empty.description", "No Athletics Events are available right now."),
       );
     }

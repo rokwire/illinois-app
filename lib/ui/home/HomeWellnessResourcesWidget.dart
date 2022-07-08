@@ -118,7 +118,6 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
   Widget _buildContent() {
     return  (_commands?.isEmpty ?? true) ? HomeMessageCard(
-      title: Localization().getStringEx("widget.home.wellness_resources.text.empty", "Whoops! Nothing to see here."),
       message: Localization().getStringEx("widget.home.wellness_resources.text.empty.description", "Tap the \u2606 on items in Wellness Resources so you can quickly find them here."),
     ) : _buildResourceContent();
   }

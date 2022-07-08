@@ -45,7 +45,6 @@ class _HomeDiningWidgetState extends HomeCompoundWidgetState<HomeDiningWidget> {
 
   @override String? get favoriteId => widget.favoriteId;
   @override String? get title => HomeDiningWidget.title;
-  @override String? get emptyTitle => Localization().getStringEx("widget.home.dinings.text.empty", "Whoops! Nothing to see here.");
   @override String? get emptyMessage => Localization().getStringEx("widget.home.dinings.text.empty.description", "Tap the \u2606 on items in Dinings so you can quickly find them here.");
 
   @override
@@ -53,7 +52,7 @@ class _HomeDiningWidgetState extends HomeCompoundWidgetState<HomeDiningWidget> {
     if (code == 'dinings_all') {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.dinings.all.button.title', 'Residence Hall Dining'),
-        description: Localization().getStringEx('widget.home.dinings.all.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
+        description: Localization().getStringEx('widget.home.dinings.all.button.description', 'Find a place to eat at one of the many residence hall dining locations.'),
         favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapDiningsAll,
       );
@@ -61,7 +60,7 @@ class _HomeDiningWidgetState extends HomeCompoundWidgetState<HomeDiningWidget> {
     else if (code == 'dinings_open') {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.dinings.open.button.title', 'Residence Hall Dining Open Now'),
-        description: Localization().getStringEx('widget.home.dinings.open.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
+        description: Localization().getStringEx('widget.home.dinings.open.button.description', 'Eat at a residence hall dining location that is open now.'),
         favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onTapDiningsOpen,
       );

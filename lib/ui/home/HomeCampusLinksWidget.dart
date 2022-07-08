@@ -50,7 +50,6 @@ class _HomeCampusLinksWidgetState extends HomeCompoundWidgetState<HomeCampusLink
 
   @override String? get favoriteId => widget.favoriteId;
   @override String? get title => HomeCampusLinksWidget.title;
-  @override String? get emptyTitle => Localization().getStringEx("widget.home.campus_links.text.empty", "Whoops! Nothing to see here.");
   @override String? get emptyMessage => Localization().getStringEx("widget.home.campus_links.text.empty.description", "Tap the \u2606 on items in Campus Links so you can quickly find them here.");
 
 

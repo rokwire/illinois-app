@@ -51,7 +51,6 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
 
   @override String? get favoriteId => widget.favoriteId;
   @override String? get title => HomeAppHelpWidget.title;
-  @override String? get emptyTitle => Localization().getStringEx("widget.home.app_help.text.empty", "Whoops! Nothing to see here.");
   @override String? get emptyMessage => Localization().getStringEx("widget.home.app_help.text.empty.description", "Tap the \u2606 on items in App Help so you can quickly find them here.");
 
   @override
