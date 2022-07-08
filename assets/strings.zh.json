@@ -1620,8 +1620,8 @@
 	"panel.poll_pin_bouble.poll_closed": "投票已结束",
 
 	"panel.parking_events.label.loading": "正在加載停車事件. 請耐心等待...",
-	"panel.parking_events.label.no_events": "沒有停車事件",
-	"panel.parking_events.label.heading": "事件",
+	"panel.parking_events.label.no_events": "Currently there is no parking information for any State Farm Center events.",
+	"panel.parking_events.label.heading": "州立農場中心停車場",
 	"panel.parking_events.label.status.active": "活跃",
 	"panel.parking_events.label.status.inactive": "不活跃",
 	"panel.parking_events.label.from":"从: ",

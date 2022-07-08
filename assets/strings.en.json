@@ -1621,8 +1621,8 @@
     "panel.poll_pin_bouble.poll_closed": "Poll is already closed",
 
     "panel.parking_events.label.loading": "Loading parking events. Please wait...",
-    "panel.parking_events.label.no_events": "No parking events.",
-    "panel.parking_events.label.heading": "Events",
+    "panel.parking_events.label.no_events": "Currently there is no parking information for any State Farm Center events.",
+    "panel.parking_events.label.heading": "State Farm Center Parking",
     "panel.parking_events.label.status.active": "active",
     "panel.parking_events.label.status.inactive": "inactive",
     "panel.parking_events.label.from":"From: ",

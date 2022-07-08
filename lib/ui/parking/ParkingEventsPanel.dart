@@ -59,7 +59,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(
-        title: Localization().getStringEx("panel.parking_events.label.heading","Events"),
+        title: Localization().getStringEx("panel.parking_events.label.heading", "State Farm Center Parking"),
       ),
       body: _buildScaffoldBody(),
       backgroundColor: Styles().colors!.background,
@@ -108,7 +108,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
   }
 
   Widget _buildEmptyWidget() {
-    return Center(child: Text(Localization().getStringEx("panel.parking_events.label.no_events", "No parking events."), style: TextStyle(
+    return Center(child: Text(Localization().getStringEx("panel.parking_events.label.no_events", "Currently there is no parking information for any State Farm Center events."), style: TextStyle(
       fontFamily: Styles().fontFamilies!.bold,
       fontSize: 18,
       color: Styles().colors!.fillColorPrimary,

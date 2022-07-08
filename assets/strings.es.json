@@ -1618,8 +1618,8 @@
     "panel.poll_pin_bouble.poll_closed": "La encuesta ya está cerrada",
 
     "panel.parking_events.label.loading": "Cargando eventos de estacionamiento. Por favor espera...",
-    "panel.parking_events.label.no_events": "No hay eventos de estacionamiento.",
-    "panel.parking_events.label.heading": "Eventos",
+    "panel.parking_events.label.no_events": "Actualmente no hay información de estacionamiento para ningún evento del State Farm Center.",
+    "panel.parking_events.label.heading": "Estacionamiento del centro de State Farm",
     "panel.parking_events.label.status.active": "activo",
     "panel.parking_events.label.status.inactive": "inactivo",
     "panel.parking_events.label.from":"From: ",
