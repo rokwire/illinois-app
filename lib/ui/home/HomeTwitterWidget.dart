@@ -232,7 +232,6 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
     if (pages.isEmpty) {
       return HomeMessageCard(
-        title: Localization().getStringEx('widget.home.twitter.text.empty', 'Whoops! Nothing to see here.'),
         message: Localization().getStringEx('widget.home.twitter.text.empty.description', 'Failed to load tweets.'),
       );
     }

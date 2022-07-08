@@ -144,7 +144,6 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     
   Widget _buildContent() {
     return (_recentItems?.isEmpty ?? true) ? HomeMessageCard(
-      title: Localization().getStringEx("widget.home.recent_items.text.empty", "Whoops! Nothing to see here."),
       message: Localization().getStringEx("widget.home.recent_items.text.empty.description", "There are no recently viewed items available."),
     ) : _buildRecentContent();
   }

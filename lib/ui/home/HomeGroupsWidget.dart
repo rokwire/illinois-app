@@ -152,20 +152,17 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   }
 
   Widget _buildEmpty() {
-    String title, message;
+    String message;
     switch(widget.contentType) {
-      
       case GroupsContentType.my:
-        title = Localization().getStringEx('widget.home.groups.my.text.empty', 'Whoops! Nothing to see here.');
-        message = Localization().getStringEx('widget.home.groups.my.text.description', 'You have not created any groups yet.');
+        message = Localization().getStringEx('widget.home.groups.my.text.empty.description', 'You have not created any groups yet.');
         break;
       
       case GroupsContentType.all:
-        title = Localization().getStringEx('widget.home.groups.all.text.empty', 'Whoops! Nothing to see here.');
-        message = Localization().getStringEx('widget.home.groups.all.text.description', 'Failed to load groups.');
+        message = Localization().getStringEx('widget.home.groups.all.text.empty.description', 'Failed to load groups.');
         break;
     }
-    return HomeMessageCard(title: title, message: message,);
+    return HomeMessageCard(message: message,);
   }
 
 

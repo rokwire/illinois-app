@@ -145,7 +145,6 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
     }
     else if (CollectionUtils.isEmpty(_recentPolls)) {
       return HomeMessageCard(
-        title: Localization().getStringEx("widget.home.recent_polls.text.empty", "Whoops! Nothing to see here."),
         message: Localization().getStringEx("widget.home.recent_polls.text.empty.description", "No Recent Polls are available right now."),);
     }
     else {
@@ -192,7 +191,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
       contentWidget,
       LinkButton(
         title: Localization().getStringEx('widget.home.recent_polls.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.recent_polls.button.all.hint', 'Tap to view all news'),
+        hint: Localization().getStringEx('widget.home.recent_polls.button.all.hint', 'Tap to view all polls'),
         onTap: _onTapSeeAll,
       ),
     ]);

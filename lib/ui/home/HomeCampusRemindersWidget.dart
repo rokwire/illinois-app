@@ -129,7 +129,6 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
 
   Widget _buildContent() {
     return  (_reminderItems?.isEmpty ?? true) ? HomeMessageCard(
-      title: Localization().getStringEx("widget.home.campus_reminders.text.empty", "Whoops! Nothing to see here."),
       message: Localization().getStringEx("widget.home.campus_reminders.text.empty.description", "There are no active Campus Reminders."),
     ) : _buildRemindersContent();
   }
@@ -179,7 +178,11 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
 
   void _onViewAll() {
     Analytics().logSelect(target: "HomeCampusRemindersWidget View All");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _reminderItems, contentTitle: Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'))));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
+      contentList: _reminderItems,
+      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_reminders.empty", "There are no active Campus Reminders."),
+    )));
   }
 }
 

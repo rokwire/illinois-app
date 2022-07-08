@@ -610,7 +610,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   String? get title;
   Image?  get titleIcon => Image.asset('images/campus-tools.png', excludeFromSemantics: true);
   
-  String? get emptyTitle;
+  String? get emptyTitle => null;
   String? get emptyMessage;
 
   double  get pageHeight => 0;

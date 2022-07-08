@@ -301,7 +301,6 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
 
   Widget _buildContent() {
     return (_events?.isEmpty ?? true) ? HomeMessageCard(
-      title: Localization().getStringEx("widget.home.suggested_events.text.empty", "Whoops! Nothing to see here."),
       message: Localization().getStringEx("widget.home.suggested_events.text.empty.description", "There are no suggested events available."),
     ) : _buildEventsContent();
   }

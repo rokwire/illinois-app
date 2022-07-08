@@ -176,8 +176,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("panel.saved.message.no_items", "Whoops! Nothing to see here."), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
-        Container(height:8),
         Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
         Expanded(child: Container(), flex: 3),
     ],),);
@@ -557,8 +555,6 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     return <Widget>[Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("panel.saved.message.no_items", "Whoops! Nothing to see here."), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
-        Container(height:8),
         Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
         Expanded(child: Container(), flex: 3),
     ],),)];

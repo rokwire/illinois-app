@@ -48,7 +48,6 @@ class _HomeStateFarmCenterWidgetState extends HomeCompoundWidgetState<HomeStateF
 
   @override String? get favoriteId => widget.favoriteId;
   @override String? get title => HomeStateFarmCenterWidget.title;
-  @override String? get emptyTitle => Localization().getStringEx("widget.home.state_farm_center.text.empty", "Whoops! Nothing to see here.");
   @override String? get emptyMessage => Localization().getStringEx("widget.home.state_farm_center.text.empty.description", "Tap the \u2606 on items in State Farm Center so you can quickly find them here.");
 
   @override
@@ -56,7 +55,7 @@ class _HomeStateFarmCenterWidgetState extends HomeCompoundWidgetState<HomeStateF
     if (code == 'parking') {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.state_farm_center.parking.button.title', 'Parking'),
-        description: Localization().getStringEx('widget.home.state_farm_center.parking.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
+        description: Localization().getStringEx('widget.home.state_farm_center.parking.button.description', 'Get help parking.'),
         favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onParking,
       );
