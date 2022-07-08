@@ -163,6 +163,7 @@
 			"emergency"                     : false,
 			"faqs"                          : false,
 			"wayfinding"                    : false,
+			"create_stadium_poll"           : false,
 			"safer"                         : false,
 			"campus_links"                  : false
 		}
