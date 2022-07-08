@@ -308,20 +308,6 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             ),
           ),
         ),
-        Container(width: 12,),
-        Expanded(child:
-          Padding(padding: EdgeInsets.symmetric(vertical: 5), child:
-            RoundedButton(
-              label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
-              hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
-              backgroundColor: Styles().colors!.white,
-              fontSize: 16.0,
-              textColor: Styles().colors!.fillColorPrimary,
-              borderColor: Styles().colors!.fillColorSecondary,
-              onTap: _onSignOutClicked,
-            ),
-          ),
-        ),
       ],),
     );
   }
