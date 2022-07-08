@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Hide Create Stadium Poll [#1918](https://github.com/rokwire/illinois-app/issues/1918).
+- Text changes in Favorite & Browse panels, string transaltions [#1920](https://github.com/rokwire/illinois-app/issues/1920).
 
 ## [4.0.46] - 2022-07-07
 ### Changed
