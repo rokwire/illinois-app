@@ -80,7 +80,7 @@
 	"headerbar.options.hint":"",
 	"headerbar.debug.title":"調試",
 	"headerbar.debug.hint":"",
-	"headerbar.radio.title":"WPGU 調頻收音機",
+	"headerbar.radio.title":"WPGU 107.1 調頻",
 	"headerbar.radio.hint":"",
 
 	"toggle_button.status.checked":"选中",
@@ -334,7 +334,7 @@
 	"panel.browse.entry.events.upcoming_events.title": "建議的活動",
 
 	"panel.browse.entry.feeds.twitter.title": "推特",
-	"panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 調頻收音機",
+	"panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 調頻",
 
 	"panel.browse.entry.groups.all_groups.title": "所有組",
 
@@ -2518,8 +2518,8 @@
 
 	"widget.home.wallet.library_card.title": "借書卡",
 
-	"widget.home.radio.title": "WPGU 調頻收音機",
-	"widget.home.radio.disabled.message": "未啟用 WPGU FM 收音機。",
+	"widget.home.radio.title": "WPGU 107.1 調頻",
+	"widget.home.radio.disabled.message": "WPGU 107.1 FM 未啟用。",
 	"widget.home.radio.button.pause.title": "暫停",
 	"widget.home.radio.button.play.title": "玩",
 	"widget.home.radio.button.initalize.title": "初始化",

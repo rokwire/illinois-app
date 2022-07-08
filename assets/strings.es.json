@@ -80,7 +80,7 @@
     "headerbar.options.hint":"",
     "headerbar.debug.title":"Depurar",
     "headerbar.debug.hint":"",
-    "headerbar.radio.title":"WPGU Radio FM",
+    "headerbar.radio.title":"WPGU 107.1 FM",
     "headerbar.radio.hint":"",
 
     "toggle_button.status.checked": "marcado",
@@ -334,7 +334,7 @@
     "panel.browse.entry.events.upcoming_events.title": "Eventos sugeridos",
 
     "panel.browse.entry.feeds.twitter.title": "Gorjeo",
-    "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU Radio FM",
+    "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
 
     "panel.browse.entry.groups.all_groups.title": "Todos los grupos",
 
@@ -2518,8 +2518,8 @@
 
     "widget.home.wallet.library_card.title": "Tarjeta de biblioteca",
 
-    "widget.home.radio.title": "WPGU Radio FM",
-    "widget.home.radio.disabled.message": "La radio FM WPGU no está habilitada.",
+    "widget.home.radio.title": "WPGU 107.1 FM",
+    "widget.home.radio.disabled.message": "WPGU 107.1 FM no está habilitada.",
     "widget.home.radio.button.pause.title": "Pausa",
     "widget.home.radio.button.play.title": "Tocar",
     "widget.home.radio.button.initalize.title": "Inicializando",

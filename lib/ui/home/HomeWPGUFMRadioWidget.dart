@@ -22,7 +22,7 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio');
+  static String get title => Localization().getStringEx('widget.home.radio.title', 'WPGU 107.1 FM');
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
       childPadding: HomeSlantWidget.defaultChildPadding,
       child: _isEnabled ? _WPGUFMRadioControl(borderRadius: BorderRadius.all(Radius.circular(6)),) : HomeMessageCard(
-        message: Localization().getStringEx('widget.home.radio.disabled.message', 'WPGU FM Radio is not enabled'),
+        message: Localization().getStringEx('widget.home.radio.disabled.message', 'WPGU 107.1 FM is not enabled.'),
         margin: EdgeInsets.only(top: 8, bottom: 16),
       ),
     );
@@ -57,7 +57,7 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
               Expanded(child:
                 Padding(padding: EdgeInsets.all(8), child:
                   Center(child:
-                    Text(Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'), style: TextStyle(fontSize: 20, color: Colors.white),),
+                    Text(HomeWPGUFMRadioWidget.title, style: TextStyle(fontSize: 20, color: Colors.white),),
                   ),
                 ),
               ),

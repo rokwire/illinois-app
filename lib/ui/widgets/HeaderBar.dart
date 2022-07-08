@@ -270,7 +270,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
   }
 
   Widget buildHeaderRadioButton(BuildContext context) {
-    return Semantics(label: Localization().getStringEx('headerbar.radio.title', 'WPGU FM Radio'), hint: Localization().getStringEx('headerbar.radio.hint', ''), button: true, excludeSemantics: true, child:
+    return Semantics(label: Localization().getStringEx('headerbar.radio.title', 'WPGU 107.1 FM'), hint: Localization().getStringEx('headerbar.radio.hint', ''), button: true, excludeSemantics: true, child:
       IconButton(icon: Image.asset('images/radio-white.png', excludeFromSemantics: true), onPressed: () => onTapRadio(context),),);
   }
 

@@ -81,7 +81,7 @@
     "headerbar.options.hint":"",
     "headerbar.debug.title":"Debug",
     "headerbar.debug.hint":"",
-    "headerbar.radio.title":"WPGU FM Radio",
+    "headerbar.radio.title":"WPGU 107.1 FM",
     "headerbar.radio.hint":"",
 
     "toggle_button.status.checked": "checked",
@@ -336,7 +336,7 @@
     "panel.browse.entry.events.suggested_events.title": "Suggested Events",
 
     "panel.browse.entry.feeds.twitter.title": "Twitter",
-    "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU FM Radio",
+    "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
 
     "panel.browse.entry.groups.all_groups.title": "All Groups",
 
@@ -2525,8 +2525,8 @@
 
     "widget.home.wallet.library_card.title": "Library Card",
 
-    "widget.home.radio.title": "WPGU FM Radio",
-    "widget.home.radio.disabled.message": "WPGU FM Radio is not enabled.",
+    "widget.home.radio.title": "WPGU 107.1 FM",
+    "widget.home.radio.disabled.message": "WPGU 107.1 FM is not enabled.",
     "widget.home.radio.button.pause.title": "Pause",
     "widget.home.radio.button.play.title": "Play",
     "widget.home.radio.button.initalize.title": "Initializing",
