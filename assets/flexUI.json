@@ -164,7 +164,8 @@
 			"faqs"                          : false,
 			"wayfinding"                    : false,
 			"safer"                         : false,
-			"campus_links"                  : false
+			"campus_links"                  : false,
+			"create_stadium_poll"           : false
 		}
 	}
 }
