@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.0.47] - 2022-07-08
 ### Changed
 - Hide Create Stadium Poll [#1918](https://github.com/rokwire/illinois-app/issues/1918).
 - Text changes in Favorite & Browse panels, string transaltions [#1920](https://github.com/rokwire/illinois-app/issues/1920).
