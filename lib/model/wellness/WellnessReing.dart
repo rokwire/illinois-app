@@ -112,7 +112,7 @@ class WellnessRingRecord {
   static WellnessRingRecord? fromJson(Map<String, dynamic>? json) {
     if (json != null) {
       return WellnessRingRecord(
-        wellnessRingId: JsonUtils.stringValue(json['wellnessRingId']) ?? "",
+        wellnessRingId: JsonUtils.stringValue(json['ring_id']) ?? "",
         value: JsonUtils.doubleValue(json['value']) ?? 0.0,
         dateCreatedUtc: DateTimeUtils.dateTimeFromString(JsonUtils.stringValue(json['date_created']), format: _dateTimeFormat, isUtc: true),
       );
@@ -122,7 +122,7 @@ class WellnessRingRecord {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
-    json['wellnessRingId'] = wellnessRingId;
+    json['ring_id'] = wellnessRingId;
     json['value'] = value;
     json['date_created']  = DateTimeUtils.utcDateTimeToString(dateCreatedUtc);
     return json;

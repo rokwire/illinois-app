@@ -84,10 +84,12 @@ class WellnessRings with Service{
   }
 
   Future<bool> _loadFromNet() async{
-    var history = await _requestGetRingDefinition();
-    _wellnessRingsRecords = history;
+    var definitionHistory = await _requestGetRingDefinition();
+    _wellnessRingsRecords = definitionHistory;
     _updateActiveRingsData();
-    return history != null;
+    var recordsHistory = await _requestGetRingRecord();
+    _wellnessRecords = recordsHistory;
+    return definitionHistory != null;
   }
   /////
 
@@ -148,15 +150,19 @@ class WellnessRings with Service{
 
   Future<bool> addRecord(WellnessRingRecord record) async {
     Log.d("addRecord ${record.toJson()}");
-    //TBD store to BB
-    bool alreadyAccomplished = _isAccomplished(record.wellnessRingId);
-    _wellnessRecords?.add(record);
-    NotificationService().notify(notifyUserRingsUpdated);
-    if(alreadyAccomplished == false) {
-      _checkForAccomplishment(record.wellnessRingId);
+    bool success = await _requestAddRingRecord(record);
+    if(success) {
+      bool alreadyAccomplished = _isAccomplished(record.wellnessRingId);
+      _wellnessRecords?.add(record);
+      NotificationService().notify(notifyUserRingsUpdated);
+      if (alreadyAccomplished == false) {
+        _checkForAccomplishment(record.wellnessRingId);
+      }
+      _storeWellnessRecords();
+      return true;
     }
-    _storeWellnessRecords();
-    return true;
+
+    return false;
   }
 
   Future<List<WellnessRingDefinition>?> loadWellnessRings() async {
@@ -412,7 +418,7 @@ class WellnessRings with Service{
   }
 ///////
 
-  //BB APIS
+  //BB APIS RING DEFINITION
   Future<WellnessRingDefinition?> _requestAddRingDefinition(WellnessRingDefinition definition) async {
     //TBD ENABLED
     String url = '${Config().wellnessUrl}/user/rings';
@@ -494,6 +500,66 @@ class WellnessRings with Service{
 
 //////
 
+//BB APIS RING RECORDS
+
+  // Future<List<WellnessRingRecord>> _requestGetRingRecords() async { //TBD Change on backend to avoid multiple requests
+  //   List<WellnessRingRecord> fullHistory = [];
+  //   if(_activeWellnessRings?.isNotEmpty ?? false){
+  //     _activeWellnessRings!.keys.forEach((element) async {
+  //       var history = await _requestGetRingRecord(element);
+  //       if(history?.isNotEmpty??false) {
+  //         fullHistory.addAll(history!);
+  //       }
+  //     });
+  //   }
+  //   return fullHistory;
+  // }
+
+  Future<List<WellnessRingRecord>?> _requestGetRingRecord({String? ringId}) async { //TBD Change on backend to avoid multiple requests
+    //TBD ENABLED
+    String url ="";
+    if(ringId != null) {
+      url = '${Config().wellnessUrl}/user/rings/$ringId"/records';
+    } else {
+      url = '${Config().wellnessUrl}/user/all_rings_records';
+    }
+
+    http.Response? response = await Network().get(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<dynamic>? responseData = JsonUtils.decodeList(responseString);
+      return (responseData?.isNotEmpty ?? false) ? WellnessRingRecord.listFromJson(responseData): null;
+    } else {
+      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  Future<bool> _requestAddRingRecord(WellnessRingRecord record) async {
+    //TBD ENABLED
+    String url = '${Config().wellnessUrl}/user/rings/${record.wellnessRingId}/records';
+
+    String? definitionJson = JsonUtils.encode(record);
+
+    http.Response? response = await Network().post(url, auth: Auth2(), body: definitionJson);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      // List<dynamic>? responseData = JsonUtils.decodeList(responseString);
+      return true;
+    } else {
+      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      return false;
+    }
+  }
+
+  Future<bool> _requestDeleteRingRecords(String ringId) async {
+    //TBD implement
+    return false;
+  }
+
+//////
   //TBD Remove unnecessary public methods
   //TBD Reorder methods
   //TBD clan up
