@@ -2553,8 +2553,8 @@
     "widget.home.athletics_events.button.all.hint": "Tap to View all events",
 
     "widget.home.athletics_teams.text.title": "Athletics Teams",
-    "widget.home.athletics_teams.text.description": "See all sports and select your favorite sports.",
-    "widget.home.athletics_teams.text.description.hint": "Tap to see all sports and select your favorite sports.",
+    "widget.home.athletics_teams.text.description": "See all athletics teams and select your favorite sports.",
+    "widget.home.athletics_teams.text.description.hint": "Tap to see all athletics teams and select your favorite sports.",
     "widget.home.athletics_teams.button.all.title": "View All",
     "widget.home.athletics_teams.button.all.hint": "Tap to view all teams",
 
