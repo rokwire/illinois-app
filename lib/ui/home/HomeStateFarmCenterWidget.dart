@@ -51,7 +51,7 @@ class _HomeStateFarmCenterWidgetState extends HomeCompoundWidgetState<HomeStateF
   @override String? get emptyMessage => Localization().getStringEx("widget.home.state_farm_center.text.empty.description", "Tap the \u2606 on items in State Farm Center so you can quickly find them here.");
 
   @override
-  Widget? widgetFromCode(String? code) {
+  Widget? widgetFromCode(String code) {
     if (code == 'parking') {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.state_farm_center.parking.button.title', 'Parking'),

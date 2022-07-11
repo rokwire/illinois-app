@@ -46,7 +46,7 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
   @override String? get emptyMessage => Localization().getStringEx("widget.home.safer.text.empty.description", "Tap the \u2606 on items in Building Access so you can quickly find them here.");
 
   @override
-  Widget? widgetFromCode(String? code) {
+  Widget? widgetFromCode(String code) {
     if (code == 'building_access') {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access'),

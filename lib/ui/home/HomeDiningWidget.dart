@@ -48,7 +48,7 @@ class _HomeDiningWidgetState extends HomeCompoundWidgetState<HomeDiningWidget> {
   @override String? get emptyMessage => Localization().getStringEx("widget.home.dinings.text.empty.description", "Tap the \u2606 on items in Dinings so you can quickly find them here.");
 
   @override
-  Widget? widgetFromCode(String? code) {
+  Widget? widgetFromCode(String code) {
     if (code == 'dinings_all') {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.dinings.all.button.title', 'Residence Hall Dining'),
