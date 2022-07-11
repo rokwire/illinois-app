@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated description texy in HomeAthliticsTeamsWidget [#1936](https://github.com/rokwire/illinois-app/issues/1936).
 ### Fixed
 - Fixed content updating of Wallet favorite widget [#1935](https://github.com/rokwire/illinois-app/issues/1935).
-- Fixed navigation after phone confirmation panel [#1931](https://github.com/rokwire/illinois-app/issues/1931)
+- Fixed navigation after phone confirmation panel [#1931](https://github.com/rokwire/illinois-app/issues/1931).
+- Fixed some Android launch images [#1928](https://github.com/rokwire/illinois-app/issues/1928).
 
 ## [4.0.48] - 2022-07-08
 ### Changed
