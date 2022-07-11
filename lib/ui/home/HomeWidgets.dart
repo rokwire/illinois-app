@@ -615,7 +615,6 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   String? get emptyTitle => null;
   String? get emptyMessage;
 
-  double  get pageHeight => 0;
   double  get pageSpacing => 16;
   double  get contentSpacing => 16;
   double  get contentInnerSpacing => 8;
@@ -628,6 +627,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   List<String>? _favoriteCodes;
   Set<String>? _availableCodes;
   List<String>? _displayCodes;
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   
   PageController? _pageController;
   String? _currentCode;
@@ -702,13 +702,13 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
     else if (direction == Axis.horizontal) {
       List<Widget> pages = <Widget>[];
       for (String code in _displayCodes!) {
-        pages.add(Padding(padding: EdgeInsets.only(right: pageSpacing, bottom: contentSpacing), child: widgetFromCode(code) ?? Container()));
+        pages.add(Padding(key: _contentKeys[code] ??= GlobalKey(), padding: EdgeInsets.only(right: pageSpacing, bottom: contentSpacing), child: widgetFromCode(code) ?? Container()));
       }
 
-      return Container(constraints: BoxConstraints(minHeight: pageHeight), child:
+      return Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
         ExpandablePageView(
           controller: _pageController,
-          estimatedPageSize: pageHeight,
+          estimatedPageSize: _pageHeight,
           onPageChanged: _onCurrentPageChanged,
           children: pages,
         ),
@@ -780,6 +780,19 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
       }
     }
     return displayCodes;
+  }
+
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
   }
 
   void _onCurrentPageChanged(int index) {
