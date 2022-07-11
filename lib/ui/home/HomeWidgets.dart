@@ -626,10 +626,10 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   List<String>? _favoriteCodes;
   Set<String>? _availableCodes;
   List<String>? _displayCodes;
-  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
-  Key _pageViewKey = UniqueKey();
   
   PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   String? _currentCode;
   int _currentPage = -1;
 
