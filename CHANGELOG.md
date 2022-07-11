@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated description texy in HomeAthliticsTeamsWidget [#1936](https://github.com/rokwire/illinois-app/issues/1936).
+### Fixed
+- Fixed content updating of Wallet favorite widget [#1935](https://github.com/rokwire/illinois-app/issues/1935).
 
 ## [4.0.48] - 2022-07-08
 ### Changed

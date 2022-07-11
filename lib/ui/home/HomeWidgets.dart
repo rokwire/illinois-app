@@ -7,7 +7,6 @@ import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -615,23 +614,24 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   String? get emptyTitle => null;
   String? get emptyMessage;
 
-  double  get pageHeight => 0;
   double  get pageSpacing => 16;
   double  get contentSpacing => 16;
   double  get contentInnerSpacing => 8;
 
   @protected
-  Widget? widgetFromCode(String? code);
+  Widget? widgetFromCode(String code);
 
   // Data
 
   List<String>? _favoriteCodes;
   Set<String>? _availableCodes;
   List<String>? _displayCodes;
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  Key _pageViewKey = UniqueKey();
   
   PageController? _pageController;
   String? _currentCode;
-  int _currentIndex = -1;
+  int _currentPage = -1;
 
   @override
   void initState() {
@@ -646,13 +646,9 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
     
     if (direction == Axis.horizontal) {
       if (_displayCodes?.isNotEmpty ?? false) {
-        _currentIndex = 0;
+        _currentPage = 0;
         _currentCode = _displayCodes?.first;
       }
-
-      double screenWidth = MediaQuery.of(App.instance?.currentContext ?? super.context).size.width;
-      double pageViewport = (screenWidth - 2 * pageSpacing) / screenWidth;
-      _pageController = PageController(viewportFraction: pageViewport);
     }
 
     super.initState();
@@ -696,19 +692,26 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
     }
     else if (_displayCodes?.length == 1) {
       return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: contentSpacing), child:
-        widgetFromCode(_displayCodes?.first) ?? Container()
+        widgetFromCode(_displayCodes!.single) ?? Container()
       );
     }
     else if (direction == Axis.horizontal) {
       List<Widget> pages = <Widget>[];
       for (String code in _displayCodes!) {
-        pages.add(Padding(padding: EdgeInsets.only(right: pageSpacing, bottom: contentSpacing), child: widgetFromCode(code) ?? Container()));
+        pages.add(Padding(key: _contentKeys[code] ??= GlobalKey(), padding: EdgeInsets.only(right: pageSpacing, bottom: contentSpacing), child: widgetFromCode(code) ?? Container()));
       }
 
-      return Container(constraints: BoxConstraints(minHeight: pageHeight), child:
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage);
+      }
+
+      return Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
         ExpandablePageView(
+          key: _pageViewKey,
           controller: _pageController,
-          estimatedPageSize: pageHeight,
+          estimatedPageSize: _pageHeight,
           onPageChanged: _onCurrentPageChanged,
           children: pages,
         ),
@@ -782,24 +785,34 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
     return displayCodes;
   }
 
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
+  }
+
   void _onCurrentPageChanged(int index) {
-    _currentCode = ListUtils.entry(_displayCodes, _currentIndex = index);
+    _currentCode = ListUtils.entry(_displayCodes, _currentPage = index);
   }
 
   void _updateCurrentPage() {
     if ((_displayCodes?.isNotEmpty ?? false) && (direction == Axis.horizontal)) {
       int currentPage = (_currentCode != null) ? _displayCodes!.indexOf(_currentCode!) : -1;
       if (currentPage < 0) {
-        currentPage = max(0, min(_currentIndex, _displayCodes!.length - 1));
+        currentPage = max(0, min(_currentPage, _displayCodes!.length - 1));
       }
 
-      _currentCode = _displayCodes![_currentIndex = currentPage];
+      _currentCode = _displayCodes![_currentPage = currentPage];
 
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
-        if (_pageController?.hasClients ?? false) {
-          _pageController?.jumpToPage(currentPage);
-        }
-      });
+      _pageViewKey = UniqueKey();
+      _pageController = null;
     }
   }
 }

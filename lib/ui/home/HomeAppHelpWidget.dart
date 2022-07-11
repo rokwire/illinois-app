@@ -54,7 +54,7 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
   @override String? get emptyMessage => Localization().getStringEx("widget.home.app_help.text.empty.description", "Tap the \u2606 on items in App Help so you can quickly find them here.");
 
   @override
-  Widget? widgetFromCode(String? code) {
+  Widget? widgetFromCode(String code) {
     if ((code == 'video_tutorial') && _canVideoTutorial) {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.app_help.video_tutorial.button.title', 'Video Tutorial'),

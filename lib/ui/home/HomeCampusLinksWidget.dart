@@ -54,7 +54,7 @@ class _HomeCampusLinksWidgetState extends HomeCompoundWidgetState<HomeCampusLink
 
 
   @override
-  Widget? widgetFromCode(String? code) {
+  Widget? widgetFromCode(String code) {
     if ((code == 'due_date_catalog') && _canDueDateCatalog) {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.campus_links.date_cat.button.title', 'Due Date Catalog'),

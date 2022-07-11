@@ -48,7 +48,7 @@ class _HomeWalletWidgetState extends HomeCompoundWidgetState<HomeWalletWidget> {
   @override String? get emptyMessage => Localization().getStringEx("widget.home.wallet.text.empty.description", "Tap the \u2606 on items in Wallet so you can quickly find them here.");
 
   @override
-  Widget? widgetFromCode(String? code) {
+  Widget? widgetFromCode(String code) {
     if (code == 'illini_cash_card') {
       return HomeIlliniCashWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
     }
