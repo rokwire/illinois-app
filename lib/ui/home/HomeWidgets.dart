@@ -631,7 +631,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   
   PageController? _pageController;
   String? _currentCode;
-  int _currentIndex = -1;
+  int _currentPage = -1;
 
   @override
   void initState() {
@@ -646,7 +646,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
     
     if (direction == Axis.horizontal) {
       if (_displayCodes?.isNotEmpty ?? false) {
-        _currentIndex = 0;
+        _currentPage = 0;
         _currentCode = _displayCodes?.first;
       }
 
@@ -796,17 +796,17 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   }
 
   void _onCurrentPageChanged(int index) {
-    _currentCode = ListUtils.entry(_displayCodes, _currentIndex = index);
+    _currentCode = ListUtils.entry(_displayCodes, _currentPage = index);
   }
 
   void _updateCurrentPage() {
     if ((_displayCodes?.isNotEmpty ?? false) && (direction == Axis.horizontal)) {
       int currentPage = (_currentCode != null) ? _displayCodes!.indexOf(_currentCode!) : -1;
       if (currentPage < 0) {
-        currentPage = max(0, min(_currentIndex, _displayCodes!.length - 1));
+        currentPage = max(0, min(_currentPage, _displayCodes!.length - 1));
       }
 
-      _currentCode = _displayCodes![_currentIndex = currentPage];
+      _currentCode = _displayCodes![_currentPage = currentPage];
 
       WidgetsBinding.instance?.addPostFrameCallback((_) {
         if (_pageController?.hasClients ?? false) {
