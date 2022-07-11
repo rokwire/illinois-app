@@ -19,12 +19,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -46,6 +46,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:package_info/package_info.dart';
 
 class SettingsSectionsContentWidget extends StatefulWidget {
+
   @override
   _SettingsSectionsContentWidgetState createState() => _SettingsSectionsContentWidgetState();
 }
@@ -237,7 +238,8 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   void _popToMe() {
     Navigator.of(context).popUntil((Route route){
-      return AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType;
+      return route.settings.name == SettingsHomeContentPanel.routeName;
+      // return AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.parentWidget.runtimeType;
     });
   }
 
