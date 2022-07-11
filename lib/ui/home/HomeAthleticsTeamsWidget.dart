@@ -39,8 +39,8 @@ class _HomeAthliticsTeamsWidgetState extends State<HomeAthliticsTeamsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    String description = Localization().getStringEx('widget.home.athletics_teams.text.description', 'See all sports and select your favorite sports.');
-    String descriptionHint = Localization().getStringEx('widget.home.athletics_teams.text.description.hint', 'Tap to see all sports and select your favorite sports.');
+    String description = Localization().getStringEx('widget.home.athletics_teams.text.description', 'See all athletics teams and select your favorite sports.');
+    String descriptionHint = Localization().getStringEx('widget.home.athletics_teams.text.description.hint', 'Tap to see all athletics teams and select your favorite sports.');
 
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeAthliticsTeamsWidget.title,
