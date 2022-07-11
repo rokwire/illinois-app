@@ -23,8 +23,9 @@ class WellnessRings with Service{
   File? _cacheFile;
 
   Map<String,WellnessRingDefinition>? _activeWellnessRings;
-  List<WellnessRingDefinition>? _wellnessRingsRecords;
-  List<WellnessRingRecord>? _wellnessRecords;
+
+  List<WellnessRingDefinition>? _wellnessRingsRecords = [];
+  List<WellnessRingRecord>? _wellnessRecords = [];
 
   // Singletone Factory
 
@@ -43,7 +44,7 @@ class WellnessRings with Service{
   @override
   Future<void> initService() async {
     _cacheFile = await _getCacheFile();
-    await _initFromCache();
+    // await _initFromCache(); //TODO
     await _loadFromNet();
     _initActiveRingsData();
     return super.initService();
@@ -51,7 +52,6 @@ class WellnessRings with Service{
 
   //Init
   Future<bool> _initFromCache() async{
-    TMP: return true; //TBD REMOVE
     return _loadContentJsonFromCache().then((Map<String, dynamic>? storedValues) {
         _wellnessRingsRecords = WellnessRingDefinition.listFromJson(storedValues?["wellness_rings_data"]) ?? [];
         _wellnessRecords = WellnessRingRecord.listFromJson(storedValues?["wellness_ring_records"] ?? []);
@@ -384,7 +384,7 @@ class WellnessRings with Service{
   }
 
   Future<void> _saveContentStringToCache(String? value) async {
-    TMP: return; //TBD REMOVE
+    // TMP: return; //TBD REMOVE
     try {
       if (value != null) {
         await _cacheFile?.writeAsString(value, flush: true);
@@ -397,7 +397,7 @@ class WellnessRings with Service{
   }
 
   Future<Map<String, dynamic>?> _loadContentJsonFromCache() async {
-    TMP: return null; //TBD REMOVE
+    // TMP: return null; //TBD REMOVE
     return JsonUtils.decodeMap(await _loadContentStringFromCache());
   }
 ///////
