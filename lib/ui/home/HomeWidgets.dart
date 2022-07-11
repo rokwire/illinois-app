@@ -7,7 +7,6 @@ import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -628,6 +627,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   Set<String>? _availableCodes;
   List<String>? _displayCodes;
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  Key _pageViewKey = UniqueKey();
   
   PageController? _pageController;
   String? _currentCode;
@@ -649,10 +649,6 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
         _currentPage = 0;
         _currentCode = _displayCodes?.first;
       }
-
-      double screenWidth = MediaQuery.of(App.instance?.currentContext ?? super.context).size.width;
-      double pageViewport = (screenWidth - 2 * pageSpacing) / screenWidth;
-      _pageController = PageController(viewportFraction: pageViewport);
     }
 
     super.initState();
@@ -705,8 +701,15 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
         pages.add(Padding(key: _contentKeys[code] ??= GlobalKey(), padding: EdgeInsets.only(right: pageSpacing, bottom: contentSpacing), child: widgetFromCode(code) ?? Container()));
       }
 
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage);
+      }
+
       return Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
         ExpandablePageView(
+          key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,
           onPageChanged: _onCurrentPageChanged,
@@ -808,11 +811,8 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
 
       _currentCode = _displayCodes![_currentPage = currentPage];
 
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
-        if (_pageController?.hasClients ?? false) {
-          _pageController?.jumpToPage(currentPage);
-        }
-      });
+      _pageViewKey = UniqueKey();
+      _pageController = null;
     }
   }
 }
