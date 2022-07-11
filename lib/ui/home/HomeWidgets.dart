@@ -621,7 +621,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   double  get contentInnerSpacing => 8;
 
   @protected
-  Widget? widgetFromCode(String? code);
+  Widget? widgetFromCode(String code);
 
   // Data
 
@@ -696,7 +696,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
     }
     else if (_displayCodes?.length == 1) {
       return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: contentSpacing), child:
-        widgetFromCode(_displayCodes?.first) ?? Container()
+        widgetFromCode(_displayCodes!.single) ?? Container()
       );
     }
     else if (direction == Axis.horizontal) {
