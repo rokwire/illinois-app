@@ -30,6 +30,7 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/OnCampus.dart';
@@ -136,6 +137,7 @@ void main() async {
     Wellness(),
     WellnessRings(),
     WPGUFMRadio(),
+    Laundries(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // Laundries(),
