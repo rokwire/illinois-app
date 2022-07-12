@@ -28,6 +28,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
@@ -151,6 +152,7 @@ class ExplorePanelState extends State<ExplorePanel>
       NativeCommunicator.notifyMapSelectExplore,
       NativeCommunicator.notifyMapClearExplore,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
+      FlexUI.notifyChanged,
       Styles.notifyChanged,
     ]);
 
@@ -275,7 +277,9 @@ class ExplorePanelState extends State<ExplorePanel>
     exploreItems.add(ExploreItem.Events);
     exploreItems.add(ExploreItem.Dining);
     if (_displayType == ListMapDisplayType.Map) {
-      exploreItems.add(ExploreItem.Laundry);
+      if (FlexUI().hasFeature('laundry')) {
+        exploreItems.add(ExploreItem.Laundry);
+      }
       // #1872 Hide State Farm Wayfinding from Map
       // exploreItems.add(ExploreItem.State_Farm);
     }
@@ -1386,6 +1390,9 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _onPrivacyLevelChanged();
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateExploreItems();
     }
     else if(name == Styles.notifyChanged){
       setState(() { });

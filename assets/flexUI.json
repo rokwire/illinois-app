@@ -69,7 +69,7 @@
 
 		"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 		
-		"features": ["authentication", "create_poll", "mtd_bus_number", "parking_lot_directions", "gies", "new_student", "canvas", "safer"],
+		"features": ["authentication", "create_poll", "mtd_bus_number", "parking_lot_directions", "gies", "new_student", "canvas", "safer", "laundry"],
 		
 		"launch":["emergency"]
 		
@@ -156,6 +156,7 @@
 			"campus_resources": { "build": "debug" }
 		},
 		"illini_cash": {
+			"features.laundry": { "housingResidenceStatus": true },
 			"new_student": { "firstYearStudent": true },
 			"new_student_checklist": { "firstYearStudent": true }
 		},
