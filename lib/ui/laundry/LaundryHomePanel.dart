@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Laundries.dart';
@@ -176,8 +177,9 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     );
   }
 
-  AppBar _buildHeaderBar() {
-    return AppBar(
+  PreferredSizeWidget _buildHeaderBar() {
+    return HeaderBar(title: Localization().getStringEx('panel.laundry_home.heading.laundry', 'Laundry'),);
+    /*return AppBar(
       leading: Semantics(
         label: Localization().getStringEx('headerbar.back.title', 'Back'),
         hint: Localization().getStringEx('headerbar.back.hint', ''),
@@ -215,7 +217,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
         style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16, color: Colors.white, letterSpacing: 1),
       ),
       centerTitle: false,
-    );
+    );*/
   }
 
   Widget _buildContentWidget() {
