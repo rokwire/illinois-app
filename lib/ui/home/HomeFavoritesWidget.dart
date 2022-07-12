@@ -193,7 +193,8 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       return _buildCompositEventCard(item);
     }
 
-    bool favorite = Auth2().isFavorite(item);
+    bool isFavorite = Auth2().isFavorite(item);
+    Image? favoriteStarIcon = item?.favoriteStarIcon(selected: isFavorite);
     Color? headerColor = item?.favoriteHeaderColor;
     String? title = item?.favoriteTitle;
     String? cardDetailText = item?.favoriteDetailText;
@@ -212,23 +213,23 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
                       Expanded(child:
                         Text(title ?? '', semanticsLabel: "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20), ),
                       ),
-                      Visibility(visible: Auth2().canFavorite, child:
+                      Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
                         GestureDetector(behavior: HitTestBehavior.opaque,
                           onTap: () {
                             Analytics().logSelect(target: "Favorite: $title");
                             Auth2().prefs?.toggleFavorite(item);
                           }, child:
                           Semantics(container: true,
-                            label: favorite
+                            label: isFavorite
                                 ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
                                 : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-                            hint: favorite
+                            hint: isFavorite
                                 ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
                                 : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                             button: true,
                             excludeSemantics: true,
                             child:
-                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Image.asset(favorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)))),
+                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: favoriteStarIcon))),
                           )
                         ],
                       )
