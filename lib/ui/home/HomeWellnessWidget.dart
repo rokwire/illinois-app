@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
-import 'package:illinois/model/wellness/WellnessReing.dart';
+import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/Transportation.dart';
@@ -390,7 +390,8 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
     if(activeRings?.isNotEmpty ?? false){
       for(WellnessRingDefinition data in activeRings!) {
         content.add(SmallWellnessRingButton(label: data.name!, color: data.color,
-            onTapWidget: (context){ _onTapIncrease(data);}));
+            onTapWidget: (context)  =>  _onTapIncrease(data)
+        ));
         content.add(Container(height: 5,));
       }
     }
@@ -411,8 +412,8 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.rings)));
   }
 
-  void _onTapIncrease(WellnessRingDefinition data){
-    WellnessRings().addRecord(
+  Future<void> _onTapIncrease(WellnessRingDefinition data) async{
+    await WellnessRings().addRecord(
         WellnessRingRecord(value: 1, dateCreatedUtc: DateTime
             .now(), wellnessRingId: data.id));
   }

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:illinois/model/wellness/WellnessReing.dart';
+import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:path/path.dart';
@@ -19,12 +19,14 @@ class WellnessRings with Service{
 
   static const String _cacheFileName = "wellness.json";
   static const int MAX_RINGS = 4;
+  static const int HISTORY_LIMIT_DAYS = 14;
 
   File? _cacheFile;
 
   Map<String,WellnessRingDefinition>? _activeWellnessRings;
-  List<WellnessRingDefinition>? _wellnessRingsRecords;
-  List<WellnessRingRecord>? _wellnessRecords;
+
+  List<WellnessRingDefinition>? _wellnessRingsRecords = [];
+  List<WellnessRingRecord>? _wellnessRecords = [];
 
   // Singletone Factory
 
@@ -42,22 +44,57 @@ class WellnessRings with Service{
 
   @override
   Future<void> initService() async {
-    _cacheFile = await _getCacheFile();
-    await _initFromCache();
-    await _loadFromNet();
-    _initActiveRingsData();
+    _initRecords();
     return super.initService();
   }
 
   //Init
+  Future<void> _initRecords() async {
+    await _initFromCache();
+    _loadFromNet().then((_) {
+      Log.d("Wellness Rings _initRecords finished!");
+      NotificationService().notify(notifyUserRingsUpdated);
+    });
+  }
+
   Future<bool> _initFromCache() async{
+    _cacheFile = await _getCacheFile();
     return _loadContentJsonFromCache().then((Map<String, dynamic>? storedValues) {
         _wellnessRingsRecords = WellnessRingDefinition.listFromJson(storedValues?["wellness_rings_data"]) ?? [];
         _wellnessRecords = WellnessRingRecord.listFromJson(storedValues?["wellness_ring_records"] ?? []);
+        Log.d("Wellness Rings Init from cache finished!");
         return true;
       });
   }
 
+  Future<void> _loadFromNet() async{
+    await Future.wait([
+      _loadRingDefinitions(),
+      _loadRingRecords(),
+    ]);
+    Log.d("Wellness Rings _loadFromNet finished!");
+  }
+
+  Future<void> _loadRingDefinitions() async {
+    var definitionHistory = await _requestGetRingDefinition();
+    if(definitionHistory!=null)
+      _wellnessRingsRecords = definitionHistory;
+    _updateActiveRingsData();
+    // NotificationService().notify(notifyUserRingsUpdated);
+    Log.d("Wellness Rings _loadRingDefinitions finished!");
+  }
+
+  Future<void> _loadRingRecords() async {
+    var recordsHistory = await _requestGetRingRecord(
+        startPeriod: DateTimeUtils.midnight(DateTime.now())?.subtract(Duration(days: HISTORY_LIMIT_DAYS))); //Consider do we want to load full history from the beginning
+    if(recordsHistory != null)
+      _wellnessRecords = recordsHistory;
+    // NotificationService().notify(notifyUserRingsUpdated);
+    Log.d("Wellness Rings loadRingRecords finished!");
+  }
+  /////
+
+  //Active Rings:
   bool _initActiveRingsData (){
     _activeWellnessRings = {};
     if(_wellnessRingsRecords?.isNotEmpty ?? false){
@@ -65,7 +102,7 @@ class WellnessRings with Service{
         if(_activeWellnessRings!.containsKey(data.id)){
           WellnessRingDefinition? storedDefinition = _activeWellnessRings![data.id];
           if((storedDefinition?.timestamp ?? 0) < data.timestamp){
-              _activeWellnessRings![data.id] = data; //TBD try storedData = data;
+            _activeWellnessRings![data.id] = data;
           }
         } else {
           _activeWellnessRings![data.id] = data;
@@ -82,13 +119,6 @@ class WellnessRings with Service{
     // NotificationService().notify(notifyUserRingsUpdated); //TBD use separate key
   }
 
-  Future<bool> _loadFromNet() async{
-    //TBD network API
-    // _storeWellnessRingData();
-    return true;
-  }
-  /////
-
   //APIS
   Future<bool> addRing(WellnessRingDefinition definition) async {
     bool success = false;
@@ -102,7 +132,6 @@ class WellnessRings with Service{
         _updateActiveRingsData();
         success = true;
       }
-
     }
     return success;
   }
@@ -114,44 +143,52 @@ class WellnessRings with Service{
       if(_wellnessRingsRecords == null){
         _wellnessRingsRecords = [];
       }
-      _wellnessRingsRecords!.add(data);
-      _updateActiveRingsData();
-      success = true;
-      _storeWellnessRingData();
-      NotificationService().notify(notifyUserRingsUpdated);
+      success = await _requestAddRingDefinitionHistory(data);
+      if(success) {
+        _wellnessRingsRecords!.add(data);
+        _updateActiveRingsData();
+        _storeWellnessRingData();
+        NotificationService().notify(notifyUserRingsUpdated);
+      }
     }
     return success;
   }
 
   Future<bool> removeRing(WellnessRingDefinition data) async {
-    //TBD network API
     WellnessRingDefinition? ringData = _activeWellnessRings?[data.id];
-    if(ringData != null){
-      _wellnessRingsRecords?.removeWhere((ringRecord) => ringRecord.id == data.id);
-      _wellnessRecords?.removeWhere((ringRecord) => ringRecord.wellnessRingId == data.id);
-      _updateActiveRingsData();
-      _storeWellnessRingData();
-      NotificationService().notify(notifyUserRingsUpdated);
-      return true;
+    bool success = await _requestDeleteRingDefinition(data.id);
+    if(success) {
+      if (ringData != null) {
+        _wellnessRingsRecords?.removeWhere((ringRecord) =>
+        ringRecord.id == data.id);
+        _wellnessRecords?.removeWhere((ringRecord) =>
+        ringRecord.wellnessRingId == data.id);
+        _updateActiveRingsData();
+        _storeWellnessRingData();
+        NotificationService().notify(notifyUserRingsUpdated);
+        return true;
+      }
     }
-
     return false;
   }
 
   Future<bool> addRecord(WellnessRingRecord record) async {
     Log.d("addRecord ${record.toJson()}");
-    //TBD store to BB
-    bool alreadyAccomplished = _isAccomplished(record.wellnessRingId);
-    _wellnessRecords?.add(record);
-    NotificationService().notify(notifyUserRingsUpdated);
-    if(alreadyAccomplished == false) {
-      _checkForAccomplishment(record.wellnessRingId);
+    bool success = await _requestAddRingRecord(record);
+    if(success) {
+      bool alreadyAccomplished = _isAccomplished(record.wellnessRingId);
+      _wellnessRecords?.add(record);
+      NotificationService().notify(notifyUserRingsUpdated);
+      if (alreadyAccomplished == false) {
+        _checkForAccomplishment(record.wellnessRingId);
+      }
+      _storeWellnessRecords();
+      return true;
     }
-    _storeWellnessRecords();
-    return true;
+    return false;
   }
 
-  Future<List<WellnessRingDefinition>?> loadWellnessRings() async {
+  Future<List<WellnessRingDefinition>?> loadWellnessRings() async { //TBD decide do we need such method
     //TBD load from net
     return _activeWellnessRings?.values.toList();
   }
@@ -277,7 +314,7 @@ class WellnessRings with Service{
     return (id != null )? (_activeWellnessRings?[id] ): null;
   }
 
-  //Total Completion
+  //Total Completion TBD remove if we are not going to use it again
   int getTotalCompletionCount(String id){
     //Split records by date
     Map<String, List<WellnessRingRecord>> ringDateRecords = {};
@@ -376,6 +413,7 @@ class WellnessRings with Service{
   }
 
   Future<void> _saveContentStringToCache(String? value) async {
+    // TMP: return; //TBD REMOVE
     try {
       if (value != null) {
         await _cacheFile?.writeAsString(value, flush: true);
@@ -388,6 +426,7 @@ class WellnessRings with Service{
   }
 
   Future<Map<String, dynamic>?> _loadContentJsonFromCache() async {
+    // TMP: return null; //TBD REMOVE
     return JsonUtils.decodeMap(await _loadContentStringFromCache());
   }
 ///////
@@ -402,7 +441,7 @@ class WellnessRings with Service{
   }
 ///////
 
-  //BB APIS
+  //BB APIS RING DEFINITION
   Future<WellnessRingDefinition?> _requestAddRingDefinition(WellnessRingDefinition definition) async {
     //TBD ENABLED
     String url = '${Config().wellnessUrl}/user/rings';
@@ -413,8 +452,6 @@ class WellnessRings with Service{
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      //TBD handle response
-      // List<ToDoCategory>? categories = ToDoCategory.listFromJson(JsonUtils.decodeList(responseString));
       Map<String, dynamic>? responseData = JsonUtils.decodeMap(responseString);
       List<dynamic>? history = JsonUtils.listValue(responseData?["history"]);
       return (history?.isNotEmpty ?? false) ? WellnessRingDefinition.fromJson(history!.last ): null;
@@ -424,8 +461,7 @@ class WellnessRings with Service{
     }
   }
 
-  // ignore: do_not_use_environment TBD make it private 
-  Future<WellnessRingDefinition?> requestGetRingDefinition({String? ringId}) async {
+  Future<List<WellnessRingDefinition>?> _requestGetRingDefinition({String? ringId}) async {
     //TBD ENABLED
     String url = '${Config().wellnessUrl}/user/rings';
     if(ringId!=null){
@@ -436,17 +472,119 @@ class WellnessRings with Service{
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
-      //TBD handle response
-      // List<ToDoCategory>? categories = ToDoCategory.listFromJson(JsonUtils.decodeList(responseString));
-      return null;
+      List<dynamic>? responseData = JsonUtils.decodeList(responseString);
+      if(responseData?.isNotEmpty ?? false){
+        List<dynamic> fullHistory = [];
+        responseData!.forEach((data) { //TBD get response in this format
+          List<dynamic>? history = JsonUtils.listValue(data["history"]);
+          if(history!=null) {
+            fullHistory.addAll(history);
+          }
+        });
+        return WellnessRingDefinition.listFromJson(fullHistory);
+      } else {
+        return []; //successful but empty
+      }
     } else {
       Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
       return null;
     }
   }
 
+  Future<bool> _requestDeleteRingDefinition(String ringId) async {
+    //TBD ENABLED
+    String url = '${Config().wellnessUrl}/user/rings/$ringId';
+
+    http.Response? response = await Network().delete(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      return true;
+    } else {
+      Log.w('Failed to delete wellness ring. Response:\n$responseCode: $responseString');
+      return false;
+    }
+  }
+
+  Future<bool> _requestAddRingDefinitionHistory(WellnessRingDefinition definition) async {
+    //TBD ENABLED
+    String url = '${Config().wellnessUrl}/user/rings/${definition.id}/history';
+
+    String? definitionJson = JsonUtils.encode(definition);
+
+    http.Response? response = await Network().post(url, auth: Auth2(), body: definitionJson);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      return true;
+    } else {
+      Log.w('Failed to add wellness ring history. Response:\n$responseCode: $responseString');
+      return false;
+    }
+  }
+
 //////
 
+//BB APIS RING RECORDS
+
+  Future<List<WellnessRingRecord>?> _requestGetRingRecord({String? ringId, DateTime? startPeriod, DateTime? endPeriod}) async { //TBD Change on backend to avoid multiple requests
+    //TBD ENABLED
+    bool haveAppliedQueryParams = false;
+    String url ="";
+    if(ringId != null) {
+      url = '${Config().wellnessUrl}/user/rings/$ringId"/records';
+    } else {
+      url = '${Config().wellnessUrl}/user/all_rings_records';
+    }
+
+    if(startPeriod != null){
+      url += haveAppliedQueryParams ? "&" : "?";
+      url += "start_date=${startPeriod.millisecondsSinceEpoch.toString()}";
+      haveAppliedQueryParams = true;
+    }
+
+    if(endPeriod != null){
+      url += haveAppliedQueryParams ? "&" : "?";
+      url += "end_date=${endPeriod.millisecondsSinceEpoch.toString()}";
+      haveAppliedQueryParams = true;
+    }
+
+    http.Response? response = await Network().get(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<dynamic>? responseData = JsonUtils.decodeList(responseString);
+      return (responseData?.isNotEmpty ?? false) ? WellnessRingRecord.listFromJson(responseData): [] /*successful but empty*/;
+    } else {
+      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  Future<bool> _requestAddRingRecord(WellnessRingRecord record) async {
+    //TBD ENABLED
+    String url = '${Config().wellnessUrl}/user/rings/${record.wellnessRingId}/records';
+
+    String? definitionJson = JsonUtils.encode(record);
+
+    http.Response? response = await Network().post(url, auth: Auth2(), body: definitionJson);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      // List<dynamic>? responseData = JsonUtils.decodeList(responseString);
+      return true;
+    } else {
+      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      return false;
+    }
+  }
+
+  Future<bool> _requestDeleteRingRecords(String ringId) async {
+    //TBD implement
+    return false;
+  }
+
+//////
   //TBD Remove unnecessary public methods
   //TBD Reorder methods
   //TBD clan up

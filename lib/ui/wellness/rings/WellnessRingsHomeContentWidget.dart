@@ -16,7 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/wellness/WellnessReing.dart';
+import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingCreatePane.dart';
@@ -169,12 +169,12 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
               description: "${WellnessRings()
                   .getRingDailyValue(definition.id)
                   .toInt()}/${definition.goal.toInt()} ${definition.unit}s",
-              onTapIncrease: (context) {
-                WellnessRings().addRecord(
+              onTapIncrease: (context) async{
+                await WellnessRings().addRecord(
                     WellnessRingRecord(value: 1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
               },
-            onTapDecrease: (context) {
-              WellnessRings().addRecord(
+            onTapDecrease: (context) async {
+              await WellnessRings().addRecord(
                   WellnessRingRecord(value: -1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
             },
               onTapEdit: (context){
