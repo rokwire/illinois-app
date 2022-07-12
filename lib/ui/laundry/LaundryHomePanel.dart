@@ -26,7 +26,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/explore/ExploreViewTypeTab.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
@@ -170,16 +169,15 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildHeaderBar(),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.laundry_home.heading.laundry', 'Laundry'),),
       body: _loading ? Center(child: CircularProgressIndicator(),) : _buildContentWidget(),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
-  PreferredSizeWidget _buildHeaderBar() {
-    return HeaderBar(title: Localization().getStringEx('panel.laundry_home.heading.laundry', 'Laundry'),);
-    /*return AppBar(
+  /*PreferredSizeWidget _buildHeaderBar() {
+    return AppBar(
       leading: Semantics(
         label: Localization().getStringEx('headerbar.back.title', 'Back'),
         hint: Localization().getStringEx('headerbar.back.hint', ''),
@@ -217,8 +215,23 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
         style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16, color: Colors.white, letterSpacing: 1),
       ),
       centerTitle: false,
-    );*/
+    );
   }
+
+  void _onTapMap() {
+    Analytics().logSelect(target: 'Map');
+    _selectDisplayType(_DisplayType.Map);
+  }
+
+  void _onTapList() {
+    Analytics().logSelect(target: 'List');
+    _selectDisplayType(_DisplayType.List);
+  }
+
+  void _onTapBack() {
+    Analytics().logSelect(target: 'Back');
+    Navigator.pop(context);
+  }*/
 
   Widget _buildContentWidget() {
     if (_loading == true) {
@@ -354,7 +367,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     Laundries().loadSchoolRooms().then((laundrySchool) => _onSchoolLoaded(laundrySchool));
   }
 
-  void _selectDisplayType(_DisplayType displayType) {
+  /*void _selectDisplayType(_DisplayType displayType) {
     Analytics().logSelect(target: displayType.toString());
     if (_displayType != displayType) {
       setState(() {
@@ -363,7 +376,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
         _enableMap(_displayType == _DisplayType.Map);
       });
     }
-  }
+  }*/
 
   void _onSchoolLoaded(LaundrySchool? laundrySchool) {
     if (mounted) {
@@ -453,21 +466,6 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     if (_nativeMapController != null) {
       _nativeMapController!.placePOIs(rooms);
     }
-  }
-
-  void _onTapMap() {
-    Analytics().logSelect(target: 'Map');
-    _selectDisplayType(_DisplayType.Map);
-  }
-
-  void _onTapList() {
-    Analytics().logSelect(target: 'List');
-    _selectDisplayType(_DisplayType.List);
-  }
-
-  void _onTapBack() {
-    Analytics().logSelect(target: 'Back');
-    Navigator.pop(context);
   }
 }
 
