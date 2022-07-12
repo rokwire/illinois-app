@@ -17,6 +17,7 @@
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class LaundrySchool {
@@ -34,13 +35,21 @@ class LaundrySchool {
   }
 }
 
-class LaundryRoom implements Favorite {
+class LaundryRoom with Explore implements Favorite {
   String? id;
   String? name;
   LaundryRoomStatus? status;
   ExploreLocation? location;
 
   LaundryRoom({this.id, this.name, this.status, this.location});
+
+  static bool canJson(Map<String, dynamic>? json) {
+    return (json != null) &&
+      ((json['ID'] != null) || (json['id'] != null)) &&
+      ((json['Name'] != null) || (json['title'] != null)) &&
+      ((json['Status'] != null) || (json['status'] != null)) &&
+      ((json['Location'] != null) || (json['location'] != null));
+  }
 
   static LaundryRoom? fromJson(Map<String, dynamic>? json) {
     return (json != null)
@@ -51,6 +60,16 @@ class LaundryRoom implements Favorite {
             location: ExploreLocation.fromJSON(JsonUtils.mapValue(json['Location'] ?? json['location'])))
         : null;
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': name,
+      'status': roomStatusToString(status),
+      'location': location?.toJson()
+    };
+  }
+
 
   static LaundryRoom? fromNativeMapJson(Map<String, dynamic>? json) {
     return (json != null)
@@ -80,7 +99,13 @@ class LaundryRoom implements Favorite {
   @override
   int get hashCode => (id?.hashCode ?? 0) ^ (name?.hashCode ?? 0) ^ (status?.hashCode ?? 0) ^ (location?.hashCode ?? 0);
 
-  String? get displayStatus => null;
+  String? get displayStatus {
+    switch(status) {
+      case LaundryRoomStatus.online: return Localization().getStringEx('widget.laundry.room.status.online.text', 'Online');
+      case LaundryRoomStatus.offline: return Localization().getStringEx('widget.laundry.room.status.offline.text', 'Offline');
+      default: return null;
+    }
+  }
 
   Map<String, dynamic> get analyticsAttributes {
     return {
@@ -89,11 +114,20 @@ class LaundryRoom implements Favorite {
     };
   }
 
-  Map<String, dynamic> toJson() {
-    return {'id': id, 'title': name, 'status': roomStatusToString(status), 'location': location?.toJson()};
-  }
+  // Explore
+
+  @override String?   get exploreId => id;
+  @override String?   get exploreTitle => name;
+  @override String?   get exploreSubTitle => displayStatus;
+  @override String?   get exploreShortDescription => null;
+  @override String?   get exploreLongDescription => null;
+  @override DateTime? get exploreStartDateUtc => null;
+  @override String?   get exploreImageURL => null;
+  @override String?   get explorePlaceId => null;
+  ExploreLocation?    get exploreLocation => location;
 
   // Favorite
+
   static const String favoriteKeyName = "laundryPlaceIds";
   @override String get favoriteKey => favoriteKeyName;
   @override String? get favoriteId => id;

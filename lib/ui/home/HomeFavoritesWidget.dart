@@ -193,10 +193,12 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       return _buildCompositEventCard(item);
     }
 
-    bool favorite = Auth2().isFavorite(item);
+    bool isFavorite = Auth2().isFavorite(item);
+    Image? favoriteStarIcon = item?.favoriteStarIcon(selected: isFavorite);
     Color? headerColor = item?.favoriteHeaderColor;
     String? title = item?.favoriteTitle;
     String? cardDetailText = item?.favoriteDetailText;
+    Color? cardDetailTextColor = item?.favoriteDetailTextColor ?? Styles().colors?.textBackground;
     Image? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? item?.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: () => _onTapItem(item), child:
@@ -211,23 +213,23 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
                       Expanded(child:
                         Text(title ?? '', semanticsLabel: "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20), ),
                       ),
-                      Visibility(visible: Auth2().canFavorite, child:
+                      Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
                         GestureDetector(behavior: HitTestBehavior.opaque,
                           onTap: () {
                             Analytics().logSelect(target: "Favorite: $title");
                             Auth2().prefs?.toggleFavorite(item);
                           }, child:
                           Semantics(container: true,
-                            label: favorite
+                            label: isFavorite
                                 ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
                                 : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-                            hint: favorite
+                            hint: isFavorite
                                 ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
                                 : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                             button: true,
                             excludeSemantics: true,
                             child:
-                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Image.asset(favorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)))),
+                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: favoriteStarIcon))),
                           )
                         ],
                       )
@@ -240,10 +242,10 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
                         Row(children: <Widget>[
                           Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
                           Expanded(child:
-                            Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+                            Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: cardDetailTextColor)),
                           )
                         ],) :
-                        Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+                        Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: cardDetailTextColor)),
                   )),)
                 ]),
               ),
@@ -414,7 +416,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.dining', 'Tap the \u2606 on items in Dinings so you can quickly find them here.');
       case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.athletics', 'Tap the \u2606 on items in Athletics Events so you can quickly find them here.');
       case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.news', 'Tap the \u2606 on items in Athletics News so you can quickly find them here.');
-      case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.laundry', 'Tap the \u2606 on items in Laundry so you can quickly find them here.');
+      case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.laundry', 'Tap the \u2606 on laundry locations to quickly find them here.');
       case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.inbox', 'Tap the \u2606 on items in Notifications so you can quickly find them here.');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.campus_guide', 'Tap the \u2606 on items in Campus Guide so you can quickly find them here.');
     }

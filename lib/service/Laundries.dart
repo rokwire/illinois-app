@@ -18,20 +18,32 @@ import 'dart:async';
 import 'package:http/http.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:illinois/model/Laundry.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-// Laundries does rely on Service initialization API so it does not override service interfaces and is not registered in Services..
-class Laundries /* with Service */ {
+class Laundries with Service implements ExploreJsonHandler {
+
+  // Singletone Factory
+
   static final Laundries _logic = Laundries._internal();
 
-  factory Laundries() {
-    return _logic;
-  }
+  factory Laundries() => _logic;
 
   Laundries._internal();
+
+
+  // Service
+
+  @override
+  void createService() {
+    Explore.addJsonHandler(this);
+  }
+
+  // Implementation
 
   Future<LaundrySchool?> loadSchoolRooms() async {
     String? roomsUrl = (Config().gatewayUrl != null) ? "${Config().gatewayUrl}/laundry/rooms" : null;
@@ -105,4 +117,8 @@ class Laundries /* with Service */ {
       return null;
     }
   }
+
+  // ExploreJsonHandler
+  @override bool exploreCanJson(Map<String, dynamic>? json) => LaundryRoom.canJson(json);
+  @override Explore? exploreFromJson(Map<String, dynamic>? json) => LaundryRoom.fromJson(json);
 }

@@ -495,6 +495,8 @@ class _BrowseEntry extends StatelessWidget {
       case "groups.all_groups":  _onTapAllGroups(context); break;
       case "groups.my_groups":   _onTapMyGroups(context); break;
 
+      case "laundry.laundry":    _onTapLaundry(context); break;
+
       case "my.my_groups":       _onTapMyGroups(context); break;
       case "my.my_game_day":     _onTapMyGameDay(context); break;
       case "my.my_events":       _onTapMyEvents(context); break;

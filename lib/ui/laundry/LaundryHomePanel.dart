@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Laundries.dart';
@@ -25,7 +26,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/explore/ExploreViewTypeTab.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
@@ -39,6 +39,10 @@ import 'package:sprintf/sprintf.dart';
 enum _DisplayType { List, Map }
 
 class LaundryHomePanel extends StatefulWidget {
+  final LaundrySchool? laundrySchool;
+
+  LaundryHomePanel({Key? key, this.laundrySchool}) : super(key: key);
+
   @override
   _LaundryHomePanelState createState() => _LaundryHomePanelState();
 }
@@ -82,7 +86,10 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
         this.setState(() {});
       });
 
-    _loadSchool();
+    _laundrySchool = widget.laundrySchool;
+    if (_laundrySchool == null) {
+      _loadSchool();
+    }
   }
 
   @override
@@ -162,14 +169,14 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildHeaderBar(),
+      appBar: HeaderBar(title: Localization().getStringEx('panel.laundry_home.heading.laundry', 'Laundry'),),
       body: _loading ? Center(child: CircularProgressIndicator(),) : _buildContentWidget(),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
-  AppBar _buildHeaderBar() {
+  /*PreferredSizeWidget _buildHeaderBar() {
     return AppBar(
       leading: Semantics(
         label: Localization().getStringEx('headerbar.back.title', 'Back'),
@@ -210,6 +217,21 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       centerTitle: false,
     );
   }
+
+  void _onTapMap() {
+    Analytics().logSelect(target: 'Map');
+    _selectDisplayType(_DisplayType.Map);
+  }
+
+  void _onTapList() {
+    Analytics().logSelect(target: 'List');
+    _selectDisplayType(_DisplayType.List);
+  }
+
+  void _onTapBack() {
+    Analytics().logSelect(target: 'Back');
+    Navigator.pop(context);
+  }*/
 
   Widget _buildContentWidget() {
     if (_loading == true) {
@@ -345,7 +367,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     Laundries().loadSchoolRooms().then((laundrySchool) => _onSchoolLoaded(laundrySchool));
   }
 
-  void _selectDisplayType(_DisplayType displayType) {
+  /*void _selectDisplayType(_DisplayType displayType) {
     Analytics().logSelect(target: displayType.toString());
     if (_displayType != displayType) {
       setState(() {
@@ -354,7 +376,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
         _enableMap(_displayType == _DisplayType.Map);
       });
     }
-  }
+  }*/
 
   void _onSchoolLoaded(LaundrySchool? laundrySchool) {
     if (mounted) {
@@ -444,21 +466,6 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     if (_nativeMapController != null) {
       _nativeMapController!.placePOIs(rooms);
     }
-  }
-
-  void _onTapMap() {
-    Analytics().logSelect(target: 'Map');
-    _selectDisplayType(_DisplayType.Map);
-  }
-
-  void _onTapList() {
-    Analytics().logSelect(target: 'List');
-    _selectDisplayType(_DisplayType.List);
-  }
-
-  void _onTapBack() {
-    Analytics().logSelect(target: 'Back');
-    Navigator.pop(context);
   }
 }
 
