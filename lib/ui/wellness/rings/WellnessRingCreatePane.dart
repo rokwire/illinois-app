@@ -29,7 +29,9 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
   TextEditingController _nameController = TextEditingController();
   TextEditingController _quantityController = TextEditingController();
   TextEditingController _unitController = TextEditingController();
-  bool _loading = false;
+
+  bool _loadingSave = false;
+  bool _loadingDelete = false;
 
   @override
   void initState() {
@@ -235,7 +237,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
             label: _continueButtonTitle,
             fontSize: 16,
             contentWeight: 0,
-            progress: _loading,
+            progress: _loadingSave,
             padding: EdgeInsets.symmetric(horizontal: 46, vertical: 6),
             onTap: _onTapSave));
   }
@@ -250,7 +252,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
             label: Localization().getStringEx('panel.wellness.categories.delete.button', 'Delete'),
             fontSize: 16,
             contentWeight: 0,
-            progress: _loading,
+            progress: _loadingDelete,
             padding: EdgeInsets.symmetric(horizontal: 46, vertical: 8),
             onTap: _onTapDelete));
   }
@@ -292,7 +294,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.ring.create.empty.color.msg', 'Please, select color.'));
       return;
     }
-    _setLoading(true);
+    _setLoadingSave(true);
     WellnessRingDefinition _ringData = WellnessRingDefinition(name: name, colorHex: ColorUtils.toHex(_selectedColor!), goal: quantity, unit: unit, dateCreatedUtc: DateTime.now().toUtc(), id: "id_${DateTime.now().millisecondsSinceEpoch}");
     if(widget.data?.id != null) {
       _ringData.id = widget.data!.id;
@@ -309,8 +311,8 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
               'panel.wellness.ring.create.failed.msg',
               'Failed to create Wellness Ring.');
         }
+        _setLoadingSave(false);
         AppAlert.showDialogResult(context, msg).then((value){
-          _setLoading(false);
           Navigator.of(context).pop(success);
         });
       });
@@ -326,8 +328,8 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
               'panel.wellness.ring.create.update.failed.msg',
               'Failed to update Wellness Ring.');
         }
+        _setLoadingSave(false);
         AppAlert.showDialogResult(context, msg).then((value) {
-          _setLoading(false);
           Navigator.of(context).pop(success);
         });
       });
@@ -337,6 +339,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
   void _onTapDelete(){
     _hideKeyboard();
     if(widget.data?.id != null) {
+      _setLoadingDelete(true);
       WellnessRings().removeRing(widget.data!).then((success){
         late String msg;
         if (success) {
@@ -348,8 +351,8 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
               'panel.wellness.ring.create.delete.failed.msg',
               'Failed to delete Wellness Ring.');
         }
+        _setLoadingDelete(false);
         AppAlert.showDialogResult(context, msg).then((value) {
-          _setLoading(false);
           Navigator.of(context).pop(success);
         });
       });
@@ -378,8 +381,14 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
     }
   }
 
-  void _setLoading(bool loading) {
-    _loading = loading;
+  void _setLoadingDelete(bool loading) {
+    _loadingDelete = loading;
+    _updateState();
+
+  }
+
+  void _setLoadingSave(bool loading) {
+    _loadingSave = loading;
     _updateState();
   }
 
