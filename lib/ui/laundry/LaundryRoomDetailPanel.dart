@@ -177,7 +177,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
       Localization().getStringEx('widget.card.button.favorite.off.hint', '') :
       Localization().getStringEx('widget.card.button.favorite.on.hint', '');
 
-    String favoriteIcon = isFavorite? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png';
+    String favoriteIcon = isFavorite? 'images/icon-star-orange.png' : 'images/icon-star-white.png';
     return Container(color: Colors.white, child:
       Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 11, bottom: 24), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
