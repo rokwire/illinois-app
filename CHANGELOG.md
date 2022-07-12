@@ -11,9 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated strings for phone / email sign up [#1931](https://github.com/rokwire/illinois-app/issues/1931).
 - Multiple updates for Laundry favorite / detail UI [#1916](https://github.com/rokwire/illinois-app/issues/1916).
-- Set keys to all Home panel widgets so that their content does not get mixed [#1961](https://github.com/rokwire/illinois-app/issues/1961).
+- Updated some wellness resource URLs [#1888](https://github.com/rokwire/illinois-app/issues/1888).
 ### Fixed
 - Do not apply any logic whether to show laundry favorites in Saved panel [#1917](https://github.com/rokwire/illinois-app/issues/1917).
+- Set keys to all Home panel widgets so that their content does not get mixed [#1961](https://github.com/rokwire/illinois-app/issues/1961).
 
 ## [4.0.49] - 2022-07-11
 ### Changed
