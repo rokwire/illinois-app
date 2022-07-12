@@ -17,7 +17,9 @@
 import 'package:flutter/semantics.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -26,6 +28,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
@@ -55,7 +58,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
-enum ExploreItem { Events, Dining, State_Farm }
+enum ExploreItem { Events, Dining, Laundry, State_Farm }
 
 enum ExploreFilterType { categories, event_time, event_tags, payment_type, work_time }
 
@@ -149,6 +152,7 @@ class ExplorePanelState extends State<ExplorePanel>
       NativeCommunicator.notifyMapSelectExplore,
       NativeCommunicator.notifyMapClearExplore,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
+      FlexUI.notifyChanged,
       Styles.notifyChanged,
     ]);
 
@@ -272,10 +276,13 @@ class ExplorePanelState extends State<ExplorePanel>
     List<ExploreItem> exploreItems = [];
     exploreItems.add(ExploreItem.Events);
     exploreItems.add(ExploreItem.Dining);
-//  #1872 Hide State Farm Wayfinding from Map
-//  if (_displayType == ListMapDisplayType.Map) {
-//    exploreItems.add(ExploreItem.State_Farm);
-//  }
+    if (_displayType == ListMapDisplayType.Map) {
+      if (FlexUI().hasFeature('laundry')) {
+        exploreItems.add(ExploreItem.Laundry);
+      }
+      // #1872 Hide State Farm Wayfinding from Map
+      // exploreItems.add(ExploreItem.State_Farm);
+    }
 
     if (!ListEquality().equals(_exploreItems, exploreItems)) {
       _exploreItems = exploreItems;
@@ -436,6 +443,10 @@ class ExplorePanelState extends State<ExplorePanel>
           task = _loadDining(selectedFilterList);
           break;
 
+        case ExploreItem.Laundry:
+          task = _loadLaundry();
+          break;
+
         case ExploreItem.State_Farm:
           _clearExploresFromMap();
           _viewStateFarmPoi();
@@ -503,6 +514,13 @@ class ExplorePanelState extends State<ExplorePanel>
 
     return Dinings().loadBackendDinings(onlyOpened, paymentType, _locationData);
   }
+
+  Future<List<Explore>?> _loadLaundry() async {
+    LaundrySchool? laundrySchool = await Laundries().loadSchoolRooms();
+    return laundrySchool?.rooms;
+  }
+
+  
 
   ///
   /// Load athletics games if "All Categories" or "Athletics" categories are selected
@@ -923,6 +941,9 @@ class ExplorePanelState extends State<ExplorePanel>
     else if (explore is Dining) {
       return explore.uiColor;
     }
+    else if (explore is LaundryRoom) {
+      return explore.uiColor;
+    }
     else {
       return null;
     }
@@ -995,6 +1016,7 @@ class ExplorePanelState extends State<ExplorePanel>
     switch (_selectedItem) {
       case ExploreItem.Events: message = Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.'); break;
       case ExploreItem.Dining: message = Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.'); break;
+      case ExploreItem.Laundry: message = Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.'); break;
       default:                 message =  ''; break;
     }
     return SingleChildScrollView(child:
@@ -1013,6 +1035,7 @@ class ExplorePanelState extends State<ExplorePanel>
     switch (_selectedItem) {
       case ExploreItem.Events:      message = Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..'); break;
       case ExploreItem.Dining:      message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
+      case ExploreItem.Laundry:     message = Localization().getStringEx('panel.explore.state.offline.empty.laundry', 'No laundry locations available while offline.'); break;
       case ExploreItem.State_Farm:  message = Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.'); break;
       default:                      message =  ''; break;
     }
@@ -1227,6 +1250,7 @@ class ExplorePanelState extends State<ExplorePanel>
     switch (exploreItem) {
       case ExploreItem.Events:      return Localization().getStringEx('panel.explore.button.events.title', 'Events');
       case ExploreItem.Dining:      return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
+      case ExploreItem.Laundry:     return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry');
       case ExploreItem.State_Farm:  return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       default:                      return null;
     }
@@ -1236,6 +1260,7 @@ class ExplorePanelState extends State<ExplorePanel>
     switch (exploreItem) {
       case ExploreItem.Events:      return Localization().getStringEx('panel.explore.button.events.hint', '');
       case ExploreItem.Dining:      return Localization().getStringEx('panel.explore.button.dining.hint', '');
+      case ExploreItem.Laundry:     return Localization().getStringEx('panel.explore.button.laundry.hint', '');
       case ExploreItem.State_Farm:  return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
       default:                      return null;
     }
@@ -1245,6 +1270,7 @@ class ExplorePanelState extends State<ExplorePanel>
     switch (exploreItem) {
       case ExploreItem.Events:      return Localization().getStringEx('panel.explore.header.events.title', 'Events');
       case ExploreItem.Dining:      return Localization().getStringEx('panel.explore.header.dining.title', 'Residence Hall Dining');
+      case ExploreItem.Laundry:     return Localization().getStringEx('panel.explore.header.laundry.title', 'Laundry');
       case ExploreItem.State_Farm:  return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
       default:                      return null;
     }
@@ -1364,6 +1390,9 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _onPrivacyLevelChanged();
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateExploreItems();
     }
     else if(name == Styles.notifyChanged){
       setState(() { });

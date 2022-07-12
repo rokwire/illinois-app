@@ -278,6 +278,8 @@
     "panel.browse.section.feeds.description": "Escuche la radio, lea las noticias y vea los feeds de Illinois en las redes sociales.",
     "panel.browse.section.groups.title": "Grupos",
     "panel.browse.section.groups.description": "Comience su propio grupo o descubra un nuevo grupo para unirse.",
+    "panel.browse.section.laundry.title": "Ropa sucia",
+    "panel.browse.section.laundry.description": "Vea las ubicaciones de lavandería y la disponibilidad de lavadoras/secadoras.",
     "panel.browse.section.my.title": "Mi",
     "panel.browse.section.my.description": "Vistas personalizadas de todo lo que te interesa.",
     "panel.browse.section.polls.title": "Centro",
@@ -337,6 +339,8 @@
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
 
     "panel.browse.entry.groups.all_groups.title": "Todos los grupos",
+
+    "panel.browse.entry.laundry.laundry.title": "Ropa sucia",
 
     "panel.browse.entry.my.my_groups.title": "Mis grupos",
     "panel.browse.entry.my.my_game_day.title": "Mi dia de juego",
@@ -843,11 +847,14 @@
 
     "panel.explore.header.events.title":"Eventos",
     "panel.explore.header.dining.title":"Comedor de la residencia",
+    "panel.explore.header.laundry.title":"Ropa sucia",
     "panel.explore.header.state_farm.title":"Orientación de State Farm",
     "panel.explore.button.events.title":"Eventos",
     "panel.explore.button.events.hint":"",
     "panel.explore.button.dining.title":"Comedor de la residencia",
     "panel.explore.button.dining.hint":"",
+    "panel.explore.button.laundry.title":"Ropa sucia",
+    "panel.explore.button.laundry.hint":"",
     "panel.explore.button.state_farm.title":"Orientación de State Farm",
     "panel.explore.button.state_farm.hint":"",
     "panel.explore.button.directions.title":"Indicaciones",
@@ -885,10 +892,13 @@
     "panel.explore.state.offline.empty.events":"No hay próximos eventos disponibles sin conexión",
     "panel.explore.state.online.empty.dining":"Actualmente no hay restaurantes abiertos",
     "panel.explore.state.offline.empty.dining":"No hay restaurantes disponibles sin conexión",
+    "panel.explore.state.online.empty.laundry":"No hay ubicaciones de lavandería abiertas actualmente.",
+    "panel.explore.state.offline.empty.laundry":"No hay ubicaciones de lavandería disponibles mientras está desconectado.",
     "panel.explore.state.offline.empty.state_farm":"No hay State Farm Wayfinding disponible sin conexión.",
 
     "panel.explore.item.events.name":"Eventos",
     "panel.explore.item.dinings.name":"Opciones para comer",
+    "panel.explore.item.laundry.name":"Ropa sucia",
     "panel.explore.item.places.name":"Lugares",
     "panel.explore.item.unknown.name":"Explora",
     "panel.explore.map.popup.title.format":"%d %s",
@@ -1123,7 +1133,6 @@
     "panel.laundry_home.button.details.hint":"Ver detalles",
 
     "panel.laundry_detail.header.title":"Lavandería",
-    "panel.laundry_detail.heading.laundry":"Servicio de lavandería",
     "panel.laundry_detail.button.view_on_map.title":"Ver en el mapa",
     "panel.laundry_detail.button.report_issue.title":"Reportar un problema",
     "panel.laundry_detail.button.view_on_map.hint":"",
@@ -1171,6 +1180,9 @@
     "panel.laundry.issues_submitted.success.header.label": "¡Gracias! Su solicitud de servicio ha sido recibida.",
     "panel.laundry.issues_submitted.success.description.label": "Uno de nuestros técnicos llegará a su propiedad dentro de los 3 días hábiles para reparar la máquina. Le pedimos disculpas por cualquier inconveniente que pueda haber experimentado.",
     "panel.laundry.issues_submitted.return.button": "Devolver",
+
+    "widget.laundry.room.status.online.text": "En línea",
+    "widget.laundry.room.status.offline.text": "Desconectada",
 
     "panel.settings.home.header.settings.label": "Mi configuración",
     "panel.settings.home.settings.sections.section.label": "Iniciar sesión/Cerrar sesión",
@@ -2562,6 +2574,12 @@
     "widget.home.recent_polls.button.all.title": "Ver todo",
     "widget.home.recent_polls.button.all.hint": "Toca para ver todas las encuestas",
 
+    "widget.home.laundry.text.title": "Ropa sucia",
+    "widget.home.laundry.text.empty.description": "No hay lavanderías disponibles en este momento.",
+    "widget.home.laundry.text.offline": "Las lavanderías no están disponibles sin conexión.",
+    "widget.home.laundry.button.all.title": "Ver todo",
+    "widget.home.laundry.button.all.hint": "Toca para ver todas las lavanderías",
+
     "widget.home.tout.customize.label": "personalizar",
     "widget.home.tout.button.info.label": "Información",
     "widget.home.tout.button.info.hint": "Toca para más información",
@@ -2603,7 +2621,7 @@
     "widget.home.favorites.message.empty.dining": "Toque \u2606 en los elementos de Dinings para que pueda encontrarlos rápidamente aquí.",
     "widget.home.favorites.message.empty.athletics": "Toca el \u2606 en los elementos de los eventos de atletismo para que puedas encontrarlos rápidamente aquí.",
     "widget.home.favorites.message.empty.news": "Toca el \u2606 en los elementos de Noticias de atletismo para que puedas encontrarlos rápidamente aquí.",
-    "widget.home.favorites.message.empty.laundry": "Toca el \u2606 en los artículos de Lavandería para que puedas encontrarlos rápidamente aquí.",
+    "widget.home.favorites.message.empty.laundry": "Toca el \u2606 en las ubicaciones de lavandería para encontrarlas rápidamente aquí.",
     "widget.home.favorites.message.empty.campus_guide": "Toca el \u2606 en los elementos de la Guía del campus para que puedas encontrarlos rápidamente aquí.",
     "widget.home.favorites.message.empty.inbox": "Toca \u2606 en los elementos de Notificaciones para que puedas encontrarlos rápidamente aquí.",
 

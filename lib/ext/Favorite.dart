@@ -73,6 +73,16 @@ extension FavoriteExt on Favorite {
     }
   }
   
+  Color? get favoriteDetailTextColor {
+    if (this is LaundryRoom) {
+      switch((this as LaundryRoom).status) {
+        case LaundryRoomStatus.online: return Styles().colors?.fillColorPrimary;
+        case LaundryRoomStatus.offline: return Styles().colors?.disabledTextColor;
+        default: return null;
+      }
+    }
+  }
+  
   Image? get favoriteDetailIcon {
     if (this is Event) {
       return Image.asset('images/icon-calendar.png', excludeFromSemantics: true);
@@ -85,6 +95,21 @@ extension FavoriteExt on Favorite {
     }
     else if (this is News) {
       return Image.asset('images/icon-calendar.png', excludeFromSemantics: true);
+    }
+    else if (this is LaundryRoom) {
+      return Image.asset('images/icon-online.png', excludeFromSemantics: true, color: favoriteDetailTextColor, colorBlendMode: BlendMode.srcIn,);
+    }
+    else {
+      return null;
+    }
+  }
+
+  Image? favoriteStarIcon({required bool selected}) {
+    if ((this is Event) || (this is Dining) || (this is LaundryRoom) || (this is InboxMessage) ) {
+      return Image.asset(selected ? 'images/icon-star-orange.png' : 'images/icon-star-white.png', excludeFromSemantics: true);
+    }
+    else if ((this is Game) || (this is News) || (this is GuideFavorite)) {
+      return Image.asset(selected ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true);
     }
     else {
       return null;

@@ -280,6 +280,8 @@
     "panel.browse.section.feeds.description": "Listen to radio, read the news and check out Illinois feeds from social media.",
     "panel.browse.section.groups.title": "Groups",
     "panel.browse.section.groups.description": "Start your own group or discover a new group to join.",
+    "panel.browse.section.laundry.title": "Laundry",
+    "panel.browse.section.laundry.description": "View laundry locations and washer/dryer availability",
     "panel.browse.section.my.title": "My",
     "panel.browse.section.my.description": "Personalized views of everything you are interested in.",
     "panel.browse.section.polls.title": "Polls",
@@ -339,6 +341,8 @@
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
 
     "panel.browse.entry.groups.all_groups.title": "All Groups",
+
+    "panel.browse.entry.laundry.laundry.title": "Laundry",
 
     "panel.browse.entry.my.my_groups.title": "My Groups",
     "panel.browse.entry.my.my_game_day.title": "My Game Day",
@@ -845,11 +849,14 @@
 
     "panel.explore.header.events.title":"Events",
     "panel.explore.header.dining.title":"Residence Hall Dining",
+    "panel.explore.header.laundry.title":"Laundry",
     "panel.explore.header.state_farm.title":"State Farm Wayfinding",
     "panel.explore.button.events.title":"Events",
     "panel.explore.button.events.hint":"",
     "panel.explore.button.dining.title":"Residence Hall Dining",
     "panel.explore.button.dining.hint":"",
+    "panel.explore.button.laundry.title":"Laundry",
+    "panel.explore.button.laundry.hint":"",
     "panel.explore.button.state_farm.title":"State Farm Wayfinding",
     "panel.explore.button.state_farm.hint":"",
     "panel.explore.button.directions.title":"Directions",
@@ -887,10 +894,13 @@
     "panel.explore.state.offline.empty.events":"No upcoming events available while offline.",
     "panel.explore.state.online.empty.dining":"No dining locations are currently open",
     "panel.explore.state.offline.empty.dining":"No dining locations available while offline.",
+    "panel.explore.state.online.empty.laundry":"No laundry locations are currently open",
+    "panel.explore.state.offline.empty.laundry":"No laundry locations available while offline.",
     "panel.explore.state.offline.empty.state_farm":"No State Farm Wayfinding available while offline.",
 
     "panel.explore.item.events.name":"Events",
     "panel.explore.item.dinings.name":"Dining Options",
+    "panel.explore.item.laundry.name":"Laundry",
     "panel.explore.item.places.name":"Places",
     "panel.explore.item.unknown.name":"Explores",
     "panel.explore.map.popup.title.format":"%d %s",
@@ -1125,7 +1135,6 @@
     "panel.laundry_home.button.details.hint":"View details",
 
     "panel.laundry_detail.header.title":"Laundry",
-    "panel.laundry_detail.heading.laundry":"Laundry",
     "panel.laundry_detail.button.view_on_map.title":"View on map",
     "panel.laundry_detail.button.report_issue.title":"Report an Issue",
     "panel.laundry_detail.button.view_on_map.hint":"",
@@ -1173,6 +1182,9 @@
     "panel.laundry.issues_submitted.success.header.label": "Thank You! Your Service Request has been received.",
     "panel.laundry.issues_submitted.success.description.label": "One of our technicians will arrive at your property within 3 business days to service the machine. We apologize for any inconvenience you may have experienced.",
     "panel.laundry.issues_submitted.return.button": "Return",
+
+    "widget.laundry.room.status.online.text": "Online",
+    "widget.laundry.room.status.offline.text": "Offline",
 
     "panel.settings.home.header.settings.label": "My Settings",
     "panel.settings.home.settings.sections.section.label": "Sign In/Sign Out",
@@ -2569,6 +2581,12 @@
     "widget.home.recent_polls.button.all.title": "View All",
     "widget.home.recent_polls.button.all.hint": "Tap to view all polls",
 
+    "widget.home.laundry.text.title": "Laundry",
+    "widget.home.laundry.text.empty.description": "No Laundries are available right now.",
+    "widget.home.laundry.text.offline": "Laundries are not available while offline.",
+    "widget.home.laundry.button.all.title": "View All",
+    "widget.home.laundry.button.all.hint": "Tap to view all laundries",
+
     "widget.home.tout.customize.label": "Customize",
     "widget.home.tout.button.info.label": "Info",
     "widget.home.tout.button.info.hint": "Tap for more info",
@@ -2610,7 +2628,7 @@
     "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in Dinings so you can quickly find them here.",
     "widget.home.favorites.message.empty.athletics": "Tap the \u2606 on items in Athletics Events so you can quickly find them here.",
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in Athletics News so you can quickly find them here.",
-    "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in Laundry so you can quickly find them here.",
+    "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on laundry locations to quickly find them here.",
     "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in Campus Guide so you can quickly find them here.",
     "widget.home.favorites.message.empty.inbox": "Tap the \u2606 on items in Notifications so you can quickly find them here.",
 

@@ -1,11 +1,13 @@
 import 'dart:ui';
 
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Laundry.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Dining.dart';
+import 'package:illinois/ext/LaundryRoom.dart';
 import 'package:illinois/ext/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -97,6 +99,9 @@ extension ExploreExt on Explore {
     else if (exploresType == "dining") {
       return Localization().getStringEx('panel.explore.item.dinings.name', 'Dinings');
     }
+    else if (exploresType == "laundryroom") {
+      return Localization().getStringEx('panel.explore.item.laundry.name', 'Laundry');
+    }
     else if (exploresType == "place") {
       return Localization().getStringEx('panel.explore.item.places.name', 'Places');
     }
@@ -148,8 +153,6 @@ extension ExploreExt on Explore {
     }
     else {
       return {
-        Analytics.LogAttributeDiningId:   exploreId,
-        Analytics.LogAttributeDiningName: exploreTitle,
         Analytics.LogAttributeLocation : exploreLocation?.analyticsValue,
       };
     }
@@ -161,6 +164,9 @@ extension ExploreExt on Explore {
     }
     else if (this is Dining) {
       return (this as Dining).uiColor;
+    }
+    else if (this is LaundryRoom) {
+      return (this as LaundryRoom).uiColor;
     }
     else if (this is Game) {
       return (this as Game).uiColor;
