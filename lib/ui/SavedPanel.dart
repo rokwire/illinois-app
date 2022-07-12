@@ -491,7 +491,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
   }
 
-  bool get _laundryAvailable => IlliniCash().ballance?.housingResidenceStatus ?? false;
+  bool get _laundryAvailable => true; // IlliniCash().ballance?.housingResidenceStatus ?? false;
 
 }
 
