@@ -30,7 +30,6 @@ import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Dinings.dart';
-import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/Sports.dart';
