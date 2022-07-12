@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.0.50] - 2022-07-12
 ### Added
 - Handled "viewPoi" command in iOS MapView [#1699](https://github.com/rokwire/illinois-app/issues/1699).
 - Handled Laundry in Favorites and Browse panels [#1916](https://github.com/rokwire/illinois-app/issues/1916).
@@ -12,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated strings for phone / email sign up [#1931](https://github.com/rokwire/illinois-app/issues/1931).
 - Multiple updates for Laundry favorite / detail UI [#1916](https://github.com/rokwire/illinois-app/issues/1916).
 - Updated some wellness resource URLs [#1888](https://github.com/rokwire/illinois-app/issues/1888).
+- Wellness Rings updates [#1692](https://github.com/rokwire/illinois-app/issues/1692).
 ### Fixed
 - Do not apply any logic whether to show laundry favorites in Saved panel [#1917](https://github.com/rokwire/illinois-app/issues/1917).
 - Set keys to all Home panel widgets so that their content does not get mixed [#1961](https://github.com/rokwire/illinois-app/issues/1961).
