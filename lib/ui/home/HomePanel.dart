@@ -37,6 +37,7 @@ import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeDiningWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
+import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
@@ -327,6 +328,15 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeRecentPollsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
         return HomeRecentPollsWidget(favoriteId: code, updateController: _updateController,);
+      }
+    }
+    else if (code == 'laundry') {
+      if (title) {
+        return HomeLaundryWidget.title;
+      } else if (handle) {
+        return HomeLaundryWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeLaundryWidget(favoriteId: code, updateController: _updateController,);
       }
     }
     else if (code == 'my_groups') {

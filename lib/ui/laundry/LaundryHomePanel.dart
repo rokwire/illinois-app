@@ -39,6 +39,10 @@ import 'package:sprintf/sprintf.dart';
 enum _DisplayType { List, Map }
 
 class LaundryHomePanel extends StatefulWidget {
+  final LaundrySchool? laundrySchool;
+
+  LaundryHomePanel({Key? key, this.laundrySchool}) : super(key: key);
+
   @override
   _LaundryHomePanelState createState() => _LaundryHomePanelState();
 }
@@ -82,7 +86,10 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
         this.setState(() {});
       });
 
-    _loadSchool();
+    _laundrySchool = widget.laundrySchool;
+    if (_laundrySchool == null) {
+      _loadSchool();
+    }
   }
 
   @override

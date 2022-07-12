@@ -278,6 +278,8 @@
     "panel.browse.section.feeds.description": "Escuche la radio, lea las noticias y vea los feeds de Illinois en las redes sociales.",
     "panel.browse.section.groups.title": "Grupos",
     "panel.browse.section.groups.description": "Comience su propio grupo o descubra un nuevo grupo para unirse.",
+    "panel.browse.section.laundry.title": "Ropa sucia",
+    "panel.browse.section.laundry.description": "Vea las ubicaciones de lavandería y la disponibilidad de lavadoras/secadoras.",
     "panel.browse.section.my.title": "Mi",
     "panel.browse.section.my.description": "Vistas personalizadas de todo lo que te interesa.",
     "panel.browse.section.polls.title": "Centro",
@@ -337,6 +339,8 @@
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
 
     "panel.browse.entry.groups.all_groups.title": "Todos los grupos",
+
+    "panel.browse.entry.laundry.laundry.title": "Ropa sucia",
 
     "panel.browse.entry.my.my_groups.title": "Mis grupos",
     "panel.browse.entry.my.my_game_day.title": "Mi dia de juego",
@@ -1171,6 +1175,9 @@
     "panel.laundry.issues_submitted.success.header.label": "¡Gracias! Su solicitud de servicio ha sido recibida.",
     "panel.laundry.issues_submitted.success.description.label": "Uno de nuestros técnicos llegará a su propiedad dentro de los 3 días hábiles para reparar la máquina. Le pedimos disculpas por cualquier inconveniente que pueda haber experimentado.",
     "panel.laundry.issues_submitted.return.button": "Devolver",
+
+    "widget.laundry.room.status.online.text": "En línea",
+    "widget.laundry.room.status.offline.text": "Desconectada",
 
     "panel.settings.home.header.settings.label": "Mi configuración",
     "panel.settings.home.settings.sections.section.label": "Iniciar sesión/Cerrar sesión",
@@ -2561,6 +2568,12 @@
     "widget.home.recent_polls.text.offline": "Las encuestas recientes no están disponibles sin conexión.",
     "widget.home.recent_polls.button.all.title": "Ver todo",
     "widget.home.recent_polls.button.all.hint": "Toca para ver todas las encuestas",
+
+    "widget.home.laundry.text.title": "Ropa sucia",
+    "widget.home.laundry.text.empty.description": "No hay lavanderías disponibles en este momento.",
+    "widget.home.laundry.text.offline": "Las lavanderías no están disponibles sin conexión.",
+    "widget.home.laundry.button.all.title": "Ver todo",
+    "widget.home.laundry.button.all.hint": "Toca para ver todas las lavanderías",
 
     "widget.home.tout.customize.label": "personalizar",
     "widget.home.tout.button.info.label": "Información",

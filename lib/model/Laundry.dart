@@ -17,6 +17,7 @@
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class LaundrySchool {
@@ -80,7 +81,13 @@ class LaundryRoom implements Favorite {
   @override
   int get hashCode => (id?.hashCode ?? 0) ^ (name?.hashCode ?? 0) ^ (status?.hashCode ?? 0) ^ (location?.hashCode ?? 0);
 
-  String? get displayStatus => null;
+  String? get displayStatus {
+    switch(status) {
+      case LaundryRoomStatus.online: return Localization().getStringEx('widget.laundry.room.status.online.text', 'Online');
+      case LaundryRoomStatus.offline: return Localization().getStringEx('widget.laundry.room.status.offline.text', 'Offline');
+      default: return null;
+    }
+  }
 
   Map<String, dynamic> get analyticsAttributes {
     return {

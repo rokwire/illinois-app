@@ -278,7 +278,9 @@
 	"panel.browse.section.feeds.description": "收聽廣播、閱讀新聞並查看來自社交媒體的伊利諾伊州動態。",
 	"panel.browse.section.groups.title": "團體",
 	"panel.browse.section.groups.description": "開始您自己的群組或發現新的群組加入。",
-	"panel.browse.section.my.title": "我的",
+	"panel.browse.section.laundry.title": "洗衣店",
+	"panel.browse.section.laundry.description": "查看洗衣地點和洗衣機/烘乾機的可用性。",
+"panel.browse.section.my.title": "我的",
 	"panel.browse.section.my.description": "您感興趣的所有內容的個性化視圖。",
 	"panel.browse.section.polls.title": "民意調查",
 	"panel.browse.section.polls.description": "創建、參與和查看您和其他人創建的投票結果。",
@@ -337,6 +339,8 @@
 	"panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 調頻",
 
 	"panel.browse.entry.groups.all_groups.title": "所有組",
+
+	"panel.browse.entry.laundry.laundry.title": "洗衣店",
 
 	"panel.browse.entry.my.my_groups.title": "我的群組",
 	"panel.browse.entry.my.my_game_day.title": "我的比賽日",
@@ -1172,7 +1176,10 @@
     "panel.laundry.issues_submitted.success.description.label": "我們的一名技術人員將在 3 個工作日內到達您的物業為機器提供服務. 對於您可能遇到的任何不便, 我們深表歉意.",
     "panel.laundry.issues_submitted.return.button": "返回",
 
-    "panel.settings.home.header.settings.label": "我的設置",
+    "widget.laundry.room.status.online.text": "在線的",
+    "widget.laundry.room.status.offline.text": "離線",
+
+		"panel.settings.home.header.settings.label": "我的設置",
     "panel.settings.home.settings.sections.section.label": "登入/登出",
     "panel.settings.home.settings.sections.interests.label": "我的興趣",
     "panel.settings.home.settings.sections.food_filter.label": "我的食物過濾器",
@@ -2561,6 +2568,12 @@
 	"widget.home.recent_polls.text.offline": "最近的民意調查在離線時不可用。",
 	"widget.home.recent_polls.button.all.title": "查看全部",
 	"widget.home.recent_polls.button.all.hint": "點按即可查看所有民意調查",
+
+	"widget.home.laundry.text.title": "洗衣店",
+	"widget.home.laundry.text.empty.description": "目前沒有洗衣店可用。",
+	"widget.home.laundry.text.offline": "離線時不提供洗衣服務。",
+	"widget.home.laundry.button.all.title": "查看全部",
+	"widget.home.laundry.button.all.hint": "點擊查看所有洗衣房",
 
 	"widget.home.tout.customize.label": "定制",
 	"widget.home.tout.button.info.label": "信息",
