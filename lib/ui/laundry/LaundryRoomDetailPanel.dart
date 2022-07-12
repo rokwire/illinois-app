@@ -178,17 +178,20 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
       Localization().getStringEx('widget.card.button.favorite.on.hint', '');
 
     String favoriteIcon = isFavorite? 'images/icon-star-orange.png' : 'images/icon-star-white.png';
+    
     return Container(color: Colors.white, child:
       Padding(padding: EdgeInsets.only(left: 24), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Row(children: <Widget>[
             Expanded(child:
-              Text(widget.room.name ?? '', style: TextStyle( fontFamily: Styles().fontFamilies?.extraBold, fontSize: 24, color: Styles().colors?.fillColorPrimary,),),
+              Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+                Text(widget.room.name ?? '', style: TextStyle( fontFamily: Styles().fontFamilies?.extraBold, fontSize: 22, color: Styles().colors?.fillColorPrimary,),),
+              ),
             ),
             Visibility(visible: Auth2().canFavorite, child:
               GestureDetector(onTap: _onTapFavorite, child:
                 Semantics(label: favoriteLabel, hint: favoriteHint, button: true, excludeSemantics: true, child:
-                  Padding(padding: EdgeInsets.all(24), child:
+                  Padding(padding: EdgeInsets.only(left: 12, right: 16, top: 24, bottom: 25), child:
                     Image.asset(favoriteIcon, excludeFromSemantics: true)
                   ),
                 ),
