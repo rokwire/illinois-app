@@ -320,8 +320,8 @@ class WellnessRingButton extends StatefulWidget{
   final Color? color;
   final bool enabled;
   final void Function(BuildContext context)? onTapWidget;
-  final void Function(BuildContext context)? onTapDecrease;
-  final void Function(BuildContext context)? onTapIncrease;
+  final Future<void> Function(BuildContext context)? onTapDecrease;
+  final Future<void> Function(BuildContext context)? onTapIncrease;
   final void Function(BuildContext context)? onTapEdit;
 
   const WellnessRingButton({Key? key, required this.label, this.description, this.color, this.enabled = true, this.onTapIncrease, this.onTapEdit, this.onTapDecrease, this.onTapWidget}) : super(key: key);
@@ -332,6 +332,8 @@ class WellnessRingButton extends StatefulWidget{
 }
 
 class _WellnessRingButtonState extends State<WellnessRingButton>{
+  bool _increaseLoading = false;
+  bool _decreaseLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -383,7 +385,10 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
 
   Widget get _editRingButton{
     return GestureDetector(
-        onTap: (){ if (widget.onTapEdit!=null) widget.onTapEdit!(this.context);},
+        onTap: (){
+          if (widget.onTapEdit!=null)
+            widget.onTapEdit!(this.context);
+        },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Image.asset('images/edit-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
@@ -391,20 +396,65 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
   }
   Widget get _increaseValueButton{
     return GestureDetector(
-        onTap: (){ if (widget.onTapIncrease!=null) widget.onTapIncrease!(this.context);},
+        onTap: (){
+          if (widget.onTapIncrease!=null){
+            if(mounted){ setState(() {_increaseLoading = true;});}
+
+            widget.onTapIncrease!(this.context).
+              then((_) {
+                if(mounted){ setState(() {_increaseLoading = false;});}
+              });
+        }},
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
-        ));
+          height: 40, width: 40,
+          child: Stack(
+            children : [
+              Center(
+                child:Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Visibility(visible: _increaseLoading, child: Center(child: CircularProgressIndicator(color: Colors.white),)),
+              )),
+              Center(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+                ))
+            ]
+        ))
+
+    );
   }
 
   Widget get _decreaseValueButton{
     return GestureDetector(
-        onTap: (){ if (widget.onTapDecrease!=null) widget.onTapDecrease!(this.context);},
+        onTap: (){ 
+          if (widget.onTapDecrease!=null){
+            if(mounted){setState(() {_decreaseLoading = true;});}
+
+            widget.onTapDecrease!(this.context).
+              then((value) {
+               if(mounted){ setState(() {_decreaseLoading = false;});}
+              });
+          }
+        },
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          child: Image.asset('images/group-decrease.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
-        ));
+          height: 40, width: 40,
+          child:  Stack(
+            children : [
+              Center(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Visibility(visible: _decreaseLoading, child: Center(child: CircularProgressIndicator(color: Colors.white,),)),
+              )),
+              Center(
+                child:Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Image.asset('images/group-decrease.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+              ))
+            ]
+          )
+        )
+    );
   }
 }
 
@@ -412,7 +462,7 @@ class SmallWellnessRingButton extends StatefulWidget{
   final String label;
   final Color? color;
   final bool enabled;
-  final void Function(BuildContext context)? onTapWidget;
+  final Future<void> Function(BuildContext context)? onTapWidget;
 
   const SmallWellnessRingButton({Key? key, required this.label, this.color, this.enabled = true, this.onTapWidget}) : super(key: key);
 
@@ -422,12 +472,23 @@ class SmallWellnessRingButton extends StatefulWidget{
 }
 
 class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
+  bool _increaseLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Semantics(label: widget.label, button: true, excludeSemantics: true, child:
-    GestureDetector(onTap: () => widget.enabled && widget.onTapWidget!=null? widget.onTapWidget!(context): null, child:
-    Container(
+    GestureDetector(
+      onTap: (){
+        if (widget.onTapWidget!=null){
+          if(mounted){setState(() {_increaseLoading = true;});}
+
+          widget.onTapWidget!(this.context).
+          then((value) {
+            if(mounted){ setState(() {_increaseLoading = false;});}
+          });
+        }
+      },
+      child: Container(
       // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Expanded(child:
@@ -467,9 +528,21 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
     return GestureDetector(
         onTap: (){},
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
-        ));
+            height: 35, width: 35,
+            child: Stack(
+                children : [
+                  Center(
+                      child:Container(
+                        padding: EdgeInsets.symmetric(horizontal: 7, vertical: 7),
+                        child: Visibility(visible: _increaseLoading, child: Center(child: CircularProgressIndicator(color: Colors.white),)),
+                      )),
+                  Center(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                        child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+                      ))
+                ]
+            )));
   }
 }
 

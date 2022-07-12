@@ -390,7 +390,8 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
     if(activeRings?.isNotEmpty ?? false){
       for(WellnessRingDefinition data in activeRings!) {
         content.add(SmallWellnessRingButton(label: data.name!, color: data.color,
-            onTapWidget: (context){ _onTapIncrease(data);}));
+            onTapWidget: (context)  =>  _onTapIncrease(data)
+        ));
         content.add(Container(height: 5,));
       }
     }
@@ -411,8 +412,8 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.rings)));
   }
 
-  void _onTapIncrease(WellnessRingDefinition data){
-    WellnessRings().addRecord(
+  Future<void> _onTapIncrease(WellnessRingDefinition data) async{
+    await WellnessRings().addRecord(
         WellnessRingRecord(value: 1, dateCreatedUtc: DateTime
             .now(), wellnessRingId: data.id));
   }

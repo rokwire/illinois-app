@@ -169,12 +169,12 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
               description: "${WellnessRings()
                   .getRingDailyValue(definition.id)
                   .toInt()}/${definition.goal.toInt()} ${definition.unit}s",
-              onTapIncrease: (context) {
-                WellnessRings().addRecord(
+              onTapIncrease: (context) async{
+                await WellnessRings().addRecord(
                     WellnessRingRecord(value: 1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
               },
-            onTapDecrease: (context) {
-              WellnessRings().addRecord(
+            onTapDecrease: (context) async {
+              await WellnessRings().addRecord(
                   WellnessRingRecord(value: -1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
             },
               onTapEdit: (context){
