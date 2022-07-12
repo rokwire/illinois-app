@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Handled "viewPoi" command in iOS MapView [#1699](https://github.com/rokwire/illinois-app/issues/1699).
+### Changed
+- Updated strings for phone / email sign up [#1931](https://github.com/rokwire/illinois-app/issues/1931).
+### Fixed
+- Do not apply any logic whether to show laundry favorites in Saved panel [#1917](https://github.com/rokwire/illinois-app/issues/1917).
+
+## [4.0.49] - 2022-07-11
 ### Changed
 - Updated description texy in HomeAthliticsTeamsWidget [#1936](https://github.com/rokwire/illinois-app/issues/1936).
 ### Fixed

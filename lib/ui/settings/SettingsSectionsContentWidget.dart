@@ -190,14 +190,14 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_2",
-                          "Verify your phone number or sign in by email to save your preferences and have the same experience on more than one device.")),
+                          "Sign in with your mobile phone number or email address to save your preferences and have the same experience on more than one device.")),
                 ],
               ),
             )),);
           contentList.add(RibbonButton(
             borderRadius: _allRounding,
             border: _allBorder,
-            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Continue"),
+            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Sign in with mobile phone or email"),
             onTap: _onPhoneOrEmailLoginClicked),);
       }
     }
@@ -333,7 +333,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         contentList.add(RibbonButton(
             border: _allBorder,
             borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Phone Number"),
+            label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Mobile Phone Number"),
             onTap: _onPhoneOrEmailLoginClicked));
       }
       else if (code == 'disconnect') {
