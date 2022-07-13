@@ -460,11 +460,12 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
 
 class SmallWellnessRingButton extends StatefulWidget{
   final String label;
+  final String description;
   final Color? color;
   final bool enabled;
   final Future<void> Function(BuildContext context)? onTapWidget;
 
-  const SmallWellnessRingButton({Key? key, required this.label, this.color, this.enabled = true, this.onTapWidget}) : super(key: key);
+  const SmallWellnessRingButton({Key? key, required this.label, this.color, this.enabled = true, this.onTapWidget, this.description = ""}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _SmallWellnessRingButtonState();
@@ -500,14 +501,16 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
               Expanded(
                   flex: 5,
                   child: Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(widget.label ,
-                          style: TextStyle(color: Colors.white,
-                              fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.start,),
-                      ],),)),
+                    child:
+                    RichText(
+                        textAlign: TextAlign.left,
+                        text: TextSpan(
+                            children:[
+                              TextSpan(text: "${widget.label}  ", style : TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 14),),
+                              TextSpan(text: widget.description, style : TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)),
+                            ]
+                        )),
+                    )),
               Container(
                 child: Row(
                   children: [

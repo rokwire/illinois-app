@@ -173,6 +173,10 @@ class WellnessRings with Service{
   }
 
   Future<bool> addRecord(WellnessRingRecord record) async {
+    if(!_canAddRingRecord(record)){
+      Log.d("addRecord not allowed${record.toJson()}");
+      return false;
+    }
     Log.d("addRecord ${record.toJson()}");
     bool success = await _requestAddRingRecord(record);
     if(success) {
@@ -382,6 +386,14 @@ class WellnessRings with Service{
       value += record.value;
     });
     return value;
+  }
+
+  bool _canAddRingRecord(WellnessRingRecord record){
+    if(record.value > 0){
+      return true;
+    } else { //Don't allow to become negative
+      return getRingDailyValue(record.wellnessRingId) > 0;
+    }
   }
 
   List<WellnessRingDefinition>? get wellnessRings{

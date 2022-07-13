@@ -61,7 +61,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
               padding: EdgeInsets.all(16),
               child: Column(children: [
                 Container(height: 14,),
-                WellnessWidgetHelper.buildWellnessHeader(),
+                // WellnessWidgetHelper.buildWellnessHeader(),
                 _buildCreateDescriptionHeader(),
                 _buildNameWidget(),
                 _buildColorsRowWidget(),
@@ -119,26 +119,29 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
       "#f5821e",
       "#54a747",
       "#09fd4",
-      "#1d58a7"]; //In normal cases this will be visible only for new custom ring
-    String? initialColorHex = widget.data?.colorHex;
-    String? tmpColorHex = _tmpColor!= null ? ColorUtils.toHex(_tmpColor!) : null;
+      "#1d58a7",
+      "#662d91"
+    ];
+    //Custom Color shown in last cell Not used for now. Use if showing custom picker
+    // String? initialColorHex = widget.data?.colorHex;
+    // String? tmpColorHex = _tmpColor!= null ? ColorUtils.toHex(_tmpColor!) : null;
     String? selectedColorHex = _selectedColor != null ? ColorUtils.toHex(_selectedColor!) : null;
-
-    //Show initial color if we have changed with default one
-    if(initialColorHex != null && !predefinedColors.contains(initialColorHex)){
-      predefinedColors.removeLast();
-      predefinedColors.add(initialColorHex);
-    }
-
-    //Show selected colour
-    if(selectedColorHex!=null && !predefinedColors.contains(selectedColorHex)){
-      predefinedColors.removeLast();
-      predefinedColors.add(selectedColorHex);
-    //Or last custom color
-    } else if(tmpColorHex != null && !predefinedColors.contains(tmpColorHex)){
-      predefinedColors.removeLast();
-      predefinedColors.add(tmpColorHex);
-    }
+    //
+    // //Show initial color if we have changed with default one
+    // if(initialColorHex != null && !predefinedColors.contains(initialColorHex)){
+    //   predefinedColors.removeLast();
+    //   predefinedColors.add(initialColorHex);
+    // }
+    //
+    // //Show selected colour
+    // if(selectedColorHex!=null && !predefinedColors.contains(selectedColorHex)){
+    //   predefinedColors.removeLast();
+    //   predefinedColors.add(selectedColorHex);
+    // //Or last custom color
+    // } else if(tmpColorHex != null && !predefinedColors.contains(tmpColorHex)){
+    //   predefinedColors.removeLast();
+    //   predefinedColors.add(tmpColorHex);
+    // }
 
     List<Widget> content = [];
     for(String colorHex in predefinedColors){
@@ -147,7 +150,8 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
       );
     }
 
-    content.add(_buildColorEntry(imageAsset: 'images/icon-color-edit.png'),);
+    //Custom Color Picker
+    // content.add(_buildColorEntry(imageAsset: 'images/icon-color-edit.png'),);
 
     return Center(
         child: Padding(

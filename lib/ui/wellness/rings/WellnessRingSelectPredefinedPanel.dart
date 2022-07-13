@@ -20,18 +20,18 @@ class WellnessRingSelectPredefinedPanel extends StatefulWidget{
 
 class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPredefinedPanel> implements NotificationsListener{
   static const List<Map<String,dynamic>> PREDEFINED_RING_BUTTONS = [
-    {"ring":{'name': "Hobby", 'value': 2, 'color_hex': '#f5821e', 'ring_id': "id_predefined_0", 'unit':'session'},
+    {"ring":{'name': "Hobby", 'value': 1, 'color_hex': '#f5821e', 'ring_id': "id_predefined_0", 'unit':'session'},
       "name":"Hobby Ring",
-      "description":"Use this ring to motivate you to engage in your hobby in some small way every day. It’s important to have your own free time, even if it’s small some days.",
-      "example": "Examples for filling out this ring could be reading, sketching, playing an instrument, or whatever hobbies you enjoy!"},
-    {"ring":{'name': "Movement", 'value': 2, 'color_hex': '#54a747', 'ring_id': "id_predefined_1", 'unit':'activity'},
+      "description":"Use this ring to motivate you to engage in a hobby in some way every day. It’s important to have your own free time, even if it’s only for a couple minutes.",
+      "example": "Examples include reading, sketching, playing an instrument, or whatever hobbies you enjoy!"},
+    {"ring":{'name': "Movement", 'value': 1, 'color_hex': '#54a747', 'ring_id': "id_predefined_1", 'unit':'activity'},
       "name":"Movement Ring",
       "description":"Use this ring to motivate you to do something active every day, even if it's daily stretching or taking a short walk! A small amount of physical activity every day can improve your overall mood and motivation.",
-      "example":"Examples for filling out this ring could be going on a walk, rock climbing, dancing, stretching, or whatever exercise you enjoy!"},
-    {"ring":{'name': "Mindfulness", 'value': 2, 'color_hex': '#09fd4' , 'ring_id': "id_predefined_2", 'unit':'moment'},
+      "example":"Examples include going on a walk, rock climbing, dancing, stretching, or whatever exercise you enjoy!"},
+    {"ring":{'name': "Mindfulness", 'value': 1, 'color_hex': '#09fd4' , 'ring_id': "id_predefined_2", 'unit':'moment'},
       "name":"Mindfulness",
-      "description":"Use this ring to motivate you to focus on the present moment. Taking even a small amount of time for  intentional practice, like journaling or breathing exercises, can help reduce overall stress.",
-      "example": "Examples could include drinking a certain amount of water throughout the day, taking your daily vitamin, etc."},
+      "description":"Use this ring to motivate you to focus on the present moment. Taking even a small amount of time for intentional practice, like journaling or breathing exercises, can help reduce overall stress.",
+      "example": "Examples include journaling, breathing exercises, meditation, or whatever mindful practice you enjoy!"},
     {"name" : "Custom Ring",
       "description":"Create a ring for whatever habit you want to build or maintain for yourself! Ex: use this ring to motivate you to drink water every day!",
       "example": "Examples could include drinking a certain amount of water throughout the day, taking your daily vitamin, etc."},
@@ -67,7 +67,7 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                       Container(height: 14,),
-                      WellnessWidgetHelper.buildWellnessHeader(),
+                      // WellnessWidgetHelper.buildWellnessHeader(),
                       Container(height: 16,),
                       Container(
                         child: Text(Localization().getStringEx('panel.wellness.ring.select.description', 'Select a ring type or create your own custom ring.'),
