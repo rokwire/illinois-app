@@ -156,7 +156,8 @@
 			"campus_resources": { "build": "debug" }
 		},
 		"illini_cash": {
-			"features.laundry": { "housingResidenceStatus": true },
+			"laundry": { "housingResidenceStatus": true },
+			"my_laundry": { "housingResidenceStatus": true },
 			"new_student": { "firstYearStudent": true },
 			"new_student_checklist": { "firstYearStudent": true }
 		},
