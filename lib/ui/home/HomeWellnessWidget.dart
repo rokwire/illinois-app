@@ -389,7 +389,10 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
     List<WellnessRingDefinition>? activeRings = WellnessRings().wellnessRings;
     if(activeRings?.isNotEmpty ?? false){
       for(WellnessRingDefinition data in activeRings!) {
-        content.add(SmallWellnessRingButton(label: data.name!, color: data.color,
+        content.add(SmallWellnessRingButton(
+            label: data.name!,
+            description: "${WellnessRings().getRingDailyValue(data.id).toInt()}/${data.goal.toInt()}",
+            color: data.color,
             onTapWidget: (context)  =>  _onTapIncrease(data)
         ));
         content.add(Container(height: 5,));

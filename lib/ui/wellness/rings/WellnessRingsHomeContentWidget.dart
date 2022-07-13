@@ -72,7 +72,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Container(height: 8,),
-          WellnessWidgetHelper.buildWellnessHeader(),
+          // WellnessWidgetHelper.buildWellnessHeader(),
           Container(height: 12,),
           _buildTabButtonRow(),
           _buildContent()
@@ -113,7 +113,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
           Container(height: 20,),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 6),
-            child: Text(Localization().getStringEx('panel.wellness.rings.description.label', "See your recent progress in one place by checking your log for the lat 14 days."),
+            child: Text(Localization().getStringEx('panel.wellness.rings.description.label', "See your recent progress in one place by checking your log for the last 14 days."),
               style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
           )),
           Container(height: 15,),
@@ -166,9 +166,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
           content.add(WellnessRingButton(
               label: definition.name ?? "",
               color: definition.color,
-              description: "${WellnessRings()
-                  .getRingDailyValue(definition.id)
-                  .toInt()}/${definition.goal.toInt()} ${definition.unit}s",
+              description: "${WellnessRings().getRingDailyValue(definition.id).toInt()}/${definition.goal.toInt()} ${definition.unit}",
               onTapIncrease: (context) async{
                 await WellnessRings().addRecord(
                     WellnessRingRecord(value: 1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
