@@ -1920,7 +1920,7 @@
     "panel.groups_create.authman.section.title": "University managed membership",
     "panel.groups_create.authman.enabled.label": "Is this a managed membership group?",
     "panel.groups_create.authman.group.name.label": "Membership name",
-    "panel.groups_create.prompt.msg.title": "Does this group comply with University guidelines? (It will be removed if the group is deemed not to comply.)",
+    "panel.groups_create.prompt.msg.title": "The University of Illinois takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may report group names or content that are obscene, threatening, or harassing to group administrator(s). Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.",
     "panel.groups_create.attendance_group.label": "Enable attendance checking",
     
     "panel.groups.common.privacy.title.private": "Private",
