@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Apply authorization header to StudentSummary API call [#1895](https://github.com/rokwire/illinois-app/issues/1895).
 - CreatePollPanel: show members selection only for group polls [#1945](https://github.com/rokwire/illinois-app/issues/1945).
+### Added
+- Added favorite button in AthleticsNewsArticlePanel [#1990](https://github.com/rokwire/illinois-app/issues/1990).
 
 ## [4.0.50] - 2022-07-12
 ### Added

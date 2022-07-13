@@ -492,6 +492,8 @@
     "panel.athletics_game_detail.load.failed.msg": "Failed to load game. Please, try again.",
 
     "panel.athletics_news_article.load.failed.msg": "Failed to load news article. Please, try again.",
+    "panel.athletics_news_article.button.save_game.title": "Save Article",
+    "panel.athletics_news_article.button.save_game.hint": "Tap to save",
 
     "panel.athletics_roster_list.header.title": "Roster",
     "panel.athletics_roster_list.button.by_name.title": "By Name",

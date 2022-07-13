@@ -143,7 +143,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                 visible: Auth2().canFavorite,
                                 child: Semantics(
                                   label: Localization().getStringEx("widget.game_detail_heading.button.save_game.title", "Save Game"),
-                                  hint: Localization().getStringEx("widget.game_detail_heading.button.save_game.hint", ""),
+                                  hint: Localization().getStringEx("widget.game_detail_heading.button.save_game.hint", "Tap to save"),
                                   button: true,
                                   checked: isGameFavorite,
                                   child: GestureDetector(
