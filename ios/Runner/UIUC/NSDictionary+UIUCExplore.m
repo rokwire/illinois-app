@@ -118,7 +118,9 @@
 
 - (CLLocationCoordinate2D)uiucExploreLocationCoordinate {
 	NSDictionary *location = self.uiucExploreLocation;
-	return (location != nil) ? CLLocationCoordinate2DMake([location inaDoubleForKey:@"latitude"], [location inaDoubleForKey:@"longitude"]) : kCLLocationCoordinate2DInvalid;
+	NSNumber *latitude = [location inaNumberForKey:@"latitude"];
+	NSNumber *longitude = [location inaNumberForKey:@"longitude"];
+	return ((latitude != nil) && (longitude != nil)) ? CLLocationCoordinate2DMake(latitude.doubleValue, longitude.doubleValue) : kCLLocationCoordinate2DInvalid;
 }
 
 - (int)uiucExploreLocationFloor {

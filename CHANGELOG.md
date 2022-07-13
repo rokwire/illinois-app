@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Apply authorization header to StudentSummary API call [#1895](https://github.com/rokwire/illinois-app/issues/1895).
 - CreatePollPanel: show members selection only for group polls [#1945](https://github.com/rokwire/illinois-app/issues/1945).
 - CreateGroup dialog text change [#1949](https://github.com/rokwire/illinois-app/issues/1949).
+- Do not display explore location with missing latitude or longitude in iOS Map View [#1942](https://github.com/rokwire/illinois-app/issues/1942).
 ### Added
 - Added favorite button in AthleticsNewsArticlePanel [#1990](https://github.com/rokwire/illinois-app/issues/1990).
 
