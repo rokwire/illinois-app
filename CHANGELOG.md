@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show Laundry only to students in residence [#1984](https://github.com/rokwire/illinois-app/issues/1984).
 - Remove "My Illini" from the Browse screen [#1903](https://github.com/rokwire/illinois-app/issues/1903).
 - Updated Wellness Resources links [#1887](https://github.com/rokwire/illinois-app/issues/1887).
+### Fixed
+- Apply authorization header to StudentSummary API call [#1895](https://github.com/rokwire/illinois-app/issues/1895).
 
 ## [4.0.50] - 2022-07-12
 ### Added
