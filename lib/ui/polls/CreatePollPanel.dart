@@ -271,6 +271,9 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   Widget _buildGroupMembersSelection(){
+    if(widget.group == null){
+      return Container();
+    }
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         color: Colors.white,
