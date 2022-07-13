@@ -490,6 +490,8 @@
 	"panel.athletics_game_detail.load.failed.msg": "加載遊戲失敗. 請再試一次.",
 
 	"panel.athletics_news_article.load.failed.msg": "無法加載新聞文章. 請再試一次.",
+	"panel.athletics_news_article.button.save_game.title": "保存文章",
+	"panel.athletics_news_article.button.save_game.hint": "點按即可保存",
 
 	"panel.athletics_roster_list.header.title":"名册",
 	"panel.athletics_roster_list.button.by_name.title":"按名称",
