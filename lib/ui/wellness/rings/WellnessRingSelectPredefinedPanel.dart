@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/WellnessRings.dart';
+import 'package:illinois/ui/wellness/rings/WellnessRingCreatePane.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -10,8 +11,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
-import 'WellnessRingCreatePane.dart';
-import 'WellnessRingWidgets.dart';
 
 class WellnessRingSelectPredefinedPanel extends StatefulWidget{
   @override

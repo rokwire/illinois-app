@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/WellnessRings.dart';
-import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
