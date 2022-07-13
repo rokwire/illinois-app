@@ -529,25 +529,24 @@ class WellnessRings with Service{
 
   Future<List<WellnessRingRecord>?> _requestGetRingRecord({String? ringId, DateTime? startPeriod, DateTime? endPeriod}) async { //TBD Change on backend to avoid multiple requests
     //TBD ENABLED
-    bool haveAppliedQueryParams = false;
-    String url ="";
-    if(ringId != null) {
-      url = '${Config().wellnessUrl}/user/rings/$ringId"/records';
-    } else {
-      url = '${Config().wellnessUrl}/user/all_rings_records';
-    }
 
+    String url = (ringId != null)
+      ? '${Config().wellnessUrl}/user/rings/$ringId"/records'
+      : '${Config().wellnessUrl}/user/all_rings_records';
+
+    String params = "";
+    
     if(startPeriod != null){
-      url += haveAppliedQueryParams ? "&" : "?";
-      url += "start_date=${startPeriod.millisecondsSinceEpoch.toString()}";
-      haveAppliedQueryParams = true;
+      params += params.isNotEmpty ? "&" : "";
+      params += "start_date=${startPeriod.millisecondsSinceEpoch.toString()}";
     }
 
     if(endPeriod != null){
-      url += haveAppliedQueryParams ? "&" : "?";
-      url += "end_date=${endPeriod.millisecondsSinceEpoch.toString()}";
-      haveAppliedQueryParams = true;
+      params += params.isNotEmpty ? "&" : "";
+      params += "end_date=${endPeriod.millisecondsSinceEpoch.toString()}";
     }
+
+    url += params.isNotEmpty ? "?$params" : "";
 
     http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
@@ -579,10 +578,10 @@ class WellnessRings with Service{
     }
   }
 
-  Future<bool> _requestDeleteRingRecords(String ringId) async {
+  /*Future<bool> _requestDeleteRingRecords(String ringId) async {
     //TBD implement
     return false;
-  }
+  }*/
 
 //////
   //TBD Remove unnecessary public methods
