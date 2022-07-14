@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Do not display explore location with missing latitude or longitude in iOS Map View [#1942](https://github.com/rokwire/illinois-app/issues/1942).
 ### Added
 - Added favorite button in AthleticsNewsArticlePanel [#1990](https://github.com/rokwire/illinois-app/issues/1990).
+### Fixed
+- Fixed "Prompt when saving events to calendar" enable [#1980](https://github.com/rokwire/illinois-app/issues/1980).
 
 ## [4.0.50] - 2022-07-12
 ### Added
