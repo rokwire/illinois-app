@@ -606,8 +606,23 @@ class WellnessRings with Service{
   }
 
   Future<bool> _requestDeleteRingRecords({String? ringId}) async {
-    //TBD implement
-    return true;
+    //TBD ENABLED
+    String url = "";
+    if(ringId == null) {
+      url = '${Config().wellnessUrl}/user/all_rings_records';
+    } else {
+      url = '${Config().wellnessUrl}/user/rings/$ringId/records';
+    }
+
+    http.Response? response = await Network().delete(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    if (responseCode == 200) {
+      return true;
+    } else {
+      String? responseString = response?.body;
+      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      return false;
+    }
   }
 
 //////
