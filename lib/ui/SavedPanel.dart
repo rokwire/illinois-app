@@ -182,7 +182,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
           Html(data: HomeFavoritesWidget.emptyMessageHtml(favoriteCategory) ?? '',
             onLinkTap: (url, renderContext, attributes, element) => HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'SavedPanel($favoriteCategory) View Home'),
             style: {
-              "body": Style(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero, textAlign: TextAlign.center),
+              "body": Style(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.medium, fontSize: FontSize(18), padding: EdgeInsets.zero, margin: EdgeInsets.zero, textAlign: TextAlign.center),
               "a": Style(color: HomeFavoritesWidget.linkColor(favoriteCategory)),
             }) :
           Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
