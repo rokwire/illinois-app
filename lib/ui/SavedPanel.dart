@@ -20,7 +20,9 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Favorite.dart';
+import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -172,10 +174,18 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   Widget _buildEmpty() {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
+    String? favoriteCategory = (widget.favoriteCategories.length == 1) ? widget.favoriteCategories.single : null;
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 48, vertical: 32), child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+        (favoriteCategory != null) ?
+          Html(data: HomeFavoritesWidget.emptyMessageHtml(favoriteCategory) ?? '',
+            onLinkTap: (url, renderContext, attributes, element) => HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'SavedPanel($favoriteCategory) View Home'),
+            style: {
+              "body": Style(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero, textAlign: TextAlign.center),
+              "a": Style(color: HomeFavoritesWidget.linkColor(favoriteCategory)),
+            }) :
+          Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
         Expanded(child: Container(), flex: 3),
     ],),);
   }
