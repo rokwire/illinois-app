@@ -192,6 +192,17 @@ class WellnessRings with Service{
     return false;
   }
 
+  Future<bool> deleteRecords() async {
+    bool success = await _requestDeleteRingRecords();
+    if(success) {
+      _wellnessRecords?.clear();
+      NotificationService().notify(notifyUserRingsUpdated);
+      _storeWellnessRecords();
+      return true;
+    }
+    return false;
+  }
+
   Future<List<WellnessRingDefinition>?> loadWellnessRings() async { //TBD decide do we need such method
     //TBD load from net
     return _activeWellnessRings?.values.toList();
@@ -404,6 +415,10 @@ class WellnessRings with Service{
     return (_activeWellnessRings?.length ?? 0) < MAX_RINGS;
   }
 
+  bool get haveHistory{
+    return _wellnessRecords?.isNotEmpty ?? false;
+  }
+
   //Cashe
   Future<File> _getCacheFile() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -590,13 +605,11 @@ class WellnessRings with Service{
     }
   }
 
-  /*Future<bool> _requestDeleteRingRecords(String ringId) async {
+  Future<bool> _requestDeleteRingRecords({String? ringId}) async {
     //TBD implement
-    return false;
-  }*/
+    return true;
+  }
 
 //////
-  //TBD Remove unnecessary public methods
-  //TBD Reorder methods
   //TBD clan up
 }
