@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Update Canvas Error text [#2002](https://github.com/rokwire/illinois-app/issues/2002).
+- Update CheckList scrolling [#2001](https://github.com/rokwire/illinois-app/issues/2001).
 
 ## [4.0.51] - 2022-07-13
 ### Changed
