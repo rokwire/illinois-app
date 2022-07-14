@@ -66,7 +66,7 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
     return _buildCenterWidget(widget: Padding(
         padding: EdgeInsets.symmetric(horizontal: 28),
         child: Text(
-            Localization().getStringEx('panel.canvas_courses.load.failed.error.msg', 'Failed to load courses. Please, try again later.'),
+            Localization().getStringEx('panel.canvas_courses.load.failed.error.msg', 'You do not appear to be enrolled in any Gies Canvas courses.'),
             textAlign: TextAlign.center,
             style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
