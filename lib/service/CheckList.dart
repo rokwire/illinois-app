@@ -567,10 +567,6 @@ abstract class CheckList with Service implements NotificationsListener{
     return false;
   }
 
-  bool get supportNotes{
-    return false; //Remove Notes buttons if we don't support them anymore. Hide for now
-  }
-
   Map<String, dynamic>? get studentInfo{
     return _studentInfo;
   }

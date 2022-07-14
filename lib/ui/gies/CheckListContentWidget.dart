@@ -76,44 +76,40 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
 
   Widget _buildTitle() {
     String? progress = JsonUtils.intValue(_currentPage["progress"])?.toString();
-    return
-      Semantics(container: true,
-        child:Container(key: _titleKey, color: Styles().colors!.fillColorPrimary, child:
-      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 10), child:
+    return Semantics(container: true, child:
+      Container(key: _titleKey, color: Styles().colors!.fillColorPrimary, padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
         Column(children: [
-          Semantics(
-            header: true,
-            child: Column(children: [
-              Visibility( visible:  progress!=null,
-                child:Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Semantics(header: true, child:
+            Column(children: [
+              Visibility( visible: progress != null, child:
+                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                   Expanded(child:
-                    Semantics(child:Text(JsonUtils.stringValue(_currentPage["step_title"]) ?? "", textAlign: TextAlign.center,style: TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20,),),)),
-              ],)),
+                    Semantics(child:
+                      Text(JsonUtils.stringValue(_currentPage["step_title"]) ?? "", textAlign: TextAlign.center, style:
+                        TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20,),
+                      ),
+                    )
+                  ),
+                ],),
+              ),
               Container(height: 8,),
               Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                 Expanded(child:
-                  Text(_currentPage["title"]??"", textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32,),),),
+                  Text(_currentPage["title"] ?? "", textAlign: TextAlign.center, style:
+                    TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32,),
+                  ),
+                ),
               ],),
             ],),
           ),
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
             Expanded(child: Container()),
             Padding(padding: EdgeInsets.only(top: 3), child:
-            _buildProgress(),
+              _buildProgress(),
             ),
-            Expanded(child:
-              !CheckList(widget.contentKey).supportNotes? Container() :
-              Align(alignment: Alignment.centerRight, child:
-                InkWell(onTap: () => _onTapNotes(), child:
-                  Padding(padding: EdgeInsets.only(top: 14, bottom: 4), child:
-                    Text(Localization().getStringEx('widget.gies.button.notes', 'Notes'), style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 16, decoration: TextDecoration.underline, ),),
-                  ),
-                ),
-              ),
-            )
           ],),
         ],),
-    ),));
+    ));
   }
 
   Widget _buildProgress() {
@@ -194,12 +190,8 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
 
   Widget _buildContent() {
     return Container(color: Colors.white, padding: EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0), child:
-      _CheckListPageWidget(contentKey: widget.contentKey, key: _pageKey, page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < CheckList(widget.contentKey).navigationPages!.length) ? _onTapBack : null,onTapNotes: _onTapNotes, showTitle: false,),
+      _CheckListPageWidget(contentKey: widget.contentKey, key: _pageKey, page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < CheckList(widget.contentKey).navigationPages!.length) ? _onTapBack : null, showTitle: false,),
     );
-  }
-
-  void _onTapNotes() {
-    _showPopup(_pagePopup(_currentPage) ?? 'notes', _currentPage["id"]);
   }
 
   void _onTapLink(String? url) {
@@ -263,22 +255,6 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
     });
   }
 
-  String? _pagePopup(Map? page) {
-    List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page['buttons']) : null;
-    if (buttons != null) {
-      String? popup;
-      for (dynamic button in buttons) {
-        if ((button is Map) && ((popup = _pageButtonPopup(button)) != null)) {
-          return popup;
-        }
-      }
-    }
-    return null;
-  }
-
-  String? _pageButtonPopup(Map button) {
-    return JsonUtils.stringValue(button['popup']);
-  }
 
   @override
   void onNotification(String name, param) {
@@ -320,10 +296,9 @@ class _CheckListPageWidget extends StatefulWidget{
   final void Function(String?)? onTapLink;
   final void Function(Map<String, dynamic> button, String panelId)? onTapButton;
   final void Function()? onTapBack;
-  final void Function()? onTapNotes;
   final bool showTitle;
 
-  _CheckListPageWidget({Key? key, this.page, this.onTapLink, this.onTapButton, this.onTapBack, this.showTitle = true, this.onTapNotes, required this.contentKey}) : super(key: key);
+  _CheckListPageWidget({Key? key, this.page, this.onTapLink, this.onTapButton, this.onTapBack, this.showTitle = true, required this.contentKey}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CheckListPageState();
@@ -484,7 +459,6 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
           onTapLink: widget.onTapLink,
           onTapButton: widget.onTapButton,
           onTapBack: (1 < CheckList(widget.contentKey).navigationPages!.length) ? widget.onTapBack : null,
-          onTapNotes: widget.onTapNotes,
           contentKey: widget.contentKey,
       ),
       );
@@ -757,9 +731,8 @@ class _StepsHorizontalListWidget extends StatefulWidget {
   final void Function(String?)? onTapLink;
   final void Function(Map<String, dynamic> button, String panelId)? onTapButton;
   final void Function()? onTapBack;
-  final void Function()? onTapNotes;
 
-  const _StepsHorizontalListWidget({Key? key, this.tabs, this.title, this.onTapLink, this.onTapButton, this.onTapBack, this.pageProgress = 0, this.onTapNotes, required this.contentKey}) : super(key: key);
+  const _StepsHorizontalListWidget({Key? key, this.tabs, this.title, this.onTapLink, this.onTapButton, this.onTapBack, this.pageProgress = 0, required this.contentKey}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _StepsHorizontalListState();
@@ -823,20 +796,6 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
       }
     }
 
-    if(CheckList(widget.contentKey).supportNotes) {
-      tabs.add(
-        GestureDetector(onTap: _onTapNotes,
-          child: Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child:
-          Text(Localization().getStringEx('widget.gies.button.notes', 'Notes'),
-            style: TextStyle(color: Styles().colors!.white,
-              fontFamily: Styles().fontFamilies!.bold,
-              fontSize: 16,
-              decoration: TextDecoration
-                  .underline,),),
-          ),
-        ),
-      );
-    }
     return Container(
       key: _tabKey,
       padding: EdgeInsets.only(right: 16, left: 16,),
@@ -947,11 +906,6 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
 
   void _onTapTabButton(int index){
     _swipeToIndex(index);
-  }
-
-  void _onTapNotes(){
-    if(widget.onTapNotes!=null)
-      widget.onTapNotes!();
   }
 
   void _swipeToPage(String pageId){

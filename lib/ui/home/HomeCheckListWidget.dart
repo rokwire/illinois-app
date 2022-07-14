@@ -3,12 +3,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/CheckList.dart';
-import 'package:illinois/ui/gies/CheckListContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -161,17 +159,6 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                   textColor: Styles().colors!.fillColorPrimary,
                   onTap: _onTapContinue,
                 ),
-                !CheckList(widget.contentKey).supportNotes ? Container() :
-                Column(children: [
-                  Container(height: 12,),
-                  RoundedButton(
-                    label: Localization().getStringEx('widget.gies.button.title.view_notes', "View My Notes"),
-                    backgroundColor: Styles().colors?.white!,
-                    borderColor: Styles().colors?.fillColorSecondary!,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    onTap: _onTapViewNotes,
-                  ),
-                ],),
                 Container(height: 16,),
               ],
             )
@@ -210,12 +197,6 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
 
   void _onTapContinue(){
     CheckListPanel.present(context, contentKey: widget.contentKey);
-  }
-
-  void _onTapViewNotes(){
-    showDialog(context: context, builder: (BuildContext context) {
-        return CheckListNotesWidget(contentKey: widget.contentKey ,notes: JsonUtils.decodeList(Storage().getChecklistNotes(widget.contentKey)) ?? []);
-    });
   }
 
   String get _progressText {
