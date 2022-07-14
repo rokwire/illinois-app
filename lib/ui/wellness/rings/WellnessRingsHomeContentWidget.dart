@@ -23,6 +23,7 @@ import 'package:illinois/ui/wellness/rings/WellnessRingCreatePane.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -118,6 +119,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
           )),
           Container(height: 15,),
           _buildHistoryList(),
+          _buildClearHistoryButton()
         ],
       )
 
@@ -156,6 +158,28 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
         children: content,
       ),
     );
+  }
+
+  Widget _buildClearHistoryButton(){
+    return  WellnessRings().haveHistory ?
+      Container(
+        padding: EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+        child: SmallRoundedButton(label: 'Clear History',
+          onTap: (){
+            WellnessRings().deleteRecords().then((success) {
+              if(success == false){
+                AppAlert.showDialogResult(context, "Unable to clear history");
+              }
+            });
+          },
+          backgroundColor: Colors.white,
+          // padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+          borderColor: Styles().colors!.fillColorSecondary,
+          textColor: Styles().colors!.fillColorPrimary,
+          rightIcon: Container(),
+        ),
+      )
+    : Container();
   }
 
   Widget _buildButtons(){

@@ -6,6 +6,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -13,7 +14,7 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:http/http.dart' as http;
 
-class WellnessRings with Service{
+class WellnessRings with Service implements NotificationsListener{
   static const String notifyUserRingsUpdated = "edu.illinois.rokwire.wellness.user.ring.updated";
   static const String notifyUserRingsAccomplished = "edu.illinois.rokwire.wellness.user.ring.accomplished";
 
@@ -21,12 +22,12 @@ class WellnessRings with Service{
   static const int MAX_RINGS = 4;
   static const int HISTORY_LIMIT_DAYS = 14;
 
-  File? _cacheFile;
-
   Map<String,WellnessRingDefinition>? _activeWellnessRings;
-
   List<WellnessRingDefinition>? _wellnessRingsRecords = [];
   List<WellnessRingRecord>? _wellnessRecords = [];
+
+  File? _cacheFile;
+  DateTime? _pausedDateTime;
 
   // Singletone Factory
 
@@ -72,7 +73,13 @@ class WellnessRings with Service{
       _loadRingDefinitions(),
       _loadRingRecords(),
     ]);
+    _saveRingsDataToCache(); //Consider update
     Log.d("Wellness Rings _loadFromNet finished!");
+  }
+
+  Future<void> _refreshFromNet() async {
+    _loadFromNet();
+    //TBD consider update instead of rewrite the whole content
   }
 
   Future<void> _loadRingDefinitions() async {
@@ -186,6 +193,17 @@ class WellnessRings with Service{
       if (alreadyAccomplished == false) {
         _checkForAccomplishment(record.wellnessRingId);
       }
+      _storeWellnessRecords();
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> deleteRecords() async {
+    bool success = await _requestDeleteRingRecords();
+    if(success) {
+      _wellnessRecords?.clear();
+      NotificationService().notify(notifyUserRingsUpdated);
       _storeWellnessRecords();
       return true;
     }
@@ -404,6 +422,10 @@ class WellnessRings with Service{
     return (_activeWellnessRings?.length ?? 0) < MAX_RINGS;
   }
 
+  bool get haveHistory{
+    return _wellnessRecords?.isNotEmpty ?? false;
+  }
+
   //Cashe
   Future<File> _getCacheFile() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -590,13 +612,51 @@ class WellnessRings with Service{
     }
   }
 
-  /*Future<bool> _requestDeleteRingRecords(String ringId) async {
-    //TBD implement
-    return false;
-  }*/
+  Future<bool> _requestDeleteRingRecords({String? ringId}) async {
+    //TBD ENABLED
+    String url = "";
+    if(ringId == null) {
+      url = '${Config().wellnessUrl}/user/all_rings_records';
+    } else {
+      url = '${Config().wellnessUrl}/user/rings/$ringId/records';
+    }
+
+    http.Response? response = await Network().delete(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    if (responseCode == 200) {
+      return true;
+    } else {
+      String? responseString = response?.body;
+      Log.w('Failed to add wellness ring. Response:\n$responseCode: $responseString');
+      return false;
+    }
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if(name == Auth2.notifyLoginFinished ||
+        name == Auth2.notifyLoginChanged ){
+      _refreshFromNet();
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+            _refreshFromNet();
+        }
+      }
+    }
+  }
 
 //////
-  //TBD Remove unnecessary public methods
-  //TBD Reorder methods
   //TBD clan up
 }
