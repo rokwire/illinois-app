@@ -24,7 +24,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 
-class CheckListPanel extends StatefulWidget {
+class CheckListPanel extends StatelessWidget {
   final String contentKey;
 
   const CheckListPanel({Key? key, required this.contentKey}) : super(key: key);
@@ -58,20 +58,15 @@ class CheckListPanel extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => _CheckListPanelState();
-}
-
-class _CheckListPanelState extends State<CheckListPanel> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(title: _title), body: SingleChildScrollView(child: CheckListContentWidget(contentKey: widget.contentKey)));
+        appBar: HeaderBar(title: _title), body: SingleChildScrollView(child: CheckListContentWidget(contentKey: contentKey)));
   }
 
   String get _title {
-    if (widget.contentKey == CheckList.giesOnboarding) {
+    if (contentKey == CheckList.giesOnboarding) {
       return Localization().getStringEx('widget.checklist.gies.title', 'iDegrees New Student Checklist');
-    } else if (widget.contentKey == CheckList.uiucOnboarding) {
+    } else if (contentKey == CheckList.uiucOnboarding) {
       return Localization().getStringEx('widget.checklist.uiuc.title', 'New Student Checklist');
     }
 
