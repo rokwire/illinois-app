@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -203,13 +204,19 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       padding = EdgeInsets.zero;
     }
     else if (widget.favoriteCategories.length == 1) {
-      List<Favorite>? favorites = _favorites[widget.favoriteCategories.first];
+      String favoriteCategory = widget.favoriteCategories.single;
+      List<Favorite>? favorites = _favorites[favoriteCategory];
       if (0 < (favorites?.length ?? 0)) {
         for (int index = 0; index < favorites!.length; index++) {
           contentList.add(Padding(padding: EdgeInsets.only(top: (0 < index) ? 8 : 0), child:
             _SavedItem(favorites[index])
           ));
         }
+        contentList.add(LinkButton(
+          title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
+          hint: Localization().getStringEx('panel.saved.button.all.hint', 'Tap to see all favorite items'),
+          onTap: () => _onViewAll(favoriteCategory),
+        ));
       }
       padding = EdgeInsets.symmetric(horizontal: 16, vertical: 16);
     }
@@ -480,10 +487,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     });
   }
 
-
-
-
-
   void _requestAuthorization() async {
     PermissionStatus permissionStatus = await NotificationPermissions.getNotificationPermissionStatus();
     if (permissionStatus != PermissionStatus.unknown) {
@@ -502,6 +505,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   bool get _laundryAvailable => true; // IlliniCash().ballance?.housingResidenceStatus ?? false;
 
+  void _onViewAll(String favoriteCategory) {
+    Analytics().logSelect(target: 'View All');
+    FavoriteExt.launchHome(context, key: favoriteCategory);
+  }
 }
 
 class _SavedItemsList extends StatefulWidget {
@@ -538,7 +545,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
             slantColor: widget.slantColor ?? Styles().colors!.fillColorPrimary,
             children: (0 <  widget.items!.length) ? _buildListItems(context) : _buildEmptyContent(context),),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(
-          label: _showAll ? Localization().getStringEx('panel.saved.events.button.less', "Show Less") : Localization().getStringEx('panel.saved.events.button.all', "Show All"),
+          label: _showAll ? Localization().getStringEx('panel.saved.button.less.title', "Show Less") : Localization().getStringEx('panel.saved.button.more.title', "Show All"),
           onTap: _onViewAllTapped,
         ),),)
       ],
