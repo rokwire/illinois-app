@@ -100,12 +100,12 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
             textStyle: TextStyle(
                 fontSize: 16,
                 fontFamily: Styles().fontFamilies!.bold,
-                color: Storage().calendarEnabledToSave! ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent),
+                color: (Storage().calendarEnabledToSave == true) ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent),
             border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4)),
             toggled: Storage().calendarCanPrompt ?? false,
             onTap: () {
-              if (Storage().calendarEnabledToSave == false) {
+              if (Storage().calendarEnabledToSave == true) {
                 setState(() {
                   Storage().calendarCanPrompt = (Storage().calendarCanPrompt != true);
                 });
