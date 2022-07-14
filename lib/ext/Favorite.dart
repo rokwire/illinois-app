@@ -8,10 +8,15 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
+import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
+import 'package:illinois/ui/explore/ExplorePanel.dart';
+import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
+import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -121,7 +126,7 @@ extension FavoriteExt on Favorite {
       return (this as Explore).uiColor;
     }
     else if (this is Game) {
-      return Styles().colors?.fillColorPrimary;
+      return (this as Game).uiColor;
     }
     else if (this is News) {
       return Styles().colors?.fillColorPrimary;
@@ -164,4 +169,29 @@ extension FavoriteExt on Favorite {
     }
   }
   
+  static void launchHome(BuildContext context, { String? key }) {
+    // Work in lowercase as key can come from an URL
+    String? lowerCaseKey = key?.toLowerCase();
+    if (lowerCaseKey == Event.favoriteKeyName.toLowerCase()) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
+    }
+    else if (lowerCaseKey == Dining.favoriteKeyName.toLowerCase()) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Dining); } ));
+    }
+    else if (lowerCaseKey == Game.favoriteKeyName.toLowerCase()) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
+    }
+    else if (lowerCaseKey == News.favoriteKeyName.toLowerCase()) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
+    }
+    else if (lowerCaseKey == LaundryRoom.favoriteKeyName.toLowerCase()) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
+    }
+    else if (lowerCaseKey == GuideFavorite.favoriteKeyName.toLowerCase()) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
+    }
+    else if (lowerCaseKey == InboxMessage.favoriteKeyName.toLowerCase()) {
+      SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+    }
+  }
 }

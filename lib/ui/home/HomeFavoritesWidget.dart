@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/main.dart';
 import 'package:illinois/model/Dining.dart';
@@ -72,6 +73,8 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   PageController? _pageController;
   bool _loadingFavorites = false;
   final double _pageSpacing = 16;
+  final String localScheme = 'local';
+  final String localUrlMacro = '{{local_url}}';
   
   @override
   void initState() {
@@ -143,7 +146,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       return HomeProgressWidget();
     }
     else if ((_favorites == null) || (_favorites!.length == 0)) {
-      return HomeMessageCard(message: _emptyMessage);
+      return _buildEmpty();
     }
     else {
       return _buildFavorites();
@@ -374,6 +377,22 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     return null;
   }
 
+  Widget _buildEmpty() {
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+      Container(decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        padding: EdgeInsets.all(16),
+        child: Html(data: _emptyMessageHtml ?? '',
+          onLinkTap: (url, context, attributes, element) => _handleLocalUrl(url),
+          style: {
+            "body": Style(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+            "a": Style(color: _linkColor),
+          },
+        ),
+      ),
+    );
+  }
+
+
   String? get headingTitle => HomeFavoritesWidget.titleFromKey(favoriteKey: widget.favoriteKey);
 
 
@@ -403,22 +422,36 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     return null;
   }
 
-  String? get _loggedOutMessage {
+  String? get _emptyMessageHtml {
+    String? message;
     switch(widget.favoriteKey) {
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.logged_out.inbox', 'You need to be logged in to access My Notifications.');
+      case Event.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.events.tmp", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events</b></a> for quick access here."); break;
+      case Dining.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.dining", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Dining</b></a> for quick access here."); break;
+      case Game.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.athletics", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Athletics Events</b></a> for quick access here."); break;
+      case News.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.news", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Athletics News</b></a> for quick access here."); break;
+      case LaundryRoom.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.laundry", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Laundry Locations</b></a> for quick access here."); break;
+      case GuideFavorite.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.campus_guide", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Campus Guide</b></a> for quick access here."); break;
+      case InboxMessage.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.inbox", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Notifications</b></a> for quick access here."); break;
+    }
+    return (message != null) ? message.replaceAll(localUrlMacro, '$localScheme://${widget.favoriteKey.toLowerCase()}') : null;
+  }
+
+  Color? get _linkColor {
+    switch(widget.favoriteKey) {
+      case Event.favoriteKeyName: return Styles().colors?.eventColor;
+      case Dining.favoriteKeyName: return Styles().colors?.diningColor;
+      case Game.favoriteKeyName: return Styles().colors?.fillColorPrimary;
+      case News.favoriteKeyName: return Styles().colors?.fillColorPrimary;
+      case LaundryRoom.favoriteKeyName: return Styles().colors?.accentColor2;
+      case GuideFavorite.favoriteKeyName: return Styles().colors?.accentColor3;
+      case InboxMessage.favoriteKeyName: return Styles().colors?.fillColorSecondary;
     }
     return null;
   }
 
-  String? get _emptyMessage {
+  String? get _loggedOutMessage {
     switch(widget.favoriteKey) {
-      case Event.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.events', 'Tap the \u2606 on items in Events so you can quickly find them here.');
-      case Dining.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.dining', 'Tap the \u2606 on items in Dinings so you can quickly find them here.');
-      case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.athletics', 'Tap the \u2606 on items in Athletics Events so you can quickly find them here.');
-      case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.news', 'Tap the \u2606 on items in Athletics News so you can quickly find them here.');
-      case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.laundry', 'Tap the \u2606 on laundry locations to quickly find them here.');
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.inbox', 'Tap the \u2606 on items in Notifications so you can quickly find them here.');
-      case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.empty.campus_guide', 'Tap the \u2606 on items in Campus Guide so you can quickly find them here.');
+      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.logged_out.inbox', 'You need to be logged in to access My Notifications.');
     }
     return null;
   }
@@ -444,5 +477,13 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   void _onSeeAll() {
     Analytics().logSelect(target: 'HomeFavoritesWidget(${widget.favoriteKey}) View All');
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
+  }
+
+  void _handleLocalUrl(String? url) {
+    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+    if (uri?.scheme == localScheme) {
+      Analytics().logSelect(target: 'HomeFavoritesWidget(${widget.favoriteKey}) View Main');
+      FavoriteExt.launchHome(context, key: uri?.host);
+    }
   }
 }

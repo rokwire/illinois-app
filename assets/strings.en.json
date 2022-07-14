@@ -2626,13 +2626,13 @@
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide are not available while offline.",
     "widget.home.favorites.message.offline.inbox": "My Notifications are not available while offline.",
 
-    "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in Events so you can quickly find them here.",
-    "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in Dinings so you can quickly find them here.",
-    "widget.home.favorites.message.empty.athletics": "Tap the \u2606 on items in Athletics Events so you can quickly find them here.",
-    "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in Athletics News so you can quickly find them here.",
-    "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on laundry locations to quickly find them here.",
-    "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in Campus Guide so you can quickly find them here.",
-    "widget.home.favorites.message.empty.inbox": "Tap the \u2606 on items in Notifications so you can quickly find them here.",
+    "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.athletics": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics Events</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.inbox": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Notifications</b></a> for quick access here.",
 
     "widget.home.favorites.message.logged_out.inbox": "You need to be logged in to access My Notifications.",
 

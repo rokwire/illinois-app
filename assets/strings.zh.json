@@ -2619,13 +2619,13 @@
 	"widget.home.favorites.message.offline.campus_guide": "我的校園指南在離線時不可用。",
 	"widget.home.favorites.message.offline.inbox": "我的通知在離線時不可用。",
 
-	"widget.home.favorites.message.empty.events": "在事件中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
-	"widget.home.favorites.message.empty.dining": "在 Dinings 中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
-	"widget.home.favorites.message.empty.athletics": "點擊田徑項目中的 \u2606，以便您可以在此處快速找到它們。",
-	"widget.home.favorites.message.empty.news": "在田徑新聞中的項目上點擊 \u2606，以便您可以在這裡快速找到它們。",
-	"widget.home.favorites.message.empty.laundry": "點擊洗衣位置上的 \u2606 以在此處快速找到它們。",
-	"widget.home.favorites.message.empty.campus_guide": "在 Campus Guide 中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
-	"widget.home.favorites.message.empty.inbox": "在通知中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
+	"widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
+	"widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
+	"widget.home.favorites.message.empty.athletics": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics Events</b></a> for quick access here.",
+	"widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
+	"widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here.",
+	"widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
+	"widget.home.favorites.message.empty.inbox": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Notifications</b></a> for quick access here.",
 
 	"widget.home.favorites.message.logged_out.inbox": "You need to be logged in to access My Notifications.",
 
