@@ -71,42 +71,62 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[_buildTitle(), _buildSlant(), _buildContent()]);
+    final double slantHeight = 45;
+    return Column(children: <Widget>[
+      _buildTitle(),
+      Expanded(child:
+        Container(color: Styles().colors?.white, child:
+          Stack(children: [
+            _buildSlant(slantHeight),
+            SingleChildScrollView(child:
+              Padding(padding: EdgeInsets.only(top: slantHeight), child: 
+                _buildContent()
+              ,)
+            ),
+          ],)
+        ),
+      )
+    ]);
   }
 
   Widget _buildTitle() {
     String? progress = JsonUtils.intValue(_currentPage["progress"])?.toString();
     return Semantics(container: true, child:
-      Container(key: _titleKey, color: Styles().colors!.fillColorPrimary, padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+      Container(key: _titleKey, color: Styles().colors!.fillColorPrimary, padding: EdgeInsets.only(top: 8, bottom: 8), child:
         Column(children: [
           Semantics(header: true, child:
-            Column(children: [
-              Visibility( visible: progress != null, child:
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 3), child:
+              Column(children: [
+                Visibility( visible: progress != null, child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                    Expanded(child:
+                      Semantics(child:
+                        Text(JsonUtils.stringValue(_currentPage["step_title"]) ?? "", textAlign: TextAlign.center, style:
+                          TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20,),
+                        ),
+                      )
+                    ),
+                  ],),
+                ),
+                Container(height: 8,),
                 Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                   Expanded(child:
-                    Semantics(child:
-                      Text(JsonUtils.stringValue(_currentPage["step_title"]) ?? "", textAlign: TextAlign.center, style:
-                        TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20,),
-                      ),
-                    )
+                    Text(_currentPage["title"] ?? "", textAlign: TextAlign.center, style:
+                      TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32,),
+                    ),
                   ),
                 ],),
-              ),
-              Container(height: 8,),
-              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Expanded(child:
-                  Text(_currentPage["title"] ?? "", textAlign: TextAlign.center, style:
-                    TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32,),
-                  ),
-                ),
               ],),
-            ],),
+            ),
           ),
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-            Expanded(child: Container()),
-            Padding(padding: EdgeInsets.only(top: 3), child:
-              _buildProgress(),
-            ),
+            Expanded(child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 8), child:
+                SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+                  _buildProgress(),
+                )
+              )
+            )
           ],),
         ],),
     ));
@@ -141,36 +161,32 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
         }
 
         progressWidgets.add(
-            Semantics(label: "Page ${progressStep.toString()}", button: true, hint: progressStepCompleted? "Completed" :((progressStep == currentPageProgress)? "Current page":"Not Completed"), child:
+          Semantics(label: "Page ${progressStep.toString()}", button: true, hint: progressStepCompleted? "Completed" :((progressStep == currentPageProgress)? "Current page":"Not Completed"), child:
             InkWell(onTap: () => _onTapProgress(progressStep), child:
-            Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
-            Container(width: 32, height: 32, child:
-            Stack(children:<Widget>[
-              Visibility(
-                visible: currentStep,
-                child:  Align(alignment: Alignment.center, child: Container(width: 32, height: 32, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white))),
-              ),
-              Container(child:
-                Align(alignment: Alignment.center, child:
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children:[
-                    Text(progressStep.toString(), style: TextStyle(color: textColor, fontFamily: textFamily, fontSize: 15, decoration: TextDecoration.underline), semanticsLabel: '',),
-                    !showCheckIcon ? Container():
-                    Container(
-                        height: 14,
-                        width: 14,
-                        child:Image.asset('images/green-check-mark.png', semanticLabel: "completed",)
+              Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
+                Container(width: 32, height: 32, child:
+                  Stack(children:<Widget>[
+                    Visibility(visible: currentStep, child: 
+                      Align(alignment: Alignment.center, child:
+                        Container(width: 32, height: 32, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white)),
+                      ),
+                    ),
+                    Align(alignment: Alignment.center, child:
+                      Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children:[
+                        Text(progressStep.toString(), semanticsLabel: '', style:
+                          TextStyle(color: textColor, fontFamily: textFamily, fontSize: 15, decoration: TextDecoration.underline),
+                        ),
+                        !showCheckIcon ? Container() :
+                        Container(height: 14, width: 14, child:
+                          Image.asset('images/green-check-mark.png', semanticLabel: "completed",)
+                        )
+                      ]),
                     )
-                  ])
-              )
+                  ]),
+                ),
               ),
-            ]),
             ),
-            ),
-            ),
-            )
+          )
         );
       }
     }
@@ -178,20 +194,18 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
     return progressWidgets.isNotEmpty ? Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: progressWidgets) : Container();
   }
 
-  Widget _buildSlant() {
+  Widget _buildSlant(double height) {
     return Column(children: <Widget>[
-      Container(color:  Styles().colors!.fillColorPrimary, height: 10,),
       Container(color: Styles().colors!.fillColorPrimary, child:
-      CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.white, horzDir: TriangleHorzDirection.rightToLeft), child:
-      Container(height: 45,),
-      )),
+        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.white, horzDir: TriangleHorzDirection.rightToLeft), child:
+          Container(height: height,),
+        ),
+      ),
     ],);
   }
 
   Widget _buildContent() {
-    return Container(color: Colors.white, padding: EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 0), child:
-      _CheckListPageWidget(contentKey: widget.contentKey, key: _pageKey, page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < CheckList(widget.contentKey).navigationPages!.length) ? _onTapBack : null, showTitle: false,),
-    );
+    return _CheckListPageWidget(contentKey: widget.contentKey, key: _pageKey, page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < CheckList(widget.contentKey).navigationPages!.length) ? _onTapBack : null, showTitle: false,);
   }
 
   void _onTapLink(String? url) {
@@ -290,7 +304,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
 
 }
 
-class _CheckListPageWidget extends StatefulWidget{
+class _CheckListPageWidget extends StatelessWidget{
   final String contentKey;
   final Map<String, dynamic>? page;
   final void Function(String?)? onTapLink;
@@ -301,27 +315,20 @@ class _CheckListPageWidget extends StatefulWidget{
   _CheckListPageWidget({Key? key, this.page, this.onTapLink, this.onTapButton, this.onTapBack, this.showTitle = true, required this.contentKey}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _CheckListPageState();
-
-}
-
-class _CheckListPageState extends State<_CheckListPageWidget> {
-
-  @override
   Widget build(BuildContext context) {
     List<Widget> contentList = <Widget>[];
 
-    String? titleHtml = (widget.page != null) && widget.showTitle? "${JsonUtils.stringValue(widget.page!["step_title"])}: ${JsonUtils.stringValue(widget.page!['title'])}" : null;
+    String? titleHtml = (page != null) && showTitle? "${JsonUtils.stringValue(page!["step_title"])}: ${JsonUtils.stringValue(page!['title'])}" : null;
     if (StringUtils.isNotEmpty(titleHtml)) {
       contentList.add(
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          (widget.onTapBack != null) ?
+          (onTapBack != null) ?
           Semantics(
             label: Localization().getStringEx('headerbar.back.title', 'Back'),
             hint: Localization().getStringEx('headerbar.back.hint', ''),
             button: true,
             child: InkWell(
-              onTap: widget.onTapBack,
+              onTap: onTapBack,
               child: Container(height: 36, width: 36, child:
               Image.asset('images/chevron-left-gray.png')
               ),
@@ -332,7 +339,7 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
           Expanded(child:
           Padding(padding: EdgeInsets.only(top: 4, bottom: 4, right: 16), child:
           Html(data: titleHtml,
-            onLinkTap: (url, context, attributes, element) => widget.onTapLink!(url),
+            onLinkTap: (url, context, attributes, element) => onTapLink!(url),
             style: {
               "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
               "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
@@ -343,12 +350,12 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
         ],));
     }
 
-    String? textHtml = (widget.page != null) ? JsonUtils.stringValue(widget.page!['text']) : null;
+    String? textHtml = (page != null) ? JsonUtils.stringValue(page!['text']) : null;
     if (StringUtils.isNotEmpty(textHtml)) {
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
         Html(data: textHtml,
-          onLinkTap: (url, context, attributes, element) => widget.onTapLink!(url),
+          onLinkTap: (url, context, attributes, element) => onTapLink!(url),
           style: {
             "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
             "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
@@ -356,7 +363,7 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
         ),);
     }
 
-    List<dynamic>? content = (widget.page != null) ? JsonUtils.listValue(widget.page!['content']) : null;
+    List<dynamic>? content = (page != null) ? JsonUtils.listValue(page!['content']) : null;
     if (content != null) {
       for (dynamic contentEntry in content) {
         if (contentEntry is Map) {
@@ -367,7 +374,7 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
             contentEntryWidgets.add(
               Padding(padding: EdgeInsets.only(top: 4, bottom: 4), child:
               Html(data: headingHtml,
-                onLinkTap: (url, context, attributes, element) => widget.onTapLink!(url),
+                onLinkTap: (url, context, attributes, element) => onTapLink!(url),
                 style: {
                   "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
                   "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
@@ -390,7 +397,7 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
                     Text(bulletText, style: TextStyle(color: bulletColor, fontSize: 20),),),
                     Expanded(child:
                     Html(data: bulletEntry,
-                      onLinkTap: (url, context, attributes, element) => widget.onTapLink!(url),
+                      onLinkTap: (url, context, attributes, element) => onTapLink!(url),
                       style: {
                         "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
                         "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
@@ -420,7 +427,7 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
                     Text('${numberIndex + 1}.', style: TextStyle(color: numberColor, fontSize: 20),),),
                     Expanded(child:
                     Html(data: numberEntry,
-                      onLinkTap: (url, context, attributes, element) => widget.onTapLink!(url),
+                      onLinkTap: (url, context, attributes, element) => onTapLink!(url),
                       style: {
                         "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
                         "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
@@ -451,20 +458,20 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
         }
       }
     }
-    List<dynamic>? steps = (widget.page != null) ? JsonUtils.listValue(widget.page!['steps']) : null;
+    List<dynamic>? steps = (page != null) ? JsonUtils.listValue(page!['steps']) : null;
     if (steps != null ) {
       contentList.add(_StepsHorizontalListWidget(tabs: steps,
-          pageProgress: JsonUtils.intValue(widget.page!["progress"]) ?? 0,
-          title:"${JsonUtils.stringValue(widget.page!["step_title"])}: ${widget.page!["title"]}",
-          onTapLink: widget.onTapLink,
-          onTapButton: widget.onTapButton,
-          onTapBack: (1 < CheckList(widget.contentKey).navigationPages!.length) ? widget.onTapBack : null,
-          contentKey: widget.contentKey,
+          pageProgress: JsonUtils.intValue(page!["progress"]) ?? 0,
+          title:"${JsonUtils.stringValue(page!["step_title"])}: ${page!["title"]}",
+          onTapLink: onTapLink,
+          onTapButton: onTapButton,
+          onTapBack: (1 < CheckList(contentKey).navigationPages!.length) ? onTapBack : null,
+          contentKey: contentKey,
       ),
       );
     }
 
-    List<dynamic>? buttons = (widget.page != null) ? JsonUtils.listValue(widget.page!['buttons']) : null;
+    List<dynamic>? buttons = (page != null) ? JsonUtils.listValue(page!['buttons']) : null;
     if (buttons != null) {
       List<Widget> buttonWidgets = <Widget>[];
       for (dynamic button in buttons) {
@@ -482,7 +489,7 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     contentWeight: 0,
                     onTap:() {
-                    try { widget.onTapButton!(button.cast<String, dynamic>(), JsonUtils.stringValue(widget.page?["id"])!); }
+                    try { onTapButton!(button.cast<String, dynamic>(), JsonUtils.stringValue(page?["id"])!); }
                     catch (e) { print(e.toString()); }
                   }
               ))
@@ -497,7 +504,7 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
       }
     }
 
-    List<dynamic>? navigationButtons = (widget.page != null) ? JsonUtils.listValue(widget.page!['navigation_buttons']) : null;
+    List<dynamic>? navigationButtons = (page != null) ? JsonUtils.listValue(page!['navigation_buttons']) : null;
     if (navigationButtons != null) {
       List<Widget> buttonWidgets = <Widget>[];
       for (dynamic button in navigationButtons) {
@@ -525,7 +532,7 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       contentWeight: 0,
                       onTap:() {
-                        try { widget.onTapButton!(button.cast<String, dynamic>(), JsonUtils.stringValue(widget.page?["id"])!); }
+                        try { onTapButton!(button.cast<String, dynamic>(), JsonUtils.stringValue(page?["id"])!); }
                         catch (e) { print(e.toString()); }
                       }
                   ))
@@ -544,8 +551,8 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
     }
 
     return Padding(padding: EdgeInsets.only(), child:
-    Container(
-      color: Styles().colors!.white,
+      Container(
+      //color: Styles().colors!.white,
       clipBehavior: Clip.none,
       child: Padding(padding: EdgeInsets.only(top: 0, bottom: 16), child:
       Row(children: [ Expanded(child: Column(children: contentList))],)
@@ -557,7 +564,7 @@ class _CheckListPageState extends State<_CheckListPageWidget> {
     if(StringUtils.isNotEmpty(name)){
       switch (name) {
         case "student_info":
-          return ContactInfoWidget(contentKey: widget.contentKey, params: params,);
+          return ContactInfoWidget(contentKey: contentKey, params: params,);
       }
     }
     return Container();
@@ -781,10 +788,10 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
   }
 
   Widget _buildHeader(){
-    return Container(
-      padding: EdgeInsets.only(right: 16, left: 16, top: 16,),
-      color: Styles().colors!.fillColorPrimary,
-      child: Text(widget.title?? "", style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 24),),
+    return Container(padding: EdgeInsets.only(right: 16, left: 16, top: 16,), color: Styles().colors!.fillColorPrimary, child:
+      Text(widget.title?? "", style:
+        TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 24),
+      ),
     );
   }
 

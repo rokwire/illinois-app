@@ -60,7 +60,9 @@ class CheckListPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(title: _title), body: SingleChildScrollView(child: CheckListContentWidget(contentKey: contentKey)));
+      appBar: HeaderBar(title: _title),
+      body: CheckListContentWidget(contentKey: contentKey)
+    );
   }
 
   String get _title {

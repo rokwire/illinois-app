@@ -76,26 +76,28 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     return Scaffold(
         appBar: RootHeaderBar(title: Localization().getStringEx('panel.academics.header.title', 'Academics')),
         body: Column(children: <Widget>[
-          Padding(
-              padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-              child: RibbonButton(
-                  textColor: Styles().colors!.fillColorSecondary,
-                  backgroundColor: Styles().colors!.white,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                  rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-                  label: _getContentLabel(_selectedContent),
-                  onTap: _changeSettingsContentValuesVisibility)),
-          Expanded(
-              child: Stack(children: [
-            Padding(
-                padding: EdgeInsets.only(top: 16),
-                child: SingleChildScrollView(
-                    child: Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child: _contentWidget))),
-            _buildContentValuesContainer()
-          ]))
+          Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
+            RibbonButton(
+              textColor: Styles().colors!.fillColorSecondary,
+              backgroundColor: Styles().colors!.white,
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+              rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+              label: _getContentLabel(_selectedContent),
+              onTap: _changeSettingsContentValuesVisibility
+            ),
+          ),
+          Expanded(child:
+            Stack(children: [
+              Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16,), child:
+                _contentWidget
+              ),
+              _buildContentValuesContainer()
+            ]),
+          )
         ]),
-        backgroundColor: Styles().colors!.background);
+        backgroundColor: Styles().colors!.background
+      );
   }
 
   Widget _buildContentValuesContainer() {
@@ -242,6 +244,16 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 
   Widget get _contentWidget {
+    return ((_selectedContent == AcademicsContent.gies_checklist) || (_selectedContent == AcademicsContent.uiuc_checklist)) ?
+      _rawContentWidget :
+      SingleChildScrollView(child:
+        Padding(padding: EdgeInsets.only(bottom: 16), child:
+          _rawContentWidget
+        ),
+      );
+}
+
+  Widget get _rawContentWidget {
     // There is no content for AcademicsContent.my_illini - it is a web url opened in an external browser
     switch (_selectedContent) {
       case AcademicsContent.events:
