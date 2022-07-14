@@ -61,7 +61,7 @@ class CheckListPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(title: _title),
-      body: CheckListContentWidget(contentKey: contentKey)
+      body: CheckListContentWidget(contentKey: contentKey, panelDisplay: true,)
     );
   }
 

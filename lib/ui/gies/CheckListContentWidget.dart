@@ -45,8 +45,9 @@ class CheckListContentWidget extends StatefulWidget{
   );
 
   final String contentKey;
+  final bool panelDisplay;
 
-  const CheckListContentWidget({Key? key, required this.contentKey}) : super(key: key);
+  const CheckListContentWidget({Key? key, required this.contentKey, this.panelDisplay = false}) : super(key: key);
   
   @override
   State<StatefulWidget> createState() => _CheckListContentWidgetState();
@@ -102,7 +103,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
                     Expanded(child:
                       Semantics(child:
                         Text(JsonUtils.stringValue(_currentPage["step_title"]) ?? "", textAlign: TextAlign.center, style:
-                          TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20,),
+                          TextStyle(color: Styles().colors!.fillColorSecondary, fontFamily: Styles().fontFamilies!.bold, fontSize: widget.panelDisplay ? 20 : 18,),
                         ),
                       )
                     ),
@@ -112,7 +113,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
                 Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                   Expanded(child:
                     Text(_currentPage["title"] ?? "", textAlign: TextAlign.center, style:
-                      TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32,),
+                      TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: widget.panelDisplay ? 32 : 24,),
                     ),
                   ),
                 ],),
