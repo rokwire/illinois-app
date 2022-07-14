@@ -239,7 +239,7 @@ class _InfoDialog extends StatelessWidget {
                       onLinkTap: (url, renderContext, attributes, element) => _onTapLink(context, url),
                       style: {
                         "body": Style(color: Styles().colors?.white, fontFamily: Styles().fontFamilies!.bold, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                        "a": Style(color: Styles().colors?.fillColorSecondaryVariant),
+                        "a": Style(color: Styles().colors?.white),
                       },),
                     //Text('Illinois app uses your first name from Student Self-Service. You can change your preferred name under Personal Information and Preferred First Name',
                     //  style: TextStyle(color: Styles().colors?.white, fontSize: 16, fontFamily: Styles().fontFamilies!.bold,),
