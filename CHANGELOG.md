@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update Canvas Error text [#2002](https://github.com/rokwire/illinois-app/issues/2002).
 - Update CheckList scrolling [#2001](https://github.com/rokwire/illinois-app/issues/2001).
 - Allow navigation to relevant home panel from HomeFavroitesWidget and SavedPanel [#1896](https://github.com/rokwire/illinois-app/issues/1896).
+- Change link color in _InfoDialog from HomeToutWidget to white [#1973](https://github.com/rokwire/illinois-app/issues/1973).
 ### Fixed
 - Fixed "Prompt when saving events to calendar" enable [#1980](https://github.com/rokwire/illinois-app/issues/1980).
 
