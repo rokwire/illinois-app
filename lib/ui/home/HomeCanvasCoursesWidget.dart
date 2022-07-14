@@ -136,7 +136,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
   Widget _buildEmptyContent() {
     return HomeMessageCard(
-      message: Localization().getStringEx('widget.home.home_canvas_courses.text.empty.description', 'You do not enroll in any courses.'),
+      message: Localization().getStringEx('widget.home.home_canvas_courses.text.empty.description', 'You do not appear to be enrolled in any Gies Canvas courses.'),
     );
   }
 
