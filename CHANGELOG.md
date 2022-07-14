@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update Canvas Error text [#2002](https://github.com/rokwire/illinois-app/issues/2002).
 - Update CheckList scrolling [#2001](https://github.com/rokwire/illinois-app/issues/2001).
 - Allow navigation to relevant home panel from HomeFavroitesWidget and SavedPanel [#1896](https://github.com/rokwire/illinois-app/issues/1896).
-
+### Fixed
+- Fixed "Prompt when saving events to calendar" enable [#1980](https://github.com/rokwire/illinois-app/issues/1980).
 
 ## [4.0.51] - 2022-07-13
 ### Changed
@@ -23,8 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Do not display explore location with missing latitude or longitude in iOS Map View [#1942](https://github.com/rokwire/illinois-app/issues/1942).
 ### Added
 - Added favorite button in AthleticsNewsArticlePanel [#1990](https://github.com/rokwire/illinois-app/issues/1990).
-### Fixed
-- Fixed "Prompt when saving events to calendar" enable [#1980](https://github.com/rokwire/illinois-app/issues/1980).
 
 ## [4.0.50] - 2022-07-12
 ### Added
