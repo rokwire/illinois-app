@@ -2318,7 +2318,7 @@
 	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
 
     "panel.canvas_courses.header.title": "Courses",
-    "panel.canvas_courses.load.failed.error.msg": "Failed to load courses. Please, try again later.",
+    "panel.canvas_courses.load.failed.error.msg": "You do not appear to be enrolled in any Gies Canvas courses.",
 
     "panel.home_canvas_course.header.title": "Course",
     "panel.home_canvas_course.load.failed.error.msg": "Failed to load course. Please, try again later.",
@@ -2685,7 +2685,7 @@
     "widget.home_prefered_sports.label.offline.sports":"Sports are not available while offline.",
     
     "widget.home_canvas_courses.header.label": "Courses",
-	"widget.home.home_canvas_courses.text.empty.description": "You do not enroll in any courses.",
+	"widget.home.home_canvas_courses.text.empty.description": "You do not appear to be enrolled in any Gies Canvas courses.",
     "widget.home.home_canvas_courses.button.all.title": "View All",
     "widget.home.home_canvas_courses.button.all.hint": "Tap to view all courses",
 
