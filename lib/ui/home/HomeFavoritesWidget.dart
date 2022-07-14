@@ -425,7 +425,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   String? get _emptyMessageHtml {
     String? message;
     switch(widget.favoriteKey) {
-      case Event.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.events.tmp", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events</b></a> for quick access here."); break;
+      case Event.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.events", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Events</b></a> for quick access here."); break;
       case Dining.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.dining", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Dining</b></a> for quick access here."); break;
       case Game.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.athletics", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Athletics Events</b></a> for quick access here."); break;
       case News.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.news", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Athletics News</b></a> for quick access here."); break;
