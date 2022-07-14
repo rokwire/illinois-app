@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
 import 'package:illinois/service/RecentItems.dart';
@@ -27,6 +28,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -44,13 +46,14 @@ class AthleticsNewsArticlePanel extends StatefulWidget {
   _AthleticsNewsArticlePanelState createState() => _AthleticsNewsArticlePanelState();
 }
 
-class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
+class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> implements NotificationsListener {
 
   News? _article;
   bool _loading = false;
 
   @override
   void initState() {
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     _article = widget.article;
     if (_article != null) {
       RecentItems().addRecentItem(RecentItem.fromSource(_article));
@@ -60,6 +63,23 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
     }
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   void _loadNewsArticle() {
@@ -122,7 +142,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
                           hint: Localization().getStringEx("panel.athletics_news_article.button.save_game.hint", "Tap to save"),
                           child: GestureDetector(onTap: _onTapSwitchFavorite, child:
                             Container(padding: EdgeInsets.all(24), child:
-                              Image.asset(isNewsFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-white-frame-thin.png',excludeFromSemantics: true),
+                              Image.asset(isNewsFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png',excludeFromSemantics: true),
                             ),
                           ),
                         ),
