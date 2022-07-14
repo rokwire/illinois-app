@@ -122,7 +122,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
                           hint: Localization().getStringEx("panel.athletics_news_article.button.save_game.hint", "Tap to save"),
                           child: GestureDetector(onTap: _onTapSwitchFavorite, child:
                             Container(padding: EdgeInsets.all(24), child:
-                              Image.asset(isNewsFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-white-frame-thin.png',excludeFromSemantics: true),
+                              Image.asset(isNewsFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png',excludeFromSemantics: true),
                             ),
                           ),
                         ),
