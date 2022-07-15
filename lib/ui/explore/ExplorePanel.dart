@@ -20,6 +20,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Laundries.dart';
+import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -744,9 +745,14 @@ class ExplorePanelState extends State<ExplorePanel>
 
   PreferredSizeWidget get headerBarWidget {
     String? headerLabel;
+    List<Widget>? actions;
     switch (_displayType) {
       case ListMapDisplayType.List:
         headerLabel = _headerBarListTitle(_selectedItem);
+        if (_selectedItem == ExploreItem.Events) {
+          actions ??= <Widget>[];
+          actions.add(_buildSearchHeaderButton());
+        }
         break;
       case ListMapDisplayType.Map:
         headerLabel = Localization().getStringEx("panel.maps.header.title", "Map");
@@ -757,8 +763,23 @@ class ExplorePanelState extends State<ExplorePanel>
     if (widget.rootTabDisplay) {
       return RootHeaderBar(title: headerLabel);
     } else {
-      return HeaderBar(title: headerLabel, sortKey: _ExploreSortKey.headerBar);
+      return HeaderBar(title: headerLabel, sortKey: _ExploreSortKey.headerBar, actions: actions,);
     }
+  }
+
+  Widget _buildSearchHeaderButton() {
+    return Semantics(label: Localization().getStringEx('headerbar.search.title', 'Search'), hint: Localization().getStringEx('headerbar.search.hint', ''), button: true, excludeSemantics: true, child:
+      InkWell(onTap: _onTapSearch, child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Image.asset('images/icon-search.png', excludeFromSemantics: true,),
+        )
+      )
+    );
+  }
+
+  void _onTapSearch() {
+    Analytics().logSelect(target: "Search");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreSearchPanel()));
   }
 
   Widget _buildExploreItemsDropDownContainer() {
