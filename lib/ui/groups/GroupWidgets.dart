@@ -361,9 +361,8 @@ class GroupsConfirmationDialog extends StatelessWidget{
 class GroupEventCard extends StatefulWidget {
   final Event? groupEvent;
   final Group? group;
-  final bool isAdmin;
 
-  GroupEventCard({this.groupEvent, this.group, this.isAdmin = false});
+  GroupEventCard({this.groupEvent, this.group});
 
   @override
   createState()=> _GroupEventCardState();
@@ -381,7 +380,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
             boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
             borderRadius: BorderRadius.all(Radius.circular(8))
         ),
-        child: _EventContent(event: event, isAdmin: widget.isAdmin, group: widget.group),
+        child: _EventContent(event: event, group: widget.group),
       ),
     );
   }
@@ -390,12 +389,13 @@ class _GroupEventCardState extends State<GroupEventCard>{
 class _EventContent extends StatefulWidget {
   final Group? group;
   final Event? event;
-  final bool isAdmin;
 
-  _EventContent({this.event, this.isAdmin = false, this.group});
+  _EventContent({this.event, this.group});
 
   @override
   createState()=> _EventContentState();
+
+  bool get isAdmin => group?.currentUserAsMember?.isAdmin ?? false;
 }
 
 class _EventContentState extends State<_EventContent> implements NotificationsListener {

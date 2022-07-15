@@ -61,11 +61,10 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
 
   Widget _buildEvents() {
     List<Widget> content = [];
-    bool isCurrentUserAdmin = widget.group?.currentUserIsAdmin ?? false;
 
     if (_groupEvents != null) {
       for (Event? groupEvent in _groupEvents!) {
-        content.add(GroupEventCard(groupEvent: groupEvent, group: widget.group, isAdmin: isCurrentUserAdmin));
+        content.add(GroupEventCard(groupEvent: groupEvent, group: widget.group));
       }
     }
 
