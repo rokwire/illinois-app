@@ -302,6 +302,11 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       details.add(location);
     }
 
+    Widget? online = _exploreOnlineDetail();
+    if (online != null) {
+      details.add(online);
+    }
+
     Widget? workTime = _exploreWorkTimeDetail();
     if (workTime != null) {
       details.add(workTime);
@@ -343,13 +348,15 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   Widget? _exploreLocationDetail() {
     String iconRes = 'images/icon-location.png';
-    String? eventType;
-    if(widget.explore!=null && widget.explore is Event) {
-      bool isVirtual = (widget.explore as Event).isVirtual ?? false;
-      eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
-      iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
+    String? locationText;
+    if(widget.explore!=null && widget.explore is Event ) {//For Events we show Two Locati
+      if ((widget.explore as Event).displayAsInPerson) {
+        locationText = Localization().getStringEx(
+            'panel.explore_detail.event_type.in_person', "In-person event");
+      } else if( !(widget.explore as Event).displayAsVirtual ){ // displayAsInPerson == false && displayAsVirtual == false
+        locationText = widget.explore?.getShortDisplayLocation(widget.locationData);
+      }
     }
-    String? locationText = eventType ?? widget.explore?.getShortDisplayLocation(widget.locationData);
     if ((locationText != null) && locationText.isNotEmpty) {
       return Semantics(label: locationText, child:Padding(
         padding: _detailPadding,
@@ -371,6 +378,31 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     } else {
       return null;
     }
+  }
+
+  Widget? _exploreOnlineDetail() {
+    if((widget.explore!=null && widget.explore is Event) &&
+        ((widget.explore as Event).displayAsVirtual)) {
+        return Semantics(label: Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event"), child:Padding(
+          padding: _detailPadding,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Image.asset("images/laptop.png", excludeFromSemantics: true,), //TBD update icon res
+              Padding(
+                padding: _iconPadding,
+              ),
+              Expanded(child: Text(Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event") ,
+                  style: TextStyle(
+                      fontFamily: Styles().fontFamilies!.medium,
+                      fontSize: 14,
+                      color: Styles().colors!.textBackground))),
+            ],
+          ),
+        ));
+    }
+
+    return null;
   }
 
   Widget? _exploreWorkTimeDetail() {
