@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Display hidden status in Group card, cleaned up header layout [#2013](https://github.com/rokwire/illinois-app/issues/2013).
 
 ## [4.0.52] - 2022-07-14
 ### Changed
