@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/ui/SearchPanel.dart';
+import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
 import 'package:illinois/ui/explore/ExploreViewTypeTab.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -73,7 +73,7 @@ class ExploreDisplayTypeHeader extends StatelessWidget {
                       icon: Image.asset('images/icon-search.png', excludeFromSemantics: true),
                       onPressed: () {
                         Analytics().logSelect(target: "Search");
-                        Navigator.push(context, CupertinoPageRoute(builder: (context) => SearchPanel(searchData:additionalData ))).
+                        Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreSearchPanel(searchData:additionalData ))).
                           then(
                             (value){
                               if(value!=null && value == true){
