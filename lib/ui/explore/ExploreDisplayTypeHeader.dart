@@ -73,7 +73,7 @@ class ExploreDisplayTypeHeader extends StatelessWidget {
                       icon: Image.asset('images/icon-search.png', excludeFromSemantics: true),
                       onPressed: () {
                         Analytics().logSelect(target: "Search");
-                        Navigator.push(context, CupertinoPageRoute(builder: (context) => SearchPanel(searchData:additionalData ))).
+                        Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreSearchPanel(searchData:additionalData ))).
                           then(
                             (value){
                               if(value!=null && value == true){
