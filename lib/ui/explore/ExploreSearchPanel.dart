@@ -30,7 +30,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
-import 'athletics/AthleticsGameDetailPanel.dart';
+import '../athletics/AthleticsGameDetailPanel.dart';
 
 class SearchPanel extends StatefulWidget {
   final Map<String, dynamic>? searchData;

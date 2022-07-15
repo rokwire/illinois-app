@@ -18,7 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/ui/SearchPanel.dart';
+import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
 import 'package:illinois/ui/explore/ExploreViewTypeTab.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
