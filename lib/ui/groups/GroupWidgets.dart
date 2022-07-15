@@ -820,17 +820,26 @@ class _GroupCardState extends State<GroupCard> {
   @override
   Widget build(BuildContext context) {
     String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), [StringUtils.ensureNotEmpty(widget.group?.pendingCount.toString())]);
+    String? groupCategory = StringUtils.ensureNotEmpty(widget.group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
     return GestureDetector(onTap: () => _onTapCard(context), child:
       Padding(padding: widget.margin, child:
         Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
           Stack(children: [
             Column(key: _contentKey, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               _buildHeading(),
-              Container(height: 3),
+              Container(height: 6),
               Row(children:[
                 Expanded(child:
                   Column(children:[
-                    _buildCategoryLayout(),
+                    Row(children: [
+                      Expanded(child:
+                        Text(groupCategory,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
+                          style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+                        )
+                      ),
+                    ]),
                     Row(children: [
                       Expanded(child:
                         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
@@ -874,55 +883,53 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   Widget _buildHeading() {
-    List<Widget> leftContent = <Widget>[];
+    
+    List<Widget> wrapContent = <Widget>[];
 
-    if (widget.group?.currentUserAsMember?.status != null) {
-      leftContent.add(
-        Semantics(
-          label: "status: ${widget.group?.currentUserStatusText?.toLowerCase() ?? ""} ,for: ",
-          excludeSemantics: true,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(color: widget.group?.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2))),
-            child: Text(widget.group?.currentUserStatusText?.toUpperCase() ?? '',
-              style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white)))),
-      );
+    if (widget.group?.privacy == GroupPrivacy.private) {
+      wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.private', 'Private')));
     }
 
-    // String? groupCategory = StringUtils.ensureNotEmpty(group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
-    // if (StringUtils.isNotEmpty(groupCategory)) {
-    //   if (leftContent.isNotEmpty) {
-    //     leftContent.add(Container(height: 6,));
-    //   }
-    //   leftContent.add(
-    //     Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
-    //       overflow: TextOverflow.ellipsis,
-    //       maxLines: displayType == GroupCardDisplayType.homeGroups? 2 : 10,)
-    //   );
-    // }
-
-    List<Widget> rightContent = <Widget>[];
-    rightContent.add(_buildPrivacyStatysBadge()); //Moved above the image
-
-    List<Widget> content = <Widget>[];
-    if (leftContent.isNotEmpty) {
-      content.add(Expanded(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: leftContent,)));
+    if (widget.group?.authManEnabled ?? false) {
+      wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.authman', 'Managed')));
     }
 
-    if (rightContent.isNotEmpty) {
-      if (leftContent.isEmpty) {
-        content.add(Expanded(child: Container()));
-      }
-      content.add(Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: rightContent,));
+    if (widget.group?.hiddenForSearch ?? false) {
+      wrapContent.add(_buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.hidden', 'Hidden')));
     }
 
-    return content.isNotEmpty ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: content,) : Container(width: 0, height: 0);
+    if ((widget.group?.privacy == GroupPrivacy.public) && wrapContent.isNotEmpty) {
+      wrapContent.insert(0, _buildHeadingWrapLabel(Localization().getStringEx('widget.group_card.status.public', 'Public')));
+    }
+
+    List<Widget> rowContent = <Widget>[];
+
+    String? userStatus = widget.group?.currentUserStatusText;
+    if (StringUtils.isNotEmpty(userStatus)) {
+      rowContent.add(Padding(padding: EdgeInsets.only(right: wrapContent.isNotEmpty ? 8 : 0), child:
+        _buildHeadingLabel(userStatus!.toUpperCase(),
+          color: widget.group?.currentUserStatusColor,
+          semanticsLabel: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [userStatus.toLowerCase()])
+        )      
+      ));
+    }
+
+    if (wrapContent.isNotEmpty) {
+      rowContent.add(Expanded(child:
+        Wrap(alignment: WrapAlignment.end, spacing: 4, runSpacing: 2, children: wrapContent,)
+      ));
+    }
+
+    return rowContent.isNotEmpty ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: rowContent,) : Container();
   }
 
-  Widget _buildPrivacyStatysBadge(){
+  /*Widget _buildPrivacyStatysBadge(){
     String privacyStatus = '';
     if (widget.group?.authManEnabled ?? false) {
-      privacyStatus = ' ' + Localization().getStringEx('widget.group_card.status.authman', 'Managed');
+      privacyStatus += ' ' + Localization().getStringEx('widget.group_card.status.authman', 'Managed');
+    }
+    if (widget.group?.hiddenForSearch ?? false) {
+      privacyStatus += ' ' + Localization().getStringEx('widget.group_card.status.hidden', 'Hidden');
     }
     if (widget.group?.privacy == GroupPrivacy.private) {
       privacyStatus = Localization().getStringEx('widget.group_card.status.private', 'Private') + privacyStatus;
@@ -930,40 +937,22 @@ class _GroupCardState extends State<GroupCard> {
       privacyStatus = Localization().getStringEx('widget.group_card.status.public', 'Public') + privacyStatus;
     }
 
-    if (StringUtils.isNotEmpty(privacyStatus)) {
-      return
-        Container(
-          padding: EdgeInsets.only(bottom: 8),
-          child: Semantics(
-              label: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [privacyStatus]),
-              excludeSemantics: true,
-              child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))),
-                  child: Text(privacyStatus.toUpperCase(),
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white)))));
-    } else {
-      return Container();
-    }
+    return StringUtils.isNotEmpty(privacyStatus) ? _buildHeadingWrapLabel(privacyStatus) : Container();
+  }*/
+
+  Widget _buildHeadingLabel(String text, {Color? color, String? semanticsLabel}) {
+    return Semantics(label: semanticsLabel, excludeSemantics: true,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(2))),
+        child: Text(text,
+          style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white))));
   }
 
-  Widget _buildCategoryLayout(){
-    String? groupCategory = StringUtils.ensureNotEmpty(widget.group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
-    List<Widget> content = [];
-    if (StringUtils.isNotEmpty(groupCategory)) {
-        content.add(Container(height: 6,));
-        content.add(
-          Text(groupCategory, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
-            overflow: TextOverflow.ellipsis,
-            maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,)
-      );
-    }
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: content,
-      )
+  Widget _buildHeadingWrapLabel(String text) {
+    return _buildHeadingLabel(text.toUpperCase(),
+      color: Styles().colors?.fillColorSecondary,
+      semanticsLabel: sprintf(Localization().getStringEx('widget.group_card.status.hint', 'status: %s ,for: '), [text.toLowerCase()])
     );
   }
 
