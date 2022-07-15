@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed and cleaned up Select Group popup from Create Event Panel [#1952](https://github.com/rokwire/illinois-app/issues/1952).
 ### Added
 - Access ExploreSearchPanel from ExploreHomePanel [#1885](https://github.com/rokwire/illinois-app/issues/1885).
+- Implement hybrid events [#2018](https://github.com/rokwire/illinois-app/issues/2018)
 
 ## [4.0.52] - 2022-07-14
 ### Changed
