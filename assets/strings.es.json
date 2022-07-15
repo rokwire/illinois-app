@@ -1594,6 +1594,7 @@
     "panel.polls_home.card.button.title.start_poll":"Comenzar encuesta",
     "panel.polls_home.card.button.title.end_poll":"Encuesta final",
     "panel.polls_home.card.button.title.vote":"Votar",
+    "panel.polls_home.card.button.title.delete_poll":"Eliminar encuesta",
     "panel.polls_home.card.of.label":"de",
     "panel.polls_home.text.log_in.description":"Usted debe estar conectado.",
     "panel.polls_home.button.log_in.title": "Inicia sesión para ver",

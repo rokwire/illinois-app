@@ -1597,6 +1597,7 @@
     "panel.polls_home.card.button.title.start_poll":"Start Poll",
     "panel.polls_home.card.button.title.end_poll":"End Poll",
     "panel.polls_home.card.button.title.vote":"Vote",
+    "panel.polls_home.card.button.title.delete_poll":"Delete Poll",
     "panel.polls_home.card.of.label":"of",
     "panel.polls_home.text.log_in.description":"You must be logged in.",
     "panel.polls_home.button.log_in.title": "Log in to view",

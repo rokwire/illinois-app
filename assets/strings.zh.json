@@ -1596,6 +1596,7 @@
 	"panel.polls_home.card.button.title.start_poll":"开始投票",
 	"panel.polls_home.card.button.title.end_poll":"结束投票",
 	"panel.polls_home.card.button.title.vote":"投票",
+	"panel.polls_home.card.button.title.delete_poll":"刪除投票",
 	"panel.polls_home.card.of.label":"的",
 	"panel.polls_home.text.log_in.description":"你需要登录.",
 	"panel.polls_home.button.log_in.title": "登录查看",
