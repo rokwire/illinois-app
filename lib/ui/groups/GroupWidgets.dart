@@ -471,14 +471,15 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                     ),
                 ))),
 
-              !widget.isAdmin? Container(width: 0, height: 0) :
-              Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
-                GestureDetector(onTap: _onEventOptionsTap, child:
-                  Container(width: 42, height: 42, alignment: Alignment.center, child:
-                    Image.asset('images/icon-groups-options-orange.png'),
+              Visibility(visible: _hasEventOptions, child:
+                Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
+                  GestureDetector(onTap: _onEventOptionsTap, child:
+                    Container(width: 42, height: 42, alignment: Alignment.center, child:
+                      Image.asset('images/icon-groups-options-orange.png'),
+                    ),
                   ),
-                ),
-              )
+                )
+              ),
             ],),
             Visibility(visible:
                 StringUtils.isNotEmpty(imageUrl),
@@ -499,11 +500,21 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     Auth2().prefs?.toggleFavorite(widget.event);
   }
 
+  bool get _hasEventOptions => _canDelete || _canEdit;
+
   void _onEventOptionsTap(){
     Analytics().logSelect(target: "Options");
 
     List<Widget> options = <Widget>[];
     
+    if (_canEdit) {
+      options.add(RibbonButton(
+        label: Localization().getStringEx("panel.group_detail.button.edit_event.title", "Edit Event"),
+        leftIconAsset: "images/icon-edit.png",
+        onTap: _onEditEventTap
+      ),);
+    }
+
     if (_canDelete) {
       options.add(RibbonButton(
         label: Localization().getStringEx("panel.group_detail.button.delete_event.title", "Remove group event"),
@@ -512,14 +523,6 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
           Analytics().logSelect(target: "Remove group event");
           showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
         },
-      ),);
-    }
-
-    if (_canEdit) {
-      options.add(RibbonButton(
-        label: Localization().getStringEx("panel.group_detail.button.edit_event.title", "Edit Event"),
-        leftIconAsset: "images/icon-edit.png",
-        onTap: _onEditEventTap
       ),);
     }
 
@@ -578,7 +581,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     return widget.isAdmin && StringUtils.isNotEmpty(widget.event?.createdByGroupId);
   }
 
-  bool get _canDelete{
+  bool get _canDelete {
     return widget.isAdmin;
   }
 }
