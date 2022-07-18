@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -54,7 +55,10 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Auth2.notifyLogout]);
+    NotificationService().subscribe(this, [
+      Auth2.notifyLogout,
+      OnCampus.notifyChanged,
+    ]);
     _nameController = TextEditingController(text: _initialName = Auth2().fullName ?? "");
     _emailController = TextEditingController(text: _initialEmail = Auth2().email ?? "");
     _phoneController = TextEditingController(text: _initialPhone = Auth2().phone ?? "");
@@ -76,21 +80,31 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2.notifyLogout) {
-      Navigator.of(context).pop();
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    }
+    else if (name == OnCampus.notifyChanged) {
+      if (mounted) {
+        setState(() {
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
-      Container(child: Column(children: [_buildProfilePicture(), _buildInfoContent()])),
+      _buildProfilePicture(),
+      _buildInfoContent(),
+      _buildOnCampusSettings(),
       _buildAccountManagementOptions(),
       _buildDeleteMyAccount()
     ]);
   }
 
   Widget _buildInfoContent() {
-    late Widget contentWidget;
+    Widget? contentWidget;
     if (Auth2().isOidcLoggedIn) {
       contentWidget = _buildShibbolethInfoContent();
     }
@@ -100,44 +114,36 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     else if (Auth2().isEmailLoggedIn) {
       contentWidget = _buildEmailLoginInfoContent();
     }
-    else {
-      contentWidget = Container();
-    }
-    return Padding(padding: EdgeInsets.only(bottom: 25), child: contentWidget);
+
+    return (contentWidget != null) ? Padding(padding: EdgeInsets.only(top: 25), child: contentWidget) : Container() ;
   }
 
   Widget _buildShibbolethInfoContent(){
-    return Container(
-      child: Column(
-        children: <Widget>[
-          _PersonalInfoEntry(
-              title: Localization().getStringEx('panel.profile_info.net_id.title', 'UIN'),
-              value: Auth2().account?.authType?.uiucUser?.identifier ?? ""
-          ),
-          _PersonalInfoEntry(
-              title: Localization().getStringEx('panel.profile_info.full_name.title', 'Full Name'),
-              value: Auth2().account?.authType?.uiucUser?.fullName ?? ""),
-          _PersonalInfoEntry(
-              title: Localization().getStringEx('panel.profile_info.middle_name.title', 'Middle Name'),
-              value: Auth2().account?.authType?.uiucUser?.middleName ?? ""),
-          _PersonalInfoEntry(
-              title: Localization().getStringEx('panel.profile_info.last_name.title', 'Last Name'),
-              value:  Auth2().account?.authType?.uiucUser?.lastName ?? ""),
-          _PersonalInfoEntry(
-              title: Localization().getStringEx('panel.profile_info.email_address.title', 'Email Address'),
-              value: Auth2().account?.authType?.uiucUser?.email ?? ""),
-          _PersonalInfoEntry(
-              title: Localization().getStringEx('panel.profile_info.college.title', 'College'),
-              value: IlliniCash().studentClassification?.collegeName ?? ""),
-        ],
-      ),
-    );
+    return Column(children: <Widget>[
+      _PersonalInfoEntry(
+          title: Localization().getStringEx('panel.profile_info.net_id.title', 'UIN'),
+          value: Auth2().account?.authType?.uiucUser?.identifier ?? "",
+          margin: EdgeInsets.zero),
+      _PersonalInfoEntry(
+          title: Localization().getStringEx('panel.profile_info.full_name.title', 'Full Name'),
+          value: Auth2().account?.authType?.uiucUser?.fullName ?? ""),
+      _PersonalInfoEntry(
+          title: Localization().getStringEx('panel.profile_info.middle_name.title', 'Middle Name'),
+          value: Auth2().account?.authType?.uiucUser?.middleName ?? ""),
+      _PersonalInfoEntry(
+          title: Localization().getStringEx('panel.profile_info.last_name.title', 'Last Name'),
+          value:  Auth2().account?.authType?.uiucUser?.lastName ?? ""),
+      _PersonalInfoEntry(
+          title: Localization().getStringEx('panel.profile_info.email_address.title', 'Email Address'),
+          value: Auth2().account?.authType?.uiucUser?.email ?? ""),
+      _PersonalInfoEntry(
+          title: Localization().getStringEx('panel.profile_info.college.title', 'College'),
+          value: IlliniCash().studentClassification?.collegeName ?? ""),
+    ],);
   }
 
   Widget _buildPhoneVerifiedInfoContent(){
-    return Container(child:
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(height: 32,),
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
           Padding(padding: EdgeInsets.only(bottom: 8), child:
             Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: _formFieldLabelTextStyle)
@@ -188,18 +194,15 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
               )
           ),
           _PersonalInfoEntry(
-              visible: Auth2().isPhoneLoggedIn,
               title: Localization().getStringEx("panel.profile_info.phone_number.title", "Phone Number"),
               value: Auth2().account?.authType?.phone ?? ""),
         ],
-      ),
-    );
+      );
   }
 
   Widget _buildEmailLoginInfoContent(){
-    return Container(child:
+    return 
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(height: 32,),
         Semantics(label: Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), header: true, excludeSemantics: true, child:
           Padding(padding: EdgeInsets.only(bottom: 8), child:
             Text(Localization().getStringEx("panel.profile_info.phone_or_email.name.title","Full Name"), textAlign: TextAlign.left, style: _formFieldLabelTextStyle)
@@ -249,66 +252,144 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
               )
           ),
           _PersonalInfoEntry(
-              visible: Auth2().isEmailLoggedIn,
               title: Localization().getStringEx("panel.profile_info.email.title", "Email Address"),
               value: Auth2().account?.authType?.email ?? ""),
         ],
-      ),
+      );
+  }
+
+  //OnCampus Settings
+
+  Widget _buildOnCampusSettings() {
+    bool onCampusRegionMonitorEnabled = OnCampus().enabled;
+    bool onCampusRegionMonitorSelected = OnCampus().monitorEnabled;
+
+    bool campusRegionManualInsideSelected = OnCampus().monitorManualInside;
+    bool onCampusSelected = !onCampusRegionMonitorSelected && campusRegionManualInsideSelected;
+    bool offCampusSelected = !onCampusRegionMonitorSelected && !campusRegionManualInsideSelected;
+
+    String onCampusRegionMonitorInfo = onCampusRegionMonitorEnabled ?
+      Localization().getStringEx('panel.settings.home.calendar.on_campus.location_services.required.label', 'requires location services') :
+      Localization().getStringEx('panel.settings.home.calendar.on_campus.location_services.not_available.label', 'not available');
+    String autoOnCampusInfo = Localization().getStringEx('panel.settings.home.calendar.on_campus.radio_button.auto.title', 'Automatically detect when I am on Campus') + '\n($onCampusRegionMonitorInfo)';
+
+    return Padding(padding: EdgeInsets.only(top: 25), child:
+      Column(children:<Widget>[
+        Row(children: [
+          Expanded(child:
+            Text(Localization().getStringEx('panel.settings.home.calendar.on_campus.title', 'On Campus'), style:
+              TextStyle(fontSize: 20, fontFamily: Styles().fontFamilies?.bold, color: Styles().colors!.fillColorPrimary)
+            ),
+          ),
+        ]),
+        _buildOnCampusRadioItem(
+            label: autoOnCampusInfo,
+            enabled: onCampusRegionMonitorEnabled,
+            selected: onCampusRegionMonitorSelected,
+            onTap: _onTapOnCampusAuto),
+        _buildOnCampusRadioItem(
+            label: Localization().getStringEx('panel.settings.home.calendar.on_campus.radio_button.on.title', 'Always make me on campus'),
+            selected: onCampusSelected,
+            onTap: _onTapOnCampusOn),
+        _buildOnCampusRadioItem(
+            label: Localization().getStringEx('panel.settings.home.calendar.on_campus.radio_button.off.title', 'Always make me off campus'),
+            selected: offCampusSelected,
+            onTap: _onTapOnCampusOff),
+      ]),
     );
+  }
+
+  Widget _buildOnCampusRadioItem({required String label, bool enabled = true, required bool selected, VoidCallback? onTap}) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Container(height: 4),
+      GestureDetector(onTap: onTap, child:
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          decoration: BoxDecoration(
+            color: Styles().colors!.white,
+            border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(4))),
+          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Expanded(child:
+              Text(label, style:
+                TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.bold, color: (enabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent))
+              )
+            ),
+            Padding(padding: EdgeInsets.only(left: 5), child:
+              Image.asset(selected ? 'images/deselected-dark.png' : 'images/deselected.png')
+            )
+          ])
+        )
+      )
+    ]);
+  }
+
+  void _onTapOnCampusAuto() {
+    if (OnCampus().enabled && !OnCampus().monitorEnabled) {
+      setState(() {
+        OnCampus().monitorEnabled = true;
+      });
+    }
+  }
+
+  void _onTapOnCampusOn() {
+    if ((OnCampus().monitorEnabled || !OnCampus().monitorManualInside)) {
+      setState(() {
+        OnCampus().monitorEnabled = false;
+        OnCampus().monitorManualInside = true;
+      });
+    }
+  }
+
+  void _onTapOnCampusOff() {
+    if ((OnCampus().monitorEnabled || OnCampus().monitorManualInside)) {
+      setState(() {
+        OnCampus().monitorEnabled = false;
+        OnCampus().monitorManualInside = false;
+      });
+    }
   }
 
   //AccountManagementOptions
 
   Widget _buildAccountManagementOptions() {
+    Widget? contentWidget;
     if (Auth2().isOidcLoggedIn) {
-      return _buildShibbolethAccountManagementOptions();
+      contentWidget = _buildShibbolethAccountManagementOptions();
     }
     else if (Auth2().isPhoneLoggedIn) {
-      return _buildPhoneOrEmailAccountManagementOptions();
+      contentWidget = _buildPhoneOrEmailAccountManagementOptions();
     }
     else if (Auth2().isEmailLoggedIn) {
-      return _buildPhoneOrEmailAccountManagementOptions();
+      contentWidget = _buildPhoneOrEmailAccountManagementOptions();
     }
-    else {
-      return Container();
-    }
+    
+    return (contentWidget != null) ? Padding(padding: EdgeInsets.only(top: 25), child: contentWidget) : Container() ;
   }
 
   Widget _buildShibbolethAccountManagementOptions() {
-    return
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: 5),
-        child: RoundedButton(
-          label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
-          hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
-          backgroundColor: Styles().colors!.background,
-          fontSize: 16.0,
-          textColor: Styles().colors!.fillColorPrimary,
-          borderColor: Styles().colors!.fillColorSecondary,
-          onTap: _onSignOutClicked,
-        ),
-      );
+    return RoundedButton(
+      label: Localization().getStringEx("panel.profile_info.button.sign_out.title", "Sign Out"),
+      hint: Localization().getStringEx("panel.profile_info.button.sign_out.hint", ""),
+      backgroundColor: Styles().colors!.background,
+      fontSize: 16.0,
+      textColor: Styles().colors!.fillColorPrimary,
+      borderColor: Styles().colors!.fillColorSecondary,
+      onTap: _onSignOutClicked,
+    );
   }
 
   Widget _buildPhoneOrEmailAccountManagementOptions() {
-    return Container(child:
-      Row(children: <Widget>[
-        Expanded(child:
-          Padding(padding: EdgeInsets.symmetric(vertical: 5), child:
-            RoundedButton(
-              label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
-              hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
-              enabled: _canSave,
-              backgroundColor: _canSave ? Styles().colors!.white : Styles().colors!.background,
-              fontSize: 16.0,
-              textColor: _canSave? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-              borderColor: _canSave? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-              progress: _isSaving,
-              onTap: _onSaveChangesClicked,
-            ),
-          ),
-        ),
-      ],),
+    return RoundedButton(
+      label: Localization().getStringEx("panel.profile_info.button.save.title", "Save Changes"),
+      hint: Localization().getStringEx("panel.profile_info.button.save.hint", ""),
+      enabled: _canSave,
+      backgroundColor: _canSave ? Styles().colors!.white : Styles().colors!.background,
+      fontSize: 16.0,
+      textColor: _canSave? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+      borderColor: _canSave? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+      progress: _isSaving,
+      onTap: _onSaveChangesClicked,
     );
   }
 
@@ -356,54 +437,53 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   }
 
   Widget _buildProfilePicture() {
-    late Widget contentWidget;
+    Widget contentWidget;
     if (_profilePicProcessing) {
       contentWidget = Center(child: CircularProgressIndicator());
     } else {
-      Image profileImage = _hasProfilePicture
-          ? Image.memory(_profileImageBytes!)
-          : Image.asset('images/missing-profile-photo-placeholder.png', excludeFromSemantics: true);
-      contentWidget = Padding(
-          padding: EdgeInsets.only(bottom: 25),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Visibility(
-                  visible: _hasProfilePicture,
-                  child: Padding(
-                      padding: EdgeInsets.only(right: 24),
-                      child: _buildProfileImageButton(
-                          Localization().getStringEx("panel.profile_info.button.picture.edit.title", "Edit"),
-                          Localization().getStringEx("panel.profile_info.button.picture.edit.hint", "Edit profile photo"),
-                          _onTapEditPicture))),
-              Expanded(child: Container(
-                  width: 189,
-                  height: 189,
-                  child: Semantics (
-                    image: true,
-                    label: "Profile",
-                    child: Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                          image: DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage.image)))))),
-              Visibility(
-                  visible: _hasProfilePicture,
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 24),
-                      child: _buildProfileImageButton(
-                          Localization().getStringEx("panel.profile_info.button.picture.delete.title", "Delete"),
-                          Localization().getStringEx("panel.profile_info.button.picture.delete.hint", "Delete profile photo"),
-                          _onTapDeletePicture)))
-            ]),
-            Visibility(
-                visible: !_hasProfilePicture,
-                child: Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: _buildProfileImageButton(
-                        Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Set Profile Photo"),
-                        Localization().getStringEx("panel.profile_info.button.profile_picture.hint", ""),
-                        _onTapProfilePicture)))
-          ]));
+      Image profileImage = _hasProfilePicture ? Image.memory(_profileImageBytes!) : Image.asset('images/missing-profile-photo-placeholder.png', excludeFromSemantics: true);
+      contentWidget = Column(children: [
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Visibility(visible: _hasProfilePicture, child:
+            Padding(padding: EdgeInsets.only(right: 24), child:
+              _buildProfileImageButton(
+                Localization().getStringEx("panel.profile_info.button.picture.edit.title", "Edit"),
+                Localization().getStringEx("panel.profile_info.button.picture.edit.hint", "Edit profile photo"),
+                _onTapEditPicture
+              )
+            )
+          ),
+          Expanded(child:
+            Container(width: 189, height: 189, child:
+              Semantics(image: true, label: "Profile", child:
+                Container(decoration:
+                  BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
+                    DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage.image)
+                  )
+                ),
+              )
+            ),
+          ),
+          Visibility(visible: _hasProfilePicture, child:
+            Padding(padding: EdgeInsets.only(left: 24), child:
+              _buildProfileImageButton(
+                Localization().getStringEx("panel.profile_info.button.picture.delete.title", "Delete"),
+                Localization().getStringEx("panel.profile_info.button.picture.delete.hint", "Delete profile photo"),
+                _onTapDeletePicture
+              )
+            )
+          )
+        ]),
+        Visibility(visible: !_hasProfilePicture, child:
+          Padding(padding: EdgeInsets.only(top: 10), child:
+            _buildProfileImageButton(
+              Localization().getStringEx("panel.profile_info.button.profile_picture.title", "Set Profile Photo"),
+              Localization().getStringEx("panel.profile_info.button.profile_picture.hint", ""),
+              _onTapProfilePicture
+            )
+          )
+        )
+      ]);
     }
     return Padding(padding: EdgeInsets.only(top: 25), child: contentWidget);
   }
@@ -678,39 +758,26 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
 class _PersonalInfoEntry extends StatelessWidget {
   final String? title;
   final String? value;
-  final bool visible;
+  final EdgeInsetsGeometry margin;
 
-  _PersonalInfoEntry({this.title, this.value, this.visible = true});
+  _PersonalInfoEntry({this.title, this.value, this.margin = const EdgeInsets.only(top: 12)});
 
   @override
   Widget build(BuildContext context) {
-    return visible
-        ? Container(
-            margin: EdgeInsets.only(top: 25),
-            child: Row(
-              children: <Widget>[
-                Expanded(child:
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      title!,
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.textBackground),
-                    ),
-                    Container(
-                      height: 5,
-                    ),
-                    Text(
-                      value!,
-                      style:
-                          TextStyle(fontSize: 20, color: Styles().colors!.fillColorPrimary),
-                    )
-                  ],
-                )
-                ),
-              ],
-            ),
+    return Padding(padding: margin, child:
+      Row(children: [
+        Expanded(child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Text(title ?? '', style:
+                TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.textBackground),
+              ),
+              Container(height: 5,),
+              Text(value ?? '', style:
+                TextStyle(fontSize: 20, color: Styles().colors!.fillColorPrimary),
+              )
+            ],),
         )
-        : Container();
+      ],),
+    );
   }
 }
