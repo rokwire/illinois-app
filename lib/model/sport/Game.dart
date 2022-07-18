@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:collection/collection.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/assets.dart';
@@ -104,6 +105,16 @@ class Game with Explore implements Favorite {
   static bool canJson(Map<String, dynamic>? json) {
     return (json != null) && (json['sport'] != null) && (json['id'] != null);
   }
+
+  @override
+  bool operator ==(other) =>
+      (other is Game) &&
+      (const DeepCollectionEquality().equals(other.jsonData, jsonData));
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(jsonData);
+
 
   String get title {
     String? opponentName = opponent?.name;

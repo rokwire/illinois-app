@@ -1,9 +1,9 @@
 
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -42,9 +42,12 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
 
   List<News>? _news;
   bool _loadingNews = false;
-  final double _pageSpacing = 16;
-  PageController? _pageController;
   DateTime? _pausedDateTime;
+
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -62,10 +65,6 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
         }
       });
     }
-
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
 
     if (Connectivity().isOnline) {
       _loadingNews = true;
@@ -100,6 +99,20 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
     else if (name == Config.notifyConfigChanged) {
       if (mounted) {
         setState(() {});
+      }
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _refreshNews();
+        }
       }
     }
   }
@@ -140,17 +153,27 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
 
     if (1 < visibleCount) {
 
-      double pageHeight = (14 + 24 * 2) * MediaQuery.of(context).textScaleFactor + 2 * 24 + 10 + 12 + 12 + 16;
-
       List<Widget> pages = <Widget>[];
-      for (News news in _news!) {
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
+      for (int index = 0; index < visibleCount; index++) {
+        News news = _news![index];
+        pages.add(Padding(key: _contentKeys[news.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
           AthleticsNewsCard(news: news, onTap: () => _onTapNews(news))
         ));
       }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          children: pages,
+        ),
       );
     }
     else {
@@ -187,31 +210,34 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
         });
       }
       Sports().loadNews(null, Config().homeAthleticsNewsCount).then((List<News>? news) {
-        if (mounted) {
+        if (mounted && !DeepCollectionEquality().equals(news, _news)) {
           setState(() {
-            if (showProgress) {
-              _loadingNews = false;
-            }
-            if (news != null) {
-              _news = news;
-            }
+            _news = news;
+            _pageViewKey = UniqueKey();
+            _pageController = null;
+            _contentKeys.clear();
+          });
+        }
+      }).whenComplete(() {
+        if (mounted && showProgress) {
+          setState(() {
+            _loadingNews = false;
           });
         }
       });
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      _pausedDateTime = DateTime.now();
-    }
-    else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
-        if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _refreshNews();
-        }
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
       }
     }
+
+    return minContentHeight ?? 0;
   }
 }

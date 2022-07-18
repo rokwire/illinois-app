@@ -35,6 +35,19 @@ class CanvasCourse {
     ) : null;
   }
 
+  @override
+  bool operator ==(other) =>
+    (other is CanvasCourse) &&
+      (other.id == id) &&
+      (other.name == name) &&
+      (other.accessRestrictedByDate == accessRestrictedByDate);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (name?.hashCode ?? 0) ^
+    (accessRestrictedByDate?.hashCode ?? 0);
+
   static List<CanvasCourse>? listFromJson(List<dynamic>? jsonList) {
     if (CollectionUtils.isEmpty(jsonList)) {
       return null;

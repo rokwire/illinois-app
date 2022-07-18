@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:collection/collection.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Storage.dart';
@@ -52,6 +53,15 @@ class News implements Favorite {
         pubDateUtc: DateTimeUtils.dateTimeFromString(json['pub_date_utc'], format: dateTimeFormat, isUtc: true),
         json: json);
   }
+
+  @override
+  bool operator == (other) =>
+    (other is News) &&
+    (const DeepCollectionEquality().equals(other.json, json));
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(json);
 
   String? get fillText {
     return StringUtils.isNotEmpty(fullText) ? fullText : fullTextRaw;

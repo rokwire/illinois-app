@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -46,9 +46,11 @@ class HomeMyGroupsWidget extends StatefulWidget {
 
 class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements NotificationsListener{
   List<Group>? _groups;
-  PageController? _pageController;
-  final double _pageSpacing = 16;
   DateTime? _pausedDateTime;
+
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -65,14 +67,10 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
-          _loadGroups();
+          _updateGroups();
         }
       });
     }
-
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
 
     _loadGroups();
   }
@@ -87,9 +85,22 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   void _loadGroups(){
     Groups().loadGroups(contentType: widget.contentType).then((groups) {
       _sortGroups(groups);
-      if(mounted){
+      if (mounted) {
         setState(() {
           _groups = groups;
+        });
+      }
+    });
+  }
+
+  void _updateGroups() {
+    Groups().loadGroups(contentType: widget.contentType).then((List<Group>? groups) {
+      _sortGroups(groups);
+      if (mounted && !DeepCollectionEquality().equals(_groups, groups)) {
+        setState(() {
+          _groups = groups;
+          _pageViewKey = UniqueKey();
+          _pageController = null;
         });
       }
     });
@@ -120,9 +131,19 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
 
     double pageHeight = 90 * 2 * MediaQuery.of(context).textScaleFactor;
 
+    if (_pageController == null) {
+      double screenWidth = MediaQuery.of(context).size.width;
+      double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+      _pageController = PageController(viewportFraction: pageViewport);
+    }
+
     return Column(children: [
       Container(height: pageHeight, child:
-        PageView(controller: _pageController, children: pages,)
+        PageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          children: pages,
+        )
       ),
       LinkButton(
         title: Localization().getStringEx('widget.home.my_groups.button.all.title', 'View All'),
@@ -187,7 +208,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _loadGroups();
+          _updateGroups();
         }
       }
     }

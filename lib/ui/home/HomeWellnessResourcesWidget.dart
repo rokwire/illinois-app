@@ -16,9 +16,9 @@
 
 import 'dart:async';
 import 'dart:math';
+import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -59,7 +59,12 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
   List<dynamic>? _favoriteCommands;
   Map<String, dynamic>? _strings;
+  
   PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  String? _currentFavoriteId;
+  int _currentPage = -1;
   final double _pageSpacing = 16;
 
   @override
@@ -71,15 +76,9 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
-        setState(() {
-          _initContent();
-        });
+        _updateContent();
       });
     }
-
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
 
     _initContent();
     super.initState();
@@ -98,11 +97,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   void onNotification(String name, dynamic param) {
     if ((name == Assets.notifyChanged) ||
         (name == Auth2UserPrefs.notifyFavoritesChanged)) {
-      if (mounted) {
-        setState(() {
-          _initContent();
-        });
-      }
+        _updateContent();
     }
   }
 
@@ -126,19 +121,30 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     int visibleCount = min(Config().homeWellnessResourcesCount, _favoriteCommands?.length ?? 0);
     if (1 < visibleCount) {
 
-      double pageHeight = 18 * MediaQuery.of(context).textScaleFactor + 2 * 16;
-
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         Map<String, dynamic>? command = JsonUtils.mapValue(_favoriteCommands![index]);
         Widget? button = (command != null) ? _buildResourceButton(command) : null;
         if (button != null) {
-          pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child: button));
+          String? commandId = JsonUtils.stringValue(command!['id']);
+          pages.add(Padding(key: _contentKeys[commandId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child: button));
         }
       }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          onPageChanged: _onCurrentPageChanged,
+          children: pages,
+        ),
       );
     }
     else {
@@ -190,6 +196,28 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     List<dynamic>? commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
     WellnessResourcesContentWidget.ensureDefaultFavorites(commands);
     _favoriteCommands = _filterFavoriteCommands(commands);
+    if (_favoriteCommands?.isNotEmpty ?? false) {
+      _currentPage = 0;
+
+      Map<String, dynamic>? command = JsonUtils.mapValue(_favoriteCommands!.first);
+      _currentFavoriteId =  (command != null) ? JsonUtils.stringValue(command['id']) : null;
+    }
+  }
+
+  void _updateContent() {
+    Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${WellnessResourcesContentWidget.wellnessCategoryKey}']) ;
+    Map<String, dynamic>? strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
+    List<dynamic>? commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
+    WellnessResourcesContentWidget.ensureDefaultFavorites(commands);
+    List<dynamic>? favoriteCommands = _filterFavoriteCommands(commands);
+
+    if (mounted && (favoriteCommands != null) && !DeepCollectionEquality().equals(_favoriteCommands, favoriteCommands)) {
+      setState(() {
+        _favoriteCommands = favoriteCommands;
+        _strings = strings;
+        _updateCurrentPage();
+      });
+    }
   }
 
   static List<dynamic>? _filterFavoriteCommands(List<dynamic>? commands) {
@@ -208,6 +236,57 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
       }
     }
     return favoriteCommands;
+  }
+
+  int _findFavorite(String? favoriteId) {
+    if (_favoriteCommands != null) {
+      for (int index = 0; index < _favoriteCommands!.length; index++) {
+        Map<String, dynamic>? command = JsonUtils.mapValue(_favoriteCommands![index]);
+        String? commandId = (command != null) ? JsonUtils.stringValue(command['id']) : null;
+        if (commandId == favoriteId) {
+          return index;
+        }
+      }
+    }
+    return -1;
+  }
+
+  void _updateCurrentPage() {
+    if (_favoriteCommands?.isNotEmpty ?? false)  {
+      int currentPage = (_currentFavoriteId != null) ? _findFavorite(_currentFavoriteId!) : -1;
+      if (currentPage < 0) {
+        currentPage = max(0, min(_currentPage, _favoriteCommands!.length - 1));
+      }
+
+      Map<String, dynamic>? command = JsonUtils.mapValue(ListUtils.entry(_favoriteCommands, _currentPage = currentPage));
+      _currentFavoriteId = (command != null) ? JsonUtils.stringValue(command['id']) : null;
+    }
+    else {
+      _currentPage = -1;
+      _currentFavoriteId = null;
+    }
+
+    _pageViewKey = UniqueKey();
+    _pageController = null;
+    _contentKeys.clear();
+  }
+
+  void _onCurrentPageChanged(int index) {
+    Map<String, dynamic>? command = JsonUtils.mapValue(ListUtils.entry(_favoriteCommands, _currentPage = index));
+    _currentFavoriteId = (command != null) ? JsonUtils.stringValue(command['id']) : null;
+  }
+
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
   }
 
   String? _getString(String? key, {String? languageCode}) {

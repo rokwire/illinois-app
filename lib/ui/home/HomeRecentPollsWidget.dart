@@ -2,9 +2,9 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -43,12 +43,15 @@ class HomeRecentPollsWidget extends StatefulWidget {
 class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implements NotificationsListener {
 
   List<Poll>? _recentPolls;
-  PageController? _pageController;
   bool _loadingPolls = false;
   bool _loadingPollsPage = false;
   bool _hasMorePolls = true;
-  final double _pageSpacing = 16;
   DateTime? _pausedDateTime;
+  
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -70,10 +73,6 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
         }
       });
     }
-
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
 
     if (Connectivity().isOnline) {
       _loadingPolls = true;
@@ -155,20 +154,19 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
   Widget _buildPollsContent() {
     Widget contentWidget;
     if (1 < (_recentPolls?.length ?? 0)) {
-      double pageHeight = (12 + 20 + 15) * MediaQuery.of(context).textScaleFactor + 2 * 16 + 12 + 12 + 25;
 
       List<Widget> pages = <Widget>[];
       for (Poll poll in _recentPolls!) {
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
+        pages.add(Padding(key: _contentKeys[poll.pollId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
           PollCard(poll: poll, group: _getGroup(poll.groupId)),
         ));
       }
 
       if (_loadingPollsPage) {
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
+        pages.add(Padding(key: _contentKeys['last'] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
           Container(decoration: BoxDecoration(color: Styles().colors?.white, borderRadius: BorderRadius.circular(5)), child:
             HomeProgressWidget(
-              padding: EdgeInsets.symmetric(horizontal: 32, vertical: (pageHeight - 24) / 2),
+              padding: EdgeInsets.symmetric(horizontal: 32, vertical: (_pageHeight - 24) / 2),
               progessSize: Size(24, 24),
               progressColor: Styles().colors?.fillColorPrimary,
             ),
@@ -176,8 +174,20 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
         ));
       }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight, onPageChanged: _onPageChanged),
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          onPageChanged: _onPageChanged,
+          children: pages,
+        ),
       );
     }
     else {
@@ -214,6 +224,19 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
     return null;
   }
 
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
+  }
+
   void _onTapSeeAll() {
     Analytics().logSelect(target: "HomeRecentPolls: View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
@@ -232,8 +255,11 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
             if (showProgress) {
               _loadingPolls = false;
             }
-            if (result?.polls != null) {
+            if ((result?.polls != null) && !DeepCollectionEquality().equals(_recentPolls, result?.polls)) {
               _recentPolls = result?.polls;
+              _pageViewKey = UniqueKey();
+              _pageController = null;
+              _contentKeys.clear();
             }
           });
         }
@@ -248,7 +274,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
           _loadingPollsPage = true;
         });
       }
-      Polls().getRecentPolls(cursor: PollsCursor(offset: 0, limit: max(_recentPolls?.length ?? 0, Config().homeRecentPollsCount + 1)))?.then((PollsChunk? result) {
+      Polls().getRecentPolls(cursor: PollsCursor(offset: _recentPolls?.length, limit: Config().homeRecentPollsCount + 1))?.then((PollsChunk? result) {
         if (mounted) {
           setState(() {
             _loadingPollsPage = false;

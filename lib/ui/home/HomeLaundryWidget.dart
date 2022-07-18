@@ -4,7 +4,6 @@ import 'dart:async';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -46,9 +45,12 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
 
   LaundrySchool? _laundrySchool;
   bool _loading = false;
-  final double _pageSpacing = 16;
-  PageController? _pageController;
   DateTime? _pausedDateTime;
+  
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -66,10 +68,6 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
         }
       });
     }
-
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
 
     if (Connectivity().isOnline) {
       _loading = true;
@@ -104,6 +102,20 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
     else if (name == Config.notifyConfigChanged) {
       if (mounted) {
         setState(() {});
+      }
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _refreshLaundry();
+        }
       }
     }
   }
@@ -144,17 +156,26 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
 
     if (1 < visibleCount) {
 
-      double pageHeight = (20 + 16) * MediaQuery.of(context).textScaleFactor + 7 + 2 * 16 + 12;
-
       List<Widget> pages = <Widget>[];
       for (LaundryRoom room in _laundrySchool!.rooms!) {
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
+        pages.add(Padding(key: _contentKeys[room.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
           LaundryRoomCard(room: room, onTap: () => _onTapRoom(room))
         ));
       }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          children: pages,
+        ),
       );
     }
     else {
@@ -191,32 +212,35 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
         });
       }
       Laundries().loadSchoolRooms().then((LaundrySchool? laundrySchool) {
-        if (mounted) {
+        if (mounted && (laundrySchool != null) && (_laundrySchool != laundrySchool)) {
           setState(() {
-            if (showProgress) {
-              _loading = false;
-            }
-            if (laundrySchool != null) {
-              _laundrySchool = laundrySchool;
-            }
+            _laundrySchool = laundrySchool;
+            _pageViewKey = UniqueKey();
+            _pageController = null;
+            _contentKeys.clear();
+          });
+        }
+      }).whenComplete(() {
+        if (mounted && showProgress) {
+          setState(() {
+            _loading = false;
           });
         }
       });
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      _pausedDateTime = DateTime.now();
-    }
-    else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
-        if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _refreshLaundry();
-        }
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
       }
     }
+
+    return minContentHeight ?? 0;
   }
 }
 

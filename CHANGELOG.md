@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Special handling for "cost" field in Student Guide. It is now part of the "links" section [#2029](https://github.com/rokwire/illinois-app/issues/2029).
 ### Fixed
 - Create Polls strings updates [#1713](https://github.com/rokwire/illinois-app/issues/1713).
+- Fixed content update in page view in home widgets [#2020](https://github.com/rokwire/illinois-app/issues/2020).
 ### Changed
 - HomeTweeterWidget: move navigation buttons below main Image [#1455](https://github.com/rokwire/illinois-app/issues/1455).
 

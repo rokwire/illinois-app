@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:collection/collection.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -33,6 +34,17 @@ class LaundrySchool {
             rooms: LaundryRoom.fromJsonList(JsonUtils.listValue(json['LaundryRooms'])))
         : null;
   }
+
+  @override
+  bool operator ==(other) =>
+    (other is LaundrySchool) &&
+      (other.schoolName == schoolName) &&
+      (const DeepCollectionEquality().equals(other.rooms, rooms));
+
+  @override
+  int get hashCode =>
+    (schoolName?.hashCode ?? 0) ^
+    const DeepCollectionEquality().hash(rooms);
 }
 
 class LaundryRoom with Explore implements Favorite {
