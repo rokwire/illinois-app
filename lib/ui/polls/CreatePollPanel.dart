@@ -151,7 +151,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
       child: Container(
           child: PollOptionView(
         title: Localization().getStringEx("panel.create_poll.text.question", "QUESTION"),
-        hint: Localization().getStringEx("panel.create_poll.hint.question", "Ask people near you…"),
+        hint: Localization().getStringEx("panel.create_poll.hint.question", "Ask people…"),
         textController: _questionController,
         maxLength: 120,
         minLines: 3,
