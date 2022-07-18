@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Favorite.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
@@ -107,8 +108,13 @@ class HomeFavoritesWidget extends StatefulWidget {
 class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements NotificationsListener {
 
   List<Favorite>? _favorites;
-  PageController? _pageController;
   bool _loadingFavorites = false;
+  
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<Favorite, GlobalKey> _contentKeys = <Favorite, GlobalKey>{};
+  Favorite? _currentFavorite;
+  int _currentPage = -1;
   final double _pageSpacing = 16;
   
   @override
@@ -128,10 +134,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         }
       });
     }
-
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
 
     _refreshFavorites();
     super.initState();
@@ -193,17 +195,28 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     int visibleCount = _favorites?.length ?? 0; // min(Config().homeFavoriteItemsCount, ...)
     if (1 < visibleCount) {
 
-      double pageHeight = (20 + 16) * MediaQuery.of(context).textScaleFactor + 7 + 2 * 16 + 12;
-
       List<Widget> pages = [];
-      for (int i = 0; i < visibleCount; i++) {
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
-          _buildItemCard(_favorites![i])),
+      for (Favorite favorite in _favorites!) {
+        pages.add(Padding(key: _contentKeys[favorite] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
+          _buildItemCard(favorite)),
         );
       }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage);
+      }
+
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          onPageChanged: _onCurrentPageChanged,
+          children: pages
+        ),
       );
     }
     else {
@@ -211,7 +224,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         _buildItemCard(_favorites!.first),
       );
     }
-
 
     return Column(children: <Widget>[
       Padding(padding: EdgeInsets.only(top: 8), child:
@@ -314,13 +326,55 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         });
       }
       _loadFavorites().then((List<Favorite>? favorites) {
-        if (mounted) {
+        if (mounted && !DeepCollectionEquality().equals(_favorites, favorites)) {
           setState(() {
             _favorites = favorites;
+            _updateCurrentPage();
+          });
+        }
+      }).whenComplete(() {
+        if (mounted) {
+          setState(() {
             _loadingFavorites = false;
           });
         }
       }); 
+    }
+  }
+
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
+  }
+
+  void _onCurrentPageChanged(int index) {
+    _currentFavorite = ListUtils.entry(_favorites, _currentPage = index);
+  }
+
+  void _updateCurrentPage() {
+    if ((_currentPage < 0) || (_currentFavorite == null)) {
+      if (_favorites?.isNotEmpty ?? false) {
+        _currentPage = 0;
+        _currentFavorite = _favorites?.first;
+      }
+    }
+    else {
+      int currentPage = (_currentFavorite != null) ? _favorites!.indexOf(_currentFavorite!) : -1;
+      if (currentPage < 0) {
+        currentPage = max(0, min(_currentPage, _favorites!.length - 1));
+      }
+
+      _currentFavorite = _favorites![_currentPage = currentPage];
+      _pageViewKey = UniqueKey();
+      _pageController = null;
     }
   }
 
