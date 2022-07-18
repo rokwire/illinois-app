@@ -196,7 +196,8 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     if (1 < visibleCount) {
 
       List<Widget> pages = [];
-      for (Favorite favorite in _favorites!) {
+      for (int index = 0; index < visibleCount; index++) {
+        Favorite favorite = _favorites![index];
         pages.add(Padding(key: _contentKeys[favorite] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
           _buildItemCard(favorite)),
         );
@@ -207,7 +208,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
         _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage);
       }
-
 
       contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
         ExpandablePageView(
@@ -367,7 +367,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       }
     }
     else {
-      if (_favorites != null) {
+      if (_favorites?.isNotEmpty ?? false) {
         int currentPage = (_currentFavorite != null) ? _favorites!.indexOf(_currentFavorite!) : -1;
         if (currentPage < 0) {
           currentPage = max(0, min(_currentPage, _favorites!.length - 1));
@@ -377,9 +377,9 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       }
       else {
         _currentPage = -1;
-        _currentFavorite = _favorites?.first;
+        _currentFavorite = null;
       }
-      
+
       _pageViewKey = UniqueKey();
       _pageController = null;
       _contentKeys.clear();
