@@ -36,7 +36,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   void initState() {
     super.initState();
     _initAllMembersAllowedToPost();
-    _loadPostTemplates();
+    _loadPostNudges();
   }
 
   @override
@@ -76,7 +76,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                 children: [
                   Container(height: 12,),
                   GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group?.id, onSelectionChanged: _onMembersSelectionChanged),
-                  _buildTemplatesWidget(),
+                  _buildNudgesWidget(),
                   Container(height: 12,),
                   Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
                     style: TextStyle(
@@ -134,7 +134,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     );
   }
 
-  Widget _buildTemplatesWidget() {
+  Widget _buildNudgesWidget() {
     // Do not show the nudges for regular members
     if (!(widget.group?.currentUserIsAdmin ?? false)) {
       return Container();
@@ -145,7 +145,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     return Padding(
         padding: EdgeInsets.only(bottom: 12),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(Localization().getStringEx('panel.group.detail.post.create.templates.label', 'Templates'),
+          Text(Localization().getStringEx('panel.group.detail.post.create.nudges.label', 'Nudges'),
               style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary)),
           Padding(
               padding: EdgeInsets.only(top: 5),
@@ -162,9 +162,9 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                               isExpanded: true,
                               style: TextStyle(
                                   fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),
-                              items: _templatesDropDownItems,
+                              items: _nudgesDropDownItems,
                               value: _selectedNudge,
-                              onChanged: _onTemplateChanged)))))
+                              onChanged: _onNudgeChanged)))))
         ]));
   }
 
@@ -176,20 +176,20 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     }
   }
 
-  List<DropdownMenuItem<GroupPostNudge?>> get _templatesDropDownItems {
+  List<DropdownMenuItem<GroupPostNudge?>> get _nudgesDropDownItems {
     List<DropdownMenuItem<GroupPostNudge?>> items = [];
     if (CollectionUtils.isNotEmpty(_postNudges)) {
-      for (GroupPostNudge template in _postNudges!) {
-        items.add(DropdownMenuItem(value: template, child: Text(StringUtils.ensureNotEmpty(template.subject))));
+      for (GroupPostNudge nudge in _postNudges!) {
+        items.add(DropdownMenuItem(value: nudge, child: Text(StringUtils.ensureNotEmpty(nudge.subject))));
       }
     }
     items.add(DropdownMenuItem(
-        value: null, child: Text(Localization().getStringEx('panel.group.detail.post.create.templates.custom.label', 'Custom'))));
+        value: null, child: Text(Localization().getStringEx('panel.group.detail.post.create.nudges.custom.label', 'Custom'))));
     return items;
   }
 
-  void _onTemplateChanged(GroupPostNudge? template) {
-    _selectedNudge = template;
+  void _onNudgeChanged(GroupPostNudge? nudge) {
+    _selectedNudge = nudge;
     String? subject;
     String? body;
     if (_selectedNudge != null) {
@@ -258,12 +258,12 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     }
   }
 
-  void _loadPostTemplates() {
-    // Load post templates only for admins
+  void _loadPostNudges() {
+    // Load post nudges only for admins
     if (widget.group?.currentUserIsAdmin ?? false) {
       _setLoading(true);
-      Groups().loadPostNudges(groupName: StringUtils.ensureNotEmpty(widget.group?.title)).then((templates) {
-        _postNudges = templates;
+      Groups().loadPostNudges(groupName: StringUtils.ensureNotEmpty(widget.group?.title)).then((nudges) {
+        _postNudges = nudges;
         _setLoading(false);
       });
     }
