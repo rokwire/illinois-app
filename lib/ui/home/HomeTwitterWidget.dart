@@ -661,6 +661,52 @@ class _TweetWidget extends StatelessWidget {
                     InkWell(onTap: () => _onTap(context), child:
                       Image.network(tweet!.media!.imageUrl!, excludeFromSemantics: true)) :
                   Container(),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Visibility(
+                          visible: onTapPrevious!=null,
+                          child: Semantics(
+                              label: "Previous Page",
+                              button: true,
+                              child: GestureDetector(
+                                  onTap: onTapPrevious?? (){},
+                                  child: Container(
+                                    padding: EdgeInsets.all(24),
+                                    child: Text(
+                                      "<",
+                                      semanticsLabel: "",
+                                      style: TextStyle(
+                                        color : Styles().colors!.fillColorPrimary,
+                                        fontFamily: Styles().fontFamilies!.bold,
+                                        fontSize: 26,
+                                      ),),)
+                              )
+                          )
+                      ),
+                      Visibility(
+                          visible: onTapNext!=null,
+                          child: Semantics(
+                              label: "Next Page",
+                              button: true,
+                              child: GestureDetector(
+                                  onTap: onTapNext?? (){},
+                                  child: Container(
+                                    padding: EdgeInsets.all(24),
+                                    child: Text(
+                                      ">",
+                                      semanticsLabel: "",
+                                      style: TextStyle(
+                                        color : Styles().colors!.fillColorPrimary,
+                                        fontFamily: Styles().fontFamilies!.bold,
+                                        fontSize: 26,
+                                      ),),)
+                              )
+                          )
+                      )
+                    ],
+                  ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
                     //Text(tweet.text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: 16, ),),
                     Html(data: tweet!.html,
@@ -680,53 +726,6 @@ class _TweetWidget extends StatelessWidget {
                 Text(tweet?.displayTime ?? '', style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 14, ),),
               ],)
             ),
-
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Visibility(
-                  visible: onTapPrevious!=null,
-                  child: Semantics(
-                    label: "Previous Page",
-                    button: true,
-                    child: GestureDetector(
-                      onTap: onTapPrevious?? (){},
-                      child: Container(
-                        padding: EdgeInsets.all(24),
-                        child: Text(
-                          "<",
-                          semanticsLabel: "",
-                          style: TextStyle(
-                            color : Styles().colors!.fillColorPrimary,
-                            fontFamily: Styles().fontFamilies!.bold,
-                            fontSize: 26,
-                          ),),)
-                    )
-                  )
-                ),
-                Visibility(
-                  visible: onTapNext!=null,
-                  child: Semantics(
-                    label: "Next Page",
-                    button: true,
-                    child: GestureDetector(
-                      onTap: onTapNext?? (){},
-                      child: Container(
-                        padding: EdgeInsets.all(24),
-                        child: Text(
-                          ">",
-                          semanticsLabel: "",
-                          style: TextStyle(
-                            color : Styles().colors!.fillColorPrimary,
-                            fontFamily: Styles().fontFamilies!.bold,
-                            fontSize: 26,
-                          ),),)
-                    )
-                  )
-                )
-              ],
-            )
           ])
       )
     );

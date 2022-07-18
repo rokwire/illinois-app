@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Create Polls strings updates [#1713](https://github.com/rokwire/illinois-app/issues/1713).
 - Fixed content update in page view in home widgets [#2020](https://github.com/rokwire/illinois-app/issues/2020).
-
+### Changed
+- HomeTweeterWidget: move navigation buttons below main Image [#1455](https://github.com/rokwire/illinois-app/issues/1455).
 
 ## [4.0.53] - 2022-07-15
 ### Changed
