@@ -24,8 +24,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   static final double _outerPadding = 16;
 
   PostDataModel _postData = PostDataModel();
-  List<GroupPostTemplate>? _postTemplates;
-  GroupPostTemplate? _selectedTemplate;
+  List<GroupPostNudge>? _postNudges;
+  GroupPostNudge? _selectedNudge;
   bool _loading = false;
   //Refresh
   GlobalKey _postImageHolderKey = GlobalKey();
@@ -135,11 +135,11 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   }
 
   Widget _buildTemplatesWidget() {
-    // Do not show the templates for regular members
+    // Do not show the nudges for regular members
     if (!(widget.group?.currentUserIsAdmin ?? false)) {
       return Container();
     }
-    if (CollectionUtils.isEmpty(_postTemplates)) {
+    if (CollectionUtils.isEmpty(_postNudges)) {
       return Container();
     }
     return Padding(
@@ -157,13 +157,13 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                   child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: DropdownButtonHideUnderline(
-                          child: DropdownButton<GroupPostTemplate?>(
+                          child: DropdownButton<GroupPostNudge?>(
                               icon: Icon(Icons.arrow_drop_down, color: Styles().colors!.fillColorSecondary),
                               isExpanded: true,
                               style: TextStyle(
                                   fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),
                               items: _templatesDropDownItems,
-                              value: _selectedTemplate,
+                              value: _selectedNudge,
                               onChanged: _onTemplateChanged)))))
         ]));
   }
@@ -176,10 +176,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     }
   }
 
-  List<DropdownMenuItem<GroupPostTemplate?>> get _templatesDropDownItems {
-    List<DropdownMenuItem<GroupPostTemplate?>> items = [];
-    if (CollectionUtils.isNotEmpty(_postTemplates)) {
-      for (GroupPostTemplate template in _postTemplates!) {
+  List<DropdownMenuItem<GroupPostNudge?>> get _templatesDropDownItems {
+    List<DropdownMenuItem<GroupPostNudge?>> items = [];
+    if (CollectionUtils.isNotEmpty(_postNudges)) {
+      for (GroupPostNudge template in _postNudges!) {
         items.add(DropdownMenuItem(value: template, child: Text(StringUtils.ensureNotEmpty(template.subject))));
       }
     }
@@ -188,13 +188,13 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     return items;
   }
 
-  void _onTemplateChanged(GroupPostTemplate? template) {
-    _selectedTemplate = template;
+  void _onTemplateChanged(GroupPostNudge? template) {
+    _selectedNudge = template;
     String? subject;
     String? body;
-    if (_selectedTemplate != null) {
-      subject = _selectedTemplate?.subject;
-      body = _selectedTemplate?.body;
+    if (_selectedNudge != null) {
+      subject = _selectedNudge?.subject;
+      body = _selectedNudge?.body;
     }
     _postData.subject = subject;
     _postData.body = body;
@@ -262,8 +262,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     // Load post templates only for admins
     if (widget.group?.currentUserIsAdmin ?? false) {
       _setLoading(true);
-      Groups().loadPostTemplates(groupName: StringUtils.ensureNotEmpty(widget.group?.title)).then((templates) {
-        _postTemplates = templates;
+      Groups().loadPostNudges(groupName: StringUtils.ensureNotEmpty(widget.group?.title)).then((templates) {
+        _postNudges = templates;
         _setLoading(false);
       });
     }
