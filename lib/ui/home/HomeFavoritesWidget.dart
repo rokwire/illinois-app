@@ -367,14 +367,22 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       }
     }
     else {
-      int currentPage = (_currentFavorite != null) ? _favorites!.indexOf(_currentFavorite!) : -1;
-      if (currentPage < 0) {
-        currentPage = max(0, min(_currentPage, _favorites!.length - 1));
-      }
+      if (_favorites != null) {
+        int currentPage = (_currentFavorite != null) ? _favorites!.indexOf(_currentFavorite!) : -1;
+        if (currentPage < 0) {
+          currentPage = max(0, min(_currentPage, _favorites!.length - 1));
+        }
 
-      _currentFavorite = _favorites![_currentPage = currentPage];
+        _currentFavorite = _favorites![_currentPage = currentPage];
+      }
+      else {
+        _currentPage = -1;
+        _currentFavorite = _favorites?.first;
+      }
+      
       _pageViewKey = UniqueKey();
       _pageController = null;
+      _contentKeys.clear();
     }
   }
 
