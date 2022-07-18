@@ -121,7 +121,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                   _buildColorEntry(color: UiColors.fromHex('#54A747'), isSelected: (_selectedColor == UiColors.fromHex('#54A747'))),
                   _buildColorEntry(color: UiColors.fromHex('#009FD4'), isSelected: (_selectedColor == UiColors.fromHex('#009FD4'))),
                   _buildColorEntry(color: UiColors.fromHex('#1D58A7'), isSelected: (_selectedColor == UiColors.fromHex('#1D58A7'))),
-                  _buildColorEntry(imageAsset: 'images/icon-color-edit.png'),
+                  _buildColorEntry(color: UiColors.fromHex('#662d91'), isSelected: (_selectedColor == UiColors.fromHex('#662d91'))),
                 ]))));
   }
 
