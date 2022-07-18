@@ -512,7 +512,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
       if (details.isNotEmpty) {
         details += '\n';
       }
-      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.multy_choice", "You can choose more that one answer.");
+      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.multy_choice", "You can choose more than one answer.");
     }
     if (_allowRepeatOptions) {
       if (details.isNotEmpty) {
