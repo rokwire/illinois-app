@@ -15,12 +15,13 @@
  */
 
 import 'dart:async';
+import 'dart:collection';
 
+import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Config.dart';
@@ -72,7 +73,10 @@ class HomeRecentItemsWidget extends StatefulWidget {
 class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implements NotificationsListener {
 
   Iterable<RecentItem>? _recentItems;
+  
   PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   final double _pageSpacing = 16;
 
   @override
@@ -87,20 +91,19 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
-          if (mounted) {
+          if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
             setState(() {
-              _recentItems = RecentItems().recentItems;
+              _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
+              _pageViewKey = UniqueKey();
+              _pageController = null;
+              _contentKeys.clear();
             });
           }
         }
       });
     }
 
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
-
-    _recentItems = RecentItems().recentItems;
+    _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
   }
 
   @override
@@ -117,9 +120,12 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     if (name == RecentItems.notifyChanged) {
       if (mounted) {
         SchedulerBinding.instance?.addPostFrameCallback((_) {
-          if (mounted) {
+          if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
             setState(() {
-              _recentItems = RecentItems().recentItems;
+              _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
+              _pageViewKey = UniqueKey();
+              _pageController = null;
+              _contentKeys.clear();
             });
           }
         });
@@ -151,18 +157,27 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     Widget contentWidget;
 
     if (1 < (_recentItems?.length ?? 0)) {
-      double pageHeight = (18 + 12) * MediaQuery.of(context).textScaleFactor + 2 * 16 + 10 + 8;
 
       // Config().homeRecentItemsCount
       List<Widget> pages = <Widget>[];
       for (RecentItem item in _recentItems!) {
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
+        pages.add(Padding(key: _contentKeys[item.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
           HomeRecentItemCard(recentItem: item),
         ));
       }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          children: pages),
       );
     }
     else {
@@ -185,6 +200,19 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     Analytics().logSelect(target: "HomeRecentItemsWidget View All");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeRecentItemsPanel()));
   }
+
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
+  }
 }
 
 // HomeRecentItemsPanel
@@ -204,7 +232,7 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
   void initState() {
     super.initState();
     NotificationService().subscribe(this, RecentItems.notifyChanged);
-    _recentItems = RecentItems().recentItems;
+    _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
   }
 
   @override
@@ -218,9 +246,9 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
   @override
   void onNotification(String name, dynamic param) {
     if (name == RecentItems.notifyChanged) {
-      if (mounted) {
+      if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
         setState(() {
-          _recentItems = RecentItems().recentItems;
+          _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
         });
       }
     }
@@ -258,9 +286,9 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
   }
 
   Future<void> _onPullToRefresh() async {
-    if (mounted) {
+    if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
       setState(() {
-        _recentItems = RecentItems().recentItems;
+        _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
       });
     }
   }

@@ -20,7 +20,6 @@ import 'dart:math';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
@@ -70,9 +69,12 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
   Set<String>?    _tagsFilter;
   List<Event>?    _events;
   bool?           _loadingEvents;
-  PageController? _pageController;
-  final double    _pageSpacing = 16;
   DateTime?       _pausedDateTime;
+  
+  PageController? _pageController;
+  Key?            _pageViewKey;
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double    _pageSpacing = 16;
 
   @override
   void initState() {
@@ -94,10 +96,6 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
         }
       });
     }
-
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
 
     _loadAvailableCategories();
     super.initState();
@@ -210,6 +208,9 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
               _tagsFilter = tagsFilter;
               _categoriesFilter = categoriesFilter;
               _events = _randomSelection(events, Config().homeUpcomingEventsCount);
+              _pageViewKey = UniqueKey();
+              _pageController = null;
+              _contentKeys.clear();
             });
           }
         }
@@ -220,6 +221,9 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
               _tagsFilter = null;
               _categoriesFilter = null;
               _events = _randomSelection(events, Config().homeUpcomingEventsCount);
+              _pageViewKey = UniqueKey();
+              _pageController = null;
+              _contentKeys.clear();
             });
           });
         }
@@ -308,18 +312,28 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
   Widget _buildEventsContent() {
     Widget contentWidget;
     if (1 < (_events?.length ?? 0)) {
-      double pageHeight = (18 + 20) * MediaQuery.of(context).textScaleFactor + 20 + 12 + (18 + 8) * 2 + 12;
 
       List<Widget> pages = <Widget>[];
       for (Event event in _events!) {
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 4), child:
+        pages.add(Padding(key: _contentKeys[event.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 4), child:
           ExploreCard(explore: event, showTopBorder: true, horizontalPadding: 0, onTap: () => _onTapEvent(event),
         )
         ));
       }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          children: pages,
+        ),
       );
     }
     else {
@@ -351,6 +365,19 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: event)));
     }
+  }
+
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
   }
 
   void _navigateToExploreEvents() {

@@ -19,7 +19,6 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -55,7 +54,10 @@ class HomeCampusRemindersWidget extends StatefulWidget {
 class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> implements NotificationsListener {
 
   List<Map<String, dynamic>>? _reminderItems;
+
   PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   final double _pageSpacing = 16;
 
   @override
@@ -78,11 +80,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
       });
     }
 
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
-
-    _reminderItems = Guide().remindersList;
+    _reminderItems = List<Map<String, dynamic>>.from(Guide().remindersList ?? <Map<String, dynamic>>[]);
   }
 
   @override
@@ -137,17 +135,27 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     int visibleCount = _reminderItems?.length ?? 0; // Config().homeCampusRemindersCount
     if (1 < visibleCount) {
       
-      double pageHeight = (18 + 16) * MediaQuery.of(context).textScaleFactor + 4 + 8 + 2 * 16;
-
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 2), child:
-          GuideEntryCard(JsonUtils.mapValue(_reminderItems![index]))
+        Map<String, dynamic>? reminderItem = JsonUtils.mapValue(_reminderItems![index]);
+        pages.add(Padding(key: _contentKeys[Guide().entryId(reminderItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 2), child:
+          GuideEntryCard(reminderItem)
         ));
       }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          children: pages,
+        ),
       );
 
     }
@@ -168,11 +176,27 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
 
   void _updateReminderItems() {
     List<Map<String, dynamic>>? reminderItems = Guide().remindersList;
-    if (!DeepCollectionEquality().equals(_reminderItems, reminderItems)) {
+    if (mounted && (reminderItems != null) && !DeepCollectionEquality().equals(_reminderItems, reminderItems)) {
       setState(() {
-        _reminderItems = reminderItems;
+        _reminderItems = List<Map<String, dynamic>>.from(reminderItems);
+        _pageViewKey = UniqueKey();
+        _pageController = null;
+        _contentKeys.clear();
       });
     }
+  }
+
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
   }
 
   void _onViewAll() {

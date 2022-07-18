@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
@@ -37,13 +37,14 @@ class HomeCanvasCoursesWidget extends StatefulWidget {
 class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> implements NotificationsListener {
 
   List<CanvasCourse>? _courses;
-  PageController? _pageController;
   DateTime? _pausedDateTime;
+
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
   final double _pageSpacing = 16;
 
   @override
   void initState() {
-    super.initState();
 
     // TBD: Search for Canvas().loadCourses() and think of caching courses content. Examples: Config, GeoFence, Groups
 
@@ -55,16 +56,13 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
-          _loadCourses();
+          _updateCourses();
         }
       });
     }
 
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
-
     _loadCourses();
+    super.initState();
   }
 
   @override
@@ -91,7 +89,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _loadCourses();
+          _updateCourses();
         }
       }
     }
@@ -110,21 +108,30 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   Widget _buildCoursesContent() {
 
     List<Widget> coursePages = <Widget>[];
-    if (CollectionUtils.isNotEmpty(_courses)) {
-      for (CanvasCourse course in _courses!) {
-        coursePages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
-          GestureDetector(onTap: () => _onTapCourse(course), child:
-            CanvasCourseCard(course: course, isSmall: true)
-          ),
-        ),);
-      }
+    for (CanvasCourse course in _courses!) {
+      coursePages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
+        GestureDetector(onTap: () => _onTapCourse(course), child:
+          CanvasCourseCard(course: course, isSmall: true)
+        ),
+      ),);
+    }
+
+    if (_pageController == null) {
+      double screenWidth = MediaQuery.of(context).size.width;
+      double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+      _pageController = PageController(viewportFraction: pageViewport);
     }
 
     double pageHeight = CanvasCourseCard.height(context, isSmall: true);
 
+
     return Column(children: [
       Container(height: pageHeight, child:
-        PageView(controller: _pageController, children: coursePages,)
+        PageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          children: coursePages,
+        )
       ),
       LinkButton(
         title: Localization().getStringEx('widget.home.home_canvas_courses.button.all.title', 'View All'),
@@ -145,6 +152,18 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
       if (mounted) {
         setState(() {
           _courses = courses;
+        });
+      }
+    });
+  }
+
+  void _updateCourses() {
+    Canvas().loadCourses().then((List<CanvasCourse>? courses) {
+      if (mounted && !DeepCollectionEquality().equals(_courses, _courses)) {
+        setState(() {
+          _courses = courses;
+          _pageViewKey = UniqueKey();
+          _pageController = null;
         });
       }
     });

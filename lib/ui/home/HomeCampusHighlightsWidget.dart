@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -40,7 +39,10 @@ class HomeCampusHighlightsWidget extends StatefulWidget {
 class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget> implements NotificationsListener {
 
   List<Map<String, dynamic>>? _promotedItems;
+
   PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   final double _pageSpacing = 16;
 
   @override
@@ -63,11 +65,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
       });
     }
 
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
-
-    _promotedItems = Guide().promotedList;
+    _promotedItems = List<Map<String, dynamic>>.from(Guide().promotedList ?? <Map<String, dynamic>>[]);
   }
 
   @override
@@ -123,17 +121,27 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
 
     if (1 < visibleCount) {
       
-      double pageHeight = (18 + 16) * MediaQuery.of(context).textScaleFactor + 4 + 8 + 2 * 16;
-
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 2), child:
-          GuideEntryCard(JsonUtils.mapValue(_promotedItems![index]))
+        Map<String, dynamic>? promotedItem = JsonUtils.mapValue(_promotedItems![index]);
+        pages.add(Padding(key: _contentKeys[Guide().entryId(promotedItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 2), child:
+          GuideEntryCard(promotedItem)
         ));
       }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          children: pages,
+        ),
       );
 
     }
@@ -155,11 +163,27 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
 
   void _updatePromotedItems() {
     List<Map<String, dynamic>>? promotedItems = Guide().promotedList;
-    if (!DeepCollectionEquality().equals(_promotedItems, promotedItems)) {
+    if (mounted && (promotedItems != null) && !DeepCollectionEquality().equals(_promotedItems, promotedItems)) {
       setState(() {
-        _promotedItems = promotedItems;
+        _promotedItems = List<Map<String, dynamic>>.from(promotedItems);
+        _pageViewKey = UniqueKey();
+        _pageController = null;
+        _contentKeys.clear();
       });
     }
+  }
+
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
   }
 
   void _onSeeAll() {
