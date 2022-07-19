@@ -346,20 +346,25 @@ class HomeFavoriteButton extends FavoriteButton {
   void onFavorite(BuildContext context) {
     Analytics().logSelect(target: "Favorite: $favorite");
 
+    bool? isFavorite = this.isFavorite;
     if (prompt) {
-      promptFavorite(context, favorite).then((bool? result) {
+      promptFavorite(context, favorite: favorite, isFavorite: isFavorite).then((bool? result) {
         if (result == true) {
-          toggleFavorite();
+          _toggleFavorite(isFavorite: isFavorite);
         }
       });
     }
     else {
-      toggleFavorite();
+      _toggleFavorite(isFavorite: isFavorite);
     }
   }
 
   @override
   void toggleFavorite() {
+    _toggleFavorite(isFavorite: isFavorite);
+  }
+  
+  void _toggleFavorite({bool? isFavorite}) {
     if (favorite?.id != null) {
       if (favorite?.category == null) {
         // process toggle home panel widget
@@ -370,9 +375,11 @@ class HomeFavoriteButton extends FavoriteButton {
             favorites.add(HomeFavorite(sectionEntry, category: favorite?.id));
           }
           Auth2().prefs?.setListFavorite(favorites, (isFavorite != true));
+          HomeFavorite.log(favorites, isFavorite != true);
         }
         else {
           super.toggleFavorite();
+          HomeFavorite.log(favorite, isFavorite != true);
         }
       }
       else { 
@@ -392,10 +399,13 @@ class HomeFavoriteButton extends FavoriteButton {
           if (1 < sectionFavoritesCount) {
             // turn off only home widget entry
             super.toggleFavorite();
+            HomeFavorite.log(favorite, false);
           }
           else {
             // turn off both home widget entry and home widget itself
-            Auth2().prefs?.setListFavorite(<Favorite>[favorite!, sectionFavorite], false);
+            List<Favorite> favorites = <Favorite>[favorite!, sectionFavorite];
+            Auth2().prefs?.setListFavorite(favorites, false);
+            HomeFavorite.log(favorites, false);
           }
         }
         else {
@@ -403,20 +413,23 @@ class HomeFavoriteButton extends FavoriteButton {
           if (Auth2().prefs?.isFavorite(sectionFavorite) ?? false) {
             // turn on only home widget entry
             super.toggleFavorite();
+            HomeFavorite.log(favorite, true);
           }
           else {
             // turn on both home widget entry and home widget itself
-            Auth2().prefs?.setListFavorite(<Favorite>[favorite!, sectionFavorite], true);
+            List<Favorite> favorites = <Favorite>[favorite!, sectionFavorite];
+            Auth2().prefs?.setListFavorite(favorites, true);
+            HomeFavorite.log(favorites, true);
           }
         }
       }
     }
   }
 
-  static Future<bool?> promptFavorite(BuildContext context, Favorite? favorite) async {
+  static Future<bool?> promptFavorite(BuildContext context, { Favorite? favorite, bool? isFavorite }) async {
     if (kReleaseMode) {
 
-      String message = (Auth2().prefs?.isFavorite(favorite) ?? false) ?
+      String message = (isFavorite ?? Auth2().prefs?.isFavorite(favorite) ?? false) ?
         Localization().getStringEx('widget.home.prompt.remove.favorite', 'Are you sure you want to REMOVE this item from your favorites?') :
         Localization().getStringEx('widget.home.prompt.add.favorite', 'Are you sure you want to ADD this favorite?');
       

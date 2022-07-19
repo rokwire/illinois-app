@@ -355,24 +355,32 @@ class _BrowseSection extends StatelessWidget {
 
   void _onTapSectionFavorite(BuildContext context) {
     Analytics().logSelect(target: "Favorite: {${HomeFavorite.favoriteKeyName(category: sectionId)}}");
+    
+    bool? isSectionFavorite = _isSectionFavorite;
     if (kReleaseMode) {
-      promptSectionFavorite(context).then((bool? result) {
+      promptSectionFavorite(context, isSectionFavorite: isSectionFavorite).then((bool? result) {
         if (result == true) {
-          _toggleSectionFavorite();
+          _toggleSectionFavorite(isSectionFavorite: isSectionFavorite);
         }
       });
     }
     else {
-      _toggleSectionFavorite();
+      _toggleSectionFavorite(isSectionFavorite: isSectionFavorite);
     }
   }
 
-  void _toggleSectionFavorite() {
-    Auth2().prefs?.setListFavorite(sectionFavorites, _isSectionFavorite != true);
+  void _toggleSectionFavorite({bool? isSectionFavorite}) {
+    List<Favorite> favorites = _sectionFavorites;
+    Auth2().prefs?.setListFavorite(favorites, isSectionFavorite != true);
+    HomeFavorite.log(favorites, isSectionFavorite != true);
   }
 
-  List<Favorite> get sectionFavorites {
+  List<Favorite> get _sectionFavorites {
     List<Favorite> favorites = <Favorite>[];
+
+    if ((_homeSectionEntriesCodes != null) && (_homeRootEntriesCodes?.contains(sectionId) ?? false)) {
+      favorites.add(HomeFavorite(sectionId));
+    }
 
     if (_browseEntriesCodes != null) {
       for(String code in _browseEntriesCodes!.reversed) {
@@ -383,14 +391,11 @@ class _BrowseSection extends StatelessWidget {
       }
     }
 
-    if ((_homeSectionEntriesCodes != null) && (_homeRootEntriesCodes?.contains(sectionId) ?? false)) {
-      favorites.add(HomeFavorite(sectionId));
-    }
     return favorites;
   }
 
-  Future<bool?> promptSectionFavorite(BuildContext context) async {
-    String message = (_isSectionFavorite != true) ?
+  Future<bool?> promptSectionFavorite(BuildContext context, {bool? isSectionFavorite}) async {
+    String message = (isSectionFavorite != true) ?
       Localization().getStringEx('panel.browse.prompt.add.all.favorites', 'Are you sure you want to ADD ALL items to your favorites?') :
       Localization().getStringEx('panel.browse.prompt.remove.all.favorites', 'Are you sure you want to REMOVE ALL items from your favorites?');
     return await showDialog(context: context, builder: (BuildContext context) {
