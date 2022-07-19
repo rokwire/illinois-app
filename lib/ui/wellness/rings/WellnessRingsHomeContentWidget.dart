@@ -147,8 +147,9 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
   Widget _buildHistoryList(){
     var historyData = WellnessRings().getAccomplishmentsHistory();
     List<Widget> content = [];
-    if(historyData!=null && historyData.isNotEmpty){
-      for(var accomplishmentsPerDay in historyData.entries) {
+    var accomplishmentsDates = historyData?.entries.toList().reversed;
+    if(accomplishmentsDates!=null && accomplishmentsDates.isNotEmpty){
+      for(var accomplishmentsPerDay in accomplishmentsDates) {
         content.add(AccomplishmentCard(date: accomplishmentsPerDay.key, accomplishments: accomplishmentsPerDay.value));
         content.add(Container(height: 15,));
       }
