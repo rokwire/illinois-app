@@ -226,6 +226,17 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogGroupMembershipSwitchToMember   = "membership_switch_member";
   static const String   LogGroupMembershipRemoved          = "membership_removed";
 
+  // Wellness
+  static const String   LogWellnessEventName               = "wellness";
+  static const String   LogWellnessCategoryName            = "category";
+  static const String   LogWellnessCategoryToDo            = "todo";
+  static const String   LogWellnessCategoryRings           = "rings";
+  static const String   LogWellnessActionName              = "action";
+  static const String   LogWellnessActionComplete          = "complete";
+  static const String   LogWellnessActionUncomplete        = "uncomplete";
+  static const String   LogWellnessTargetName              = "target";
+  static const String   LogWellnessSourceName              = "source";
+
   // Event Attributes
   static const String   LogAttributeUrl                    = "url";
   static const String   LogAttributeEventId                = "event_id";
@@ -898,8 +909,21 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
     logEvent(event);
   }
-}
 
+  void logWellness({String? category, String? action, String? target, String? source, Map<String, dynamic>? attributes}) {
+    Map<String, dynamic> event = {
+      LogEventName            : LogWellnessEventName,
+      LogWellnessCategoryName : category,
+      LogWellnessActionName   : action,
+      LogWellnessTargetName   : target,
+      LogWellnessSourceName   : source,
+    };
+    if (attributes != null) {
+      event.addAll(attributes);
+    }
+    logEvent(event);
+  }
+}
 
 abstract class AnalyticsPageName {
   String? get analyticsPageName;
