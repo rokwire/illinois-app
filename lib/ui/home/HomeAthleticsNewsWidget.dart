@@ -193,12 +193,12 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
   }
 
   void _onTapNews(News news) {
-    Analytics().logSelect(target: "news: "+news.title!);
+    Analytics().logSelect(target: "News: '${news.title}'", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: news)));
   }
 
   void _onTapSeeAll() {
-    Analytics().logSelect(target: "HomeAthleticsNews: View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
   }
 

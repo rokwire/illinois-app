@@ -198,6 +198,10 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
   }
 
   void _onTapToDoItem(ToDoItem item) {
+    Analytics().logWellnessToDo(
+      action: item.isCompleted ? Analytics.LogWellnessActionUncomplete : Analytics.LogWellnessActionComplete,
+      source: widget.runtimeType.toString(),
+      item: item);
     item.isCompleted = !item.isCompleted;
     Wellness().updateToDoItem(item).then((success) {
       if (!success) {
@@ -207,12 +211,12 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
   }
 
   void _onTapAddItem() {
-    Analytics().logSelect(target: "Wellness To Do - Add Item");
+    Analytics().logSelect(target: "Add Item", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel()));
   }
 
   void _onTapViewAll() {
-    Analytics().logSelect(target: "Wellness To Do - View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.todo)));
   }
 
@@ -320,7 +324,7 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: _onTap, child:
+    return 
       Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
         ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
           Row(children: <Widget>[
@@ -380,8 +384,7 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
             ),
           ]),
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildButtons(){
@@ -406,19 +409,18 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
     ));
   }
 
-  void _onTap() {
-    Analytics().logSelect(target: 'Wellness Rings');
-  }
-
   void _onTapViewAll(){
-    Analytics().logSelect(target: "Wellness Rings - View all");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.rings)));
   }
 
   Future<void> _onTapIncrease(WellnessRingDefinition data) async{
-    await WellnessRings().addRecord(
-        WellnessRingRecord(value: 1, dateCreatedUtc: DateTime
-            .now(), wellnessRingId: data.id));
+    Analytics().logWellnessRing(
+      action: Analytics.LogWellnessActionComplete,
+      source: widget.runtimeType.toString(),
+      item: data,
+    );
+    await WellnessRings().addRecord(WellnessRingRecord(value: 1, dateCreatedUtc: DateTime.now(), wellnessRingId: data.id));
   }
   // NotificationsListener
 
@@ -570,7 +572,7 @@ class _HomeDailyTipsWellnessWidgetState extends State<HomeDailyTipsWellnessWidge
   }
 
   void _onTap() {
-    Analytics().logSelect(target: 'Wellness Dailty Tips');
+    Analytics().logSelect(target: "View", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.dailyTips,)));
   }
 

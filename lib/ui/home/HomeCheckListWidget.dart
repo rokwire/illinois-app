@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -126,7 +127,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,
-                  onTap: _onTapContinue,
+                  onTap: () => _onTapContinue(analyticsAction: 'Begin Checklist'),
                 ),
                 Container(height: 16,),
               ],
@@ -157,7 +158,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,
-                  onTap: _onTapContinue,
+                  onTap: () => _onTapContinue(analyticsAction: 'Review Checklist'),
                 ),
                 Container(height: 16,),
               ],
@@ -187,7 +188,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,
-                  onTap: _onTapContinue,
+                  onTap: () => _onTapContinue(analyticsAction: 'Continue'),
                 ),
                 Container(height: 16,),
               ],
@@ -195,7 +196,8 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
     );
   }
 
-  void _onTapContinue(){
+  void _onTapContinue({String? analyticsAction}){
+    Analytics().logSelect(target: analyticsAction, source: '${widget.runtimeType}(${widget.contentKey})');
     CheckListPanel.present(context, contentKey: widget.contentKey);
   }
 

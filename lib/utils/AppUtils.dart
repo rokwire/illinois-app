@@ -110,6 +110,7 @@ class AppAlert {
                 child: Text(
                     StringUtils.ensureNotEmpty(positiveButtonLabel, defaultValue: Localization().getStringEx('dialog.yes.title', 'Yes'))),
                 onPressed: () {
+                  Analytics().logAlert(text: message, selection: 'Yes');
                   Navigator.pop(context, true);
                   positiveCallback();
                 }),
@@ -117,7 +118,8 @@ class AppAlert {
                 child: Text(
                     StringUtils.ensureNotEmpty(negativeButtonLabel, defaultValue: Localization().getStringEx('dialog.no.title', 'No'))),
                 onPressed: () {
-                  Navigator.pop(context, true);
+                  Analytics().logAlert(text: message, selection: 'No');
+                  Navigator.pop(context, false);
                   if (negativeCallback != null) {
                     negativeCallback();
                   }

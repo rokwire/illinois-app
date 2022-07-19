@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessRing.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingCreatePane.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -104,10 +105,8 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
             label: JsonUtils.stringValue(jsonData["name"])??"",
             toggled: _selectedButton == jsonData,
             description: JsonUtils.stringValue(jsonData["description"]),
-            onTapWidget: (context){
-              _selectedButton = jsonData;
-              _refreshState();
-            }));
+            onTapWidget: (_) => _onButton(jsonData)
+        ));
         content.add(Container(height: 20,));
       }
     }
@@ -117,7 +116,14 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
     );
   }
 
+  void _onButton(Map<String, dynamic> jsonData) {
+    Analytics().logSelect(target: JsonUtils.stringValue(jsonData["name"]));
+    _selectedButton = jsonData;
+    _refreshState();
+  }
+
   void _openDetailPanel(){
+    Analytics().logSelect(target: 'Next');
     if(_selectedButton == null){
       return;
     }

@@ -331,32 +331,32 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
   }
 
   void _onTapEvents(BuildContext context) {
-    Analytics().logSelect(target: "Events");
+    Analytics().logSelect(target: "Events", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
   }
     
   void _onTapDining(BuildContext context) {
-    Analytics().logSelect(target: "Dining");
+    Analytics().logSelect(target: "Dining", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Dining); } ));
   }
 
   void _onTapAthletics(BuildContext context) {
-    Analytics().logSelect(target: "Athletics");
+    Analytics().logSelect(target: "Athletics", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
   }
 
   void _onTapIlliniCash(BuildContext context) {
-    Analytics().logSelect(target: "Illini Cash");
+    Analytics().logSelect(target: "Illini Cash", source: runtimeType.toString());
     SettingsIlliniCashPanel.present(context);
   }
 
   void _onTapLaundry(BuildContext context) {
-    Analytics().logSelect(target: "Laundry");
+    Analytics().logSelect(target: "Laundry", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
   }
 
   void _onTapMyIllini(BuildContext context) {
-    Analytics().logSelect(target: "My Illini");
+    Analytics().logSelect(target: "My Illini", source: runtimeType.toString());
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
     }
@@ -385,14 +385,14 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
   }
 
   void _onTapWellness(BuildContext context) {
-    Analytics().logSelect(target: "Wellness");
+    Analytics().logSelect(target: "Wellness", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel()));
   }
 
   bool get _canCrisisHelp => StringUtils.isNotEmpty(Config().crisisHelpUrl);
   
   void _onTapCrisisHelp(BuildContext context) {
-    Analytics().logSelect(target: "Crisis Help");
+    Analytics().logSelect(target: "Crisis Help", source: runtimeType.toString());
     String? url = Config().crisisHelpUrl;
     if (StringUtils.isNotEmpty(url)) {
       launch(url!);
@@ -402,22 +402,22 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
   }
 
   void _onTapGroups(BuildContext context) {
-    Analytics().logSelect(target: "Groups");
+    Analytics().logSelect(target: "Groups", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
   void _onTapQuickPolls(BuildContext context) {
-    Analytics().logSelect(target: "Quick Polls");
+    Analytics().logSelect(target: "Quick Polls", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
 
   void _onTapCampusGuide(BuildContext context) {
-    Analytics().logSelect(target: "Campus Guide");
+    Analytics().logSelect(target: "Campus Guide", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
   }
 
   void _onTapInbox(BuildContext context) {
-    Analytics().logSelect(target: "Inbox");
+    Analytics().logSelect(target: "Inbox", source: runtimeType.toString());
     SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
   }
 }

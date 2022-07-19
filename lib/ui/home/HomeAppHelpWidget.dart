@@ -87,7 +87,7 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
   bool get _canVideoTutorial => StringUtils.isNotEmpty(Config().videoTutorialUrl);
 
   void _onVideoTutorial() {
-    Analytics().logSelect(target: "HomeAppHelpWidget: Video Tutorial");
+    Analytics().logSelect(target: "Video Tutorial", source: widget.runtimeType.toString());
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.app_help.video_tutorial.label.offline', 'Video Tutorial not available while offline.'));
     }
@@ -99,7 +99,7 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
   bool get _canFeedback => StringUtils.isNotEmpty(Config().feedbackUrl);
 
   void _onFeedback() {
-    Analytics().logSelect(target: "HomeAppHelpWidget: Feebdack");
+    Analytics().logSelect(target: "Feebdack", source: widget.runtimeType.toString());
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.app_help.feedback.label.offline', 'Providing a Feedback is not available while offline.'));
     }
@@ -118,7 +118,7 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
   bool get _canFAQs => StringUtils.isNotEmpty(Config().faqsUrl);
 
   void _onFAQs() {
-    Analytics().logSelect(target: "HomeAppHelpWidget: FAQs");
+    Analytics().logSelect(target: "FAQs", source: widget.runtimeType.toString());
 
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.app_help.faqs.label.offline', 'FAQs is not available while offline.'));

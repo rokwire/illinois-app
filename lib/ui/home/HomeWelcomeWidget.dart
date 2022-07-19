@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -67,6 +68,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
   }
 
   void _onClose() {
+    Analytics().logSelect(target: "Close", source: widget.runtimeType.toString());
     setState(() {
       Storage().homeWelcomeVisible = _visible = false;
     });

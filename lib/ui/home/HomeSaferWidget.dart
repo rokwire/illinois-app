@@ -88,7 +88,7 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
 
   void _onBuildingAccess() {
     if (!_buildingAccessAuthLoading) {
-      Analytics().logSelect(target: 'Building Access');
+      Analytics().logSelect(target: 'Building Access', source: widget.runtimeType.toString());
       if (Connectivity().isOffline) {
         AppAlert.showOfflineMessage(context, "");
       } else if (!Auth2().privacyMatch(4)) {
@@ -132,7 +132,7 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
   }
 
   void _buildingAccessNotIncreasePrivacyLevel() {
-    Analytics().logSelect(target: 'No');
+    Analytics().logSelect(target: 'No', source: widget.runtimeType.toString());
     Navigator.of(context).pop();
     if (StringUtils.isNotEmpty(Config().iCardBoardingPassUrl)) {
       launch(Config().iCardBoardingPassUrl!);
@@ -140,7 +140,7 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
   }
 
   void _buildingAccessIncreasePrivacyLevelAndAuthentiate(int privacyLevel) {
-    Analytics().logSelect(target: 'Yes');
+    Analytics().logSelect(target: 'Yes', source: widget.runtimeType.toString());
     Navigator.of(context).pop();
     Auth2().prefs?.privacyLevel = privacyLevel;
     Future.delayed(Duration(milliseconds: 300), () {
@@ -185,21 +185,21 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
   }
 
   void _onTestLocations() {
-    Analytics().logSelect(target: 'Locations');
+    Analytics().logSelect(target: 'Locations', source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(
       builder: (context) => HomeSaferTestLocationsPanel()
     ));
   }
 
   void _onMyMcKinley() {
-    Analytics().logSelect(target: 'MyMcKinley');
+    Analytics().logSelect(target: 'MyMcKinley', source: widget.runtimeType.toString());
     if (StringUtils.isNotEmpty(Config().saferMcKinley['url'])) {
       launch(Config().saferMcKinley['url']);
     }
   }
 
   void _onWellnessAnswerCenter() {
-    Analytics().logSelect(target: 'Answer Center');
+    Analytics().logSelect(target: 'Answer Center', source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(
       builder: (context) => HomeSaferWellnessAnswerCenterPanel()
     ));

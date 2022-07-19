@@ -181,7 +181,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
         Expanded(child: Container(), flex: 1),
         (favoriteCategory != null) ?
           Html(data: HomeFavoritesWidget.emptyMessageHtml(favoriteCategory) ?? '',
-            onLinkTap: (url, renderContext, attributes, element) => HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'SavedPanel($favoriteCategory) View Home'),
+            onLinkTap: (url, renderContext, attributes, element) => HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'SavedPanel($favoriteCategory)'),
             style: {
               "body": Style(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.medium, fontSize: FontSize(18), padding: EdgeInsets.zero, margin: EdgeInsets.zero, textAlign: TextAlign.center),
               "a": Style(color: HomeFavoritesWidget.linkColor(favoriteCategory)),

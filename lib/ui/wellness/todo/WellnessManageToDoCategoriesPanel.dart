@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -242,16 +243,19 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   void _onTapCancelColorSelection() {
+    Analytics().logSelect(target: "Cancel Color");
     Navigator.of(context).pop();
   }
 
   void _onTapSelectColor() {
+    Analytics().logSelect(target: "Select Color");
     _selectedColor = _tmpColor;
     Navigator.of(context).pop();
     _updateState();
   }
 
   void _onTapEditCategory(ToDoCategory category) {
+    Analytics().logSelect(target: "Edit ${category.name}");
     _category = category;
     _nameController.text = StringUtils.ensureNotEmpty(_category?.name);
     _selectedColor = _category?.color;
@@ -259,6 +263,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   void _onTapDelete() {
+    Analytics().logSelect(target: "Delete");
     if (_category == null) {
       AppAlert.showDialogResult(
           context,
@@ -289,6 +294,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   void _onTapSave() {
+    Analytics().logSelect(target: "Save");
     _hideKeyboard();
     String name = _nameController.text;
     if (StringUtils.isEmpty(name)) {
@@ -311,6 +317,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   void _onTapColor(Color? color) async {
+    Analytics().logSelect(target: "Color: $color");
     _hideKeyboard();
     if (color == null) {
       AppAlert.showCustomDialog(context: context, contentWidget: _buildColorPickerDialog()).then((_) {

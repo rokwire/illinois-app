@@ -303,12 +303,13 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   }
 
   void _onViewAll() {
-    Analytics().logSelect(target: "HomeWellnessResourcesWidget View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.resources,)));
   }
 
   void _onCommand(Map<String, dynamic> command) {
-    Analytics().logSelect(target: _getString(JsonUtils.stringValue(command['id']), languageCode: Localization().defaultLocale?.languageCode),);
+    String? resourceName = _getString(JsonUtils.stringValue(command['id']), languageCode: Localization().defaultLocale?.languageCode);
+    Analytics().logSelect(target: "Resource: '$resourceName'" , source: widget.runtimeType.toString());
     _launchUrl(JsonUtils.stringValue(command['url']));
   }
 

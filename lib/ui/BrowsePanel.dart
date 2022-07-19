@@ -192,6 +192,10 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
   bool _isExpanded(String sectionId) => _expandedCodes.contains(sectionId);
 
   void _toggleExpanded(String sectionId) {
+    
+    String action = _expandedCodes.contains(sectionId) ? 'Collapse' : 'Expand';
+    Analytics().logSelect(target: "$action: '$sectionId'");
+
     if (mounted) {
       setState(() {
         if (_expandedCodes.contains(sectionId)) {
@@ -350,7 +354,7 @@ class _BrowseSection extends StatelessWidget {
   }
 
   void _onTapSectionFavorite(BuildContext context) {
-    Analytics().logSelect(target: "Favorite: $sectionId");
+    Analytics().logSelect(target: "Favorite: {${HomeFavorite.favoriteKeyName(category: sectionId)}}");
     if (kReleaseMode) {
       promptSectionFavorite(context).then((bool? result) {
         if (result == true) {

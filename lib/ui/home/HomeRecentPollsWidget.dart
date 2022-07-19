@@ -238,7 +238,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
   }
 
   void _onTapSeeAll() {
-    Analytics().logSelect(target: "HomeRecentPolls: View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
 

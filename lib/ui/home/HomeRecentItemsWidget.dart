@@ -197,7 +197,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: "HomeRecentItemsWidget View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeRecentItemsPanel()));
   }
 
@@ -450,12 +450,12 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
   }
 
   void _onTapFavorite() {
-    Analytics().logSelect(target: "Favorite: ${widget.recentItem.title}");
+    Analytics().logSelect(target: "Favorite: '${widget.recentItem.title}'", source: widget.runtimeType.toString());
     Auth2().prefs?.toggleFavorite(widget.recentItem.favorite);
   }
 
   void _onTapItem() {
-    Analytics().logSelect(target: "HomeRecentItemCard clicked: ${widget.recentItem.title}");
+    Analytics().logSelect(target: "Recent Item: '${widget.recentItem.title}'", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => _getDetailPanel(widget.recentItem)));
   }
 

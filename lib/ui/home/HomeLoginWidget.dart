@@ -121,7 +121,7 @@ class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
 
 
   void _onTapConnectNetIdClicked(BuildContext context) {
-    Analytics().logSelect(target: "Connect netId");
+    Analytics().logSelect(target: "Connect netId", source: widget.runtimeType.toString());
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context,"");
     }
@@ -176,7 +176,7 @@ class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
   }
 
   void _onTapPhoneOrEmailClicked(BuildContext context) {
-    Analytics().logSelect(target: "Phone or Email Login");
+    Analytics().logSelect(target: "Phone or Email Login", source: runtimeType.toString());
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(
         settings: RouteSettings(),

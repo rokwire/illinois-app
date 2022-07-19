@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessRing.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -11,7 +12,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-class WellnessRingCreatePanel extends StatefulWidget{
+class WellnessRingCreatePanel extends StatefulWidget implements AnalyticsPageAttributes {
   final WellnessRingDefinition? data;
   final String? examplesText;
   final bool initialCreation;
@@ -20,6 +21,16 @@ class WellnessRingCreatePanel extends StatefulWidget{
 
   @override
   State<StatefulWidget> createState() => _WellnessRingCreatePanelState();
+
+  @override
+  Map<String, dynamic>? get analyticsPageAttributes {
+    return {
+      Analytics.LogWellnessCategoryName: Analytics.LogWellnessCategoryRings,
+      Analytics.LogWellnessTargetName: data?.name,
+      Analytics.LogWellnessRingGoalName: data?.goal,
+      Analytics.LogWellnessRingUnitName: data?.unit,
+    };
+  }
 }
 
 class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> implements NotificationsListener {
@@ -265,16 +276,19 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
   }
 
   void _onTapCancelColorSelection() {
+    Analytics().logSelect(target: "Cancel Color");
     Navigator.of(context).pop();
   }
 
   void _onTapSelectColor() {
+    Analytics().logSelect(target: "Select Color");
     _selectedColor = _tmpColor;
     Navigator.of(context).pop();
     _updateState();
   }
 
   void _onTapSave() {
+    Analytics().logSelect(target: "Save");
     _hideKeyboard();
     String name = _nameController.text;
     double? quantity = StringUtils.isNotEmpty(_quantityController.text)? _toDouble(_quantityController.text) : null;
@@ -302,7 +316,12 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
     if(widget.data?.id != null) {
       _ringData.id = widget.data!.id;
     }
+    Analytics().logWellnessRing(
+      action: widget.initialCreation ? Analytics.LogWellnessActionCreate : Analytics.LogWellnessActionUpdate,
+      item: _ringData
+    );
     if(widget.initialCreation) {
+
       WellnessRings().addRing(_ringData).then((success) {
         late String msg;
         if (success) {
@@ -340,6 +359,11 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
   }
 
   void _onTapDelete(){
+    Analytics().logSelect(target: "Delete");
+    Analytics().logWellnessRing(
+      action: Analytics.LogWellnessActionClear,
+      item: widget.data
+    );
     _hideKeyboard();
     if(widget.data?.id != null) {
       _setLoadingDelete(true);
@@ -363,6 +387,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
   }
 
   void _onTapColor(Color? color) async {
+    Analytics().logSelect(target: "Color: $color");
     _hideKeyboard();
     if (color == null) {
       AppAlert.showCustomDialog(context: context, contentWidget: _buildColorPickerDialog()).then((_) {

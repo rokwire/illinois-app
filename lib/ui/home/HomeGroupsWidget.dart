@@ -219,7 +219,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: "HomeGroups ${widget.contentType} View All");
+    Analytics().logSelect(target: "View All", source: '${widget.runtimeType}(${widget.contentType})' );
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel(contentType: widget.contentType,)));
   }
 }

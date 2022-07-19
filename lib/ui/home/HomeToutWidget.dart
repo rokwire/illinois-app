@@ -20,9 +20,9 @@ import 'package:url_launcher/url_launcher.dart';
 class HomeToutWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final void Function()? onEdit;
+  final void Function() onEdit;
   
-  HomeToutWidget({Key? key, this.favoriteId, this.updateController, this.onEdit});
+  HomeToutWidget({Key? key, this.favoriteId, this.updateController, required this.onEdit});
 
   @override
   _HomeToutWidgetState createState() => _HomeToutWidgetState();
@@ -91,10 +91,11 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
               ],),
             )
           ),
-          GestureDetector(onTap: widget.onEdit, child:
-            Padding(padding: EdgeInsets.only(top: 16, right: 16), child: Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
-                        style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18, 
-                        decoration: TextDecoration.underline, decorationColor: Styles().colors?.textColorPrimary, decorationThickness: 1)))
+          GestureDetector(onTap: _onCustomize, child:
+            Padding(padding: EdgeInsets.only(top: 16, right: 16), child:
+              Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
+                style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18, 
+                decoration: TextDecoration.underline, decorationColor: Styles().colors?.textColorPrimary, decorationThickness: 1)))
           ),
         ],)
       )
@@ -196,8 +197,13 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   }
 
   void _onInfo() {
-    Analytics().logSelect(target: "Search");
+    Analytics().logSelect(target: "Info", source: widget.runtimeType.toString());
     _InfoDialog.show(context);
+  }
+
+  void _onCustomize() {
+    Analytics().logSelect(target: 'Customize', source: widget.runtimeType.toString());
+    widget.onEdit();
   }
 
   // NotificationsListener

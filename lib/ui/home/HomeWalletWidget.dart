@@ -142,12 +142,12 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
   }
 
   void _onTap() {
-    Analytics().logSelect(target: 'Illini Cash');
+    Analytics().logSelect(target: 'Illini Cash', source: widget.runtimeType.toString());
     SettingsIlliniCashPanel.present(context);
   }
 
   void _onTapPlus() {
-    Analytics().logSelect(target: "Add Illini Cash");
+    Analytics().logSelect(target: "Add Illini Cash", source: widget.runtimeType.toString());
     SettingsAddIlliniCashPanel.present(context);
   }
 
@@ -237,7 +237,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
   }
 
   void _onTap() {
-    Analytics().logSelect(target: 'Meal Plan');
+    Analytics().logSelect(target: 'Meal Plan', source: widget.runtimeType.toString());
     SettingsMealPlanPanel.present(context);
   }
 
@@ -322,7 +322,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
   }
 
   void _onTap() {
-    Analytics().logSelect(target: 'Bus Pass');
+    Analytics().logSelect(target: 'Bus Pass', source: widget.runtimeType.toString());
     MTDBusPassPanel.present(context);
   }
 
@@ -405,7 +405,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
   }
 
   void _onTap() {
-    Analytics().logSelect(target: 'Illini ID');
+    Analytics().logSelect(target: 'Illini ID', source: widget.runtimeType.toString());
      IDCardPanel.present(context);
   }
 
@@ -500,7 +500,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
   }
 
   void _onTap() {
-    Analytics().logSelect(target: 'Library Card');
+    Analytics().logSelect(target: 'Library Card', source: widget.runtimeType.toString());
   }
 
   void _loadLibraryBarcode() {

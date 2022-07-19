@@ -30,12 +30,24 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class WellnessToDoItemDetailPanel extends StatefulWidget {
+class WellnessToDoItemDetailPanel extends StatefulWidget  implements AnalyticsPageAttributes {
   final ToDoItem? item;
   WellnessToDoItemDetailPanel({this.item});
 
   @override
   State<WellnessToDoItemDetailPanel> createState() => _WellnessToDoItemDetailPanelState();
+
+  @override
+  Map<String, dynamic>? get analyticsPageAttributes {
+    return {
+      Analytics.LogWellnessCategoryName: Analytics.LogWellnessCategoryToDo,
+      Analytics.LogWellnessTargetName: item?.name,
+      Analytics.LogWellnessToDoCategoryName: item?.category?.name,
+      Analytics.LogWellnessToDoDueDateTime: DateTimeUtils.utcDateTimeToString(item?.dueDateTime),
+      Analytics.LogWellnessToDoReminderType: item?.reminderType.toString(),
+      Analytics.LogWellnessToDoWorkdays: item?.workDays?.join(','),
+    };
+  }
 }
 
 class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPanel> implements NotificationsListener {
@@ -456,6 +468,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   void _onTapOptionalFields() {
+    Analytics().logSelect(target: 'Optional Fields');
     _hideKeyboard();
     _optionalFieldsVisible = !_optionalFieldsVisible;
     if (_optionalFieldsVisible == false) {
@@ -465,6 +478,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   void _onTapCurrentCategory() {
+    Analytics().logSelect(target: 'Categories Dropdown');
     _hideKeyboard();
     _categoriesDropDownVisible = !_categoriesDropDownVisible;
     _updateState();
@@ -476,6 +490,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
       Analytics().logSelect(target: 'Create a Category');
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessManageToDoCategoriesPanel()));
     } else if (_category != category) {
+      Analytics().logSelect(target: 'Category: ${category?.name}');
       _category = category;
     }
     _categoriesDropDownVisible = !_categoriesDropDownVisible;
@@ -483,12 +498,14 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   void _onTapSelectedReminderType() {
+    Analytics().logSelect(target: 'Reminder Types Dropdown');
     _hideKeyboard();
     _reminderTypeDropDownValuesVisible = !_reminderTypeDropDownValuesVisible;
     _updateState();
   }
 
   void _onTapReminderType(ToDoReminderType type) {
+    Analytics().logSelect(target: 'Reminder Type: $type');
     _hideKeyboard();
     if (_reminderTypeDropDownValuesVisible) {
       _reminderTypeDropDownValuesVisible = false;
@@ -499,6 +516,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   void _onTapDueDate() async {
+    Analytics().logSelect(target: 'Due Date');
     _hideKeyboard();
     DateTime? resultDate = await _pickDate();
     if (resultDate != null) {
@@ -511,6 +529,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   void _onTapDueTime() async {
+    Analytics().logSelect(target: 'Due Time');
     if (_dueDate == null) {
       return;
     }
@@ -523,6 +542,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   void _onTapWorkDays() async {
+    Analytics().logSelect(target: 'Workdays');
     DateTime? resultDate = await _pickDate();
     if ((resultDate != null) && !(_workDays?.contains(resultDate) ?? false)) {
       if (_workDays == null) {
@@ -535,6 +555,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   void _onTapRemoveWorkDay(DateTime date) {
+    Analytics().logSelect(target: 'Remove Workday');
     if (_workDays?.contains(date) ?? false) {
       _workDays!.remove(date);
       _updateState();
@@ -563,6 +584,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   void _onTapDelete() {
+    Analytics().logSelect(target: 'Delete');
     if (_item == null) {
       AppAlert.showDialogResult(
           context, Localization().getStringEx('panel.wellness.todo.item.delete.no_item.msg', 'There is no selected item to delete.'));
@@ -578,6 +600,10 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
 
   void _deleteToDoItem() {
     _setLoading(true);
+    Analytics().logWellnessToDo(
+      action: Analytics.LogWellnessActionClear,
+      item: _item,
+    );
     Wellness().deleteToDoItem(_item!.id!).then((success) {
       late String msg;
       if (success) {
@@ -595,6 +621,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   void _onTapSave() {
+    Analytics().logSelect(target: 'Save');
     _hideKeyboard();
     String name = _nameController.text;
     if (StringUtils.isEmpty(name)) {
@@ -623,6 +650,12 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
         workDays: _formattedWorkDays,
         reminderType: _selectedReminderType,
         reminderDateTimeUtc: _reminderDateTime?.toUtc());
+
+    Analytics().logWellnessToDo(
+      action: (_item?.id == null) ? Analytics.LogWellnessActionCreate : Analytics.LogWellnessActionUpdate,
+      item: itemToSave,
+    );
+
     if (_item?.id != null) {
       Wellness().updateToDoItem(itemToSave).then((success) {
         _onSaveCompleted(success);

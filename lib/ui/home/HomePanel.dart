@@ -24,6 +24,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Guide.dart';
@@ -893,6 +894,7 @@ class _HomeHeaderBar extends RootHeaderBar {
   }
 
   void onTapEditDone(BuildContext context) {
+    Analytics().logSelect(target: 'Customize Done', source: 'HomePanel');
     if (onEditDone != null) {
       onEditDone!();
     }
@@ -908,7 +910,7 @@ abstract class HomeDragAndDropHost  {
 
 // HomeFavorite
 
-class HomeFavorite implements Favorite {
+class HomeFavorite extends Favorite {
   final String? id;
   final String? category;
   HomeFavorite(this.id, {this.category});

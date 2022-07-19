@@ -366,12 +366,18 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
               Align(
                   alignment: Alignment.topRight,
                   child: GestureDetector(
-                      onTap: () => {Navigator.of(context).pop()},
+                      onTap: _onClose,
                       child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png'))))
             ])));
   }
 
+  void _onClose() {
+    Analytics().logSelect(target: "Close", source: widget.runtimeType.toString());
+    Navigator.of(context).pop();
+  }
+
   void _onTabChanged({required _ToDoTab tab}) {
+    Analytics().logSelect(target: tab.toString(), source: widget.runtimeType.toString());
     if (_selectedTab != tab) {
       _selectedTab = tab;
       _updateState();
@@ -379,6 +385,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _onTapClearCompletedItems() {
+    Analytics().logSelect(target: 'Clear Completed Items', source: widget.runtimeType.toString());
     if (CollectionUtils.isEmpty(_todoItems)) {
       AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.todo.items.no_items.msg', 'There are no To-Do items.'));
       return;
@@ -391,6 +398,13 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _deleteCompletedItems() {
+    Analytics().logWellness(
+      category: Analytics.LogWellnessCategoryToDo,
+      action: Analytics.LogWellnessActionClear,
+      target: _completedItemNames?.join(','),
+      source: widget.runtimeType.toString(),
+    );
+    
     List<String>? completedItemsIds = _completedItemIds;
     if (CollectionUtils.isEmpty(completedItemsIds)) {
       AppAlert.showDialogResult(
@@ -412,6 +426,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _onTapPreviousWeek() {
+    Analytics().logSelect(target: "Previous Week", source: widget.runtimeType.toString());
     Duration weekDuration = Duration(days: 7);
     _calendarStartDate = _calendarStartDate.subtract(weekDuration);
     _calendarEndDate = _calendarEndDate.subtract(weekDuration);
@@ -419,6 +434,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _onTapNextWeek() {
+    Analytics().logSelect(target: "Next Week", source: widget.runtimeType.toString());
     Duration weekDuration = Duration(days: 7);
     _calendarStartDate = _calendarStartDate.add(weekDuration);
     _calendarEndDate = _calendarEndDate.add(weekDuration);
@@ -426,6 +442,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _onTapCalendarItem(ToDoItem? item) async {
+    Analytics().logSelect(target: "Calendar", source: widget.runtimeType.toString());
     if (item == null) {
       return;
     }
@@ -433,12 +450,12 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   void _onTapManageCategories() {
-    Analytics().logSelect(target: "Manage Categories");
+    Analytics().logSelect(target: "Manage Categories", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessManageToDoCategoriesPanel()));
   }
 
   void _onTapAddItem() {
-    Analytics().logSelect(target: "Add Item");
+    Analytics().logSelect(target: "Add Item", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel()));
   }
 
@@ -564,6 +581,19 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     return completedItemsIds;
   }
 
+  List<String>? get _completedItemNames {
+    if (CollectionUtils.isEmpty(_todoItems)) {
+      return null;
+    }
+    List<String> completedItemsNames = <String>[];
+    for (ToDoItem item in _todoItems!) {
+      if (item.isCompleted) {
+        completedItemsNames.add(item.name!);
+      }
+    }
+    return completedItemsNames;
+  }
+
   bool get _clearCompletedItemsButtonVisible {
     return (_completedItemIds?.length ?? 0) > 0;
   }
@@ -633,8 +663,13 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
   }
 
   void _onTapCompleted() {
-    _setLoading(true);
+    Analytics().logWellnessToDo(
+      action: widget.item.isCompleted ? Analytics.LogWellnessActionUncomplete : Analytics.LogWellnessActionComplete,
+      source: widget.runtimeType.toString(),
+      item: widget.item,
+    );
     widget.item.isCompleted = !widget.item.isCompleted;
+    _setLoading(true);
     Wellness().updateToDoItem(widget.item).then((success) {
       if (!success) {
         String msg = Localization().getStringEx('panel.wellness.todo.item.update.failed.msg', 'Failed to update To-Do item.');
@@ -645,7 +680,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
   }
 
   void _onTapEdit(ToDoItem item) {
-    Analytics().logSelect(target: "Edit Item");
+    Analytics().logSelect(target: "Edit Item", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(item: item)));
   }
 
@@ -794,6 +829,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
   }
 
   void _onTapPickReminderDate() {
+    Analytics().logSelect(target: "Pick Reminder Date", source: widget.runtimeType.toString());
     if (_loading) {
       return;
     }
@@ -817,6 +853,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
   }
 
   void _onTapPickReminderTime() {
+    Analytics().logSelect(target: "Pick Reminder Time", source: widget.runtimeType.toString());
     if (_loading) {
       return;
     }
@@ -831,9 +868,15 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
   }
 
   void _onTapSetReminder() {
+    Analytics().logSelect(target: "Set Reminder", source: widget.runtimeType.toString());
     if (_loading) {
       return;
     }
+    Analytics().logWellnessToDo(
+      action: Analytics.LogWellnessActionUpdate,
+      source: widget.runtimeType.toString(),
+      item: widget.item,
+    );
     _setLoading(true);
     _item.reminderDateTimeUtc = _reminderDateTime.toUtc();
     Wellness().updateToDoItem(_item).then((success) {
@@ -848,6 +891,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
   }
 
   void _onTapCloseEditReminderDialog() {
+    Analytics().logSelect(target: "Close", source: widget.runtimeType.toString());
     if(_loading) {
       return;
     }

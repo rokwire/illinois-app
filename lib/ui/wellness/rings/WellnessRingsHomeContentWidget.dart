@@ -166,6 +166,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
         padding: EdgeInsets.symmetric(vertical: 32, horizontal: 16),
         child: SmallRoundedButton(label: 'Clear History',
           onTap: (){
+            Analytics().logSelect(target: 'Clear History', source: widget.runtimeType.toString());
             WellnessRings().deleteRecords().then((success) {
               if(success == false){
                 AppAlert.showDialogResult(context, "Unable to clear history");
@@ -185,32 +186,52 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
   Widget _buildButtons(){
     List<Widget> content = [];
     if(_ringsData != null && _ringsData!.isNotEmpty) {
-      for (WellnessRingDefinition? definition  in _ringsData!) {
-        if (definition != null) {
-          content.add(WellnessRingButton(
-              label: definition.name ?? "",
-              color: definition.color,
-              description: "${WellnessRings().getRingDailyValue(definition.id).toInt()}/${definition.goal.toInt()} ${definition.unit}",
-              onTapIncrease: (context) async{
-                await WellnessRings().addRecord(
-                    WellnessRingRecord(value: 1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
-              },
-            onTapDecrease: (context) async {
-              await WellnessRings().addRecord(
-                  WellnessRingRecord(value: -1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
-            },
-              onTapEdit: (context){
-                Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingCreatePanel(data: definition, initialCreation: false,)));
-              },
-          ));
-          content.add(Container(height: 15,));
-        }
+      for (WellnessRingDefinition definition  in _ringsData!) {
+        content.add(WellnessRingButton(
+            label: definition.name ?? "",
+            color: definition.color,
+            description: "${WellnessRings().getRingDailyValue(definition.id).toInt()}/${definition.goal.toInt()} ${definition.unit}",
+            onTapIncrease: (_) => _onTapIncrease(definition),
+            onTapDecrease: (_) => onTapDecrease(definition),
+            onTapEdit: (_) => _onTapEdit(definition),
+        ));
+        content.add(Container(height: 15,));
       }
     }
 
     return Container(
       child: Column(children: content,),
     );
+  }
+
+  Future<void> _onTapIncrease(WellnessRingDefinition definition) async {
+    Analytics().logWellnessRing(
+      action: Analytics.LogWellnessActionComplete,
+      source: widget.runtimeType.toString(),
+      item: definition,
+    );
+    await WellnessRings().addRecord(WellnessRingRecord(value: 1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
+  }
+
+  Future<void> onTapDecrease(WellnessRingDefinition definition) async {
+    Analytics().logWellnessRing(
+      action: Analytics.LogWellnessActionUncomplete,
+      source: widget.runtimeType.toString(),
+      item: definition,
+    );
+    await WellnessRings().addRecord(WellnessRingRecord(value: -1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
+  }
+
+  void _onTapEdit(WellnessRingDefinition definition) {
+    Analytics().logSelect(target: 'Edit', source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingCreatePanel(data: definition, initialCreation: false,)));
+  }
+
+  void _onTapCreate() {
+    Analytics().logSelect(target: 'Create New Ring', source: widget.runtimeType.toString());
+    if(WellnessRings().canAddRing) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingSelectPredefinedPanel()));
+    }
   }
 
   Widget _buildCreateRingButton(){
@@ -222,13 +243,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     return Visibility(
         visible: WellnessRings().canAddRing,
         child: Semantics(label: label, hint: description, button: true, excludeSemantics: true,
-          child: GestureDetector(onTap: (){
-            if(enabled) {
-              Analytics().logSelect(target: "Create new ring");
-              Navigator.push(context, CupertinoPageRoute(
-                  builder: (context) => WellnessRingSelectPredefinedPanel()));
-            }
-          },
+          child: GestureDetector(onTap: _onTapCreate,
           child: Container(
           // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -292,12 +307,18 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
               Align(
                   alignment: Alignment.topRight,
                   child: GestureDetector(
-                      onTap: () => {Navigator.of(context).pop()},
+                      onTap: _onClose,
                       child: Padding(padding: EdgeInsets.all(11), child: Image.asset('images/icon-x-orange.png'))))
             ])));
   }
 
+  void _onClose() {
+    Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
+    Navigator.of(context).pop();
+  }
+
   void _onTabChanged({required _WellnessRingsTab tab}) {
+    Analytics().logSelect(target: tab.toString(), source: widget.runtimeType.toString());
     if (_selectedTab != tab) {
       _selectedTab = tab;
       if (mounted) {

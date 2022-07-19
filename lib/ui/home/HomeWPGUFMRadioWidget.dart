@@ -77,7 +77,7 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
   }
 
   static void _onClosePopup(BuildContext context) {
-    Analytics().logSelect(target: 'Close');
+    Analytics().logSelect(target: 'Close', source: 'HomeWPGUFMRadioWidget');
     Navigator.of(context).pop();
   }
 }
@@ -177,7 +177,7 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
 
 
   void _onTapPlayPause() {
-    Analytics().logSelect(target: 'Play/Pause');
+    Analytics().logSelect(target: 'Play/Pause', source: 'HomeWPGUFMRadioWidget');
     WPGUFMRadio().togglePlayPause();
   }
 
