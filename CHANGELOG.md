@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Removed
 - Removed OnCampus section from Calendar settings [#2045](https://github.com/rokwire/illinois-app/issues/2045).
+### Changed
+- Label to "My Gies Canvas Courses" [#2048](https://github.com/rokwire/illinois-app/issues/2048).
 
 ## [4.0.54] - 2022-07-18
 ### Added
