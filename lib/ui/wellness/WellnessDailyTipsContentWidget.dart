@@ -147,7 +147,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     }
   }
 
-  static Widget _buildEightDimensionsPopup(BuildContext context) {
+  Widget _buildEightDimensionsPopup(BuildContext context) {
     return Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), child:
       ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
         Container(color: Styles().colors!.white, child:
@@ -182,14 +182,14 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
   }
 
   void onTapEightDimension() {
-    Analytics().logSelect(target: 'Learn more about the 8 dimensions');
+    Analytics().logSelect(target: 'Learn more about the 8 dimensions', source: widget.runtimeType.toString());
     if (StringUtils.isNotEmpty(Config().wellness8DimensionsUrl)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: Config().wellness8DimensionsUrl, title: Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'),)));
     }
   }
 
   void _onTapEightDimensionsImage() {
-    Analytics().logSelect(target: '8 dimensions of Wellness');
+    Analytics().logSelect(target: '8 dimensions of Wellness', source: widget.runtimeType.toString());
     showDialog(context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
@@ -198,8 +198,8 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     );
   }
 
-  static void _onClosePopup(BuildContext context) {
-    Analytics().logSelect(target: 'Close');
+  void _onClosePopup(BuildContext context) {
+    Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
     Navigator.of(context).pop();
   }
 

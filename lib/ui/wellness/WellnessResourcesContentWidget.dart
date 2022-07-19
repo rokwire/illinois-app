@@ -202,7 +202,10 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
   }
 
   void _onCommand(Map<String, dynamic> command) {
-    Analytics().logSelect(target: _getString(JsonUtils.stringValue(command['id']), languageCode: Localization().defaultLocale?.languageCode),);
+    Analytics().logSelect(
+      target: _getString(JsonUtils.stringValue(command['id']), languageCode: Localization().defaultLocale?.languageCode),
+      source: widget.runtimeType.toString()
+    );
     _launchUrl(JsonUtils.stringValue(command['url']));
   }
 
