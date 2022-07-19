@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added default attributes from student classification to Analytics events [#2047](https://github.com/rokwire/illinois-app/issues/2047).
 - Added Analytics events to the new content [#2052](https://github.com/rokwire/illinois-app/issues/2052).
 - Implement pull-to-refresh with authman sync in GroupMembersPanel. Check if this is available in the config [#2059](https://github.com/rokwire/illinois-app/issues/2059).
+- Add create ring button to HomeWellnessRingWidget [#2026](https://github.com/rokwire/illinois-app/issues/2026).
 ### Changed
 - Label to "My Gies Canvas Courses" [#2048](https://github.com/rokwire/illinois-app/issues/2048).
 - Update wording in group privacy sentence [#2041](https://github.com/rokwire/illinois-app/issues/2041).

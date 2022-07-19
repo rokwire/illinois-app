@@ -13,6 +13,7 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:illinois/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
@@ -403,11 +404,64 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
       }
     }
 
+      content.add(_buildCreateRingButton());
+
     return Container(child:Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: content,
     ));
+  }
+
+  Widget _buildCreateRingButton(){
+    bool enabled = WellnessRings().canAddRing;
+    final Color disabledTextColor = ColorUtils.fromHex("5c5c5c") ?? Colors.white; //TODO move to colors
+    final Color disabledBackgroundColor = ColorUtils.fromHex("e7e7e7") ?? Colors.white; //TODO move to colors
+    String label = "Create New Ring";
+    String description = "Maximum of 4 total";
+    return Visibility(
+        visible: WellnessRings().canAddRing,
+        child: Semantics(label: label, hint: description, button: true, excludeSemantics: true,
+          child: GestureDetector(onTap: _onTapCreate,
+            child: Container(
+              // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Expanded(child:
+                  Container(decoration: BoxDecoration(color: enabled? Colors.white : disabledBackgroundColor, borderRadius: BorderRadius.all(Radius.circular(4)), border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1)), child:
+                  Padding(padding: EdgeInsets.only(left: 8 /*+10 from icon*/, top: 10, bottom: 10, right: 3/*+10 form icon*/), child:
+                  Row( crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.only(right: 8),
+                        child: Image.asset('images/icons-control-add-blue.png', excludeFromSemantics: true, color: enabled? Colors.black : disabledTextColor,),
+                      ),
+                      Expanded(
+                          flex: 5,
+                          child: Container(
+                            child: Text(label ,
+                              style: TextStyle(color: enabled? Colors.black : disabledTextColor,
+                                  fontFamily: Styles().fontFamilies!.bold, fontSize: 14), textAlign: TextAlign.start,),)),
+                      // Expanded(
+                          // flex: 5,
+                          // child: Container(
+                          //   child: Text(description ,
+                          //     style: TextStyle(color: enabled? Colors.black : disabledTextColor,
+                          //         fontFamily: Styles().fontFamilies!.regular, fontSize: 12), textAlign: TextAlign.end,),)),
+                    ],),
+                  ),
+                  )
+                  ),
+                ],)),
+          ),
+        ));
+  }
+
+  void _onTapCreate() {
+    Analytics().logSelect(target: 'Create New Ring', source: widget.runtimeType.toString());
+    if(WellnessRings().canAddRing) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingSelectPredefinedPanel()));
+    }
   }
 
   void _onTapViewAll(){
