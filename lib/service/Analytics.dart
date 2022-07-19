@@ -138,6 +138,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   // "event" : { "name":"select", "page":"...", "target":"..." } }
   static const String   LogSelectEventName                 = "select";
   static const String   LogSelectTargetName                = "target";
+  static const String   LogSelectSourceName                = "source";
 
   // Alert Event
   // {  "event" : { "name":"alert", "page":"...", "text":"...", "selection":"..." }}
@@ -736,12 +737,13 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     logEvent(event);
   }
 
-  void logSelect({String? target,  Map<String, dynamic>? attributes}) {
+  void logSelect({String? target, String? source,  Map<String, dynamic>? attributes}) {
 
     // Build event data
     Map<String, dynamic> event = {
       LogEventName          : LogSelectEventName,
       LogSelectTargetName   : target,
+      LogSelectSourceName   : source,
     };
 
     // Add optional attribute, if applied
