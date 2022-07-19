@@ -761,17 +761,19 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           }
           favoritesList.insert(dropIndex, dragFavoriteId);
           Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
+          HomeFavorite.log(HomeFavorite(dragFavoriteId));
         }
       }
       else if (0 <= dropIndex) {
         // Add favorite at specific position
-        HomeFavoriteButton.promptFavorite(context, HomeFavorite(dragFavoriteId)).then((bool? result) {
+        HomeFavoriteButton.promptFavorite(context, favorite: HomeFavorite(dragFavoriteId)).then((bool? result) {
           if (result == true) {
             if (dropAnchor == CrossAxisAlignment.start) {
               dropIndex++;
             }
             favoritesList.insert(dropIndex, dragFavoriteId);
             Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
+            HomeFavorite.log(HomeFavorite(dragFavoriteId));
           }
         });
       }
@@ -781,12 +783,14 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           favoritesList.removeAt(dragIndex);
           favoritesList.insert(favoritesList.length, dragFavoriteId);
           Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
+          HomeFavorite.log(HomeFavorite(dragFavoriteId));
         }
         else {
           // add favorite
-          HomeFavoriteButton.promptFavorite(context, HomeFavorite(dragFavoriteId)).then((bool? result) {
+          HomeFavoriteButton.promptFavorite(context, favorite: HomeFavorite(dragFavoriteId)).then((bool? result) {
             if (result == true) {
               Auth2().prefs?.toggleFavorite(HomeFavorite(dragFavoriteId));
+              HomeFavorite.log(HomeFavorite(dragFavoriteId));
             }
           });
         }
@@ -799,17 +803,28 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           }
           favoritesList.insert(0, dragFavoriteId);
           Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
+          HomeFavorite.log(HomeFavorite(dragFavoriteId));
         }
         else {
           if (0 <= dragIndex) {
             // remove favorite
-            HomeFavoriteButton.promptFavorite(context, HomeFavorite(dragFavoriteId)).then((bool? result) {
+            HomeFavoriteButton.promptFavorite(context, favorite: HomeFavorite(dragFavoriteId)).then((bool? result) {
               if (result == true) {
                 Auth2().prefs?.toggleFavorite(HomeFavorite(dragFavoriteId));
+                HomeFavorite.log(HomeFavorite(dragFavoriteId));
               }
             });
           }
         }
+      }
+      else {
+        // remove favorite
+        HomeFavoriteButton.promptFavorite(context, favorite: HomeFavorite(dragFavoriteId)).then((bool? result) {
+          if (result == true) {
+            Auth2().prefs?.toggleFavorite(HomeFavorite(dragFavoriteId));
+            HomeFavorite.log(HomeFavorite(dragFavoriteId));
+          }
+        });
       }
     }
   }
@@ -921,5 +936,31 @@ class HomeFavorite extends Favorite {
   static String favoriteKeyName({String? category}) => (category != null) ? "home.$category.widgetIds" : "home.widgetIds";
   @override String get favoriteKey => favoriteKeyName(category: category);
   @override String? get favoriteId => id;
+
+  static void log(dynamic favorite, [bool? selected]) {
+    List<Favorite> usedList = <Favorite>[];
+    List<Favorite> unusedList = <Favorite>[];
+    
+    List<String>? fullContent = JsonUtils.listStringsValue(FlexUI()['home']);
+    LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(favoriteKeyName());
+
+    if (homeFavorites != null) {
+      for (String code in List<String>.from(homeFavorites).reversed) {
+        if (fullContent?.contains(code) ?? false) {
+          usedList.add(HomeFavorite(code));
+        }
+      }
+    }
+
+    if (fullContent != null) {
+      for (String code in fullContent) {
+        if (!(homeFavorites?.contains(code) ?? false)) {
+          unusedList.add(HomeFavorite(code));
+        }
+      }
+    }
+
+    Analytics().logWidgetFavorite(favorite, selected, used: usedList, unused: unusedList);
+  }
 }
 

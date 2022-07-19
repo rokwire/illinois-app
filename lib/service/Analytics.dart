@@ -160,12 +160,20 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
   static const String   LogFavoriteEventName                = "favorite";
   static const String   LogFavoriteActionName               = "action";
+  static const String   LogFavoriteTargetName               = "target";
   static const String   LogFavoriteTypeName                 = "type";
   static const String   LogFavoriteIdName                   = "id";
   static const String   LogFavoriteTitleName                = "title";
+  static const String   LogFavoriteUsedName                 = "used";
+  static const String   LogFavoriteUnusedName               = "unused";
 
   static const String   LogFavoriteOnActionName             = "on";
   static const String   LogFavoriteOffActionName            = "off";
+  static const String   LogFavoriteReorderActionName        = "reorder";
+
+  // Widget Favorite Event
+  // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
+  static const String   LogWidgetFavoriteEventName          = "widget_favorite";
 
   // Poll Event
   // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
@@ -809,7 +817,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
   }
 
-  void logFavorite(Favorite? favorite, [bool? on, String? title]) {
+  void logFavorite(Favorite? favorite, {bool? on, String? title}) {
     if (on == null) {
       on = Auth2().isFavorite(favorite);
     }
@@ -820,6 +828,33 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       LogFavoriteIdName     : favorite?.favoriteId,
       LogFavoriteTitleName  : title,
     });
+  }
+
+  void logWidgetFavorite(dynamic favorite, bool? selected, { List<Favorite>? used, List<Favorite>? unused }) {
+    dynamic target;
+    if (favorite is Favorite) {
+      target = favorite.toString();
+    }
+    else if (favorite is List) {
+      target = JsonUtils.stringListValue(favorite);
+    }
+
+    String? action;
+    if (selected != null) {
+      action = selected ? LogFavoriteOnActionName : LogFavoriteOffActionName;
+    }
+    else {
+      action = LogFavoriteReorderActionName;
+    }
+
+    logEvent({
+      LogEventName          : LogWidgetFavoriteEventName,
+      LogFavoriteTargetName : target,
+      LogFavoriteActionName : action,
+      LogFavoriteUsedName   : JsonUtils.stringListValue(used),
+      LogFavoriteUnusedName : JsonUtils.stringListValue(unused),
+    });
+
   }
 
   void logPoll(Poll? poll, String action) {
