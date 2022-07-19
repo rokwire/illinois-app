@@ -19,6 +19,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -72,6 +73,16 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogStdAccessibilityName            = "accessibility";
   static const String   LogStdAuthCardRoleName             = "icard_role";
   static const String   LogStdAuthCardStudentLevel         = "icard_student_level";
+  static const String   LogStdStudentTermCode              = "student_term_code";
+  static const String   LogStdStudentType                  = "student_type";
+  static const String   LogStdStudentTypeCode              = "student_type_code";
+  static const String   LogStdStudentAdmittedTerm          = "student_admitted_term";
+  static const String   LogStdStudentCollegeName           = "student_college_name";
+  static const String   LogStdStudentDepartmentName        = "student_department_name";
+  static const String   LogStdStudentLevelCode             = "student_level_code";
+  static const String   LogStdStudentLevelDescription      = "student_level_description";
+  static const String   LogStdStudentClassification        = "student_classification";
+  static const String   LogStdStudentFirstYear             = "student_first_year";
   
   static const String   LogEvent                           = "event";
   static const String   LogEventName                       = "name";
@@ -96,6 +107,16 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     LogStdAccessibilityName,
     LogStdAuthCardRoleName,
     LogStdAuthCardStudentLevel,
+    LogStdStudentTermCode,
+    LogStdStudentType,
+    LogStdStudentTypeCode,
+    LogStdStudentAdmittedTerm,
+    LogStdStudentCollegeName,
+    LogStdStudentDepartmentName,
+    LogStdStudentLevelCode,
+    LogStdStudentLevelDescription,
+    LogStdStudentClassification,
+    LogStdStudentFirstYear,
   ];
 
   // Livecycle Event
@@ -624,11 +645,41 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         else if (attributeName == LogStdAccessibilityName) {
           analyticsEvent[LogStdAccessibilityName] = _accessibilityState;
         }
-        else if(attributeName == LogStdAuthCardRoleName){
+        else if (attributeName == LogStdAuthCardRoleName) {
           analyticsEvent[LogStdAuthCardRoleName] = Auth2().authCard?.role;
         }
-        else if(attributeName == LogStdAuthCardStudentLevel){
+        else if (attributeName == LogStdAuthCardStudentLevel) {
           analyticsEvent[LogStdAuthCardStudentLevel] = Auth2().authCard?.studentLevel;
+        }
+        else if (attributeName == LogStdStudentTermCode) {
+          analyticsEvent[LogStdStudentTermCode] = IlliniCash().studentClassification?.termCode;
+        }
+        else if (attributeName == LogStdStudentType) {
+          analyticsEvent[LogStdStudentType] = IlliniCash().studentClassification?.studentType;
+        }
+        else if (attributeName == LogStdStudentTypeCode) {
+          analyticsEvent[LogStdStudentTypeCode] = IlliniCash().studentClassification?.studentTypeCode;
+        }
+        else if (attributeName == LogStdStudentAdmittedTerm) {
+          analyticsEvent[LogStdStudentAdmittedTerm] = IlliniCash().studentClassification?.admittedTerm;
+        }
+        else if (attributeName == LogStdStudentCollegeName) {
+          analyticsEvent[LogStdStudentCollegeName] = IlliniCash().studentClassification?.collegeName;
+        }
+        else if (attributeName == LogStdStudentDepartmentName) {
+          analyticsEvent[LogStdStudentDepartmentName] = IlliniCash().studentClassification?.departmentName;
+        }
+        else if (attributeName == LogStdStudentLevelCode) {
+          analyticsEvent[LogStdStudentLevelCode] = IlliniCash().studentClassification?.studentLevelCode;
+        }
+        else if (attributeName == LogStdStudentLevelDescription) {
+          analyticsEvent[LogStdStudentLevelDescription] = IlliniCash().studentClassification?.studentLevelDescription;
+        }
+        else if (attributeName == LogStdStudentClassification) {
+          analyticsEvent[LogStdStudentClassification] = IlliniCash().studentClassification?.classification;
+        }
+        else if (attributeName == LogStdStudentFirstYear) {
+          analyticsEvent[LogStdStudentFirstYear] = IlliniCash().studentClassification?.firstYear;
         }
       }
 
