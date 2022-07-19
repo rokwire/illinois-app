@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.0.55] - 2022-07-19
 ### Removed
 - Removed OnCampus section from Calendar settings [#2045](https://github.com/rokwire/illinois-app/issues/2045).
 ### Added
@@ -19,7 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update wording in Notifications HomeFavoritesWidget [#2022](https://github.com/rokwire/illinois-app/issues/2022).
 - Optimized content update in HomeFavoriteWidget.
 ### Fixed
-- Fixed WellnessRings refresh issues. [#2055](https://github.com/rokwire/illinois-app/issues/2055).
+- Fixed WellnessRings refresh issues [#2055](https://github.com/rokwire/illinois-app/issues/2055).
+
 ## [4.0.54] - 2022-07-18
 ### Added
 - Added On Campus settings in Personal Info child widget [#2027](https://github.com/rokwire/illinois-app/issues/2027).
