@@ -2630,7 +2630,7 @@
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
     "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here.",
     "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.inbox": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Notifications</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.inbox": "See your most recent <a href='{{local_url}}'><b>Notifications</b></a> for quick access here.",
 
     "widget.home.favorites.message.logged_out.inbox": "You need to be logged in to access My Notifications.",
 
