@@ -251,17 +251,17 @@ class _HomeCampusGuideWidgetState extends State<HomeCampusGuideWidget> implement
   }
 
   void _onTapCategory(String category) {
-    Analytics().logSelect(target: category);
+    Analytics().logSelect(target: "Category: '$category'", source: widget.runtimeType.toString());
     //Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(category: category,)));
   }
 
   void _onTapSection(GuideSection section, {String? category}) {
-    Analytics().logSelect(target: "$category / ${section.name}");
+    Analytics().logSelect(target: "Category: '$category' / Section: '${section.name}'", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(guide: widget.guide, category: category, section: section,)));
   }
 
   void _onTapViewAll() {
-    Analytics().logSelect(target: "HomeCampusGuideWidget View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideCategoriesPanel(guide: widget.guide,)));
   }
 }

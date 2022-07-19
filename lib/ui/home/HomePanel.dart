@@ -894,7 +894,7 @@ class _HomeHeaderBar extends RootHeaderBar {
   }
 
   void onTapEditDone(BuildContext context) {
-    Analytics().logSelect(target: 'Customize Done');
+    Analytics().logSelect(target: 'Customize Done', source: 'HomePanel');
     if (onEditDone != null) {
       onEditDone!();
     }

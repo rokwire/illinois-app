@@ -71,12 +71,12 @@ class _HomeDiningWidgetState extends HomeCompoundWidgetState<HomeDiningWidget> {
   }
   
   void _onTapDiningsAll() {
-    Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining");
+    Analytics().logSelect(target: "Residence Hall Dining", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining) ));
   }
 
   void _onTapDiningsOpen() {
-    Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining Open Now");
+    Analytics().logSelect(target: "Residence Hall Dining Open Now", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
   }
 }

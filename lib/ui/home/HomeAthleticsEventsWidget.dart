@@ -193,7 +193,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
 
 
   void _onTapGame(Game game) {
-    Analytics().logSelect(target: "Game: "+game.title);
+    Analytics().logSelect(target: "Game: '${game.title}'" , source: widget.runtimeType.toString());
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute( builder: (context) => AthleticsGameDetailPanel(game: game)));
     }
@@ -203,7 +203,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
   }
 
   void _onTapSeeAll() {
-    Analytics().logSelect(target: "HomeAthleticsEvents: View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3}))));
   }
 

@@ -170,12 +170,12 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   }
 
   void _onTapCourse(CanvasCourse course) {
-    Analytics().logSelect(target: "Home Canvas Course");
+    Analytics().logSelect(target: "Course: '${course.name}'", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseHomePanel(courseId: course.id)));
   }
 
   void _onViewAll() {
-    Analytics().logSelect(target: "Home Canvas Courses View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.courses,)));
   }
 

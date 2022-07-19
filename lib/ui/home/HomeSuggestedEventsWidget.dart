@@ -354,7 +354,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
 
 
   void _onTapEvent(Event? event) {
-    Analytics().logSelect(target: "HomeUpcomingEvents event: ${event?.exploreId}");
+    Analytics().logSelect(target: "Event: '${event?.title}'", source: widget.runtimeType.toString());
 
     if (event?.isComposite ?? false) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event)));
@@ -381,12 +381,12 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
   }
 
   void _navigateToExploreEvents() {
-    Analytics().logSelect(target: "HomeUpcomingEvents View all events");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events)));
   }
 
   void _navigateToSettings() {
-    Analytics().logSelect(target: "Events for you - settings");
+    Analytics().logSelect(target: "Settings", source: widget.runtimeType.toString());
     SettingsHomeContentPanel.present(context, content: SettingsContent.interests);
   }
 }

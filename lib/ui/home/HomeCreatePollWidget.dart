@@ -111,6 +111,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   }
 
   void _onCreatePoll() {
+    Analytics().logSelect(target: "Create Poll", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));
 
   }
@@ -120,7 +121,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   }
 
   void _onLogin(){
-    Analytics().logSelect(target: "Login");
+    Analytics().logSelect(target: "Login", source: widget.runtimeType.toString());
     if (_authLoading != true) {
       setState(() { _authLoading = true; });
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {

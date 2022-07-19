@@ -335,7 +335,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   }
 
   void _onDropDownValueChanged(String? value) {
-    Analytics().logSelect(target: "Twitter account selected: $value");
+    Analytics().logSelect(target: "Twitter account selected: $value", source: widget.runtimeType.toString());
     Storage().selectedTwitterAccount = _selectedAccountKey = (value != _defaultAccountKey) ? value : null;
     _refresh(count: Config().twitterTweetsCount);
   }
@@ -353,7 +353,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   }
 
   void _onViewAll() {
-    Analytics().logSelect(target: "Home Twitter Widget View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => TwitterPanel()));
   }
 
@@ -611,7 +611,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
   }
 
   void _onDropDownValueChanged(String? value) {
-    Analytics().logSelect(target: "Twitter account selected: $value");
+    Analytics().logSelect(target: "Twitter account selected: $value", source: widget.runtimeType.toString());
     Storage().selectedTwitterAccount = _selectedAccountKey = (value != _defaultAccountKey) ? value : null;
     _refresh(count: Config().twitterTweetsCount);
   }

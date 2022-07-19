@@ -56,7 +56,7 @@ class _HomeAthliticsTeamsWidgetState extends State<HomeAthliticsTeamsWidget> {
   }
 
   void _onTapSeeAll() {
-    Analytics().logSelect(target: "HomeAthleticsTeams: View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamsPanel()));
   }
 

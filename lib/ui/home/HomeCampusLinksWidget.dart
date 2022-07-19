@@ -71,7 +71,7 @@ class _HomeCampusLinksWidgetState extends HomeCompoundWidgetState<HomeCampusLink
   bool get _canDueDateCatalog => StringUtils.isNotEmpty(Config().dateCatalogUrl);
 
   void _onDueDateCatalog() {
-    Analytics().logSelect(target: "HomeCampusLinksWidget: Due Date Catalog");
+    Analytics().logSelect(target: "Due Date Catalog", source: widget.runtimeType.toString());
     
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.campus_links.date_cat.label.offline', 'Due Date Catalog not available while offline.'));

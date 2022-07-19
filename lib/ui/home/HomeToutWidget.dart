@@ -197,12 +197,12 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   }
 
   void _onInfo() {
-    Analytics().logSelect(target: "HomeTout: Info");
+    Analytics().logSelect(target: "Info", source: widget.runtimeType.toString());
     _InfoDialog.show(context);
   }
 
   void _onCustomize() {
-    Analytics().logSelect(target: 'HomeTout: Customize');
+    Analytics().logSelect(target: 'Customize', source: widget.runtimeType.toString());
     widget.onEdit();
   }
 

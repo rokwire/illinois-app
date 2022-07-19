@@ -82,12 +82,12 @@ class _HomeStateFarmCenterWidgetState extends HomeCompoundWidgetState<HomeStateF
   }
 
   void _onParking() {
-    Analytics().logSelect(target: "HomeStateFarmCenterWidget: Parking");
+    Analytics().logSelect(target: "Parking", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ParkingEventsPanel()));
   }
 
   void _onWayfinding() {
-    Analytics().logSelect(target: "HomeStateFarmCenterWidget: Wayfinding");
+    Analytics().logSelect(target: "Wayfinding", source: widget.runtimeType.toString());
     NativeCommunicator().launchMap(target: {
       'latitude': Config().stateFarmWayfinding['latitude'],
       'longitude': Config().stateFarmWayfinding['longitude'],
@@ -96,7 +96,7 @@ class _HomeStateFarmCenterWidgetState extends HomeCompoundWidgetState<HomeStateF
   }
 
   void _onCreateStadiumPoll() {
-    Analytics().logSelect(target: "HomeStateFarmCenterWidget: Create Stadium Poll");
+    Analytics().logSelect(target: "Create Stadium Poll", source: widget.runtimeType.toString());
     CreateStadiumPollPanel.present(context);
   }
 

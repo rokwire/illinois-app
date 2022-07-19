@@ -195,12 +195,12 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
   }
 
   void _onTapRoom(LaundryRoom room) {
-    Analytics().logSelect(target: "laundry: ${room.name}");
+    Analytics().logSelect(target: "Laundry: '${room.name}'", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: room,)));
   }
 
   void _onTapSeeAll() {
-    Analytics().logSelect(target: "HomeLaundries: View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel(laundrySchool: _laundrySchool,)));
   }
 
