@@ -96,10 +96,10 @@ class HomeFavoritesWidget extends StatefulWidget {
     return null;
   }
 
-  static void handleLocalUrl(String? url, {required BuildContext context, String? analyticsTarget}) {
+  static void handleLocalUrl(String? url, {required BuildContext context, String? analyticsTarget, String? analyticsSource}) {
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;
     if (uri?.scheme == HomeFavoritesWidget.localScheme) {
-      Analytics().logSelect(target: analyticsTarget);
+      Analytics().logSelect(target: analyticsTarget, source: analyticsSource);
       FavoriteExt.launchHome(context, key: uri?.host);
     }
   }
@@ -266,7 +266,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
                       Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
                         GestureDetector(behavior: HitTestBehavior.opaque,
                           onTap: () {
-                            Analytics().logSelect(target: "Favorite: $title");
+                            Analytics().logSelect(target: "Favorite: $title", source: 'HomeFavoritesWidget(${widget.favoriteKey})');
                             Auth2().prefs?.toggleFavorite(item);
                           }, child:
                           Semantics(container: true,
@@ -479,7 +479,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       Container(decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         padding: EdgeInsets.all(16),
         child: Html(data: HomeFavoritesWidget.emptyMessageHtml(widget.favoriteKey) ?? '',
-          onLinkTap: (url, renderContext, attributes, element) => HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'HomeFavoritesWidget(${widget.favoriteKey}) View Home'),
+          onLinkTap: (url, renderContext, attributes, element) => HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'HomeFavoritesWidget(${widget.favoriteKey})'),
           style: {
             "body": Style(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
             "a": Style(color: HomeFavoritesWidget.linkColor(widget.favoriteKey)),
@@ -540,12 +540,12 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   }
 
   void _onTapItem(Favorite? item) {
-    Analytics().logSelect(target: item?.favoriteTitle);
+    Analytics().logSelect(target: item?.favoriteTitle, source: 'HomeFavoritesWidget(${widget.favoriteKey})');
     item?.favoriteLaunchDetail(context);
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: 'HomeFavoritesWidget(${widget.favoriteKey}) View All');
+    Analytics().logSelect(target: 'View All', source: 'HomeFavoritesWidget(${widget.favoriteKey})');
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
   }
 }
