@@ -230,7 +230,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
 
 // WellnessFavorite
 
-class WellnessFavorite implements Favorite {
+class WellnessFavorite extends Favorite {
   final String? id;
   final String? category;
   WellnessFavorite(this.id, {this.category});

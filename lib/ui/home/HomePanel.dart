@@ -910,7 +910,7 @@ abstract class HomeDragAndDropHost  {
 
 // HomeFavorite
 
-class HomeFavorite implements Favorite {
+class HomeFavorite extends Favorite {
   final String? id;
   final String? category;
   HomeFavorite(this.id, {this.category});
