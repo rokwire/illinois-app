@@ -198,12 +198,10 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
   }
 
   void _onTapToDoItem(ToDoItem item) {
-    Analytics().logWellness(
-      category: Analytics.LogWellnessCategoryToDo,
+    Analytics().logWellnessToDo(
       action: item.isCompleted ? Analytics.LogWellnessActionUncomplete : Analytics.LogWellnessActionComplete,
-      target: item.name,
-      source: widget.runtimeType.toString()
-    );
+      source: widget.runtimeType.toString(),
+      item: item);
     item.isCompleted = !item.isCompleted;
     Wellness().updateToDoItem(item).then((success) {
       if (!success) {
@@ -417,11 +415,10 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
   }
 
   Future<void> _onTapIncrease(WellnessRingDefinition data) async{
-    Analytics().logWellness(
-      category: Analytics.LogWellnessCategoryToDo,
+    Analytics().logWellnessRing(
       action: Analytics.LogWellnessActionComplete,
-      target: data.name,
-      source: widget.runtimeType.toString()
+      source: widget.runtimeType.toString(),
+      item: data,
     );
     await WellnessRings().addRecord(WellnessRingRecord(value: 1, dateCreatedUtc: DateTime.now(), wellnessRingId: data.id));
   }

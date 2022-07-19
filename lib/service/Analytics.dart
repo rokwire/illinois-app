@@ -19,6 +19,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/wellness/ToDo.dart' as wellness;
+import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/polls.dart';
@@ -42,6 +44,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/main.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/RootPanel.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'package:uuid/uuid.dart';
 import 'package:notification_permissions/notification_permissions.dart' as Notifications;
@@ -235,10 +238,17 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogWellnessActionName              = "action";
   static const String   LogWellnessActionComplete          = "complete";
   static const String   LogWellnessActionUncomplete        = "uncomplete";
+  static const String   LogWellnessActionCreate            = "create";
   static const String   LogWellnessActionUpdate            = "update";
   static const String   LogWellnessActionClear             = "clear";
   static const String   LogWellnessTargetName              = "target";
   static const String   LogWellnessSourceName              = "source";
+  static const String   LogWellnessRingGoalName            = "goal";
+  static const String   LogWellnessRingUnitName            = "unit";
+  static const String   LogWellnessToDoCategoryName        = "target_category";
+  static const String   LogWellnessToDoDueDateTime         = "date";
+  static const String   LogWellnessToDoReminderType        = "reminder";
+  static const String   LogWellnessToDoWorkdays            = "workdays";
 
   // Event Attributes
   static const String   LogAttributeUrl                    = "url";
@@ -927,7 +937,37 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
     logEvent(event);
   }
+
+  void logWellnessToDo({String? action, wellness.ToDoItem? item, String? source}) {
+    logWellness(
+      category: LogWellnessCategoryToDo,
+      action: action,
+      target: item?.name,
+      source: source,
+      attributes: {
+        LogWellnessToDoCategoryName: item?.category?.name,
+        LogWellnessToDoDueDateTime: DateTimeUtils.utcDateTimeToString(item?.dueDateTime),
+        LogWellnessToDoReminderType: item?.reminderType.toString(),
+        LogWellnessToDoWorkdays: item?.workDays?.join(','),
+      }
+    );
+  }
+
+  void logWellnessRing({String? action, WellnessRingDefinition? item, String? source}) {
+    logWellness(
+      category: Analytics.LogWellnessCategoryRings,
+      action: action,
+      target: item?.name,
+      source: source,
+      attributes: {
+        Analytics.LogWellnessRingGoalName: item?.goal,
+        Analytics.LogWellnessRingUnitName: item?.unit,
+      }
+    );
+  }
+
 }
+
 
 abstract class AnalyticsPageName {
   String? get analyticsPageName;

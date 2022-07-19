@@ -663,11 +663,10 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
   }
 
   void _onTapCompleted() {
-    Analytics().logWellness(
-      category: Analytics.LogWellnessCategoryToDo,
+    Analytics().logWellnessToDo(
       action: widget.item.isCompleted ? Analytics.LogWellnessActionUncomplete : Analytics.LogWellnessActionComplete,
-      target: widget.item.name,
-      source: widget.runtimeType.toString()
+      source: widget.runtimeType.toString(),
+      item: widget.item,
     );
     widget.item.isCompleted = !widget.item.isCompleted;
     _setLoading(true);
@@ -873,11 +872,10 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
     if (_loading) {
       return;
     }
-    Analytics().logWellness(
-      category: Analytics.LogWellnessCategoryToDo,
+    Analytics().logWellnessToDo(
       action: Analytics.LogWellnessActionUpdate,
-      target: widget.item.name,
       source: widget.runtimeType.toString(),
+      item: widget.item,
     );
     _setLoading(true);
     _item.reminderDateTimeUtc = _reminderDateTime.toUtc();
