@@ -108,6 +108,7 @@ class HomeFavoritesWidget extends StatefulWidget {
 class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements NotificationsListener {
 
   List<Favorite>? _favorites;
+  LinkedHashSet<String>? _favoriteIds;
   bool _loadingFavorites = false;
   
   PageController? _pageController;
@@ -320,25 +321,30 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   void _refreshFavorites({bool showProgress = true}) {
     if (Connectivity().isOnline) {
-      if (showProgress && mounted) {
-        setState(() {
-          _loadingFavorites = true;
-        });
+      LinkedHashSet<String> refFavoriteIds = Auth2().prefs?.getFavorites(widget.favoriteKey) ?? LinkedHashSet<String>();
+      if (!DeepCollectionEquality().equals(_favoriteIds, refFavoriteIds)) {
+        if (showProgress && mounted) {
+          setState(() {
+            _loadingFavorites = true;
+          });
+        }
+        LinkedHashSet<String> favoriteIds = LinkedHashSet<String>.from(refFavoriteIds);
+        _loadFavorites(favoriteIds).then((List<Favorite>? favorites) {
+          if (mounted) {
+            setState(() {
+              _favoriteIds = favoriteIds;
+              _favorites = favorites;
+              _updateCurrentPage();
+            });
+          }
+        }).whenComplete(() {
+          if (mounted) {
+            setState(() {
+              _loadingFavorites = false;
+            });
+          }
+        }); 
       }
-      _loadFavorites().then((List<Favorite>? favorites) {
-        if (mounted && !DeepCollectionEquality().equals(_favorites, favorites)) {
-          setState(() {
-            _favorites = favorites;
-            _updateCurrentPage();
-          });
-        }
-      }).whenComplete(() {
-        if (mounted) {
-          setState(() {
-            _loadingFavorites = false;
-          });
-        }
-      }); 
     }
   }
 
@@ -386,8 +392,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     }
   }
 
-  Future<List<Favorite>?> _loadFavorites() async {
-    LinkedHashSet<String>? favoriteIds = Auth2().prefs?.getFavorites(widget.favoriteKey);
+  Future<List<Favorite>?> _loadFavorites(LinkedHashSet<String>? favoriteIds) async {
     if (CollectionUtils.isNotEmpty(favoriteIds)) {
       switch(widget.favoriteKey) {
         case Event.favoriteKeyName: return _loadFavoriteEvents(favoriteIds);
