@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -14,6 +15,8 @@ import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:http/http.dart' as http;
 
+enum WellnessRingsStatus {unknown, initializing, initialized, failed}
+
 class WellnessRings with Service implements NotificationsListener{
   static const String notifyUserRingsUpdated = "edu.illinois.rokwire.wellness.user.ring.updated";
   static const String notifyUserRingsAccomplished = "edu.illinois.rokwire.wellness.user.ring.accomplished";
@@ -21,6 +24,9 @@ class WellnessRings with Service implements NotificationsListener{
   static const String _cacheFileName = "wellness.json";
   static const int MAX_RINGS = 4;
   static const int HISTORY_LIMIT_DAYS = 14;
+
+  WellnessRingsStatus status = WellnessRingsStatus.unknown;
+  final List<Completer<void>> _loadCompleters = [];
 
   Map<String,WellnessRingDefinition>? _activeWellnessRings;
   List<WellnessRingDefinition>? _wellnessRingsRecords = [];
@@ -44,6 +50,19 @@ class WellnessRings with Service implements NotificationsListener{
   WellnessRings.internal();
 
   @override
+  void createService() {
+    NotificationService().subscribe(this,[
+      AppLivecycle.notifyStateChanged,
+      Auth2.notifyLoginSucceeded
+    ]);
+  }
+
+  @override
+  void destroyService() {
+    NotificationService().unsubscribe(this);
+  }
+
+  @override
   Future<void> initService() async {
     _initRecords();
     return super.initService();
@@ -52,10 +71,7 @@ class WellnessRings with Service implements NotificationsListener{
   //Init
   Future<void> _initRecords() async {
     await _initFromCache();
-    _loadFromNet().then((_) {
-      Log.d("Wellness Rings _initRecords finished!");
-      NotificationService().notify(notifyUserRingsUpdated);
-    });
+    await _initFromNet();
   }
 
   Future<bool> _initFromCache() async{
@@ -68,13 +84,78 @@ class WellnessRings with Service implements NotificationsListener{
       });
   }
 
-  Future<void> _loadFromNet() async{
-    await Future.wait([
+  Future<void> _waitForInitFromNet() async{
+    if(!serviceDataInitialized && Auth2().isLoggedIn) {
+      try {
+        if (_loadCompleters.isEmpty) {
+          Completer<void> completer = Completer<void>();
+          _loadCompleters.add(completer);
+          _initFromNet().whenComplete(() {
+            for (var completer in _loadCompleters) {
+              completer.complete();
+            }
+            _loadCompleters.clear();
+          });
+          return completer.future;
+        } else {
+          Completer<void> completer = Completer<void>();
+          _loadCompleters.add(completer);
+          return completer.future;
+        }
+      } catch(err){
+        Log.e("Failed to invoke Rings INIT API");
+        debugPrint(err.toString());
+      }
+    }
+  }
+
+  Future<void> _initFromNet() async{
+    Log.d("_initFromNet status = $status!");
+    if(status  == WellnessRingsStatus.initializing){
+      return; //Wait for previous call
+    }
+
+    status = WellnessRingsStatus.initializing;
+
+    Log.d("_initFromNet Start Loading status = $status!");
+    _loadFromNet().then((success) {
+      Log.d("Wellness Rings _loadFromNet().then((success) = $success");
+      status = success ? WellnessRingsStatus.initialized : WellnessRingsStatus.failed;
+      NotificationService().notify(notifyUserRingsUpdated);
+      Log.d("Wellness Rings _initRecords finished! status = $status");
+    }).onError((error, stackTrace){
+      Log.d("loadFromNet().onError((error, = $error");
+      status = WellnessRingsStatus.failed;
+    });
+  }
+
+  Future<bool> _loadFromNet() async{
+    List<bool> results = await Future.wait([
       _loadRingDefinitions(),
       _loadRingRecords(),
     ]);
+
     _saveRingsDataToCache(); //Consider update
-    Log.d("Wellness Rings _loadFromNet finished!");
+    Log.d("Wellness Rings _loadFromNet finished!  status = $status, results: $results" );
+
+    return results.isNotEmpty ? !results.contains(false) : false;
+  }
+
+  Future<void> initIfNeeded() async {
+    Log.d("initIfNeeded status = $status!");
+    if(status == WellnessRingsStatus.failed || status == WellnessRingsStatus.unknown){
+      await _waitForInitFromNet();
+    }
+  }
+
+  Future<void> _reInit() async {
+    Log.d("_reInit status = $status!");
+    status = WellnessRingsStatus.unknown;
+    _wellnessRecords = [];
+    _wellnessRingsRecords = [];
+    _activeWellnessRings = {};
+    _saveRingsDataToCache();
+    await _waitForInitFromNet();
   }
 
   Future<void> _refreshFromNet() async {
@@ -82,22 +163,24 @@ class WellnessRings with Service implements NotificationsListener{
     //TBD consider update instead of rewrite the whole content
   }
 
-  Future<void> _loadRingDefinitions() async {
+  Future<bool> _loadRingDefinitions() async {
     var definitionHistory = await _requestGetRingDefinition();
     if(definitionHistory!=null)
       _wellnessRingsRecords = definitionHistory;
     _updateActiveRingsData();
     // NotificationService().notify(notifyUserRingsUpdated);
-    Log.d("Wellness Rings _loadRingDefinitions finished!");
+    Log.d("Wellness Rings _loadRingDefinitions finished! success: ${definitionHistory != null}");
+    return definitionHistory != null;
   }
 
-  Future<void> _loadRingRecords() async {
+  Future<bool> _loadRingRecords() async {
     var recordsHistory = await _requestGetRingRecord(
         startPeriod: DateTimeUtils.midnight(DateTime.now())?.subtract(Duration(days: HISTORY_LIMIT_DAYS))); //Consider do we want to load full history from the beginning
     if(recordsHistory != null)
       _wellnessRecords = recordsHistory;
     // NotificationService().notify(notifyUserRingsUpdated);
-    Log.d("Wellness Rings loadRingRecords finished!");
+    Log.d("Wellness Rings loadRingRecords finished! success: ${recordsHistory != null}");
+    return recordsHistory != null;
   }
   /////
 
@@ -128,6 +211,11 @@ class WellnessRings with Service implements NotificationsListener{
 
   //APIS
   Future<bool> addRing(WellnessRingDefinition definition) async {
+    await initIfNeeded();
+    if(!serviceDataInitialized){//Do not allow performing action while we don't have actual data
+      return false;
+    }
+
     bool success = false;
     if(_wellnessRingsRecords == null){
       _wellnessRingsRecords = [];
@@ -144,6 +232,11 @@ class WellnessRings with Service implements NotificationsListener{
   }
 
   Future<bool> updateRing(WellnessRingDefinition data) async {
+    await initIfNeeded();
+    if(!serviceDataInitialized){//Do not allow performing action while we don't have actual data
+      return false;
+    }
+
     bool success = false;
     WellnessRingDefinition? currentRingData = _activeWellnessRings?[data.id];
     if(currentRingData == null || currentRingData != data){
@@ -162,6 +255,10 @@ class WellnessRings with Service implements NotificationsListener{
   }
 
   Future<bool> removeRing(WellnessRingDefinition data) async {
+    await initIfNeeded();
+    if(!serviceDataInitialized){//Do not allow performing action while we don't have actual data
+      return false;
+    }
     WellnessRingDefinition? ringData = _activeWellnessRings?[data.id];
     bool success = await _requestDeleteRingDefinition(data.id);
     if(success) {
@@ -180,6 +277,11 @@ class WellnessRings with Service implements NotificationsListener{
   }
 
   Future<bool> addRecord(WellnessRingRecord record) async {
+    await initIfNeeded();
+    if(!serviceDataInitialized){//Do not allow performing action while we don't have actual data
+      return false;
+    }
+     //Do not allow performing action while we don't have actual data)
     if(!_canAddRingRecord(record)){
       Log.d("addRecord not allowed${record.toJson()}");
       return false;
@@ -210,8 +312,8 @@ class WellnessRings with Service implements NotificationsListener{
     return false;
   }
 
-  Future<List<WellnessRingDefinition>?> loadWellnessRings() async { //TBD decide do we need such method
-    //TBD load from net
+  Future<List<WellnessRingDefinition>?> loadWellnessRings() async {
+    await initIfNeeded();
     return _activeWellnessRings?.values.toList();
   }
   /////
@@ -407,6 +509,10 @@ class WellnessRings with Service implements NotificationsListener{
   }
 
   bool _canAddRingRecord(WellnessRingRecord record){
+    if(!serviceDataInitialized){ //Do not allow performing action while we don't have actual data
+      return false;
+    }
+
     if(record.value > 0){
       return true;
     } else { //Don't allow to become negative
@@ -419,11 +525,20 @@ class WellnessRings with Service implements NotificationsListener{
   }
 
   bool get canAddRing{
-    return (_activeWellnessRings?.length ?? 0) < MAX_RINGS;
+    return serviceDataInitialized && //Do not allow performing action while we don't have actual data
+      (_activeWellnessRings?.length ?? 0) < MAX_RINGS;
   }
 
   bool get haveHistory{
     return _wellnessRecords?.isNotEmpty ?? false;
+  }
+
+  bool get serviceEnabled{
+    return true;
+  }
+
+  bool get serviceDataInitialized{
+    return status == WellnessRingsStatus.initialized;
   }
 
   //Cashe
@@ -634,9 +749,8 @@ class WellnessRings with Service implements NotificationsListener{
 
   @override
   void onNotification(String name, param) {
-    if(name == Auth2.notifyLoginFinished ||
-        name == Auth2.notifyLoginChanged ){
-      _refreshFromNet();
+    if(name == Auth2.notifyLoginSucceeded){
+      _reInit();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);

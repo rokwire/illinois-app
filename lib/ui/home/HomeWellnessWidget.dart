@@ -313,6 +313,7 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
     NotificationService().subscribe(this, [
       WellnessRings.notifyUserRingsUpdated
     ]);
+    WellnessRings().loadWellnessRings();
     super.initState();
   }
 
