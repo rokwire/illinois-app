@@ -1590,7 +1590,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       // Do not try to refresh group if the device is offline
       return;
     }
-    if (_group?.syncAuthmanAllowed == true) {
+    if ((_group?.syncAuthmanAllowed == true) && (_group?.attendanceGroup == true)) {
       await Groups().syncAuthmanGroup(group: _group!);
     }
     Group? group = await Groups().loadGroup(widget.groupId); // The same as _refreshGroup(refreshEvents: true) but use await to show the pull to refresh progress indicator properly

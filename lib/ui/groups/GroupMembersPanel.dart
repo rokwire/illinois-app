@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -167,14 +168,15 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         appBar: HeaderBar(title: headerTitle),
         body: _isLoading
             ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ))
-            : SingleChildScrollView(
+            : RefreshIndicator(onRefresh: _onPullToRefresh, child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
           child:Column(
             children: <Widget>[
               Visibility(visible: _isAdmin, child: _buildRequests()),
               _buildMembers()
             ],
           ),
-        ),
+        )),
         bottomNavigationBar: uiuc.TabBar(),
     );
   }
@@ -363,6 +365,14 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         ),
       ),
     );
+  }
+
+  Future<void> _onPullToRefresh() async {
+    print('vleeez');
+    if ((_group?.syncAuthmanAllowed == true) && (Config().allowGroupsAuthmanSync)) {
+      await Groups().syncAuthmanGroup(group: _group!);
+    }
+    _reloadGroup();
   }
 
   void _onSearchTextChanged(String text) {
