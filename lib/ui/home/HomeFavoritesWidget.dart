@@ -78,7 +78,7 @@ class HomeFavoritesWidget extends StatefulWidget {
       case News.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.news", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Athletics News</b></a> for quick access here."); break;
       case LaundryRoom.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.laundry", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Laundry Locations</b></a> for quick access here."); break;
       case GuideFavorite.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.campus_guide", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Campus Guide</b></a> for quick access here."); break;
-      case InboxMessage.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.inbox", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Notifications</b></a> for quick access here."); break;
+      case InboxMessage.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.inbox", "See your most recent <a href='$localUrlMacro'><b>Notifications</b></a> for quick access here."); break;
     }
     return (message != null) ? message.replaceAll(localUrlMacro, '$localScheme://${key.toLowerCase()}') : null;
   }

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Label to "My Gies Canvas Courses" [#2048](https://github.com/rokwire/illinois-app/issues/2048).
 - Update wording in group privacy sentence [#2041](https://github.com/rokwire/illinois-app/issues/2041).
+- Update wording in Notifications HomeFavoritesWidget [#2022](https://github.com/rokwire/illinois-app/issues/2022).
 
 ## [4.0.54] - 2022-07-18
 ### Added
