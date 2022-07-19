@@ -209,7 +209,8 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
     return _CheckListPageWidget(contentKey: widget.contentKey, key: _pageKey, page: _currentPage, onTapLink: _onTapLink, onTapButton: _onTapButton, onTapBack: (1 < CheckList(widget.contentKey).navigationPages!.length) ? _onTapBack : null, showTitle: false,);
   }
 
-  void _onTapLink(String? url) {
+  void _onTapLink(String? url, {String? source}) {
+    Analytics().logSelect(target: "Link: '$source'" , source: "${widget.runtimeType}('${widget.contentKey}')");
     if (StringUtils.isNotEmpty(url)) {
 
       Uri? uri = Uri.tryParse(url!);
@@ -231,16 +232,19 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
   }
 
   void _onTapButton(Map<String, dynamic> button, String pageId) {
+    Analytics().logSelect(target: "Button: '${JsonUtils.stringValue(button['title'])}'", source: "${widget.runtimeType}('${widget.contentKey}')");
     _processButtonPopup(button, pageId).then((_) {
       CheckList(widget.contentKey).processButtonPage(button, callerPageId: pageId);
     });
   }
 
   void _onTapBack() {
+    Analytics().logSelect(target: "Back", source: "${widget.runtimeType}('${widget.contentKey}')");
     CheckList(widget.contentKey).popPage();
   }
 
   void _onTapProgress(int progress) {
+    Analytics().logSelect(target: "Step: $progress", source: "${widget.runtimeType}('${widget.contentKey}')");
     int? currentPageProgress = _currentPageProgress;
     if (currentPageProgress != progress) {
       CheckList(widget.contentKey).pushPage(CheckList(widget.contentKey).getPage(progress: progress));
@@ -308,7 +312,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
 class _CheckListPageWidget extends StatelessWidget{
   final String contentKey;
   final Map<String, dynamic>? page;
-  final void Function(String?)? onTapLink;
+  final void Function(String? url, { String? source })? onTapLink;
   final void Function(Map<String, dynamic> button, String panelId)? onTapButton;
   final void Function()? onTapBack;
   final bool showTitle;
@@ -340,7 +344,8 @@ class _CheckListPageWidget extends StatelessWidget{
           Expanded(child:
           Padding(padding: EdgeInsets.only(top: 4, bottom: 4, right: 16), child:
           Html(data: titleHtml,
-            onLinkTap: (url, context, attributes, element) => onTapLink!(url),
+            onLinkTap: (url, context, attributes, element) => onTapLink!(url, source: element?.text)
+            ,
             style: {
               "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: FontSize(24), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
               "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
@@ -356,7 +361,7 @@ class _CheckListPageWidget extends StatelessWidget{
       contentList.add(
         Padding(padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), child:
         Html(data: textHtml,
-          onLinkTap: (url, context, attributes, element) => onTapLink!(url),
+          onLinkTap: (url, context, attributes, element) => onTapLink!(url, source: element?.text),
           style: {
             "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
             "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
@@ -375,7 +380,7 @@ class _CheckListPageWidget extends StatelessWidget{
             contentEntryWidgets.add(
               Padding(padding: EdgeInsets.only(top: 4, bottom: 4), child:
               Html(data: headingHtml,
-                onLinkTap: (url, context, attributes, element) => onTapLink!(url),
+                onLinkTap: (url, context, attributes, element) => onTapLink!(url, source: element?.text),
                 style: {
                   "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
                   "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
@@ -398,7 +403,7 @@ class _CheckListPageWidget extends StatelessWidget{
                     Text(bulletText, style: TextStyle(color: bulletColor, fontSize: 20),),),
                     Expanded(child:
                     Html(data: bulletEntry,
-                      onLinkTap: (url, context, attributes, element) => onTapLink!(url),
+                      onLinkTap: (url, context, attributes, element) => onTapLink!(url, source: element?.text),
                       style: {
                         "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
                         "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
@@ -428,7 +433,7 @@ class _CheckListPageWidget extends StatelessWidget{
                     Text('${numberIndex + 1}.', style: TextStyle(color: numberColor, fontSize: 20),),),
                     Expanded(child:
                     Html(data: numberEntry,
-                      onLinkTap: (url, context, attributes, element) => onTapLink!(url),
+                      onLinkTap: (url, context, attributes, element) => onTapLink!(url, source: element?.text),
                       style: {
                         "body": Style(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
                         "a": Style(color: Styles().colors!.fillColorSecondaryVariant),
@@ -713,7 +718,7 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
   }
 
   void _onSave() {
-    Analytics().logAlert(text: "Things to Remember", selection: "Save");
+    Analytics().logSelect(target: 'Save', source: "${widget.runtimeType}('${widget.contentKey}')");
 
     if (widget.notes != null) {
       for (dynamic note in widget.notes!) {
@@ -736,7 +741,7 @@ class _StepsHorizontalListWidget extends StatefulWidget {
   final String? title;
   final int pageProgress;
 
-  final void Function(String?)? onTapLink;
+  final void Function(String? url, { String? source })? onTapLink;
   final void Function(Map<String, dynamic> button, String panelId)? onTapButton;
   final void Function()? onTapBack;
 
@@ -913,6 +918,9 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
   }
 
   void _onTapTabButton(int index){
+    Map<String, dynamic>? tabData = ((0 <= index) && (index < (widget.tabs?.length ?? 0))) ? JsonUtils.mapValue(widget.tabs![index]) : null;
+    String? tabKey = (tabData != null) ? JsonUtils.stringValue(tabData["key"]) : null;
+    Analytics().logSelect(target: "${widget.pageProgress}$tabKey", source: "${widget.runtimeType}('${widget.contentKey}')");
     _swipeToIndex(index);
   }
 

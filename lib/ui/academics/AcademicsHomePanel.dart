@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
@@ -84,7 +85,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
               rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
               label: _getContentLabel(_selectedContent),
-              onTap: _changeSettingsContentValuesVisibility
+              onTap: _onTapRibbonButton
             ),
           ),
           Expanded(child:
@@ -111,6 +112,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         child: BlockSemantics(
             child: GestureDetector(
                 onTap: () {
+                  Analytics().logSelect(target: 'Close Dropdown');
                   setState(() {
                     _contentValuesVisible = false;
                   });
@@ -200,12 +202,18 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 
   void _onTapContentItem(AcademicsContent contentItem) {
+    Analytics().logSelect(target: '$contentItem');
     // Open My Illini in an external browser
     if (contentItem == AcademicsContent.my_illini) {
       _onMyIlliniSelected();
     } else {
       _selectedContent = _lastSelectedContent = contentItem;
     }
+    _changeSettingsContentValuesVisibility();
+  }
+
+  void _onTapRibbonButton() {
+    Analytics().logSelect(target: 'Toggle Dropdown');
     _changeSettingsContentValuesVisibility();
   }
 
