@@ -266,7 +266,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
                       Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
                         GestureDetector(behavior: HitTestBehavior.opaque,
                           onTap: () {
-                            Analytics().logSelect(target: "Favorite: $title", source: 'HomeFavoritesWidget(${widget.favoriteKey})');
+                            Analytics().logSelect(target: "Favorite: $title", source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
                             Auth2().prefs?.toggleFavorite(item);
                           }, child:
                           Semantics(container: true,
@@ -540,12 +540,12 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   }
 
   void _onTapItem(Favorite? item) {
-    Analytics().logSelect(target: item?.favoriteTitle, source: 'HomeFavoritesWidget(${widget.favoriteKey})');
+    Analytics().logSelect(target: item?.favoriteTitle, source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
     item?.favoriteLaunchDetail(context);
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: 'View All', source: 'HomeFavoritesWidget(${widget.favoriteKey})');
+    Analytics().logSelect(target: 'View All', source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
   }
 }

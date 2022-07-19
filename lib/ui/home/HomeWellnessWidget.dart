@@ -202,7 +202,7 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
       category: Analytics.LogWellnessCategoryToDo,
       action: item.isCompleted ? Analytics.LogWellnessActionUncomplete : Analytics.LogWellnessActionComplete,
       target: item.name,
-      source: "HomeToDoWellnessWidget"
+      source: widget.runtimeType.toString()
     );
     item.isCompleted = !item.isCompleted;
     Wellness().updateToDoItem(item).then((success) {
@@ -213,12 +213,12 @@ class _HomeToDoWellnessWidgetState extends State<HomeToDoWellnessWidget> impleme
   }
 
   void _onTapAddItem() {
-    Analytics().logSelect(target: "Add Item", source: "HomeToDoWellnessWidget");
+    Analytics().logSelect(target: "Add Item", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel()));
   }
 
   void _onTapViewAll() {
-    Analytics().logSelect(target: "View All", source: "HomeToDoWellnessWidget");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.todo)));
   }
 
@@ -412,7 +412,7 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
   }
 
   void _onTapViewAll(){
-    Analytics().logSelect(target: "View All", source: "HomeRingsWellnessWidget");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.rings)));
   }
 
@@ -421,7 +421,7 @@ class _HomeRingsWellnessWidgetState extends State<HomeRingsWellnessWidget> imple
       category: Analytics.LogWellnessCategoryToDo,
       action: Analytics.LogWellnessActionComplete,
       target: data.name,
-      source: "HomeRingsWellnessWidget"
+      source: widget.runtimeType.toString()
     );
     await WellnessRings().addRecord(WellnessRingRecord(value: 1, dateCreatedUtc: DateTime.now(), wellnessRingId: data.id));
   }
@@ -575,7 +575,7 @@ class _HomeDailyTipsWellnessWidgetState extends State<HomeDailyTipsWellnessWidge
   }
 
   void _onTap() {
-    Analytics().logSelect(target: "View", source: "HomeDailyTipsWellnessWidget");
+    Analytics().logSelect(target: "View", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.dailyTips,)));
   }
 
