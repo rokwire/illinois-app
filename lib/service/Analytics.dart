@@ -235,6 +235,8 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogWellnessActionName              = "action";
   static const String   LogWellnessActionComplete          = "complete";
   static const String   LogWellnessActionUncomplete        = "uncomplete";
+  static const String   LogWellnessActionUpdate            = "update";
+  static const String   LogWellnessActionClear             = "clear";
   static const String   LogWellnessTargetName              = "target";
   static const String   LogWellnessSourceName              = "source";
 
