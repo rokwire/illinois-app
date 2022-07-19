@@ -368,7 +368,6 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 
   Future<void> _onPullToRefresh() async {
-    print('vleeez');
     if ((_group?.syncAuthmanAllowed == true) && (Config().allowGroupsAuthmanSync)) {
       await Groups().syncAuthmanGroup(group: _group!);
     }
