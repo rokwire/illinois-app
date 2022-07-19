@@ -707,7 +707,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _onCreateTap() {
     AppAlert.showCustomDialog(
         context: context,
-        contentWidget: Text(Localization().getStringEx("panel.groups_create.prompt.msg.title", "The University of Illinois takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may report group names or content that are obscene, threatening, or harassing to group administrator(s). Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.")),
+        contentWidget: Text(Localization().getStringEx("panel.groups_create.prompt.msg.title", "The University of Illinois takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.")),
         actions: <Widget>[
           TextButton(
               child:
