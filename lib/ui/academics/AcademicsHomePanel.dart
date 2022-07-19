@@ -286,7 +286,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContent.uiuc_checklist:
         return Localization().getStringEx('panel.academics.section.uiuc_checklist.label', 'New Student Checklist');
       case AcademicsContent.courses:
-        return Localization().getStringEx('panel.academics.section.courses.label', 'My Courses');
+        return Localization().getStringEx('panel.academics.section.courses.label', 'My Gies Canvas Courses');
       case AcademicsContent.my_illini:
         return Localization().getStringEx('panel.academics.section.my_illini.label', 'myIllini');
     }

@@ -394,7 +394,7 @@
     "panel.academics.section.events.label": "Academic Events",
     "panel.academics.section.gies_checklist.label": "iDegrees New Student Checklist",
     "panel.academics.section.uiuc_checklist.label": "New Student Checklist",
-    "panel.academics.section.courses.label": "My Courses",
+    "panel.academics.section.courses.label": "My Gies Canvas Courses",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.events.offline.msg": "No academic events available while offline.",
     "panel.academics.section.events.empty.msg": "No academic events.",
