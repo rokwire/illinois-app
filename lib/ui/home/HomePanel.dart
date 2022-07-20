@@ -773,6 +773,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
             }
             favoritesList.insert(dropIndex, dragFavoriteId);
             Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
+            _setSectionFavorites(dragFavoriteId, true);
             HomeFavorite.log(HomeFavorite(dragFavoriteId));
           }
         });
@@ -789,7 +790,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           // add favorite
           HomeFavoriteButton.promptFavorite(context, favorite: HomeFavorite(dragFavoriteId)).then((bool? result) {
             if (result == true) {
-              Auth2().prefs?.toggleFavorite(HomeFavorite(dragFavoriteId));
+              Auth2().prefs?.setFavorite(HomeFavorite(dragFavoriteId), true);
+              _setSectionFavorites(dragFavoriteId, true);
               HomeFavorite.log(HomeFavorite(dragFavoriteId));
             }
           });
@@ -803,6 +805,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           }
           favoritesList.insert(0, dragFavoriteId);
           Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
+          _setSectionFavorites(dragFavoriteId, true);
           HomeFavorite.log(HomeFavorite(dragFavoriteId));
         }
         else {
@@ -810,7 +813,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
             // remove favorite
             HomeFavoriteButton.promptFavorite(context, favorite: HomeFavorite(dragFavoriteId)).then((bool? result) {
               if (result == true) {
-                Auth2().prefs?.toggleFavorite(HomeFavorite(dragFavoriteId));
+                Auth2().prefs?.setFavorite(HomeFavorite(dragFavoriteId), false);
+                _setSectionFavorites(dragFavoriteId, false);
                 HomeFavorite.log(HomeFavorite(dragFavoriteId));
               }
             });
@@ -821,7 +825,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         // remove favorite
         HomeFavoriteButton.promptFavorite(context, favorite: HomeFavorite(dragFavoriteId)).then((bool? result) {
           if (result == true) {
-            Auth2().prefs?.toggleFavorite(HomeFavorite(dragFavoriteId));
+            Auth2().prefs?.setFavorite(HomeFavorite(dragFavoriteId), false);
+            _setSectionFavorites(dragFavoriteId, false);
             HomeFavorite.log(HomeFavorite(dragFavoriteId));
           }
         });
@@ -829,6 +834,13 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
   }
 
+  void _setSectionFavorites(String favoriteId, bool value) {
+      List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.$favoriteId']);            
+      if (avalableSectionFavorites != null) {
+        Iterable<Favorite> favorites = avalableSectionFavorites.map((e) => HomeFavorite(e, category: favoriteId));
+        Auth2().prefs?.setListFavorite(favorites, value);
+      }
+  }
 
   GlobalKey _widgetKey(String code) => _widgetKeys[code] ??= GlobalKey();
 

@@ -365,6 +365,10 @@ class HomeFavoriteButton extends FavoriteButton {
   }
   
   void _toggleFavorite({bool? isFavorite}) {
+    _setFavorite(isFavorite != true);
+  }
+  
+  void _setFavorite(bool value) {
     if (favorite?.id != null) {
       if (favorite?.category == null) {
         // process toggle home panel widget
@@ -374,52 +378,52 @@ class HomeFavoriteButton extends FavoriteButton {
           for(String sectionEntry in avalableSectionFavorites) {
             favorites.add(HomeFavorite(sectionEntry, category: favorite?.id));
           }
-          Auth2().prefs?.setListFavorite(favorites, (isFavorite != true));
-          HomeFavorite.log(favorites, isFavorite != true);
+          Auth2().prefs?.setListFavorite(favorites, value);
+          HomeFavorite.log(favorites, value);
         }
         else {
-          super.toggleFavorite();
-          HomeFavorite.log(favorite, isFavorite != true);
+          Auth2().prefs?.setFavorite(favorite, value);
+          HomeFavorite.log(favorite, value);
         }
       }
       else { 
         // process toggle home widget entry
         HomeFavorite sectionFavorite = HomeFavorite(favorite?.category);
-        if (isFavorite == true) {
+        if (value) {
+          // turn on home widget entry
+          if (Auth2().prefs?.isFavorite(sectionFavorite) ?? false) {
+            // turn on only home widget entry
+            Auth2().prefs?.setFavorite(favorite, value);
+            HomeFavorite.log(favorite, value);
+          }
+          else {
+            // turn on both home widget entry and home widget itself
+            List<Favorite> favorites = <Favorite>[favorite!, sectionFavorite];
+            Auth2().prefs?.setListFavorite(favorites, value);
+            HomeFavorite.log(favorites, value);
+          }
+        }
+        else {
           // turn off home widget entry
           int sectionFavoritesCount = 0;
           List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.category}']);
           if (avalableSectionFavorites != null) {
-            for(String sectionEntry in avalableSectionFavorites) {
+            for (String sectionEntry in avalableSectionFavorites) {
               if (Auth2().prefs?.isFavorite(HomeFavorite(sectionEntry, category: favorite?.category)) ?? false) {
                 sectionFavoritesCount++;
               }
             }
           }
-          if (1 < sectionFavoritesCount) {
-            // turn off only home widget entry
-            super.toggleFavorite();
-            HomeFavorite.log(favorite, false);
-          }
-          else {
+          if (sectionFavoritesCount <= 1) {
             // turn off both home widget entry and home widget itself
             List<Favorite> favorites = <Favorite>[favorite!, sectionFavorite];
-            Auth2().prefs?.setListFavorite(favorites, false);
-            HomeFavorite.log(favorites, false);
-          }
-        }
-        else {
-          // turn on home widget entry
-          if (Auth2().prefs?.isFavorite(sectionFavorite) ?? false) {
-            // turn on only home widget entry
-            super.toggleFavorite();
-            HomeFavorite.log(favorite, true);
+            Auth2().prefs?.setListFavorite(favorites, value);
+            HomeFavorite.log(favorites, value);
           }
           else {
-            // turn on both home widget entry and home widget itself
-            List<Favorite> favorites = <Favorite>[favorite!, sectionFavorite];
-            Auth2().prefs?.setListFavorite(favorites, true);
-            HomeFavorite.log(favorites, true);
+            // turn off only home widget entry
+            Auth2().prefs?.setFavorite(favorite, value);
+            HomeFavorite.log(favorite, value);
           }
         }
       }
@@ -801,7 +805,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   double get _pageHeight {
 
     double? minContentHeight;
-    for(GlobalKey contentKey in _contentKeys.values) {
+    for (GlobalKey contentKey in _contentKeys.values) {
       final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
       if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
         minContentHeight = renderBox.size.height;

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Read group names from app config in FlexUI [#118](https://github.com/rokwire/app-flutter-plugin/issues/118).
 ### Fixed
 - Construct redirect url with deep link target for group promotion [#2065](https://github.com/rokwire/illinois-app/issues/2065).
+- Fixed adding/removing compound widgets from Favorites/Customize panel [#2073](https://github.com/rokwire/illinois-app/issues/2073).
 ### Added
 - Handle LMS push notifications with deep links to Canvas app [#2066](https://github.com/rokwire/illinois-app/issues/2066).
 
