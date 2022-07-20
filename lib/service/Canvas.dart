@@ -17,6 +17,7 @@
 import 'dart:core';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:http/http.dart' as http;
@@ -24,6 +25,7 @@ import 'package:http/http.dart' as http;
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 class Canvas with Service {
   
@@ -161,6 +163,18 @@ class Canvas with Service {
     } else {
       Log.w('Failed to load canvas self user. Response:\n$responseCode: $responseString');
       return null;
+    }
+  }
+
+  // Handle Canvas app deep link
+
+  Future<void> openCanvasAppDeepLink(String deepLink) async {
+    bool? appLaunched = await RokwirePlugin.launchApp({"deep_link": deepLink});
+    if (appLaunched != true) {
+      String? canvasStoreUrl = Config().canvasStoreUrl;
+      if ((canvasStoreUrl != null) && await url_launcher.canLaunch(canvasStoreUrl)) {
+        await url_launcher.launch(canvasStoreUrl, forceSafariVC: false);
+      }
     }
   }
 

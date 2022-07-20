@@ -21,6 +21,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
@@ -89,6 +90,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyGroupsNotification,
       FirebaseMessaging.notifyHomeNotification,
       FirebaseMessaging.notifyInboxNotification,
+      FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
       Events.notifyEventDetail,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
@@ -188,6 +190,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
+    }
+    else if (name == FirebaseMessaging.notifyCanvasAppDeepLinkNotification) {
+      _onFirebaseCanvasAppDeepLinkNotification(param);
     }
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
@@ -612,6 +617,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _onFirebaseInboxNotification() {
     SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+  }
+  
+  void _onFirebaseCanvasAppDeepLinkNotification(dynamic param) {
+    if (param is Map<String, dynamic>) {
+      String? deepLink = JsonUtils.stringValue(param['deep_link']);
+      Canvas().openCanvasAppDeepLink(StringUtils.ensureNotEmpty(deepLink));
+    }
   }
 }
 
