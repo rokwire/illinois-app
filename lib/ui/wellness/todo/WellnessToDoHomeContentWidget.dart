@@ -272,7 +272,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   Widget _buildCalendarToDoItem(ToDoItem? item) {
     double widgetSize = 30;
     bool hasReminder = (item?.reminderDateTimeUtc != null);
-    return GestureDetector(
+    return  GestureDetector(
         onTap: () => _onTapCalendarItem(item),
         child: Container(
             height: widgetSize,
@@ -640,12 +640,16 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
           decoration: BoxDecoration(color: widget.item.color, borderRadius: BorderRadius.all(Radius.circular(10))),
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
           child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            _buildCompletedWidget(color: widget.item.color),
-            Expanded(
-                child: Text(StringUtils.ensureNotEmpty(widget.item.name),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold))),
-            GestureDetector(onTap: () => _onTapEdit(widget.item), child: Image.asset('images/edit-white.png'))
+             Expanded(
+                 // child:AppSemantics.buildCheckBoxSemantics( selected: widget.item.isCompleted, title: widget.item.name,
+                 child:Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                _buildCompletedWidget(color: widget.item.color),
+                Expanded(
+                    child: Text(StringUtils.ensureNotEmpty(widget.item.name),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold))),
+            ])),
+            Semantics(label: "Edit", button: true, child: GestureDetector(onTap: () => _onTapEdit(widget.item), child: Image.asset('images/edit-white.png', excludeFromSemantics: true,)))
           ])),
       Visibility(visible: _loading, child: CircularProgressIndicator())
     ]);
@@ -659,7 +663,8 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
             decoration: BoxDecoration(color: Styles().colors!.white, shape: BoxShape.circle),
             height: viewWidgetSize,
             width: viewWidgetSize);
-    return GestureDetector(onTap: _onTapCompleted, child: Padding(padding: EdgeInsets.only(right: 20), child: viewWidget));
+    return AppSemantics.buildCheckBoxSemantics( selected: widget.item.isCompleted, title: widget.item.name,
+    child:GestureDetector(onTap: _onTapCompleted, child: Padding(padding: EdgeInsets.only(right: 20), child: viewWidget)));
   }
 
   void _onTapCompleted() {
@@ -669,6 +674,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
       item: widget.item,
     );
     widget.item.isCompleted = !widget.item.isCompleted;
+    AppSemantics.announceCheckBoxStateChange(context, widget.item.isCompleted , widget.item.name);
     _setLoading(true);
     Wellness().updateToDoItem(widget.item).then((success) {
       if (!success) {
