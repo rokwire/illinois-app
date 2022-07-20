@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Construct redirect url with deep link target for group promotion [#2065](https://github.com/rokwire/illinois-app/issues/2065).
 - Fixed adding/removing compound widgets from Favorites/Customize panel [#2073](https://github.com/rokwire/illinois-app/issues/2073).
+- Fixed Semantics for WellnessToDo checkbox [#2044](https://github.com/rokwire/illinois-app/issues/2044).
 ### Added
 - Handle LMS push notifications with deep links to Canvas app [#2066](https://github.com/rokwire/illinois-app/issues/2066).
 
@@ -31,7 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optimized content update in HomeFavoriteWidget.
 ### Fixed
 - Fixed WellnessRings refresh issues [#2055](https://github.com/rokwire/illinois-app/issues/2055).
-- Fixed Semantics for WellnessToDo checkbox [#2044](https://github.com/rokwire/illinois-app/issues/2044).
 
 ## [4.0.54] - 2022-07-18
 ### Added
