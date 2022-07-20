@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Do not override default TabBar background color any more [#2067](https://github.com/rokwire/illinois-app/issues/2067).
 ### Fixed
 - Construct redirect url with deep link target for group promotion [#2065](https://github.com/rokwire/illinois-app/issues/2065).
+### Added
+- Handle LMS push notifications with deep links to Canvas app [#2066](https://github.com/rokwire/illinois-app/issues/2066).
 
 ## [4.0.55] - 2022-07-19
 ### Removed
