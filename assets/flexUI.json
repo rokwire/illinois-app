@@ -85,12 +85,12 @@
 
 		},
 		"groups": {
-			"home.twitter.account.canvas"            : ["Canvas Beta", "AND", ["NOT", "Gies Online Programs"]],
-			"gies"                                   : ["Gies Online Programs"],
-			"gies_checklist"                         : ["Gies Online Programs"],
-			"_new_student"                           : ["2022 New Students"],
-			"_new_student_checklist"                 : ["2022 New Students"],
-			"canvas"                                 : ["Canvas Beta"]
+			"home.twitter.account.canvas"            : ["${config.settings.groups.canvas}", "AND", ["NOT", "${config.settings.groups.gies}"]],
+			"gies"                                   : ["${config.settings.groups.gies}"],
+			"gies_checklist"                         : ["${config.settings.groups.gies}"],
+			"_new_student"                           : ["${config.settings.groups.new_student}"],
+			"_new_student_checklist"                 : ["${config.settings.groups.new_student}"],
+			"canvas"                                 : ["${config.settings.groups.canvas}"]
 		},
 		"locations": {
 		},

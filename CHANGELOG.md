@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- The next build on `develop` should refer to version 4.1.0 -->
 ### Changed
 - Do not override default TabBar background color any more [#2067](https://github.com/rokwire/illinois-app/issues/2067).
+- Read group names from app config in FlexUI [#118](https://github.com/rokwire/app-flutter-plugin/issues/118).
 ### Fixed
 - Construct redirect url with deep link target for group promotion [#2065](https://github.com/rokwire/illinois-app/issues/2065).
 ### Added
