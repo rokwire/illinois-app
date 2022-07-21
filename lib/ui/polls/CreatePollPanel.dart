@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -50,6 +51,8 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   bool _selectedRepeatVotes = false;
   bool _selectedHideResult = false;
   PollStatus? _progressPollStatus;
+  //Groups
+  List<Member>? _groupMembersSelection;
 
   @override
   void initState() {
@@ -82,6 +85,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                 _buildOptionsList(),
                 _buildSettingsHeader(),
                 _buildSettingsList(),
+                _buildGroupMembersSelection(),
                 _buildButtonsTab()
               ])))));
   }
@@ -147,7 +151,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
       child: Container(
           child: PollOptionView(
         title: Localization().getStringEx("panel.create_poll.text.question", "QUESTION"),
-        hint: Localization().getStringEx("panel.create_poll.hint.question", "Ask people near you…"),
+        hint: Localization().getStringEx("panel.create_poll.hint.question", "Ask people…"),
         textController: _questionController,
         maxLength: 120,
         minLines: 3,
@@ -266,6 +270,24 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         ));
   }
 
+  Widget _buildGroupMembersSelection(){
+    if(widget.group == null){
+      return Container();
+    }
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        color: Colors.white,
+        child: GroupMembersSelectionWidget(
+        selectedMembers: _groupMembersSelection,
+        allMembers: GroupMembersSelectionWidget.constructAllMembersAllowedToPost(widget.group),
+        groupId: widget.group?.id,
+        onSelectionChanged: (members){
+          setState(() {
+            _groupMembersSelection = members;
+          });
+        },));
+  }
+
   List<Widget> _buildSettingsButtons() {
     TextStyle _textStyle = TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium);
     BorderRadius rounding = BorderRadius.all(Radius.circular(5));
@@ -325,36 +347,33 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16),
             child: Container(
                 child: Column(children: [
-              Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Expanded(
-                    child: RoundedButton(
-                        label: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save"),
-                        backgroundColor: Colors.white,
-                        borderColor: Styles().colors!.fillColorPrimary,
-                        textColor: Styles().colors!.fillColorPrimary,
-                        progress: (_progressPollStatus == PollStatus.created),
-                        onTap: () {
-                          _onCreatePoll(status: PollStatus.created);
-                        })),
-                Container(width: 6),
-                Expanded(
-                    child: RoundedButton(
-                        label: Localization().getStringEx("panel.create_poll.setting.start.preview.title", "Start Poll"),
-                        backgroundColor: Colors.white,
-                        borderColor: Styles().colors!.fillColorSecondary,
-                        textColor: Styles().colors!.fillColorPrimary,
-                        progress: (_progressPollStatus == PollStatus.opened),
-                        onTap: () {
-                          _onCreatePoll(status: PollStatus.opened);
-                        }))
-              ]),
-              Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Text(
-                    Localization()
-                        .getStringEx("panel.create_poll.description.non_editable.text", "Once started, you can no longer edit the poll."),
-                    style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
-                  ))
+                   RoundedButton(
+                      label: Localization().getStringEx("panel.create_poll.setting.start.preview.title", "Start Poll Now"),
+                      backgroundColor: Colors.white,
+                      borderColor: Styles().colors!.fillColorSecondary,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      progress: (_progressPollStatus == PollStatus.opened),
+                      onTap: () {
+                        _onCreatePoll(status: PollStatus.opened);
+                      }),
+                  Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Text(
+                        Localization()
+                            .getStringEx("panel.create_poll.description.non_editable.text", "Once started, you can no longer edit the poll."),
+                        style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
+                      )),
+                  UnderlinedButton(
+                      title: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save poll for starting later"),//TBD localize
+                      // backgroundColor: Colors.white,
+                      // borderColor: Styles().colors!.fillColorPrimary,
+                      // textColor: Styles().colors!.fillColorPrimary,
+                      progress: (_progressPollStatus == PollStatus.created),
+                      onTap: () {
+                        _onCreatePoll(status: PollStatus.created);
+                      },
+                  ),
+                  Container(height: 10)
             ]))));
   }
 
@@ -425,13 +444,14 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         creatorUserName: Auth2().fullName ?? 'Someone',
         pinCode: Poll.randomPin,
         status: status,
-        groupId: widget.group?.id
+        groupId: widget.group?.id,
+        toMembers: _groupMembersSelection
       );
       
       setState(() {
         _progressPollStatus = status;
       });
-      Polls().create(poll).then((_){
+      Polls().create(poll).then((Poll poll){
         Navigator.pop(context);
       }).catchError((e){
         Log.d(e);
@@ -512,5 +532,65 @@ class _PollOptionViewState extends State<PollOptionView> {
 
   _getCounterText() {
     return sprintf(counterFormat, [widget.textController?.text.length, widget.maxLength]);
+  }
+}
+
+class UnderlinedButton extends StatelessWidget {
+  final Function? onTap;
+  final String? title;
+  final String? hint;
+  final double fontSize;
+  final EdgeInsets padding;
+  final String? fontFamily;
+  final bool progress;
+
+  const UnderlinedButton(
+      {Key? key, this.onTap, this.title, this.hint, this.fontSize = 16, this.padding = const EdgeInsets
+          .symmetric(vertical: 20), this.fontFamily, this.progress = false}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+        label: title,
+        hint: hint,
+        button: true,
+        excludeSemantics: true,
+        child: GestureDetector(
+          onTap: () {
+            if (onTap != null) {
+              onTap!();
+            }
+          },
+          child: Stack(
+            children: [
+            Align(alignment: Alignment.center,
+            child:
+            Padding(
+                  padding: padding,
+                  child: Container(
+                      decoration: BoxDecoration(
+                          border: Border(bottom: BorderSide(
+                            color: Styles().colors!.fillColorSecondary!,
+                            width: 1,),)
+                      ),
+                      padding: EdgeInsets.only(bottom: 2),
+                      child: Text(
+                        title!,
+                        style: TextStyle(
+                            fontFamily: fontFamily ?? Styles().fontFamilies!.medium,
+                            fontSize: fontSize,
+                            color: Styles().colors!.fillColorPrimary,
+                            decorationColor: Styles().colors!.fillColorSecondary,
+                            decorationThickness: 1,
+                            decorationStyle:
+                            TextDecorationStyle.solid),
+                      )))),
+              progress ?
+              Align(alignment: Alignment.center,
+                    child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary!), )
+              ) : Container(),
+            ],
+          )
+        ));
   }
 }

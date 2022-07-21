@@ -3,7 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -13,7 +14,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
 import 'package:illinois/ui/home/HomeSaferWellnessAnswerCenterPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -21,135 +21,74 @@ class HomeSaferWidget extends StatefulWidget {
 
   static const String notifyNeedsVisiblity = "edu.illinois.rokwire.home.safer.needs.visibility";
   
-  final StreamController<void>? refreshController;
+  final String? favoriteId;
+  final StreamController<String>? updateController;
 
-  HomeSaferWidget({Key? key, this.refreshController}) : super(key: key);
+  HomeSaferWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: title,
+    );
+
+  static String get title => Localization().getStringEx('widget.home.safer.label.title', 'Building Access');
 
   @override
   _HomeSaferWidgetState createState() => _HomeSaferWidgetState();
 }
 
-class _HomeSaferWidgetState extends State<HomeSaferWidget> implements NotificationsListener {
+class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
 
   bool _buildingAccessAuthLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-
-    NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
-    ]);
-
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-      });
-    }
-  }
+  @override String? get favoriteId => widget.favoriteId;
+  @override String? get title => HomeSaferWidget.title;
+  @override String? get emptyMessage => Localization().getStringEx("widget.home.safer.text.empty.description", "Tap the \u2606 on items in Building Access so you can quickly find them here.");
 
   @override
-  void dispose() {
-    super.dispose();
-    NotificationService().unsubscribe(this);
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      if (mounted) {
-        setState(() {});
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SectionSlantHeader(
-      title: Localization().getStringEx('widget.home.safer.label.title', 'Building Access'),
-      titleIconAsset: 'images/campus-tools.png',
-      children: _buildCommandsList(),);
-  }
-
-  List<Widget> _buildCommandsList() {
-    List<Widget> contentList = <Widget>[];
-    List<dynamic>? contentListCodes = FlexUI()['home.safer'];
-    if (contentListCodes != null) {
-      for (dynamic contentListCode in contentListCodes) {
-        Widget? contentEntry;
-        if (contentListCode == 'building_access') {
-          contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access'),
-            description: Localization().getStringEx('widget.home.safer.button.building_access.description', 'Check your current building access.'),
-            loading: _buildingAccessAuthLoading,
-            onTap: _onBuildingAccess,
-          );
-        }
-        else if (contentListCode == 'test_locations') {
-          contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.test_locations.title', 'Test Locations'),
-            description: Localization().getStringEx('widget.home.safer.button.test_locations.description', 'Find test locations'),
-            onTap: _onTestLocations,
-          );
-        }
-        else if (contentListCode == 'my_mckinley') {
-          contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley'),
-            description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'MyMcKinley Patient Health Portal'),
-            onTap: _onMyMcKinley,
-          );
-        }
-        else if (contentListCode == 'wellness_answer_center') {
-          contentEntry = _buildCommandEntry(
-            title: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.title', 'Answer Center'),
-            description: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.description', 'Get answers to your questions.'),
-            onTap: _onWellnessAnswerCenter,
-          );
-        }
-
-        if (contentEntry != null) {
-          if (contentList.isNotEmpty) {
-            contentList.add(Container(height: 6,));
-          }
-          contentList.add(contentEntry);
-        }
-      }
-
-    }
-   return contentList;
-  }
-
-  Widget _buildCommandEntry({required String title, String? description, bool? loading, void Function()? onTap}) {
-    return Semantics(label: title, hint: description, button: true, child:
-      GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-          decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Row(children: <Widget>[
-              Expanded(child:
-                Text(title, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary), semanticsLabel: "",),
-              ),
-              ((loading == true)
-                ? SizedBox(height: 16, width: 16, child:
-                    CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2),
-                  )
-                : Image.asset('images/chevron-right.png', excludeFromSemantics: true))
-            ],),
-            StringUtils.isNotEmpty(description)
-              ? Padding(padding: EdgeInsets.only(top: 5), child:
-                  Text(description!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface), semanticsLabel: "",),
-                )
-              : Container(),
-        ],),),),
+  Widget? widgetFromCode(String code) {
+    if (code == 'building_access') {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.safer.button.building_access.title', 'Building Access'),
+        description: Localization().getStringEx('widget.home.safer.button.building_access.description', 'Check your current building access.'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        loading: _buildingAccessAuthLoading,
+        onTap: _onBuildingAccess,
       );
+    }
+    else if (code == 'test_locations') {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.safer.button.test_locations.title', 'Test Locations'),
+        description: Localization().getStringEx('widget.home.safer.button.test_locations.description', 'Find test locations'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        onTap: _onTestLocations,
+      );
+    }
+    else if (code == 'my_mckinley') {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.safer.button.my_mckinley.title', 'MyMcKinley'),
+        description: Localization().getStringEx('widget.home.safer.button.my_mckinley.description', 'MyMcKinley Patient Health Portal'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        onTap: _onMyMcKinley,
+      );
+    }
+    else if (code == 'wellness_answer_center') {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.title', 'Answer Center'),
+        description: Localization().getStringEx('widget.home.safer.button.wellness_answer_center.description', 'Get answers to your questions.'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        onTap: _onWellnessAnswerCenter,
+      );
+    }
+    else {
+      return null;
+    }
+
   }
 
   void _onBuildingAccess() {
     if (!_buildingAccessAuthLoading) {
-      Analytics().logSelect(target: 'Building Access');
+      Analytics().logSelect(target: 'Building Access', source: widget.runtimeType.toString());
       if (Connectivity().isOffline) {
         AppAlert.showOfflineMessage(context, "");
       } else if (!Auth2().privacyMatch(4)) {
@@ -193,7 +132,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   void _buildingAccessNotIncreasePrivacyLevel() {
-    Analytics().logSelect(target: 'No');
+    Analytics().logSelect(target: 'No', source: widget.runtimeType.toString());
     Navigator.of(context).pop();
     if (StringUtils.isNotEmpty(Config().iCardBoardingPassUrl)) {
       launch(Config().iCardBoardingPassUrl!);
@@ -201,7 +140,7 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   void _buildingAccessIncreasePrivacyLevelAndAuthentiate(int privacyLevel) {
-    Analytics().logSelect(target: 'Yes');
+    Analytics().logSelect(target: 'Yes', source: widget.runtimeType.toString());
     Navigator.of(context).pop();
     Auth2().prefs?.privacyLevel = privacyLevel;
     Future.delayed(Duration(milliseconds: 300), () {
@@ -242,31 +181,25 @@ class _HomeSaferWidgetState extends State<HomeSaferWidget> implements Notificati
   }
 
   void _showBuildingAccessPanel() {
-    showModalBottomSheet(context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-        builder: (context) {
-          return IDCardPanel();
-        });
+     IDCardPanel.present(context);
   }
 
   void _onTestLocations() {
-    Analytics().logSelect(target: 'Locations');
+    Analytics().logSelect(target: 'Locations', source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(
       builder: (context) => HomeSaferTestLocationsPanel()
     ));
   }
 
   void _onMyMcKinley() {
-    Analytics().logSelect(target: 'MyMcKinley');
+    Analytics().logSelect(target: 'MyMcKinley', source: widget.runtimeType.toString());
     if (StringUtils.isNotEmpty(Config().saferMcKinley['url'])) {
       launch(Config().saferMcKinley['url']);
     }
   }
 
   void _onWellnessAnswerCenter() {
-    Analytics().logSelect(target: 'Answer Center');
+    Analytics().logSelect(target: 'Answer Center', source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(
       builder: (context) => HomeSaferWellnessAnswerCenterPanel()
     ));

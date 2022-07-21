@@ -227,7 +227,7 @@ class Tweet {
   static List<Tweet>? listFromJson(List<dynamic>? jsonList) {
     List<Tweet>? result;
     if (jsonList != null) {
-      result = [];
+      result = <Tweet>[];
       for (dynamic jsonEntry in jsonList) {
         ListUtils.add(result, Tweet.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
@@ -436,7 +436,7 @@ class TweetEntityUrl with TweetEntity {
   static List<TweetEntityUrl>? listFromJson(List<dynamic>? jsonList) {
     List<TweetEntityUrl>? result;
     if (jsonList != null) {
-      result = [];
+      result = <TweetEntityUrl>[];
       for (dynamic jsonEntry in jsonList) {
         ListUtils.add(result, TweetEntityUrl.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
@@ -506,7 +506,7 @@ class TweetEntityAnnotation with TweetEntity {
   static List<TweetEntityAnnotation>? listFromJson(List<dynamic>? jsonList) {
     List<TweetEntityAnnotation>? result;
     if (jsonList != null) {
-      result = [];
+      result = <TweetEntityAnnotation>[];
       for (dynamic jsonEntry in jsonList) {
         ListUtils.add(result, TweetEntityAnnotation.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
@@ -570,7 +570,7 @@ class TweetEntityHashtag with TweetEntity {
   static List<TweetEntityHashtag>? listFromJson(List<dynamic>? jsonList) {
     List<TweetEntityHashtag>? result;
     if (jsonList != null) {
-      result = [];
+      result = <TweetEntityHashtag>[];
       for (dynamic jsonEntry in jsonList) {
         ListUtils.add(result, TweetEntityHashtag.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
@@ -639,7 +639,7 @@ class TweetEntityMention with TweetEntity {
   static List<TweetEntityMention>? listFromJson(List<dynamic>? jsonList) {
     List<TweetEntityMention>? result;
     if (jsonList != null) {
-      result = [];
+      result = <TweetEntityMention>[];
       for (dynamic jsonEntry in jsonList) {
         ListUtils.add(result, TweetEntityMention.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
@@ -721,7 +721,7 @@ class TweetRef {
   static List<TweetRef>? listFromJson(List<dynamic>? jsonList) {
     List<TweetRef>? result;
     if (jsonList != null) {
-      result = [];
+      result = <TweetRef>[];
       for (dynamic jsonEntry in jsonList) {
         ListUtils.add(result, TweetRef.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
@@ -991,7 +991,7 @@ class TwitterMedia {
   static List<TwitterMedia>? listFromJson(List<dynamic>? jsonList) {
     List<TwitterMedia>? result;
     if (jsonList != null) {
-      result = [];
+      result = <TwitterMedia>[];
       for (dynamic jsonEntry in jsonList) {
         ListUtils.add(result, TwitterMedia.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
@@ -1133,7 +1133,7 @@ class TwitterUser {
   static List<TwitterUser>? listFromJson(List<dynamic>? jsonList) {
     List<TwitterUser>? result;
     if (jsonList != null) {
-      result = [];
+      result = <TwitterUser>[];
       for (dynamic jsonEntry in jsonList) {
         ListUtils.add(result, TwitterUser.fromJson(JsonUtils.mapValue(jsonEntry)));
       }

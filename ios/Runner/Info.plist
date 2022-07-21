@@ -43,6 +43,7 @@
 	<array>
 		<string>com.touchnet.orderahead</string>
 		<string>edu.illinois.covid</string>
+		<string>canvas-student</string>
 		<string>https</string>
 		<string>http</string>
 	</array>

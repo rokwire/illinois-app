@@ -59,7 +59,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   @override
   void initState() {
     _event = widget.event;
-    Groups().loadGroups(myGroups: true).then((groups) {
+    Groups().loadGroups(contentType: GroupsContentType.my).then((groups) {
       if(groups?.isNotEmpty ?? false){
         _adminGroups = groups!.where((group) => group.currentUserIsAdmin).toList();
       }
@@ -117,6 +117,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       _eventTimeDetail(),
                       Container(height: 12,),
                       _eventLocationDetail(),
+                      _eventOnlineDetail(),
                       Container(height: 8,),
                       _eventPriceDetail(),
                       _eventPrivacyDetail(),
@@ -238,22 +239,21 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   }
 
   Widget _eventLocationDetail() {
-    String? locationText = _event?.getLongDisplayLocation(null); //TBD decide if we need distance calculation - pass _locationData
-    bool isVirtual = _event?.isVirtual ?? false;
-    String eventType = isVirtual? Localization().getStringEx('panel.groups_event_detail.label.online_event', "Online Event") : Localization().getStringEx('panel.groups_event_detail.label.in_person_event', "In-person event");
-    bool hasEventUrl = StringUtils.isNotEmpty(_event?.location?.description);
-    bool isOnlineUnderlined = isVirtual && hasEventUrl;
+    if(!(widget.event?.displayAsInPerson ?? false)){
+      return Container();
+    }
+    String eventType = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
-    String iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
-    String locationId = StringUtils.ensureNotEmpty(_event?.location?.locationId);
-    bool isLocationIdUrl = Uri.tryParse(locationId)?.isAbsolute ?? false;
-    String? value = isVirtual ? locationId : locationText;
-    bool isValueVisible = StringUtils.isNotEmpty(value) && (!isVirtual || !isLocationIdUrl);
+    String iconRes = "images/location.png" ;
+    String? locationId = widget.event?.location?.locationId;
+    String? locationText = _event?.getLongDisplayLocation(null); //TBD decide if we need distance calculation - pass _locationData
+    String? value = locationId ?? locationText;
+    bool isValueVisible = StringUtils.isNotEmpty(value);
     return GestureDetector(
       onTap: _onLocationDetailTapped,
       child: Semantics(
           label: "$eventType, $locationText",
-          hint: isVirtual ? Localization().getStringEx('panel.explore_detail.button.virtual.hint', 'Double tap to open link') : Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
+          hint: Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
           button: true,
           excludeSemantics: true,
           child:Padding(
@@ -268,9 +268,9 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(right: 10),
-                          child:Image.asset(iconRes),
+                          child:Image.asset(iconRes, excludeFromSemantics: true),
                         ),
-                        Container(decoration: (isOnlineUnderlined ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (isOnlineUnderlined ? 2 : 0)), child: Text(eventType,
+                        Container(decoration: (null), padding: EdgeInsets.only(bottom: (0)), child: Text(eventType,
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies!.medium,
                                 fontSize: 16,
@@ -284,6 +284,69 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                           padding: EdgeInsets.only(bottom: 2),
                           child: Text(
                             value??"",
+                            style: TextStyle(
+                                fontFamily: Styles().fontFamilies!.medium,
+                                fontSize: 14,
+                                color: Styles().colors!.fillColorPrimary),
+                          ))))
+                ],)
+          )
+      ),
+    );
+  }
+
+  Widget _eventOnlineDetail() {
+    if(!(widget.event?.displayAsVirtual ?? false)){
+      return Container();
+    }
+
+    String eventType = Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event");
+    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
+    String iconRes = "images/laptop.png";
+    String? virtualUrl = widget.event?.virtualEventUrl;
+    String locationDescription = StringUtils.ensureNotEmpty(widget.event?.location?.description);
+    String? locationId = widget.event?.location?.locationId;
+    String? urlFromLocation = locationId ??  locationDescription;
+    bool isLocationIdUrl = Uri.tryParse(urlFromLocation)?.isAbsolute ?? false;
+    String value = virtualUrl ??
+        (isLocationIdUrl? urlFromLocation : "");
+
+    bool isValueVisible = StringUtils.isNotEmpty(value);
+    return GestureDetector(
+      onTap: _onLocationDetailTapped,
+      child: Semantics(
+          label: "$eventType, $virtualUrl",
+          hint: Localization().getStringEx('panel.explore_detail.button.virtual.hint', 'Double tap to open link'),
+          button: true,
+          excludeSemantics: true,
+          child:Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(right: 10),
+                          child:Image.asset(iconRes, excludeFromSemantics: true),
+                        ),
+                        Container(decoration: (StringUtils.isNotEmpty(value) ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (StringUtils.isNotEmpty(value) ? 2 : 0)), child: Text(eventType,
+                            style: TextStyle(
+                                fontFamily: Styles().fontFamilies!.medium,
+                                fontSize: 16,
+                                color: Styles().colors!.textBackground)),),
+                      ]),
+                  Container(height: 4,),
+                  Visibility(visible: isValueVisible, child: Container(
+                      padding: EdgeInsets.only(left: 30),
+                      child: Container(
+                          decoration: underlineLocationDecoration,
+                          padding: EdgeInsets.only(bottom: 2),
+                          child: Text(
+                            value,
                             style: TextStyle(
                                 fontFamily: Styles().fontFamilies!.medium,
                                 fontSize: 14,
@@ -480,7 +543,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                   'widget.card.button.favorite.on.hint', ''),
               button: true,
-              child: Image.asset(isFavorite ? 'images/icon-star-solid.png' : 'images/icon-favorites-white.png') //TBD selected image res
+              child: Image.asset(isFavorite ? 'images/icon-star-white-transluent.png' : 'images/icon-star-white-frame-bold.png') //TBD selected image res
           )));
   }
 
@@ -576,7 +639,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
   void _onLocationDetailTapped(){
     Analytics().logSelect(target: 'Event location/url');
-    if((_event?.isVirtual?? false) == true){
+    if((_event?.displayAsVirtual?? false) == true){
       String? url = _event?.location?.description;
       if(StringUtils.isNotEmpty(url)) {
         _onTapWebButton(url, analyticsName: "Event Link");
@@ -641,10 +704,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                     emptySelectionText: Localization().getStringEx('panel.groups_event_detail.button.select_group.title', "Select a group.."),
                     buttonHint: Localization().getStringEx('panel.groups_event_detail.button.select_group.hint', "Double tap to show categories options"),
                     items: _adminGroups,
-                    constructTitle: (Group group) {
-                      return group.title;
+                    constructTitle: (dynamic group) {
+                      return group is Group ? group.title : "N/A";
                       },
-                    onValueChanged: (Group group) {
+                    onValueChanged: (dynamic group) {
                       setState(() {
                         _currentlySelectedGroup = group;
                       });

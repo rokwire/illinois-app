@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/header_bar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -81,11 +81,11 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
 
     String description = (_state == Auth2EmailAccountState.nonExistent) ?
       (widget.link == true) ? Localization().getStringEx('panel.onboarding2.email.link.description.text', 'Please enter a password to add your email address.') :
-      Localization().getStringEx('panel.onboarding2.email.sign_up.description.text', 'Please enter a password to create a new account for your email.') :
+      Localization().getStringEx('panel.onboarding2.email.sign_up.description.text', 'Please enter a password to create a new account with your email.') :
       Localization().getStringEx('panel.onboarding2.email.sign_in.description.text', 'Please enter your password to sign in with your email.');
 
-    String showPassword = (_state == Auth2EmailAccountState.nonExistent) ?
-      Localization().getStringEx("panel.onboarding2.email.label.show_passwords.text", "Show Passwords") :
+    String showPassword =
+    // (_state == Auth2EmailAccountState.nonExistent) ? Localization().getStringEx("panel.onboarding2.email.label.show_passwords.text", "Show Passwords") :
       Localization().getStringEx("panel.onboarding2.email.label.show_password.text", "Show Password");
 
     String buttonTitle = (_state == Auth2EmailAccountState.nonExistent) ?
@@ -105,7 +105,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
     );
 
     return Scaffold(
-      appBar: HeaderBar(title: title,),
+      appBar: HeaderBar(title: title, centerTitle: false,),
       body: Column(children: <Widget>[
         Expanded(child:
           SingleChildScrollView(scrollDirection: Axis.vertical, child:
@@ -204,7 +204,19 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                     ),
                   ],)
                 ),
-
+                Visibility(visible: (_state != Auth2EmailAccountState.nonExistent), child:
+                  Row(
+                    children: [
+                      Expanded(child:
+                        Padding(padding: EdgeInsets.only(top: 12,), child:
+                          Text(Localization().getStringEx("panel.onboarding2.email.password_instructions.text", "Use 8 or more characters containing a mix of lowercase letters, uppercase letters, a number, and a special character.",),
+                            style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular),
+                          )
+                        )
+                      )
+                    ],
+                  ),
+                ),
                 Row(children: [
                   
                   Expanded(child:
@@ -373,7 +385,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
         setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.password_empty.text", "Please enter your password."));
       }
       else if (!RegExp(strengthRegEx).hasMatch(password)) {
-        setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.password_weak.text", "Password must be at least 8 characters long and must contain a lowercase letter, uppercase letter, number, and a special character."));
+        setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.password_weak.text", "Password must use 8 or more characters containing a mix of lowercase letters, uppercase letters, a number, and a special character."));
       }
       else if (password != confirmPassword) {
         setErrorMsg(Localization().getStringEx("panel.onboarding2.email.validation.passwords_dont_match.text", "Passwords do not match."));

@@ -24,7 +24,6 @@ import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
-import 'package:illinois/ui/wallet/WalletSheet.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -36,8 +35,9 @@ class GuideListPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final GuideSection? section;
   final List<Map<String, dynamic>>? contentList;
   final String? contentTitle;
+  final String? contentEmptyMessage;
 
-  GuideListPanel({ this.guide, this.category, this.section, this.contentList, this.contentTitle});
+  GuideListPanel({ this.guide, this.category, this.section, this.contentList, this.contentTitle, this.contentEmptyMessage});
 
   @override
   _GuideListPanelState createState() => _GuideListPanelState();
@@ -85,6 +85,24 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     }
   }
 
+  @override
+  Widget build(BuildContext context) {
+
+    String? title;
+    if (widget.category != null) {
+      title = widget.category;
+    }
+    else if (widget.contentList?.isEmpty ?? true) {
+      title = widget.contentTitle;
+    }
+    
+    return Scaffold(
+      appBar: HeaderBar(title: title ?? Localization().getStringEx('panel.guide_list.label.highlights.heading', 'Campus Guide')),
+      body: Column(children: _buildContent()),
+      backgroundColor: Styles().colors!.background,
+    );
+  }
+
   void _buildGuideContent() {
     if (widget.contentList != null) {
       _guideItems = List.from(widget.contentList!);
@@ -120,24 +138,6 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
     else {
       _features = null;
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    String? title;
-    if (widget.category != null) {
-      title = widget.category;
-    }
-    else if (widget.contentList != null) {
-      title = Localization().getStringEx('panel.guide_list.label.highlights.heading', 'Campus Guide');
-    }
-    
-    return Scaffold(
-      appBar: HeaderBar(title: title),
-      body: Column(children: _buildContent()),
-      backgroundColor: Styles().colors!.background,
-    );
   }
 
   List<Widget> _buildContent() {
@@ -186,7 +186,7 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
         Expanded(child:
           Padding(padding: EdgeInsets.all(32), child:
             Center(child:
-              Text(Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+              Text(widget.contentEmptyMessage ?? Localization().getStringEx('panel.guide_list.label.content.empty', 'Empty guide content'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
             ,)
           ),
         ),
@@ -335,17 +335,17 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateBusPass() {
     Analytics().logSelect(target: "Bus Pass");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDBusPassPanel()));
+    MTDBusPassPanel.present(context);
   }
 
   void _navigateDining() {
     Analytics().logSelect(target: "Dining");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Dining, showHeaderBack: true,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining)));
   }
 
   void _navigateEvents() {
     Analytics().logSelect(target: "Events");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialTab: ExploreTab.Events, showHeaderBack: true,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events)));
   }
 
   void _navigateGroups() {
@@ -355,17 +355,12 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateIlliniCash() {
     Analytics().logSelect(target: "Illini Cash");
-    Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
-        settings: RouteSettings(name: SettingsIlliniCashPanel.routeName),
-        builder: (context){
-          return SettingsIlliniCashPanel();
-        }
-    ));
+    SettingsIlliniCashPanel.present(context);
   }
 
   void _navigateIlliniId() {
     Analytics().logSelect(target: "Illini ID");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => IDCardPanel()));
+    IDCardPanel.present(context);
   }
 
   void _navigateLaundry() {
@@ -375,16 +370,12 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
   void _navigateLibraryCard() {
     Analytics().logSelect(target: "Library Card");
-    showModalBottomSheet(context: context, isScrollControlled: true, isDismissible: true, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0),), builder: (context) => WalletSheet(ensureVisibleCard: 'library',));
+    //showModalBottomSheet(context: context, isScrollControlled: true, isDismissible: true, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0),), builder: (context) => WalletSheet(ensureVisibleCard: 'library',));
   }
 
   void _navigateMealPlan() {
     Analytics().logSelect(target: "Meal Plan");
-    Navigator.of(context, rootNavigator: false).push(CupertinoPageRoute(
-        builder: (context){
-          return SettingsMealPlanPanel();
-        }
-    ));
+    SettingsMealPlanPanel.present(context);
   }
 
   void _navigateMyIllini() {

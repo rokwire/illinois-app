@@ -21,7 +21,7 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/laundry/LaundryDetailPanel.dart';
+import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 
 class LaundryListPanel extends StatefulWidget {
@@ -48,60 +48,54 @@ class _LaundryListPanelState extends State<LaundryListPanel>  {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(
-        title: Localization().getStringEx("panel.laundry_detail.header.title", "Laundry"),
-      ),
+      appBar: HeaderBar(title: Localization().getStringEx("panel.laundry_detail.header.title", "Laundry"),),
       body: _buildContentWidget(),
-      backgroundColor: Styles().colors!.background,
+      backgroundColor: Styles().colors?.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
   Widget _buildContentWidget() {
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: 
-            Container(
-                  color: Styles().colors!.background,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Container(
-                          color: Styles().colors!.background,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: 16, right: 16, bottom: 80),
-                                child: ListView.separated(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemBuilder: (context, index) {
-                                      LaundryRoom laundryRoom = widget.rooms![index];
-                                      return LaundryRoomRibbonButton(
-                                        label: laundryRoom.title,
-                                        onTap: () => _onRoomTap(laundryRoom),
-                                      );
-                                    },
-                                    separatorBuilder: (context, index) => Container(),
-                                    itemCount: widget.rooms!.length),
-                              )
-                            ],
-                          )),
+    return Column(children: <Widget>[
+      Expanded(child: 
+        Container(color: Styles().colors?.background, child:
+          Padding(padding: EdgeInsets.only(top: 16), child:
+            SingleChildScrollView(scrollDirection: Axis.vertical, child:
+              Container(color: Styles().colors?.background, child:
+                Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+                  Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 80), child:
+                    ListView.separated(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemBuilder: _buildListItem,
+                      separatorBuilder: _buildListSeparator,
+                      itemCount: widget.rooms?.length ?? 0
                     ),
-                  ),
-                ),
+                  )
+                ],),
+              ),
+            ),
+          ),
         ),
-      ],
-    );
+      ),
+    ],);
+  }
+
+  Widget _buildListItem(BuildContext context, int index) {
+    LaundryRoom? laundryRoom = (widget.rooms != null) ? widget.rooms![index] : null;
+    return (laundryRoom != null) ? LaundryRoomRibbonButton(
+      label: laundryRoom.name,
+      onTap: () => _onRoomTap(laundryRoom),
+    ) : Container();
+  }
+
+  Widget _buildListSeparator(BuildContext context, int index) {
+    return Container();
   }
 
   void _onRoomTap(LaundryRoom room) {
-    Analytics().logSelect(target: "Room" + room.title!);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryDetailPanel(room: room,)));
+    Analytics().logSelect(target: "Room" + room.name!);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryRoomDetailPanel(room: room,)));
   }
 }
 
@@ -121,40 +115,19 @@ class LaundryRoomRibbonButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: onTap,
-        child: Semantics(
-          label: label,
-          hint:
-          Localization().getStringEx('panel.laundry_list.button.item.hint', ''),
-          button: true,
-          excludeSemantics: true,
-          child: Container(
-            decoration: BoxDecoration(
-                color: backgroundColor,
-                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                borderRadius: borderRadius),
-//            height: 48,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Expanded(child:
-                    Text(
-                      label!,
-                      style: TextStyle(
-                          color: Styles().colors!.fillColorPrimary,
-                          fontSize: 16,
-                          fontFamily: labelFontFamily ?? Styles().fontFamilies!.medium),
-                    ),
-                  ),
-                  Image.asset('images/chevron-right.png', excludeFromSemantics: true)
-                ],
+    return GestureDetector(onTap: onTap, child:
+      Semantics(label: label, hint: Localization().getStringEx('panel.laundry_list.button.item.hint', ''), button: true, excludeSemantics: true, child:
+        Container(decoration: BoxDecoration(color: backgroundColor, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius: borderRadius), child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14), child:
+            Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+              Expanded(child:
+                Text(label ?? '', style: TextStyle(fontFamily: labelFontFamily ?? Styles().fontFamilies?.medium, fontSize: 16,  color: Styles().colors?.fillColorPrimary,), ),
               ),
-            ),
+              Image.asset('images/chevron-right.png', excludeFromSemantics: true)
+            ],),
           ),
-        ));
+        ),
+      )
+    );
   }
 }

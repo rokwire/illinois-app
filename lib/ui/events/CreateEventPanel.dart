@@ -78,6 +78,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   bool _allDay = false;
   ExploreLocation? _location;
   bool _isOnline = false;
+  bool _isInPerson = false;
   bool _isFree = false;
   String? _selectedPrivacy = eventPrivacyPublic;
   //TMP: bool _isAttendanceRequired = false;
@@ -95,7 +96,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   final _eventLocationController = TextEditingController();
   final _eventLatitudeController = TextEditingController();
   final _eventLongitudeController = TextEditingController();
-  final _eventCallUrlController = TextEditingController();
+  final _eventVirtualUrlController = TextEditingController();
   final _eventPriceController = TextEditingController();
 
   @override
@@ -494,8 +495,18 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                         toggled: _isOnline,
                                         onTap: _onOnlineToggled,
                                         border: Border.all(color: Styles().colors!.fillColorPrimary!),
-                                        borderRadius:
-                                        BorderRadius.all(Radius.circular(4)),
+                                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                                      )),
+                                  Container(height: 8,),
+                                  Semantics(label:Localization().getStringEx("panel.create_event.date_time.in_person","Make this an in-person event"),
+                                      hint: Localization().getStringEx("panel.create_event.date_time.all_day.hint",""), toggled: _isInPerson, excludeSemantics: true, child:
+                                      ToggleRibbonButton(
+                                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                                        label: Localization().getStringEx("panel.create_event.date_time.in_person","Make this an in-person event"),
+                                        toggled: _isInPerson,
+                                        onTap: _onInPersonToggled,
+                                        border: Border.all(color: Styles().colors!.fillColorPrimary!),
+                                        borderRadius: BorderRadius.all(Radius.circular(4)),
                                       ))
                                 ])),
                         Container(height: 6,),
@@ -937,7 +948,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                (_isOnline) ? Container():
+                (!_isInPerson) ? Container():
                 Column(
                     children: [
                       Padding(
@@ -1271,7 +1282,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                           width: 1)),
                                   height: 48,
                                   child: TextField(
-                                    controller: _eventCallUrlController,
+                                    controller: _eventVirtualUrlController,
                                     onChanged: _onTextChanged,
                                     decoration: InputDecoration(
                                         border: InputBorder.none),
@@ -1505,6 +1516,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       }
       _allDay = event.allDay ?? false;
       _isOnline = event.isVirtual ?? false;
+      _isInPerson = event.isInPerson ?? false;
       _isFree = event.isEventFree?? false;
       _location = event.location;
       if (event.longDescription != null) {
@@ -1520,13 +1532,16 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         _eventPriceController.text = event.cost!;
       }
       _selectedPrivacy = (event.isGroupPrivate??false) ? eventPrivacyPrivate : eventPrivacyPublic;
+
+      // if (_isOnline) {
+        _eventVirtualUrlController.text = event.virtualEventUrl ?? /*Support old records*/
+            ((Uri.tryParse(event.location?.description??"")?.isAbsolute ?? false) ?
+              event.location?.description ?? "" :
+            "");
+      // }
+
       if(event.location!=null){
-        if (_isOnline) {
-          _eventCallUrlController.text = _location!.description!;
-        }
-        else {
-          _eventLocationController.text = _location!.description!;
-        }
+        _eventLocationController.text = _location!.description!;
         _eventLatitudeController.text = event.location?.latitude?.toString()??"";
         _eventLongitudeController.text = event.location?.longitude?.toString()??"";
       }
@@ -1641,6 +1656,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     setState(() {});
   }
 
+  void _onInPersonToggled() {
+    _isInPerson = !_isInPerson;
+    _modified = true;
+    setState(() {});
+  }
+
   void _onFreeToggled() {
     _isFree = !_isFree;
     _modified = true;
@@ -1692,12 +1713,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       _eventLocationController.text = StringUtils.ensureNotEmpty(locationName);
 
       if(StringUtils.isNotEmpty(_location!.description)){
-        if (_isOnline) {
-          _eventCallUrlController.text = _location!.description!;
-        }
-        else {
+        // if (_isOnline) {
+        //   _eventVirtualUrlController.text = _location!.description!;
+        // }
+        // else {
           _eventLocationController.text = _location!.description!;
-        }
+        // }
       }
 
       if(_location?.latitude!=null){
@@ -1725,7 +1746,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
         context,
         CupertinoPageRoute(
             builder: (context) =>
-                WebPanel(url: _eventCallUrlController.text)));
+                WebPanel(url: _eventVirtualUrlController.text)));
   }
 
   void _onTapConfirmWebsiteUrl() {
@@ -1823,7 +1844,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       if (hasGroup) {
         List<Group>? otherGroups = await _loadOtherAdminUserGroups();
         if (CollectionUtils.isNotEmpty(otherGroups)) {
-          otherGroupsToSave = await showDialog(context: context, barrierDismissible: false, builder: (_) => _GroupsSelectionPopup(groups: otherGroups));
+          otherGroupsToSave = await showDialog(context: context, barrierDismissible: true, builder: (_) => _GroupsSelectionPopup(groups: otherGroups));
         }
       }
 
@@ -1901,7 +1922,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   /// Returns the groups that current user is admin of without the current group
   ///
   Future<List<Group>?> _loadOtherAdminUserGroups() async {
-    List<Group>? userGroups = await Groups().loadGroups(myGroups: true);
+    List<Group>? userGroups = await Groups().loadGroups(contentType: GroupsContentType.my);
     List<Group>? userAdminGroups;
     if (CollectionUtils.isNotEmpty(userGroups)) {
       userAdminGroups = [];
@@ -1923,11 +1944,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     if(_location==null) {
       _location = new ExploreLocation();
     }
-    _location!.description = _isOnline? (_eventCallUrlController.text.toString()) : (_eventLocationController.text.toString());
-    String? longitude = !_isOnline? (_eventLongitudeController.text.toString()) : null;
-    String? latitude = !_isOnline? (_eventLatitudeController.text.toString()) : null;
-    _location!.latitude = (latitude != null) ? num.tryParse(latitude) : null;
-    _location!.longitude = (longitude != null) ? num.tryParse(longitude) : null;
+    _location!.description =  (_eventLocationController.text.toString());
+    String? longitude = (_eventLongitudeController.text.toString()) ;
+    String? latitude = (_eventLatitudeController.text.toString());
+    _location!.latitude = num.tryParse(latitude);
+    _location!.longitude =  num.tryParse(longitude);
 
     event.imageURL = _imageUrl;
     event.category = _selectedCategory != null ? _selectedCategory["category"] : "";
@@ -1952,6 +1973,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
     event.registrationUrl = StringUtils.isNotEmpty(_eventPurchaseUrlController.text)?_eventPurchaseUrlController.text : null;
     event.titleUrl = _eventWebsiteController.text;
     event.isVirtual = _isOnline;
+    event.virtualEventUrl =  StringUtils.isNotEmpty(_eventVirtualUrlController.text)?_eventVirtualUrlController.text : null;
+    event.isInPerson = _isInPerson;
     event.recurringFlag = false;//decide do we need it
     event.cost = _eventPriceController.text.toString();//decide do we need it
     event.isGroupPrivate = _isPrivateEvent;
@@ -2372,108 +2395,111 @@ class _GroupsSelectionPopup extends StatefulWidget {
 }
 
 class _GroupsSelectionPopupState extends State<_GroupsSelectionPopup> {
-  List<String> _selectedGroupIds = [];
+  Set<String> _selectedGroupIds = {};
 
   @override
   void initState() {
     super.initState();
     if (CollectionUtils.isNotEmpty(widget.groups)) {
       for (Group group in widget.groups!) {
-        ListUtils.add(_selectedGroupIds, group.id);
+        if (group.id != null) {
+          _selectedGroupIds.add(group.id!);
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      contentPadding: EdgeInsets.zero,
-        scrollable: true,
-        content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-      Container(
+    return AlertDialog(contentPadding: EdgeInsets.zero, scrollable: true, content:
+      Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        Container(
           decoration: BoxDecoration(
             color: Styles().colors!.fillColorPrimary,
             borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
           ),
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, mainAxisSize: MainAxisSize.max, children: <Widget>[
-            Padding(
-                padding: EdgeInsets.all(10),
-                child: Text(
-                    Localization().getStringEx("widget.groups.selection.heading", "Select Group"),
-                    style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 24)))
-          ])),
-      Padding(
-          padding: EdgeInsets.all(10),
-          child: _buildGroupsList()),
-      Semantics(
-        container: true,
-        child:Padding(
-          padding: EdgeInsets.all(10),
-          child: RoundedButton(
-              label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select"),
-              borderColor: Styles().colors!.fillColorSecondary,
-              backgroundColor: Styles().colors!.white,
-              textColor: Styles().colors!.fillColorPrimary,
-              onTap: _onTapSelect)))
+          child: Row(children: <Widget>[
+            Opacity(opacity: 0, child:
+              Padding(padding: EdgeInsets.all(8), child:
+                Image.asset('images/close-white.png', excludeFromSemantics: true,)
+              )
+            ),
+            Expanded(child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+                Text(Localization().getStringEx("widget.groups.selection.heading", "Select Group"), textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 24)
+                )
+              )
+            ),
+            Semantics(button: true, label: Localization().getStringEx("dialog.close.title","Close"), child:
+              InkWell(onTap: _onTapClose, child:
+                Padding(padding: EdgeInsets.only(top: 8, bottom: 8, left: 4, right: 12), child:
+                  Image.asset('images/close-white.png', excludeFromSemantics: true,)
+                )
+              )
+            )
+          ])
+        ),
+      Padding(padding: EdgeInsets.all(10), child: _buildGroupsList()),
+      Semantics(container: true, child:
+        Padding(padding: EdgeInsets.all(10), child:
+          RoundedButton(
+            label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select"),
+            borderColor: Styles().colors!.fillColorSecondary,
+            backgroundColor: Styles().colors!.white,
+            textColor: Styles().colors!.fillColorPrimary,
+            onTap: _onTapSelect
+          )
+        )
+      )
     ]));
   }
 
   Widget _buildGroupsList() {
-    if (CollectionUtils.isNotEmpty(widget.groups)) {
+    if (CollectionUtils.isEmpty(widget.groups)) {
       return Container();
     }
     List<Widget> groupWidgetList = [];
-    for (int index = 0; index < widget.groups!.length; index++) {
-      Group group = widget.groups![index];
-      Widget groupSelectionWidget = ToggleRibbonButton(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-          label: group.title,
-          toggled: _isGroupSelected(index),
-          onTap: () => _onTapGroup(index),
-          textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold));
+    for (Group group in widget.groups!) {
+      if (group.id != null) {
+        groupWidgetList.add(ToggleRibbonButton(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+            label: group.title,
+            toggled: _selectedGroupIds.contains(group.id),
+            onTap: () => _onTapGroup(group.id!),
+            textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)
+        ));
+      }
 
-      groupWidgetList.add(groupSelectionWidget);
     }
     return Column(children: groupWidgetList);
   }
 
-  void _onTapGroup(int index) {
-    Group? group = (widget.groups != null) ? widget.groups![index] : null;
-    String? groupId = group?.id;
-    if (_isGroupSelected(index)) {
-      _selectedGroupIds.remove(groupId);
-    } else if (groupId != null) {
-      _selectedGroupIds.add(groupId);
-    }
+  void _onTapGroup(String groupId) {
     if (mounted) {
-      setState(() {});
-    }
-  }
-
-  bool _isGroupSelected(int index) {
-    if ((widget.groups != null) && (index >= 0) && (index < widget.groups!.length) && CollectionUtils.isNotEmpty(_selectedGroupIds)) {
-      Group group = widget.groups![index];
-      for (String groupId in _selectedGroupIds) {
-        if (groupId == group.id) {
-          return true;
+      setState(() {
+        if (_selectedGroupIds.contains(groupId)) {
+          _selectedGroupIds.remove(groupId);
+        } else {
+          _selectedGroupIds.add(groupId);
         }
-      }
+      });
     }
-    return false;
   }
 
   void _onTapSelect() {
-    List<Group>? selectedGroups;
-    if (CollectionUtils.isNotEmpty(_selectedGroupIds)) {
-      selectedGroups = [];
-      if (widget.groups != null) {
-        for (Group group in widget.groups!) {
-          if (_selectedGroupIds.contains(group.id)) {
-            selectedGroups.add(group);
-          }
+    List<Group>? selectedGroups = [];
+    if (widget.groups != null) {
+      for (Group group in widget.groups!) {
+        if (_selectedGroupIds.contains(group.id)) {
+          selectedGroups.add(group);
         }
       }
     }
     Navigator.of(context).pop(selectedGroups);
+  }
+
+  void _onTapClose() {
+    Navigator.of(context).pop(<Group>[]);
   }
 }

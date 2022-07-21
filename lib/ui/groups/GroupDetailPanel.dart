@@ -17,6 +17,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -26,6 +29,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -107,6 +111,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   List<Poll>?        _groupPolls;
   bool               _pollsLoading = false;
 
+  bool               _memberAttendLoading = false;
+
   bool get _isMember {
     return _group?.currentUserAsMember?.isMember ?? false;
   }
@@ -179,6 +185,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Polls.notifyStatusChanged,
       Polls.notifyVoteChanged,
       Polls.notifyResultsChanged,
+      Polls.notifyLifecycleDelete,
+      Connectivity.notifyStatusChanged,
     ]);
 
     _loadGroup(loadEvents: true);
@@ -193,20 +201,29 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _loadGroup({bool loadEvents = false}) {
     _increaseProgress();
-    Groups().loadGroup(widget.groupId).then((Group? group) {
-      if (mounted) {
-        if (group != null) {
-          _group = group;
-          _groupAdmins = _group!.getMembersByStatus(GroupMemberStatus.admin);
-          _loadInitialPosts();
-          _loadPolls();
-        }
-        if (loadEvents) {
-          _loadEvents();
-        }
-        _decreaseProgress();
+    // Load group if the device is online, otherwise - use widget's argument
+    if (Connectivity().isOnline) {
+      Groups().loadGroup(widget.groupId).then((Group? group) {
+        _onGroupLoaded(group, loadEvents: loadEvents);
+      });
+    } else {
+      _onGroupLoaded(widget.group, loadEvents: loadEvents);
+    }
+  }
+
+  void _onGroupLoaded(Group? group, {bool loadEvents = false}) {
+    if (mounted) {
+      if (group != null) {
+        _group = group;
+        _groupAdmins = _group!.getMembersByStatus(GroupMemberStatus.admin);
+        _loadInitialPosts();
+        _loadPolls();
       }
-    });
+      if (loadEvents) {
+        _loadEvents();
+      }
+      _decreaseProgress();
+    }
   }
 
   void _refreshGroup({bool refreshEvents = false}) {
@@ -321,7 +338,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     String? groupId = _group?.id;
     if (StringUtils.isNotEmpty(groupId) && _group!.currentUserIsMemberOrAdmin) {
       _setPollsLoading(true);
-      Polls().getGroupPolls([groupId!])!.then((result) {
+      Polls().getGroupPolls(groupIds: {groupId!})!.then((result) {
         _groupPolls = (result != null) ? result.polls : null;
         _setPollsLoading(false);
       });
@@ -341,7 +358,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _cancelMembershipRequest() {
     _setConfirmationLoading(true);
-    Groups().cancelRequestMembership(widget.group).whenComplete(() {
+    Groups().cancelRequestMembership(_group).whenComplete(() {
       if (mounted) {
         _setConfirmationLoading(false);
         _loadGroup();
@@ -351,7 +368,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Future<void> _leaveGroup() {
     _setConfirmationLoading(true);
-    return Groups().leaveGroup(widget.group).whenComplete(() {
+    return Groups().leaveGroup(_group).whenComplete(() {
       if (mounted) {
         _setConfirmationLoading(false);
         _loadGroup(loadEvents: true);
@@ -425,16 +442,26 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
     else if (param == widget.groupId && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)) {
       _loadGroup(loadEvents: true);
-    } else if (name == Groups.notifyGroupPostsUpdated) {
+    } 
+    else if (name == Groups.notifyGroupPostsUpdated) {
       _refreshCurrentPosts(delta: param is int ? param : null);
-    } else if (name == Polls.notifyCreated) {
+    } 
+    else if ((name == Polls.notifyCreated)
+             || (name == Polls.notifyLifecycleDelete)) {
       _refreshPolls();
-    } else if (name == Polls.notifyVoteChanged
+    } 
+    else if (name == Polls.notifyVoteChanged
             || name == Polls.notifyResultsChanged 
             || name == Polls.notifyStatusChanged) {
       _onPollUpdated(param); // Deep collection update single element (do not reload whole list)
-    }else if (name == AppLivecycle.notifyStateChanged) {
+    } 
+    else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
+    } 
+    else if (name == Connectivity.notifyStatusChanged) {
+      if (Connectivity().isOnline && mounted) {
+        _loadGroup(loadEvents: true);
+      }
     }
   }
 
@@ -443,7 +470,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       _pausedDateTime = DateTime.now();
     }
     else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
+      // Refresh group if the device is online
+      if ((_pausedDateTime != null) && Connectivity().isOnline) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _refreshGroup(refreshEvents: true);
@@ -571,6 +599,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       pendingMembers = "";
     }
 
+    int attendedCount = _group?.attendedCount ?? 0;
+    String? attendedMembers;
+    if (_group!.currentUserIsAdmin && (_group!.attendanceGroup == true)) {
+      if (attendedCount == 0) {
+        attendedMembers = Localization().getStringEx("panel.group_detail.attended_members.count.empty", "No Members Attended");
+      } else if (attendedCount == 1) {
+        attendedMembers = Localization().getStringEx("panel.group_detail.attended_members.count.one", "1 Member Attended");
+      } else {
+        attendedMembers =
+            sprintf(Localization().getStringEx("panel.group_detail.attended_members.count.format", "%s Members Attended"), [attendedCount]);
+      }
+    }
+
     if (_isMemberOrAdmin) {
       if(_isAdmin) {
         commands.add(RibbonButton(
@@ -596,6 +637,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapPromote,
         ));
+        if (_group?.attendanceGroup == true) {
+          commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
+          commands.add(Stack(alignment: Alignment.center, children: [
+            RibbonButton(
+            label: Localization().getStringEx("panel.group_detail.button.take_attendance.title", "Take Attendance"),
+            hint: Localization().getStringEx("panel.group_detail.button.take_attendance.hint", ""),
+            leftIconAsset: 'images/icon-qr-code.png',
+            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+            onTap: _onTapTakeAttendance,
+          ),
+          Visibility(
+                visible: _memberAttendLoading, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2))
+          ]));
+        }
       }
       if (StringUtils.isNotEmpty(_group?.webURL)) {
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
@@ -616,38 +671,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       }
     }
 
-    Widget badgeOrCategoryWidget = _showMembershipBadge ?
-      Row(children: <Widget>[
-        Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
-          Center(child:
-            Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
-              Text(_group!.currentUserStatusText!.toUpperCase(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white),)
-            ),
-          ),
-        ),
-        Expanded(child: Container(),),
-      ],) :
-    
-      Row(children: <Widget>[
-        Expanded(child:
-          Text(_group?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
-        ),
-      ],);
-
     return Container(color: Colors.white, child:
       Stack(children: <Widget>[
-        Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 12), child:
+        Padding(padding: EdgeInsets.only(top: 12), child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
-                badgeOrCategoryWidget,
+              Padding(padding: EdgeInsets.only(left: 16) /* the Policy button takes vertical and right space */, child:
+                _buildBadgeOrCategoryWidget(),
               ),
 
-              Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
                 Text(_group?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 32, color: Styles().colors!.fillColorPrimary),),
               ),
               
               GestureDetector(onTap: () => { if (_isMember) {_onTapMembers()} }, child:
-                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
                   Container(decoration: (_isMember ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
                     Text(members, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground))
                   ),
@@ -655,12 +692,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               ),
               
               Visibility(visible: StringUtils.isNotEmpty(pendingMembers), child:
-                Padding(padding: EdgeInsets.symmetric(vertical: 4), child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
                   Text(pendingMembers,  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground,),)
                 ),
               ),
+
+              Visibility(visible: StringUtils.isNotEmpty(attendedMembers), child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+                  Text(StringUtils.ensureNotEmpty(attendedMembers), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground,),)
+                ),
+              ),
               
-              Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Column(children: commands,),),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+                Column(children: commands,),),
             ],),
           ),
         ],),
@@ -737,7 +781,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     if (CollectionUtils.isNotEmpty(_groupEvents)) {
       for (Event? groupEvent in _groupEvents!) {
-        content.add(GroupEventCard(groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
+        content.add(GroupEventCard(groupEvent: groupEvent, group: _group));
       }
 
       content.add(Padding(padding: EdgeInsets.only(top: 16), child:
@@ -941,6 +985,40 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     );
   }
 
+  Widget _buildBadgeOrCategoryWidget() {
+    return _showMembershipBadge ?
+      Row(children: <Widget>[
+        Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
+          Center(child:
+            Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
+              Text(_group!.currentUserStatusText!.toUpperCase(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white),)
+            ),
+          ),
+        ),
+        Expanded(child: Container(),),
+        _buildPolicyButton(),
+      ],) :
+    
+      Row(children: <Widget>[
+        Expanded(child:
+          Text(_group?.category?.toUpperCase() ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.fillColorPrimary),),
+        ),
+        _buildPolicyButton(),
+      ],);
+  }
+
+  Widget _buildPolicyButton() {
+    return Semantics(button: true, excludeSemantics: true,
+      label: Localization().getStringEx('panel.group_detail.button.policy.label', 'Policy'),
+      hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
+      child: InkWell(onTap: _onPolicy, child:
+        Padding(padding: EdgeInsets.all(16), child:
+          Image.asset('images/icon-info-orange.png')
+        ),
+      ),
+    );
+  }
+
   Widget _buildAdmins() {
     if (CollectionUtils.isEmpty(_groupAdmins)) {
       return Container();
@@ -1073,14 +1151,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _showModalImage(String? url){
-    Analytics().logSelect(target: "Image");
+    Analytics().logSelect(target: "Image", attributes: _group?.analyticsAttributes);
     if (url != null) {
-      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image", attributes: _group?.analyticsAttributes))));
     }
   }
 
   void _onGroupOptionsTap() {
-    Analytics().logSelect(target: 'Group Options');
+    Analytics().logSelect(target: 'Group Options', attributes: _group?.analyticsAttributes);
     int membersCount = _group?.membersCount ?? 0;
     String? confirmMsg = (membersCount > 1)
         ? sprintf(
@@ -1117,7 +1195,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         leftIconAsset: "images/icon-leave-group.png",
                         label: Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
                         onTap: () {
-                          Analytics().logSelect(target: "Leave group");
+                          Analytics().logSelect(target: "Leave group", attributes: _group?.analyticsAttributes);
                           showDialog(
                               context: context,
                               builder: (context) => _buildConfirmationDialog(
@@ -1141,7 +1219,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         leftIconAsset: "images/icon-delete-group.png",
                         label: Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
                         onTap: () {
-                          Analytics().logSelect(target: "Delete group");
+                          Analytics().logSelect(target: "Delete group", attributes: _group?.analyticsAttributes);
                           showDialog(
                               context: context,
                               builder: (context) => _buildConfirmationDialog(
@@ -1173,7 +1251,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapEventOptions() {
-    Analytics().logSelect(target: "Event options");
+    Analytics().logSelect(target: "Event options", attributes: _group?.analyticsAttributes);
     showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -1210,7 +1288,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTab(_DetailTab tab) {
-    Analytics().logSelect(target: "Tab: $tab");
+    Analytics().logSelect(target: "Tab: $tab", attributes: _group?.analyticsAttributes);
     if (_currentTab != tab) {
       setState(() {
         _currentTab = tab;
@@ -1232,7 +1310,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapLeave() {
-    Analytics().logSelect(target: "Leave Group");
+    Analytics().logSelect(target: "Leave Group", attributes: _group?.analyticsAttributes);
     showDialog(
         context: context,
         builder: (context) => _buildConfirmationDialog(
@@ -1257,30 +1335,183 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onWebsite() {
-    Analytics().logSelect(target: 'Group url');
+    Analytics().logSelect(target: 'Group url', attributes: _group?.analyticsAttributes);
     String? url = _group?.webURL;
     if (StringUtils.isNotEmpty(url)) {
       launch(url!);
     }
   }
 
+  void _onPolicy () {
+    Analytics().logSelect(target: 'Policy');
+    showDialog(context: context, builder: (_) =>  InfoPopup(
+      backColor: Color(0xfffffcdf), //Styles().colors?.surface ?? Colors.white,
+      padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
+      border: Border.all(color: Styles().colors!.textSurface!, width: 1),
+      alignment: Alignment.center,
+      infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The University of Illinois takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.'),
+      infoTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+      closeIcon: Image.asset('images/close-orange-small.png'),
+    ),);
+  }
+
   void _onTapMembers(){
-    Analytics().logSelect(target: "Group Members");
+    Analytics().logSelect(target: "Group Members", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group)));
   }
 
   void _onTapSettings(){
-    Analytics().logSelect(target: "Group Settings");
+    Analytics().logSelect(target: "Group Settings", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,)));
   }
 
   void _onTapPromote() {
-    Analytics().logSelect(target: "Promote Group");
+    Analytics().logSelect(target: "Promote Group", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupQrCodePanel(group: _group)));
   }
 
+  void _onTapTakeAttendance() {
+    if (_memberAttendLoading) {
+      return;
+    }
+    Analytics().logSelect(target: "Take Attendance", attributes: _group?.analyticsAttributes);
+    FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors!.fillColorSecondary!)!,
+            Localization().getStringEx('panel.group_detail.attendance.scan.cancel.button.title', 'Cancel'), true, ScanMode.QR)
+        .then((scanResult) {
+      _onAttendanceScanFinished(scanResult);
+    });
+  }
+
+  void _onAttendanceScanFinished(String? scanResult) {
+    if (scanResult == '-1') {
+      // The user hit "Cancel button"
+      return;
+    }
+    String? uin = _extractUin(scanResult);
+    // There is no uin in the scanned QRcode
+    if (uin == null) {
+      AppAlert.showDialogResult(
+          context,
+          Localization()
+              .getStringEx('panel.group_detail.attendance.qr_code.uin.not_valid.msg', 'This QR code does not contain valid UIN number.'));
+      return;
+    }
+
+    Member? member = _getExistingGroupMember(uin: uin);
+    if (member != null) {
+      // The member already attended.
+      if (_checkMemberAttended(member: member)) {
+        AppAlert.showDialogResult(
+            context,
+            sprintf(
+                Localization()
+                    .getStringEx('panel.group_detail.attendance.member.attended.msg', 'Student with UIN "%s" already attended on "%s"'),
+                [uin, _getAttendedDateTimeFormatted(member: member)]));
+      }
+      // Attend the member to the group
+      else {
+        _attendMember(member: member);
+      }
+    } else {
+      // Do not allow a student to attend to authman group which one is not member of.
+      if (_group?.authManEnabled == true) {
+        AppAlert.showDialogResult(
+            context,
+            sprintf(
+                Localization().getStringEx('panel.group_detail.attendance.authman.uin.not_member.msg',
+                    'Student with UIN "%s" is not a member of this group and is not allowed to attend.'),
+                [uin]));
+      } 
+      // Create new member and attend to non-authman group
+      else {
+        member = Member();
+        member.status = GroupMemberStatus.member;
+        member.externalId = uin;
+        _attendMember(member: member);
+      }
+    }
+  }
+
+  void _attendMember({required Member member}) {
+    _setMemberAttendLoading(true);
+    Groups().memberAttended(group: _group!, member: member).then((success) {
+      _setMemberAttendLoading(false);
+      String msg = success
+          ? Localization().getStringEx('panel.group_detail.attendance.member.succeeded.msg', 'Successfully tagged member as attended.')
+          : Localization()
+              .getStringEx('panel.group_detail.attendance.member.failed.msg', 'Failed to tag member as attended. Please try again.');
+      AppAlert.showDialogResult(context, msg);
+    });
+  }
+
+  String? _getAttendedDateTimeFormatted({required Member member}) {
+    DateTime? attendedUniTime = AppDateTime().getUniLocalTimeFromUtcTime(member.dateAttendedUtc);
+    String? dateTimeFormatted = AppDateTime().formatDateTime(attendedUniTime, format: 'yyyy/MM/dd h:mm');
+    return dateTimeFormatted;
+  }
+
+  ///
+  /// Returns UIN number from string (uin or megTrack2), null - otherwise
+  ///
+  String? _extractUin(String? stringToCheck) {
+    if (StringUtils.isEmpty(stringToCheck)) {
+      return stringToCheck;
+    }
+    int stringSymbolsCount = stringToCheck!.length;
+    final int uinNumbersCount = 9;
+    final int megTrack2SymbolsCount = 28;
+    // Validate UIN in format 'XXXXXXXXX'
+    if (stringSymbolsCount == uinNumbersCount) {
+      RegExp uinRegEx = RegExp('[0-9]{$uinNumbersCount}');
+      bool uinMatch = uinRegEx.hasMatch(stringToCheck);
+      return uinMatch ? stringToCheck : null;
+    }
+    // Validate megTrack2 in format 'AAAAXXXXXXXXXAAA=AAAAAAAAAAA' where 'XXXXXXXXX' is the UIN
+    else if (stringSymbolsCount == megTrack2SymbolsCount) {
+      RegExp megTrack2RegEx = RegExp('[0-9]{4}[0-9]{$uinNumbersCount}[0-9]{3}=[0-9]{11}');
+      bool megTrackMatch = megTrack2RegEx.hasMatch(stringToCheck);
+      if (megTrackMatch) {
+        String uin = stringToCheck.substring(4, 13);
+        return uin;
+      } else {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  ///
+  /// Returns group member by uin, null - otherwise
+  ///
+  Member? _getExistingGroupMember({required String uin}) {
+    List<Member>? members = _group?.members;
+    if (CollectionUtils.isEmpty(members)) {
+      return null;
+    }
+    for (Member member in members!) {
+      if (member.isMemberOrAdmin && (member.externalId == uin)) {
+        return member;
+      }
+    }
+    return null;
+  }
+
+  ///
+  /// Returns true if member has already attended, false - otherwise
+  ///
+  bool _checkMemberAttended({required Member member}) {
+    return (member.dateAttendedUtc != null);
+  }
+
+  void _setMemberAttendLoading(bool loading) {
+    _memberAttendLoading = loading;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   void _onMembershipRequest() {
-    Analytics().logSelect(target: "Request to join", attributes: widget.group!.analyticsAttributes);
+    Analytics().logSelect(target: "Request to join", attributes: _group?.analyticsAttributes);
     if (CollectionUtils.isNotEmpty(_group?.questions)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
     } else {
@@ -1299,7 +1530,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onCancelMembershipRequest() {
-    Analytics().logSelect(target: "Cancel membership request");
+    Analytics().logSelect(target: "Cancel membership request", attributes: _group?.analyticsAttributes);
     showDialog(
         context: context,
         builder: (context) => _buildConfirmationDialog(
@@ -1316,17 +1547,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapCreateEvent(){
-    Analytics().logSelect(target: "Create Event");
+    Analytics().logSelect(target: "Create Event", attributes: _group?.analyticsAttributes);
     Navigator.push(context, MaterialPageRoute(builder: (context) => CreateEventPanel(group: _group,)));
   }
 
   void _onTapBrowseEvents(){
-    Analytics().logSelect(target: "Browse Events");
+    Analytics().logSelect(target: "Browse Events", attributes: _group?.analyticsAttributes);
     Navigator.push(context, MaterialPageRoute(builder: (context) => ExplorePanel(browseGroupId: _group?.id, initialFilter: ExploreFilter(type: ExploreFilterType.event_time, selectedIndexes: {0/*Upcoming*/} ),)));
   }
 
   void _onTapCreatePost() {
-    Analytics().logSelect(target: "Create Post");
+    Analytics().logSelect(target: "Create Post", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group))).then((result) {
       if (_refreshingPosts != true) {
         _refreshCurrentPosts();
@@ -1354,7 +1585,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
   }
 
-  Future<void>_onPullToRefresh() async {
+  Future<void> _onPullToRefresh() async {
+    if (Connectivity().isOffline) {
+      // Do not try to refresh group if the device is offline
+      return;
+    }
+    if ((_group?.syncAuthmanAllowed == true) && (_group?.attendanceGroup == true)) {
+      await Groups().syncAuthmanGroup(group: _group!);
+    }
     Group? group = await Groups().loadGroup(widget.groupId); // The same as _refreshGroup(refreshEvents: true) but use await to show the pull to refresh progress indicator properly
     if ((group != null)) {
       if(mounted) {

@@ -16,27 +16,36 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/wallet/WalletSheet.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/tab_bar.dart' as rokwire;
 
 class TabBar extends rokwire.TabBar {
 
   static const String notifySelectionChanged = "edu.illinois.rokwire.tabbar_widget.selection.changed";
 
-  final bool? walletExpanded;
-
-  TabBar({Key? key, TabController? tabController, this.walletExpanded}) : super(key: key, tabController: tabController);
+  TabBar({Key? key, TabController? tabController}) : super(key: key, tabController: tabController);
 
   @override
   Widget? buildTab(BuildContext context, String code, int index) {
-    if ((code == 'home') || (code == 'athletics')) {
+    if (code == 'home') {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.home.title', 'Home'),
         hint: Localization().getStringEx('tabbar.home.hint', ''),
         iconAsset: 'images/tab-home.png',
         selectedIconAsset: 'images/tab-home-selected.png',
+        selected: (tabController?.index == index),
+        onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
+      );
+    }
+    else if (code == 'favorites') {
+      return rokwire.TabWidget(
+        label: Localization().getStringEx('tabbar.favorites.title', 'Favorites'),
+        hint: Localization().getStringEx('tabbar.favorites.hint', ''),
+        iconAsset: 'images/tab-favorites.png',
+        selectedIconAsset: 'images/tab-favorites-selected.png',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
@@ -51,28 +60,42 @@ class TabBar extends rokwire.TabBar {
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
     }
-    else if (code == 'wallet') {
-      return (walletExpanded != true) ?
-        rokwire.TabWidget(
-          label: Localization().getStringEx('tabbar.wallet.title', 'Wallet'),
-          hint: Localization().getStringEx('tabbar.wallet.hint', ''),
-          iconAsset: 'images/tab-wallet.png',
-          selected: false,
-          onTap: (rokwire.TabWidget tabWidget) => _onShowWalletSheet(context, tabWidget),
-        ) :
-        rokwire.TabCloseWidget(
-          label: Localization().getStringEx('panel.wallet.button.close.title', 'close'),
-          hint: Localization().getStringEx('panel.wallet.button.close.hint', ''),
-          iconAsset: 'images/icon-close-big.png',
-          onTap: (rokwire.TabCloseWidget tabCloseWidget) => _onCloseWalletSheet(context, tabCloseWidget),
-        );
-    }
     else if (code == 'browse') {
       return rokwire.TabWidget(
         label: Localization().getStringEx('tabbar.browse.title', 'Browse'),
         hint: Localization().getStringEx('tabbar.browse.hint', ''),
         iconAsset: 'images/tab-browse.png',
         selectedIconAsset: 'images/tab-browse-selected.png',
+        selected: (tabController?.index == index),
+        onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
+      );
+    }
+    else if (code == 'maps') {
+      return rokwire.TabWidget(
+        label: Localization().getStringEx('tabbar.map.title', 'Map'),
+        hint: Localization().getStringEx('tabbar.map.hint', 'Map Page'),
+        iconAsset: 'images/tab-navigate.png',
+        selectedIconAsset: 'images/tab-navigate-selected.png',
+        selected: (tabController?.index == index),
+        onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
+      );
+    }
+    else if (code == 'academics') {
+      return rokwire.TabWidget(
+        label: Localization().getStringEx('tabbar.academics.title', 'Academics'),
+        hint: Localization().getStringEx('tabbar.academics.hint', ''),
+        iconAsset: 'images/tab-academics.png',
+        selectedIconAsset: 'images/tab-academics-selected.png',
+        selected: (tabController?.index == index),
+        onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
+      );
+    }
+    else if (code == 'wellness') {
+      return rokwire.TabWidget(
+        label: Localization().getStringEx('tabbar.wellness.title', 'Wellness'),
+        hint: Localization().getStringEx('tabbar.wellness.hint', ''),
+        iconAsset: 'images/tab-wellness.png',
+        selectedIconAsset: 'images/tab-wellness-selected.png',
         selected: (tabController?.index == index),
         onTap: (rokwire.TabWidget tabWidget) => _onSwitchTab(index, tabWidget),
       );
@@ -87,22 +110,16 @@ class TabBar extends rokwire.TabBar {
     NotificationService().notify(TabBar.notifySelectionChanged, tabIndex);
   }
 
-  void _onShowWalletSheet(BuildContext context, rokwire.TabWidget tabWidget) {
-    Analytics().logSelect(target: tabWidget.label);
-    showModalBottomSheet(context: context,
-      isScrollControlled: true,
-      isDismissible: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24.0),
-      ),
-      builder: (context){
-        return WalletSheet();
-      }
-    );
-  }
 
-  void _onCloseWalletSheet(BuildContext context, rokwire.TabCloseWidget tabCloseWidget) {
-    Analytics().logSelect(target: tabCloseWidget.label);
-    Navigator.pop(context);
+  // 1.1.1 Can you make the Nav bar white please for Dev builds for now. I'll let you know when we can go back to yellow.
+  // (https://github.com/rokwire/illinois-app/issues/1852)
+  @override
+  Color? get backgroundColor {
+    switch(Config().configEnvironment) {
+      case ConfigEnvironment.test:       return Colors.lightGreenAccent;
+      case ConfigEnvironment.dev:        //return Colors.yellowAccent;
+      case ConfigEnvironment.production: return Styles().colors?.surface ?? Colors.white;
+      default:                           return Colors.white;
+    }
   }
 }

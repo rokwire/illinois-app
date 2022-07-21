@@ -223,7 +223,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                         'widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true)
+                    child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)
                 )))
         )),)
       ],
@@ -283,6 +283,11 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     Widget? location = _exploreLocationDetail();
     if (location != null) {
       details.add(location);
+    }
+
+    Widget? online = _exploreOnlineDetail();
+    if (online != null) {
+      details.add(online);
     }
 
     Widget? price = _eventPriceDetail();
@@ -360,22 +365,21 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Widget? _exploreLocationDetail() {
-    String locationText = widget.event?.getLongDisplayLocation(_locationData)??"";
-    bool isVirtual = widget.event?.isVirtual ?? false;
-    String eventType = isVirtual? Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event") : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
-    bool hasEventUrl = StringUtils.isNotEmpty(widget.event?.location?.description);
-    bool isOnlineUnderlined = isVirtual && hasEventUrl;
+    if(!(widget.event?.displayAsInPerson ?? false)){
+      return null;
+    }
+    String eventType = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
-    String iconRes = isVirtual? "images/laptop.png" : "images/location.png" ;
-    String locationId = StringUtils.ensureNotEmpty(widget.event?.location?.locationId);
-    bool isLocationIdUrl = Uri.tryParse(locationId)?.isAbsolute ?? false;
-    String value = isVirtual ? locationId : locationText;
-    bool isValueVisible = StringUtils.isNotEmpty(value) && (!isVirtual || !isLocationIdUrl);
+    String iconRes = "images/location.png" ;
+    String? locationId = widget.event?.location?.locationId;
+    String locationText = widget.event?.getLongDisplayLocation(_locationData)??"";
+    String value = locationId ?? locationText;
+    bool isValueVisible = StringUtils.isNotEmpty(value);
     return GestureDetector(
         onTap: _onLocationDetailTapped,
         child: Semantics(
           label: "$eventType, $locationText",
-          hint: isVirtual ? Localization().getStringEx('panel.explore_detail.button.virtual.hint', 'Double tap to open link') : Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
+          hint: Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
           button: true,
           excludeSemantics: true,
           child:Padding(
@@ -392,7 +396,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                   padding: EdgeInsets.only(right: 10),
                   child:Image.asset(iconRes, excludeFromSemantics: true),
                 ),
-                Container(decoration: (isOnlineUnderlined ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (isOnlineUnderlined ? 2 : 0)), child: Text(eventType,
+                Container(decoration: (null), padding: EdgeInsets.only(bottom: (0)), child: Text(eventType,
                     style: TextStyle(
                         fontFamily: Styles().fontFamilies!.medium,
                         fontSize: 16,
@@ -415,6 +419,69 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           )
         ),
       );
+  }
+
+  Widget? _exploreOnlineDetail() {
+    if(!(widget.event?.displayAsVirtual ?? false)){
+      return null;
+    }
+
+    String eventType = Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event");
+    BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
+    String iconRes = "images/laptop.png";
+    String? virtualUrl = widget.event?.virtualEventUrl;
+    String locationDescription = StringUtils.ensureNotEmpty(widget.event?.location?.description);
+    String? locationId = widget.event?.location?.locationId;
+    String? urlFromLocation = locationId ??  locationDescription;
+    bool isLocationIdUrl = Uri.tryParse(urlFromLocation)?.isAbsolute ?? false;
+    String value = virtualUrl ??
+        (isLocationIdUrl? urlFromLocation : "");
+
+    bool isValueVisible = StringUtils.isNotEmpty(value);
+    return GestureDetector(
+      onTap: _onLocationDetailTapped,
+      child: Semantics(
+          label: "$eventType, $virtualUrl",
+          hint: Localization().getStringEx('panel.explore_detail.button.virtual.hint', 'Double tap to open link'),
+          button: true,
+          excludeSemantics: true,
+          child:Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(right: 10),
+                          child:Image.asset(iconRes, excludeFromSemantics: true),
+                        ),
+                        Container(decoration: (StringUtils.isNotEmpty(value) ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (StringUtils.isNotEmpty(value) ? 2 : 0)), child: Text(eventType,
+                            style: TextStyle(
+                                fontFamily: Styles().fontFamilies!.medium,
+                                fontSize: 16,
+                                color: Styles().colors!.textBackground)),),
+                      ]),
+                  Container(height: 4,),
+                  Visibility(visible: isValueVisible, child: Container(
+                      padding: EdgeInsets.only(left: 30),
+                      child: Container(
+                          decoration: underlineLocationDecoration,
+                          padding: EdgeInsets.only(bottom: 2),
+                          child: Text(
+                            value,
+                            style: TextStyle(
+                                fontFamily: Styles().fontFamilies!.medium,
+                                fontSize: 14,
+                                color: Styles().colors!.fillColorPrimary),
+                          ))))
+                ],)
+          )
+      ),
+    );
   }
 
   Widget? _eventPrivacyDetail() {
@@ -770,7 +837,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
   void _addRecentItem(){
     if(!widget.previewMode)
-      RecentItems().addRecentItem(RecentItem.fromOriginalType(widget.event));
+      RecentItems().addRecentItem(RecentItem.fromSource(widget.event));
   }
 
   void _onTapGetTickets(String? ticketsUrl) {
@@ -798,7 +865,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   void _onLocationDetailTapped() {
-    if((widget.event?.isVirtual?? false) == true){
+    if((widget.event?.displayAsVirtual ?? false) == true){
       String? url = widget.event?.location?.description;
       if(StringUtils.isNotEmpty(url)) {
         _onTapWebButton(url, "Event Link ");

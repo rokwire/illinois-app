@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -8,12 +11,14 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeLoginWidget extends StatefulWidget {
 
-  HomeLoginWidget();
+  final String? favoriteId;
+  final StreamController<String>? updateController;
+
+  HomeLoginWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
   @override
   _HomeLoginWidgetState createState() => _HomeLoginWidgetState();
@@ -32,13 +37,14 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
     List<dynamic> codes = FlexUI()['home.connect'] ?? [];
     for (String code in codes) {
       if (code == 'netid') {
-        contentList.add(HomeLoginNetIdWidget());
+        contentList.add(_HomeLoginNetIdWidget());
       } else if (code == 'phone_or_email') {
-        contentList.add(HomeLoginPhoneOrEmailWidget());
+        contentList.add(_HomeLoginPhoneOrEmailWidget());
       }
     }
 
-      if (CollectionUtils.isNotEmpty(contentList)) {
+    if (CollectionUtils.isNotEmpty(contentList)) {
+      
       List<Widget> content = <Widget>[];
       for (Widget entry in contentList) {
         if (content.isNotEmpty) {
@@ -51,10 +57,12 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
         content.add(Container(height: 20,),);
       }
 
-      return SectionSlantHeader(
-        title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
-        titleIconAsset: 'images/icon-member.png',
-        children: content,);
+      return HomeSlantWidget(favoriteId: widget.favoriteId,
+          title: Localization().getStringEx("panel.home.connect.not_logged_in.title", "Connect to Illinois"),
+          titleIcon: Image.asset('images/icon-member.png', excludeFromSemantics: true,),
+          childPadding: HomeSlantWidget.defaultChildPadding,
+          child: Column(children: content,),
+      );
     }
     else {
       return Container();
@@ -62,15 +70,15 @@ class _HomeLoginWidgetState extends State<HomeLoginWidget> {
   }
 }
 
-class HomeLoginNetIdWidget extends StatefulWidget {
+class _HomeLoginNetIdWidget extends StatefulWidget {
 
-  HomeLoginNetIdWidget();
+  _HomeLoginNetIdWidget();
 
   @override
   _HomeLoginNetIdWidgetState createState() => _HomeLoginNetIdWidgetState();
 }
 
-class _HomeLoginNetIdWidgetState extends State<HomeLoginNetIdWidget> {
+class _HomeLoginNetIdWidgetState extends State<_HomeLoginNetIdWidget> {
 
   bool _authLoading = false;
 
@@ -113,7 +121,7 @@ class _HomeLoginNetIdWidgetState extends State<HomeLoginNetIdWidget> {
 
 
   void _onTapConnectNetIdClicked(BuildContext context) {
-    Analytics().logSelect(target: "Connect netId");
+    Analytics().logSelect(target: "Connect netId", source: widget.runtimeType.toString());
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context,"");
     }
@@ -131,7 +139,7 @@ class _HomeLoginNetIdWidgetState extends State<HomeLoginNetIdWidget> {
   }
 }
 
-class HomeLoginPhoneOrEmailWidget extends StatelessWidget{
+class _HomeLoginPhoneOrEmailWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Semantics(container: true, child: Container(
@@ -168,7 +176,7 @@ class HomeLoginPhoneOrEmailWidget extends StatelessWidget{
   }
 
   void _onTapPhoneOrEmailClicked(BuildContext context) {
-    Analytics().logSelect(target: "Phone or Email Login");
+    Analytics().logSelect(target: "Phone or Email Login", source: runtimeType.toString());
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute(
         settings: RouteSettings(),

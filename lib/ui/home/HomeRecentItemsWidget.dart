@@ -15,17 +15,28 @@
  */
 
 import 'dart:async';
+import 'dart:collection';
 
+import 'package:collection/collection.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:illinois/ext/Explore.dart';
-import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
+import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/ext/RecentItem.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -36,17 +47,24 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
-import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
+// HomeRecentItemsWidget
+
 class HomeRecentItemsWidget extends StatefulWidget {
 
-  final StreamController<void>? refreshController;
+  final String? favoriteId;
+  final StreamController<String>? updateController;
 
-  HomeRecentItemsWidget({this.refreshController});
+  HomeRecentItemsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: title,
+    );
+  static String get title => Localization().getStringEx('widget.home.recent_items.label.header.title', 'Recently Viewed');
 
   @override
   _HomeRecentItemsWidgetState createState() => _HomeRecentItemsWidgetState();
@@ -54,44 +72,45 @@ class HomeRecentItemsWidget extends StatefulWidget {
 
 class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implements NotificationsListener {
 
-  List<RecentItem>? _recentItems;
+  Iterable<RecentItem>? _recentItems;
+  
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
     super.initState();
 
-    NotificationService().subscribe(this, RecentItems.notifyChanged);
+    NotificationService().subscribe(this, [
+      Config.notifyConfigChanged,
+      RecentItems.notifyChanged,
+    ]);
 
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-        _loadRecentItems();
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+          if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
+            setState(() {
+              _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
+              _pageViewKey = UniqueKey();
+              _pageController = null;
+              _contentKeys.clear();
+            });
+          }
+        }
       });
     }
 
-    _loadRecentItems();
+    _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
   }
 
   @override
   void dispose() {
-    super.dispose();
     NotificationService().unsubscribe(this);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _RecentItemsList(
-      heading: Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed'),
-      headingIconRes: 'images/campus-tools.png',
-      items: _recentItems,
-    );
-  }
-
-  void _loadRecentItems() {
-    if (mounted) {
-      setState(() {
-        _recentItems = RecentItems().recentItems.toSet().toList();
-      });
-    }
+    _pageController?.dispose();
+    super.dispose();
   }
 
   // NotificationsListener
@@ -100,129 +119,200 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   void onNotification(String name, dynamic param) {
     if (name == RecentItems.notifyChanged) {
       if (mounted) {
-        SchedulerBinding.instance!.addPostFrameCallback((_) {
-          if (mounted) {
+        SchedulerBinding.instance?.addPostFrameCallback((_) {
+          if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
             setState(() {
-              _recentItems = RecentItems().recentItems.toSet().toList();
+              _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
+              _pageViewKey = UniqueKey();
+              _pageController = null;
+              _contentKeys.clear();
             });
           }
         });
       }
     }
+    else if (name == Config.notifyConfigChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
-}
-
-class _RecentItemsList extends StatelessWidget{
-  final int limit;
-  final List<RecentItem>? items;
-  final String? heading;
-  final String? subTitle;
-  final String? headingIconRes;
-  final String slantImageRes;
-  final Color? slantColor;
-  final void Function()? tapMore;
-  final bool showMoreButtonExplicitly;
-  final String? moreButtonLabel;
-
-  //Card Options
-  final bool cardShowDate;
-
-  const _RecentItemsList(
-      {Key? key, this.items, this.heading, this.subTitle, this.headingIconRes,
-        this.slantImageRes = 'images/slant-down-right-blue.png', this.slantColor, this.tapMore, this.cardShowDate = false, this.limit = 3,
-        this.moreButtonLabel, this.showMoreButtonExplicitly = false,})
-      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool showMoreButton =showMoreButtonExplicitly ||( tapMore!=null && limit<(items?.length??0));
-    String? moreLabel = StringUtils.isEmpty(moreButtonLabel)? Localization().getStringEx('widget.home_recent_items.button.more.title', 'View All'): moreButtonLabel;
-    return items!=null && items!.isNotEmpty? Column(
-      children: <Widget>[
-        SectionSlantHeader(
-            title:heading,
-            subTitle: subTitle,
-            titleIconAsset: headingIconRes,
-            children: _buildListItems(context)
-        ),
-        !showMoreButton?Container():
-        Container(height: 20,),
-        !showMoreButton?Container():
-        SmallRoundedButton(
-          label: moreLabel ?? '',
-          hint: Localization().getStringEx('widget.home_recent_items.button.more.hint', ''),
-          onTap: tapMore ?? (){},),
-        Container(height: 48,),
-      ],
-    ) : Container();
-
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
+      title: HomeRecentItemsWidget.title,
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      child: _buildContent(),
+    );
+  }
+    
+  Widget _buildContent() {
+    return (_recentItems?.isEmpty ?? true) ? HomeMessageCard(
+      message: Localization().getStringEx("widget.home.recent_items.text.empty.description", "There are no recently viewed items available."),
+    ) : _buildRecentContent();
   }
 
-  List<Widget> _buildListItems(BuildContext context){
+  Widget _buildRecentContent() {
+    Widget contentWidget;
+
+    if (1 < (_recentItems?.length ?? 0)) {
+
+      // Config().homeRecentItemsCount
+      List<Widget> pages = <Widget>[];
+      for (RecentItem item in _recentItems!) {
+        pages.add(Padding(key: _contentKeys[item.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
+          HomeRecentItemCard(recentItem: item),
+        ));
+      }
+
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          children: pages),
+      );
+    }
+    else {
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
+        HomeRecentItemCard(recentItem: _recentItems!.first)
+      );
+    }
+
+    return Column(children: <Widget>[
+      contentWidget,
+      LinkButton(
+        title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to view all items'),
+        onTap: _onSeeAll,
+      ),
+    ]);
+  }
+
+  void _onSeeAll() {
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeRecentItemsPanel()));
+  }
+
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
+  }
+}
+
+// HomeRecentItemsPanel
+
+class HomeRecentItemsPanel extends StatefulWidget {
+  HomeRecentItemsPanel();
+
+  @override
+  _HomeRecentItemsPanelState createState() => _HomeRecentItemsPanelState();
+}
+
+class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements NotificationsListener {
+
+  Iterable<RecentItem>? _recentItems;
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationService().subscribe(this, RecentItems.notifyChanged);
+    _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == RecentItems.notifyChanged) {
+      if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
+        setState(() {
+          _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: HeaderBar(title: Localization().getStringEx('widget.home.recent_items.label.header.title', 'Recently Viewed'),),
+      body: RefreshIndicator(onRefresh: _onPullToRefresh, child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Expanded(child:
+            SingleChildScrollView(child:
+              Padding(padding: EdgeInsets.all(16), child:
+                Column(children: _buildListItems(),)
+              )
+            ,),
+          ),
+        ],)),
+      backgroundColor: Styles().colors!.background,
+    );
+  }
+
+  List<Widget> _buildListItems() {
     List<Widget> widgets =  [];
-    if(items?.isNotEmpty??false){
-      int visibleCount = items!.length<limit?items!.length:limit;
-      for(int i = 0 ; i<visibleCount; i++) {
-        RecentItem item = items![i];
-        widgets.add(_buildItemCart(
-            recentItem: item, context: context));
+    if (_recentItems != null) {
+      for (RecentItem item in _recentItems!) {
+        if (0 < widgets.length) {
+          widgets.add(Container(height: 8));
+        }
+        widgets.add(HomeRecentItemCard(recentItem: item));
       }
     }
     return widgets;
   }
 
-  Widget _buildItemCart({RecentItem? recentItem, BuildContext? context}) {
-    return _HomeRecentItemCard(
-      item: recentItem,
-      showDate: cardShowDate,
-      onTap: () {
-        Analytics().logSelect(target: "HomeRecentItemCard clicked: " + recentItem!.recentTitle!);
-        Navigator.push(context!, CupertinoPageRoute(builder: (context) => _getDetailPanel(recentItem)));
-      },);
+  Future<void> _onPullToRefresh() async {
+    if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
+      setState(() {
+        _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
+      });
+    }
   }
 
-  static Widget _getDetailPanel(RecentItem item) {
-    Object? originalObject = item.fromOriginalJson();
-    if (originalObject is News) { // News
-      return AthleticsNewsArticlePanel(article: originalObject,);
-    } else if (originalObject is Game) { // Game
-      return AthleticsGameDetailPanel(game: originalObject,);
-    } else if (originalObject is Explore) { // Event or Dining
-      if (originalObject is Event && originalObject.isComposite) {
-        return CompositeEventsDetailPanel(parentEvent: originalObject);
-      }
-      return ExploreDetailPanel(explore: originalObject,);
-    }
-    else if ((item.recentItemType == RecentItemType.guide) && (originalObject is Map)) {
-      return GuideDetailPanel(guideEntryId: Guide().entryId(JsonUtils.mapValue(originalObject)));
-    }
-
-    return Container();
-  }
 }
 
-class _HomeRecentItemCard extends StatefulWidget {
-  final bool showDate;
-  final RecentItem? item;
-  final GestureTapCallback? onTap;
+// HomeRecentItemCard
 
-  _HomeRecentItemCard(
-      {required this.item, this.onTap, this.showDate = false}) {
-    assert(item != null);
-  }
+class HomeRecentItemCard extends StatefulWidget {
+
+  final RecentItem recentItem;
+  final bool showDate;
+
+  HomeRecentItemCard({required this.recentItem, this.showDate = false});
 
   @override
   _HomeRecentItemCardState createState() => _HomeRecentItemCardState();
 }
 
-class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements NotificationsListener {
-
-//  Object _originalItem;
+class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements NotificationsListener {
 
   @override
   void initState() {
     NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
-//    _originalItem = widget.item.fromOriginalJson();
     super.initState();
   }
 
@@ -232,64 +322,69 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
     super.dispose();
   }
 
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (mounted){
+        setState(() {});
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    bool isFavorite;
-    Object? originalItem = widget.item!.fromOriginalJson();
-    if (originalItem is Favorite) {
-      isFavorite = Auth2().isFavorite(originalItem);
-    }
-    else if ((widget.item!.recentItemType == RecentItemType.guide) && (originalItem is Map)) {
-      isFavorite = Auth2().isFavorite(GuideFavorite(id: Guide().entryId(JsonUtils.mapValue(originalItem))));
-    }
-    else {
-      isFavorite = false;
-    }
+    bool isFavorite = Auth2().isFavorite(widget.recentItem.favorite);
 
     String? favLabel = isFavorite ?
       Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') :
       Localization().getStringEx('widget.card.button.favorite.on.title','Add To Favorites');
+
     String? favHint = isFavorite ?
       Localization().getStringEx('widget.card.button.favorite.off.hint', '') :
       Localization().getStringEx('widget.card.button.favorite.on.hint','');
-    String favIcon = isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png';
+
+    String favIcon = isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png';
 
     return Padding(padding: EdgeInsets.only(bottom: 8), child:
-      Container(decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4))), clipBehavior: Clip.none, child:
-        Stack(children: [
-          GestureDetector(behavior: HitTestBehavior.translucent, onTap: widget.onTap, child:
-            Padding(padding: EdgeInsets.all(16), child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Expanded(child:
-                    Padding(padding: EdgeInsets.only(right: 24), child:
-                      Text(widget.item!.recentTitle ?? '', style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold, color: Styles().colors!.fillColorPrimary,),)
+      Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), clipBehavior: Clip.none, child:
+        ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
+          Stack(children: [
+            GestureDetector(behavior: HitTestBehavior.translucent, onTap: _onTapItem, child:
+              Container(color: Colors.white, padding: EdgeInsets.all(16), child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                    Expanded(child:
+                      Padding(padding: EdgeInsets.only(right: 24), child:
+                        Text(widget.recentItem.title ?? '', style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.extraBold, color: Styles().colors!.fillColorPrimary,),)
+                      ),
                     ),
-                  ),
-                ]),
-                Padding(padding: EdgeInsets.only(top: 10), child:
-                  Column(children: _buildDetails()),
-                )
-              ])
-            )
-          ),
-          _topBorder(),
-          Visibility(visible: Auth2().canFavorite, child:
-            Align(alignment: Alignment.topRight, child:
-              GestureDetector(onTap: _onTapFavorite, child:
-                Semantics(excludeSemantics: true, label: favLabel, hint: favHint, child:
-                  Container(padding: EdgeInsets.all(16), child: 
-                    Image.asset(favIcon)
-            ),),),),
-          ),
+                  ]),
+                  Padding(padding: EdgeInsets.only(top: 10), child:
+                    Column(children: _buildDetails()),
+                  )
+                ])
+              )
+            ),
+            _topBorder(),
+            Visibility(visible: Auth2().canFavorite, child:
+              Align(alignment: Alignment.topRight, child:
+                GestureDetector(onTap: _onTapFavorite, child:
+                  Semantics(excludeSemantics: true, label: favLabel, hint: favHint, child:
+                    Container(padding: EdgeInsets.all(16), child: 
+                      Image.asset(favIcon)
+              ),),),),
+            ),
 
-        ],),
+          ],),
+      ),
     ),);
   }
 
   List<Widget> _buildDetails() {
     List<Widget> details =  [];
-    if(StringUtils.isNotEmpty(widget.item!.recentTime)) {
+    if(StringUtils.isNotEmpty(widget.recentItem.time)) {
       Widget? dateDetail = widget.showDate ? _dateDetail() : null;
       if (dateDetail != null) {
         details.add(dateDetail);
@@ -302,7 +397,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
         details.add(timeDetail);
       }
     }
-    Widget? descriptionDetail = ((widget.item!.recentItemType == RecentItemType.guide) && StringUtils.isNotEmpty(widget.item!.recentDescripton)) ? _descriptionDetail() : null;
+    Widget? descriptionDetail = ((widget.recentItem.type == RecentItemType.guide) && StringUtils.isNotEmpty(widget.recentItem.descripton)) ? _descriptionDetail() : null;
     if (descriptionDetail != null) {
       if (details.isNotEmpty) {
         details.add(Container(height: 8,));
@@ -314,7 +409,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
 
   //Not used any more
   Widget? _dateDetail(){
-    String? displayTime = widget.item!.recentTime;
+    String? displayTime = widget.recentItem.time;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       String displayDate = Localization().getStringEx('widget.home_recent_item_card.label.date', 'Date');
       return Semantics(label: displayDate, excludeSemantics: true, child:
@@ -330,7 +425,7 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
   }
 
   Widget? _timeDetail() {
-    String? displayTime = widget.item!.recentTime;
+    String? displayTime = widget.recentItem.time;
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Semantics(label: displayTime, excludeSemantics: true, child:
         Row(children: <Widget>[
@@ -345,49 +440,48 @@ class _HomeRecentItemCardState extends State<_HomeRecentItemCard> implements Not
   }
 
   Widget _descriptionDetail() {
-    return Semantics(label: widget.item!.recentDescripton ?? '', excludeSemantics: true, child:
-      Text(widget.item!.recentDescripton ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.textBackground)),
+    return Semantics(label: widget.recentItem.descripton ?? '', excludeSemantics: true, child:
+      Text(widget.recentItem.descripton ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.textBackground)),
     );
   }
 
   Widget _topBorder() {
-    Object? originalItem = widget.item!.fromOriginalJson();
-    Color? borderColor = Styles().colors!.fillColorPrimary;
-    if (originalItem is Explore) {
-      borderColor = originalItem.uiColor;
-    }
-    else if (widget.item!.recentItemType == RecentItemType.guide) {
-      borderColor = Styles().colors!.accentColor3;
-    }
-    else {
-      borderColor = Styles().colors!.fillColorPrimary;
-    }
-    return Container(height: 7, color: borderColor);
+    return Container(height: 7, color: widget.recentItem.headerColor ?? Styles().colors?.fillColorPrimary);
   }
 
   void _onTapFavorite() {
-    Analytics().logSelect(target: "Favorite: ${widget.item?.recentTitle}");
-    Object? originalItem = widget.item!.fromOriginalJson();
-    if (originalItem is Favorite) {
-      Auth2().prefs?.toggleFavorite(originalItem);
-    }
-    else if ((widget.item!.recentItemType == RecentItemType.guide) && (originalItem is Map)) {
-      Auth2().prefs?.toggleFavorite(GuideFavorite(
-        id: Guide().entryId(JsonUtils.mapValue(originalItem)),
-        title: Guide().entryTitle(JsonUtils.mapValue(originalItem))
-      ));
-    }
+    Analytics().logSelect(target: "Favorite: '${widget.recentItem.title}'", source: widget.runtimeType.toString());
+    Auth2().prefs?.toggleFavorite(widget.recentItem.favorite);
   }
 
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      if (mounted){
-        setState(() {});
-      }
-    }
+  void _onTapItem() {
+    Analytics().logSelect(target: "Recent Item: '${widget.recentItem.title}'", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => _getDetailPanel(widget.recentItem)));
   }
+
+  static Widget _getDetailPanel(RecentItem item) {
+    dynamic sourceItem = item.source;
+
+    if (sourceItem is Event) {
+      return sourceItem.isComposite ? CompositeEventsDetailPanel(parentEvent: sourceItem) : ExploreEventDetailPanel(event: sourceItem,);
+    }
+    else if (sourceItem is Dining) {
+      return ExploreDiningDetailPanel(dining: sourceItem,);
+    }
+    else if (sourceItem is Game) {
+      return AthleticsGameDetailPanel(game: sourceItem,);
+    }
+    else if (sourceItem is News) {
+      return AthleticsNewsArticlePanel(article: sourceItem,);
+    }
+    else if (sourceItem is LaundryRoom) {
+      return LaundryRoomDetailPanel(room: sourceItem,);
+    }
+    else if ((item.type == RecentItemType.guide) && (sourceItem is Map)) {
+      return GuideDetailPanel(guideEntryId: Guide().entryId(JsonUtils.mapValue(sourceItem)));
+    }
+    return Container();
+  }
+
 }
 

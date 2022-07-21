@@ -141,6 +141,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
                             Container(height: 8),
                             _buildPrivacyDropDown(),
+                            _buildHiddenForSearch(),
                             _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "images/icon-member.png"),
                             _buildAuthManLayout(),
                             Visibility(
@@ -150,8 +151,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                                 _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
                                 _buildMembershipLayout(),
                               ],)),
+                            Container(height: 8,),
+                            _buildCanAutojoinLayout(),
                             Container(height: 8),
                             _buildPollsLayout(),
+                            Container(height: 16),
+                            _buildAttendanceLayout(),
                             Container(height: 40),
                         ],),)
 
@@ -465,12 +470,49 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             child:Text(longDescription ?? '',
               style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular, letterSpacing: 1),
             ),)),
-        Container(height: 40,)
+        Container(height: _isPrivateGroup ? 5 : 40)
       ],);
   }
 
   void _onPrivacyChanged(dynamic value) {
     _group?.privacy = value;
+    if (_isPublicGroup) {
+      // Do not hide group from search if it is public
+      _group!.hiddenForSearch = false;
+    }
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Widget _buildHiddenForSearch() {
+    return Visibility(
+        visible: _isPrivateGroup,
+        child: Padding(
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 40),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(
+                  child: _buildSwitch(
+                      title: Localization().getStringEx("panel.groups.common.private.search.hidden.label", "Make Group Hidden"),
+                      value: _group?.hiddenForSearch,
+                      onTap: _onTapHiddenForSearch)),
+              Semantics(
+                  container: true,
+                  child: Container(
+                      padding: EdgeInsets.only(left: 8, right: 8, top: 12),
+                      child: Text(
+                          Localization()
+                              .getStringEx("panel.groups.common.private.search.hidden.description", "A hidden group is unsearchable."),
+                          style: TextStyle(
+                              color: Styles().colors!.textBackground,
+                              fontSize: 14,
+                              fontFamily: Styles().fontFamilies!.regular,
+                              letterSpacing: 1))))
+            ])));
+  }
+
+  void _onTapHiddenForSearch() {
+    _group!.hiddenForSearch = !(_group!.hiddenForSearch ?? false);
     if (mounted) {
       setState(() {});
     }
@@ -541,6 +583,22 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       setState(() {});
     });
   }
+  //Autojoin
+  Widget _buildCanAutojoinLayout(){
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.auto_join.enabled.label", "Group can be joined automatically?"),//TBD localize
+        value: _group?.canJoinAutomatically,
+        onTap: () {
+          if (_group?.canJoinAutomatically != null) {
+            _group!.canJoinAutomatically = !(_group!.canJoinAutomatically!);
+          } else {
+            _group?.canJoinAutomatically = true;
+          }
+        }
+      ),
+    );
+  }
 
   // AuthMan Group
   Widget _buildAuthManLayout() {
@@ -608,6 +666,25 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     }
   }
 
+  // Attendance
+  Widget _buildAttendanceLayout() {
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: _buildSwitch(
+            title: Localization().getStringEx("panel.groups_create.attendance_group.label", "Enable attendance checking"),
+            value: _group?.attendanceGroup,
+            onTap: _onTapAttendanceGroup));
+  }
+
+  void _onTapAttendanceGroup() {
+    if (_group != null) {
+      _group!.attendanceGroup = !(_group!.attendanceGroup ?? false);
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   //Buttons
   Widget _buildButtonsLayout() {
     return
@@ -628,6 +705,24 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void _onCreateTap() {
+    AppAlert.showCustomDialog(
+        context: context,
+        contentWidget: Text(Localization().getStringEx("panel.groups_create.prompt.msg.title", "The University of Illinois takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.")),
+        actions: <Widget>[
+          TextButton(
+              child:
+              Text(Localization().getStringEx('dialog.ok.title', 'Ok')),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _onCreateGroup();
+              }),
+          TextButton(
+              child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')),
+              onPressed: () => Navigator.of(context).pop())
+        ]);
+  }
+
+  void _onCreateGroup() {
     Analytics().logSelect(target: "Create Group");
     if(!_creating && _canSave) {
       setState(() {
@@ -751,5 +846,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   bool get _isAuthManGroup{
     return _group?.authManEnabled ?? false;
+  }
+
+  bool get _isPrivateGroup {
+    return _group?.privacy == GroupPrivacy.private;
+  }
+
+  bool get _isPublicGroup {
+    return _group?.privacy == GroupPrivacy.public;
   }
 }

@@ -200,7 +200,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                         'widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
+                    child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png')
                 ))
         )),)
       ],
@@ -260,6 +260,11 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
     Widget? location = _exploreLocationDetail();
     if (location != null) {
       details.add(location);
+    }
+
+    Widget? online = _exploreOnlineDetail();
+    if (online != null) {
+      details.add(online);
     }
 
     Widget? price = _eventPriceDetail();
@@ -329,7 +334,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   Widget? _exploreLocationDetail() {
     String? locationText = widget.parentEvent?.getLongDisplayLocation(_locationData);
-    if (!(widget.parentEvent?.isVirtual ?? false) && widget.parentEvent?.location != null && (locationText != null) && locationText.isNotEmpty) {
+    if ((widget.parentEvent?.displayAsInPerson ?? false) && widget.parentEvent?.location != null && (locationText != null) && locationText.isNotEmpty) {
       return GestureDetector(
         onTap: _onLocationDetailTapped,
         child: Semantics(
@@ -345,6 +350,40 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                   Padding(
                     padding: EdgeInsets.only(right: 10),
                     child:Image.asset('images/icon-location.png'),
+                  ),
+                  Expanded(child: Text(locationText,
+                      style: TextStyle(
+                          fontFamily: Styles().fontFamilies!.medium,
+                          fontSize: 16,
+                          color: Styles().colors!.textBackground))),
+                ],
+              ),
+            )
+        ),
+      );
+    } else {
+      return null;
+    }
+  }
+
+  Widget? _exploreOnlineDetail() {
+    String? locationText = widget.parentEvent?.virtualEventUrl ?? widget.parentEvent?.location?.description;
+    if ((widget.parentEvent?.displayAsVirtual ?? false) && widget.parentEvent?.location != null && (locationText != null) && locationText.isNotEmpty) {
+      return GestureDetector(
+        onTap: _onLocationDetailTapped,
+        child: Semantics(
+            label: locationText,
+            hint: Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
+            button: true,
+            excludeSemantics: true,
+            child:Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child:Image.asset('images/laptop.png'), //TBD update icon res
                   ),
                   Expanded(child: Text(locationText,
                       style: TextStyle(
@@ -524,7 +563,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   void _addRecentItem() {
-    RecentItems().addRecentItem(RecentItem.fromOriginalType(widget.parentEvent));
+    RecentItems().addRecentItem(RecentItem.fromSource(widget.parentEvent));
   }
 
   void _onTapGetTickets(String? ticketsUrl) {
@@ -743,7 +782,7 @@ class _EventEntry extends StatelessWidget {
                       hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                           'widget.card.button.favorite.on.hint', ''),
                       button: true,
-                      child: Image.asset(isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png')
+                      child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png')
                   ))
           )),)
         ],),),

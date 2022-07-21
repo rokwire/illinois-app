@@ -63,7 +63,7 @@ class Dining with Explore implements Favorite {
     }
     String id = json['DiningOptionID'].toString();
     String? addressInfo = json["Address"];
-    List<DiningSchedule> diningSchedules = [];
+    List<DiningSchedule> diningSchedules = <DiningSchedule>[];
 
     if(json['DiningSchedules'] != null) {
       List<dynamic> menuSchedules = json['DiningSchedules'];
@@ -139,10 +139,10 @@ class Dining with Explore implements Favorite {
   @override String?   get explorePlaceId          { return null; }
   @override ExploreLocation? get exploreLocation  { return location; }
 
-  static String favoriteKeyName = "diningPlaceIds";
-  @override String? get favoriteId => exploreId;
-  @override String? get favoriteTitle => title;
+  // Favorite
+  static const String favoriteKeyName = "diningPlaceIds";
   @override String get favoriteKey => favoriteKeyName;
+  @override String? get favoriteId => exploreId;
 
   String? get displayWorkTime {
     if(diningSchedules != null && diningSchedules!.isNotEmpty) {
@@ -230,7 +230,7 @@ class Dining with Explore implements Favorite {
 
     if(json['DiningSchedules'] != null) {
 
-      diningSchedules = [];
+      diningSchedules = <DiningSchedule>[];
 
       List<dynamic> menuSchedules = json['DiningSchedules'];
       for (Map<String, dynamic> menuScheduleData in menuSchedules) {
@@ -279,7 +279,7 @@ class Dining with Explore implements Favorite {
       for(DiningSchedule schedule in diningSchedules!){
         String? displayDate = _dateToLongDisplayDate(schedule.eventDateUtc);
         if((displayDate != null) && !displayDateScheduleMapping.containsKey(displayDate)){
-          displayDateScheduleMapping[displayDate] = [];
+          displayDateScheduleMapping[displayDate] = <DiningSchedule>[];
         }
 
         displayDateScheduleMapping[displayDate]!.add(schedule);
@@ -290,7 +290,7 @@ class Dining with Explore implements Favorite {
   }
 
   List<DiningSchedule> get firstOpeningDateSchedules{
-    List<DiningSchedule> firstOpeningDateSchedules = [];
+    List<DiningSchedule> firstOpeningDateSchedules = <DiningSchedule>[];
     List<String> displayDates = displayScheduleDates;
 
     if(displayDates.isNotEmpty){
@@ -432,7 +432,7 @@ class PaymentTypeHelper {
       return null;
     }
     else {
-      List<PaymentType> paymentTypes = [];
+      List<PaymentType> paymentTypes = <PaymentType>[];
       for (String paymentTypeString in paymentTypesList) {
         PaymentType? paymentType = PaymentTypeHelper.paymentTypeFromString(paymentTypeString);
         if (paymentType != null) {
@@ -448,7 +448,7 @@ class PaymentTypeHelper {
       return null;
     }
     else {
-      List<String> paymentTypesList = [];
+      List<String> paymentTypesList = <String>[];
       for (PaymentType paymentType in paymentTypes) {
         String? paymentTypeString = PaymentTypeHelper.paymentTypeToString(paymentType);
         if (paymentTypeString != null) {
@@ -476,7 +476,7 @@ class DiningNutritionItem {
     if (json == null) {
       return null;
     }
-    List<NutritionNameValuePair> nutritionsList = [];
+    List<NutritionNameValuePair> nutritionsList = <NutritionNameValuePair>[];
     if(json.containsKey("NutritionList")) {
       for (Map<String, dynamic> nutritionEntry in json["NutritionList"]) {
         NutritionNameValuePair? pair = NutritionNameValuePair.fromJson(nutritionEntry);
@@ -535,7 +535,7 @@ class DiningProductItem {
   String? meal;
 
   List<String> get traitList{
-    List<String> traitList = [];
+    List<String> traitList = <String>[];
     for (String entry in (traits ?? "").split(',')) {
       entry = entry.trim();
       if(entry.isNotEmpty) {
@@ -722,7 +722,7 @@ class DiningSchedule {
   static List<DiningSchedule>? listFromJson(dynamic json) {
     List<DiningSchedule>? diningSchedules;
     if (json is List) {
-      diningSchedules = [];
+      diningSchedules = <DiningSchedule>[];
       for (dynamic jsonEntry in json) {
         if (jsonEntry is Map) {
           DiningSchedule? diningSchedule = DiningSchedule.fromJson(JsonUtils.mapValue(jsonEntry));

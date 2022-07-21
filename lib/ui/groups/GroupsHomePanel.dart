@@ -16,10 +16,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/settings/SettingsPersonalInfoPanel.dart';
+import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -34,7 +35,11 @@ import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-class GroupsHomePanel extends StatefulWidget{
+class GroupsHomePanel extends StatefulWidget {
+  final GroupsContentType? contentType;
+  
+  GroupsHomePanel({Key? key, this.contentType}) : super(key: key);
+  
   _GroupsHomePanelState createState() => _GroupsHomePanelState();
 }
 
@@ -46,8 +51,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   bool _isFilterLoading = false;
   bool _isGroupsLoading = false;
-  bool _myGroupsSelected = false;
-  bool _myGroupsBussy = false;
+  bool _myGroupsBusy = false;
+
+  GroupsContentType? _selectedContentType;
 
   List<Group>? _allGroups;
 
@@ -67,9 +73,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Groups.notifyGroupDeleted,
       Auth2.notifyLoginSucceeded,
       Auth2.notifyLogout,
+      Connectivity.notifyStatusChanged,
     ]);
+    _selectedContentType = widget.contentType;
     _loadFilters();
-    _loadGroupsContent(autoUpdateTabSelection: true);
+    _loadGroupsContent();
   }
 
   @override
@@ -93,29 +101,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   ///////////////////////////////////
   // Data Loading
 
-  void _loadGroupsContent({ bool autoUpdateTabSelection = false }) {
+  void _loadGroupsContent() {
 
     setState(() {
       _isGroupsLoading = true;
     });
 
-    Groups().loadGroups().then((List<Group>? groups) {
+    // Load only my groups if the device is offline - allow the user to reach his groups
+    Groups().loadGroups(contentType: Connectivity().isOffline ? GroupsContentType.my : GroupsContentType.all).then((List<Group>? groups) {
       if (mounted) {
-        if (groups != null) {
-          setState(() {
-            _isGroupsLoading = false;
-            _allGroups = _sortGroups(groups);
-            if (autoUpdateTabSelection) {
-              _myGroupsSelected = _hasMyGroups;
-            }
-          });
-        }
-        else {
-          // Initial request failed
-          setState(() {
-            _isGroupsLoading = false;
-          });
-        }
+        setState(() {
+          _isGroupsLoading = false;
+          _allGroups = _sortGroups(groups);
+          if (_selectedContentType == null) {
+            _selectedContentType = _hasMyGroups ? GroupsContentType.my : GroupsContentType.all;
+          }
+        });
       }
     });
   }
@@ -261,11 +262,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             alignment: AlignmentDirectional.topCenter,
             children: <Widget>[
               Container(color: Styles().colors!.background, child:
-              RefreshIndicator(onRefresh: _onPullToRefresh, child:
-              SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
-              Column( children: <Widget>[ _myGroupsSelected ? _buildMyGroupsContent() : _buildAllGroupsContent(), ],),
-              ),
-              ),
+                RefreshIndicator(onRefresh: _onPullToRefresh, child:
+                  SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
+                    Column( children: <Widget>[ _buildGroupsContent(), ],),
+                  ),
+                ),
               ),
               Visibility(
                   visible: _hasActiveFilter,
@@ -289,11 +290,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
               IntrinsicWidth(child:
                 Row(children: <Widget>[
                   Padding(padding: EdgeInsets.only(right: 15), child:
-                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups'), hint: '', selected: !_myGroupsSelected , onTap: _onTapAllGroups),
+                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups'), hint: '', selected: (_selectedContentType == GroupsContentType.all) , onTap: _onTapAllGroups),
                   ),
                   Visibility(visible: _showMyGroups, child:
                     Padding(padding: EdgeInsets.only(right: 15), child:
-                      _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups'), hint: '', selected: _myGroupsSelected, progress: _myGroupsBussy, onTap: _onTapMyGroups),
+                      _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups'), hint: '', selected: (_selectedContentType == GroupsContentType.my), progress: _myGroupsBusy, onTap: _onTapMyGroups),
                     ),
                   ),
                   Flexible(child: Container()),
@@ -320,7 +321,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Widget _buildFilterButtons() {
     bool hasCategories = CollectionUtils.isNotEmpty(_categories);
-    return _isFilterLoading || _myGroupsSelected
+    return (_isFilterLoading || (_selectedContentType == GroupsContentType.my))
       ? Container()
       : Container(
         width: double.infinity,
@@ -447,6 +448,18 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     );
   }
 
+  Widget _buildGroupsContent() {
+    if (_selectedContentType == GroupsContentType.my) {
+      return _buildMyGroupsContent();
+    }
+    else if (_selectedContentType == GroupsContentType.all) {
+      return _buildAllGroupsContent();
+    }
+    else {
+      return Container();
+    }
+  }
+
   Widget _buildMyGroupsContent(){
     // _myGroups = sortedGroups?.where((group) => group.currentUserIsMemberOrAdmin).toList();
     // _myPendingGroups = sortedGroups?.where((group) => group.currentUserIsPendingMember).toList();
@@ -569,28 +582,28 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   void _onTapAllGroups(){
     Analytics().logSelect(target: "All Groups");
-    if(_myGroupsSelected){
+    if(_selectedContentType != GroupsContentType.all){
       setState(() {
-        _myGroupsSelected = false;
+        _selectedContentType = GroupsContentType.all;
       });
     }
   }
 
   void _onTapMyGroups(){
     Analytics().logSelect(target: "My Groups");
-    if(!_myGroupsSelected){
+    if(_selectedContentType != GroupsContentType.my){
       if (Auth2().isOidcLoggedIn) {
-        setState(() { _myGroupsSelected = true; });
+        setState(() { _selectedContentType = GroupsContentType.my; });
       }
       else {
-        setState(() { _myGroupsBussy = true; });
+        setState(() { _myGroupsBusy = true; });
         
         Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
           if (mounted) {
             setState(() {
-              _myGroupsBussy = false;
+              _myGroupsBusy = false;
               if (result == Auth2OidcAuthenticateResult.succeeded) {
-                _myGroupsSelected = true;
+                _selectedContentType = GroupsContentType.my;
               }
             });
           }
@@ -607,7 +620,8 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Future<void> _onPullToRefresh() async {
     Analytics().logSelect(target: "Pull To Refresh");
-    List<Group>? groups = await Groups().loadGroups();
+    // Load only my groups if the device is offline - allow the user to reach his groups
+    List<Group>? groups = await Groups().loadGroups(contentType: Connectivity().isOffline ? GroupsContentType.my : GroupsContentType.all);
     if (mounted && (groups != null)) {
       setState(() {
         _allGroups = _sortGroups(groups);
@@ -624,7 +638,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   void _onTapUserProfileImage() {
     Analytics().logSelect(target: "User Profile Image");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPersonalInfoPanel()));
+    SettingsProfileContentPanel.present(context);
   }
   
   bool get _canCreateGroup {
@@ -653,7 +667,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         }
       });
     }
-
+    else if (name == Connectivity.notifyStatusChanged) {
+      if (Connectivity().isOnline && mounted) {
+        _loadGroupsContent();
+      }
+    }
   }
 }
 

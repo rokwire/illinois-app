@@ -39,6 +39,7 @@
 @interface MapView()<GMSMapViewDelegate, MPMapControlDelegate> {
 	int64_t       _mapId;
 	NSArray*      _explores;
+	NSDictionary* _poi;
 	NSMutableSet* _markers;
 	float         _currentZoom;
 	bool          _didFirstLayout;
@@ -83,6 +84,7 @@
 
 	if (!_didFirstLayout) {
 		_didFirstLayout = true;
+		[self acknowledgePOI];
 		[self applyMarkers];
 		[self applyEnabled];
 	}
@@ -171,6 +173,29 @@
 	if (_mapView.myLocationEnabled != enableMyLocation) {
 		_mapView.myLocationEnabled = enableMyLocation;
 		_mapView.settings.myLocationButton = enableMyLocation;
+	}
+}
+
+#pragma mark POI
+
+- (void)applyPOI:(NSDictionary*)poi {
+	_poi = poi;
+	
+	if (_didFirstLayout) {
+		[self acknowledgePOI];
+	}
+}
+
+- (void)acknowledgePOI {
+	if ((_poi != nil) && _didFirstLayout) {
+		double latitude = [_poi inaDoubleForKey:@"latitude"];
+		double longitude = [_poi inaDoubleForKey:@"longitude"];
+		int zoom = [_poi inaIntForKey:@"zoom"];
+
+		GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:latitude longitude:longitude zoom:(_currentZoom = zoom)];
+		GMSCameraUpdate *update = [GMSCameraUpdate setCamera:camera];
+		[_mapView moveCamera:update];
+		_poi = nil;
 	}
 }
 
@@ -377,6 +402,11 @@
 	} else if ([[call method] isEqualToString:@"enableMyLocation"]) {
 		bool enableMyLocation = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;
 		[_mapView enableMyLocation:enableMyLocation];
+	} else if ([[call method] isEqualToString:@"viewPoi"]) {
+		NSDictionary *parameters = [call.arguments isKindOfClass:[NSDictionary class]] ? call.arguments : nil;
+		NSDictionary *targetJsonMap = [parameters inaDictForKey:@"target"];
+		[_mapView applyPOI:targetJsonMap];
+		result(@(true));
 	} else {
 		result(FlutterMethodNotImplemented);
 	}

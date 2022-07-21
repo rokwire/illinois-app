@@ -312,7 +312,7 @@ List<DeviceOrientation>? _deviceOrientationListFromStringList(List<dynamic>? str
   
   List<DeviceOrientation>? orientationsList;
   if (stringsList != null) {
-    orientationsList = [];
+    orientationsList = <DeviceOrientation>[];
     for (dynamic string in stringsList) {
       if (string is String) {
         DeviceOrientation? orientation = _deviceOrientationFromString(string);
@@ -329,7 +329,7 @@ List<String>? _deviceOrientationListToStringList(List<DeviceOrientation>? orient
   
   List<String>? stringsList;
   if (orientationsList != null) {
-    stringsList = [];
+    stringsList = <String>[];
     for (DeviceOrientation orientation in orientationsList) {
       String? orientationString = _deviceOrientationToString(orientation);
       if (orientationString != null) {

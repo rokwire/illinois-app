@@ -50,18 +50,18 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   _PollType? _selectedPollType;
 
   List<Poll>? _myPolls;
-  String? _myPollsCursor;
+  PollsCursor? _myPollsCursor;
   String? _myPollsError;
   bool _myPollsLoading = false;
   
   List<Poll>? _recentPolls;
   List<Poll>? _recentLocalPolls;
-  String? _recentPollsCursor;
+  PollsCursor? _recentPollsCursor;
   String? _recentPollsError;
   bool _recentPollsLoading = false;
 
   List<Poll>? _groupPolls;
-  String? _groupPollsCursor;
+  PollsCursor? _groupPollsCursor;
   String? _groupPollsError;
   bool _groupPollsLoading = false;
   List<Group>? _myGroups;
@@ -305,7 +305,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     if (0 < pols1Len) {
       polls1!.forEach((poll){
         Group? group = _getGroup(poll.groupId);
-        content.add(_PollCard(poll: poll, group: group));
+        content.add(PollCard(poll: poll, group: group));
         content.add(_constructListSeparator());
       });
     }
@@ -313,7 +313,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     if (0 < pols2Len) {
       polls2!.forEach((poll){
         Group? group = _getGroup(poll.groupId);
-        content.add(_PollCard(poll: poll, group: group));
+        content.add(PollCard(poll: poll, group: group));
         content.add(_constructListSeparator());
       });
     }
@@ -629,9 +629,9 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     if (((_groupPolls == null) || (_groupPollsCursor != null)) && !_groupPollsLoading) {
       _setGroupPollsLoading(true);
       _loadMyGroupsIfNeeded().then((_) {
-        List<String>? groupIds = _myGroupIds;
+        Set<String>? groupIds = _myGroupIds;
         if (CollectionUtils.isNotEmpty(groupIds)) {
-          Polls().getGroupPolls(groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
+          Polls().getGroupPolls(groupIds: groupIds, cursor: _groupPollsCursor)!.then((PollsChunk? result) {
             if (result != null) {
               if (_groupPolls == null) {
                 _groupPolls = [];
@@ -660,13 +660,13 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Future<void> _reloadMyGroups() async {
-    _myGroups = await Groups().loadGroups(myGroups: true);
+    _myGroups = await Groups().loadGroups(contentType: GroupsContentType.my);
   }
 
-  List<String>? get _myGroupIds {
-    List<String>? groupIds;
+  Set<String>? get _myGroupIds {
+    Set<String>? groupIds;
     if (CollectionUtils.isNotEmpty(_myGroups)) {
-      groupIds = [];
+      groupIds = <String>{};
       _myGroups!.forEach((group) {
         groupIds!.add(group.id!);
       });
@@ -837,15 +837,15 @@ enum _PollType { myPolls, recentPolls, groupPolls }
 
 enum _PollFilterTabPosition { left, center, right }
 
-class _PollCard extends StatefulWidget{
+class PollCard extends StatefulWidget{
   final Poll? poll;
   final Group? group;
 
-  const _PollCard({Key? key, this.poll, this.group}) : super(key: key);
+  const PollCard({Key? key, this.poll, this.group}) : super(key: key);
   _PollCardState createState() => _PollCardState();
 }
 
-class _PollCardState extends State<_PollCard>{
+class _PollCardState extends State<PollCard>{
   List<GlobalKey>? _progressKeys;
   double? _progressWidth;
 
@@ -904,38 +904,65 @@ class _PollCardState extends State<_PollCard>{
       Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends."), style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 15, fontWeight: FontWeight.w500),) :
       Column(children: _buildCheckboxOptions(),);
 
-    return Container(child:
-      Semantics(
-        container: true,
-        child: Column(children: <Widget>[ Container(padding: EdgeInsets.symmetric(),
-          decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(5)),
-          child: Padding(padding: EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children:
-          <Widget>[
-            Visibility(visible: (widget.group != null), child: Padding(padding: EdgeInsets.only(bottom: 10), child: Row(children: [
-              Padding(padding: EdgeInsets.only(right: 3), child: Text(Localization().getStringEx('panel.polls_home.card.group.label', 'Group:'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14))),
-              Expanded(child: Text(StringUtils.ensureNotEmpty(groupName), overflow: TextOverflow.ellipsis, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)))
-            ]))),
-            Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus",
-            child: Padding(padding: EdgeInsets.only(bottom: 12), child: Row(children: <Widget>[
-              Text(StringUtils.ensureNotEmpty(pollVotesStatus), style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),),
-              Text('  ', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12,),),
-              Expanded(child:
-              Text(pollStatus ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, ),),
+    return Semantics(container: true, child:
+      Column(children: <Widget>[
+        Container(decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(5)), child:
+          Padding(padding: EdgeInsets.all(16), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Visibility(visible: (widget.group != null), child:
+                Padding(padding: EdgeInsets.only(bottom: 10), child:
+                  Row(children: [
+                    Padding(padding: EdgeInsets.only(right: 3), child:
+                      Text(Localization().getStringEx('panel.polls_home.card.group.label', 'Group:'), style:
+                        TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14),
+                      ),
+                    ),
+                    Expanded(child:
+                      Text(StringUtils.ensureNotEmpty(groupName), overflow: TextOverflow.ellipsis, style:
+                        TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 14)
+                      ),
+                    ),
+                  ]),
+                ),
               ),
-              Expanded(child: Container()),
-              Text(pin, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12, ),)
-            ],),),
-            ),
-            Row(children: <Widget>[Expanded(child: Container(),)],),
-            Padding(padding: EdgeInsets.symmetric(vertical: 0),child:
-            Text(poll.title!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, height: 1.2 ),),),
-            Container(height:12),
-            cardBody,
-            Container(height:25),
-            Column(children: footerWidgets,),
-          ]
-            ,),),
-      ),],)));
+              Semantics(excludeSemantics: true, label: "$pollStatus,$pollVotesStatus", child:
+                Padding(padding: EdgeInsets.only(bottom: 12), child:
+                  Row(children: <Widget>[
+                    Text(StringUtils.ensureNotEmpty(pollVotesStatus), style:
+                      TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12,),
+                    ),
+                    Text('  ', style:
+                      TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 12,),
+                    ),
+                    Expanded(child:
+                      Text(pollStatus ?? '', style:
+                        TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, ),
+                      ),
+                    ),
+                    Expanded(child: Container()),
+                    Text(pin, style:
+                      TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12, ),
+                    )
+                  ],),
+                ),
+              ),
+              Row(children: <Widget>[
+                Expanded(child: Container(),)
+              ],),
+              Padding(padding: EdgeInsets.symmetric(vertical: 0),child:
+                Text(poll.title!, style:
+                  TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, height: 1.2 ),
+                ),
+              ),
+              Container(height:12),
+              cardBody,
+              Container(height:25),
+              Column(children: footerWidgets,),
+            ]),
+          ),
+        ),
+      ],),
+    );
   }
 
   List<Widget> _buildCheckboxOptions() {

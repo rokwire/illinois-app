@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:collection/collection.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Storage.dart';
@@ -53,6 +54,15 @@ class News implements Favorite {
         json: json);
   }
 
+  @override
+  bool operator == (other) =>
+    (other is News) &&
+    (const DeepCollectionEquality().equals(other.json, json));
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(json);
+
   String? get fillText {
     return StringUtils.isNotEmpty(fullText) ? fullText : fullTextRaw;
   }
@@ -66,14 +76,8 @@ class News implements Favorite {
     return AppDateTime().formatDateTime(pubDateTime, format: "MMM dd ", ignoreTimeZone: useDeviceLocalTimeZone);
   }
 
-  @override
-  String? get favoriteId => id;
-
-  @override
-  String? get favoriteTitle => title;
-
-  @override
-  String get favoriteKey => favoriteKeyName;
-
-  static String favoriteKeyName = "athleticNewsIds";
+  // Favorite
+  static const String favoriteKeyName = "athleticNewsIds";
+  @override String get favoriteKey => favoriteKeyName;
+  @override String? get favoriteId => id;
 }

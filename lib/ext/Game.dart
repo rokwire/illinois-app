@@ -17,6 +17,6 @@ extension GameExt on Game {
     Analytics.LogAttributeLocation : location?.location,
   };
 
-  Color? get uiColor => Styles().colors?.eventColor;
+  Color? get uiColor => Styles().colors?.fillColorPrimary;
 
 }

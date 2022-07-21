@@ -67,6 +67,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     _groupUpdatesPostsNotificationSetting : _groupUpdatesPostsNotificationSetting,
     _groupUpdatesInvitationsNotificationSetting : _groupUpdatesInvitationsNotificationSetting,
     _groupUpdatesEventsNotificationSetting : _groupUpdatesEventsNotificationSetting,
+    _groupUpdatesPollsNotificationSetting : _groupUpdatesPollsNotificationSetting,
   };
 
   // Settings entry : setting name (User.prefs.setting name)
@@ -74,6 +75,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     _eventRemindersUpdatesNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.event_reminders.enabled',
     _diningSpecialsUpdatesNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.dining_specials.enabled',
     _groupUpdatesPostsNotificationSetting       : 'edu.illinois.rokwire.settings.inbox.notification.group.posts.enabled',
+    _groupUpdatesPollsNotificationSetting       : 'edu.illinois.rokwire.settings.inbox.notification.group.polls.enabled',
     _groupUpdatesInvitationsNotificationSetting : 'edu.illinois.rokwire.settings.inbox.notification.group.invitations.enabled',
     _groupUpdatesEventsNotificationSetting      : 'edu.illinois.rokwire.settings.inbox.notification.group.events.enabled',
     _athleticsUpdatesStartNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.athletic_updates.start.enabled',
@@ -111,12 +113,14 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String _groupPostsNotificationKey = 'posts';
   static const String _groupInvitationsNotificationKey = 'invitations';
   static const String _groupEventsNotificationKey = 'events';
+  static const String _groupPollsNotificationKey = 'polls';
 
-  static const List<String> _groupNotificationsKeyList = [_groupPostsNotificationKey, _groupInvitationsNotificationKey, _groupEventsNotificationKey];
+  static const List<String> _groupNotificationsKeyList = [_groupPostsNotificationKey, _groupInvitationsNotificationKey, _groupEventsNotificationKey, _groupPollsNotificationKey];
 
   static const String _groupUpdatesPostsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupPostsNotificationKey';
   static const String _groupUpdatesInvitationsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupInvitationsNotificationKey';
   static const String _groupUpdatesEventsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupEventsNotificationKey';
+  static const String _groupUpdatesPollsNotificationSetting = '$_groupUpdatesNotificationKey.$_groupPollsNotificationKey';
 
   // Payload types
   static const String payloadTypeConfigUpdate = 'config_update';
@@ -129,7 +133,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeGroup = 'group';
   static const String payloadTypeHome = 'home';
   static const String payloadTypeInbox = 'inbox';
-
 
   DateTime? _pausedDateTime;
   
@@ -233,8 +236,14 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   // Message Processing
 
   @override
-  void processDataMessage(Map<String, dynamic>? data) {
-    String? type = getMessageType(data);
+  void processDataMessage(Map<String, dynamic>? data) => _processDataMessage(data);
+
+  void _processDataMessage(Map<String, dynamic>? data, {String? type} ) {
+    
+    if (type == null) {
+      type = _getMessageType(data);
+    }
+    
     if (type == payloadTypeConfigUpdate) {
       _onConfigUpdate(data);
     }
@@ -273,7 +282,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
   }
 
-  static String? getMessageType(Map<String, dynamic>? data) {
+  static String? _getMessageType(Map<String, dynamic>? data) {
     if (data == null)
       return null;
 
@@ -328,6 +337,13 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     });
   }
 
+  void processDataMessageEx(Map<String, dynamic>? data, { Set<String>? allowedPayloadTypes }) {
+    String? messageType;
+    if ((allowedPayloadTypes == null) || (allowedPayloadTypes.contains(messageType = _getMessageType(data)))) {
+      _processDataMessage(data, type: messageType);
+    }
+  }
+
   // Settings topics
 
   bool? get notifyEventReminders               { return _getNotifySetting('event_reminders'); } 
@@ -353,6 +369,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
 
   bool? get notifyGroupInvitationsUpdates                { return _getNotifySetting(_groupUpdatesInvitationsNotificationSetting); }
   set notifyGroupInvitationsUpdates(bool? value)    { _setNotifySetting(_groupUpdatesInvitationsNotificationSetting, value); }
+
+  bool? get notifyGroupPollsUpdates                { return _getNotifySetting(_groupUpdatesPollsNotificationSetting); }
+  set notifyGroupPollsUpdates(bool? value)    { _setNotifySetting(_groupUpdatesPollsNotificationSetting, value); }
 
   bool? get notifyGroupEventsUpdates               { return _getNotifySetting(_groupUpdatesEventsNotificationSetting); }
   set notifyGroupEventsUpdates(bool? value)   { _setNotifySetting(_groupUpdatesEventsNotificationSetting, value); }

@@ -55,7 +55,7 @@ class Guide with Service implements NotificationsListener {
       DeepLink.notifyUri,
       AppLivecycle.notifyStateChanged,
     ]);
-    _guideDetailsCache = [];
+    _guideDetailsCache = <Map<String, dynamic>>[];
   }
 
   @override
@@ -744,23 +744,15 @@ class GuideSection {
 class GuideFavorite implements Favorite {
   
   final String? id;
-  final String? title;
-  GuideFavorite({this.id, this.title});
+  GuideFavorite({this.id});
 
   bool operator == (o) => o is GuideFavorite && o.id == id;
 
   int get hashCode => (id?.hashCode ?? 0);
 
-  @override
-  String? get favoriteId => id;
-
-  @override
-  String? get favoriteTitle => title;
-
-  @override
-  String get favoriteKey => favoriteKeyName;
-
-  static String favoriteKeyName = "studentGuideIds";
+  static const String favoriteKeyName = "studentGuideIds";
+  @override String get favoriteKey => favoriteKeyName;
+  @override String? get favoriteId => id;
 }
 
 GuideContentSource? guideContentSourceFromString(String? value) {

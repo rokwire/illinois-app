@@ -67,7 +67,7 @@ class Dinings  with Service implements ExploreJsonHandler {
 
   Future<List<Dining>?> loadBackendDinings(bool onlyOpened, PaymentType? paymentType, Position? locationData) async {
     if(_enabled) {
-      List<Dining> dinings = [];
+      List<Dining> dinings = <Dining>[];
 
       // 1.2 Load Dining locations only if need
       if (!_useCachedDiningLoacations) {
@@ -142,7 +142,7 @@ class Dinings  with Service implements ExploreJsonHandler {
         final response = await Network().get(url);
         if ((response != null) && (response.statusCode == 200)) {
           List<dynamic>? jsonList = JsonUtils.decode(response.body);
-          List<DiningProductItem> productList = [];
+          List<DiningProductItem> productList = <DiningProductItem>[];
           if (CollectionUtils.isNotEmpty(jsonList)) {
             for (dynamic jsonEntry in jsonList!) {
               DiningProductItem? item = DiningProductItem.fromJson(JsonUtils.mapValue(jsonEntry));
@@ -212,7 +212,7 @@ class Dinings  with Service implements ExploreJsonHandler {
       if (responseBody != null) {
         List<dynamic>? jsonList = JsonUtils.decode(responseBody);
         if (CollectionUtils.isNotEmpty(jsonList)) {
-          List<DiningSpecial> list = [];
+          List<DiningSpecial> list = <DiningSpecial>[];
 
           for (dynamic jsonEntry in jsonList!) {
             ListUtils.add(list, DiningSpecial.fromJson(JsonUtils.mapValue(jsonEntry) ));
@@ -303,7 +303,7 @@ class DiningUtils{
     if(allProducts != null) {
       for(DiningProductItem item in allProducts){
         if((item.servingUnit != null) && !mapping.containsKey(item.servingUnit)){
-          mapping[item.servingUnit!] = [];
+          mapping[item.servingUnit!] = <DiningProductItem>[];
         }
         mapping[item.servingUnit]!.add(item);
       }
@@ -317,7 +317,7 @@ class DiningUtils{
     if(allProducts != null) {
       for(DiningProductItem item in allProducts){
         if((item.course != null) && !mapping.containsKey(item.course)){
-          mapping[item.course!] = [];
+          mapping[item.course!] = <DiningProductItem>[];
         }
         mapping[item.course]!.add(item);
       }
@@ -332,7 +332,7 @@ class DiningUtils{
       for(DiningProductItem item in allProducts){
         if (item.category != null) {
           if(!mapping.containsKey(item.category)){
-            mapping[item.category!] = [];
+            mapping[item.category!] = <DiningProductItem>[];
           }
           mapping[item.category!]!.add(item);
         }

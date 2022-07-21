@@ -108,12 +108,17 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             ]))),
                             Container(height: 12, color: Styles().colors!.background),
                             _buildPrivacyDropDown(),
+                            _buildHiddenForSearch(),
                             _buildAuthManLayout(),
                             Visibility(
                               visible: !_isAuthManGroup,
                               child: _buildMembershipLayout()),
                             Container(height: 8, color: Styles().colors!.background),
                             _buildPollsLayout(),
+                            Container(height: 16, color: Styles().colors!.background),
+                            _buildAttendanceLayout(),
+                            Container(height: 16, color: Styles().colors!.background),
+                            _buildCanAutoJoinLayout(),
                             Container(height: 24,  color: Styles().colors!.background,),
                           ],),)
                       ]),
@@ -599,6 +604,44 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   void _onPrivacyChanged(dynamic value) {
     _group?.privacy = value;
+    if (_isPublicGroup) {
+      // Do not hide group from search if it is public
+      _group!.hiddenForSearch = false;
+    }
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Widget _buildHiddenForSearch() {
+    return Visibility(
+        visible: _isPrivateGroup,
+        child: Container(
+            color: Styles().colors!.background,
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 20),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(
+                  child: _buildSwitch(
+                      title: Localization().getStringEx("panel.groups.common.private.search.hidden.label", "Make Group Hidden"),
+                      value: _group?.hiddenForSearch,
+                      onTap: _onTapHiddenForSearch)),
+              Semantics(
+                  container: true,
+                  child: Container(
+                      padding: EdgeInsets.only(left: 8, right: 8, top: 12),
+                      child: Text(
+                          Localization()
+                              .getStringEx("panel.groups.common.private.search.hidden.description", "A hidden group is unsearchable."),
+                          style: TextStyle(
+                              color: Styles().colors!.textBackground,
+                              fontSize: 14,
+                              fontFamily: Styles().fontFamilies!.regular,
+                              letterSpacing: 1))))
+            ])));
+  }
+
+  void _onTapHiddenForSearch() {
+    _group!.hiddenForSearch = !(_group!.hiddenForSearch ?? false);
     if (mounted) {
       setState(() {});
     }
@@ -831,7 +874,50 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       }
     }
   }
-  //
+  
+  // Attendance
+  Widget _buildAttendanceLayout() {
+    return Container(
+      color: Styles().colors!.background,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: _buildSwitch(
+            title: Localization().getStringEx("panel.groups_settings.attendance_group.label", "Enable attendance checking"),
+            value: _group?.attendanceGroup,
+            onTap: _onTapAttendanceGroup));
+  }
+
+  void _onTapAttendanceGroup() {
+    if (_group != null) {
+      _group!.attendanceGroup = !(_group!.attendanceGroup ?? false);
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  //Auto Join
+  //Autojoin
+  Widget _buildCanAutoJoinLayout(){
+    return Container( color: Styles().colors!.background,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.auto_join.enabled.label", "Group can be joined automatically?"),//TBD localize
+          value: _group?.canJoinAutomatically,
+          onTap: () {
+            if (_group?.canJoinAutomatically != null) {
+              _group!.canJoinAutomatically = !(_group!.canJoinAutomatically!);
+            } else {
+              _group?.canJoinAutomatically = true;
+            }
+
+            if(mounted){
+              setState(() {
+
+              });
+            }
+          }
+      ),
+    );
+  }
 
   // Common
   Widget _buildInfoHeader(String title, String? description,{double topPadding = 24}){
@@ -928,6 +1014,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   bool get _isAuthManGroup{
     return _group?.authManEnabled ?? false;
+  }
+
+  bool get _isPrivateGroup {
+    return _group?.privacy == GroupPrivacy.private;
+  }
+
+  bool get _isPublicGroup {
+    return _group?.privacy == GroupPrivacy.public;
   }
 }
 

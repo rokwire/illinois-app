@@ -34,6 +34,22 @@ import 'package:rokwire_plugin/service/styles.dart';
 
 class MTDBusPassPanel extends StatefulWidget {
   _MTDBusPassPanelState createState() => _MTDBusPassPanelState();
+
+  static void present(BuildContext context) {
+    if (!Auth2().isOidcLoggedIn) {
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.bus_pass', 'You need to be logged in to access MTD Bus Pass.'));
+    }
+    else if (Auth2().authCard == null) {
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.no_card.bus_pass', 'You need a valid Illini Identity card to access MTD Bus Pass.'));
+    }
+    else {
+      showModalBottomSheet(context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+        builder: (context) => MTDBusPassPanel());
+    }
+  }
 }
 
 class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements NotificationsListener {
@@ -189,7 +205,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
                 width: _photoSize,
                 padding: EdgeInsets.only(top: 12, left: 6, right: 6),
                 child: Text(
-                  Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus driver as you board."),
+                  Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus operator as you board."),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: Styles().fontFamilies!.regular,
@@ -324,7 +340,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   GeoFenceBeacon? _getCurrentBeacon() {
     // Just return the first beacon that we have for now.
     for (String regionId in _rangingRegionIds) {
-      List<GeoFenceBeacon>? regionBacons = GeoFence().currentBeaconsInRegion(regionId);
+      Set<GeoFenceBeacon>? regionBacons = GeoFence().currentBeaconsInRegion(regionId);
       if ((regionBacons != null) && regionBacons.isNotEmpty) {
         return regionBacons.first;
       }

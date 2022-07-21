@@ -483,6 +483,10 @@ class _PollContentState extends State<PollContentWidget> implements Notification
             _votingOptions.remove(optionIndex);
           }
         }
+        if(!_allowMultipleOptions && !_allowRepeatOptions){
+          //We only want to see the 2nd panel for multi voting. If a Poll is a single vote poll then when a user votes close the panel.
+          _onClose();
+        }
       });
     });
   }
@@ -508,7 +512,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
       if (details.isNotEmpty) {
         details += '\n';
       }
-      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.multy_choice", "You can choose more that one answer.");
+      details += '• ' + Localization().getStringEx("panel.poll_prompt.text.rule.detail.multy_choice", "You can choose more than one answer.");
     }
     if (_allowRepeatOptions) {
       if (details.isNotEmpty) {

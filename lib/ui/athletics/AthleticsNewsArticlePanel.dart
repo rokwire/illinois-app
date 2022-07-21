@@ -18,6 +18,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
 import 'package:illinois/service/RecentItems.dart';
@@ -26,6 +28,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -43,16 +46,17 @@ class AthleticsNewsArticlePanel extends StatefulWidget {
   _AthleticsNewsArticlePanelState createState() => _AthleticsNewsArticlePanelState();
 }
 
-class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
+class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> implements NotificationsListener {
 
   News? _article;
   bool _loading = false;
 
   @override
   void initState() {
+    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
     _article = widget.article;
     if (_article != null) {
-      RecentItems().addRecentItem(RecentItem.fromOriginalType(_article));
+      RecentItems().addRecentItem(RecentItem.fromSource(_article));
     }
     else {
       _loadNewsArticle();
@@ -61,11 +65,28 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   void _loadNewsArticle() {
     _setLoading(true);
     Sports().loadNewsArticle(widget.articleId).then((article) {
       _article = article;
-      RecentItems().addRecentItem(RecentItem.fromOriginalType(_article));
+      RecentItems().addRecentItem(RecentItem.fromSource(_article));
       _setLoading(false);
     });
   }
@@ -88,122 +109,83 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
       return Center(child: Text(Localization().getStringEx('panel.athletics_news_article.load.failed.msg', 'Failed to load news article. Please, try again.')));
     }
 
-    return CustomScrollView(
-        scrollDirection: Axis.vertical,
-        slivers: <Widget>[
-            SliverToutHeaderBar(
-            flexImageUrl: _article?.imageUrl,
-            flexBackColor: Styles().colors?.white,
-            flexRightToLeftTriangleColor: Styles().colors?.white,
-            flexLeftToRightTriangleColor: Styles().colors?.fillColorSecondaryTransparent05,
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              Container(
-                color: Styles().colors!.background,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: <Widget>[
-                        Container(
-                          child: Column(
-                            children: <Widget>[
-                              Column(
-                                children: <Widget>[
-                                  Container(
-                                    color: Colors.white,
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 16, horizontal: 24),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Row(
-                                            children: <Widget>[
-                                              Container(
-                                                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 86),
-                                                color: Styles().colors!.fillColorPrimary,
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 6, horizontal: 8),
-                                                  child: Text(
-                                                    _article?.category?.toUpperCase() ?? '',
-                                                    style: TextStyle(
-                                                        fontFamily: Styles().fontFamilies!.bold,
-                                                        fontSize: 14,
-                                                        letterSpacing: 1.0,
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Padding(
-                                            padding:
-                                            EdgeInsets.only(top: 12, bottom: 24),
-                                            child: Text(
-                                              _article?.title ?? '',
-                                              style: TextStyle(
-                                                  fontSize: 24,
-                                                  color: Styles().colors!.fillColorPrimary),
-                                            ),
-                                          ),
-                                          Row(
-                                            children: <Widget>[
-                                              Image.asset('images/icon-news.png'),
-                                              Container(width: 5,),
-                                              Text(_article?.displayTime ?? '',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Styles().colors!.textBackground,
-                                                      fontFamily: Styles().fontFamilies!.medium
-                                                  )),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(24),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: _buildContentWidgets(context),
-                                        ),
-                                      )),
-                                  StringUtils.isNotEmpty(_article?.link)?
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 20, right: 20, bottom: 48),
-                                    child: RoundedButton(
-                                      label: 'Share this article',
-                                      backgroundColor: Styles().colors!.background,
-                                      textColor: Styles().colors!.fillColorPrimary,
-                                      borderColor: Styles().colors!.fillColorSecondary,
-                                      fontSize: 16,
-                                      onTap: () => {
-                                        _shareArticle()
-                                      },
-                                    ),
-                                  ) : Container()
-                                ],
-                              )
-                            ],
+    bool isNewsFavorite = Auth2().isFavorite(widget.article);
+
+    return CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
+      SliverToutHeaderBar(
+        flexImageUrl: _article?.imageUrl,
+        flexBackColor: Styles().colors?.white,
+        flexRightToLeftTriangleColor: Styles().colors?.white,
+        flexLeftToRightTriangleColor: Styles().colors?.fillColorSecondaryTransparent05,
+      ),
+      SliverList(delegate: SliverChildListDelegate([
+        Container(color: Styles().colors!.background, child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Column(children: <Widget>[
+              Container(color: Colors.white, child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Padding(padding: EdgeInsets.only(top: 8, bottom: 8, left: 24, right: 8), child:
+                    Row(children: <Widget>[
+                      Container(
+                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 86),
+                        color: Styles().colors!.fillColorPrimary,
+                        child: Padding(padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                          child: Text(_article?.category?.toUpperCase() ?? '',
+                            style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, letterSpacing: 1.0, color: Colors.white),
                           ),
-                        )
-                      ],
-                    )
-                  ],
+                        ),
+                      ),
+                      Expanded(child: Container(),),
+                      Visibility(visible: Auth2().canFavorite, child:
+                        Semantics(button: true, checked: isNewsFavorite,
+                          label: Localization().getStringEx("panel.athletics_news_article.button.save_game.title", "Save Article"),
+                          hint: Localization().getStringEx("panel.athletics_news_article.button.save_game.hint", "Tap to save"),
+                          child: GestureDetector(onTap: _onTapSwitchFavorite, child:
+                            Container(padding: EdgeInsets.all(24), child:
+                              Image.asset(isNewsFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png',excludeFromSemantics: true),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],),
+                  ),
+                  Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 12, bottom: 24), child:
+                    Text(_article?.title ?? '', style:
+                      TextStyle(fontSize: 24, color: Styles().colors!.fillColorPrimary),
+                    ),
+                  ),
+                  Padding(padding: EdgeInsets.only(left: 24, right: 24, bottom: 24), child:
+                    Row(children: <Widget>[
+                      Image.asset('images/icon-news.png'),
+                      Container(width: 5,),
+                      Text(_article?.displayTime ?? '', style:
+                        TextStyle(fontSize: 16, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.medium),
+                      ),
+                    ],),
+                  ),
+                ],),
+              ),
+              Padding(padding: EdgeInsets.all(24), child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children:
+                  _buildContentWidgets(context),
                 ),
               ),
-            ])
-          )
-        ],
-      );
+              StringUtils.isNotEmpty(_article?.link) ? Padding(padding: EdgeInsets.only(left: 20, right: 20, bottom: 48), child:
+                RoundedButton(
+                  label: 'Share this article',
+                  backgroundColor: Styles().colors!.background,
+                  textColor: Styles().colors!.fillColorPrimary,
+                  borderColor: Styles().colors!.fillColorSecondary,
+                  fontSize: 16,
+                  onTap: _shareArticle,
+                ),
+              ) : Container()
+            ],)
+          ],),
+        ),
+      ]),
+    )
+  ],);
   }
 
   _shareArticle(){
@@ -252,4 +234,10 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> {
       setState(() {});
     }
   }
+
+  void _onTapSwitchFavorite() {
+    Analytics().logSelect(target: "Favorite: ${widget.article?.title}");
+    Auth2().prefs?.toggleFavorite(widget.article);
+  }
+
 }

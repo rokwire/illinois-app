@@ -7,6 +7,8 @@
 	{"id":"illini_union",      "types":["voter"],            "name":"Illini Union",                                  "enabled": true, "location": {"latitude": 40.109211, "longitude":  -88.227221, "radius": 100}},
 	{"id":"arc",               "types":["voter"],            "name":"ARC",                                           "enabled": true, "location": {"latitude": 40.100729, "longitude":  -88.235799, "radius": 150}},
 
+	{"id":"campus",            "types":["location"],         "name":"Campus",                                        "enabled": true, "location": {"latitude": 40.109560, "longitude":  -88.227300, "radius": 320}},
+
 	{"id":"MTD",               "types":["test", "MTD"],      "name":"Champaign–Urbana MTD",                          "enabled": true, "beacon": {"uuid": "d7d5a51f-ce7f-4a4c-a944-bed73578b201"}}
 ]
 

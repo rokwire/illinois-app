@@ -43,7 +43,7 @@ class GroupPollListPanel extends StatefulWidget implements AnalyticsPageAttribut
 
 class _GroupPollListPanelState extends State<GroupPollListPanel> implements NotificationsListener {
   List<Poll>? _polls;
-  String? _pollsCursor;
+  PollsCursor? _pollsCursor;
   String? _pollsError;
   bool _pollsLoading = false;
 
@@ -153,7 +153,7 @@ class _GroupPollListPanelState extends State<GroupPollListPanel> implements Noti
       String? groupId = widget.group.id;
       if (StringUtils.isNotEmpty(groupId)) {
         _setGroupPollsLoading(true);
-        Polls().getGroupPolls([groupId!], cursor: _pollsCursor)?.then((PollsChunk? result) {
+        Polls().getGroupPolls(groupIds: {groupId!}, cursor: _pollsCursor)?.then((PollsChunk? result) {
           if (result != null) {
             if (_polls == null) {
               _polls = [];

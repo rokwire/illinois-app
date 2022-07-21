@@ -132,6 +132,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
               child: Container(
                 color: Styles().colors!.background,
                 child: Column(
+
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(height: 16,),
@@ -379,7 +380,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             onTap: _onTapCrash)),
                     Container(height: 16),
                   ],
-                ),
+                                ),
               ),
             ),
           ),
@@ -479,7 +480,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   GeoFenceBeacon? get _currentBeacon {
     // Just return the first beacon that we have for now.
     for (String regionId in _rangingRegionIds) {
-      List<GeoFenceBeacon>? regionBacons = GeoFence().currentBeaconsInRegion(regionId);
+      Set<GeoFenceBeacon>? regionBacons = GeoFence().currentBeaconsInRegion(regionId);
       if ((regionBacons != null) && regionBacons.isNotEmpty) {
         return regionBacons.first;
       }

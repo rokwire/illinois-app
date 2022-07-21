@@ -21,9 +21,10 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/main.dart';
-import 'package:illinois/ui/canvas/CanvasCalendarEventDetailPanel.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
+import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
+import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:rokwire_plugin/service/events.dart';
@@ -34,12 +35,10 @@ import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Sports.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -48,7 +47,6 @@ import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/BrowsePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
-import 'package:illinois/ui/inbox/InboxHomePanel.dart';
 import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
@@ -57,40 +55,16 @@ import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/service/Canvas.dart';
 
-enum RootTab { Home, Athletics, Explore, Wallet, Browse }
-
-class _PanelData {
-  _RootPanelState? _panelState;
-
-  RootTab?         _rootTab;
-  ExploreTab?      _exploreTab;
-  ExploreFilter?   _exploreInitialFilter;
-}
+enum RootTab { Home, Favorites, Athletics, Explore, Browse, Maps, Academics, Wellness }
 
 class RootPanel extends StatefulWidget {
-  final _PanelData _data = _PanelData();
+  static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
 
-  void selectTab({RootTab? rootTab, ExploreTab? exploreTab, ExploreFilter? exploreInitialFilter, bool? showHeaderBack = false}) {
-    if ((_data._panelState != null) && _data._panelState!.mounted && (rootTab != null)) {
-      _data._panelState!.selectTab(rootTab: rootTab, exploreTab: exploreTab, exploreInitialFilter: exploreInitialFilter);
-    }
-    else {
-      _data._rootTab = rootTab;
-      _data._exploreTab = exploreTab;
-      _data._exploreInitialFilter = exploreInitialFilter;
-    }
-  }
+  RootPanel() : super(key: stateKey);
 
   @override
-  _RootPanelState createState() {
-    return _data._panelState = _RootPanelState();
-  }
-
-  _RootPanelState? get panelState {
-    return _data._panelState;
-  }
+  _RootPanelState createState()  => _RootPanelState();
 }
 
 class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin implements NotificationsListener {
@@ -119,9 +93,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
       Guide.notifyGuideDetail,
-      Canvas.notifyCanvasEventDetail,
       Localization.notifyStringsUpdated,
-      Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
       Polls.notifyPresentVote,
@@ -133,22 +105,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     ]);
 
     _tabs = _getTabs();
-    _initTabBarController();
+    _tabBarController = TabController(length: _tabs.length, vsync: this);
     _updatePanels(_tabs);
-
-    if (widget._data._rootTab != null) {
-      int tabIndex = _getIndexByRootTab(widget._data._rootTab);
-      if ((0 <= tabIndex) && (tabIndex < _tabs.length)) {
-        _currentTabIndex = tabIndex;
-      }
-
-      if (widget._data._rootTab == RootTab.Explore) {
-        ExplorePanel? explorePanel = _panels[RootTab.Explore] as ExplorePanel?;
-        explorePanel?.selectTab(widget._data._exploreTab, initialFilter: widget._data._exploreInitialFilter);
-      }
-
-      widget.selectTab(rootTab: null, exploreTab: null, exploreInitialFilter: null, showHeaderBack: null);
-    }
 
     Services().initUI();
     _showPresentPoll();
@@ -200,16 +158,10 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == Guide.notifyGuideDetail) {
       _onGuideDetail(param);
     }
-    else if (name == Canvas.notifyCanvasEventDetail) {
-      _onCanvasEventDetail(param);
-    }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
         setState(() { });
       }
-    }
-    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _FavoritesSavedDialog.show(context);
     }
     else if (name == FlexUI.notifyChanged) {
       _updateContent();
@@ -245,16 +197,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _onTabSelectionChanged(int tabIndex) {
     if (mounted) {
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-      RootTab? tab = getRootTabByIndex(tabIndex);
-      selectTab(rootTab: tab);
+      _selectTab(tabIndex);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    App.instance.homeContext = context;
-    Analytics().accessibilityState = MediaQuery.of(context).accessibleNavigation;
-
     List<Widget> panels = [];
     for (RootTab? rootTab in _tabs) {
       panels.add(_panels[rootTab] ?? Container());
@@ -276,36 +224,24 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         onWillPop: _onWillPop);
   }
 
-  ///Public interface
-  void selectTab({RootTab? rootTab, ExploreTab? exploreTab, ExploreFilter? exploreInitialFilter}) {
+  
+  void _selectTab(int tabIndex) {
 
-    int newTabIndex = _getIndexByRootTab(rootTab);
-    if ((newTabIndex >= 0) && (newTabIndex != _currentTabIndex)) {
-      _tabBarController!.animateTo(newTabIndex);
-      _selectTabAtIndex(newTabIndex);
-    }
-  }
+    if ((tabIndex >= 0) && (tabIndex != _currentTabIndex)) {
+      _tabBarController!.animateTo(tabIndex);
 
-  void _initTabBarController({RootTab? rootTab}) {
-    int initialIndex = (rootTab != null) ? max(_getIndexByRootTab(rootTab), 0)  : 0;
-    _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: initialIndex);
-  }
-
-  void _selectTabAtIndex(int index) {
-    if (_currentTabIndex != index) {
-
-      Widget? tabPanel = _getTabPanelAtIndex(index);
+      Widget? tabPanel = _getTabPanelAtIndex(tabIndex);
       if (tabPanel != null) {
         Analytics().logPage(name:tabPanel.runtimeType.toString());
       }
 
       if (mounted) {
         setState(() {
-          _currentTabIndex = index;
+          _currentTabIndex = tabIndex;
         });
       }
       else {
-        _currentTabIndex = index;
+        _currentTabIndex = tabIndex;
       }
     }
   }
@@ -329,7 +265,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   Future<bool> _onWillPop() async {
     if (_currentTabIndex != 0) {
-      selectTab(rootTab: RootTab.Home);
+      _selectTab(0);
       return Future.value(false);
     }
     bool? result = await showDialog(
@@ -503,16 +439,6 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
-  Future<void> _onCanvasEventDetail(Map<String, dynamic>? content) async {
-    String? eventId = (content != null) ? JsonUtils.stringValue(content['event_id']) : null;
-    if (StringUtils.isNotEmpty(eventId)) {
-      int? eventIdValue = int.tryParse(eventId!);
-      if (eventIdValue != null) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCalendarEventDetailPanel(eventId: eventIdValue)));
-      }
-    }
-  }
-
   void _showAthleticsGameDetail(Map<String, dynamic>? athleticsGameDetails) {
     if (athleticsGameDetails == null) {
       return;
@@ -580,17 +506,24 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _updateContent() {
     List<RootTab> tabs = _getTabs();
     if (!DeepCollectionEquality().equals(_tabs, tabs)) {
-      RootTab? currentRootTab = getRootTabByIndex(_currentTabIndex);
       _updatePanels(tabs);
+      
+      RootTab? currentRootTab = getRootTabByIndex(_currentTabIndex);
       if (mounted) {
         setState(() {
           _tabs = tabs;
-          _initTabBarController(rootTab: currentRootTab);
+          _currentTabIndex = (currentRootTab != null) ? max(_getIndexByRootTab(currentRootTab), 0)  : 0;
+          
+          // Do not initialize _currentTabIndex as initialIndex because we get empty panel content.
+          // Initialize TabController with initialIndex = 0 and then manually animate to desired tab index.
+          _tabBarController = TabController(length: _tabs.length, vsync: this);
         });
+        _tabBarController!.animateTo(_currentTabIndex);
       }
       else {
         _tabs = tabs;
-        _initTabBarController(rootTab: currentRootTab);
+        _currentTabIndex = (currentRootTab != null) ? max(_getIndexByRootTab(currentRootTab), 0)  : 0;
+        _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: _currentTabIndex);
       }
     }
   }
@@ -621,17 +554,26 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if (rootTab == RootTab.Home) {
       return HomePanel();
     }
+    else if (rootTab == RootTab.Favorites) {
+      return HomePanel();
+    }
     else if (rootTab == RootTab.Athletics) {
-      return AthleticsHomePanel(showTabBar: false,);
+      return AthleticsHomePanel(rootTabDisplay: true,);
     }
     else if (rootTab == RootTab.Explore) {
-      return ExplorePanel(showHeaderBack: false, showTabBar: false,);
-    }
-    else if (rootTab == RootTab.Wallet) {
-      return null;
+      return ExplorePanel(rootTabDisplay: true);
     }
     else if (rootTab == RootTab.Browse) {
       return BrowsePanel();
+    }
+    else if (rootTab == RootTab.Maps) {
+      return ExplorePanel(rootTabDisplay: true, mapDisplayType: ListMapDisplayType.Map);
+    }
+    else if (rootTab == RootTab.Academics) {
+      return AcademicsHomePanel();
+    }
+    else if (rootTab == RootTab.Wellness) {
+      return WellnessHomePanel(rootTabDisplay: true,);
     }
     else {
       return null;
@@ -665,11 +607,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _onFirebaseHomeNotification() {
     // Pop to Home Panel and select the first tab
     Navigator.of(context).popUntil((route) => route.isFirst);
-    selectTab(rootTab: RootTab.Home);
+    _selectTab(0);
   }
 
   void _onFirebaseInboxNotification() {
-    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => InboxHomePanel()));
+    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
   }
 }
 
@@ -678,108 +620,27 @@ RootTab? rootTabFromString(String? value) {
     if (value == 'home') {
       return RootTab.Home;
     }
+    else if (value == 'favorites') {
+      return RootTab.Favorites;
+    }
     else if (value == 'athletics') {
       return RootTab.Athletics;
     }
     else if (value == 'explore') {
       return RootTab.Explore;
     }
-    else if (value == 'wallet') {
-      return RootTab.Wallet;
-    }
     else if (value == 'browse') {
       return RootTab.Browse;
     }
+    else if (value == 'maps') {
+      return RootTab.Maps;
+    }
+    else if (value == 'academics') {
+      return RootTab.Academics;
+    }
+    else if (value == 'wellness') {
+      return RootTab.Wellness;
+    }
   }
   return null;
-}
-
-class _FavoritesSavedDialog extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _FavoritesSavedDialogState();
-  }
-
-  static void show(BuildContext? context) {
-    bool favoriteDialogWasShown = (Storage().favoritesDialogWasVisible == true);
-    if (favoriteDialogWasShown || context == null) {
-      return;
-    }
-
-    Storage().favoritesDialogWasVisible = true;
-    showDialog(
-        context: context,
-        builder: (_) => Material(
-              type: MaterialType.transparency,
-              child: _FavoritesSavedDialog(),
-            ));
-  }
-}
-
-class _FavoritesSavedDialogState extends State<_FavoritesSavedDialog> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-      Container(
-        height: 50,
-      ),
-      Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15),
-          child: Container(
-              decoration: BoxDecoration(
-                color: Styles().colors!.fillColorPrimary,
-                border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2.0),
-                borderRadius: BorderRadius.circular(4.0),
-              ),
-              child: Padding(
-                  padding: EdgeInsets.all(24),
-                  child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Row(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-                      Expanded(
-                          flex: 5,
-                          child: Text(
-                            Localization().getStringEx('widget.favorites_saved_dialog.title', 'This starred item has been added to your saved list')
-                                + (DeviceCalendar().canAddToCalendar? Localization().getStringEx("widget.favorites_saved_dialog.calendar.title", " and if it is an event, also your calendar") :"") + ".",
-                            style: TextStyle(
-                              color: Styles().colors!.white,
-                              fontSize: 16,
-                              fontFamily: Styles().fontFamilies!.bold,
-                            ),
-                          )),
-                      InkWell(onTap: _onTapClose, child:
-                        Semantics(button: true, label: Localization().getStringEx("dialog.close.title","Close"), child:
-                          Image.asset('images/close-white.png', excludeFromSemantics: true,)))
-                    ]),
-                    Semantics(button: true, child:
-                    Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: GestureDetector(
-                        onTap: _onViewAll,
-                        child: Text(
-                          Localization().getStringEx("widget.favorites_saved_dialog.button.view", "View"),
-                          style: TextStyle(
-                              color: Styles().colors!.white,
-                              fontSize: 14,
-                              fontFamily: Styles().fontFamilies!.medium,
-                              decoration: TextDecoration.underline,
-                              decorationThickness: 1,
-                              decorationColor: Styles().colors!.fillColorSecondary),
-                        ),
-                      ),
-                    ))
-                  ]))))
-    ]));
-  }
-
-  void _onTapClose() {
-    Analytics().logAlert(text: "Event Saved", selection: "close");
-    Navigator.pop(context, "");
-  }
-
-  void _onViewAll() {
-    Analytics().logAlert(text: "Event Saved", selection: "View All");
-    Navigator.pop(context, "");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SavedPanel()));
-  }
 }

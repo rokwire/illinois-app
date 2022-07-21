@@ -197,7 +197,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	[parentView addSubview:_launchScreenView];
 }
 
-- (void)removeLaunchScreen {
+- (void)removeLaunchScreenWithCompletionHandler:(FlutterCompletion)completionHandler {
 	if (_launchScreenView != nil) {
 		__weak typeof(self) weakSelf = self;
 		[UIView animateWithDuration:0.5 animations:^{
@@ -205,6 +205,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		} completion:^(BOOL finished) {
 			[weakSelf.launchScreenView removeFromSuperview];
 			weakSelf.launchScreenView = nil;
+			completionHandler(nil);
 		}];
 	}
 }
@@ -301,8 +302,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 }
 
 - (void)handleDismissLaunchScreenWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	[self removeLaunchScreen];
-	result(nil);
+	[self removeLaunchScreenWithCompletionHandler:^(id returnValue) {
+		result(returnValue);
+	}];
 }
 
 - (void)handleSetLaunchScreenStatusWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
@@ -708,11 +710,12 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	_imageView.frame = CGRectMake((contentSize.width - imageSize.width) / 2, (contentSize.height - imageSize.height) / 2, imageSize.width, imageSize.height);
 	
 	CGSize activitySize = [_activityView sizeThatFits:contentSize];
-	_activityView.frame = CGRectMake((contentSize.width - activitySize.width) / 2, 7 * (contentSize.height - activitySize.height) / 8, activitySize.width, activitySize.height);
+	CGFloat activityY = (contentSize.height * 0.55) + ((contentSize.height * 0.30) - activitySize.height) / 2;
+	_activityView.frame = CGRectMake((contentSize.width - activitySize.width) / 2, activityY, activitySize.width, activitySize.height);
 	
 	CGFloat statusPaddingX = 16;
 	CGSize statusSize = [_statusView inaTextSizeForBoundWidth:contentSize.width - 2 * statusPaddingX];
-	CGFloat statusY = contentSize.height - ((contentSize.height - activitySize.height) / 8 - statusSize.height) / 2 - statusSize.height;
+	CGFloat statusY = (contentSize.height * 0.90) + ((contentSize.height * 0.10) - statusSize.height) / 2;
 	_statusView.frame = CGRectMake(statusPaddingX, statusY, contentSize.width - 2 * statusPaddingX, statusSize.height);
 }
 

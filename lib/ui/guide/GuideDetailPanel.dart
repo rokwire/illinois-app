@@ -106,7 +106,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                 button: true,
                 child: GestureDetector(onTap: _onTapFavorite, child:
                   Container(padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
-                    Image.asset(_isFavorite ? 'images/icon-star-selected.png' : 'images/icon-star.png', excludeFromSemantics: true,)
+                    Image.asset(_isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,)
                   )
             ),),),),
           ],)
@@ -469,7 +469,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
   void _onTapFavorite() {
     String? title = Guide().entryTitle(_guideEntry, stripHtmlTags: true);
     Analytics().logSelect(target: "Favorite: $title");
-    Auth2().prefs?.toggleFavorite(GuideFavorite(id: Guide().entryId(_guideEntry), title: title, ));
+    Auth2().prefs?.toggleFavorite(GuideFavorite(id: Guide().entryId(_guideEntry)));
   }
 
   void _onTapLink(String? url) {

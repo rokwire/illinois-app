@@ -60,7 +60,7 @@ class RewardHistoryEntry {
   static List<RewardHistoryEntry>? listFromJson(List<dynamic>? jsonList) {
     List<RewardHistoryEntry>? items;
     if (CollectionUtils.isNotEmpty(jsonList)) {
-      items = [];
+      items = <RewardHistoryEntry>[];
       for (dynamic jsonEntry in jsonList!) {
         ListUtils.add(items, RewardHistoryEntry.fromJson(jsonEntry));
       }

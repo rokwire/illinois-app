@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:illinois/model/illinicash/IlliniCashBallance.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -141,19 +139,6 @@ class Storage extends rokwire.Storage {
   }
 
   ////////////////////////////
-  // Upgrade Message Version
-
-  static const String _userLoginVersionKey = 'user_login_version';
-
-  String? get userLoginVersion {
-    return getStringWithName(_userLoginVersionKey);
-  }
-
-  set userLoginVersion(String? value) {
-    setStringWithName(_userLoginVersionKey, value);
-  }
-
-  ////////////////////////////
   // Last Run Version
 
   static const String lastRunVersionKey  = 'last_run_version';
@@ -170,14 +155,12 @@ class Storage extends rokwire.Storage {
   // IlliniCash
 
   static const String illiniCashBallanceKey  = '_illinicash_ballance';
+  String? get illiniCashBallance => getEncryptedStringWithName(illiniCashBallanceKey);
+  set illiniCashBallance(String? value) =>  setEncryptedStringWithName(illiniCashBallanceKey, value);
 
-  IlliniCashBallance? get illiniCashBallance {
-    return IlliniCashBallance.fromJson(JsonUtils.decodeMap(getEncryptedStringWithName(illiniCashBallanceKey)));
-  }
-
-  set illiniCashBallance(IlliniCashBallance? value) {
-    setEncryptedStringWithName(illiniCashBallanceKey, value != null ? json.encode(value.toJson()) : null);
-  }
+  static const String illiniStudentClassificationKey  = '_illini_student_classification';
+  String? get illiniStudentClassification => getEncryptedStringWithName(illiniStudentClassificationKey);
+  set illiniStudentClassification(String? value) =>  setEncryptedStringWithName(illiniStudentClassificationKey, value);
 
   /////////////////////
   // Twitter
@@ -205,21 +188,8 @@ class Storage extends rokwire.Storage {
 
   @override String get currentLanguageKey => 'current_language';
 
-  //////////////////
-  // Favorites
-
-  static const String favoritesDialogWasVisibleKey  = 'favorites_dialog_was_visible';
-
-  bool? get favoritesDialogWasVisible {
-    return getBoolWithName(favoritesDialogWasVisibleKey, defaultValue: false);
-  }
-
-  set favoritesDialogWasVisible(bool? value) {
-    setBoolWithName(favoritesDialogWasVisibleKey, value);
-  }
-
   //////////////
-  // Recent Items
+  // Recent Items - backward compatability
 
   static const String recentItemsKey  = '_recent_items_json_string';
   
@@ -228,9 +198,9 @@ class Storage extends rokwire.Storage {
     return JsonUtils.decode(jsonString);
   }
 
-  set recentItems(List<dynamic>? recentItems) {
+  /*set recentItems(List<dynamic>? recentItems) {
     setStringWithName(recentItemsKey, recentItems != null ? json.encode(recentItems) : null);
-  }
+  }*/
 
   //////////////
   // Local Date/Time
@@ -384,39 +354,38 @@ class Storage extends rokwire.Storage {
   @override String get calendarEnablePromptKey => 'calendar_enabled_to_prompt';
 
   //////////////////
-  // GIES
+  // Checklist
 
-  static const String _giesNavPagesKey  = 'gies_nav_pages';
+  static const String _navPagesKey  = 'checklist_nav_pages';
 
-  List<String>? get giesNavPages {
-    return getStringListWithName(_giesNavPagesKey);
+  List<String>? getCheckListNavPages(String contentKey) {
+    return getStringListWithName("${contentKey}_$_navPagesKey");
   }
 
-  set giesNavPages(List<String>? value) {
-    setStringListWithName(_giesNavPagesKey, value);
+  setCheckListNavPages(String contentKey, List<String>? value) {
+    setStringListWithName("${contentKey}_$_navPagesKey", value);
   }
 
-  static const String _giesCompletedPagesKey  = 'gies_completed_pages';
-
+  static const String _checkListCompletedPagesKey  = 'checklist_completed_pages';
   
-  Set<String>? get giesCompletedPages {
-    List<String>? pagesList = getStringListWithName(_giesCompletedPagesKey);
+  Set<String>? getChecklistCompletedPages(String contentKey) {
+    List<String>? pagesList = getStringListWithName("${contentKey}_$_checkListCompletedPagesKey");
     return (pagesList != null) ? Set.from(pagesList) : null;
   }
 
-  set giesCompletedPages(Set<String>? value) {
+  setChecklistCompletedPages(String contentKey, Set<String>? value) {
     List<String>? pagesList = (value != null) ? List.from(value) : null;
-    setStringListWithName(_giesCompletedPagesKey, pagesList);
+    setStringListWithName("${contentKey}_$_checkListCompletedPagesKey", pagesList);
   }
 
-  static const String _giesNotesKey = 'gies_notes';
+  static const String _giesNotesKey = 'checklist_notes';
 
-  String? get giesNotes {
-    return getStringWithName(_giesNotesKey);
+  String? getChecklistNotes(String contentKey) {
+    return getStringWithName("${contentKey}_$_giesNotesKey");
   }
 
-  set giesNotes(String? value) {
-    setStringWithName(_giesNotesKey, value);
+  setChecklistNotes(String contentKey, String? value) {
+    setStringWithName("${contentKey}_$_giesNotesKey", value);
   }
 
   //Groups
@@ -433,7 +402,7 @@ class Storage extends rokwire.Storage {
     // catch(e) { debugPrint(e.toString()); return null; }
     if(table != null){
       table.forEach((key, selections) {
-        List<List<Member>> groupSelections = [];
+        List<List<Member>> groupSelections = <List<Member>>[];
         if(selections is List && CollectionUtils.isNotEmpty(selections)){
           selections.forEach((selection) {
             List<Member>? groupSelection;
@@ -449,7 +418,7 @@ class Storage extends rokwire.Storage {
       });
     // if(table != null){
     //   table.forEach((key, value) {
-    //     List<List<Member>> groupSelections = [];
+    //     List<List<Member>> groupSelections = <List<Member>>[];
     //     List<dynamic>? selections = JsonUtils.decodeList(value);
     //     if(CollectionUtils.isNotEmpty(selections)){
     //       selections!.forEach((element) {
@@ -469,4 +438,74 @@ class Storage extends rokwire.Storage {
 
     return result;
   }
+
+  // On Campus
+
+  String get onCampusRegionIdKey => 'edu.illinois.rokwire.on_campus.region_id';
+  String? get onCampusRegionId => getStringWithName(onCampusRegionIdKey);
+  set onCampusRegionId(String? value) => setStringWithName(onCampusRegionIdKey, value);
+
+  String get onCampusRegionMonitorEnabledKey => 'edu.illinois.rokwire.on_campus.region_monitor.enabled';
+  bool? get onCampusRegionMonitorEnabled => getBoolWithName(onCampusRegionMonitorEnabledKey);
+  set onCampusRegionMonitorEnabled(bool? value) => setBoolWithName(onCampusRegionMonitorEnabledKey, value);
+
+  String get onCampusRegionManualInsideKey => 'edu.illinois.rokwire.on_campus.region_manual.inside';
+  bool? get onCampusRegionManualInside => getBoolWithName(onCampusRegionManualInsideKey);
+  set onCampusRegionManualInside(bool? value) => setBoolWithName(onCampusRegionManualInsideKey, value);
+
+  // Home Tout
+
+  String get homeToutImageUrlKey => 'edu.illinois.rokwire.home.tout.image.url';
+  String? get homeToutImageUrl => getStringWithName(homeToutImageUrlKey);
+  set homeToutImageUrl(String? value) => setStringWithName(homeToutImageUrlKey, value);
+
+  String get homeToutImageTimeKey => 'edu.illinois.rokwire.home.tout.image.time';
+  int? get homeToutImageTime => getIntWithName(homeToutImageTimeKey);
+  set homeToutImageTime(int? value) => setIntWithName(homeToutImageTimeKey, value);
+
+  // Home Welcome 
+
+  String get homeWelcomeVisibleKey => 'edu.illinois.rokwire.home.welcome.image.time';
+  bool? get homeWelcomeVisible => getBoolWithName(homeWelcomeVisibleKey);
+  set homeWelcomeVisible(bool? value) => setBoolWithName(homeWelcomeVisibleKey, value);
+
+  // Browse Tout
+
+  String get browseToutImageUrlKey => 'edu.illinois.rokwire.browse.tout.image.url';
+  String? get browseToutImageUrl => getStringWithName(browseToutImageUrlKey);
+  set browseToutImageUrl(String? value) => setStringWithName(browseToutImageUrlKey, value);
+
+  String get browseToutImageTimeKey => 'edu.illinois.rokwire.browse.tout.image.time';
+  int? get browseToutImageTime => getIntWithName(browseToutImageTimeKey);
+  set browseToutImageTime(int? value) => setIntWithName(browseToutImageTimeKey, value);
+
+  // Home Campus Reminders
+
+  String get homeCampusRemindersCategoryKey => 'edu.illinois.rokwire.home.campus_reminders.category';
+  String? get homeCampusRemindersCategory => getStringWithName(homeCampusRemindersCategoryKey);
+  set homeCampusRemindersCategory(String? value) => setStringWithName(homeCampusRemindersCategoryKey, value);
+
+  String get homeCampusRemindersCategoryTimeKey => 'edu.illinois.rokwire.home.campus_reminders.category.time';
+  int? get homeCampusRemindersCategoryTime => getIntWithName(homeCampusRemindersCategoryTimeKey);
+  set homeCampusRemindersCategoryTime(int? value) => setIntWithName(homeCampusRemindersCategoryTimeKey, value);
+
+  // Wellness ToDo
+
+  static const String _userAccessedWellnessToDoKey = 'wellness.todo.user.accessed';
+  bool? get isUserAccessedWellnessToDo => getBoolWithName(_userAccessedWellnessToDoKey);
+  set userAccessedWellnessToDo(bool? value) => setBoolWithName(_userAccessedWellnessToDoKey, value);
+
+  // Wellness Daily Tips
+
+  String get wellnessDailyTipIdKey => 'edu.illinois.rokwire.wellness.daily_tips.id';
+  String? get wellnessDailyTipId => getStringWithName(wellnessDailyTipIdKey);
+  set wellnessDailyTipId(String? value) => setStringWithName(wellnessDailyTipIdKey, value);
+
+  String get wellnessDailyTipTimeKey => 'edu.illinois.rokwire.wellness.daily_tips.time';
+  int? get wellnessDailyTipTime => getIntWithName(wellnessDailyTipTimeKey);
+  set wellnessDailyTipTime(int? value) => setIntWithName(wellnessDailyTipTimeKey, value);
+
+  static const String _userAccessedWellnessRingsKey = 'wellness.rings.user.accessed';
+  bool? get isUserAccessedWellnessRings => getBoolWithName(_userAccessedWellnessRingsKey);
+  set userAccessedWellnessRings(bool? value) => setBoolWithName(_userAccessedWellnessRingsKey, value);
 }

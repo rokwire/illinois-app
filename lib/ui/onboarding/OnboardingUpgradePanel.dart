@@ -15,9 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:illinois/main.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -38,9 +36,6 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
 
   @override
   Widget build(BuildContext context) {
-
-    App.instance.homeContext = context;
-    Analytics().accessibilityState = MediaQuery.of(context).accessibleNavigation;
 
     String? appName = Localization().getStringEx('app.title', 'Illinois');
     String? appVersion = Config().appVersion;

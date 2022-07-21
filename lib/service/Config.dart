@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/config.dart' as rokwire;
@@ -42,7 +44,6 @@ class Config extends rokwire.Config {
 
   Map<String, dynamic> get secretShibboleth => JsonUtils.mapValue(secretKeys['shibboleth']) ?? {};
   Map<String, dynamic> get secretIlliniCash => JsonUtils.mapValue(secretKeys['illini_cash']) ?? {};
-  Map<String, dynamic> get secretLaundry => JsonUtils.mapValue(secretKeys['laundry']) ?? {};
   Map<String, dynamic> get secretParkhub => JsonUtils.mapValue(secretKeys['parkhub']) ?? {};
   Map<String, dynamic> get secretPadaapi => JsonUtils.mapValue(secretKeys['padaapi']) ?? {};
   Map<String, dynamic> get secretTwitter => JsonUtils.mapValue(secretKeys['twitter']) ?? {};
@@ -54,6 +55,12 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get saferMcKinley => JsonUtils.mapValue(safer['mckinley']) ?? {};
   Map<String, dynamic> get saferWellness => JsonUtils.mapValue(safer['wellness']) ?? {};
 
+  Map<String, dynamic> get stateFarm => JsonUtils.mapValue(content['state_farm']) ?? {};
+  Map<String, dynamic> get stateFarmWayfinding => JsonUtils.mapValue(stateFarm['wayfinding']) ?? {};
+
+  Map<String, dynamic> get canvas => JsonUtils.mapValue(content['canvas']) ?? {};
+  Map<String, dynamic> get canvasDeepLink => JsonUtils.mapValue(canvas['deep_link']) ?? {};
+
   // Getters: Secret Keys
 
   String? get shibbolethClientId     => JsonUtils.stringValue(secretShibboleth['client_id']);
@@ -62,8 +69,6 @@ class Config extends rokwire.Config {
   String? get illiniCashAppKey       => JsonUtils.stringValue(secretIlliniCash['app_key']);
   String? get illiniCashHmacKey      => JsonUtils.stringValue(secretIlliniCash['hmac_key']);
   String? get illiniCashSecretKey    => JsonUtils.stringValue(secretIlliniCash['secret_key']);
-
-  String? get laundryApiKey          => JsonUtils.stringValue(secretLaundry['api_key']);
 
   String? get padaapiApiKey          => JsonUtils.stringValue(secretPadaapi['api_key']);
 
@@ -84,6 +89,7 @@ class Config extends rokwire.Config {
   String? get illiniCashTrustcommerceHost => JsonUtils.stringValue(otherUniversityServices['illini_cash_trustcommerce_host']);
   String? get illiniCashTokenHost    => JsonUtils.stringValue(otherUniversityServices['illini_cash_token_host']);
   String? get illiniCashPaymentHost  => JsonUtils.stringValue(otherUniversityServices['illini_cash_payment_host']);
+  String? get illiniCashServicesUrl  => JsonUtils.stringValue(otherUniversityServices['illini_cash_services_url']);
   String? get illiniCashTosUrl       => JsonUtils.stringValue(otherUniversityServices['illini_cash_tos_url']);
   String? get myIlliniUrl            => JsonUtils.stringValue(otherUniversityServices['myillini_url']);
   String? get feedbackUrl            => JsonUtils.stringValue(otherUniversityServices['feedback_url']);
@@ -94,18 +100,23 @@ class Config extends rokwire.Config {
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
   String? get videoTutorialUrl       => JsonUtils.stringValue(otherUniversityServices['video_tutorial_url']);
+  String? get videoTutorialCcUrl     => JsonUtils.stringValue(otherUniversityServices['video_tutorial_cc_url']);
+  String? get wellness8DimensionsUrl => JsonUtils.stringValue(otherUniversityServices['wellness_8_dimensions_url']);
+  String? get wpgufmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['wpgufm_radio_url']);
+  String? get preferredFirstNameStmntUrl => JsonUtils.stringValue(otherUniversityServices['preferred_first_name_stmnt_url']);
 
   // Getters: Platform Building Blocks
+  String? get gatewayUrl             => JsonUtils.stringValue(platformBuildingBlocks['gateway_url']);
   String? get lmsUrl                 => JsonUtils.stringValue(platformBuildingBlocks['lms_url']);
   String? get rewardsUrl             => JsonUtils.stringValue(platformBuildingBlocks['rewards_url']);
   String? get rokwireAuthUrl         => JsonUtils.stringValue(platformBuildingBlocks['rokwire_auth_url']);
   String? get sportsServiceUrl       => JsonUtils.stringValue(platformBuildingBlocks['sports_service_url']);
   String? get transportationUrl      => JsonUtils.stringValue(platformBuildingBlocks["transportation_url"]);
+  String? get wellnessUrl            => JsonUtils.stringValue(platformBuildingBlocks["wellness_url"]);
   
   // Getters: Third Party Services
   String? get instagramHostUrl       => JsonUtils.stringValue(thirdPartyServices['instagram_host_url']);
   String? get twitterHostUrl         => JsonUtils.stringValue(thirdPartyServices['twitter_host_url']);
-  String? get laundryHostUrl         => JsonUtils.stringValue(thirdPartyServices['laundry_host_url']);
   String? get ticketsUrl             => JsonUtils.stringValue(thirdPartyServices['tickets_url']);
   String? get youtubeUrl             => JsonUtils.stringValue(thirdPartyServices['youtube_url']);
   String? get gameDayFootballUrl     => JsonUtils.stringValue(thirdPartyServices['gameday_football_url']);
@@ -134,9 +145,36 @@ class Config extends rokwire.Config {
     return (userAccount != null) ? JsonUtils.stringValue(userAccount['name']) : null;
   }
 
-  // Getters: settings
+  // Getters: Canvas
 
-  String get appPrivacyVersion => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');
+  String? get canvasStoreUrl {
+    dynamic storeUrlEntry = JsonUtils.mapValue(canvas['store_url']);
+    if (storeUrlEntry is Map) {
+      return storeUrlEntry[Platform.operatingSystem.toLowerCase()];
+    } else if (storeUrlEntry is String) {
+      return storeUrlEntry;
+    }
+    return null;
+  }
+
+  String? get canvasCourseDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['course_format']);
+  String? get canvasAssignmentDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['assignment_format']);
+
+  // Getters: settings
+  int  get homeCampusGuideCount      => JsonUtils.intValue(settings['homeCampusGuideCount']) ?? 3;
+  int  get homeCampusHighlightsCount => JsonUtils.intValue(settings['homeCampusHighlightsCount']) ?? 3;
+  int  get homeCampusRemindersCount  => JsonUtils.intValue(settings['homeCampusRemindersCount']) ?? 3;
+  int  get homeFavoriteItemsCount    => JsonUtils.intValue(settings['homeFavoriteItemsCount']) ?? 3;
+  int  get homeAthleticsNewsCount    => JsonUtils.intValue(settings['homeAthleticsNewsCount']) ?? 3;
+  int  get homeAthleticsEventsCount  => JsonUtils.intValue(settings['homeAthleticsEventsCount']) ?? 3;
+  int  get homeAthleticsTeamsCount   => JsonUtils.intValue(settings['homeAthleticsTeamsCount']) ?? 2;
+  int  get homeRecentItemsCount      => JsonUtils.intValue(settings['homeRecentItemsCount']) ?? 3;
+  int  get homeUpcomingEventsCount   => JsonUtils.intValue(settings['homeUpcomingEventsCount']) ?? 5;
+  int  get homeWellnessResourcesCount=> JsonUtils.intValue(settings['homeWellnessResourcesCount']) ?? 5;
+  int  get recentItemsCount          => JsonUtils.intValue(settings['recentItemsCount']) ?? 32;
+  int  get homeRecentPollsCount      => JsonUtils.intValue(settings['homeRecentPollsCount']) ?? 3;
+  String get appPrivacyVersion       => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');
+  bool get allowGroupsAuthmanSync    => JsonUtils.boolValue(settings['allowGroupsAuthmanSync']) ?? false;
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;

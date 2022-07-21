@@ -15,10 +15,14 @@
  */
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -26,58 +30,76 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
-import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeCampusRemindersWidget extends StatefulWidget {
-  final StreamController<void>? refreshController;
+  final String? favoriteId;
+  final StreamController<String>? updateController;
 
-  HomeCampusRemindersWidget({this.refreshController});
+  HomeCampusRemindersWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
+  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: title,
+    );
+
+  static String get title => Localization().getStringEx('widget.home.campus_reminders.label.campus_reminders', 'Campus Reminders');
+  
   @override
   _HomeCampusRemindersWidgetState createState() => _HomeCampusRemindersWidgetState();
 }
 
 class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> implements NotificationsListener {
-  static const int _maxItems = 3;
 
   List<Map<String, dynamic>>? _reminderItems;
+
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
     super.initState();
 
     NotificationService().subscribe(this, [
+      Config.notifyConfigChanged,
       Guide.notifyChanged,
       Auth2UserPrefs.notifyRolesChanged,
       AppLivecycle.notifyStateChanged,
       Auth2.notifyCardChanged,
     ]);
 
-    if (widget.refreshController != null) {
-      widget.refreshController!.stream.listen((_) {
-        Guide().refresh();
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+          Guide().refresh();
+        }
       });
     }
 
-    _reminderItems = Guide().remindersList;
+    _reminderItems = List<Map<String, dynamic>>.from(Guide().remindersList ?? <Map<String, dynamic>>[]);
   }
 
   @override
   void dispose() {
-    super.dispose();
+    _pageController?.dispose();
     NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Guide.notifyChanged) {
+    if (name == Config.notifyConfigChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if (name == Guide.notifyChanged) {
       _updateReminderItems();
     }
     else if (name == Auth2UserPrefs.notifyRolesChanged) {
@@ -95,55 +117,95 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(visible: CollectionUtils.isNotEmpty(_reminderItems), child:
-      Column(children: [
-          SectionSlantHeader(
-            title: Localization().getStringEx('widget.home_campus_reminders.label.campus_reminders', 'Campus Reminders'),
-            titleIconAsset: 'images/campus-tools.png',
-            children: _buildRemindersList()
-          ),
-        ]),
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
+      title: Localization().getStringEx('widget.home.campus_reminders.label.campus_reminders', 'Campus Reminders'),
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      child: _buildContent()
     );
+  }
+
+  Widget _buildContent() {
+    return  (_reminderItems?.isEmpty ?? true) ? HomeMessageCard(
+      message: Localization().getStringEx("widget.home.campus_reminders.text.empty.description", "There are no active Campus Reminders."),
+    ) : _buildRemindersContent();
+  }
+
+  Widget _buildRemindersContent() {
+    Widget contentWidget;
+    int visibleCount = _reminderItems?.length ?? 0; // Config().homeCampusRemindersCount
+    if (1 < visibleCount) {
+      
+      List<Widget> pages = <Widget>[];
+      for (int index = 0; index < visibleCount; index++) {
+        Map<String, dynamic>? reminderItem = JsonUtils.mapValue(_reminderItems![index]);
+        pages.add(Padding(key: _contentKeys[Guide().entryId(reminderItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 2), child:
+          GuideEntryCard(reminderItem)
+        ));
+      }
+
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          children: pages,
+        ),
+      );
+
+    }
+    else {
+      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        GuideEntryCard(_reminderItems?.first)
+      );
+    }
+    return Column(children: <Widget>[
+      contentWidget,
+      LinkButton(
+        title: Localization().getStringEx('widget.home.campus_reminders.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.campus_reminders.button.all.hint', 'Tap to view all reminders'),
+        onTap: _onViewAll,
+      ),
+    ]);
   }
 
   void _updateReminderItems() {
     List<Map<String, dynamic>>? reminderItems = Guide().remindersList;
-    if (!DeepCollectionEquality().equals(_reminderItems, reminderItems)) {
+    if (mounted && (reminderItems != null) && !DeepCollectionEquality().equals(_reminderItems, reminderItems)) {
       setState(() {
-        _reminderItems = reminderItems;
+        _reminderItems = List<Map<String, dynamic>>.from(reminderItems);
+        _pageViewKey = UniqueKey();
+        _pageController = null;
+        _contentKeys.clear();
       });
     }
   }
 
-  List<Widget> _buildRemindersList() {
-    List<Widget> contentList = <Widget>[];
-    if (_reminderItems != null) {
-      int remindersCount = min(_reminderItems!.length, _maxItems);
-      for (int index = 0; index < remindersCount; index++) {
-        Map<String, dynamic>? reminderItem = _reminderItems![index];
-        if (contentList.isNotEmpty) {
-          contentList.add(Container(height: 8,));
-        }
-        contentList.add(GuideEntryCard(reminderItem));
-      }
-      if (_maxItems < _reminderItems!.length) {
-        contentList.add(Container(height: 16,));
-        contentList.add(RoundedButton(
-          label: Localization().getStringEx('widget.home_campus_reminders.button.more.title', 'View All'),
-          hint: Localization().getStringEx('widget.home_campus_reminders.button.more.hint', 'Tap to view all reminders'),
-          borderColor: Styles().colors!.fillColorSecondary,
-          textColor: Styles().colors!.fillColorPrimary,
-          backgroundColor: Styles().colors!.white,
-          onTap: () => _showAll(),
-        ));
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
       }
     }
-    return contentList;
+
+    return minContentHeight ?? 0;
   }
 
-  void _showAll() {
-    Analytics().logSelect(target: "HomeCampusRemindersWidget View All");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _reminderItems, contentTitle: Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'))));
+  void _onViewAll() {
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
+      contentList: _reminderItems,
+      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_reminders.section', 'Campus Reminders'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_reminders.empty", "There are no active Campus Reminders."),
+    )));
   }
 }
 

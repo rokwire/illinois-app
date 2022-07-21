@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
@@ -35,6 +37,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class HomeVoterRegistrationWidget extends StatefulWidget {
+  final String? favoriteId;
+  final StreamController<String>? updateController;
+
+  HomeVoterRegistrationWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
   @override
   _HomeVoterRegistrationWidgetState createState() => _HomeVoterRegistrationWidgetState();
 }
@@ -165,7 +172,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
   }
 
   void _hideByUser() {
-    Analytics().logSelect(target: "Voter Registration: Close");
+    Analytics().logSelect(target: "Close", source: widget.runtimeType.toString());
     if (_voterRule?.hideForPeriod ?? false) {
       Storage().voterHiddenForPeriod = true;
     }
@@ -292,7 +299,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
     if (ruleOption == null) {
       return;
     }
-    Analytics().logSelect(target: "Voter Registration: ${Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent)}");
+    Analytics().logSelect(target: "${Localization().getStringFromKeyMapping(ruleOption.label, _stringsContent)}", source: widget.runtimeType.toString());
     switch (ruleOption.value) {
       case 'rv_yes':
         Auth2().prefs?.voter?.registeredVoter = true;
@@ -329,7 +336,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
   }
 
   void _onTapVbmButton(String? vbmButtonTitle) {
-    Analytics().logSelect(target: "Vote By Mail: ${StringUtils.ensureNotEmpty(vbmButtonTitle)}");
+    Analytics().logSelect(target: "Vote By Mail: ${StringUtils.ensureNotEmpty(vbmButtonTitle)}", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: _voterRule?.vbmUrl)));
   }
 

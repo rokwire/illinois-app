@@ -51,7 +51,7 @@ class ParkingEvent {
     List<dynamic>? lotsJson = json.containsKey('lots') ? json['lots'] : null;
     List<ParkingLot>? lots;
     if (CollectionUtils.isNotEmpty(lotsJson)) {
-      lots = [];
+      lots = <ParkingLot>[];
       for (dynamic lotEntry in lotsJson!) {
         ListUtils.add(lots, ParkingLot.fromJson(JsonUtils.mapValue(lotEntry)));
       }
@@ -250,7 +250,7 @@ class LatLng {
   static List<LatLng>? listFromJson(List<dynamic>? json) {
     List<LatLng>? values;
     if (json != null) {
-      values = [];
+      values = <LatLng>[];
       for (dynamic entry in json) {
         ListUtils.add(values, LatLng.fromJson(JsonUtils.mapValue(entry)));
       }

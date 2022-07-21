@@ -22,16 +22,18 @@ import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
+import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Gies.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/IlliniCash.dart';
+import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/service/Onboarding.dart';
 import 'package:illinois/service/Onboarding2.dart';
 import 'package:illinois/service/Config.dart';
@@ -43,6 +45,9 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Voter.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:illinois/service/WPGUFMRadio.dart';
+import 'package:illinois/service/Wellness.dart';
+import 'package:illinois/service/WellnessRings.dart';
 
 import 'package:illinois/ui/onboarding/OnboardingErrorPanel.dart';
 import 'package:illinois/ui/onboarding/OnboardingUpgradePanel.dart';
@@ -124,9 +129,15 @@ void main() async {
     DeviceCalendar(),
     Events(),
     Groups(),
-    Gies(),
+    CheckList(CheckList.giesOnboarding),
+    CheckList(CheckList.uiucOnboarding),
     Canvas(),
     Rewards(),
+    OnCampus(),
+    Wellness(),
+    WellnessRings(),
+    WPGUFMRadio(),
+    Laundries(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // Laundries(),
@@ -162,54 +173,22 @@ class AppExitListener implements NotificationsListener {
   }
 }
 
-class _AppData {
-  _AppState? _panelState;
-  BuildContext? _homeContext;
-}
-
 class App extends StatefulWidget {
 
-  final _AppData _data = _AppData();
   final ServiceError? initializeError;
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   static App? _instance;
 
   App({this.initializeError}) {
     _instance = this;
   }
 
-  static get instance {
-    return _instance;
-  }
+  static App? get instance => _instance;
 
-  get panelState {
-    return _data._panelState;
-  }
+  BuildContext? get currentContext => navigatorKey.currentContext;
 
   @override
-  _AppState createState() {
-    _AppState appState = _AppState();
-    if ((_data._homeContext != null) && (_data._panelState == null)) {
-      _presentLaunchPopup(appState, _data._homeContext);
-    }
-    return _data._panelState = appState;
-  }
-
-  BuildContext? get homeContext {
-    return _data._homeContext;
-  }
-
-  set homeContext(BuildContext? context) {
-    if ((_data._homeContext == null) && (_data._panelState != null)) {
-      _presentLaunchPopup(_data._panelState, context);
-    }
-    _data._homeContext = context;
-  }
-
-  void _presentLaunchPopup(_AppState? appState, BuildContext? context) {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      appState!._presentLaunchPopup(context);
-    });
-  }
+  _AppState createState() => _AppState();
 }
 
 class _AppState extends State<App> implements NotificationsListener {
@@ -253,7 +232,9 @@ class _AppState extends State<App> implements NotificationsListener {
     }
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      NativeCommunicator().dismissLaunchScreen();
+      NativeCommunicator().dismissLaunchScreen().then((_) {
+        _presentLaunchPopup();
+      });
     });
 
     super.initState();
@@ -269,6 +250,7 @@ class _AppState extends State<App> implements NotificationsListener {
   Widget build(BuildContext context) {
     return MaterialApp(
       key: _key,
+      navigatorKey: widget.navigatorKey,
       localizationsDelegates: [
         AppLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
@@ -360,8 +342,9 @@ class _AppState extends State<App> implements NotificationsListener {
     
   }
 
-  void _presentLaunchPopup(BuildContext? context) {
-    if ((_launchPopup == null) && (context != null)) {
+  void _presentLaunchPopup() {
+    BuildContext? launchContext = App.instance?.currentContext;
+    if ((_launchPopup == null) && (launchContext != null)) {
       dynamic launch = FlexUI()['launch'];
       List<dynamic>? launchList = (launch is List) ? launch : null;
       if (launchList != null) {
@@ -372,7 +355,7 @@ class _AppState extends State<App> implements NotificationsListener {
           },);
           if (launchPopup != null) {
             _launchPopup = launchPopup;
-            showDialog(context: context, builder: (BuildContext context) {
+            showDialog(context: launchContext, builder: (BuildContext context) {
               return Dialog(child:
                 Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
                   launchPopup
@@ -439,7 +422,7 @@ class _AppState extends State<App> implements NotificationsListener {
       else if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _presentLaunchPopup(App.instance.homeContext);
+          _presentLaunchPopup();
         }
       }
     }

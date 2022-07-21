@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -24,9 +27,11 @@ import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 
@@ -40,6 +45,9 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   Future<void>? _initializeVideoPlayerFuture;
   bool _isVideoEnded = false;
   List<DeviceOrientation>? _allowedOrientations;
+  String? _currentCaptionText;
+  bool _ccEnabled = false;
+  bool _ccVisible = false;
 
   @override
   void initState() {
@@ -60,14 +68,33 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   void _initVideoPlayer() {
     String? tutorialUrl = Config().videoTutorialUrl;
     if (StringUtils.isNotEmpty(tutorialUrl)) {
-      _controller = VideoPlayerController.network(tutorialUrl!);
-      _controller!.addListener(_checkVideoEnded);
-      _initializeVideoPlayerFuture = _controller!.initialize().then((_) => _controller!.play()); // Automatically play video after initialization
+      _controller = VideoPlayerController.network(tutorialUrl!, closedCaptionFile: _loadClosedCaptions());
+      _controller!.addListener(_checkVideoStateChanged);
+      _initializeVideoPlayerFuture = _controller!.initialize().then((_) {
+        _currentCaptionText = _controller!.value.caption.text;
+        _ccEnabled = true;
+        _showCc(true);
+        _startCcHidingTimer();
+        _controller!.play(); // Automatically play video after initialization
+      });
     }
   }
 
   void _disposeVideoPlayer() {
     _controller?.dispose();
+  }
+
+  Future<ClosedCaptionFile> _loadClosedCaptions() async {
+    String? fileContents;
+    String? closedCaptionsUrl = Config().videoTutorialCcUrl;
+    if (StringUtils.isNotEmpty(closedCaptionsUrl)) {
+      Response? response = await Network().get(closedCaptionsUrl);
+      int? responseCode = response?.statusCode;
+      if (responseCode == 200) {
+        fileContents = response?.body;
+      }
+    }
+    return SubRipCaptionFile(StringUtils.ensureNotEmpty(fileContents));
   }
 
   void _enableLandscapeOrientations() {
@@ -98,8 +125,12 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
               Onboarding2BackButton(padding: const EdgeInsets.only(left: 17, top: 11, right: 20, bottom: 27), onTap: _onTapBack)
             ]),
             Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: SizedBox(width: buttonWidth, child: RoundedButton(label: _buttonLabel, fontSize: 16, onTap: _onTapSkip)))
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: IntrinsicHeight(
+                    child: Stack(children: [
+                  Align(child: SizedBox(width: buttonWidth, child: RoundedButton(label: _buttonLabel, fontSize: 16, onTap: _onTapSkip))),
+                  Positioned(bottom: 0, top: 0, right: 0, child: Center(child: _buildCcButton()))
+                ])))
           ])
         ])));
   }
@@ -110,7 +141,25 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
           future: _initializeVideoPlayerFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return Center(child: AspectRatio(aspectRatio: _controller!.value.aspectRatio, child: VideoPlayer(_controller!)));
+              double playerAspectRatio = _controller!.value.aspectRatio;
+              Orientation deviceOrientataion = MediaQuery.of(context).orientation;
+              double deviceWidth = MediaQuery.of(context).size.width;
+              double deviceHeight = MediaQuery.of(context).size.height;
+              double playerWidth = (deviceOrientataion == Orientation.portrait) ? deviceWidth : (deviceHeight * playerAspectRatio);
+              double playerHeight = (deviceOrientataion == Orientation.landscape) ? deviceHeight : (deviceWidth / playerAspectRatio);
+              return GestureDetector(
+                  onTap: _onTapPlayPause,
+                  child: Center(child: SizedBox(
+                      width: playerWidth,
+                      height: playerHeight,
+                      child: Stack(alignment: Alignment.center, children: [
+                        Stack(children: [
+                          Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: VideoPlayer(_controller!))),
+                          ClosedCaption(
+                              text: _currentCaptionText, textStyle: TextStyle(fontSize: 16, color: Styles().colors!.white))
+                        ]),
+                        _buildPlayButton()
+                      ]))));
             } else {
               return const Center(child: CircularProgressIndicator());
             }
@@ -122,6 +171,59 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     }
   }
 
+  Widget _buildPlayButton() {
+    final double buttonWidth = 80;
+    final double buttonHeight = 50;
+    bool buttonVisible = _isPlayerInitialized && !_isPlaying;
+    return Visibility(
+        visible: buttonVisible,
+        child: Container(
+            decoration: BoxDecoration(color: Styles().colors!.iconColor, borderRadius: BorderRadius.all(Radius.circular(10))),
+            width: buttonWidth,
+            height: buttonHeight,
+            child: Center(
+                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Container(
+                  width: (buttonHeight / 2),
+                  child: CustomPaint(
+                      painter: TrianglePainter(
+                          painterColor: Styles().colors!.white,
+                          horzDir: TriangleHorzDirection.rightToLeft,
+                          vertDir: TriangleVertDirection.topToBottom),
+                      child: Container(height: (buttonHeight / 4)))),
+              Container(
+                  width: (buttonHeight / 2),
+                  child: CustomPaint(
+                      painter: TrianglePainter(
+                          painterColor: Styles().colors!.white,
+                          horzDir: TriangleHorzDirection.rightToLeft,
+                          vertDir: TriangleVertDirection.bottomToTop),
+                      child: Container(height: (buttonHeight / 4))))
+            ]))));
+  }
+
+  Widget _buildCcButton() {
+    return Visibility(
+        visible: _ccVisible,
+        child: GestureDetector(
+                onTap: _onTapCc,
+                child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Container(
+                        width: 40,
+                        height: 30,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: (_ccEnabled ? Styles().colors!.white! : Styles().colors!.disabledTextColorTwo!), width: 2),
+                            borderRadius: BorderRadius.all(Radius.circular(6))),
+                        child: Center(
+                            child: Text('CC',
+                                style: TextStyle(
+                                    color: (_ccEnabled ? Styles().colors!.white! : Styles().colors!.disabledTextColorTwo!),
+                                    fontSize: 18,
+                                    fontFamily: Styles().fontFamilies!.bold)))))));
+  }
+
   void _onTapBack() {
     Analytics().logSelect(target: "Back");
     Navigator.pop(context);
@@ -131,16 +233,65 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2RolesPanel()));
   }
 
-  void _checkVideoEnded() {
+  void _onTapPlayPause() {
+    if (!_isPlayerInitialized) {
+      return;
+    }
+    if (_isPlaying) {
+      _controller?.pause();
+      _showCc(true);
+    } else {
+      _controller?.play();
+      _startCcHidingTimer();
+    }
+    setState(() {});
+  }
+
+  void _showCc(bool ccVisible) {
+    _ccVisible = ccVisible;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _startCcHidingTimer() {
+    Timer(Duration(seconds: 5), () => _showCc(false));
+  }
+
+  void _onTapCc() {
+    _ccEnabled = !_ccEnabled;
+    _currentCaptionText = _ccEnabled ? _controller?.value.caption.text : null;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _checkVideoStateChanged() {
     if (_controller != null) {
-      bool videoEnded = (_controller!.value.position == _controller!.value.duration);
-      if (_isVideoEnded != videoEnded) {
-        _isVideoEnded = videoEnded;
-        if (mounted) {
-          setState(() {});
+      if ((_currentCaptionText != _controller?.value.caption.text) && _ccEnabled) {
+        setState(() {
+          _currentCaptionText = _controller?.value.caption.text;
+        });
+      } else {
+        if (_isPlayerInitialized) {
+          bool videoEnded = (_controller!.value.position == _controller!.value.duration);
+          if (_isVideoEnded != videoEnded) {
+            _isVideoEnded = videoEnded;
+          }
+          if (videoEnded) {
+            _showCc(true);
+          }
         }
       }
     }
+  }
+
+  bool get _isPlaying {
+    return (_controller?.value.isPlaying ?? false);
+  }
+
+  bool get _isPlayerInitialized {
+    return (_controller?.value.isInitialized ?? false);
   }
 
   String get _buttonLabel {

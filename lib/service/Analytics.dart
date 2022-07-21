@@ -19,6 +19,9 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/wellness/ToDo.dart' as wellness;
+import 'package:illinois/model/wellness/WellnessRing.dart';
+import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -41,6 +44,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/main.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/RootPanel.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'package:uuid/uuid.dart';
 import 'package:notification_permissions/notification_permissions.dart' as Notifications;
@@ -72,6 +76,16 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogStdAccessibilityName            = "accessibility";
   static const String   LogStdAuthCardRoleName             = "icard_role";
   static const String   LogStdAuthCardStudentLevel         = "icard_student_level";
+  static const String   LogStdStudentTermCode              = "student_term_code";
+  static const String   LogStdStudentType                  = "student_type";
+  static const String   LogStdStudentTypeCode              = "student_type_code";
+  static const String   LogStdStudentAdmittedTerm          = "student_admitted_term";
+  static const String   LogStdStudentCollegeName           = "student_college_name";
+  static const String   LogStdStudentDepartmentName        = "student_department_name";
+  static const String   LogStdStudentLevelCode             = "student_level_code";
+  static const String   LogStdStudentLevelDescription      = "student_level_description";
+  static const String   LogStdStudentClassification        = "student_classification";
+  static const String   LogStdStudentFirstYear             = "student_first_year";
   
   static const String   LogEvent                           = "event";
   static const String   LogEventName                       = "name";
@@ -96,6 +110,16 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     LogStdAccessibilityName,
     LogStdAuthCardRoleName,
     LogStdAuthCardStudentLevel,
+    LogStdStudentTermCode,
+    LogStdStudentType,
+    LogStdStudentTypeCode,
+    LogStdStudentAdmittedTerm,
+    LogStdStudentCollegeName,
+    LogStdStudentDepartmentName,
+    LogStdStudentLevelCode,
+    LogStdStudentLevelDescription,
+    LogStdStudentClassification,
+    LogStdStudentFirstYear,
   ];
 
   // Livecycle Event
@@ -117,6 +141,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   // "event" : { "name":"select", "page":"...", "target":"..." } }
   static const String   LogSelectEventName                 = "select";
   static const String   LogSelectTargetName                = "target";
+  static const String   LogSelectSourceName                = "source";
 
   // Alert Event
   // {  "event" : { "name":"alert", "page":"...", "text":"...", "selection":"..." }}
@@ -135,12 +160,20 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
   static const String   LogFavoriteEventName                = "favorite";
   static const String   LogFavoriteActionName               = "action";
+  static const String   LogFavoriteTargetName               = "target";
   static const String   LogFavoriteTypeName                 = "type";
   static const String   LogFavoriteIdName                   = "id";
   static const String   LogFavoriteTitleName                = "title";
+  static const String   LogFavoriteUsedName                 = "used";
+  static const String   LogFavoriteUnusedName               = "unused";
 
   static const String   LogFavoriteOnActionName             = "on";
   static const String   LogFavoriteOffActionName            = "off";
+  static const String   LogFavoriteReorderActionName        = "reorder";
+
+  // Widget Favorite Event
+  // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
+  static const String   LogWidgetFavoriteEventName          = "widget_favorite";
 
   // Poll Event
   // {  "event" : { "name":"favorite", "action":"on/off", "type":"...", "id":"...", "title":"..." }}
@@ -205,6 +238,26 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogGroupMembershipSwitchToMember   = "membership_switch_member";
   static const String   LogGroupMembershipRemoved          = "membership_removed";
 
+  // Wellness
+  static const String   LogWellnessEventName               = "wellness";
+  static const String   LogWellnessCategoryName            = "category";
+  static const String   LogWellnessCategoryToDo            = "todo";
+  static const String   LogWellnessCategoryRings           = "rings";
+  static const String   LogWellnessActionName              = "action";
+  static const String   LogWellnessActionComplete          = "complete";
+  static const String   LogWellnessActionUncomplete        = "uncomplete";
+  static const String   LogWellnessActionCreate            = "create";
+  static const String   LogWellnessActionUpdate            = "update";
+  static const String   LogWellnessActionClear             = "clear";
+  static const String   LogWellnessTargetName              = "target";
+  static const String   LogWellnessSourceName              = "source";
+  static const String   LogWellnessRingGoalName            = "goal";
+  static const String   LogWellnessRingUnitName            = "unit";
+  static const String   LogWellnessToDoCategoryName        = "target_category";
+  static const String   LogWellnessToDoDueDateTime         = "date";
+  static const String   LogWellnessToDoReminderType        = "reminder";
+  static const String   LogWellnessToDoWorkdays            = "workdays";
+
   // Event Attributes
   static const String   LogAttributeUrl                    = "url";
   static const String   LogAttributeEventId                = "event_id";
@@ -237,7 +290,6 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   String?               _locationServices;
   String?               _notificationServices;
   String?               _sessionUuid;
-  String?               _accessibilityState;
   List<dynamic>?        _userRoles;
   
 
@@ -475,11 +527,11 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
 
     if (builder != null) {
-      Widget? panel = (App.instance?.homeContext != null) ? builder(App.instance?.homeContext) : null;
+      Widget? panel = (App.instance?.currentContext != null) ? builder(App.instance!.currentContext!) : null;
       if (panel != null) {
         
         if (panel is RootPanel) {
-          Widget? tabPanel = App.instance?.panelState?.rootPanel?.panelState?.currentTabPanel;
+          Widget? tabPanel = RootPanel.stateKey.currentState?.currentTabPanel;
           if (tabPanel != null) {
             panel = tabPanel;
           }
@@ -551,12 +603,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
 
   // Accessibility
 
-  bool? get accessibilityState {
-    return (_accessibilityState != null) ? (true.toString() == _accessibilityState) : null;
-  }
-
-  set accessibilityState(bool? value) {
-    _accessibilityState = (value != null) ? value.toString() : null;
+  bool? get _accessibilityState {
+    BuildContext? context = App.instance?.currentContext;
+    return (context != null) ? MediaQuery.of(context).accessibleNavigation : null;
   }
 
   // User Roles Service
@@ -628,11 +677,41 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         else if (attributeName == LogStdAccessibilityName) {
           analyticsEvent[LogStdAccessibilityName] = _accessibilityState;
         }
-        else if(attributeName == LogStdAuthCardRoleName){
+        else if (attributeName == LogStdAuthCardRoleName) {
           analyticsEvent[LogStdAuthCardRoleName] = Auth2().authCard?.role;
         }
-        else if(attributeName == LogStdAuthCardStudentLevel){
+        else if (attributeName == LogStdAuthCardStudentLevel) {
           analyticsEvent[LogStdAuthCardStudentLevel] = Auth2().authCard?.studentLevel;
+        }
+        else if (attributeName == LogStdStudentTermCode) {
+          analyticsEvent[LogStdStudentTermCode] = IlliniCash().studentClassification?.termCode;
+        }
+        else if (attributeName == LogStdStudentType) {
+          analyticsEvent[LogStdStudentType] = IlliniCash().studentClassification?.studentType;
+        }
+        else if (attributeName == LogStdStudentTypeCode) {
+          analyticsEvent[LogStdStudentTypeCode] = IlliniCash().studentClassification?.studentTypeCode;
+        }
+        else if (attributeName == LogStdStudentAdmittedTerm) {
+          analyticsEvent[LogStdStudentAdmittedTerm] = IlliniCash().studentClassification?.admittedTerm;
+        }
+        else if (attributeName == LogStdStudentCollegeName) {
+          analyticsEvent[LogStdStudentCollegeName] = IlliniCash().studentClassification?.collegeName;
+        }
+        else if (attributeName == LogStdStudentDepartmentName) {
+          analyticsEvent[LogStdStudentDepartmentName] = IlliniCash().studentClassification?.departmentName;
+        }
+        else if (attributeName == LogStdStudentLevelCode) {
+          analyticsEvent[LogStdStudentLevelCode] = IlliniCash().studentClassification?.studentLevelCode;
+        }
+        else if (attributeName == LogStdStudentLevelDescription) {
+          analyticsEvent[LogStdStudentLevelDescription] = IlliniCash().studentClassification?.studentLevelDescription;
+        }
+        else if (attributeName == LogStdStudentClassification) {
+          analyticsEvent[LogStdStudentClassification] = IlliniCash().studentClassification?.classification;
+        }
+        else if (attributeName == LogStdStudentFirstYear) {
+          analyticsEvent[LogStdStudentFirstYear] = IlliniCash().studentClassification?.firstYear;
         }
       }
 
@@ -678,12 +757,13 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     logEvent(event);
   }
 
-  void logSelect({String? target,  Map<String, dynamic>? attributes}) {
+  void logSelect({String? target, String? source,  Map<String, dynamic>? attributes}) {
 
     // Build event data
     Map<String, dynamic> event = {
       LogEventName          : LogSelectEventName,
       LogSelectTargetName   : target,
+      LogSelectSourceName   : source,
     };
 
     // Add optional attribute, if applied
@@ -737,7 +817,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
   }
 
-  void logFavorite(Favorite? favorite, [bool? on]) {
+  void logFavorite(Favorite? favorite, {bool? on, String? title}) {
     if (on == null) {
       on = Auth2().isFavorite(favorite);
     }
@@ -746,8 +826,35 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
       LogFavoriteActionName : on ? LogFavoriteOnActionName : LogFavoriteOffActionName,
       LogFavoriteTypeName   : favorite?.favoriteKey,
       LogFavoriteIdName     : favorite?.favoriteId,
-      LogFavoriteTitleName  : favorite?.favoriteTitle,
+      LogFavoriteTitleName  : title,
     });
+  }
+
+  void logWidgetFavorite(dynamic favorite, bool? selected, { List<Favorite>? used, List<Favorite>? unused }) {
+    dynamic target;
+    if (favorite is Favorite) {
+      target = favorite.toString();
+    }
+    else if (favorite is List) {
+      target = JsonUtils.stringListValue(favorite);
+    }
+
+    String? action;
+    if (selected != null) {
+      action = selected ? LogFavoriteOnActionName : LogFavoriteOffActionName;
+    }
+    else {
+      action = LogFavoriteReorderActionName;
+    }
+
+    logEvent({
+      LogEventName          : LogWidgetFavoriteEventName,
+      LogFavoriteTargetName : target,
+      LogFavoriteActionName : action,
+      LogFavoriteUsedName   : JsonUtils.stringListValue(used),
+      LogFavoriteUnusedName : JsonUtils.stringListValue(unused),
+    });
+
   }
 
   void logPoll(Poll? poll, String action) {
@@ -851,6 +958,49 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     }
     logEvent(event);
   }
+
+  void logWellness({String? category, String? action, String? target, String? source, Map<String, dynamic>? attributes}) {
+    Map<String, dynamic> event = {
+      LogEventName            : LogWellnessEventName,
+      LogWellnessCategoryName : category,
+      LogWellnessActionName   : action,
+      LogWellnessTargetName   : target,
+      LogWellnessSourceName   : source,
+    };
+    if (attributes != null) {
+      event.addAll(attributes);
+    }
+    logEvent(event);
+  }
+
+  void logWellnessToDo({String? action, wellness.ToDoItem? item, String? source}) {
+    logWellness(
+      category: LogWellnessCategoryToDo,
+      action: action,
+      target: item?.name,
+      source: source,
+      attributes: {
+        LogWellnessToDoCategoryName: item?.category?.name,
+        LogWellnessToDoDueDateTime: DateTimeUtils.utcDateTimeToString(item?.dueDateTime),
+        LogWellnessToDoReminderType: item?.reminderType.toString(),
+        LogWellnessToDoWorkdays: item?.workDays?.join(','),
+      }
+    );
+  }
+
+  void logWellnessRing({String? action, WellnessRingDefinition? item, String? source}) {
+    logWellness(
+      category: Analytics.LogWellnessCategoryRings,
+      action: action,
+      target: item?.name,
+      source: source,
+      attributes: {
+        Analytics.LogWellnessRingGoalName: item?.goal,
+        Analytics.LogWellnessRingUnitName: item?.unit,
+      }
+    );
+  }
+
 }
 
 
