@@ -762,17 +762,6 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
 
   List<String>? _buildFavoriteCodes() {
     LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: favoriteId));
-    if (favorites == null) {
-      // Build a default set of favorites
-      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry(contentKey));
-      if (fullContent != null) {
-        favorites = LinkedHashSet<String>.from(fullContent.reversed);
-        Future.delayed(Duration(), () {
-          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: favoriteId), favorites);
-        });
-      }
-    }
-    
     return (favorites != null) ? List.from(favorites) : null;
   }
 

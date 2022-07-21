@@ -144,17 +144,6 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
 
   List<String>? _buildFavoriteCodes() {
     LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
-    if (favorites == null) {
-      // Build a default set of favorites
-      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.campus_resources'));
-      if (fullContent != null) {
-        favorites = LinkedHashSet<String>.from(fullContent.reversed);
-        Future.delayed(Duration(), () {
-          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites);
-        });
-      }
-    }
-    
     return (favorites != null) ? List.from(favorites) : null;
   }
 
