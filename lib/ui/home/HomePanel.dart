@@ -97,6 +97,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   @override
   void initState() {
+
+    // Build Favorite codes before start listening for Auth2UserPrefs.notifyFavoritesChanged
+    // because _buildFavoriteCodes may fire such.
+    _favoriteCodes = _buildFavoriteCodes();
+    _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
+
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       Localization.notifyStringsUpdated,
@@ -106,8 +112,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       Assets.notifyChanged,
       HomeSaferWidget.notifyNeedsVisiblity,
     ]);
-    _favoriteCodes = _buildFavoriteCodes();
-    _availableCodes = JsonUtils.setStringsValue(FlexUI()['home']) ?? <String>{};
     super.initState();
   }
 
@@ -614,14 +618,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   List<String>? _buildFavoriteCodes() {
     LinkedHashSet<String>? homeFavorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName());
     if (homeFavorites == null) {
-      // Build a default set of favorites
-      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home'));
-      if (fullContent != null) {
-        homeFavorites = LinkedHashSet<String>.from(fullContent.reversed);
-        Future.delayed(Duration(), () {
-          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), homeFavorites);
-        });
-      }
+      homeFavorites = _initDefaultFavorites();
     }
     return (homeFavorites != null) ? List.from(homeFavorites) : null;
   }
@@ -629,34 +626,52 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   void _updateFavoriteCodes() {
     if (mounted) {
       List<String>? favoriteCodes = _buildFavoriteCodes();
-      if (_isEditing) {
-        if (favoriteCodes != null) {
+      if ((favoriteCodes != null) && !DeepCollectionEquality().equals(_favoriteCodes, favoriteCodes)) {
+        setState(() {
           _favoriteCodes = favoriteCodes;
-        }
-        setState(() {});
-      }
-      else {
-        if ((favoriteCodes != null) && !DeepCollectionEquality().equals(_favoriteCodes, favoriteCodes)) {
-          setState(() {
-            _favoriteCodes = favoriteCodes;
-          });
-        }
+        });
       }
     }
   }
 
+  static LinkedHashSet<String>? _initDefaultFavorites() {
+    Map<String, dynamic>? defaults = FlexUI().content('defaults.favorites');
+    if (defaults != null) {
+      List<String>? defaultContent = JsonUtils.listStringsValue(defaults['home']);
+      if (defaultContent != null) {
+
+        // Init content of all compound widgets that bellongs to home favorites content
+        for (String code in defaultContent) {
+          List<String>? defaultWidgetContent = JsonUtils.listStringsValue(defaults['home.$code']);
+          if (defaultWidgetContent != null) {
+            Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: code),
+              LinkedHashSet<String>.from(defaultWidgetContent.reversed));
+          }
+        }
+
+        // Clear content of all compound widgets that do not bellongs to home favorites content
+        Iterable<String>? favoriteKeys = Auth2().prefs?.favoritesKeys;
+        if (favoriteKeys != null) {
+          for (String favoriteKey in favoriteKeys) {
+            String? code = HomeFavorite.parseFavoriteKeyCategory(favoriteKey);
+            if ((code != null) && !defaultContent.contains(code)) {
+              Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: code), null);
+            }
+          }
+        }
+
+        // Init content of home favorites
+        LinkedHashSet<String>? defaultFavorites = LinkedHashSet<String>.from(defaultContent.reversed);
+        Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), defaultFavorites);
+        return defaultFavorites;
+      }
+    }
+    return null;
+  }
+
   Future<void> _onPullToRefresh() async {
     if (_isEditing) {
-      //TMP:
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), null);
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'app_help'), null);
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'dinings'), null);
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'safer'), null);
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'campus_resources'), null);
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'state_farm_center'), null);
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'campus_links'), null);
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'wallet'), null);
-      Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: 'wellness'), null);
+      _initDefaultFavorites();
     }
     else {
       _updateController.add(HomePanel.notifyRefresh);
@@ -948,6 +963,21 @@ class HomeFavorite extends Favorite {
   static String favoriteKeyName({String? category}) => (category != null) ? "home.$category.widgetIds" : "home.widgetIds";
   @override String get favoriteKey => favoriteKeyName(category: category);
   @override String? get favoriteId => id;
+
+  static String? parseFavoriteKeyCategory(String? value) {
+    if (value != null) {
+      String prefix = "home.";
+      int prefixIndex = value.indexOf(prefix);
+
+      String suffix = ".widgetIds";
+      int suffixIndex = value.indexOf(prefix);
+
+      if ((prefixIndex == 0) && (prefixIndex < suffixIndex) && ((suffixIndex + prefix.length) == value.length)) {
+        return value.substring(prefix.length, value.length - suffix.length);
+      }
+    }
+    return null;
+  }
 
   static void log(dynamic favorite, [bool? selected]) {
     List<Favorite> usedList = <Favorite>[];
