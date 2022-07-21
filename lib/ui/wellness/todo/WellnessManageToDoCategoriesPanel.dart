@@ -36,6 +36,8 @@ class WellnessManageToDoCategoriesPanel extends StatefulWidget {
 }
 
 class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCategoriesPanel> implements NotificationsListener {
+  static final List<String> _availableCategoryHexColors = ['#E45434', '#F5821E', '#54A747', '#009FD4', '#1D58A7', '#662d91'];
+
   ToDoCategory? _category;
   List<ToDoCategory>? _categories;
   Color? _selectedColor;
@@ -109,19 +111,15 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   Widget _buildColorsRowWidget() {
+    List<Widget> colorWidgets = [];
+    for (String colorHex in _availableCategoryHexColors) {
+      colorWidgets.add(_buildColorEntry(color: UiColors.fromHex(colorHex), isSelected: (_selectedColor == UiColors.fromHex(colorHex))));
+    }
     return Center(
         child: Padding(
             padding: EdgeInsets.only(top: 20),
             child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                  _buildColorEntry(color: UiColors.fromHex('#E45434'), isSelected: (_selectedColor == UiColors.fromHex('#E45434'))),
-                  _buildColorEntry(color: UiColors.fromHex('#F5821E'), isSelected: (_selectedColor == UiColors.fromHex('#F5821E'))),
-                  _buildColorEntry(color: UiColors.fromHex('#54A747'), isSelected: (_selectedColor == UiColors.fromHex('#54A747'))),
-                  _buildColorEntry(color: UiColors.fromHex('#009FD4'), isSelected: (_selectedColor == UiColors.fromHex('#009FD4'))),
-                  _buildColorEntry(color: UiColors.fromHex('#1D58A7'), isSelected: (_selectedColor == UiColors.fromHex('#1D58A7'))),
-                  _buildColorEntry(color: UiColors.fromHex('#662d91'), isSelected: (_selectedColor == UiColors.fromHex('#662d91'))),
-                ]))));
+                scrollDirection: Axis.horizontal, child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: colorWidgets))));
   }
 
   Widget _buildColorEntry({Color? color, String? imageAsset, bool isSelected = false}) {
