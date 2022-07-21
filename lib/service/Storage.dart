@@ -489,12 +489,6 @@ class Storage extends rokwire.Storage {
   int? get homeCampusRemindersCategoryTime => getIntWithName(homeCampusRemindersCategoryTimeKey);
   set homeCampusRemindersCategoryTime(int? value) => setIntWithName(homeCampusRemindersCategoryTimeKey, value);
 
-  // Wellness ToDo
-
-  static const String _userAccessedWellnessToDoKey = 'wellness.todo.user.accessed';
-  bool? get isUserAccessedWellnessToDo => getBoolWithName(_userAccessedWellnessToDoKey);
-  set userAccessedWellnessToDo(bool? value) => setBoolWithName(_userAccessedWellnessToDoKey, value);
-
   // Wellness Daily Tips
 
   String get wellnessDailyTipIdKey => 'edu.illinois.rokwire.wellness.daily_tips.id';
@@ -504,8 +498,4 @@ class Storage extends rokwire.Storage {
   String get wellnessDailyTipTimeKey => 'edu.illinois.rokwire.wellness.daily_tips.time';
   int? get wellnessDailyTipTime => getIntWithName(wellnessDailyTipTimeKey);
   set wellnessDailyTipTime(int? value) => setIntWithName(wellnessDailyTipTimeKey, value);
-
-  static const String _userAccessedWellnessRingsKey = 'wellness.rings.user.accessed';
-  bool? get isUserAccessedWellnessRings => getBoolWithName(_userAccessedWellnessRingsKey);
-  set userAccessedWellnessRings(bool? value) => setBoolWithName(_userAccessedWellnessRingsKey, value);
 }
