@@ -433,7 +433,7 @@ class CampusResourceButton extends StatelessWidget {
 
   const CampusResourceButton({ Key? key, this.favorite, this.title,  this.hint, this.iconAsset,  this.onTap, this.promptFavorite = true }) : super(key: key);
 
-  bool get _canFavorite => FlexUI().contentSourceEntry((favorite?.category != null) ? 'home.${favorite?.category}' : 'home')?.contains(favorite?.favoriteId) ?? false;
+  bool get _canFavorite => FlexUI()[(favorite?.category != null) ? 'home.${favorite?.category}' : 'home']?.contains(favorite?.favoriteId) ?? false;
 
   @override
   Widget build(BuildContext context) {

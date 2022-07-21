@@ -110,6 +110,9 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
   void onNotification(String name, dynamic param) {
     if (name == FlexUI.notifyChanged) {
       _updateContentCodes();
+      if (mounted) {
+        setState(() { });
+      }
     } 
     else if((name == Auth2UserPrefs.notifyFavoritesChanged) ||
       (name == Localization.notifyStringsUpdated) ||
@@ -227,8 +230,8 @@ class _BrowseSection extends StatelessWidget {
 
   _BrowseSection({Key? key, required this.sectionId, this.expanded = false, this.onExpand}) :
     _browseEntriesCodes = JsonUtils.listStringsValue(FlexUI()['browse.$sectionId']),
-    _homeSectionEntriesCodes = JsonUtils.setStringsValue(FlexUI().contentSourceEntry('home.$sectionId')),
-    _homeRootEntriesCodes = JsonUtils.setStringsValue(FlexUI().contentSourceEntry('home')),
+    _homeSectionEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home.$sectionId']),
+    _homeRootEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home']),
     super(key: key);
 
   HomeFavorite? _favorite(String code) {
