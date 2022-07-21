@@ -21,7 +21,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
@@ -55,8 +54,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     _selectedTab = _ToDoTab.daily;
     _initCalendarDates();
     _loadToDoItems();
-    if (Storage().isUserAccessedWellnessToDo != true) {
-      Storage().userAccessedWellnessToDo = true;
+    if (Wellness().isToDoListAccessed != true) {
+      Wellness().toDoListAccessed(true);
       WidgetsBinding.instance!.addPostFrameCallback((_) {
         _showWelcomePopup();
       });
