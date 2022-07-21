@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Show popups in Wellness ToDo and Rings just once [#2071](https://github.com/rokwire/illinois-app/issues/2071).
+- Fix blue color in Wellness ToDo categories [#2040](https://github.com/rokwire/illinois-app/issues/2040).
 
 ## [4.1.0] - 2022-07-20
 ### Changed

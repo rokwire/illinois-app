@@ -26,7 +26,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class WellnessManageToDoCategoriesPanel extends StatefulWidget {
   final ToDoCategory? category;
@@ -40,7 +39,6 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   ToDoCategory? _category;
   List<ToDoCategory>? _categories;
   Color? _selectedColor;
-  Color? _tmpColor;
   TextEditingController _nameController = TextEditingController();
   bool _loading = false;
 
@@ -135,31 +133,6 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
             width: 50, height: 50, decoration: BoxDecoration(color: color, image: image, border: border, shape: BoxShape.circle))));
   }
 
-  Widget _buildColorPickerDialog() {
-    return SingleChildScrollView(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-      ColorPicker(pickerColor: Styles().colors!.fillColorSecondary!, onColorChanged: _onColorChanged),
-      Padding(
-          padding: EdgeInsets.only(top: 20),
-          child: Center(
-              child: Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
-            RoundedButton(
-                label: Localization().getStringEx('panel.wellness.categories.manage.color.pick.cancel.button', 'Cancel'),
-                contentWeight: 0,
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                fontSize: 16,
-                onTap: _onTapCancelColorSelection),
-            Container(width: 30),
-            RoundedButton(
-                label: Localization().getStringEx('panel.wellness.categories.manage.color.pick.select.button', 'Select'),
-                contentWeight: 0,
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                fontSize: 16,
-                onTap: _onTapSelectColor)
-          ])))
-    ]));
-  }
-
   Widget _buildEditCategoryButtons() {
     bool hasCategoryForEdit = (_category != null);
     return Padding(
@@ -238,22 +211,6 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
             ])));
   }
 
-  void _onColorChanged(Color newColor) {
-    _tmpColor = newColor;
-  }
-
-  void _onTapCancelColorSelection() {
-    Analytics().logSelect(target: "Cancel Color");
-    Navigator.of(context).pop();
-  }
-
-  void _onTapSelectColor() {
-    Analytics().logSelect(target: "Select Color");
-    _selectedColor = _tmpColor;
-    Navigator.of(context).pop();
-    _updateState();
-  }
-
   void _onTapEditCategory(ToDoCategory category) {
     Analytics().logSelect(target: "Edit ${category.name}");
     _category = category;
@@ -319,11 +276,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   void _onTapColor(Color? color) async {
     Analytics().logSelect(target: "Color: $color");
     _hideKeyboard();
-    if (color == null) {
-      AppAlert.showCustomDialog(context: context, contentWidget: _buildColorPickerDialog()).then((_) {
-        _tmpColor = null;
-      });
-    } else {
+    if (color != null) {
       _selectedColor = color;
       _updateState();
     }
