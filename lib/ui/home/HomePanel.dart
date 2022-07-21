@@ -652,7 +652,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         // Clear content of all compound widgets that do not bellongs to home favorites content
         Iterable<String>? favoriteKeys = Auth2().prefs?.favoritesKeys;
         if (favoriteKeys != null) {
-          for (String favoriteKey in favoriteKeys) {
+          for (String favoriteKey in List.from(favoriteKeys)) {
             String? code = HomeFavorite.parseFavoriteKeyCategory(favoriteKey);
             if ((code != null) && !defaultContent.contains(code)) {
               Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: code), null);
@@ -970,9 +970,9 @@ class HomeFavorite extends Favorite {
       int prefixIndex = value.indexOf(prefix);
 
       String suffix = ".widgetIds";
-      int suffixIndex = value.indexOf(prefix);
+      int suffixIndex = value.indexOf(suffix);
 
-      if ((prefixIndex == 0) && (prefixIndex < suffixIndex) && ((suffixIndex + prefix.length) == value.length)) {
+      if ((prefixIndex == 0) && ((prefixIndex + prefix.length) < suffixIndex) && ((suffixIndex + suffix.length) == value.length)) {
         return value.substring(prefix.length, value.length - suffix.length);
       }
     }
