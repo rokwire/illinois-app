@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/WellnessRing.dart';
-import 'package:illinois/service/Storage.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingCreatePane.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
@@ -53,8 +53,8 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
       _ringsData = rings;
       if(mounted) setState(() {});
     });
-    if (Storage().isUserAccessedWellnessRings != true) {
-      Storage().userAccessedWellnessRings = true;
+    if (Wellness().isRingsAccessed != true) {
+      Wellness().ringsAccessed(true);
       WidgetsBinding.instance!.addPostFrameCallback((_) {
         _showWelcomePopup();
       });

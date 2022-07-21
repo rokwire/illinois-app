@@ -46,6 +46,9 @@ class Wellness with Service implements NotificationsListener {
   static const String notifyContentChanged = "edu.illinois.rokwire.wellness.content.changed";
   static const String notifyDailyTipChanged = "edu.illinois.rokwire.wellness.daily_tip.changed";
 
+  static final String _userAccessedToDoListSetting = 'edu.illinois.rokwire.settings.wellness.todo.list.accessed';
+  static final String _userAccessedRingsSetting = 'edu.illinois.rokwire.settings.wellness.rings.accessed';
+
   static const String _contentCacheFileName = "wellness.content.json";
   static const String _tipsContentCategory = "wellness_tips";
   static const List<String> _contentCategories = [_tipsContentCategory];
@@ -363,6 +366,32 @@ class Wellness with Service implements NotificationsListener {
         }
       }
     }
+  }
+
+  // Common User Settings
+
+  bool? get isToDoListAccessed {
+    return _getUserBoolSetting(_userAccessedToDoListSetting);
+  }
+
+  void toDoListAccessed(bool accessed) {
+    _applyUserSetting(settingName: _userAccessedToDoListSetting, settingValue: accessed);
+  }
+
+  bool? get isRingsAccessed {
+    return _getUserBoolSetting(_userAccessedRingsSetting);
+  }
+
+  void ringsAccessed(bool accessed) {
+    _applyUserSetting(settingName: _userAccessedRingsSetting, settingValue: accessed);
+  }
+
+  bool? _getUserBoolSetting(String settingName) {
+    return Auth2().prefs?.getBoolSetting(settingName: settingName);
+  }
+
+  void _applyUserSetting({required String settingName, dynamic settingValue}) {
+    Auth2().prefs?.applySetting(settingName, settingValue);
   }
 
   // Getters
