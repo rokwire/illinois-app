@@ -10,12 +10,18 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
+enum GroupPostReportAbuseType {
+  deanOfStudents,
+  groupAdmins
+}
+
 class GroupPostReportAbuse extends StatefulWidget {
 
+  final GroupPostReportAbuseType type;
   final String? groupId;
   final String? postId;
 
-  GroupPostReportAbuse({Key? key, this.groupId, this.postId}) : super(key: key);
+  GroupPostReportAbuse({Key? key, required this.type, this.groupId, this.postId}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupPostReportAbuseState();
@@ -57,12 +63,17 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
   }
 
   Widget _buildContent() {
+    String title;
+    switch(widget.type) {
+      case GroupPostReportAbuseType.deanOfStudents: title = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students'); break;
+      case GroupPostReportAbuseType.groupAdmins: title = Localization().getStringEx('panel.group.detail.post.report_abuse.group_admins.description.text', 'Report obscene, threatening, or harassing content to Group Administrators'); break;
+    }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(top: 16), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 24, top: 16), child:
-              Text(Localization().getStringEx('panel.group.detail.post.report_abuse.description.text', 'Report violation of Student Code to Dean of Students'), textAlign: TextAlign.center,
+              Text(title, textAlign: TextAlign.center,
                 style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),
               )
             )
@@ -168,6 +179,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
       _sending = true;
     });
 
+    //TBD: Acknowledge widget.type in Groups service call
     Groups().reportAbuse(groupId: widget.groupId, postId: widget.postId, comment: _commentController.text).then((bool result) {
       if (mounted) {
         setState(() {
