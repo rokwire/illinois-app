@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Added Report to Group Administrators option in Group post panel [#2083](https://github.com/rokwire/illinois-app/issues/2083).
 
 ## [4.1.1] - 2022-07-21
 ### Fixed
