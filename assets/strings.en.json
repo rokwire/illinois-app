@@ -2889,8 +2889,8 @@
     "model.canvas.calendar.event.type.assignment.label": "Assignment",
 
     "model.wellness.todo.category.reminder.type.none.label": "None",
-    "model.wellness.todo.category.reminder.type.morning_of.label": "Morning Of",
-    "model.wellness.todo.category.reminder.type.night_before.label": "Night Before",
+    "model.wellness.todo.category.reminder.type.morning_of.label": "Morning Of (8:00 AM)",
+    "model.wellness.todo.category.reminder.type.night_before.label": "Night Before (9:00 PM)",
     "model.wellness.todo.category.reminder.type.specific_time.label": "Specific Time",
 
     "logic.date_time.greeting.morning": "Good morning",
