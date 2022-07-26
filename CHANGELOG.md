@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add times to options in Wellness ToDo reminder drop-down [#1974](https://github.com/rokwire/illinois-app/issues/1974).
 - Redirect user to edit wellness todo item when tapping on calendar item with reminder [#1976](https://github.com/rokwire/illinois-app/issues/1976).
 - Acknowledged new parameters of 'report/abuse' API of Groups BB [#2083](https://github.com/rokwire/illinois-app/issues/2083).
+- Improve Semantics for WellnessRings widgets [#2023](https://github.com/rokwire/illinois-app/issues/2023).
 
 ## [4.1.2] - 2022-07-25
 ### Added
