@@ -156,8 +156,8 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                             height: innerContentSize,
                             width: innerContentSize,
                             child: CircularProgressIndicator(
-                              semanticsLabel: "${data.name} Ring Progress indicator",
-                              semanticsValue: "completed ${WellnessRings().getRingDailyValue(data.id).toInt()} of ${data.goal.toInt()} ${data.unit}s",
+                              semanticsLabel: "${data.name} Ring Progress indicator",// tbd localize
+                              semanticsValue: "completed ${WellnessRings().getRingDailyValue(data.id).toInt()} of ${data.goal.toInt()} ${data.unit}s", // tbd localize
                               strokeWidth: widget.strokeSize.toDouble(),
                               value: controller!.value >= 1 ? 0.9975 : controller.value,
                               // * (completion) >= 1 ? 0.999 : completion, // Simulate padding in the end
@@ -343,7 +343,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(label: "${widget.label} Ring. ", hint: widget.description, explicitChildNodes: true, child:
+    return Semantics(label: "${widget.label} Ring. ", hint: widget.description, explicitChildNodes: true, child: // tbd localize
     GestureDetector(onTap: () => widget.enabled && widget.onTapWidget!=null? widget.onTapWidget!(context): null, child:
     Container(
       // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
@@ -388,7 +388,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
   }
 
   Widget get _editRingButton{
-    return Semantics(label: "${widget.label} Ring Edit Button", hint: "double tap to edit ring details", inMutuallyExclusiveGroup: true, excludeSemantics: true,
+    return Semantics(label: "${widget.label} Ring Edit Button", hint: "double tap to edit ring details", inMutuallyExclusiveGroup: true, excludeSemantics: true, // tbd localize
       child:GestureDetector(
         onTap: (){
           if (widget.onTapEdit!=null)
@@ -400,7 +400,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
         )));
   }
   Widget get _increaseValueButton{
-    return Semantics(label: "${widget.label} Ring Increase Button", hint: "double tap to increase with 1", inMutuallyExclusiveGroup: true, excludeSemantics: true,
+    return Semantics(label: "${widget.label} Ring Increase Button", hint: "double tap to increase with 1", inMutuallyExclusiveGroup: true, excludeSemantics: true, // tbd localize
       child:GestureDetector(
         onTap: (){
           if (widget.onTapIncrease!=null){
@@ -408,7 +408,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
 
             widget.onTapIncrease!(this.context).
               then((_) {
-              AppSemantics.announceMessage(context, "${widget.label} Ring Increased with 1") ;
+              AppSemantics.announceMessage(context, "${widget.label} Ring Increased with 1") ; // tbd localize
                 if(mounted){ setState(() {_increaseLoading = false;});}
               });
         }},
@@ -433,7 +433,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
   }
 
   Widget get _decreaseValueButton{
-    return Semantics(label: "${widget.label} Ring Decrease Button", hint: "double tap to decrease with 1", inMutuallyExclusiveGroup: true, excludeSemantics: true,
+    return Semantics(label: "${widget.label} Ring Decrease Button", hint: "double tap to decrease with 1", inMutuallyExclusiveGroup: true, excludeSemantics: true,// tbd localize
         child: GestureDetector(
         onTap: (){ 
           if (widget.onTapDecrease!=null){
@@ -441,7 +441,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
 
             widget.onTapDecrease!(this.context).
               then((value) {
-               AppSemantics.announceMessage(context, "${widget.label} Ring Decreased with 1") ;
+               AppSemantics.announceMessage(context, "${widget.label} Ring Decreased with 1") ;// tbd localize
                if(mounted){ setState(() {_decreaseLoading = false;});}
               });
           }
@@ -486,7 +486,7 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(label: "${widget.label} Ring", hint: "double tap to increase with 1", button: true, excludeSemantics: true,
+    return Semantics(label: "${widget.label} Ring", hint: "double tap to increase with 1", button: true, excludeSemantics: true,// tbd localize
       child: GestureDetector(
       onTap: (){
         if (widget.onTapWidget!=null){
