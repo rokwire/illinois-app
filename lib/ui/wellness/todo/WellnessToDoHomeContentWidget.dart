@@ -108,10 +108,10 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       Expanded(
           child: _TabButton(
               position: _TabButtonPosition.last,
-              selected: (_selectedTab == _ToDoTab.reminders),
-              label: Localization().getStringEx('panel.wellness.todo.tab.reminders.label', 'Reminders'),
-              hint: Localization().getStringEx('panel.wellness.todo.tab.reminders.hint', ''),
-              onTap: () => _onTabChanged(tab: _ToDoTab.reminders)))
+              selected: (_selectedTab == _ToDoTab.weekly),
+              label: Localization().getStringEx('panel.wellness.todo.tab.weekly.label', 'Weekly'),
+              hint: Localization().getStringEx('panel.wellness.todo.tab.weekly.hint', ''),
+              onTap: () => _onTabChanged(tab: _ToDoTab.weekly)))
     ]);
   }
 
@@ -159,7 +159,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   Widget _buildCalendarWidget() {
-    if (_selectedTab != _ToDoTab.reminders) {
+    if (_selectedTab != _ToDoTab.weekly) {
       return Container();
     }
     TextStyle smallStyle = TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular);
@@ -499,7 +499,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       case _ToDoTab.category:
         key = item.category?.name;
         break;
-      case _ToDoTab.reminders:
+      case _ToDoTab.weekly:
         key = item.displayDueDate;
         break;
     }
@@ -697,7 +697,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
   }
 }
 
-enum _ToDoTab { daily, category, reminders }
+enum _ToDoTab { daily, category, weekly }
 
 enum _TabButtonPosition { first, middle, last }
 
