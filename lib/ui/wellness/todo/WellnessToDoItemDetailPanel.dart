@@ -288,7 +288,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   Widget _buildSelectedReminderTypeContainer() {
-    String? selectedTypeLabel = ToDoItem.reminderTypeToDisplayString(_selectedReminderType);
+    String? selectedTypeLabel = _getReminderTypeLabel(_selectedReminderType);
     return Padding(
         padding: EdgeInsets.only(top: 20),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -351,7 +351,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
             height: 48,
             decoration: BoxDecoration(color: Colors.white, border: Border(left: borderSide, right: borderSide, bottom: borderSide)),
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text(StringUtils.ensureNotEmpty(ToDoItem.reminderTypeToDisplayString(type)),
+              Text(StringUtils.ensureNotEmpty(_getReminderTypeLabel(type)),
                   style: TextStyle(fontSize: 16, color: Styles().colors!.textSurfaceAccent, fontFamily: Styles().fontFamilies!.regular)),
               Image.asset(isSelected ? 'images/icon-favorite-selected.png' : 'images/icon-favorite-deselected.png')
             ])));
@@ -722,11 +722,11 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
         _reminderDateTime = null;
         break;
       case ToDoReminderType.morning_of:
-        _reminderDateTime = DateTime(_dueDate!.year, _dueDate!.month, _dueDate!.day, 9); // 9 o'clock in the morning
+        _reminderDateTime = DateTime(_dueDate!.year, _dueDate!.month, _dueDate!.day, 8); // 8:00 AM in the morning
         break;
       case ToDoReminderType.night_before:
         _reminderDateTime =
-            DateTime(_dueDate!.year, _dueDate!.month, (_dueDate!.day), 17).subtract(Duration(days: 1)); // 17 o'clock the night before
+            DateTime(_dueDate!.year, _dueDate!.month, (_dueDate!.day), 21).subtract(Duration(days: 1)); // 9:00 PM the night before
         break;
       case ToDoReminderType.specific_time:
         TimeOfDay? pickedTime = await _pickTime();
@@ -754,6 +754,14 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     if (mounted) {
       setState(() {});
     }
+  }
+
+  String? _getReminderTypeLabel(ToDoReminderType? type) {
+    String? typeLabel = ToDoItem.reminderTypeToDisplayString(type);
+    if ((type == ToDoReminderType.specific_time) && (_reminderDateTime != null)) {
+      typeLabel = typeLabel! + ' (${AppDateTime().formatDateTime(_reminderDateTime, format: 'h:mm a', ignoreTimeZone: true)})';
+    }
+    return typeLabel;
   }
 
   String? get _formattedDueDate {
