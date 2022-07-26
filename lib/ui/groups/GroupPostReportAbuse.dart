@@ -10,18 +10,19 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
-enum GroupPostReportAbuseType {
-  deanOfStudents,
-  groupAdmins
+class GroupPostReportAbuseOptions {
+  final bool reportToDeanOfStudents;
+  final bool reportToGroupAdmins;
+  GroupPostReportAbuseOptions({ this.reportToDeanOfStudents = false, this.reportToGroupAdmins = false});
 }
 
 class GroupPostReportAbuse extends StatefulWidget {
 
-  final GroupPostReportAbuseType type;
+  final GroupPostReportAbuseOptions options;
   final String? groupId;
   final String? postId;
 
-  GroupPostReportAbuse({Key? key, required this.type, this.groupId, this.postId}) : super(key: key);
+  GroupPostReportAbuse({Key? key, required this.options, this.groupId, this.postId}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupPostReportAbuseState();
@@ -63,11 +64,20 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
   }
 
   Widget _buildContent() {
-    String title;
-    switch(widget.type) {
-      case GroupPostReportAbuseType.deanOfStudents: title = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students'); break;
-      case GroupPostReportAbuseType.groupAdmins: title = Localization().getStringEx('panel.group.detail.post.report_abuse.group_admins.description.text', 'Report obscene, threatening, or harassing content to Group Administrators'); break;
+    String? title;
+    if (widget.options.reportToDeanOfStudents && !widget.options.reportToGroupAdmins) {
+      title = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students');
     }
+    else if (!widget.options.reportToDeanOfStudents && widget.options.reportToGroupAdmins) {
+      title = Localization().getStringEx('panel.group.detail.post.report_abuse.group_admins.description.text', 'Report obscene, threatening, or harassing content to Group Administrators');
+    }
+    else if (widget.options.reportToDeanOfStudents && widget.options.reportToGroupAdmins) {
+      title = Localization().getStringEx('panel.group.detail.post.report_abuse.both.description.text', 'Report violation of Student Code to Dean of Students and obscene, threatening, or harassing content to Group Administrators');
+    }
+    else {
+      title = '';
+    }
+
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(top: 16), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -179,8 +189,13 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
       _sending = true;
     });
 
-    //TBD: Acknowledge widget.type in Groups service call
-    Groups().reportAbuse(groupId: widget.groupId, postId: widget.postId, comment: _commentController.text).then((bool result) {
+    Groups().reportAbuse(
+      groupId: widget.groupId,
+      postId: widget.postId,
+      comment: _commentController.text,
+      reportToDeanOfStudents: widget.options.reportToDeanOfStudents,
+      reportToGroupAdmins: widget.options.reportToGroupAdmins,
+    ).then((bool result) {
       if (mounted) {
         setState(() {
           _sending = false;

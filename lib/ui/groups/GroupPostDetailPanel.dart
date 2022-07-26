@@ -566,12 +566,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconAsset: "images/icon-feedback.png",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
-                onTap: () => _onTapReportAbuse(type: GroupPostReportAbuseType.deanOfStudents, post: widget.post),
+                onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), post: widget.post),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconAsset: "images/icon-feedback.png",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
-                onTap: () => _onTapReportAbuse(type: GroupPostReportAbuseType.groupAdmins, post: widget.post),
+                onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: widget.post),
               )),
             ],
           ),
@@ -620,12 +620,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconAsset: "images/icon-feedback.png",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
-                onTap: () => _onTapReportAbuse(type: GroupPostReportAbuseType.deanOfStudents, post: reply),
+                onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents: true), post: reply),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconAsset: "images/icon-feedback.png",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
-                onTap: () => _onTapReportAbuse(type: GroupPostReportAbuseType.groupAdmins, post: reply),
+                onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: reply),
               )),
             ],
           ),
@@ -691,14 +691,20 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _scrollToPostEdit();
   }
 
-  void _onTapReportAbuse({required GroupPostReportAbuseType type, GroupPost? post}) {
-    String anapyticsSarget;
-    switch(type) {
-      case GroupPostReportAbuseType.deanOfStudents: anapyticsSarget = 'Report Abuse to Dean of Students'; break;
-      case GroupPostReportAbuseType.groupAdmins: anapyticsSarget = 'Report Abuse to Group Administrator(s)'; break;
+  void _onTapReportAbuse({required GroupPostReportAbuseOptions options, GroupPost? post}) {
+    String? analyticsTarget;
+    if (options.reportToDeanOfStudents && !options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students');
     }
-    Analytics().logSelect(target: anapyticsSarget);
-    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(type: type, groupId: widget.group?.id, postId: (post ?? widget.post)?.id)));
+    else if (!options.reportToDeanOfStudents && options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.group_admins.description.text', 'Report obscene, threatening, or harassing content to Group Administrators');
+    }
+    else if (options.reportToDeanOfStudents && options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.both.description.text', 'Report violation of Student Code to Dean of Students and obscene, threatening, or harassing content to Group Administrators');
+    }
+    Analytics().logSelect(target: analyticsTarget);
+
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(options: options, groupId: widget.group?.id, postId: (post ?? widget.post)?.id)));
   }
 
   void _onTapEditMainPost(){
