@@ -205,7 +205,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                   child: Text(StringUtils.ensureNotEmpty(category.name),
                       style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 14))),
               Expanded(child: Container()),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Image.asset('images/icon-edit-white.png'))
+              Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Image.asset('images/edit-white.png'))
             ])));
   }
 
