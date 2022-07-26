@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Rename "Reminders" tab to "Weekly" in Wellness ToDo list [#1967](https://github.com/rokwire/illinois-app/issues/1967).
+- Icon for editing todo categories in Wellness [#1969](https://github.com/rokwire/illinois-app/issues/1969).
 
 ## [4.1.2] - 2022-07-25
 ### Added
