@@ -32,7 +32,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessToDoItemDetailPanel extends StatefulWidget  implements AnalyticsPageAttributes {
   final ToDoItem? item;
-  WellnessToDoItemDetailPanel({this.item});
+  final bool? optionalFieldsExpanded;
+  WellnessToDoItemDetailPanel({this.item, this.optionalFieldsExpanded});
 
   @override
   State<WellnessToDoItemDetailPanel> createState() => _WellnessToDoItemDetailPanelState();
@@ -64,7 +65,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   ToDoReminderType? _selectedReminderType;
   DateTime? _reminderDateTime;
   List<DateTime>? _workDays;
-  bool _optionalFieldsVisible = false;
+  late bool _optionalFieldsVisible;
   bool _reminderTypeDropDownValuesVisible = false;
   bool _categoriesDropDownVisible = false;
   bool _loading = false;
@@ -74,6 +75,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     super.initState();
     NotificationService().subscribe(this, [Wellness.notifyToDoCategoryChanged, Wellness.notifyToDoCategoryDeleted]);
     _item = widget.item;
+    _optionalFieldsVisible = widget.optionalFieldsExpanded ?? false;
     if (_item != null) {
       _populateItemFields();
     } else {

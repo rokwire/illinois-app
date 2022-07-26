@@ -445,7 +445,12 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     if (item == null) {
       return;
     }
-    AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.zero, contentWidget: _ToDoItemReminderDialog(item: item));
+    if (item.reminderDateTime != null) {
+      Navigator.push(
+          context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(item: item, optionalFieldsExpanded: true)));
+    } else {
+      AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.zero, contentWidget: _ToDoItemReminderDialog(item: item));
+    }
   }
 
   void _onTapManageCategories() {
@@ -884,6 +889,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
     );
     _setLoading(true);
     _item.reminderDateTimeUtc = _reminderDateTime.toUtc();
+    _item.reminderType = ToDoReminderType.specific_time;
     Wellness().updateToDoItem(_item).then((success) {
       _setLoading(false);
       if (!success) {
