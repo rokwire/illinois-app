@@ -2919,7 +2919,7 @@
 	"privacy.category.description.1": "您可能無法使用所有功能，但您是匿名的，我們不會要求您提供任何識別信息或存儲任何數據。 匿名數據將被收集並用於優化應用程序性能。",
 	"privacy.category.description.2": "看看你周圍發生了什麼。 我們使用 Wi-Fi 和藍牙定位服務來改善您的體驗，但我們從不存儲這些數據。",
 	"privacy.category.description.3": "您可以個性化和自定義應用程序。 Wi-Fi 和藍牙位置數據會隨著時間的推移而存儲，以提供建議並改善您的整體應用體驗。",
-	"privacy.category.description.4": "讓應用程序為您工作。\n您可以訪問您的 i-card、保存信用卡以方便以後的購買、使用 Building access/Illini ID，並根據您的特定興趣獲取通知。",
+	"privacy.category.description.4": "讓應用程序為您工作。\n您可以訪問您的 i-card、保存信用卡以方便以後的購買、使用 Illini ID，並根據您的特定興趣獲取通知。",
 	"privacy.category.description.5": "訪問所有功能，連接到校園，並讓應用程序建議您和您的朋友都可以享受的定制體驗。",
 	"privacy.category.event_and_dining.title": "活动和餐饮 \n校园周围",
 	"privacy.entry.event_and_dining.view.only.title": "仅查看",
@@ -2954,10 +2954,10 @@
 
 	"privacy.category.wallet.title": "钱包",
 	"privacy.entry.wallet.personalizations.title": "个性化",
-	"privacy.entry.wallet.personalizations.description": "檢查您的大樓訪問/伊利尼 ID、MTD 巴士通行證、伊利尼現金、膳食計劃餘額並查看過去的交易。",
+	"privacy.entry.wallet.personalizations.description": "檢查您的 Illini ID、MTD 巴士通票、Illini Cash、Meal Plan 餘額並查看過去的交易。",
 	"privacy.entry.wallet.personalizations.data_usage": "這些功能使用您的個人大學證書。",
 	"privacy.entry.wallet.sharing.title": "身份",
-	"privacy.entry.wallet.sharing.description": "檢查您的大樓訪問/伊利尼 ID、MTD 巴士通行證、伊利尼現金、膳食計劃餘額並查看過去的交易。",
+	"privacy.entry.wallet.sharing.description": "檢查您的 Illini ID、MTD 巴士通票、Illini Cash、Meal Plan 餘額並查看過去的交易。",
 	"privacy.entry.wallet.sharing.data_usage": "這些功能使用您的個人大學證書。",
 
 	"privacy.category.health.title": "卫生与健康",
