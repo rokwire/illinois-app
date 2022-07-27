@@ -177,7 +177,7 @@
 				"home": {
 					"student": [
 						"dinings", "gies_checklist", "new_student_checklist", "canvas_courses", "laundry",
-						"wellness", "wallet", "wpgufm_radio", "campus_guide", "campus_highlights",
+						"wellness", "wallet", "wpgufm_radio", "campus_highlights",
 						"campus_reminders", "all_groups", "twitter", "my_dining", "my_events",
 						"my_groups", "my_inbox", "wellness_resources", "my_game_day", "my_athletics",
 						"my_news", "my_campus_guide", "create_poll", "recent_polls", "recent_items",
@@ -189,7 +189,7 @@
 						"twitter", "recent_items", "all_groups", "my_groups", "my_inbox",
 						"wellness_resources", "my_campus_guide", "sport_events", "sport_news",
 						"my_athletics", "my_news", "my_game_day", "create_poll", "recent_polls",
-						"campus_guide", "campus_highlights", "campus_reminders", "app_help", "dinings",
+						"campus_highlights", "campus_reminders", "app_help", "dinings",
 						"laundry", "my_dining", "my_events", "state_farm_center", "suggested_events"
 					],
 					"gies_offcampus":[
@@ -197,11 +197,11 @@
 						"twitter", "recent_items", "all_groups", "my_groups", "my_inbox",
 						"wellness_resources", "my_campus_guide", "sport_events", "sport_news",
 						"my_athletics", "my_news", "my_game_day", "create_poll", "recent_polls",
-						"campus_guide", "campus_highlights", "campus_reminders", "app_help"
+						"campus_highlights", "campus_reminders", "app_help"
 					],
 					"elderly": [
 						"dinings", "wallet", "wellness", "all_groups", "campus_reminders",
-						"my_events", "my_groups", "my_inbox", "wellness_resources", "campus_guide",
+						"my_events", "my_groups", "my_inbox", "wellness_resources",
 						"campus_highlights", "recent_items", "twitter", "suggested_events", "create_poll",
 						"recent_polls", "wpgufm_radio", "sport_events", "sport_news",
 						"my_athletics", "my_news", "my_dining", "my_game_day", "state_farm_center",
@@ -210,7 +210,7 @@
 					"fan": [
 						"my_game_day", "my_athletics", "my_news", "sport_events", "sport_news",
 						"my_groups", "my_inbox", "state_farm_center", "my_events",
-						"all_groups", "campus_guide", "recent_items", "suggested_events", "twitter",
+						"all_groups", "recent_items", "suggested_events", "twitter",
 						"wpgufm_radio", "app_help"
 					]
 				},
