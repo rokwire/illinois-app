@@ -5,7 +5,6 @@ import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Laundry.dart';
-import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -282,10 +281,6 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> implements Notificati
     bool isFavorite = Auth2().isFavorite(widget.room);
     Color? headerColor = Styles().colors?.accentColor2;
     String? title = widget.room?.name;
-    String? cardDetailText = widget.room?.displayStatus;
-    Color? cardDetailTextColor = widget.room?.favoriteDetailTextColor ?? Styles().colors?.textBackground;
-    Image? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? widget.room?.favoriteDetailIcon : null;
-    bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
 
     return GestureDetector(onTap: widget.onTap, child:
       Semantics(label: title, child:
@@ -321,19 +316,6 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> implements Notificati
                       )
                     ],
                   ),
-
-                  Visibility(visible: detailVisible, child:
-                    Semantics(label: cardDetailText, excludeSemantics: true, child:
-                      Padding(padding: EdgeInsets.only(top: 12), child:
-                        (cardDetailImage != null) ? 
-                        Row(children: <Widget>[
-                          Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
-                          Expanded(child:
-                            Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: cardDetailTextColor)),
-                          )
-                        ],) :
-                        Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: cardDetailTextColor)),
-                  )),),
                 ]),
               ),
             )
