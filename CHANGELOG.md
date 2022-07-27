@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Info icon that shows descriptive message in Wellness ToDo list calendar [#2096](https://github.com/rokwire/illinois-app/issues/2096).
 - Add a "MyMcKinley Patient Health Portal" link to “Wellness Resources” [#2098](https://github.com/rokwire/illinois-app/issues/2098).
 - Add link to Wellness Resources Home when favorites widget is empty [#2098](https://github.com/rokwire/illinois-app/issues/2098).
+- Add the external website icon to "other selected services" link in Illini Cash [#2113](https://github.com/rokwire/illinois-app/issues/2113).
 ### Changed
 - Make Wellness widget components stand alone [#2107](https://github.com/rokwire/illinois-app/issues/2107).
 ### Fixed
