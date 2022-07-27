@@ -333,6 +333,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,
+          allowImplicitScrolling: true,
           children: pages,
         ),
       );
