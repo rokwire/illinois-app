@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add a "MyMcKinley Patient Health Portal" link to “Wellness Resources” [#2098](https://github.com/rokwire/illinois-app/issues/2098).
 - Add link to Wellness Resources Home when favorites widget is empty [#2098](https://github.com/rokwire/illinois-app/issues/2098).
 - Add the external website icon to "other selected services" link in Illini Cash [#2113](https://github.com/rokwire/illinois-app/issues/2113).
+- Add “My Favorites” to Settings dropdown options [#2118](https://github.com/rokwire/illinois-app/issues/2118).
 ### Changed
 - Make Wellness widget components stand alone [#2107](https://github.com/rokwire/illinois-app/issues/2107).
 - Duplicate entries from My section to their logical sections in Browse panel [#2112](https://github.com/rokwire/illinois-app/issues/2112).

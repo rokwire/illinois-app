@@ -15,7 +15,6 @@
  */
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
@@ -104,6 +103,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyCalendarSelectionPopup,
       DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
+      HomePanel.notifyCustomize,
     ]);
 
     _tabs = _getTabs();
@@ -194,6 +194,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyCanvasAppDeepLinkNotification) {
       _onFirebaseCanvasAppDeepLinkNotification(param);
     }
+    else if (name == HomePanel.notifyCustomize) {
+      _onSelectHome();
+    }
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
     }
@@ -203,6 +206,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if (mounted) {
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
       _selectTab(tabIndex);
+    }
+  }
+
+  void _onSelectHome() {
+    int? homeIndex = _getIndexByRootTab(RootTab.Home) ?? _getIndexByRootTab(RootTab.Favorites);
+    if (mounted && (homeIndex != null)) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      _selectTab(homeIndex);
     }
   }
 
@@ -255,8 +266,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     return ((0 <= index) && (index < _tabs.length)) ? _tabs[index] : null;
   }
 
-  int _getIndexByRootTab(RootTab? rootTab) {
-    return (rootTab != null) ? _tabs.indexOf(rootTab) : -1;
+  int? _getIndexByRootTab(RootTab? rootTab) {
+    int index = (rootTab != null) ? _tabs.indexOf(rootTab) : -1;
+    return (0 <= index) ? index : null;
   }
 
   Widget? _getTabPanelAtIndex(int index) {
@@ -517,7 +529,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       if (mounted) {
         setState(() {
           _tabs = tabs;
-          _currentTabIndex = (currentRootTab != null) ? max(_getIndexByRootTab(currentRootTab), 0)  : 0;
+          _currentTabIndex = (currentRootTab != null) ? (_getIndexByRootTab(currentRootTab) ?? 0)  : 0;
           
           // Do not initialize _currentTabIndex as initialIndex because we get empty panel content.
           // Initialize TabController with initialIndex = 0 and then manually animate to desired tab index.
@@ -527,7 +539,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       }
       else {
         _tabs = tabs;
-        _currentTabIndex = (currentRootTab != null) ? max(_getIndexByRootTab(currentRootTab), 0)  : 0;
+        _currentTabIndex = (currentRootTab != null) ? (_getIndexByRootTab(currentRootTab) ?? 0)  : 0;
         _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: _currentTabIndex);
       }
     }
