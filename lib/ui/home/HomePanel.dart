@@ -74,6 +74,8 @@ import 'package:illinois/ui/home/HomeSuggestedEventsWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePanel extends StatefulWidget {
   static const String notifyRefresh      = "edu.illinois.rokwire.home.refresh";
@@ -525,8 +527,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
       widgets.add(_buildEditingHeader(
         favoriteId: _favoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
-        title: Localization().getStringEx('panel.home.edit.favorites.header.title', 'Your Favorites'),
-        description: Localization().getStringEx('panel.home.edit.favorites.header.description', 'Below is the content currently on your favorites screen. To reorder your favorites, tap, hold, and drag an item. To remove an item from your favorites, tap on the star.'),
+        title: Localization().getStringEx('panel.home.edit.favorites.header.title', 'Current Favorites'),
+        description: Localization().getStringEx('panel.home.edit.favorites.header.description', 'Tap, <b>hold</b>, and drag an item to reorder your favorites. To remove an item from Favorites, tap the star.'),
       ));
        
       int position = 0;
@@ -546,8 +548,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
       widgets.add(_buildEditingHeader(
         favoriteId: _unfavoritesHeaderId, dropAnchorAlignment: null,
-        title: Localization().getStringEx('panel.home.edit.unused.header.title', 'Unused Favorites'),
-        description: Localization().getStringEx('panel.home.edit.unused.header.description', 'To add one of the below items to your favorites, tap on the star.'),
+        title: Localization().getStringEx('panel.home.edit.unused.header.title', 'Other Items to Favorite'),
+        description: Localization().getStringEx('panel.home.edit.unused.header.description', 'Tap the star to add any below items to Favorites.'),
       ));
 
       List<Map<String, dynamic>> unusedList = <Map<String, dynamic>>[];
@@ -597,7 +599,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
-                Text(description ?? '', style: TextStyle(color: Styles().colors?.textColorPrimaryVariant, fontSize: 16, fontFamily: Styles().fontFamilies?.regular),),
+                Html(data: StringUtils.ensureNotEmpty(description),
+                  onLinkTap: (url, context, attributes, element) => _onTapHtmlLink(url),
+                  style: { 
+                    "body": Style(color: Styles().colors!.textColorPrimaryVariant, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(16), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                    "b": Style(fontFamily: Styles().fontFamilies!.bold)
+                  })
               ),
             )
           ],),
@@ -737,6 +744,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     if (_scrollTimer != null) {
       _scrollTimer?.cancel();
       _scrollTimer = null;
+    }
+  }
+
+  void _onTapHtmlLink(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      launch(url!);
     }
   }
 
