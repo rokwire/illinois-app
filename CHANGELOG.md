@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Removed
 - Label "Online / Offline" from Laundry [#2094](https://github.com/rokwire/illinois-app/issues/2094).
+### Added
+- Info icon that shows descriptive message in Wellness ToDo list calendar [#2096](https://github.com/rokwire/illinois-app/issues/2096).
 
 ## [4.1.3] - 2022-07-26
 ### Changed
