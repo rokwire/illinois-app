@@ -2657,7 +2657,7 @@
     "widget.home.favorites.all.hint.inbox": "Tap to view all favorite notifications",
 
 	"widget.home.wellness_resources.header.label": "My Wellness Resources",
-    "widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in Wellness Resources so you can quickly find them here.",
+    "widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> so you can quickly find them here.",
     "widget.home.wellness_resources.button.all.title": "View All",
     "widget.home.wellness_resources.button.all.hint": "Tap to view all wellness resources",
 
