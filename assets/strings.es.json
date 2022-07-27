@@ -2650,7 +2650,7 @@
     "widget.home.favorites.all.hint.inbox": "Toca para ver todas las notificaciones favoritas",
 
 	"widget.home.wellness_resources.header.label": "Mis recursos de bienestar",
-    "widget.home.wellness_resources.text.empty.description": "Toque el \u2606 en los elementos de Recursos de bienestar para que pueda encontrarlos rápidamente aquí.",
+    "widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> so you can quickly find them here.",
     "widget.home.wellness_resources.button.all.title": "Ver todo",
     "widget.home.wellness_resources.button.all.hint": "Toque para ver todos los recursos de bienestar",
 
