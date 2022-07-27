@@ -2926,7 +2926,7 @@
     "privacy.category.description.1": "You may not be able to use all features, but you are anonymous, and we don't ask you for any identifying information or store any data. Anonymous data will be collected and used to optimize app performance.",
     "privacy.category.description.2": "See what's happening around you. We use Wi-Fi and Bluetooth location services to improve your experience, but we never store that data.",
     "privacy.category.description.3": "You can personalize and customize the app. Wi-Fi and Bluetooth location data is stored over time to make recommendations and improve your overall app experience.",
-    "privacy.category.description.4": "Let the app work for you.\nYou can access your i-card, save credit cards to make future purchases easier, use Building access/Illini ID, and get notifications based on your specific interests.",
+    "privacy.category.description.4": "Let the app work for you.\nYou can access your i-card, save credit cards to make future purchases easier, use Illini ID, and get notifications based on your specific interests.",
     "privacy.category.description.5": "Access all features, get connected to campus, and let the app suggest tailored experiences that you and your friends can all enjoy.",
     "privacy.category.event_and_dining.title": "Events and Dining \nAround Campus",
     "privacy.entry.event_and_dining.view.only.title": "View Only",
@@ -2961,10 +2961,10 @@
 
     "privacy.category.wallet.title": "Wallet",
     "privacy.entry.wallet.personalizations.title": "Personalizations",
-    "privacy.entry.wallet.personalizations.description": "Check your Building access/Illini ID, MTD bus pass, Illini Cash, Meal Plan balances and see past transactions.",
+    "privacy.entry.wallet.personalizations.description": "Check your Illini ID, MTD bus pass, Illini Cash, Meal Plan balances and see past transactions.",
     "privacy.entry.wallet.personalizations.data_usage": "These features use your personal university credentials.",
     "privacy.entry.wallet.sharing.title": "Identity",
-    "privacy.entry.wallet.sharing.description": "Check your Building access/Illini ID, MTD bus pass, Illini Cash, Meal Plan balances and see past transactions.",
+    "privacy.entry.wallet.sharing.description": "Check your Illini ID, MTD bus pass, Illini Cash, Meal Plan balances and see past transactions.",
     "privacy.entry.wallet.sharing.data_usage": "These features use your personal university credentials.",
 
     "privacy.category.health.title": "Health and Wellness",

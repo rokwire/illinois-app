@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - External link icon from "I'm Struglling" in Wellness [#2099](https://github.com/rokwire/illinois-app/issues/2099).
 - Athletics Teams widget from Favorites panel [#2102](https://github.com/rokwire/illinois-app/issues/2102).
 - Campus Guide widget from Favorites panel [#2104](https://github.com/rokwire/illinois-app/issues/2104).
+- "Building Access" references in privacy settings [#2082](https://github.com/rokwire/illinois-app/issues/2082).
 ### Added
 - Info icon that shows descriptive message in Wellness ToDo list calendar [#2096](https://github.com/rokwire/illinois-app/issues/2096).
 - Add a "MyMcKinley Patient Health Portal" link to “Wellness Resources” [#2098](https://github.com/rokwire/illinois-app/issues/2098).

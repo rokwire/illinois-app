@@ -2919,7 +2919,7 @@
     "privacy.category.description.1": "Es posible que no pueda usar todas las funciones, pero es anónimo y no le pedimos ninguna información de identificación ni almacenamos ningún dato. Se recopilarán y utilizarán datos anónimos para optimizar el rendimiento de la aplicación.",
     "privacy.category.description.2": "Mira lo que sucede a tu alrededor. Usamos los servicios de ubicación de Wi-Fi y Bluetooth para mejorar su experiencia, pero nunca almacenamos esos datos.",
     "privacy.category.description.3": "Puede personalizar y personalizar la aplicación. Los datos de ubicación de Wi-Fi y Bluetooth se almacenan con el tiempo para hacer recomendaciones y mejorar su experiencia general con la aplicación.",
-    "privacy.category.description.4": "Deja que la aplicación trabaje para ti.\nPuede acceder a su i-card, guardar tarjetas de crédito para facilitar futuras compras, usar Building access/Illini ID y recibir notificaciones basadas en sus intereses específicos.",
+    "privacy.category.description.4": "Deja que la aplicación trabaje para ti.\nPuede acceder a su i-card, guardar tarjetas de crédito para facilitar futuras compras, usar Illini ID y recibir notificaciones basadas en sus intereses específicos.",
     "privacy.category.description.5": "Acceda a todas las funciones, conéctese al campus y deje que la aplicación sugiera experiencias personalizadas que usted y sus amigos pueden disfrutar.",
     "privacy.category.event_and_dining.title": "Events and Dining \nAround Campus",
     "privacy.entry.event_and_dining.view.only.title": "Sólo vista",
@@ -2954,10 +2954,10 @@
 
     "privacy.category.wallet.title": "Billetera",
     "privacy.entry.wallet.personalizations.title": "Personalizaciones",
-    "privacy.entry.wallet.personalizations.description": "Verifique su acceso al edificio/identificación de Illini, pase de autobús MTD, efectivo de Illini, saldos del plan de comidas y vea transacciones anteriores.",
+    "privacy.entry.wallet.personalizations.description": "Verifique su ID de Illini, pase de autobús MTD, efectivo de Illini, saldos del plan de comidas y vea transacciones anteriores.",
     "privacy.entry.wallet.personalizations.data_usage": "Estas funciones utilizan sus credenciales universitarias personales.",
     "privacy.entry.wallet.sharing.title": "Identidad",
-    "privacy.entry.wallet.sharing.description": "Verifique su acceso al edificio/identificación de Illini, pase de autobús MTD, efectivo de Illini, saldos del plan de comidas y vea transacciones anteriores.",
+    "privacy.entry.wallet.sharing.description": "Verifique su ID de Illini, pase de autobús MTD, efectivo de Illini, saldos del plan de comidas y vea transacciones anteriores.",
     "privacy.entry.wallet.sharing.data_usage": "Estas funciones utilizan sus credenciales universitarias personales.",
 
     "privacy.category.health.title": "Salud y Bienestar",
