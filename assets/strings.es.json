@@ -368,10 +368,10 @@
     "panel.browse.entry.wallet.illini_id_card.title": "Tarjeta de identificación",
     "panel.browse.entry.wallet.library_card.title": "Tarjeta de biblioteca",
 
-    "panel.browse.entry.wellness.rings.title": "Anillos",
-    "panel.browse.entry.wellness.todo.title": "Que hacer",
-    "panel.browse.entry.wellness.tips.title": "Consejos diarios",
-    "panel.browse.entry.wellness.wellness_resources.title": "Recursos de bienestar",
+    "panel.browse.entry.wellness.wellness_rings.title": "Anillos",
+    "panel.browse.entry.wellness.wellness_todo.title": "Que hacer",
+    "panel.browse.entry.wellness.wellness_tips.title": "Consejos diarios",
+    "panel.browse.entry.wellness.wellness_resources.title": "Resources",
 
     "panel.search.header.title":"Buscar",
     "panel.search.label.search_for":"Buscar",
@@ -2584,7 +2584,7 @@
     "widget.home.tout.button.info.hint": "Toca para más información",
     "widget.home.tout.popup.info.content": "Para cambiar su nombre en la aplicación de Illinois, revise las <a href='{{preferred_first_name_url}}'>instrucciones de nombre preferido</a>.",
 
-    "widget.home.wellness.todo.title": "MI LISTA DE TAREAS",
+    "widget.home.wellness.todo.title": "Mi lista de tareas pendientes",
     "widget.home.wellness.todo.items.today.label": "ARTÍCULOS DE HOY",
     "widget.home.wellness.todo.items.today.empty.msg": "No tienes tareas pendientes para hoy.",
     "widget.home.wellness.todo.items.unassigned.label": "ARTÍCULOS NO ASIGNADOS",
@@ -2594,11 +2594,11 @@
     "widget.home.wellness.todo.items.view_all.label": "Ver todo",
     "widget.home.wellness.todo.items.view_all.hint": "Toque para ver todas las tareas pendientes",
 
-    "widget.home.wellness.rings.title": "ANILLOS DE BIENESTAR DIARIO",
+    "widget.home.wellness.rings.title": "Anillos de bienestar diarios",
     "widget.home.wellness.rings.view_all.label": "Ver todo",
     "widget.home.wellness.rings.view_all.hint": "Toca para ver todos los anillos",
 
-    "widget.home.wellness.tips.title": "CONSEJOS DIARIOS",
+    "widget.home.wellness.tips.title": "Consejo diario de bienestar",
 
     "widget.home.favorites.title.events": "Mis Eventos",
     "widget.home.favorites.title.dining": "Mis lugares para comer",

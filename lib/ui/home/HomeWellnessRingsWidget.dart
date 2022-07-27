@@ -27,7 +27,7 @@ class HomeWellnessRingsWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.wellness.rings.title', 'DAILY WELLNESS RINGS');
+  static String get title => Localization().getStringEx('widget.home.wellness.rings.title', 'Daily Wellness Rings');
 
   @override
   State<HomeWellnessRingsWidget> createState() => _HomeWellnessRingsWidgetState();
