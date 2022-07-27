@@ -181,13 +181,13 @@
 						"campus_reminders", "all_groups", "twitter", "my_dining", "my_events",
 						"my_groups", "my_inbox", "wellness_resources", "my_game_day", "my_athletics",
 						"my_news", "my_campus_guide", "create_poll", "recent_polls", "recent_items",
-						"suggested_events", "sport_events", "sport_news", "sport_teams", "state_farm_center",
+						"suggested_events", "sport_events", "sport_news", "state_farm_center",
 						"app_help"
 					],
 					"gies_oncampus":[
 						"gies_checklist", "canvas_courses", "wellness", "wallet", "wpgufm_radio",
 						"twitter", "recent_items", "all_groups", "my_groups", "my_inbox",
-						"wellness_resources", "my_campus_guide", "sport_events", "sport_news", "sport_teams",
+						"wellness_resources", "my_campus_guide", "sport_events", "sport_news",
 						"my_athletics", "my_news", "my_game_day", "create_poll", "recent_polls",
 						"campus_guide", "campus_highlights", "campus_reminders", "app_help", "dinings",
 						"laundry", "my_dining", "my_events", "state_farm_center", "suggested_events"
@@ -195,7 +195,7 @@
 					"gies_offcampus":[
 						"gies_checklist", "canvas_courses", "wellness", "wallet", "wpgufm_radio",
 						"twitter", "recent_items", "all_groups", "my_groups", "my_inbox",
-						"wellness_resources", "my_campus_guide", "sport_events", "sport_news", "sport_teams",
+						"wellness_resources", "my_campus_guide", "sport_events", "sport_news",
 						"my_athletics", "my_news", "my_game_day", "create_poll", "recent_polls",
 						"campus_guide", "campus_highlights", "campus_reminders", "app_help"
 					],
@@ -203,13 +203,13 @@
 						"dinings", "wallet", "wellness", "all_groups", "campus_reminders",
 						"my_events", "my_groups", "my_inbox", "wellness_resources", "campus_guide",
 						"campus_highlights", "recent_items", "twitter", "suggested_events", "create_poll",
-						"recent_polls", "wpgufm_radio", "sport_events", "sport_news", "sport_teams",
+						"recent_polls", "wpgufm_radio", "sport_events", "sport_news",
 						"my_athletics", "my_news", "my_dining", "my_game_day", "state_farm_center",
 						"my_campus_guide", "app_help"
 					],
 					"fan": [
 						"my_game_day", "my_athletics", "my_news", "sport_events", "sport_news",
-						"sport_teams", "my_groups", "my_inbox", "state_farm_center", "my_events",
+						"my_groups", "my_inbox", "state_farm_center", "my_events",
 						"all_groups", "campus_guide", "recent_items", "suggested_events", "twitter",
 						"wpgufm_radio", "app_help"
 					]
