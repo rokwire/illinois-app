@@ -17,8 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add the external website icon to "other selected services" link in Illini Cash [#2113](https://github.com/rokwire/illinois-app/issues/2113).
 ### Changed
 - Make Wellness widget components stand alone [#2107](https://github.com/rokwire/illinois-app/issues/2107).
+- Duplicate entries from My secction to their logical sections in Browse panel [#2112](https://github.com/rokwire/illinois-app/issues/2112).
 ### Fixed
 - Fix Horizontal scrolling is not accessible [#2093](https://github.com/rokwire/illinois-app/issues/2093).
+
 ## [4.1.3] - 2022-07-26
 ### Changed
 - Rename "Reminders" tab to "Weekly" in Wellness ToDo list [#1967](https://github.com/rokwire/illinois-app/issues/1967).
