@@ -303,12 +303,12 @@
 	"panel.browse.entry.app_help.feedback.title": "反饋",
 	"panel.browse.entry.app_help.faqs.title": "常見問題",
 
-	"panel.browse.entry.athletics.upcoming_games.title": "接下來的活動",
-	"panel.browse.entry.athletics.sport_news.title": "消息",
-	"panel.browse.entry.athletics.sport_teams.title": "團隊",
 	"panel.browse.entry.athletics.my_game_day.title": "我的比賽日",
-	"panel.browse.entry.athletics.my_athletics.title": "我的田徑活動",
-	"panel.browse.entry.athletics.my_news.title": "我的田徑新聞",
+	"panel.browse.entry.athletics.upcoming_games.title": "接下來的活動",
+	"panel.browse.entry.athletics.my_athletics.title": "我的活動",
+	"panel.browse.entry.athletics.sport_news.title": "消息",
+	"panel.browse.entry.athletics.my_news.title": "我的消息",
+	"panel.browse.entry.athletics.sport_teams.title": "團隊",
 
 	"panel.browse.entry.safer.building_access.title": "建築物訪問",
 	"panel.browse.entry.safer.test_locations.title": "測試地點",
