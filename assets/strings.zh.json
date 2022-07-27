@@ -1203,6 +1203,7 @@
 	"panel.settings.home.settings.sections.food_filter.label": "我的食物過濾器",
 	"panel.settings.home.settings.sections.sports.label": "我的運動隊",
 	"panel.settings.home.settings.sections.calendar.label": "我的日曆設置",
+	"panel.settings.home.settings.sections.favorites.label": "我最喜愛的",
 
 	"panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",
 	"panel.settings.home.connect.not_logged_in.netid.description.part_1": "你是不是一位",

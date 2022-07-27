@@ -1203,6 +1203,7 @@
     "panel.settings.home.settings.sections.food_filter.label": "Mi filtro de comida",
     "panel.settings.home.settings.sections.sports.label": "Mis equipos deportivos",
     "panel.settings.home.settings.sections.calendar.label": "Configuración de mi calendario",
+    "panel.settings.home.settings.sections.favorites.label": "Mis favoritas",
 
     "panel.settings.home.connect.not_logged_in.title":"Sign in to Illinois",
     "panel.settings.home.connect.not_logged_in.netid.description.part_1": "Eres un ",

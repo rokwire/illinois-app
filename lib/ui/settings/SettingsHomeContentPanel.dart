@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
@@ -28,6 +29,7 @@ import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class SettingsHomeContentPanel extends StatefulWidget {
@@ -134,14 +136,20 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   }
 
   void _onTapContentItem(SettingsContent contentItem) {
+    if (contentItem == SettingsContent.favorites) {
+      NotificationService().notify(HomePanel.notifyCustomize);
+    }
+    else {
     _selectedContent = _lastSelectedContent = contentItem;
+    }
     _changeSettingsContentValuesVisibility();
   }
 
   void _changeSettingsContentValuesVisibility() {
-    _contentValuesVisible = !_contentValuesVisible;
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _contentValuesVisible = !_contentValuesVisible;
+      });
     }
   }
 
@@ -157,7 +165,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return AthleticsTeamsWidget();
       case SettingsContent.calendar:
         return SettingsCalendarContentWidget();
-      default:
+      case SettingsContent.favorites:
         return Container();
     }
   }
@@ -176,11 +184,13 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
       case SettingsContent.calendar:
         return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'My Calendar Settings');
+      case SettingsContent.favorites:
+        return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'My Favorites');
     }
   }
 }
 
-enum SettingsContent { sections, interests, food_filters, sports, calendar }
+enum SettingsContent { sections, interests, food_filters, sports, calendar, favorites }
 
 class _DebugContainer extends StatefulWidget implements PreferredSizeWidget {
   final Widget _child;
