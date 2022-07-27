@@ -39,7 +39,7 @@
 			"browse.events": ["suggested_events", "my_events"],
 			"browse.feeds": ["twitter", "wpgufm_radio"],
 			"browse.groups": ["all_groups", "my_groups"],
-			"browse.my": ["my_groups", "my_game_day", "my_events", "my_dining", "my_athletics", "my_news", "my_laundry", "my_inbox", "my_campus_guide", "wellness_resources"],
+			"browse.my": ["my_athletics", "my_news", "my_campus_guide", "my_dining", "my_events", "my_game_day", "my_groups", "my_laundry", "my_inbox", "wellness_resources"],
 			"browse.polls": ["create_poll", "recent_polls"],
 			"browse.recent": ["recent_items"],
 			"browse.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
