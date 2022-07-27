@@ -31,7 +31,6 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
-import 'package:illinois/ui/home/HomeAthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomeCampusGuideWidget.dart';
 import 'package:illinois/ui/home/HomeCampusLinksWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
@@ -216,15 +215,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeAthliticsNewsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
         return HomeAthliticsNewsWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
-      }
-    }
-    else if (code == 'sport_teams') {
-      if (title) {
-        return HomeAthliticsTeamsWidget.title;
-      } else if (handle) {
-        return HomeAthliticsTeamsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-      } else {
-        return HomeAthliticsTeamsWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
       }
     }
     else if (code == 'campus_resources') {
