@@ -306,6 +306,9 @@
     "panel.browse.entry.athletics.upcoming_games.title": "Próximos Eventos",
     "panel.browse.entry.athletics.sport_news.title": "Noticias",
     "panel.browse.entry.athletics.sport_teams.title": "Equipos",
+    "panel.browse.entry.athletics.my_game_day.title": "Mi dia de juego",
+    "panel.browse.entry.athletics.my_athletics.title": "Mis eventos de atletismo",
+    "panel.browse.entry.athletics.my_news.title": "Mis noticias de atletismo",
 
     "panel.browse.entry.safer.building_access.title": "Acceso al edificio",
     "panel.browse.entry.safer.test_locations.title": "Ubicaciones de prueba",
@@ -314,6 +317,7 @@
 
     "panel.browse.entry.campus_guide.campus_highlights.title": "Puntos destacados de la guía del campus",
     "panel.browse.entry.campus_guide.campus_guide.title": "Guía Completa del Campus",
+    "panel.browse.entry.campus_guide.my_campus_guide.title": "Guía de mi campus",
 
     "panel.browse.entry.campus_links.due_date_catalog.title": "Catálogo de fecha de vencimiento",
 
@@ -332,8 +336,10 @@
 
     "panel.browse.entry.dinings.dinings_all.title": "Comedor de la residencia",
     "panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Abierto ahora",
+    "panel.browse.entry.dinings.my_dining.title": "Mis lugares para comer",
 
     "panel.browse.entry.events.upcoming_events.title": "Eventos sugeridos",
+    "panel.browse.entry.events.my_events.title": "Mis eventos",
 
     "panel.browse.entry.feeds.twitter.title": "Gorjeo",
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
@@ -341,6 +347,7 @@
     "panel.browse.entry.groups.all_groups.title": "Todos los grupos",
 
     "panel.browse.entry.laundry.laundry.title": "Ropa sucia",
+    "panel.browse.entry.laundry.my_laundry.title": "Mi colada",
 
     "panel.browse.entry.my.my_groups.title": "Mis grupos",
     "panel.browse.entry.my.my_game_day.title": "Mi dia de juego",

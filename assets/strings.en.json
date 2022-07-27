@@ -308,6 +308,9 @@
     "panel.browse.entry.athletics.sport_events.title": "Upcoming Events",
     "panel.browse.entry.athletics.sport_news.title": "News",
     "panel.browse.entry.athletics.sport_teams.title": "Teams",
+    "panel.browse.entry.athletics.my_game_day.title": "My Game Day",
+    "panel.browse.entry.athletics.my_athletics.title": "My Athletics Events",
+    "panel.browse.entry.athletics.my_news.title": "My Athletics News",
 
     "panel.browse.entry.safer.building_access.title": "Building Access",
     "panel.browse.entry.safer.test_locations.title": "Test Locations",
@@ -316,6 +319,7 @@
 
     "panel.browse.entry.campus_guide.campus_highlights.title": "Campus Guide Highlights",
     "panel.browse.entry.campus_guide.campus_guide.title": "Complete Campus Guide",
+    "panel.browse.entry.campus_guide.my_campus_guide.title": "My Campus Guide",
 
     "panel.browse.entry.campus_links.due_date_catalog.title": "Due Date Catalog",
 
@@ -334,8 +338,10 @@
 
     "panel.browse.entry.dinings.dinings_all.title": "Residence Hall Dining",
     "panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Open Now",
+    "panel.browse.entry.dinings.my_dining.title": "My Dining Locations",
 
     "panel.browse.entry.events.suggested_events.title": "Suggested Events",
+    "panel.browse.entry.events.my_events.title": "My Events",
 
     "panel.browse.entry.feeds.twitter.title": "Twitter",
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
@@ -343,6 +349,7 @@
     "panel.browse.entry.groups.all_groups.title": "All Groups",
 
     "panel.browse.entry.laundry.laundry.title": "Laundry",
+    "panel.browse.entry.laundry.my_laundry.title": "My Laundry",
 
     "panel.browse.entry.my.my_groups.title": "My Groups",
     "panel.browse.entry.my.my_game_day.title": "My Game Day",

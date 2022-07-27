@@ -280,7 +280,7 @@
 	"panel.browse.section.groups.description": "開始您自己的群組或發現新的群組加入。",
 	"panel.browse.section.laundry.title": "洗衣店",
 	"panel.browse.section.laundry.description": "查看洗衣地點和洗衣機/烘乾機的可用性。",
-"panel.browse.section.my.title": "我的",
+	"panel.browse.section.my.title": "我的",
 	"panel.browse.section.my.description": "您感興趣的所有內容的個性化視圖。",
 	"panel.browse.section.polls.title": "民意調查",
 	"panel.browse.section.polls.description": "創建、參與和查看您和其他人創建的投票結果。",
@@ -306,6 +306,9 @@
 	"panel.browse.entry.athletics.upcoming_games.title": "接下來的活動",
 	"panel.browse.entry.athletics.sport_news.title": "消息",
 	"panel.browse.entry.athletics.sport_teams.title": "團隊",
+	"panel.browse.entry.athletics.my_game_day.title": "我的比賽日",
+	"panel.browse.entry.athletics.my_athletics.title": "我的田徑活動",
+	"panel.browse.entry.athletics.my_news.title": "我的田徑新聞",
 
 	"panel.browse.entry.safer.building_access.title": "建築物訪問",
 	"panel.browse.entry.safer.test_locations.title": "測試地點",
@@ -314,6 +317,7 @@
 
 	"panel.browse.entry.campus_guide.campus_highlights.title": "校園指南亮點",
 	"panel.browse.entry.campus_guide.campus_guide.title": "完整的校園指南",
+	"panel.browse.entry.campus_guide.my_campus_guide.title": "我的校園指南",
 
 	"panel.browse.entry.campus_links.due_date_catalog.title": "到期日目錄",
 
@@ -332,8 +336,10 @@
 
 	"panel.browse.entry.dinings.dinings_all.title": "宿舍餐廳",
 	"panel.browse.entry.dinings.dinings_open.title": "宿舍餐廳現在開放",
+	"panel.browse.entry.dinings.my_dining.title": "我的用餐地點",
 
 	"panel.browse.entry.events.upcoming_events.title": "建議的活動",
+	"panel.browse.entry.events.my_events.title": "我的活動",
 
 	"panel.browse.entry.feeds.twitter.title": "推特",
 	"panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 調頻",
@@ -341,6 +347,7 @@
 	"panel.browse.entry.groups.all_groups.title": "所有組",
 
 	"panel.browse.entry.laundry.laundry.title": "洗衣店",
+	"panel.browse.entry.laundry.my_laundry.title": "我的洗衣店",
 
 	"panel.browse.entry.my.my_groups.title": "我的群組",
 	"panel.browse.entry.my.my_game_day.title": "我的比賽日",
