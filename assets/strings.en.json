@@ -305,12 +305,12 @@
     "panel.browse.entry.app_help.feedback.title": "Feedback",
     "panel.browse.entry.app_help.faqs.title": "FAQs",
 
-    "panel.browse.entry.athletics.sport_events.title": "Upcoming Events",
-    "panel.browse.entry.athletics.sport_news.title": "News",
-    "panel.browse.entry.athletics.sport_teams.title": "Teams",
     "panel.browse.entry.athletics.my_game_day.title": "My Game Day",
-    "panel.browse.entry.athletics.my_athletics.title": "My Athletics Events",
-    "panel.browse.entry.athletics.my_news.title": "My Athletics News",
+    "panel.browse.entry.athletics.sport_events.title": "Upcoming Events",
+    "panel.browse.entry.athletics.my_athletics.title": "My Events",
+    "panel.browse.entry.athletics.sport_news.title": "News",
+    "panel.browse.entry.athletics.my_news.title": "My News",
+    "panel.browse.entry.athletics.sport_teams.title": "Teams",
 
     "panel.browse.entry.safer.building_access.title": "Building Access",
     "panel.browse.entry.safer.test_locations.title": "Test Locations",

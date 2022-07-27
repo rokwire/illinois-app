@@ -303,12 +303,12 @@
     "panel.browse.entry.app_help.feedback.title": "Retroalimentación",
     "panel.browse.entry.app_help.faqs.title": "Preguntas frecuentes",
 
-    "panel.browse.entry.athletics.upcoming_games.title": "Próximos Eventos",
-    "panel.browse.entry.athletics.sport_news.title": "Noticias",
-    "panel.browse.entry.athletics.sport_teams.title": "Equipos",
     "panel.browse.entry.athletics.my_game_day.title": "Mi dia de juego",
-    "panel.browse.entry.athletics.my_athletics.title": "Mis eventos de atletismo",
-    "panel.browse.entry.athletics.my_news.title": "Mis noticias de atletismo",
+    "panel.browse.entry.athletics.upcoming_games.title": "Próximos Eventos",
+    "panel.browse.entry.athletics.my_athletics.title": "Mis eventos",
+    "panel.browse.entry.athletics.sport_news.title": "Noticias",
+    "panel.browse.entry.athletics.my_news.title": "Mis noticias",
+    "panel.browse.entry.athletics.sport_teams.title": "Equipos",
 
     "panel.browse.entry.safer.building_access.title": "Acceso al edificio",
     "panel.browse.entry.safer.test_locations.title": "Ubicaciones de prueba",
