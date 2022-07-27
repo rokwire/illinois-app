@@ -972,7 +972,7 @@
 	"panel.settings.illini_cash.label.title":"Illini现金",
 	"panel.settings.illini_cash.label.history":"历史",
 	"panel.settings.illini_cash.label.buy_illini_cash":"购买Illini现金",
-	"panel.settings.illini_cash.label.for_yourself_or":"使用 Illini Cash 通過您的 Illinois 應用程序或 i-card 購買食品、書籍、印刷和<a href='{{services_url}}'>其他選定服務</a>。",
+	"panel.settings.illini_cash.label.for_yourself_or":"使用 Illini Cash 購買食品、書籍、印刷和<a href='{{services_url}}'>其他選定的服務</a>{{white_space}}<img src='asset:{{external_link_icon}}' alt =''/> 使用您的伊利諾伊州應用程序或 i-card。",
 	"panel.settings.illini_cash.label.custom_period":"自定义期间",
 	"panel.settings.illini_cash.label.current_balance":"当前Illini现金余额",
 	"panel.settings.illini_cash.label.start_date":"开始日期",

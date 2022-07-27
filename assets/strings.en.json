@@ -974,7 +974,7 @@
     "panel.settings.illini_cash.label.title": "Illini Cash",
     "panel.settings.illini_cash.label.history": "History",
     "panel.settings.illini_cash.label.buy_illini_cash": "Buy Illini Cash",
-    "panel.settings.illini_cash.label.for_yourself_or": "Use Illini Cash to purchase food, books, printing, and <a href='{{services_url}}'>other selected services</a> with your Illinois app or i-card.",
+    "panel.settings.illini_cash.label.for_yourself_or": "Use Illini Cash to purchase food, books, printing, and <a href='{{services_url}}'>other selected services</a>{{white_space}}<img src='asset:{{external_link_icon}}' alt=''/> with your Illinois app or i-card.",
     "panel.settings.illini_cash.label.custom_period": "Custom Period",
     "panel.settings.illini_cash.label.current_balance": "Current Illini Cash Balance",
     "panel.settings.illini_cash.label.start_date": "Start Date",
