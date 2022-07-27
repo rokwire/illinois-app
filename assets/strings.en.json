@@ -2577,11 +2577,6 @@
     "widget.home.athletics_events.button.all.title": "View All",
     "widget.home.athletics_events.button.all.hint": "Tap to View all events",
 
-    "widget.home.campus_guide.text.title": "Campus Guide",
-    "widget.home.campus_guide.content.empty": "Campus Guide content not available.",
-    "widget.home.campus_guide.button.all.title": "View All",
-    "widget.home.campus_guide.button.all.hint": "Tap to view the complete Campus Guide",
-
     "widget.home.recent_polls.text.title": "Recent Polls",
     "widget.home.recent_polls.text.empty.description": "No Recent Polls are available right now.",
     "widget.home.recent_polls.text.offline": "Recent Polls are not available while offline.",

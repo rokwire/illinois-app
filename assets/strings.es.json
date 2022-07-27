@@ -2570,11 +2570,6 @@
     "widget.home.athletics_events.button.all.title": "Ver todo",
     "widget.home.athletics_events.button.all.hint": "Toca para ver todos los eventos",
 
-    "widget.home.campus_guide.text.title": "Guía del Campus",
-    "widget.home.campus_guide.content.empty": "Contenido de la Guía del Campus no disponible.",
-    "widget.home.campus_guide.button.all.title": "Ver todo",
-    "widget.home.campus_guide.button.all.hint": "Toca para ver la Guía del Campus completa",
-
     "widget.home.recent_polls.text.title": "Encuestas recientes",
     "widget.home.recent_polls.text.empty.description": "No hay encuestas recientes disponibles en este momento.",
     "widget.home.recent_polls.text.offline": "Las encuestas recientes no están disponibles sin conexión.",
