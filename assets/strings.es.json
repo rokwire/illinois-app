@@ -2839,9 +2839,9 @@
     "widget.home.dinings.header.title": "Comida",
     "widget.home.dinings.text.empty.description": "Toque \u2606 en los elementos de Dinings para que pueda encontrarlos rápidamente aquí.",
     "widget.home.dinings.all.button.title": "Comedor de la residencia",
-    "widget.home.dinings.all.button.description": "Encuentre un lugar para comer en uno de los muchos lugares para comer en la residencia.",
+    "widget.home.dinings.all.button.description": "Los estudiantes, profesores, personal e invitados son bienvenidos a comer en cualquier comedor de la residencia.",
     "widget.home.dinings.open.button.title": "Residence Hall Dining Abierto ahora",
-    "widget.home.dinings.open.button.description": "Coma en un comedor de la residencia que esté abierto ahora.",
+    "widget.home.dinings.open.button.description": "Acceso rápido a cualquier ubicación que esté actualmente abierta.",
 
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",

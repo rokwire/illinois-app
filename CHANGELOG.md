@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make Wellness widget components stand alone [#2107](https://github.com/rokwire/illinois-app/issues/2107).
 - Duplicate entries from My section to their logical sections in Browse panel [#2112](https://github.com/rokwire/illinois-app/issues/2112).
 - Texts in HomePanel [#1905](https://github.com/rokwire/illinois-app/issues/1905).
+- Texts for Residence Hall Dining [#1948](https://github.com/rokwire/illinois-app/issues/1948).
 ### Fixed
 - Fix Horizontal scrolling is not accessible [#2093](https://github.com/rokwire/illinois-app/issues/2093).
 
