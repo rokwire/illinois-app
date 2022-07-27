@@ -12,6 +12,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -724,15 +725,21 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
         _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage);
       }
 
-      return Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
-          key: _pageViewKey,
-          controller: _pageController,
-          estimatedPageSize: _pageHeight,
-          onPageChanged: _onCurrentPageChanged,
-          children: pages,
-        ),
-      );
+      return
+        Column(children: [
+          Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+            ExpandablePageView(
+              key: _pageViewKey,
+              controller: _pageController,
+              estimatedPageSize: _pageHeight,
+              onPageChanged: _onCurrentPageChanged,
+              allowImplicitScrolling: true,
+              children: pages,
+            ),
+          ),
+          AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+        ],);
+
     }
     else { // (direction == Axis.vertical)
       List<Widget> contentList = <Widget>[];

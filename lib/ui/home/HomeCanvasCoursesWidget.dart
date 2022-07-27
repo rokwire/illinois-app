@@ -10,6 +10,7 @@ import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/canvas/CanvasCourseHomePanel.dart';
@@ -131,8 +132,10 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
           key: _pageViewKey,
           controller: _pageController,
           children: coursePages,
+          allowImplicitScrolling: true,
         )
       ),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: coursePages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.home_canvas_courses.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.home_canvas_courses.button.all.hint', 'Tap to view all courses'),

@@ -30,6 +30,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -166,6 +167,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
           controller: _pageController,
           estimatedPageSize: _pageHeight,
           onPageChanged: _onCurrentPageChanged,
+          allowImplicitScrolling: true,
           children: pages,
         ),
       );
@@ -178,6 +180,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
     return Column(children: [
       contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.wellness_resources.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.wellness_resources.button.all.hint', 'Tap to view all wellness resources'),
