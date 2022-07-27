@@ -330,7 +330,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
   void _handleLocalUrl(String? url) {
     Uri? uri = (url != null) ? Uri.tryParse(url) : null;
-    if ((uri?.scheme == localScheme) && (uri?.host?.toLowerCase() == WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey).toLowerCase())) {
+    if ((uri?.scheme == localScheme) && (uri?.host.toLowerCase() == WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey).toLowerCase())) {
       Analytics().logSelect(target: "View Home", source: widget.runtimeType.toString());
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.resources,)));
     }
