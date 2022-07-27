@@ -2522,9 +2522,6 @@
     "widget.home.safer.button.wellness_answer_center.description": "Get answers to your questions.",
     "widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
 
-    "widget.home.wellness.label.title": "Bienestar",
-    "widget.home.wellness.text.empty.description": "Toca el \u2606 en los elementos de Bienestar para que puedas encontrarlos rápidamente aquí.",
-
     "widget.home.wallet.label.title": "Cartera",
     "widget.home.wallet.text.empty.description": "Toque \u2606 en los elementos de Wallet para encontrarlos rápidamente aquí.",
 

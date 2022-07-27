@@ -370,9 +370,9 @@
     "panel.browse.entry.wallet.illini_id_card.title": "ID Card",
     "panel.browse.entry.wallet.library_card.title": "Library Card",
 
-    "panel.browse.entry.wellness.rings.title": "Rings",
-    "panel.browse.entry.wellness.todo.title": "To Do",
-    "panel.browse.entry.wellness.tips.title": "Daily Tips",
+    "panel.browse.entry.wellness.wellness_rings.title": "Rings",
+    "panel.browse.entry.wellness.wellness_todo.title": "To Do",
+    "panel.browse.entry.wellness.wellness_tips.title": "Daily Tips",
     "panel.browse.entry.wellness.wellness_resources.title": "Wellness Resources",
 
     "panel.search.header.title":"Search",
@@ -2528,9 +2528,6 @@
     "widget.home.safer.button.wellness_answer_center.title": "Answer Center",
     "widget.home.safer.button.wellness_answer_center.description": "Get answers to your questions.",
     "widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
-
-    "widget.home.wellness.label.title": "Wellness",
-    "widget.home.wellness.text.empty.description": "Tap the \u2606 on items in Wellness so you can quickly find them here.",
 
     "widget.home.wallet.label.title": "Wallet",
     "widget.home.wallet.text.empty.description": "Tap the \u2606 on items in Wallet so you can quickly find them here.",

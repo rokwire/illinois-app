@@ -43,8 +43,10 @@ import 'package:illinois/ui/home/HomeToutWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWalletWidget.dart';
 import 'package:illinois/ui/home/HomeWelcomeWidget.dart';
+import 'package:illinois/ui/home/HomeWellnessToDoWidget.dart';
+import 'package:illinois/ui/home/HomeWellnessRingsWidget.dart';
+import 'package:illinois/ui/home/HomeWellnessTipsWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessResourcesWidget.dart';
-import 'package:illinois/ui/home/HomeWellnessWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -405,15 +407,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeCampusLinksWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
       }
     }
-    else if (code == 'wellness') {
-      if (title) {
-        return HomeWellnessWidget.title;
-      } else if (handle) {
-        return HomeWellnessWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
-      } else {
-        return HomeWellnessWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
-      }
-    }
 
     else if (code == 'my_events') {
       if (title) {
@@ -478,6 +471,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeFavoritesWidget(key: _widgetKey(code), favoriteKey: GuideFavorite.favoriteKeyName, favoriteId: code, updateController: _updateController,);
       }
     }
+    
     else if (code == 'wellness_resources') {
       if (title) {
         return HomeWellnessResourcesWidget.title;
@@ -485,6 +479,33 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeWellnessResourcesWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
         return HomeWellnessResourcesWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
+      }
+    }
+    else if (code == 'wellness_todo') {
+      if (title) {
+        return HomeWellnessToDoWidget.title;
+      } else if (handle) {
+        return HomeWellnessToDoWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeWellnessToDoWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
+      }
+    }
+    else if (code == 'wellness_rings') {
+      if (title) {
+        return HomeWellnessRingsWidget.title;
+      } else if (handle) {
+        return HomeWellnessRingsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeWellnessRingsWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
+      }
+    }
+    else if (code == 'wellness_tips') {
+      if (title) {
+        return HomeWellnessTipsWidget.title;
+      } else if (handle) {
+        return HomeWellnessTipsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeWellnessTipsWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
       }
     }
     else {
