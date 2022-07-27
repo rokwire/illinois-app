@@ -44,13 +44,32 @@ class WellnessResourcesContentWidget extends StatefulWidget {
   static void ensureDefaultFavorites(List<dynamic>? commands) {
     String favoriteKey = WellnessFavorite.favoriteKeyName(category: wellnessCategoryKey);
     if ((Auth2().prefs?.getFavorites(favoriteKey) == null) && (commands != null)) {
+
+      List<dynamic> sortedCommands = List.from(commands);
+      
+      sortedCommands.sort((dynamic entry1, dynamic entry2) {
+        
+        Map<String, dynamic>? command1 = JsonUtils.mapValue(entry1);
+        int? favorite1 = (command1 != null) ? JsonUtils.intValue(command1['favorite']) : null;
+        
+        Map<String, dynamic>? command2 = JsonUtils.mapValue(entry2);
+        int? favorite2 = (command2 != null) ? JsonUtils.intValue(command2['favorite']) : null;
+
+        if (favorite1 != null) {
+          return (favorite2 != null) ? favorite1.compareTo(favorite2) : 1;
+        }
+        else {
+          return (favorite2 != null) ? -1 : 0; 
+        }
+      });
+      
       LinkedHashSet<String> favoriteIds = LinkedHashSet<String>();
-      for (dynamic entry in commands.reversed) {
+      for (dynamic entry in sortedCommands.reversed) {
         Map<String, dynamic>? command = JsonUtils.mapValue(entry);
         if (command != null) {
           String? id = JsonUtils.stringValue(command['id']);
-          bool? isFavorite = JsonUtils.boolValue(command['favorite']);
-          if ((id != null) && (isFavorite == true)) {
+          int? favorite = JsonUtils.intValue(command['favorite']);
+          if ((id != null) && (favorite != null)) {
             favoriteIds.add(id);
           }
         }

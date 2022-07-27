@@ -15,13 +15,13 @@
  */
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -118,7 +118,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
   Widget _buildResourceContent() {
     Widget contentWidget;
-    int visibleCount = min(Config().homeWellnessResourcesCount, _favoriteCommands?.length ?? 0);
+    int visibleCount = _favoriteCommands?.length ?? 0; // Config().homeWellnessResourcesCount
     if (1 < visibleCount) {
 
       List<Widget> pages = <Widget>[];
@@ -222,15 +222,18 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
   static List<dynamic>? _filterFavoriteCommands(List<dynamic>? commands) {
     List<dynamic>? favoriteCommands;
-    if (commands != null) {
+    LinkedHashSet<String>? wellnessFavorites = Auth2().prefs?.getFavorites(WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey));
+    if ((wellnessFavorites != null) && (commands != null)) {
       favoriteCommands = [];
-      for (dynamic entry in commands) {
-        Map<String, dynamic>? command = JsonUtils.mapValue(entry);
-        if (command != null) {
-          String? id = JsonUtils.stringValue(command['id']);
-          Favorite favorite = WellnessFavorite(id, category: WellnessResourcesContentWidget.wellnessCategoryKey);
-          if (Auth2().prefs?.isFavorite(favorite) ?? false) {
-            favoriteCommands.add(entry);
+      for (String favoriteId in wellnessFavorites) {
+        for (dynamic entry in commands) {
+          Map<String, dynamic>? command = JsonUtils.mapValue(entry);
+          if (command != null) {
+            String? commandId = JsonUtils.stringValue(command['id']);
+            if (commandId == favoriteId)  {
+              favoriteCommands.add(entry);
+              break;
+            }
           }
         }
       }
