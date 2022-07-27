@@ -167,8 +167,13 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         padding: EdgeInsets.only(top: 13),
         child: Column(children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Text(StringUtils.ensureNotEmpty(_formattedCalendarMonthLabel),
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
+            Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
+              Text(StringUtils.ensureNotEmpty(_formattedCalendarMonthLabel),
+                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
+              GestureDetector(
+                  onTap: _onTapCalendarInfo,
+                  child: Padding(padding: EdgeInsets.only(left: 5), child: Image.asset('images/icon-more-info.png')))
+            ]),
             Expanded(child: Container()),
             GestureDetector(
                 onTap: _onTapPreviousWeek,
@@ -463,6 +468,14 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel()));
   }
 
+  void _onTapCalendarInfo() {
+    Analytics().logSelect(target: "Calendar Info", source: widget.runtimeType.toString());
+    AppAlert.showMessage(
+        context,
+        Localization()
+            .getStringEx('panel.wellness.todo.items.calendar.info.msg', 'Tap on a dot to set a reminder or to edit item details.'));
+  }
+
   void _initCalendarDates() {
     DateTime now = DateTime.now();
     _calendarStartDate = now.subtract(Duration(days: now.weekday));
@@ -604,9 +617,9 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   String get _formattedCalendarMonthLabel {
     if (_calendarStartDate.month != _calendarEndDate.month) {
-      return AppDateTime().formatDateTime(_calendarStartDate, format: 'MMMM', ignoreTimeZone: true)! +
+      return AppDateTime().formatDateTime(_calendarStartDate, format: 'MMM', ignoreTimeZone: true)! +
           ' / ' +
-          AppDateTime().formatDateTime(_calendarEndDate, format: 'MMMM yyyy', ignoreTimeZone: true)!;
+          AppDateTime().formatDateTime(_calendarEndDate, format: 'MMM yyyy', ignoreTimeZone: true)!;
     } else {
       return AppDateTime().formatDateTime(_calendarStartDate, format: 'MMMM yyyy', ignoreTimeZone: true)!;
     }
