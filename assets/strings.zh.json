@@ -2570,11 +2570,6 @@
 	"widget.home.athletics_events.button.all.title": "查看全部",
 	"widget.home.athletics_events.button.all.hint": "點按即可查看所有活動",
 
-	"widget.home.campus_guide.text.title": "校園指南",
-	"widget.home.campus_guide.content.empty": "校園指南內容不可用。",
-	"widget.home.campus_guide.button.all.title": "查看全部",
-	"widget.home.campus_guide.button.all.hint": "點擊查看完整的校園指南",
-
 	"widget.home.recent_polls.text.title": "最近的民意調查",
 	"widget.home.recent_polls.text.empty.description": "目前沒有可用的最近民意調查。.",
 	"widget.home.recent_polls.text.offline": "最近的民意調查在離線時不可用。",

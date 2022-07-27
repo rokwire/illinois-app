@@ -8,7 +8,7 @@
 				"my_events", "suggested_events", "sport_events", "sport_news", "my_athletics", "my_game_day",
 				"my_campus_guide", "campus_reminders", "state_farm_center", "app_help", 
 				"gies_checklist", "new_student_checklist", "safer", "canvas_courses",
-				"campus_highlights", "campus_resources", "campus_links", "campus_guide",
+				"campus_highlights", "campus_resources", "campus_links",
 				"recent_items", "my_news", "my_inbox"
 			],
 			"home.system": ["tout", "welcome", "emergency", "voter_registration", "connect"],
