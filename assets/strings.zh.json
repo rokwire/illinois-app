@@ -2839,9 +2839,9 @@
 	"widget.home.dinings.header.title": "用餐",
 	"widget.home.dinings.text.empty.description": "在 Dinings 中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
 	"widget.home.dinings.all.button.title": "宿舍餐廳",
-	"widget.home.dinings.all.button.description": "在眾多宿舍用餐地點之一找個地方吃飯。",
+	"widget.home.dinings.all.button.description": "歡迎學生、教職員工和客人在任何宿舍用餐地點就餐。",
 	"widget.home.dinings.open.button.title": "宿舍餐廳現在開放",
-	"widget.home.dinings.open.button.description": "在現在開放的宿舍用餐地點用餐。",
+	"widget.home.dinings.open.button.description": "快速訪問當前打開的任何位置。",
 
 	"model.group.updated.now": "Updated now",
 	"model.group.updated.minute": "Updated about a minute ago",
