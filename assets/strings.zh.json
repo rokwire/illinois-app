@@ -2570,12 +2570,6 @@
 	"widget.home.athletics_events.button.all.title": "查看全部",
 	"widget.home.athletics_events.button.all.hint": "點按即可查看所有活動",
 
-	"widget.home.athletics_teams.text.title": "田徑隊",
-	"widget.home.athletics_teams.text.description": "查看所有運動並選擇您最喜歡的運動。",
-	"widget.home.athletics_teams.text.description.hint": "點擊查看所有田徑隊並選擇您最喜歡的運動。",
-	"widget.home.athletics_teams.button.all.title": "查看全部",
-	"widget.home.athletics_teams.button.all.hint": "點按即可查看所有球隊",
-
 	"widget.home.campus_guide.text.title": "校園指南",
 	"widget.home.campus_guide.content.empty": "校園指南內容不可用。",
 	"widget.home.campus_guide.button.all.title": "查看全部",

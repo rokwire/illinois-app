@@ -2577,12 +2577,6 @@
     "widget.home.athletics_events.button.all.title": "View All",
     "widget.home.athletics_events.button.all.hint": "Tap to View all events",
 
-    "widget.home.athletics_teams.text.title": "Athletics Teams",
-    "widget.home.athletics_teams.text.description": "See all athletics teams and select your favorite sports.",
-    "widget.home.athletics_teams.text.description.hint": "Tap to see all athletics teams and select your favorite sports.",
-    "widget.home.athletics_teams.button.all.title": "View All",
-    "widget.home.athletics_teams.button.all.hint": "Tap to view all teams",
-
     "widget.home.campus_guide.text.title": "Campus Guide",
     "widget.home.campus_guide.content.empty": "Campus Guide content not available.",
     "widget.home.campus_guide.button.all.title": "View All",
