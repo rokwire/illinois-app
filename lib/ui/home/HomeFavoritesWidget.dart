@@ -26,6 +26,7 @@ import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -216,6 +217,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
           controller: _pageController,
           estimatedPageSize: _pageHeight,
           onPageChanged: _onCurrentPageChanged,
+          allowImplicitScrolling: true,
           children: pages
         ),
       );
@@ -230,6 +232,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       Padding(padding: EdgeInsets.only(top: 8), child:
         contentWidget,
       ),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
       LinkButton(
         title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
         hint: _viewAllHint,

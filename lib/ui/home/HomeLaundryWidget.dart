@@ -14,6 +14,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -173,6 +174,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,
+          allowImplicitScrolling: true,
           children: pages,
         ),
       );
@@ -185,6 +187,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
 
     return Column(children: <Widget>[
       contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.laundry.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.laundry.button.all.hint', 'Tap to view all laundries'),

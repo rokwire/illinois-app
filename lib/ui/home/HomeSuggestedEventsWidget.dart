@@ -25,6 +25,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -311,9 +312,9 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
 
   Widget _buildEventsContent() {
     Widget contentWidget;
+    List<Widget> pages = <Widget>[];
     if (1 < (_events?.length ?? 0)) {
 
-      List<Widget> pages = <Widget>[];
       for (Event event in _events!) {
         pages.add(Padding(key: _contentKeys[event.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 4), child:
           ExploreCard(explore: event, showTopBorder: true, horizontalPadding: 0, onTap: () => _onTapEvent(event),
@@ -344,6 +345,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
 
     return Column(children: <Widget>[
       contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.suggested_events.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.suggested_events.button.all.hint', 'Tap to view all events'),
