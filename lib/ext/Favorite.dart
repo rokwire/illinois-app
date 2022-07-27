@@ -64,9 +64,6 @@ extension FavoriteExt on Favorite {
     else if (this is News) {
       return (this as News).displayTime;
     }
-    else if (this is LaundryRoom) {
-      return (this as LaundryRoom).displayStatus;
-    }
     else if (this is GuideFavorite) {
       return Guide().entryListDescription(Guide().entryById((this as GuideFavorite).id), stripHtmlTags: true);
     }
