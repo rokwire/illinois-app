@@ -370,10 +370,10 @@
     "panel.browse.entry.wallet.illini_id_card.title": "ID Card",
     "panel.browse.entry.wallet.library_card.title": "Library Card",
 
-    "panel.browse.entry.wellness.rings.title": "Rings",
-    "panel.browse.entry.wellness.todo.title": "To Do",
-    "panel.browse.entry.wellness.tips.title": "Daily Tips",
-    "panel.browse.entry.wellness.wellness_resources.title": "Wellness Resources",
+    "panel.browse.entry.wellness.wellness_rings.title": "Rings",
+    "panel.browse.entry.wellness.wellness_todo.title": "To-Do",
+    "panel.browse.entry.wellness.wellness_tips.title": "Daily Tips",
+    "panel.browse.entry.wellness.wellness_resources.title": "Resources",
 
     "panel.search.header.title":"Search",
     "panel.search.label.search_for":"Searching only Events Titles",
@@ -2529,9 +2529,6 @@
     "widget.home.safer.button.wellness_answer_center.description": "Get answers to your questions.",
     "widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
 
-    "widget.home.wellness.label.title": "Wellness",
-    "widget.home.wellness.text.empty.description": "Tap the \u2606 on items in Wellness so you can quickly find them here.",
-
     "widget.home.wallet.label.title": "Wallet",
     "widget.home.wallet.text.empty.description": "Tap the \u2606 on items in Wallet so you can quickly find them here.",
 
@@ -2594,7 +2591,7 @@
     "widget.home.tout.button.info.hint": "Tap for more info",
     "widget.home.tout.popup.info.content": "To change your first name in the Illinois app, review the <a href='{{preferred_first_name_url}}'>preferred name instructions</a>.",
 
-    "widget.home.wellness.todo.title": "MY TO-DO LIST",
+    "widget.home.wellness.todo.title": "My To-Do List",
     "widget.home.wellness.todo.items.today.label": "TODAY'S ITEMS",
     "widget.home.wellness.todo.items.today.empty.msg": "You have no to-do items for today.",
     "widget.home.wellness.todo.items.unassigned.label": "UNASSIGNED ITEMS",
@@ -2604,11 +2601,11 @@
     "widget.home.wellness.todo.items.view_all.label": "View All",
     "widget.home.wellness.todo.items.view_all.hint": "Tap to view all To Do items",
 
-    "widget.home.wellness.rings.title": "DAILY WELLNESS RINGS",
+    "widget.home.wellness.rings.title": "Daily Wellness Rings",
     "widget.home.wellness.rings.view_all.label": "View All",
     "widget.home.wellness.rings.view_all.hint": "Tap to view all rings",
 
-    "widget.home.wellness.tips.title": "DAILY TIPS",
+    "widget.home.wellness.tips.title": "Daily Wellness Tip",
 
     "widget.home.favorites.title.events": "My Events",
     "widget.home.favorites.title.dining": "My Dining Locations",

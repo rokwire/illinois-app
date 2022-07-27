@@ -368,10 +368,10 @@
 	"panel.browse.entry.wallet.illini_id_card.title": "身份證",
 	"panel.browse.entry.wallet.library_card.title": "借書卡",
 
-	"panel.browse.entry.wellness.rings.title": "戒指",
-	"panel.browse.entry.wellness.todo.title": "去做",
-	"panel.browse.entry.wellness.tips.title": "每日提示",
-	"panel.browse.entry.wellness.wellness_resources.title": "健康資源",
+	"panel.browse.entry.wellness.wellness_rings.title": "戒指",
+	"panel.browse.entry.wellness.wellness_todo.title": "去做",
+	"panel.browse.entry.wellness.wellness_tips.title": "每日提示",
+	"panel.browse.entry.wellness.wellness_resources.title": "資源",
 
 	"panel.search.label.search_for":"搜索",
 	"panel.search.label.results_for":"结果为",
@@ -2522,9 +2522,6 @@
 	"widget.home.safer.button.wellness_answer_center.description": "Get answers to your questions.",
 	"widget.home.safer.alert.building_access.privacy_update.msg": "With your privacy level at {{privacy_level_icon}} , you will have to sign in every time to show your building access status. Do you want to change your privacy level to 4 or 5 so you only have to sign in once?",
 
-	"widget.home.wellness.label.title": "健康",
-	"widget.home.wellness.text.empty.description": "在 Wellness 中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
-
 	"widget.home.wallet.label.title": "錢包",
 	"widget.home.wallet.text.empty.description": "在電子錢包中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
 
@@ -2597,11 +2594,11 @@
 	"widget.home.wellness.todo.items.view_all.label": "查看全部",
 	"widget.home.wellness.todo.items.view_all.hint": "點按即可查看所有待辦事項",
 
-	"widget.home.wellness.rings.title": "日常健康戒指",
+	"widget.home.wellness.rings.title": "每日健康戒指",
 	"widget.home.wellness.rings.view_all.label": "查看全部",
 	"widget.home.wellness.rings.view_all.hint": "點按即可查看所有戒指",
 
-	"widget.home.wellness.tips.title": "每日提示",
+	"widget.home.wellness.tips.title": "每日健康小貼士",
 
 	"widget.home.favorites.title.events": "我的活動",
 	"widget.home.favorites.title.dining": "我的用餐地點",
