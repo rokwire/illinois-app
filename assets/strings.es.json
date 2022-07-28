@@ -1746,7 +1746,6 @@
     "panel.wellness.todo.items.reminder.set.failed.msg": "No se pudo configurar el recordatorio.",
     "panel.wellness.todo.items.calendar.info.msg": "Toque un punto para configurar un recordatorio o para editar los detalles del elemento.",
 
-    "panel.wellness.resources.header.label": "Recursos de bienestar",
     "panel.wellness.resources.button.all.title": "Ver todo",
     "panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
 
