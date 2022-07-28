@@ -13,6 +13,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -69,8 +70,20 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
   Widget _buildContent(BuildContext context, {bool dropTarget = false }) {
     return Column(key: _contentKey, children: <Widget>[
       Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors?.fillColorSecondary : ((widget.position == 0) ? Styles().colors!.surfaceAccent : Colors.transparent),),
-
-      LongPressDraggable<HomeFavorite>(
+      Semantics(
+        container: true,
+        inMutuallyExclusiveGroup: true,
+        onIncrease: (){
+          widget.dragAndDropHost?.onAccessibilityMove(dragFavoriteId: widget.favoriteId, delta: 1);
+          AppSemantics.announceMessage(context, " moved one position above");
+          // AppSemantics.requestSemanticsUpdates(context);
+        },
+        onDecrease: (){
+          widget.dragAndDropHost?.onAccessibilityMove(dragFavoriteId: widget.favoriteId, delta: -1);
+          AppSemantics.announceMessage(context, " moved one position below");
+          // AppSemantics.requestSemanticsUpdates(context);
+        },
+       child: LongPressDraggable<HomeFavorite>(
         data: HomeFavorite(widget.favoriteId),
         axis: Axis.vertical,
         //affinity: Axis.vertical,
@@ -82,7 +95,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
         feedback: HomeDragFeedback(title: widget.title),
         child: Row(crossAxisAlignment: widget.crossAxisAlignment, children: <Widget>[
 
-          Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
+          Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
             Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
               Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
             ),
@@ -99,7 +112,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
                 
           HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.Handle, prompt: true),
         ],),
-      ),
+      )),
 
       Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors?.fillColorSecondary : Styles().colors!.surfaceAccent,),
     ]);
