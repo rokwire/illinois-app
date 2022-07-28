@@ -872,6 +872,10 @@
 	"panel.explore.button.details.hint":"查看详细信息",
 	"panel.explore.label.spcial_offers.title":"特价销售",
 
+    "panel.explore.button.events.display_type.all.label": "所有活動",
+    "panel.explore.button.events.display_type.multiple.label": "多個事件",
+    "panel.explore.button.events.display_type.single.label": "單項賽事",
+
 	"panel.explore.filter.categories.hint":"按类别过滤",
 	"panel.explore.filter.categories.all":"所有类别",
 	"panel.explore.filter.categories.my":"我的类别",
