@@ -872,6 +872,10 @@
     "panel.explore.button.details.hint":"Ver detalles",
     "panel.explore.label.spcial_offers.title":"Ofertas Especiales",
 
+    "panel.explore.button.events.display_type.all.label": "Todos los eventos",
+    "panel.explore.button.events.display_type.multiple.label": "Múltiples eventos",
+    "panel.explore.button.events.display_type.single.label": "Eventos individuales",
+
     "panel.explore.filter.categories.hint":"Filtrar por categoría",
     "panel.explore.filter.categories.all":"Todas las categorías",
     "panel.explore.filter.categories.my":"Mis categorías",
