@@ -880,6 +880,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
               favoritesList.swap(dragIndex, dropIndex);
               favoritesList.insert(dropIndex, dragFavoriteId);
               Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
+              _ensureVisibleHandle(dragFavoriteId);
               HomeFavorite.log(HomeFavorite(dragFavoriteId));
             }
           }
@@ -889,6 +890,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
               if (result == true) {
                 Auth2().prefs?.setFavorite(HomeFavorite(dragFavoriteId), false);
                 _setSectionFavorites(dragFavoriteId, false);
+                _ensureVisibleHandle(dragFavoriteId);
                 HomeFavorite.log(HomeFavorite(dragFavoriteId));
               }
             });
@@ -905,6 +907,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
               favoritesList.insert(dropIndex, dragFavoriteId);
               Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
               _setSectionFavorites(dragFavoriteId, true);
+              _ensureVisibleHandle(dragFavoriteId);
               HomeFavorite.log(HomeFavorite(dragFavoriteId));
             }
           });
@@ -919,6 +922,16 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         Iterable<Favorite> favorites = avalableSectionFavorites.map((e) => HomeFavorite(e, category: favoriteId));
         Auth2().prefs?.setListFavorite(favorites, value);
       }
+  }
+
+  void _ensureVisibleHandle(String favoriteId) {
+    BuildContext? handleContext = _handleKeys[favoriteId]?.currentContext;
+    if (handleContext != null) {
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        Scrollable.ensureVisible(handleContext, duration: Duration(milliseconds: 300)).then((_) {
+        });
+      });
+    }
   }
 
   GlobalKey _widgetKey(String code) => _widgetKeys[code] ??= GlobalKey();
@@ -942,9 +955,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   void _onEditDone() {
-    //TMP: 
-    //onAccessibilityMove(dragFavoriteId: 'app_help', delta: -1);
-    //return;
     if (mounted) {
       setState(() {
         _isEditing = false;
