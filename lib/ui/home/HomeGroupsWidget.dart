@@ -25,8 +25,8 @@ class HomeMyGroupsWidget extends StatefulWidget {
 
   const HomeMyGroupsWidget({Key? key, required this.contentType, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({required GroupsContentType contentType, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({required GroupsContentType contentType, Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: titleForContentType(contentType),
     );
 
