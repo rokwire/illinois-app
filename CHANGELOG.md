@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Display types "All", "Multiple" and "Single" for events [#2124](https://github.com/rokwire/illinois-app/issues/2124).
 ### Changed
 - Updated some section descriptions in Browse panel [#2126](https://github.com/rokwire/illinois-app/issues/2126).
+### Removed
+- Removed "Wellness Resources" header from wellness resources content widget [#2128](https://github.com/rokwire/illinois-app/issues/2128).
 
 ## [4.1.4] - 2022-07-27
 ### Removed

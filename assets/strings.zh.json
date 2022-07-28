@@ -1748,7 +1748,6 @@
     "panel.wellness.todo.items.reminder.set.failed.msg": "設置提醒失敗.",
     "panel.wellness.todo.items.calendar.info.msg": "點擊一個點以設置提醒或編輯項目詳細信息.",
 
-	"panel.wellness.resources.header.label": "健康資源",
 	"panel.wellness.resources.button.all.title": "查看全部",
 	"panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
 

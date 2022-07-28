@@ -125,20 +125,9 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
 
   Widget _buildContent() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(children: [
-      _buildHeader(),
       _buildLargeButtonsContainer(),
       _buildRegularButtonsContainer(),
     ]));
-  }
-
-  Widget _buildHeader() {
-    return Padding(padding: EdgeInsets.only(left: 5, bottom: 10, right: 5), child:
-      Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Text(Localization().getStringEx('panel.wellness.resources.header.label', 'Wellness Resources'),
-          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)
-        ),
-      ]),
-    );
   }
 
   Widget _buildLargeButtonsContainer() {
