@@ -865,6 +865,53 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
   }
 
+  void onAccessibilityMove({String? dragFavoriteId, int? delta}) {
+    if (dragFavoriteId != null) {
+      List<String> favoritesList = List.from(Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName()) ?? <String>{});
+      int dragIndex = favoritesList.indexOf(dragFavoriteId);
+      if (0 <= dragIndex) {
+        // Moving a favorite item. Where?
+        int dropIndex = dragIndex + (delta ?? 0);
+        if (dropIndex < favoritesList.length) {
+          if (0 <= dropIndex) {
+            // Inside the favorites list => Reorder Favorites
+            if (dragIndex != dropIndex) {
+              favoritesList.swap(dragIndex, dropIndex);
+              favoritesList.insert(dropIndex, dragFavoriteId);
+              Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
+              HomeFavorite.log(HomeFavorite(dragFavoriteId));
+            }
+          }
+          else {
+            // Outside the favorites list => Remove Favorite
+            HomeFavoriteButton.promptFavorite(context, favorite: HomeFavorite(dragFavoriteId)).then((bool? result) {
+              if (result == true) {
+                Auth2().prefs?.setFavorite(HomeFavorite(dragFavoriteId), false);
+                _setSectionFavorites(dragFavoriteId, false);
+                HomeFavorite.log(HomeFavorite(dragFavoriteId));
+              }
+            });
+          }
+        }
+      }
+      else {
+        // Moving unused item. Where?
+        int dropIndex = -1 + (delta ?? 0);
+        if ((0 <= dropIndex) && (dropIndex <= favoritesList.length)) {
+          // Inside favorites list => Add Favorite
+          HomeFavoriteButton.promptFavorite(context, favorite: HomeFavorite(dragFavoriteId)).then((bool? result) {
+            if (result == true) {
+              favoritesList.insert(dropIndex, dragFavoriteId);
+              Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(), LinkedHashSet<String>.from(favoritesList));
+              _setSectionFavorites(dragFavoriteId, true);
+              HomeFavorite.log(HomeFavorite(dragFavoriteId));
+            }
+          });
+        }
+      }
+    }
+  }
+
   void _setSectionFavorites(String favoriteId, bool value) {
       List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.$favoriteId']);            
       if (avalableSectionFavorites != null) {
@@ -971,6 +1018,7 @@ class _HomeHeaderBar extends RootHeaderBar {
 abstract class HomeDragAndDropHost  {
   set isDragging(bool value);
   void onDragAndDrop({String? dragFavoriteId, String? dropFavoriteId, CrossAxisAlignment? dropAnchor});
+  void onAccessibilityMove({String? dragFavoriteId, int? delta});
 }
 
 // HomeFavorite
