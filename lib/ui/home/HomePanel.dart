@@ -940,6 +940,9 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   }
 
   void _onEditDone() {
+    //TMP: 
+    //onAccessibilityMove(dragFavoriteId: 'app_help', delta: -1);
+    //return;
     if (mounted) {
       setState(() {
         _isEditing = false;
