@@ -66,7 +66,9 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
         _ccEnabled = true;
         _showCc(true);
         _startCcHidingTimer();
-        _controller!.play(); // Automatically play video after initialization
+        if (mounted) {
+          _controller!.play(); // Automatically play video after initialization
+        }
       });
     }
   }

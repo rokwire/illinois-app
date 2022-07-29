@@ -71,11 +71,13 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
       _controller = VideoPlayerController.network(tutorialUrl!, closedCaptionFile: _loadClosedCaptions());
       _controller!.addListener(_checkVideoStateChanged);
       _initializeVideoPlayerFuture = _controller!.initialize().then((_) {
-        _currentCaptionText = _controller!.value.caption.text;
-        _ccEnabled = true;
-        _showCc(true);
-        _startCcHidingTimer();
-        _controller!.play(); // Automatically play video after initialization
+          _currentCaptionText = _controller!.value.caption.text;
+          _ccEnabled = true;
+          _showCc(true);
+          _startCcHidingTimer();
+          if (mounted && (ModalRoute.of(context)?.isCurrent ?? false)) {
+            _controller?.play(); // Automatically play video after initialization
+          }
       });
     }
   }
