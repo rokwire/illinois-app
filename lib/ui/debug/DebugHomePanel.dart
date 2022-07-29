@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -359,6 +360,29 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                       child: Container(height: 1, color: Styles().colors?.textSurface ,),),
 
+                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: 'Rate App',
+                            backgroundColor: Styles().colors!.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors!.fillColorPrimary,
+                            borderColor: Styles().colors!.fillColorPrimary,
+                            onTap: _onTapRateApp))),
+
+                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: 'Review App',
+                            backgroundColor: Styles().colors!.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors!.fillColorPrimary,
+                            borderColor: Styles().colors!.fillColorPrimary,
+                            onTap: _onTapReviewApp))),
+
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      child: Container(height: 1, color: Styles().colors?.textSurface ,),),
+
 
                     Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                       child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -688,6 +712,21 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
           _selectedEnv = Config().configEnvironment = env;
         });
     }
+  }
+
+  void _onTapRateApp() async {
+        Future.delayed(Duration(milliseconds: 500)).then((_) {
+          final InAppReview inAppReview = InAppReview.instance;
+          inAppReview.isAvailable().then((bool result) {
+            if (result) {
+              inAppReview.requestReview();
+            }
+          });
+        });
+  }
+
+  void _onTapReviewApp() {
+    InAppReview.instance.openStoreListing(appStoreId: 'id1476075513');
   }
 
   void _onTapHttpProxy() {
