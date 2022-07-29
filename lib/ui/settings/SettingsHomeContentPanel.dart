@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
@@ -23,6 +24,7 @@ import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
@@ -43,13 +45,14 @@ class SettingsHomeContentPanel extends StatefulWidget {
   _SettingsHomeContentPanelState createState() => _SettingsHomeContentPanelState();
 
   static void present(BuildContext context, {SettingsContent? content}) {
-    Navigator.push(
-        context,
-        PageRouteBuilder(
-            settings: RouteSettings(name: routeName),
-            pageBuilder: (context, animation1, animation2) => SettingsHomeContentPanel._(content: content),
-            transitionDuration: Duration.zero,
-            reverseTransitionDuration: Duration.zero));
+    if (ModalRoute.of(context)?.settings.name != routeName) {
+      Navigator.push(context, PageRouteBuilder(
+        settings: RouteSettings(name: routeName),
+        pageBuilder: (context, animation1, animation2) => SettingsHomeContentPanel._(content: content),
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero)
+      );
+    }
   }
 }
 
@@ -68,7 +71,11 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: _DebugContainer(
-            child: RootHeaderBar(title: Localization().getStringEx('panel.settings.home.header.settings.label', 'My Settings'))),
+            child: RootHeaderBar(
+              title: Localization().getStringEx('panel.settings.home.header.settings.label', 'My Settings'),
+              onSettings: _onTapSettings,
+          ),
+        ),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
@@ -167,6 +174,12 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return SettingsCalendarContentWidget();
       case SettingsContent.favorites:
         return Container();
+    }
+  }
+
+  void _onTapSettings() {
+    if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
     }
   }
 
