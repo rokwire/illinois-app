@@ -57,6 +57,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   DateTime? _offsetDate;
   rokwire.ConfigEnvironment? _selectedEnv;
   Set<String> _rangingRegionIds = Set();
+  bool _preparingRatingApp = false;
 
   final TextEditingController _mapThresholdDistanceController = TextEditingController();
   final TextEditingController _geoFenceRegionRadiusController = TextEditingController();
@@ -368,6 +369,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                             fontSize: 16.0,
                             textColor: Styles().colors!.fillColorPrimary,
                             borderColor: Styles().colors!.fillColorPrimary,
+                            progress: _preparingRatingApp,
                             onTap: _onTapRateApp))),
 
                     Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
@@ -715,14 +717,24 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onTapRateApp() async {
-        Future.delayed(Duration(milliseconds: 500)).then((_) {
-          final InAppReview inAppReview = InAppReview.instance;
-          inAppReview.isAvailable().then((bool result) {
+    if (!_preparingRatingApp) {
+      setState(() {
+        _preparingRatingApp = true;
+      });
+      Future.delayed(Duration(milliseconds: 500)).then((_) {
+        final InAppReview inAppReview = InAppReview.instance;
+        inAppReview.isAvailable().then((bool result) {
+          if (mounted) {
+            setState(() {
+              _preparingRatingApp = false;
+            });
             if (result) {
               inAppReview.requestReview();
             }
-          });
+          }
         });
+      });
+    }
   }
 
   void _onTapReviewApp() {
