@@ -30,7 +30,6 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -976,34 +975,3 @@ class _OptionsSection extends StatelessWidget {
   }
 }
 
-class _DebugContainer extends StatefulWidget {
-
-  final Widget _child;
-
-  _DebugContainer({required Widget child}) : _child = child;
-
-  _DebugContainerState createState() => _DebugContainerState();
-}
-
-class _DebugContainerState extends State<_DebugContainer> {
-
-  int _clickedCount = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      child: widget._child,
-      onTap: () {
-        Log.d("On tap debug widget");
-        _clickedCount++;
-
-        if (_clickedCount == 7) {
-          if (Auth2().isDebugManager) {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
-          }
-          _clickedCount = 0;
-        }
-      },
-    );
-  }
-}

@@ -106,6 +106,8 @@ PODS:
     - GoogleUtilities/Logger
   - image_picker (0.0.1):
     - Flutter
+  - in_app_review (0.2.0):
+    - Flutter
   - just_audio (0.0.1):
     - Flutter
   - MapsIndoors (3.28.0):
@@ -167,6 +169,7 @@ DEPENDENCIES:
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - GoogleMaps (= 3.10.0)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
+  - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - MapsIndoors (= 3.28.0)
   - MeridianSDK (= 7.5.0)
@@ -239,6 +242,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   image_picker:
     :path: ".symlinks/plugins/image_picker/ios"
+  in_app_review:
+    :path: ".symlinks/plugins/in_app_review/ios"
   just_audio:
     :path: ".symlinks/plugins/just_audio/ios"
   notification_permissions:
@@ -294,6 +299,7 @@ SPEC CHECKSUMS:
   GoogleMaps: 8c080862ff2748ece9929471b30feb56a6c5079d
   GoogleUtilities: 684ee790a24f73ebb2d1d966e9711c203f2a4237
   image_picker: 9aa50e1d8cdacdbed739e925b7eea16d014367e6
+  in_app_review: 4a97249f7a2f539a0f294c2d9196b7fe35e49541
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   MapsIndoors: 3a0896d7fcf4d0345924464e7da8167e96cd173d
   MeridianSDK: a730a7109642b2888a3cbae0a5faad53e78d04f5
