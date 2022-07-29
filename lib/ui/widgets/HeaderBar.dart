@@ -240,8 +240,9 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
 class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
 
   final String? title;
+  final void Function()? onSettings;
 
-  RootHeaderBar({Key? key, this.title}) : super(key: key);
+  RootHeaderBar({Key? key, this.title, this.onSettings}) : super(key: key);
 
   @override
   State<RootHeaderBar> createState() => _RootHeaderBarState();
@@ -326,9 +327,11 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
   }
 
   void onTapSettings(BuildContext context) {
-    String? currentRouteName = ModalRoute.of(context)?.settings.name;
-    if (currentRouteName != SettingsHomeContentPanel.routeName) {
-      Analytics().logSelect(target: "Settings");
+    Analytics().logSelect(target: "Settings");
+    if (onSettings != null) {
+      onSettings!();
+    }
+    else {
       SettingsHomeContentPanel.present(context);
     }
   }
