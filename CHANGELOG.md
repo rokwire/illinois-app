@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Show multiple (composite) events as single event (super event) with horizontal scroll of sub events [#2140](https://github.com/rokwire/illinois-app/issues/2140).
+### Added
+- Add Semantics label for Onboarding2ViedeoTutorialPanel. Used as accessibility id.[#1660](https://github.com/rokwire/illinois-app/issues/1660).
 
 ## [4.1.6] - 2022-07-29
 ### Added
@@ -15,7 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated "To-Do List" and "Daily Tip" entries from "Wellness" section in Browse panel [#2107](https://github.com/rokwire/illinois-app/issues/2107).
 ### Added
 - Fixed audio playback when video tutorial is skipped [#2136](https://github.com/rokwire/illinois-app/issues/2136).
-- Add Semantics label for Onboarding2ViedeoTutorialPanel. Used as accessibility id.[#1660](https://github.com/rokwire/illinois-app/issues/1660).
 
 ## [4.1.5] - 2022-07-28
 ### Added
