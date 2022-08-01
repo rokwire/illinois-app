@@ -299,7 +299,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
     }
 
     if(quantity == null) {
-      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.ring.create.empty.quantity.msg', 'Please, fill quantity field.'));
+      AppAlert.showDialogResult(context, Localization().getStringEx('panel.wellness.ring.create.empty.quantity.msg', 'Please, fill quantity field with valid number.'));
       return;
     }
 
@@ -444,7 +444,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
     return value % 1 == 0 ? value.toInt() : value;
   }
 
-  double _toDouble(String value){
+  double? _toDouble(String value){
     int? intValue = int.tryParse(value);
     if(intValue != null){
       return intValue.toDouble();
@@ -455,6 +455,6 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
       return doubleValue;
     }
 
-    return 0;
+    return null;
   }
 }
