@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Show multiple (composite) events as single event (super event) with horizontal scroll of sub events [#2140](https://github.com/rokwire/illinois-app/issues/2140).
 - Texts for App Feedback in Settings [#1933](https://github.com/rokwire/illinois-app/issues/1933).
+- Show logo and right status text in MTD Bus Pass panel only if the user is member of "MTD Bus Pass" group [#2143].
 ### Added
 - Add Semantics label for Onboarding2ViedeoTutorialPanel. Used as accessibility id.[#1660](https://github.com/rokwire/illinois-app/issues/1660).
 
