@@ -104,6 +104,8 @@ class Config extends rokwire.Config {
   String? get wellness8DimensionsUrl => JsonUtils.stringValue(otherUniversityServices['wellness_8_dimensions_url']);
   String? get wpgufmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['wpgufm_radio_url']);
   String? get preferredFirstNameStmntUrl => JsonUtils.stringValue(otherUniversityServices['preferred_first_name_stmnt_url']);
+  String? get rokwirePlatformUrl     => JsonUtils.stringValue(otherUniversityServices['rokwire_platform_url']);
+  String? get smartHealthyInitiativeUrl  => JsonUtils.stringValue(otherUniversityServices['smart_healthy_initiative_url']);
 
   // Getters: Platform Building Blocks
   String? get gatewayUrl             => JsonUtils.stringValue(platformBuildingBlocks['gateway_url']);
