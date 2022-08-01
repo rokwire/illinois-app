@@ -156,7 +156,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
                       height: playerHeight,
                       child: Stack(alignment: Alignment.center, children: [
                         Stack(children: [
-                          Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: VideoPlayer(_controller!))),
+                          Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: Semantics(label: Localization().getStringEx('panel.onboarding2.video.semantics.label', 'Onboarding video'), child: VideoPlayer(_controller!)))),
                           ClosedCaption(
                               text: _currentCaptionText, textStyle: TextStyle(fontSize: 16, color: Styles().colors!.white))
                         ]),
