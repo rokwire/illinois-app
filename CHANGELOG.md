@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show logo and right status text in MTD Bus Pass panel only if the user is member of "MTD Bus Pass" group [#2143].
 ### Added
 - Add Semantics label for Onboarding2ViedeoTutorialPanel. Used as accessibility id.[#1660](https://github.com/rokwire/illinois-app/issues/1660).
-
+### Fixed 
+- WellnessRingCreatePanel fixed goal input validation. [#2163](https://github.com/rokwire/illinois-app/issues/2163).
 ## [4.1.6] - 2022-07-29
 ### Added
 - In-App Review test in DebugHomePanel [#2131](https://github.com/rokwire/illinois-app/issues/2131).
