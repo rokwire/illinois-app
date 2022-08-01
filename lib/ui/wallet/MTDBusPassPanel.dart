@@ -270,8 +270,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Widget _buildBusNumberContent() {
-    bool busNumberVisible = FlexUI().hasFeature('mtd_bus_number') && StringUtils.isNotEmpty(_busNumber);
-    return Visibility(visible: busNumberVisible, child: Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         _buildBusIcon(),
@@ -285,7 +284,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
               )),
         ),
       ],
-    ));
+    );
   }
 
   Widget _buildBusIcon(){
