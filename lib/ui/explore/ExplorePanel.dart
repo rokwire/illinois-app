@@ -267,6 +267,9 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _changeItemsDropDownValuesVisibility() {
+    if (_filterOptionsVisible) {
+      _deactivateSelectedFilters();
+    }
     _itemsDropDownValuesVisible = !_itemsDropDownValuesVisible;
     if (mounted) {
       setState(() {});
@@ -274,6 +277,9 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _changeEventsDisplayDropDownValuesVisibility() {
+    if (_filterOptionsVisible) {
+      _deactivateSelectedFilters();
+    }
     _eventsDisplayDropDownValuesVisible = !_eventsDisplayDropDownValuesVisible;
     if (mounted) {
       setState(() {});
@@ -563,15 +569,7 @@ class ExplorePanelState extends State<ExplorePanel>
         displayEvents = [];
         for (Event event in allEvents) {
           if (event.isComposite) {
-            if (event.isRecurring) {
-              for (Event recurringEvent in event.recurringEvents!) {
-                displayEvents.add(recurringEvent);
-              }
-            } else if ((event.isSuperEvent == true) && CollectionUtils.isNotEmpty(event.subEvents)) {
-              for (Event subEvent in event.subEvents!) {
-                displayEvents.add(subEvent);
-              }
-            }
+            displayEvents.add(event);
           }
         }
         break;
