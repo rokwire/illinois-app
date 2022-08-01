@@ -267,6 +267,9 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _changeItemsDropDownValuesVisibility() {
+    if (_filterOptionsVisible) {
+      _deactivateSelectedFilters();
+    }
     _itemsDropDownValuesVisible = !_itemsDropDownValuesVisible;
     if (mounted) {
       setState(() {});
@@ -274,6 +277,9 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _changeEventsDisplayDropDownValuesVisibility() {
+    if (_filterOptionsVisible) {
+      _deactivateSelectedFilters();
+    }
     _eventsDisplayDropDownValuesVisible = !_eventsDisplayDropDownValuesVisible;
     if (mounted) {
       setState(() {});
