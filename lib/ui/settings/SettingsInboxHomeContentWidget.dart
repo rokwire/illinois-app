@@ -897,14 +897,14 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
                 Expanded(child:
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     StringUtils.isNotEmpty(widget.message?.category) ?
-                      Padding(padding: EdgeInsets.only(bottom: 3), child:
+                      Padding(padding: EdgeInsets.only(bottom: 3, right: 12), child:
                         Row(children: [
                           Expanded(child:
                             Text(widget.message?.category ?? '', semanticsLabel: "Category: ${widget.message?.category ?? ''}, ",style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))
                       )])) : Container(),
                     
                     StringUtils.isNotEmpty(widget.message?.subject) ?
-                      Padding(padding: EdgeInsets.only(bottom: 4), child:
+                      Padding(padding: EdgeInsets.only(bottom: 4, right: 12), child:
                         Row(children: [
                           Expanded(child:
                             Text(widget.message?.subject ?? '', semanticsLabel: "Subject: ${widget.message?.subject ?? ''}, ", style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
@@ -939,7 +939,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
               button: true,
               child:
               GestureDetector(onTap: _onTapFavorite, child:
-                Container(padding: EdgeInsets.all(9), child:
+                Container(padding: EdgeInsets.only(left: 9, right: 9, top: 13, bottom: 9), child:
                   Image.asset(_isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,)
             ),)),),),
         ],)
