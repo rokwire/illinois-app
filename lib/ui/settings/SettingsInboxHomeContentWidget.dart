@@ -927,8 +927,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
             ),
           ),
           Container(color: Styles().colors!.fillColorSecondary, height: 4),
-          // Hide stars for now (#1910).
-          Visibility(visible: false/*Auth2().canFavorite*/, child:
+          Visibility(visible: Auth2().canFavorite, child:
             Align(alignment: Alignment.topRight, child:
             Semantics(
               label: _isFavorite
