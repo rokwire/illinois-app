@@ -22,7 +22,6 @@ abstract class CheckList with Service implements NotificationsListener{
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
   static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
   static const String notifyContentChanged  = "edu.illinois.rokwire.gies.service.content.changed";
-  static const String notifyStudentInfoChanged  = "edu.illinois.rokwire.gies.service.content.student_info.changed";
   static const String notifyExecuteCustomWidgetAction  = "edu.illinois.rokwire.gies.service.content.execute.widget.action";
 
   //Custom actions
@@ -57,9 +56,6 @@ abstract class CheckList with Service implements NotificationsListener{
   List<int>? _progressSteps;
 
   DateTime? _pausedDateTime;
-
-  //custom widgets data
-  Map<String, dynamic>? _studentInfo;
 
   // String checklistName();
 
@@ -104,7 +100,6 @@ abstract class CheckList with Service implements NotificationsListener{
     _buildProgressSteps();
     _loadPageVerification();
     _ensureNavigationPages();
-    _refreshUserInfo();
     if (_pages != null) {
       await super.initService();
     }
@@ -201,16 +196,7 @@ abstract class CheckList with Service implements NotificationsListener{
     return JsonUtils.decodeList(await AppBundle.loadString('assets/gies.json'));
   }
 
-  Future<void> _refreshUserInfo() async{
-    _loadUserInfo().then((value){
-      if(_studentInfo != value) {
-        _studentInfo = value;
-        NotificationService().notify(notifyStudentInfoChanged, {_contentName: ""});
-      }
-    });
-  }
-
-  Future<dynamic> _loadUserInfo() async {
+  Future<dynamic> loadUserInfo() async {
     if(_contentName != giesOnboarding){
       return null;
     }
@@ -567,10 +553,6 @@ abstract class CheckList with Service implements NotificationsListener{
     return false;
   }
 
-  Map<String, dynamic>? get studentInfo{
-    return _studentInfo;
-  }
-
   String get _cacheFileName => "$_contentName.json";
   //Utils
   bool _pageCanComplete(Map? page) {
@@ -673,9 +655,6 @@ abstract class CheckList with Service implements NotificationsListener{
         // name == Groups.notifyGroupCreated ||
         name == Groups.notifyUserGroupsUpdated) {
       _loadPageVerification(notify: true);
-    }
-    else if (name == Auth2.notifyLoginSucceeded) {
-      _refreshUserInfo();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       if (param == AppLifecycleState.resumed) {

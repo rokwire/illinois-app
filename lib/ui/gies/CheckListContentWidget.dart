@@ -19,8 +19,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -1021,11 +1024,15 @@ class ContactInfoWidget extends StatefulWidget{
 }
 
 class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListener{
-  Map<String, dynamic>? studentInfo;
-
+  Map<String, dynamic>? _studentInfo;
+  DateTime? _pausedDateTime;
   @override
   void initState() {
-    NotificationService().subscribe(this, [CheckList.notifyStudentInfoChanged,]);
+    NotificationService().subscribe(this, [
+      Auth2.notifyLoginSucceeded,
+      Auth2.notifyLogout,
+      AppLivecycle.notifyStateChanged,]
+    );
     _loadStudentInfo();
     super.initState();
   }
@@ -1043,25 +1050,34 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
 
   @override
   void onNotification(String name, param) {
-    if(name == CheckList.notifyStudentInfoChanged){
+    if (name == Auth2.notifyLoginSucceeded) {
       if(param != null&& param is Map<String, dynamic> && param.containsKey(widget.contentKey)){
         _loadStudentInfo();
         if(mounted){
           setState(() {});
         }
       }
+    } else if (name == Auth2.notifyLogout){
+      _studentInfo = null;
+      if(mounted){
+        setState(() {});
+      }
+      _loadStudentInfo();
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
     }
   }
 
   Widget _buildContent(){
     List<Widget> content = [];
 
-    if(studentInfo == null || studentInfo!.isEmpty){
+    if(_studentInfo == null || _studentInfo!.isEmpty){
       return Container();
     }
 
     //UIN
-    String? uin = JsonUtils.stringValue(studentInfo!['uin']);
+    String? uin = JsonUtils.stringValue(_studentInfo!['uin']);
     if(StringUtils.isNotEmpty(uin)){
       content.add(
           Container(
@@ -1078,21 +1094,21 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
       content.add(Container(height: 10,));
     }
     //Name
-    content.add(_buildNameEntry(data: studentInfo));
+    content.add(_buildNameEntry(data: _studentInfo));
 
     //Mailing Address
-    Map<String, dynamic>? mailingAddressData = JsonUtils.mapValue(studentInfo!['mailingAddress']);
+    Map<String, dynamic>? mailingAddressData = JsonUtils.mapValue(_studentInfo!['mailingAddress']);
     content.add(_buildTitleEntry(title:"Mailing Address", countyName: JsonUtils.stringValue(mailingAddressData?['County']) ?? ""));
     content.add(Container(height: 10,));
     content.add(_buildAddressEntry(data: mailingAddressData));
 
     //Permanent Address
-    Map<String, dynamic>? permanentAddressData = JsonUtils.mapValue(studentInfo!['permanentAddress']);
+    Map<String, dynamic>? permanentAddressData = JsonUtils.mapValue(_studentInfo!['permanentAddress']);
     content.add(_buildTitleEntry(title:"Permanent Address", countyName: JsonUtils.stringValue(permanentAddressData?['County']) ?? ""));
     content.add(Container(height: 10,));
     content.add(_buildAddressEntry(data: permanentAddressData));
 
-    List<dynamic>? emergencyContracts = JsonUtils.listValue(studentInfo!["emergencycontacts"]);
+    List<dynamic>? emergencyContracts = JsonUtils.listValue(_studentInfo!["emergencycontacts"]);
     if(emergencyContracts!=null && emergencyContracts.isNotEmpty){
       for( int i=0; i<emergencyContracts.length; i++){
         dynamic contractRawData = emergencyContracts[i];
@@ -1251,7 +1267,30 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
     );
   }
 
-  void _loadStudentInfo(){
-    studentInfo = CheckList(widget.contentKey).studentInfo;
+  Future<void> _loadStudentInfo() async{
+    CheckList(widget.contentKey).loadUserInfo().then((value){
+      if(_studentInfo != value) {
+        _studentInfo = value;
+        if(mounted){
+          setState(() {
+            _studentInfo = value;
+          });
+        }
+      }
+    });
   }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+  if (state == AppLifecycleState.paused) {
+    _pausedDateTime = DateTime.now();
+  }
+  else if (state == AppLifecycleState.resumed) {
+    if (_pausedDateTime != null) {
+      Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+      if (Config().refreshTimeout < pausedDuration.inSeconds) {
+        _loadStudentInfo();
+      }
+    }
+  }
+}
 }
