@@ -284,6 +284,8 @@
     "panel.browse.section.laundry.description": "View laundry locations and washer/dryer availability",
     "panel.browse.section.my.title": "My",
     "panel.browse.section.my.description": "Personalized views of everything you are interested in.",
+    "panel.browse.section.notifications.title": "Notifications",
+    "panel.browse.section.notifications.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
     "panel.browse.section.polls.title": "Polls",
     "panel.browse.section.polls.description": "Create, participate and check out results of Polls you and others create.",
     "panel.browse.section.recent.title": "Recent",
@@ -347,6 +349,7 @@
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
 
     "panel.browse.entry.groups.all_groups.title": "All Groups",
+    "panel.browse.entry.groups.my_groups.title": "My Groups",
 
     "panel.browse.entry.laundry.laundry.title": "Laundry",
     "panel.browse.entry.laundry.my_laundry.title": "My Laundry",
@@ -361,6 +364,9 @@
     "panel.browse.entry.my.my_inbox.title": "My Notifications",
     "panel.browse.entry.my.my_campus_guide.title": "My Campus Guide",
     "panel.browse.entry.my.wellness_resources.title": "My Wellness Resources",
+
+    "panel.browse.entry.notifications.inbox.title": "Recent Notifications",
+    "panel.browse.entry.notifications.my_inbox.title": "My Notifications",
 
     "panel.browse.entry.polls.create_poll.title": "Create a Poll",
     "panel.browse.entry.polls.recent_polls.title": "View Polls",
@@ -2590,6 +2596,13 @@
     "widget.home.recent_polls.text.offline": "Recent Polls are not available while offline.",
     "widget.home.recent_polls.button.all.title": "View All",
     "widget.home.recent_polls.button.all.hint": "Tap to view all polls",
+
+    "widget.home.inbox.text.title": "Recent Notifications",
+    "widget.home.inbox.text.empty.description": "Notifications are available right now.",
+    "widget.home.inbox.text.offline": "Notifications are not available while offline.",
+    "widget.home.inbox.text.logged_out": "You need to be logged in to access Notifications.",
+    "widget.home.inbox.button.all.title": "View All",
+    "widget.home.inbox.button.all.hint": "Tap to view all notifications",
 
     "widget.home.laundry.text.title": "Laundry",
     "widget.home.laundry.text.empty.description": "No Laundries are available right now.",

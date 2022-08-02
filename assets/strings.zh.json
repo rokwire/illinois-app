@@ -282,7 +282,9 @@
 	"panel.browse.section.laundry.description": "查看洗衣地點和洗衣機/烘乾機的可用性。",
 	"panel.browse.section.my.title": "我的",
 	"panel.browse.section.my.description": "您感興趣的所有內容的個性化視圖。",
-	"panel.browse.section.polls.title": "民意調查",
+	"panel.browse.section.notifications.title": "通知",
+	"panel.browse.section.notifications.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
+"panel.browse.section.polls.title": "民意調查",
 	"panel.browse.section.polls.description": "創建、參與和查看您和其他人創建的投票結果。",
 	"panel.browse.section.recent.title": "最近的",
 	"panel.browse.section.recent.description": "您最近在應用程序中查看了什麼。 返回以再次輕鬆查看它們。",
@@ -345,6 +347,7 @@
 	"panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 調頻",
 
 	"panel.browse.entry.groups.all_groups.title": "所有組",
+	"panel.browse.entry.groups.my_groups.title": "我的群組",
 
 	"panel.browse.entry.laundry.laundry.title": "洗衣店",
 	"panel.browse.entry.laundry.my_laundry.title": "我的洗衣店",
@@ -359,6 +362,9 @@
 	"panel.browse.entry.my.my_inbox.title": "我的通知",
 	"panel.browse.entry.my.my_campus_guide.title": "我的校園指南",
 	"panel.browse.entry.my.wellness_resources.title": "我的健康資源",
+
+	"panel.browse.entry.notifications.inbox.title": "最近的通知",
+	"panel.browse.entry.notifications.my_inbox.title": "我的通知",
 
 	"panel.browse.entry.polls.create_poll.title": "創建投票",
 	"panel.browse.entry.polls.recent_polls.title": "查看民意調查",
@@ -2583,6 +2589,13 @@
 	"widget.home.recent_polls.text.offline": "最近的民意調查在離線時不可用。",
 	"widget.home.recent_polls.button.all.title": "查看全部",
 	"widget.home.recent_polls.button.all.hint": "點按即可查看所有民意調查",
+
+	"widget.home.inbox.text.title": "最近的通知",
+	"widget.home.inbox.text.empty.description": "通知現在可用。",
+	"widget.home.inbox.text.offline": "最近的通知在離線時不可用。",
+	"widget.home.inbox.text.logged_out": "您需要登錄才能訪問通知。",
+	"widget.home.inbox.button.all.title": "查看全部",
+	"widget.home.inbox.button.all.hint": "點按即可查看所有通知",
 
 	"widget.home.laundry.text.title": "洗衣店",
 	"widget.home.laundry.text.empty.description": "目前沒有洗衣店可用。",

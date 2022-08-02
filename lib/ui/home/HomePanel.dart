@@ -36,6 +36,7 @@ import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeDiningWidget.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
+import 'package:illinois/ui/home/HomeInboxWidget.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
 import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
@@ -383,6 +384,15 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeWPGUFMRadioWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
         return HomeWPGUFMRadioWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
+      }
+    }
+    else if (code == 'inbox') {
+      if (title) {
+        return HomeInboxWidget.title;
+      } else if (handle) {
+        return HomeInboxWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeInboxWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
       }
     }
     else if (code == 'app_help') {

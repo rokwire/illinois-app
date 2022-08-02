@@ -282,6 +282,8 @@
     "panel.browse.section.laundry.description": "Vea las ubicaciones de lavandería y la disponibilidad de lavadoras/secadoras.",
     "panel.browse.section.my.title": "Mi",
     "panel.browse.section.my.description": "Vistas personalizadas de todo lo que te interesa.",
+    "panel.browse.section.notifications.title": "Notificaciones",
+    "panel.browse.section.notifications.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
     "panel.browse.section.polls.title": "Centro",
     "panel.browse.section.polls.description": "Cree, participe y vea los resultados de las encuestas que usted y otros crean.",
     "panel.browse.section.recent.title": "Reciente",
@@ -345,6 +347,7 @@
     "panel.browse.entry.feeds.wpgufm_radio.title": "WPGU 107.1 FM",
 
     "panel.browse.entry.groups.all_groups.title": "Todos los grupos",
+    "panel.browse.entry.groups.my_groups.title": "Mis grupos",
 
     "panel.browse.entry.laundry.laundry.title": "Ropa sucia",
     "panel.browse.entry.laundry.my_laundry.title": "Mi colada",
@@ -359,6 +362,9 @@
     "panel.browse.entry.my.my_inbox.title": "Mis Notificaciones",
     "panel.browse.entry.my.my_campus_guide.title": "Guía de mi campus",
     "panel.browse.entry.my.wellness_resources.title": "Mis recursos de bienestar",
+
+    "panel.browse.entry.notifications.inbox.title": "Notificaciones recientes",
+    "panel.browse.entry.notifications.my_inbox.title": "Mis Notificaciones",
 
     "panel.browse.entry.polls.create_poll.title": "Crear una encuesta",
     "panel.browse.entry.polls.recent_polls.title": "Ver encuestas",
@@ -2583,6 +2589,13 @@
     "widget.home.recent_polls.text.offline": "Las encuestas recientes no están disponibles sin conexión.",
     "widget.home.recent_polls.button.all.title": "Ver todo",
     "widget.home.recent_polls.button.all.hint": "Toca para ver todas las encuestas",
+
+    "widget.home.inbox.text.title": "Notificaciones recientes",
+    "widget.home.inbox.text.empty.description": "Las notificaciones están disponibles ahora mismo.",
+    "widget.home.inbox.text.offline": "Las notificaciones recientes no están disponibles sin conexión.",
+    "widget.home.inbox.text.logged_out": "Debe iniciar sesión para acceder a las notificaciones.",
+    "widget.home.inbox.button.all.title": "Ver Тodo",
+    "widget.home.inbox.button.all.hint": "Toca para ver todas las notificaciones",
 
     "widget.home.laundry.text.title": "Ropa sucia",
     "widget.home.laundry.text.empty.description": "No hay lavanderías disponibles en este momento.",
