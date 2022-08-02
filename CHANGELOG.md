@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fix 2FA issue with MyMcKinley. Open in external browser [#2148](https://github.com/rokwire/illinois-app/issues/2148).
+- Fixed Notifications favorite icon [#1972](https://github.com/rokwire/illinois-app/issues/1972).
+### Added
+- Created Recent Notifications home widget and Notifications section in Browse panel [#1972](https://github.com/rokwire/illinois-app/issues/1972).
 
 ## [4.1.7] - 2022-08-01
 ### Changed
