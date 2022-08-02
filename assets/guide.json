@@ -379,7 +379,7 @@
     {"text":"217-333-2700","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-phone.webp","url":"tel:+1-217-333-2700"},
     {"text":"https://mckinley.illinois.edu","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-web.webp","url":"https://mckinley.illinois.edu"},
     {"text":"1109 S. Lincoln Avenue Urbana, IL 61801","icon":"https://rokwire-images.s3.us-east-2.amazonaws.com/guide/icon-link-location.webp","location":{"location":{"latitude":40.10300924174253,"longitude":-88.2197020642553},"title":"1109 S. Lincoln Avenue Urbana"}}],
-  "buttons":[{"text":"Visit website","url":"https://mckinley.illinois.edu"}],
+  "buttons":[{"text":"Visit website","url":"https://mckinley.illinois.edu", "external": true}],
   "related":["immunizations","health.insurance","pharmacy"]
 },{
   "_id":"sleep",

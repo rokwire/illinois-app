@@ -162,6 +162,8 @@ class Guide with Service implements NotificationsListener {
   }
 
   Future<String?> _loadContentStringFromNet() async {
+    // //TMP:
+    // return AppBundle.loadString('assets/guide.json');
     try {
       Response? response = await Network().get("${Config().contentUrl}/student_guides", auth: Auth2());
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
