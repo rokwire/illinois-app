@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.1.8] - 2022-08-02
 ### Fixed
 - Fix 2FA issue with MyMcKinley. Open in external browser [#2148](https://github.com/rokwire/illinois-app/issues/2148).
 - Fixed Notifications favorite icon [#1972](https://github.com/rokwire/illinois-app/issues/1972).
