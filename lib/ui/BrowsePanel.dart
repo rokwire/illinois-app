@@ -50,6 +50,7 @@ import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -467,6 +468,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "app_help.video_tutorial":        _onTapVideoTutorial(context); break;
       case "app_help.feedback":              _onTapFeedback(context); break;
+      case "app_help.review":                _onTapReview(context); break;
       case "app_help.faqs":                  _onTapFAQs(context); break;
 
       case "athletics.sport_events":         _onTapSportEvents(context); break;
@@ -629,6 +631,11 @@ class _BrowseEntry extends StatelessWidget {
       Navigator.push(
           context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
     }
+  }
+
+  void _onTapReview(BuildContext context) {
+    Analytics().logSelect(target: "Provide Review");
+    InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
   }
 
   bool get _canFAQs => StringUtils.isNotEmpty(Config().faqsUrl);

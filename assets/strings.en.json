@@ -305,6 +305,7 @@
 
     "panel.browse.entry.app_help.video_tutorial.title": "Video Tutorial",
     "panel.browse.entry.app_help.feedback.title": "Feedback",
+    "panel.browse.entry.app_help.review.title": "Review",
     "panel.browse.entry.app_help.faqs.title": "FAQs",
 
     "panel.browse.entry.athletics.my_game_day.title": "My Game Day",
@@ -1278,6 +1279,8 @@
     "panel.settings.home.feedback.description": "Enjoying the app? Missing something? The Illinois app team needs your ideas and input. Thank you!",
     "panel.settings.home.button.feedback.title": "Submit Feedback",
     "panel.settings.home.button.feedback.hint": "",
+    "panel.settings.home.button.review.title": "Review App",
+    "panel.settings.home.button.review.hint": "",
     "panel.settings.home.version.info.label": "Illinois App Version:",
     "panel.settings.home.feedback.app.description.format": "The Illinois app is the official campus app of the University of Illinois Urbana-Champaign. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='{{shci_url}}'>Smart, Healthy Communities Initiative</a> in the office of the Provost at the University of Illinois.",
     "panel.settings.home.copyright.text": "Copyright © 2022 University of Illinois Board of Trustees",
@@ -2840,6 +2843,8 @@
     "widget.home.app_help.feedback.button.description": "Enjoying the app? Missing something? The University of Illinois Smart, Healthy Communities Initiative needs your ideas and input. Thank you!",
     "widget.home.app_help.feedback.label.offline": "Providing a Feedback is not available while offline.",
     "widget.home.app_help.feedback.panel.title": "PROVIDE FEEDBACK",
+    "widget.home.app_help.review.button.title": "Submit Review",
+    "widget.home.app_help.review.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum mauris diam, vitae interdum orci imperdiet et. Proin vehicula pellentesque dignissim.",
     "widget.home.app_help.faqs.button.title": "FAQs",
     "widget.home.app_help.faqs.button.description": "Check your question in frequently asked questions.",
     "widget.home.app_help.faqs.label.offline": "FAQs is not available while offline.",

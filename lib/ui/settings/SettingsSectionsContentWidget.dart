@@ -25,6 +25,7 @@ import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -615,32 +616,35 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     for (int index = 0; index < codes.length; index++) {
       String code = codes[index];
       if (code == 'netid') {
-        contentList.add(RibbonButton(
+        contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
+          RibbonButton(
             backgroundColor: Styles().colors!.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
             progress: (_connectingNetId == true),
             onTap: _onLinkNetIdClicked),
-        );
+        ));
       }
       else if (code == 'phone') {
-        contentList.add(RibbonButton(
+        contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
+          RibbonButton(
             backgroundColor: Styles().colors!.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
-            onTap: () =>
-                _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.phone)),);
+            onTap: () => _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.phone)),
+        ),);
       }
       else if (code == 'email') {
-        contentList.add(RibbonButton(
+        contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
+          RibbonButton(
             backgroundColor: Styles().colors!.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
-            onTap: () =>
-                _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.email)),);
+            onTap: () => _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.email)),
+        ),);
       }
     }
 
@@ -792,36 +796,41 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     descriptionHtml = descriptionHtml.replaceAll(shciUrlMacro, Config().smartHealthyInitiativeUrl ?? '');
 
     return Column(children: <Widget>[
-      Padding(
-          padding: EdgeInsets.symmetric(vertical: 12),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-            Text(Localization().getStringEx("panel.settings.home.feedback.title", "App Feedback"),
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
-            Container(height: 5),
-            Text(
-                Localization().getStringEx("panel.settings.home.feedback.description",
-                    "Enjoying the app? Missing something? The Illinois app team needs your ideas and input. Thank you!"),
-                style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground, fontSize: 16))
-          ])),
-      Padding(
-          padding: EdgeInsets.only(bottom: 20),
-          child: RibbonButton(
-              border: _allBorder,
-              borderRadius: _allRounding,
-              label: Localization().getStringEx("panel.settings.home.button.feedback.title", "Submit Feedback"),
-              onTap: _onFeedbackClicked)),
-      Html(
+      Padding(padding: EdgeInsets.only(top: 12), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Text(Localization().getStringEx("panel.settings.home.feedback.title", "App Feedback"), style:
+            TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+          Container(height: 5),
+          Text(Localization().getStringEx("panel.settings.home.feedback.description",
+            "Enjoying the app? Missing something? The Illinois app team needs your ideas and input. Thank you!"),
+              style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground, fontSize: 16))
+        ])
+      ),
+      Padding(padding: EdgeInsets.only(top: 12), child:
+        RibbonButton(
+          border: _allBorder,
+          borderRadius: _allRounding,
+          label: Localization().getStringEx("panel.settings.home.button.feedback.title", "Submit Feedback"),
+          onTap: _onFeedbackClicked
+        )
+      ),
+      Padding(padding: EdgeInsets.only(top: 2), child:
+        RibbonButton(
+          border: _allBorder,
+          borderRadius: _allRounding,
+          label: Localization().getStringEx("panel.settings.home.button.review.title", "Review App"),
+          onTap: _onReviewClicked
+        )
+      ),
+      Padding(padding: EdgeInsets.only(top: 20), child:
+        Html(
           data: StringUtils.ensureNotEmpty(descriptionHtml),
           onLinkTap: (url, context, attributes, element) => _onTapHtmlLink(url),
           style: {
-            "body": Style(
-                fontFamily: Styles().fontFamilies!.regularIt,
-                color: Styles().colors!.textBackground,
-                fontSize: FontSize(16),
-                textAlign: TextAlign.left,
-                padding: EdgeInsets.zero,
-                margin: EdgeInsets.zero)
-          })
+            "body": Style(fontFamily: Styles().fontFamilies!.regularIt, color: Styles().colors!.textBackground, fontSize: FontSize(16), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero)
+          }
+        ),
+      ),
     ]);
   }
 
@@ -859,6 +868,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     else {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.feedback', 'Providing a Feedback is not available while offline.'));
     }
+  }
+
+  void _onReviewClicked() {
+    Analytics().logSelect(target: "Provide Review");
+    InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
   }
 
   void _onTapHtmlLink(String? url) {
