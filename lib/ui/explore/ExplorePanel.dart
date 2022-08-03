@@ -534,9 +534,12 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     if (_shouldLoadGames(categories)) {
       List<DateTime?> gamesTimeFrame = _getGamesTimeFrame(eventFilter);
-      List<Explore>? games = await Sports().loadGames(startDate: gamesTimeFrame.first, endDate: gamesTimeFrame.last);
+      List<Game>? games = await Sports().loadGames(startDate: gamesTimeFrame.first, endDate: gamesTimeFrame.last);
       if (CollectionUtils.isNotEmpty(games)) {
-        explores.addAll(games!);
+        List<Game>? displayGames = _buildDisplayGames(games!);
+        if (CollectionUtils.isNotEmpty(displayGames)) {
+          explores.addAll(displayGames!);
+        }
       }
     }
     _sortExplores(explores);
@@ -583,6 +586,32 @@ class ExplorePanelState extends State<ExplorePanel>
         break;
     }
     return displayEvents;
+  }
+
+  List<Game>? _buildDisplayGames(List<Game> allGames) {
+    List<Game>? displayGames;
+    switch (_selectedEventsDisplayType) {
+      case EventsDisplayType.all:
+        displayGames = allGames;
+        break;
+      case EventsDisplayType.multiple:
+        displayGames = [];
+        for (Game game in allGames) {
+          if (game.isMoreThanOneDay) {
+            displayGames.add(game);
+          }
+        }
+        break;
+      case EventsDisplayType.single:
+        displayGames = [];
+        for (Game game in allGames) {
+          if (!game.isMoreThanOneDay) {
+            displayGames.add(game);
+          }
+        }
+        break;
+    }
+    return displayGames;
   }
 
   ///
