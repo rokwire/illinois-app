@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Show events that last more than one day in "Multiple Events" [#2158](https://github.com/rokwire/illinois-app/issues/2158).
+- Updated "No MTD Buss Pass" text [#2160](https://github.com/rokwire/illinois-app/issues/2160).
 
 ## [4.1.8] - 2022-08-02
 ### Fixed

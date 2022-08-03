@@ -178,7 +178,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
     bool busPassAvailable = FlexUI().hasFeature('mtd_bus_pass');
     String description = busPassAvailable ?
       Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus operator as you board.") :
-      Localization().getStringEx("panel.bus_pass.error.disabled.text", "No MTD Bus Pass found.");
+      Localization().getStringEx("panel.bus_pass.error.disabled.text", "You do not have an MTD Bus Pass.");
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
       Column(children: <Widget>[
         _buildAvatar(),
