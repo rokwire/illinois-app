@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Notifications favorite icon [#1972](https://github.com/rokwire/illinois-app/issues/1972).
 ### Added
 - Created Recent Notifications home widget and Notifications section in Browse panel [#1972](https://github.com/rokwire/illinois-app/issues/1972).
+- Introduce Gies checklist custom widget: student_courses_list [#2152](https://github.com/rokwire/illinois-app/issues/2152).
 
 ## [4.1.7] - 2022-08-01
 ### Changed

@@ -574,6 +574,8 @@ class _CheckListPageWidget extends StatelessWidget{
       switch (name) {
         case "student_info":
           return ContactInfoWidget(contentKey: contentKey, params: params,);
+        case "student_courses_list" :
+          return CoursesListWidget(contentKey: contentKey, params: params,);
       }
     }
     return Container();
@@ -1293,4 +1295,184 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
     }
   }
 }
+}
+
+class CoursesListWidget extends StatefulWidget{
+  final String contentKey;
+  final Map<String, dynamic>? params;
+
+  const CoursesListWidget({Key? key, this.params, required this.contentKey}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _CoursesListState();
+
+}
+
+class _CoursesListState extends State<CoursesListWidget> with NotificationsListener{
+  List<dynamic>? _coursesList;
+  DateTime? _pausedDateTime;
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      Auth2.notifyLoginSucceeded,
+      Auth2.notifyLogout,
+      AppLivecycle.notifyStateChanged,]
+    );
+    _loadData();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildContent();
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Auth2.notifyLoginSucceeded) {
+      if(param != null&& param is Map<String, dynamic> && param.containsKey(widget.contentKey)){
+        _loadData();
+        if(mounted){
+          setState(() {});
+        }
+      }
+    } else if (name == Auth2.notifyLogout){
+      _coursesList = null;
+      if(mounted){
+        setState(() {});
+      }
+      _loadData();
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  Widget _buildContent(){
+    List<Widget> content = [];
+
+    if(_coursesList == null || _coursesList!.isEmpty){
+      return Container();
+    }
+
+    content.add(Text("Student Courses",
+      style: TextStyle(
+        color: Styles().colors!.fillColorPrimary,
+        fontFamily: Styles().fontFamilies!.bold,
+        fontSize: 18,
+      ),),);
+    content.add(Container(height: 10,));
+
+    for(dynamic courseData in _coursesList!){
+      Map<String, dynamic>? data = JsonUtils.mapValue(courseData);
+      var entryWidget = data!= null ? _buildEntry(data: data): null;
+      if(entryWidget != null){
+        content.add(entryWidget);
+        content.add(Container(height: 10,));
+      }
+    }
+
+    return Container(
+        child: Row( children: [
+          Expanded(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: content),
+          )
+        ])
+    );
+  }
+
+  Widget? _buildEntry({Map<String, dynamic>? data,}){
+    if(data == null || data.isEmpty)
+      return Container();
+
+    List<Widget> content = [];
+    String? instructor = JsonUtils.stringValue(data['instructor'] );
+    String? number = JsonUtils.stringValue(data['number']);
+    String? section = JsonUtils.stringValue(data['section'] );
+    String? subject = JsonUtils.stringValue(data['subject'] );
+    String? term = JsonUtils.stringValue(data['term'] );
+    String? title = JsonUtils.stringValue(data['title'] );
+
+    if(StringUtils.isNotEmpty(title)){
+      content.add( _buildTextEntry(title:"Title", value: title) ?? Container());
+    }
+
+    if(StringUtils.isNotEmpty(subject)){
+      content.add( _buildTextEntry(title:"Subject", value: subject) ?? Container());
+    }
+
+    if(StringUtils.isNotEmpty(instructor)){
+      content.add( _buildTextEntry(title:"Instructor", value: instructor) ?? Container());
+    }
+
+    if(StringUtils.isNotEmpty(number)){
+      content.add( _buildTextEntry(title:"Number", value: number) ?? Container());
+    }
+
+    if(StringUtils.isNotEmpty(section)){
+      content.add( _buildTextEntry(title:"Section", value: section) ?? Container());
+    }
+
+    if(StringUtils.isNotEmpty(term)){
+      content.add( _buildTextEntry(title:"Term", value: term) ?? Container());
+    }
+
+    return Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: content,
+        )
+    );
+  }
+
+  Widget? _buildTextEntry({String? title, String? value}){
+    if(StringUtils.isEmpty(title)){
+      return null;
+    }
+
+    return Container(
+      padding: EdgeInsets.only(bottom: 5),
+      child: Text("$title: $value",
+        style: TextStyle(
+        color: Styles().colors!.fillColorPrimary,
+        fontFamily: Styles().fontFamilies!.regular,
+        fontSize: 18,
+      ),),
+    );
+  }
+
+  Future<void> _loadData() async{
+    CheckList(widget.contentKey).loadCourses().then((value){
+      if(_coursesList != value) {
+        _coursesList = value;
+        if(mounted){
+          setState(() {
+            _coursesList = value;
+          });
+        }
+      }
+    });
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _loadData();
+        }
+      }
+    }
+  }
 }

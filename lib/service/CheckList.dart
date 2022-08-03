@@ -151,9 +151,9 @@ abstract class CheckList with Service implements NotificationsListener{
 
   Future<String?> _loadContentStringFromNet() async {
     //TMP: load from app assets
-    // if(_contentName == "new_student"){
+    // if(_contentName == CheckList.uiucOnboarding){
     //   return AppBundle.loadString('assets/newStudent.json');
-    // } else if(_contentName == "gies"){
+    // } else {
     //   return AppBundle.loadString('assets/gies.json');
     // }
 
@@ -224,6 +224,31 @@ abstract class CheckList with Service implements NotificationsListener{
     }
   }
 
+  Future<List<dynamic>?> loadCourses() async {
+    if(_contentName != giesOnboarding){
+      return null;
+    }
+    if (StringUtils.isEmpty(Config().gatewayUrl)) {
+      Log.e('Missing gateway url.');
+      return null;
+    }
+
+    String? contactInfoUrl = "${Config().gatewayUrl}/courses/giescourses?id=${Auth2().uin}";
+    String? token = Auth2().uiucToken?.accessToken;
+
+    Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: {"External-Authorization":token});
+
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    Log.d("Student Courses Request: ${response?.request.toString()}  Response: $responseCode : $responseString");
+
+    if (responseCode == 200) {
+      return JsonUtils.decodeList(responseString);
+    } else {
+      Log.e('Failed to load Contact Info. Response code: $responseCode, Response:\n$responseString');
+      return null;
+    }
+  }
   void _buildProgressSteps() {
     _progressPages = Map<int, Set<String>>();
     if ((_pages != null) && _pages!.isNotEmpty) {
