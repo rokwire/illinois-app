@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.1.9] - 2022-08-03
 ### Changed
 - Show events that last more than one day in "Multiple Events" [#2158](https://github.com/rokwire/illinois-app/issues/2158).
 - Updated "No MTD Buss Pass" text [#2160](https://github.com/rokwire/illinois-app/issues/2160).
