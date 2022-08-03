@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Show events that last more than one day in "Multiple Events" [#2158](https://github.com/rokwire/illinois-app/issues/2158).
 
 ## [4.1.8] - 2022-08-02
 ### Fixed
