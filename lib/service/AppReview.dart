@@ -84,16 +84,6 @@ class AppReview with Service implements NotificationsListener {
     }
   }
 
-  bool get _isValidSession {
-    if (_sessionStartDateTime != null) {
-      Duration sessionDuration = DateTime.now().difference(_sessionStartDateTime!);
-      if (Config().appReviewSessionDuration < sessionDuration.inSeconds) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   void _onAnalyticsEvent(Map<String, dynamic>? event) {
     String? eventName = (event != null) ? JsonUtils.stringValue(event[Analytics.LogEventName]) : null;
     if ((eventName == Analytics.LogSelectEventName) && _canRequestReview) {
@@ -107,25 +97,45 @@ class AppReview with Service implements NotificationsListener {
     }
   }
 
+  bool get _isValidSession {
+    if (_sessionStartDateTime != null) {
+      Duration sessionDuration = DateTime.now().difference(_sessionStartDateTime!);
+      if (Config().appReviewSessionDuration < sessionDuration.inSeconds) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   bool get _canRequestReview {
     if (Storage().appReviewSessionsCount < Config().appReviewSessionsCount) {
+      // Number of sessions is not enough.
       return false;
     }
 
     if (!_isValidSession) {
-      return false;
+      // Session is less than Config().appReviewSessionDuration.
+      return false; 
     }
 
     int? lastRequestTime = Storage().appReviewRequestTime;
     if (lastRequestTime != null) {
-      DateTime lastRequestMidnight = DateTimeUtils.midnight(DateTime.fromMillisecondsSinceEpoch(lastRequestTime))!;
+      DateTime lastRequestDate = DateTime.fromMillisecondsSinceEpoch(lastRequestTime);
+      if (_sessionStartDateTime?.isBefore(lastRequestDate) ?? false) {
+        // Review allready requested in this session
+        return false;
+      }
+
+      DateTime lastRequestMidnight = DateTimeUtils.midnight(lastRequestDate)!;
       DateTime todayMidnight = DateTimeUtils.midnight(DateTime.now())!;
       int lastRequestDelay = todayMidnight.difference(lastRequestMidnight).inDays;
       if (lastRequestDelay < Config().appReviewRequestTimeout) {
+        // Config().appReviewRequestTimeout not passed since the last request date
         return false;
       }
     }
 
+    // Everything seems OK now.
     return true;
   }
 
