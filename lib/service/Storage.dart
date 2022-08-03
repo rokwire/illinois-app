@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/foundation.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -295,7 +296,6 @@ class Storage extends rokwire.Storage {
 
 
   // On Campus
-
   String get onCampusRegionIdKey => 'edu.illinois.rokwire.on_campus.region_id';
   String? get onCampusRegionId => getStringWithName(onCampusRegionIdKey);
   set onCampusRegionId(String? value) => setStringWithName(onCampusRegionIdKey, value);
@@ -309,7 +309,6 @@ class Storage extends rokwire.Storage {
   set onCampusRegionManualInside(bool? value) => setBoolWithName(onCampusRegionManualInsideKey, value);
 
   // Home Tout
-
   String get homeToutImageUrlKey => 'edu.illinois.rokwire.home.tout.image.url';
   String? get homeToutImageUrl => getStringWithName(homeToutImageUrlKey);
   set homeToutImageUrl(String? value) => setStringWithName(homeToutImageUrlKey, value);
@@ -319,13 +318,11 @@ class Storage extends rokwire.Storage {
   set homeToutImageTime(int? value) => setIntWithName(homeToutImageTimeKey, value);
 
   // Home Welcome 
-
   String get homeWelcomeVisibleKey => 'edu.illinois.rokwire.home.welcome.image.time';
   bool? get homeWelcomeVisible => getBoolWithName(homeWelcomeVisibleKey);
   set homeWelcomeVisible(bool? value) => setBoolWithName(homeWelcomeVisibleKey, value);
 
   // Browse Tout
-
   String get browseToutImageUrlKey => 'edu.illinois.rokwire.browse.tout.image.url';
   String? get browseToutImageUrl => getStringWithName(browseToutImageUrlKey);
   set browseToutImageUrl(String? value) => setStringWithName(browseToutImageUrlKey, value);
@@ -335,7 +332,6 @@ class Storage extends rokwire.Storage {
   set browseToutImageTime(int? value) => setIntWithName(browseToutImageTimeKey, value);
 
   // Home Campus Reminders
-
   String get homeCampusRemindersCategoryKey => 'edu.illinois.rokwire.home.campus_reminders.category';
   String? get homeCampusRemindersCategory => getStringWithName(homeCampusRemindersCategoryKey);
   set homeCampusRemindersCategory(String? value) => setStringWithName(homeCampusRemindersCategoryKey, value);
@@ -345,7 +341,6 @@ class Storage extends rokwire.Storage {
   set homeCampusRemindersCategoryTime(int? value) => setIntWithName(homeCampusRemindersCategoryTimeKey, value);
 
   // Wellness Daily Tips
-
   String get wellnessDailyTipIdKey => 'edu.illinois.rokwire.wellness.daily_tips.id';
   String? get wellnessDailyTipId => getStringWithName(wellnessDailyTipIdKey);
   set wellnessDailyTipId(String? value) => setStringWithName(wellnessDailyTipIdKey, value);
@@ -353,4 +348,16 @@ class Storage extends rokwire.Storage {
   String get wellnessDailyTipTimeKey => 'edu.illinois.rokwire.wellness.daily_tips.time';
   int? get wellnessDailyTipTime => getIntWithName(wellnessDailyTipTimeKey);
   set wellnessDailyTipTime(int? value) => setIntWithName(wellnessDailyTipTimeKey, value);
+
+  // App Review
+  String? get _appReviewVersion  => AppVersion.majorVersion(Config().appVersion, 2);
+  
+  String get appReviewSessionsCountKey  => 'edu.illinois.rokwire.$_appReviewVersion.app_review.sessions.count';
+  int get appReviewSessionsCount => getIntWithName(appReviewSessionsCountKey, defaultValue: 0)!;
+  set appReviewSessionsCount(int? value) => setIntWithName(appReviewSessionsCountKey, value);
+
+  String get appReviewRequestTimeKey  => 'edu.illinois.rokwire.$_appReviewVersion.app_review.request.time';
+  int? get appReviewRequestTime => getIntWithName(appReviewRequestTimeKey);
+  set appReviewRequestTime(int? value) => setIntWithName(appReviewRequestTimeKey, value);
+
 }
