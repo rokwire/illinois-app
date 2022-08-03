@@ -1674,7 +1674,7 @@
 	"panel.bus_pass.header.title": "MTD 公交车票",
 	"panel.bus_pass.button.close.title": "关闭",
 	"panel.bus_pass.description.text": "上車時向巴士運營商展示此屏幕.",
-	"panel.bus_pass.error.disabled.text": "未找到 MTD 巴士通行證。",
+	"panel.bus_pass.error.disabled.text": "您沒有 MTD 巴士通行證。",
 	"panel.bus_pass.error.duplicate.text": "此MTD總線通行證已經顯示在另一台設備上。\n\n每個Illini ID僅一台設備可以顯示MTD總線通行證。",
 	"panel.bus_pass.error.default.text": "無法加載公交通行證",
 
