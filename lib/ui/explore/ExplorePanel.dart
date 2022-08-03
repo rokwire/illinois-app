@@ -568,7 +568,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case EventsDisplayType.multiple:
         displayEvents = [];
         for (Event event in allEvents) {
-          if (event.isComposite) {
+          if (event.isMultiEvent) {
             displayEvents.add(event);
           }
         }
@@ -576,7 +576,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case EventsDisplayType.single:
         displayEvents = [];
         for (Event event in allEvents) {
-          if (!event.isComposite) {
+          if (!event.isMultiEvent) {
             displayEvents.add(event);
           }
         }

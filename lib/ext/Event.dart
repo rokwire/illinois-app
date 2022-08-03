@@ -74,9 +74,7 @@ extension EventExt on Event {
 
   String? get displayDateTime {
     final String dateFormat = 'MMM dd';
-    int eventDays = (endDateGmt?.difference(startDateGmt!).inDays ?? 0).abs();
-    bool eventIsMoreThanOneDay = (eventDays >= 1);
-    if (eventIsMoreThanOneDay) {
+    if (isMoreThanOneDay) {
       String? startDateFormatted = AppDateTime().formatDateTime(startDateGmt, format: dateFormat);
       String? endDateFormatted = AppDateTime().formatDateTime(endDateGmt, format: dateFormat);
       return '$startDateFormatted - $endDateFormatted';
