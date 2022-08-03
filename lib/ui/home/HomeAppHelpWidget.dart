@@ -24,6 +24,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -71,6 +72,14 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
         onTap: _onFeedback,
       );
     }
+    else if ((code == 'review') && _canReview) {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.app_help.review.button.title', 'Submit Review'),
+        description: Localization().getStringEx('widget.home.app_help.review.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum mauris diam, vitae interdum orci imperdiet et. Proin vehicula pellentesque dignissim.'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        onTap: _onReview,
+      );
+    }
     else if ((code == 'faqs') && _canFAQs) {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.app_help.faqs.button.title', 'FAQs'),
@@ -113,6 +122,13 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
       Navigator.push(
           context, CupertinoPageRoute(builder: (context) => WebPanel(url: feedbackUrl, title: panelTitle,)));
     }
+  }
+
+  bool get _canReview => true;
+
+  void _onReview() {
+    Analytics().logSelect(target: "Review", source: widget.runtimeType.toString());
+    InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
   }
 
   bool get _canFAQs => StringUtils.isNotEmpty(Config().faqsUrl);

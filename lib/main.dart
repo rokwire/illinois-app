@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CheckList.dart';
@@ -138,9 +139,9 @@ void main() async {
     WellnessRings(),
     WPGUFMRadio(),
     Laundries(),
+    AppReview(),
 
     // These do not rely on Service initialization API so they are not registered as services.
-    // Laundries(),
     // Content(),
   ]);
   

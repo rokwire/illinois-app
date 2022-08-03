@@ -738,10 +738,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   }
 
   void _onTapReviewApp() {
-    String? appStoreUrl = MapPathKey.entry(Config().upgradeInfo, 'url.ios');
-    Uri? uri = (appStoreUrl != null) ? Uri.tryParse(appStoreUrl) : null;
-    String? appStoreId = ((uri != null) && uri.pathSegments.isNotEmpty) ? uri.pathSegments.last : null;
-    InAppReview.instance.openStoreListing(appStoreId: appStoreId);
+    InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
   }
 
   void _onTapHttpProxy() {

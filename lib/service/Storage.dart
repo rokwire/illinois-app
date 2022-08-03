@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/foundation.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -72,88 +73,39 @@ class Storage extends rokwire.Storage {
     return setBoolWithName(name, value);
   }
 
-  /////////////
   // Polls
-
   static const String selectedPollTypeKey  = 'selected_poll_type';
+  int? get selectedPollType => getIntWithName(selectedPollTypeKey);
+  set selectedPollType(int? value) => setIntWithName(selectedPollTypeKey, value);
 
-  int? get selectedPollType {
-    return getIntWithName(selectedPollTypeKey);
-  }
-
-  set selectedPollType(int? value) {
-    setIntWithName(selectedPollTypeKey, value);
-  }
-
-  ///////////////
   // On Boarding
-
   static const String onBoardingPassedKey  = 'on_boarding_passed';
+  bool? get onBoardingPassed => getBoolWithName(onBoardingPassedKey, defaultValue: false);
+  set onBoardingPassed(bool? showOnBoarding) => setBoolWithName(onBoardingPassedKey, showOnBoarding);
+
   static const String onBoardingExploreChoiceKey  = 'on_boarding_explore_campus';
+  bool? get onBoardingExploreCampus => getBoolWithName(onBoardingExploreChoiceKey, defaultValue: true);
+  set onBoardingExploreCampus(bool? exploreCampus) => setBoolWithName(onBoardingExploreChoiceKey, exploreCampus);
+
   static const String onBoardingPersonalizeChoiceKey  = 'on_boarding_personalize';
+  bool? get onBoardingPersonalizeChoice => getBoolWithName(onBoardingPersonalizeChoiceKey, defaultValue: true);
+  set onBoardingPersonalizeChoice(bool? personalize) => setBoolWithName(onBoardingPersonalizeChoiceKey, personalize);
+
   static const String onBoardingImproveChoiceKey  = 'on_boarding_improve';
+  bool? get onBoardingImproveChoice => getBoolWithName(onBoardingImproveChoiceKey, defaultValue: true);
+  set onBoardingImproveChoice(bool? personalize) => setBoolWithName(onBoardingImproveChoiceKey, personalize);
 
-  bool? get onBoardingPassed {
-    return getBoolWithName(onBoardingPassedKey, defaultValue: false);
-  }
-
-  set onBoardingPassed(bool? showOnBoarding) {
-    setBoolWithName(onBoardingPassedKey, showOnBoarding);
-  }
-
-  set onBoardingExploreCampus(bool? exploreCampus) {
-    setBoolWithName(onBoardingExploreChoiceKey, exploreCampus);
-  }
-
-  bool? get onBoardingExploreCampus {
-    return getBoolWithName(onBoardingExploreChoiceKey, defaultValue: true);
-  }
-
-  set onBoardingPersonalizeChoice(bool? personalize) {
-    setBoolWithName(onBoardingPersonalizeChoiceKey, personalize);
-  }
-
-  bool? get onBoardingPersonalizeChoice {
-    return getBoolWithName(onBoardingPersonalizeChoiceKey, defaultValue: true);
-  }
-
-  set onBoardingImproveChoice(bool? personalize) {
-    setBoolWithName(onBoardingImproveChoiceKey, personalize);
-  }
-
-  bool? get onBoardingImproveChoice {
-    return getBoolWithName(onBoardingImproveChoiceKey, defaultValue: true);
-  }
-
-  ////////////////////////////
   // Privacy Update Version
-
   static const String privacyUpdateVersionKey  = 'privacy_update_version';
+  String? get privacyUpdateVersion => getStringWithName(privacyUpdateVersionKey);
+  set privacyUpdateVersion(String? value) => setStringWithName(privacyUpdateVersionKey, value);
 
-  String? get privacyUpdateVersion {
-    return getStringWithName(privacyUpdateVersionKey);
-  }
-
-  set privacyUpdateVersion(String? value) {
-    setStringWithName(privacyUpdateVersionKey, value);
-  }
-
-  ////////////////////////////
   // Last Run Version
-
   static const String lastRunVersionKey  = 'last_run_version';
+  String? get lastRunVersion => getStringWithName(lastRunVersionKey);
+  set lastRunVersion(String? value) => setStringWithName(lastRunVersionKey, value);
 
-  String? get lastRunVersion {
-    return getStringWithName(lastRunVersionKey);
-  }
-
-  set lastRunVersion(String? value) {
-    setStringWithName(lastRunVersionKey, value);
-  }
-
-  ////////////////
   // IlliniCash
-
   static const String illiniCashBallanceKey  = '_illinicash_ballance';
   String? get illiniCashBallance => getEncryptedStringWithName(illiniCashBallanceKey);
   set illiniCashBallance(String? value) =>  setEncryptedStringWithName(illiniCashBallanceKey, value);
@@ -162,119 +114,60 @@ class Storage extends rokwire.Storage {
   String? get illiniStudentClassification => getEncryptedStringWithName(illiniStudentClassificationKey);
   set illiniStudentClassification(String? value) =>  setEncryptedStringWithName(illiniStudentClassificationKey, value);
 
-  /////////////////////
   // Twitter
-
   static const String selectedTwitterAccountKey  = 'selected_twitter_account';
   String? get selectedTwitterAccount => getStringWithName(selectedTwitterAccountKey);
   set selectedTwitterAccount(String? value) => setStringWithName(selectedTwitterAccountKey, value);
 
-  /////////////////////
   // Date offset
-
   static const String offsetDateKey  = 'settings_offset_date';
-
-  set offsetDate(DateTime? value) {
-    setStringWithName(offsetDateKey, AppDateTime().formatDateTime(value, ignoreTimeZone: true));
-  }
 
   DateTime? get offsetDate {
     String? dateString = getStringWithName(offsetDateKey);
     return StringUtils.isNotEmpty(dateString) ? DateTimeUtils.dateTimeFromString(dateString) : null;
   }
 
-  /////////////////
-  // Language
+  set offsetDate(DateTime? value) {
+    setStringWithName(offsetDateKey, AppDateTime().formatDateTime(value, ignoreTimeZone: true));
+  }
 
+  // Language
   @override String get currentLanguageKey => 'current_language';
 
-  //////////////
   // Recent Items - backward compatability
-
   static const String recentItemsKey  = '_recent_items_json_string';
-  
-  List<dynamic>? get recentItems {
-    final String? jsonString = getStringWithName(recentItemsKey);
-    return JsonUtils.decode(jsonString);
-  }
+  List<dynamic>? get recentItems => JsonUtils.decode(getStringWithName(recentItemsKey));
+//set recentItems(List<dynamic>? recentItems) => setStringWithName(recentItemsKey, JsonUtils.encode(recentItems));
 
-  /*set recentItems(List<dynamic>? recentItems) {
-    setStringWithName(recentItemsKey, recentItems != null ? json.encode(recentItems) : null);
-  }*/
-
-  //////////////
   // Local Date/Time
-
   static const String useDeviceLocalTimeZoneKey  = 'use_device_local_time_zone';
+  bool? get useDeviceLocalTimeZone => getBoolWithName(useDeviceLocalTimeZoneKey, defaultValue: true);
+  set useDeviceLocalTimeZone(bool? value) => setBoolWithName(useDeviceLocalTimeZoneKey, value);
 
-  bool? get useDeviceLocalTimeZone {
-    return getBoolWithName(useDeviceLocalTimeZoneKey, defaultValue: true);
-  }
-
-  set useDeviceLocalTimeZone(bool? value) {
-    setBoolWithName(useDeviceLocalTimeZoneKey, value);
-  }
-
-
-  //////////////
   // Debug
+  @override String get debugGeoFenceRegionRadiusKey  => 'debug_geo_fence_region_radius';
 
   static const String debugMapThresholdDistanceKey  = 'debug_map_threshold_distance';
-
-  int? get debugMapThresholdDistance {
-    return getIntWithName(debugMapThresholdDistanceKey, defaultValue: 200);
-  }
-
-  set debugMapThresholdDistance(int? value) {
-    setIntWithName(debugMapThresholdDistanceKey, value);
-  }
-
-  @override
-  String get debugGeoFenceRegionRadiusKey  => 'debug_geo_fence_region_radius';
+  int? get debugMapThresholdDistance => getIntWithName(debugMapThresholdDistanceKey, defaultValue: 200);
+  set debugMapThresholdDistance(int? value) => setIntWithName(debugMapThresholdDistanceKey, value);
 
   static const String debugDisableLiveGameCheckKey  = 'debug_disable_live_game_check';
-
-  bool? get debugDisableLiveGameCheck {
-    return getBoolWithName(debugDisableLiveGameCheckKey, defaultValue: false);
-  }
-
-  set debugDisableLiveGameCheck(bool? value) {
-    setBoolWithName(debugDisableLiveGameCheckKey, value);
-  }
+  bool? get debugDisableLiveGameCheck => getBoolWithName(debugDisableLiveGameCheckKey, defaultValue: false);
+  set debugDisableLiveGameCheck(bool? value) => setBoolWithName(debugDisableLiveGameCheckKey, value);
 
   static const String debugMapLocationProviderKey  = 'debug_map_location_provider';
-
-  bool? get debugMapLocationProvider {
-    return getBoolWithName(debugMapLocationProviderKey, defaultValue: false);
-  }
-
-  set debugMapLocationProvider(bool? value) {
-    setBoolWithName(debugMapLocationProviderKey, value);
-  }
+  bool? get debugMapLocationProvider => getBoolWithName(debugMapLocationProviderKey, defaultValue: false);
+  set debugMapLocationProvider(bool? value) => setBoolWithName(debugMapLocationProviderKey, value);
 
   static const String debugMapHideLevelsKey  = 'debug_map_hide_levels';
-
-  bool? get debugMapHideLevels {
-    return getBoolWithName(debugMapHideLevelsKey, defaultValue: false);
-  }
-
-  set debugMapHideLevels(bool? value) {
-    setBoolWithName(debugMapHideLevelsKey, value);
-  }
+  bool? get debugMapHideLevels => getBoolWithName(debugMapHideLevelsKey, defaultValue: false);
+  set debugMapHideLevels(bool? value) => setBoolWithName(debugMapHideLevelsKey, value);
 
   static const String debugLastInboxMessageKey  = 'debug_last_inbox_message';
+  String? get debugLastInboxMessage => getStringWithName(debugLastInboxMessageKey);
+  set debugLastInboxMessage(String? value) => setStringWithName(debugLastInboxMessageKey, value);
 
-  String? get debugLastInboxMessage {
-    return getStringWithName(debugLastInboxMessageKey);
-  }
-
-  set debugLastInboxMessage(String? value) {
-    setStringWithName(debugLastInboxMessageKey, value);
-  }
-
-  //////////////
   // Firebase
-
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';
 // Replacing "firebase_subscription_topis" with "firebase_messaging_subscription_topis" key ensures that
 // all subsciptions will be applied again through Notifications BB APIs
@@ -284,49 +177,26 @@ class Storage extends rokwire.Storage {
   @override String get inboxFirebaseMessagingUserIdKey => 'inbox_firebase_messaging_user_id';
   @override String get inboxUserInfoKey => 'inbox_user_info';
 
-  //////////////
   // Polls
-
-  
   @override String get activePollsKey  => 'active_polls';
 
-  /////////////
   // Styles
-
   @override String get stylesContentModeKey => 'styles_content_mode';
 
-  /////////////
   // Voter
-
   static const String _voterHiddenForPeriodKey = 'voter_hidden_for_period';
+  bool? get voterHiddenForPeriod => getBoolWithName(_voterHiddenForPeriodKey, defaultValue: false);
+  set voterHiddenForPeriod(bool? value) => setBoolWithName(_voterHiddenForPeriodKey, value);
 
-  bool? get voterHiddenForPeriod {
-    return getBoolWithName(_voterHiddenForPeriodKey, defaultValue: false);
-  }
-
-  set voterHiddenForPeriod(bool? value) {
-    setBoolWithName(_voterHiddenForPeriodKey, value);
-  }
-
-  /////////////
   // Http Proxy
-
   @override String get httpProxyEnabledKey => 'http_proxy_enabled';
   @override String get httpProxyHostKey => 'http_proxy_host';
   @override String get httpProxyPortKey => 'http_proxy_port';
   
-  //////////////////
   // Guide
-
   static const String _guideContentSourceKey = 'guide_content_source';
-
-  String? get guideContentSource {
-    return getStringWithName(_guideContentSourceKey);
-  }
-
-  set guideContentSource(String? value) {
-    setStringWithName(_guideContentSourceKey, value);
-  }
+  String? get guideContentSource => getStringWithName(_guideContentSourceKey);
+  set guideContentSource(String? value) => setStringWithName(_guideContentSourceKey, value);
 
   //////////////////
   // Auth2
@@ -346,25 +216,16 @@ class Storage extends rokwire.Storage {
   int? get auth2CardTime => getIntWithName(auth2CardTimeKey);
   set auth2CardTime(int? value) => setIntWithName(auth2CardTimeKey, value);
 
-  //////////////////
   // Calendar
 
   @override String get calendarEventsTableKey => 'calendar_events_table';
   @override String get calendarEnableSaveKey => 'calendar_enabled_to_save';
   @override String get calendarEnablePromptKey => 'calendar_enabled_to_prompt';
 
-  //////////////////
   // Checklist
-
   static const String _navPagesKey  = 'checklist_nav_pages';
-
-  List<String>? getCheckListNavPages(String contentKey) {
-    return getStringListWithName("${contentKey}_$_navPagesKey");
-  }
-
-  setCheckListNavPages(String contentKey, List<String>? value) {
-    setStringListWithName("${contentKey}_$_navPagesKey", value);
-  }
+  List<String>? getCheckListNavPages(String contentKey) => getStringListWithName("${contentKey}_$_navPagesKey");
+  setCheckListNavPages(String contentKey, List<String>? value) => setStringListWithName("${contentKey}_$_navPagesKey", value);
 
   static const String _checkListCompletedPagesKey  = 'checklist_completed_pages';
   
@@ -379,23 +240,13 @@ class Storage extends rokwire.Storage {
   }
 
   static const String _giesNotesKey = 'checklist_notes';
-
-  String? getChecklistNotes(String contentKey) {
-    return getStringWithName("${contentKey}_$_giesNotesKey");
-  }
-
-  setChecklistNotes(String contentKey, String? value) {
-    setStringWithName("${contentKey}_$_giesNotesKey", value);
-  }
+  String? getChecklistNotes(String contentKey) => getStringWithName("${contentKey}_$_giesNotesKey");
+  setChecklistNotes(String contentKey, String? value) => setStringWithName("${contentKey}_$_giesNotesKey", value);
 
   //Groups
   static const String _groupMemberSelectionTableKey = 'group_members_selection';
 
-  set groupMembersSelection(Map<String, List<List<Member>>>? selection){
-    setStringWithName(_groupMemberSelectionTableKey, JsonUtils.encode(selection));
-  }
-
-  Map<String, List<List<Member>>>? get groupMembersSelection{
+  Map<String, List<List<Member>>>? get groupMembersSelection {
     Map<String, List<List<Member>>> result = Map();
     Map<String, dynamic>? table = JsonUtils.decodeMap(getStringWithName(_groupMemberSelectionTableKey));
     // try { return table?.cast<String, List<List<Member>>>(); }
@@ -439,8 +290,12 @@ class Storage extends rokwire.Storage {
     return result;
   }
 
-  // On Campus
+  set groupMembersSelection(Map<String, List<List<Member>>>? selection) {
+    setStringWithName(_groupMemberSelectionTableKey, JsonUtils.encode(selection));
+  }
 
+
+  // On Campus
   String get onCampusRegionIdKey => 'edu.illinois.rokwire.on_campus.region_id';
   String? get onCampusRegionId => getStringWithName(onCampusRegionIdKey);
   set onCampusRegionId(String? value) => setStringWithName(onCampusRegionIdKey, value);
@@ -454,7 +309,6 @@ class Storage extends rokwire.Storage {
   set onCampusRegionManualInside(bool? value) => setBoolWithName(onCampusRegionManualInsideKey, value);
 
   // Home Tout
-
   String get homeToutImageUrlKey => 'edu.illinois.rokwire.home.tout.image.url';
   String? get homeToutImageUrl => getStringWithName(homeToutImageUrlKey);
   set homeToutImageUrl(String? value) => setStringWithName(homeToutImageUrlKey, value);
@@ -464,13 +318,11 @@ class Storage extends rokwire.Storage {
   set homeToutImageTime(int? value) => setIntWithName(homeToutImageTimeKey, value);
 
   // Home Welcome 
-
   String get homeWelcomeVisibleKey => 'edu.illinois.rokwire.home.welcome.image.time';
   bool? get homeWelcomeVisible => getBoolWithName(homeWelcomeVisibleKey);
   set homeWelcomeVisible(bool? value) => setBoolWithName(homeWelcomeVisibleKey, value);
 
   // Browse Tout
-
   String get browseToutImageUrlKey => 'edu.illinois.rokwire.browse.tout.image.url';
   String? get browseToutImageUrl => getStringWithName(browseToutImageUrlKey);
   set browseToutImageUrl(String? value) => setStringWithName(browseToutImageUrlKey, value);
@@ -480,7 +332,6 @@ class Storage extends rokwire.Storage {
   set browseToutImageTime(int? value) => setIntWithName(browseToutImageTimeKey, value);
 
   // Home Campus Reminders
-
   String get homeCampusRemindersCategoryKey => 'edu.illinois.rokwire.home.campus_reminders.category';
   String? get homeCampusRemindersCategory => getStringWithName(homeCampusRemindersCategoryKey);
   set homeCampusRemindersCategory(String? value) => setStringWithName(homeCampusRemindersCategoryKey, value);
@@ -490,7 +341,6 @@ class Storage extends rokwire.Storage {
   set homeCampusRemindersCategoryTime(int? value) => setIntWithName(homeCampusRemindersCategoryTimeKey, value);
 
   // Wellness Daily Tips
-
   String get wellnessDailyTipIdKey => 'edu.illinois.rokwire.wellness.daily_tips.id';
   String? get wellnessDailyTipId => getStringWithName(wellnessDailyTipIdKey);
   set wellnessDailyTipId(String? value) => setStringWithName(wellnessDailyTipIdKey, value);
@@ -498,4 +348,16 @@ class Storage extends rokwire.Storage {
   String get wellnessDailyTipTimeKey => 'edu.illinois.rokwire.wellness.daily_tips.time';
   int? get wellnessDailyTipTime => getIntWithName(wellnessDailyTipTimeKey);
   set wellnessDailyTipTime(int? value) => setIntWithName(wellnessDailyTipTimeKey, value);
+
+  // App Review
+  String? get _appReviewVersion  => AppVersion.majorVersion(Config().appVersion, 2);
+  
+  String get appReviewSessionsCountKey  => 'edu.illinois.rokwire.$_appReviewVersion.app_review.sessions.count';
+  int get appReviewSessionsCount => getIntWithName(appReviewSessionsCountKey, defaultValue: 0)!;
+  set appReviewSessionsCount(int? value) => setIntWithName(appReviewSessionsCountKey, value);
+
+  String get appReviewRequestTimeKey  => 'edu.illinois.rokwire.$_appReviewVersion.app_review.request.time';
+  int? get appReviewRequestTime => getIntWithName(appReviewRequestTimeKey);
+  set appReviewRequestTime(int? value) => setIntWithName(appReviewRequestTimeKey, value);
+
 }
