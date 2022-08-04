@@ -100,6 +100,8 @@ class Auth2 extends rokwire.Auth2 {
   void onAppLivecycleStateChanged(AppLifecycleState? state) {
     super.onAppLivecycleStateChanged(state);
     if (state == AppLifecycleState.resumed) {
+      //Log.d('UIUC Access Token: ${_uiucToken?.accessToken}', lineLength: 512);
+
       _refreshAuthCardIfNeeded();
     }
   }
