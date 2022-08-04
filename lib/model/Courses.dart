@@ -458,4 +458,15 @@ class CourseTerm {
     }
     return values;
   }
+
+  static CourseTerm? currentFromList(List<CourseTerm>? values) {
+    if (values != null) {
+      for (CourseTerm value in values) {
+        if (value.isCurrent == true) {
+          return value;
+        }
+      }
+    }
+    return null;
+  }
 }
