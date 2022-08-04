@@ -73,8 +73,11 @@ extension EventExt on Event {
   ///
 
   String? get displayDateTime {
-    final String dateFormat = 'MMM dd';
+    String dateFormat = 'MMM dd';
     if (isMoreThanOneDay) {
+      if (isNotTheSameYear) {
+        dateFormat += ' yyyy';
+      }
       String? startDateFormatted = AppDateTime().formatDateTime(startDateGmt, format: dateFormat);
       String? endDateFormatted = AppDateTime().formatDateTime(endDateGmt, format: dateFormat);
       return '$startDateFormatted - $endDateFormatted';
