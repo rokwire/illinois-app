@@ -190,8 +190,11 @@ class Game with Explore implements Favorite {
     int secondUtc = dateTimeUtc!.second;
     int millisUtc = dateTimeUtc!.millisecond;
     bool useStringDateTimes = (hourUtc == 0 && minuteUtc == 0 && secondUtc == 0 && millisUtc == 0);
-    final String displayDateFormat = 'MMM dd';
+    String displayDateFormat = 'MMM dd';
     if (isMoreThanOneDay) {
+      if (isNotTheSameYear) {
+        displayDateFormat += ' yyyy';
+      }
       DateTime? startDisplayDate = useStringDateTimes ? date : dateTimeUtc;
       DateTime? endDisplayDate = useStringDateTimes ? (endDate ?? endDateTimeUtc) : endDateTimeUtc;
       String? startDateFormatted = AppDateTime().formatDateTime(startDisplayDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
@@ -209,6 +212,12 @@ class Game with Explore implements Favorite {
   bool get isMoreThanOneDay {
     int gameEventDays = (endDateTimeUtc?.difference(dateTimeUtc!).inDays ?? 0).abs();
     return (gameEventDays >= 1);
+  }
+
+  bool get isNotTheSameYear {
+    int startYear = dateTimeUtc?.year ?? 0;
+    int endYear = endDateTimeUtc?.year ?? 0;
+    return (startYear != endYear);
   }
 
   String? get imageUrl {
