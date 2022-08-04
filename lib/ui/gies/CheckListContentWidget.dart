@@ -1361,7 +1361,7 @@ class _CoursesListState extends State<CoursesListWidget> with NotificationsListe
       return Container();
     }
 
-    content.add(Text("Student Courses",
+    content.add(Text("Registered Courses", //TBD localize
       style: TextStyle(
         color: Styles().colors!.fillColorPrimary,
         fontFamily: Styles().fontFamilies!.bold,
@@ -1440,13 +1440,14 @@ class _CoursesListState extends State<CoursesListWidget> with NotificationsListe
 
     return Container(
       padding: EdgeInsets.only(bottom: 5),
-      child: Text("$title: $value",
-        style: TextStyle(
-        color: Styles().colors!.fillColorPrimary,
-        fontFamily: Styles().fontFamilies!.regular,
-        fontSize: 18,
-      ),),
-    );
+      child: RichText(
+          textAlign: TextAlign.left,
+          text: TextSpan(
+              children:[
+                TextSpan(text:"$title: ", style : CheckListContentWidget._regularText,),
+                TextSpan(text: value!, style : CheckListContentWidget._boldText),
+              ]
+          )));
   }
 
   Future<void> _loadData() async{
