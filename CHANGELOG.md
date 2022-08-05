@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Created My Courses content in Academics / Browse / Favorites panels [#2169](https://github.com/rokwire/illinois-app/issues/2169).
+### Changed
+-Updated Create poll panel to accept 6 options and 250 question limit [#1591](https://github.com/rokwire/illinois-app/issues/1591).
 
 ## [4.1.10] - 2022-08-04
 ### Added
