@@ -50,12 +50,15 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All Categories");
 
   bool _isFilterLoading = false;
-  bool _isGroupsLoading = false;
+  int _groupsLoadingProgress = 0;
   bool _myGroupsBusy = false;
 
   GroupsContentType? _selectedContentType;
 
-  List<Group>? _allGroups;
+  List<Group>? _visibleAllGroups;
+  int? _allGroupsOffset;
+  int? _allGroupsLimit;
+  List<Group>? _userGroups;
 
   String? _selectedCategory;
   List<String>? _categories;
@@ -102,23 +105,47 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   // Data Loading
 
   void _loadGroupsContent() {
+    _loadUserGroups();
+    _loadAllGroups();
+  }
 
-    setState(() {
-      _isGroupsLoading = true;
+  void _loadUserGroups() {
+    _increaseGroupsLoadingProgress();
+    Groups().loadGroups(contentType: GroupsContentType.my).then((List<Group>? groups) {
+      _userGroups = groups;
+      _decreaseGroupsLoadingProgress();
+      _checkGroupsContentLoaded();
     });
+  }
 
-    // Load only my groups if the device is offline - allow the user to reach his groups
-    Groups().loadGroups(contentType: Connectivity().isOffline ? GroupsContentType.my : GroupsContentType.all).then((List<Group>? groups) {
-      if (mounted) {
-        setState(() {
-          _isGroupsLoading = false;
-          _allGroups = groups;
-          if (_selectedContentType == null) {
-            _selectedContentType = _hasMyGroups ? GroupsContentType.my : GroupsContentType.all;
-          }
-        });
-      }
+  void _loadAllGroups() {
+    // Do not load all groups when device is offline
+    if (Connectivity().isOffline) {
+      return;
+    }
+    //TBD: DD - implement paging
+    _increaseGroupsLoadingProgress();
+    Groups().loadGroups(contentType: GroupsContentType.all, allOffset: _allGroupsOffset, allLimit: _allGroupsLimit).then((List<Group>? groups) {
+      _visibleAllGroups = groups;
+      _decreaseGroupsLoadingProgress();
+      _checkGroupsContentLoaded();
     });
+  }
+
+  void _checkGroupsContentLoaded() {
+    if (_isGroupsLoading) {
+      return;
+    }
+    // if all groups are empty and user groups are not then set all groups to be user groups. 
+    // This means that device failed to load all groups for some reason - connectivity issues etc.
+    if (CollectionUtils.isEmpty(_visibleAllGroups) && CollectionUtils.isNotEmpty(_userGroups)) {
+      _visibleAllGroups = _userGroups;
+    }
+    if (_selectedContentType != null) {
+      return;
+    }
+    _selectedContentType = CollectionUtils.isNotEmpty(_userGroups) ? GroupsContentType.my : GroupsContentType.all;
+    _updateState();
   }
 
   Future<void> _loadFilters() async{
@@ -150,24 +177,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
-  bool get _hasMyGroups {
-    if (Auth2().isOidcLoggedIn && Auth2().privacyMatch(4) && (_allGroups != null)) {
-      for (Group group in _allGroups!) {
-        if (group.currentUserIsMemberOrAdminOrPending) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
   bool get _showMyGroups {
     return Auth2().privacyMatch(4);
   }
 
   void _buildMyGroupsAndPending({List<Group>? myGroups, List<Group>? myPendingGroups}) {
-    if (_allGroups != null) {
-      for (Group group in _allGroups!) {
+    if (_userGroups != null) {
+      for (Group group in _userGroups!) {
         Member? currentUserAsMember = group.currentMember;
         if (currentUserAsMember != null) {
           if (currentUserAsMember.isMemberOrAdmin) {
@@ -182,14 +198,14 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   List<Group>? get _filteredAllGroupsContent {
-    if (CollectionUtils.isEmpty(_allGroups)) {
-      return _allGroups;
+    if (CollectionUtils.isEmpty(_visibleAllGroups)) {
+      return _visibleAllGroups;
     }
     // Filter By Category
     String? selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
-    List<Group>? filteredGroups = _allGroups;
+    List<Group>? filteredGroups = _visibleAllGroups;
     if (StringUtils.isNotEmpty(selectedCategory)) {
-      filteredGroups = _allGroups!.where((group) => (selectedCategory == group.category)).toList();
+      filteredGroups = _visibleAllGroups!.where((group) => (selectedCategory == group.category)).toList();
     }
     // Filter by User Tags
     if (_selectedTagFilter == _TagFilter.my) {
@@ -200,6 +216,26 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
 
     return filteredGroups;
+  }
+
+  void _increaseGroupsLoadingProgress() {
+    _groupsLoadingProgress++;
+    _updateState();
+  }
+
+  void _decreaseGroupsLoadingProgress() {
+    _groupsLoadingProgress--;
+    _updateState();
+  }
+
+  void _updateState() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  bool get _isGroupsLoading {
+    return (_groupsLoadingProgress > 0);
   }
 
   bool get _isLoading {
@@ -217,7 +253,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   set _activeFilterType(_FilterType value) {
     if (__activeFilterType != value) {
       __activeFilterType = value;
-      setState(() {});
+      _updateState();
     }
   }
 
@@ -516,7 +552,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildAllGroupsContent(){
-    List<Group>? filteredGroups = CollectionUtils.isNotEmpty(_allGroups) ? _filteredAllGroupsContent : null;
+    List<Group>? filteredGroups = CollectionUtils.isNotEmpty(_visibleAllGroups) ? _filteredAllGroupsContent : null;
     if(CollectionUtils.isNotEmpty(filteredGroups)){
       List<Widget> widgets = [];
       widgets.add(Container(height: 8,));
@@ -530,10 +566,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
     else{
       String text;
-      if (_allGroups == null) {
+      if (_visibleAllGroups == null) {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.failed", "Failed to load groups");
       }
-      else if (_allGroups!.isEmpty) {
+      else if (_visibleAllGroups!.isEmpty) {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.empty", "There are no groups created yet");
       }
       else {
@@ -605,13 +641,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Future<void> _onPullToRefresh() async {
     Analytics().logSelect(target: "Pull To Refresh");
-    // Load only my groups if the device is offline - allow the user to reach his groups
-    List<Group>? groups = await Groups().loadGroups(contentType: Connectivity().isOffline ? GroupsContentType.my : GroupsContentType.all);
-    if (mounted && (groups != null)) {
-      setState(() {
-        _allGroups = groups;
-      });
-    }
+    _loadGroupsContent();
   }
 
   void onTapImage(Group? group){
@@ -625,6 +655,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     Analytics().logSelect(target: "User Profile Image");
     SettingsProfileContentPanel.present(context);
   }
+
+  void _setAllGroupsPagingParams({int? offset, int? limit}) {
+    _allGroupsLimit = limit;
+    _allGroupsOffset = offset;
+  }
   
   bool get _canCreateGroup {
     return Auth2().isOidcLoggedIn && Auth2().privacyMatch(5);
@@ -635,9 +670,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   void onNotification(String name, dynamic param){
     if (name == Groups.notifyUserMembershipUpdated) {
-      if (mounted) {
-        setState(() {});
-      }
+      _updateState();
     }
     else if ((name == Groups.notifyGroupCreated) || (name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted)) {
       if (mounted) {
