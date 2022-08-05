@@ -181,7 +181,8 @@ class Courses with Service implements NotificationsListener {
 
   Future<List<Course>?> loadCourses({required String termId}) async {
     if (StringUtils.isNotEmpty(Config().gatewayUrl) && StringUtils.isNotEmpty(termId) && StringUtils.isNotEmpty(Auth2().uin)) {
-      Response? response = await Network().get("${Config().gatewayUrl}/courses/studentcourses?id=${Auth2().uin}&term=$termId", auth: Auth2(), headers: { ExternalAuthorizationHeader: Auth2().uiucToken?.accessToken });
+      String url = "${Config().gatewayUrl}/courses/studentcourses?id=${Auth2().uin}&termid=$termId";
+      Response? response = await Network().get(url, auth: Auth2(), headers: { ExternalAuthorizationHeader: Auth2().uiucToken?.accessToken });
       String? responseString = (response?.statusCode == 200) ? response?.body : null;
       /* TMP: String? responseString = '''[
         {"coursetitle":"Thesis Research","courseshortname":"TAM 599","coursenumber":"25667","instructionmethod":"IND","coursesection":{"days":"","meeting_dates_or_range":"08/22/2022 - 12/07/2022","room":"","buildingname":"","buildingid":"","instructiontype":"IND","instructor":"Johnson, Harley","start_time":"","endtime":"","building":{"ID":"","Name":"","Number":"","FullAddress":"","Address1":"","Address2":"","City":"","State":"","ZipCode":"","ImageURL":"","MailCode":"","Entrances":null,"Latitude":0,"Longitude":0}}},
