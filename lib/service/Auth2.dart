@@ -12,7 +12,6 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart' as rokwire;
-import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -101,7 +100,8 @@ class Auth2 extends rokwire.Auth2 {
   void onAppLivecycleStateChanged(AppLifecycleState? state) {
     super.onAppLivecycleStateChanged(state);
     if (state == AppLifecycleState.resumed) {
-      //TMP: Log.d('UIUC Access Token: ${_uiucToken?.accessToken}', lineLength: 512);
+      //TMP: Log.d('Core Access Token: ${token?.accessToken}', lineLength: 512);
+      //TMP: Log.d('UIUC Access Token: ${uiucToken?.accessToken}', lineLength: 512);
       _refreshAuthCardIfNeeded();
     }
   }
