@@ -999,7 +999,7 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   Widget _buildMembersCount() {
-    int count = _groupStats?.totalCount ?? 0;
+    int count = _groupStats?.activeMembersCount ?? 0;
     String membersLabel = (count == 1)
         ? Localization().getStringEx('widget.group_card.member.label', 'member')
         : Localization().getStringEx('widget.group_card.members.label', 'members');
@@ -2344,7 +2344,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
   }
 
   int get _groupMembersCount {
-    return _groupStats?.totalCount ?? 0;
+    return _groupStats?.activeMembersCount ?? 0;
   }
 
   void _onPollOptionsTap() {

@@ -1195,6 +1195,6 @@ class _PollCardState extends State<PollCard> {
   }
 
   int get _groupMembersCount {
-    return _groupStats?.totalCount ?? 0;
+    return _groupStats?.activeMembersCount ?? 0;
   }
 }

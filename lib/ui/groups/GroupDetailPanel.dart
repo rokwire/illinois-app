@@ -608,7 +608,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     List<Widget> commands = [];
 
     String members;
-    int membersCount = _groupStats?.totalCount ?? 0;
+    int membersCount = _groupStats?.activeMembersCount ?? 0;
     if (membersCount == 0) {
       members = Localization().getStringEx("panel.group_detail.members.count.empty", "No Current Members");
     }
@@ -1190,7 +1190,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onGroupOptionsTap() {
     Analytics().logSelect(target: 'Group Options', attributes: _group?.analyticsAttributes);
-    int membersCount = _groupStats?.totalCount ?? 0;
+    int membersCount = _groupStats?.activeMembersCount ?? 0;
     String? confirmMsg = (membersCount > 1)
         ? sprintf(
             Localization().getStringEx(
