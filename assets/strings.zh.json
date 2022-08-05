@@ -2708,12 +2708,18 @@
 	"widget.home_prefered_sports.label.womens_sports.hint":"标题2",
 	"widget.home_prefered_sports.label.offline.sports":"离线时无法查看运动。",
     
-	"widget.home_canvas_courses.header.label": "培訓班",
-	"widget.home.home_canvas_courses.text.empty.description": "You do not appear to be enrolled in any Gies Canvas courses.",
-	"widget.home.home_canvas_courses.button.all.title": "查看全部",
-	"widget.home.home_canvas_courses.button.all.hint": "點擊查看所有課程",
+	"widget.home.canvas_courses.header.label": "我的 Gies 帆布課程",
+	"widget.home.canvas_courses.text.empty.description": "您似乎沒有註冊任何 Gies Canvas 課程。",
+	"widget.home.canvas_courses.button.all.title": "查看全部",
+	"widget.home.canvas_courses.button.all.hint": "點擊查看所有課程",
 
-	"widget.home.twitter.header.label": "推特",
+	"widget.home.student_courses.header.label": "我的課程",
+	"widget.home.student_courses.text.empty.description": "您似乎沒有註冊任何課程。",
+	"widget.home.student_courses.text.failed.description": "無法加載課程。",
+    "widget.home.student_courses.button.all.title": "查看全部",
+    "widget.home.student_courses.button.all.hint": "點擊查看所有課程",
+
+		"widget.home.twitter.header.label": "推特",
 	"widget.home.twitter.text.empty.description": "未能加載推文。",
   "widget.home.twitter.button.all.title": "查看全部",
   "widget.home.twitter.button.all.hint": "點擊查看所有推文",

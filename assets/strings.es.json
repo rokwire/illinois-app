@@ -2708,10 +2708,16 @@
     "widget.home_prefered_sports.label.womens_sports.hint":"Encabezado 2",
     "widget.home_prefered_sports.label.offline.sports":"Los deportes no están disponibles sin conexión.",
     
-    "widget.home_canvas_courses.header.label": "Cursos",
-	"widget.home.home_canvas_courses.text.empty.description": "You do not appear to be enrolled in any Gies Canvas courses.",
-    "widget.home.home_canvas_courses.button.all.title": "Ver todo",
-    "widget.home.home_canvas_courses.button.all.hint": "Toca para ver todos los cursos",
+    "widget.home.canvas_courses.header.label": "Mis cursos Gies Canvas",
+	"widget.home.canvas_courses.text.empty.description": "No parece estar inscrito en ningún curso de Gies Canvas.",
+    "widget.home.canvas_courses.button.all.title": "Ver todo",
+    "widget.home.canvas_courses.button.all.hint": "Toca para ver todos los cursos",
+
+    "widget.home.student_courses.header.label": "Mis cursos",
+	"widget.home.student_courses.text.empty.description": "No parece estar inscrito en ningún curso.",
+	"widget.home.student_courses.text.failed.description": "No se pueden cargar los cursos.",
+    "widget.home.student_courses.button.all.title": "Ver todo",
+    "widget.home.student_courses.button.all.hint": "Toca para ver todos los cursos",
 
     "widget.home.twitter.header.label": "Gorjeo",
 	"widget.home.twitter.text.empty.description": "No se pudieron cargar los tuits.",

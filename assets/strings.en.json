@@ -2715,10 +2715,16 @@
     "widget.home_prefered_sports.label.womens_sports.hint":"Header 2",
     "widget.home_prefered_sports.label.offline.sports":"Sports are not available while offline.",
     
-    "widget.home_canvas_courses.header.label": "Courses",
-	"widget.home.home_canvas_courses.text.empty.description": "You do not appear to be enrolled in any Gies Canvas courses.",
-    "widget.home.home_canvas_courses.button.all.title": "View All",
-    "widget.home.home_canvas_courses.button.all.hint": "Tap to view all courses",
+    "widget.home.canvas_courses.header.label": "My Gies Canvas Courses",
+	"widget.home.canvas_courses.text.empty.description": "You do not appear to be enrolled in any Gies Canvas courses.",
+    "widget.home.canvas_courses.button.all.title": "View All",
+    "widget.home.canvas_courses.button.all.hint": "Tap to view all courses",
+
+    "widget.home.student_courses.header.label": "My Courses",
+	"widget.home.student_courses.text.empty.description": "You do not appear to be enrolled in any courses.",
+	"widget.home.student_courses.text.failed.description": "Unable to load courses.",
+    "widget.home.student_courses.button.all.title": "View All",
+    "widget.home.student_courses.button.all.hint": "Tap to view all courses",
 
     "widget.home.twitter.header.label": "Twitter",
 	"widget.home.twitter.text.empty.description": "Failed to load tweets.",
