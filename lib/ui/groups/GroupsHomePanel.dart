@@ -112,7 +112,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       if (mounted) {
         setState(() {
           _isGroupsLoading = false;
-          _allGroups = _sortGroups(groups);
+          _allGroups = groups;
           if (_selectedContentType == null) {
             _selectedContentType = _hasMyGroups ? GroupsContentType.my : GroupsContentType.all;
           }
@@ -137,21 +137,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     setState(() {
       _isFilterLoading = false;
     });
-  }
-
-  List<Group>? _sortGroups(List<Group>? groups) {
-    if (CollectionUtils.isEmpty(groups)) {
-      return groups;
-    }
-    groups!.sort((group1, group2) {
-      int cmp = group1.category!.toLowerCase().compareTo(group2.category!.toLowerCase());
-      if (cmp != 0) {
-        return cmp;
-      } else {
-        return group1.title!.toLowerCase().compareTo(group2.title!.toLowerCase());
-      }
-    });
-    return groups;
   }
 
   static String? _tagFilterToDisplayString(_TagFilter? tagFilter) {
@@ -624,7 +609,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     List<Group>? groups = await Groups().loadGroups(contentType: Connectivity().isOffline ? GroupsContentType.my : GroupsContentType.all);
     if (mounted && (groups != null)) {
       setState(() {
-        _allGroups = _sortGroups(groups);
+        _allGroups = groups;
       });
     }
   }
