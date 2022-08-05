@@ -305,6 +305,15 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeCanvasCoursesWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
       }
     }
+    else if (code == 'student_courses') {
+      /* TBD if (title) {
+        return HomeStudentCoursesWidget.title;
+      } else if (handle) {
+        return HomeStudentCoursesWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeStudentCoursesWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
+      }*/
+    }
     else if (code == 'create_poll') {
       if (title) {
         return HomeCreatePollWidget.title;

@@ -8,7 +8,7 @@
 				"wpgufm_radio", "twitter", "all_groups", "my_groups", "create_poll", "recent_polls", 
 				"my_events", "suggested_events", "sport_events", "sport_news", "my_athletics", "my_game_day",
 				"my_campus_guide", "campus_reminders", "inbox", "state_farm_center", "app_help", 
-				"gies_checklist", "new_student_checklist", "safer", "canvas_courses",
+				"gies_checklist", "new_student_checklist", "safer", "canvas_courses", "student_courses",
 				"campus_highlights", "campus_resources", "campus_links",
 				"recent_items", "my_news", "my_inbox"
 			],
@@ -24,10 +24,10 @@
 			
 			"home.twitter.account": ["gies", "", "canvas"],
 	
-			"academics": ["gies_checklist", "new_student_checklist", "canvas_courses", "academics_events", "my_illini"],
+			"academics": ["gies_checklist", "new_student_checklist", "canvas_courses", "student_courses", "academics_events", "my_illini"],
 	
 			"browse": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_links", "campus_resources", "dinings", "events", "feeds", "laundry", "groups", "my", "notifications", "polls", "recent", "state_farm_center", "wallet", "wellness"],
-			"browse.academics": ["gies_checklist", "new_student_checklist", "canvas_courses", "campus_reminders"],
+			"browse.academics": ["gies_checklist", "new_student_checklist", "canvas_courses", "student_courses", "campus_reminders"],
 			"browse.app_help": ["video_tutorial", "feedback", "review", "faqs"],
 			"browse.athletics": ["my_game_day", "sport_events", "my_athletics", "sport_news", "my_news", "sport_teams"],
 			"browse.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
@@ -178,7 +178,7 @@
 			"content": {
 				"home": {
 					"student": [
-						"dinings", "gies_checklist", "new_student_checklist", "canvas_courses", "laundry",
+						"dinings", "gies_checklist", "new_student_checklist", "canvas_courses", "student_courses", "laundry",
 						"wallet", "wpgufm_radio", "campus_highlights", "campus_reminders", "inbox",
 						"all_groups", "twitter", "my_dining", "my_events", "my_groups", "my_inbox",
 						"wellness_rings", "wellness_todo", "wellness_tips", "wellness_resources",
@@ -187,7 +187,7 @@
 						"sport_events", "sport_news", "state_farm_center", "app_help"
 					],
 					"gies_oncampus":[
-						"gies_checklist", "canvas_courses", "wallet", "wpgufm_radio",
+						"gies_checklist", "canvas_courses", "student_courses", "wallet", "wpgufm_radio",
 						"twitter", "recent_items", "all_groups", "my_groups", "my_inbox",
 						"wellness_rings", "wellness_todo", "wellness_tips", "wellness_resources",
 						"my_campus_guide", "sport_events", "sport_news",
@@ -196,7 +196,7 @@
 						"laundry", "my_dining", "my_events", "state_farm_center", "suggested_events"
 					],
 					"gies_offcampus":[
-						"gies_checklist", "canvas_courses", "wallet", "wpgufm_radio",
+						"gies_checklist", "canvas_courses", "student_courses", "wallet", "wpgufm_radio",
 						"twitter", "recent_items", "all_groups", "my_groups", "my_inbox",
 						"wellness_rings", "wellness_todo", "wellness_tips", "wellness_resources",
 						"my_campus_guide", "sport_events", "sport_news",

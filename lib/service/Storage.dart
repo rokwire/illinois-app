@@ -360,4 +360,9 @@ class Storage extends rokwire.Storage {
   int? get appReviewRequestTime => getIntWithName(appReviewRequestTimeKey);
   set appReviewRequestTime(int? value) => setIntWithName(appReviewRequestTimeKey, value);
 
+  // Courses
+  String get selectedCourseTermIdKey => 'edu.illinois.rokwire.courses.selected.term.id';
+  String? get selectedCourseTermId => getStringWithName(selectedCourseTermIdKey);
+  set selectedCourseTermId(String? value) => setStringWithName(selectedCourseTermIdKey, value);
+
 }

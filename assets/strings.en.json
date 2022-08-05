@@ -300,6 +300,7 @@
     "panel.browse.entry.academics.gies_checklist.title": "iDegrees New Student Checklist",
     "panel.browse.entry.academics.new_student_checklist.title": "New Student Checklist",
     "panel.browse.entry.academics.canvas_courses.title": "My Gies Canvas Courses",
+    "panel.browse.entry.academics.student_courses.title": "My Courses",
     "panel.browse.entry.academics.my_illini.title": "My Illini",
     "panel.browse.entry.academics.campus_reminders.title": "Campus Reminders",
 
@@ -409,6 +410,7 @@
     "panel.academics.section.gies_checklist.label": "iDegrees New Student Checklist",
     "panel.academics.section.uiuc_checklist.label": "New Student Checklist",
     "panel.academics.section.canvas_courses.label": "My Gies Canvas Courses",
+    "panel.academics.section.student_courses.label": "My Courses",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.events.offline.msg": "No academic events available while offline.",
     "panel.academics.section.events.empty.msg": "No academic events.",
@@ -2350,6 +2352,11 @@
 
     "panel.canvas_courses.header.title": "My Gies Canvas Courses",
     "panel.canvas_courses.load.failed.error.msg": "You do not appear to be enrolled in any Gies Canvas courses.",
+
+    "panel.student_courses.header.title": "My Courses",
+    "panel.student_courses.instructor.title": "Instructor: %s",
+    "panel.student_courses.empty.content.msg": "You do not appear to be enrolled in any courses.",
+    "panel.student_courses.load.failed.error.msg": "Unable to load courses.",
 
     "panel.home_canvas_course.header.title": "Course",
     "panel.home_canvas_course.load.failed.error.msg": "Failed to load course. Please, try again later.",

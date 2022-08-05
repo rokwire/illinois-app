@@ -21,6 +21,7 @@ import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
+import 'package:illinois/ui/academics/StudentCoursesContentWidget.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -179,6 +180,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
           initialContent = AcademicsContent.gies_checklist;
         } else if (_contentValues!.contains(AcademicsContent.canvas_courses)) {
           initialContent = AcademicsContent.canvas_courses;
+        } else if (_contentValues!.contains(AcademicsContent.student_courses)) {
+          initialContent = AcademicsContent.student_courses;
         }
       }
     }
@@ -192,6 +195,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContent.uiuc_checklist;
     } else if (code == 'canvas_courses') {
       return AcademicsContent.canvas_courses;
+    } else if (code == 'student_courses') {
+      return AcademicsContent.student_courses;
     } else if (code == 'academics_events') {
       return AcademicsContent.events;
     } else if (code == 'my_illini') {
@@ -252,7 +257,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 
   Widget get _contentWidget {
-    return ((_selectedContent == AcademicsContent.gies_checklist) || (_selectedContent == AcademicsContent.uiuc_checklist)) ?
+    return ((_selectedContent == AcademicsContent.gies_checklist) || (_selectedContent == AcademicsContent.uiuc_checklist) || (_selectedContent == AcademicsContent.student_courses)) ?
       _rawContentWidget :
       SingleChildScrollView(child:
         Padding(padding: EdgeInsets.only(bottom: 16), child:
@@ -272,6 +277,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return CheckListContentWidget(contentKey: CheckList.uiucOnboarding);
       case AcademicsContent.canvas_courses:
         return CanvasCoursesContentWidget();
+      case AcademicsContent.student_courses:
+        return StudentCoursesContentWidget();
       default:
         return Container();
     }
@@ -295,6 +302,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return Localization().getStringEx('panel.academics.section.uiuc_checklist.label', 'New Student Checklist');
       case AcademicsContent.canvas_courses:
         return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Gies Canvas Courses');
+      case AcademicsContent.student_courses:
+        return Localization().getStringEx('panel.academics.section.student_courses.label', 'My Courses');
       case AcademicsContent.my_illini:
         return Localization().getStringEx('panel.academics.section.my_illini.label', 'myIllini');
     }
@@ -312,4 +321,4 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 }
 
-enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, my_illini }
+enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, student_courses, my_illini }

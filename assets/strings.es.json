@@ -297,7 +297,8 @@
 
     "panel.browse.entry.academics.gies_checklist.title": "Lista de verificación para nuevos estudiantes de iDegrees",
     "panel.browse.entry.academics.new_student_checklist.title": "Lista de verificación para nuevos estudiantes",
-    "panel.browse.entry.academics.canvas_courses.title": "Cursos",
+    "panel.browse.entry.academics.canvas_courses.title": "Mis cursos Gies Canvas",
+    "panel.browse.entry.academics.student_courses.title": "Mis cursos",
     "panel.browse.entry.academics.my_illini.title": "Myillini",
     "panel.browse.entry.academics.campus_reminders.title": "Recordatorios del campus",
 
@@ -407,6 +408,7 @@
     "panel.academics.section.gies_checklist.label": "Lista de verificación para nuevos estudiantes de iDegrees",
     "panel.academics.section.uiuc_checklist.label": "Lista de verificación para nuevos estudiantes",
     "panel.academics.section.canvas_courses.label": "Mis cursos Gies Canvas",
+    "panel.academics.section.student_courses.label": "Mis cursos",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.events.offline.msg": "No hay eventos académicos disponibles sin conexión.",
     "panel.academics.section.events.empty.msg": "Sin eventos académicos.",
@@ -2341,8 +2343,13 @@
 	"panel.home.safer.test_locations.wait_time.status.label.yellow": "Medium wait time",
 	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
 
-    "panel.canvas_courses.header.title": "Cursos",
+    "panel.canvas_courses.header.title": "Mis cursos Gies Canvas",
     "panel.canvas_courses.load.failed.error.msg": "You do not appear to be enrolled in any Gies Canvas courses.",
+
+    "panel.student_courses.header.title": "Mis cursos",
+    "panel.student_courses.instructor.title": "Instructor: %s",
+    "panel.student_courses.empty.content.msg": "You do not appear to be enrolled in any courses.",
+    "panel.student_courses.load.failed.error.msg": "Unable to load courses.",
 
     "panel.home_canvas_course.header.title": "Curso",
     "panel.home_canvas_course.load.failed.error.msg": "No se ha podido cargar el curso. Vuelve a intentarlo más tarde.",

@@ -15,7 +15,7 @@ class Course {
   static Course? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? Course(
       title: JsonUtils.stringValue(json['coursetitle']),
-      shortName: JsonUtils.stringValue(json['coureshortname']),
+      shortName: JsonUtils.stringValue(json['courseshortname']),
       number: JsonUtils.stringValue(json['coursenumber']),
       instructionMethod: JsonUtils.stringValue(json['instructionmethod']),
       section: CourseSection.fromJson(JsonUtils.mapValue(json['coursesection'])),
@@ -24,11 +24,23 @@ class Course {
 
   toJson() => {
     'coursetitle': title,
-    'coureshortname': shortName,
+    'courseshortname': shortName,
     'coursenumber': number,
     'instructionmethod': instructionMethod,
     'coursesection': section,
   };
+
+  toMapsJson() => {
+    //TMP: Emulate event for now
+    'eventId': number,
+    'title': title,
+    'location': {
+      'latitude': section?.building?.latitude,
+      'longitude': section?.building?.longitude,
+    }
+  };
+
+  bool get hasLocation => section?.building?.hasLocation ?? false;
   
   @override
   bool operator==(dynamic other) =>
@@ -75,7 +87,7 @@ class Course {
 class CourseSection {
   final String? buildingId;
   final String? buildingName;
-  final int? room;
+  final String? room;
 
   final String? instructionType;
   final String? instructor;
@@ -98,7 +110,7 @@ class CourseSection {
     return (json != null) ? CourseSection(
       buildingId: JsonUtils.stringValue(json['buildingid']),
       buildingName: JsonUtils.stringValue(json['buildingname']),
-      room: JsonUtils.intValue(json['room']),
+      room: JsonUtils.stringValue(json['room']),
 
       instructionType: JsonUtils.stringValue(json['instructiontype']),
       instructor: JsonUtils.stringValue(json['instructor']),
@@ -259,6 +271,8 @@ class Building {
     'entrances': BuildingEntrance.listToJson(entrances),
   };
 
+  bool get hasLocation => (latitude != null) && (longitude != null);
+
   @override
   bool operator==(dynamic other) =>
     (other is Building) &&
@@ -363,6 +377,8 @@ class BuildingEntrance {
     'longitude': longitude,
   };
 
+  bool get hasLocation => (latitude != null) && (longitude != null);
+
   @override
   bool operator==(dynamic other) =>
     (other is BuildingEntrance) &&
@@ -465,10 +481,13 @@ class CourseTerm {
     return values;
   }
 
-  static CourseTerm? currentFromList(List<CourseTerm>? values) {
+  static CourseTerm? findInList(List<CourseTerm>? values, {bool? isCurrent, String? id}) {
     if (values != null) {
       for (CourseTerm value in values) {
-        if (value.isCurrent == true) {
+        if ((isCurrent != null) && (value.isCurrent == isCurrent)) {
+          return value;
+        }
+        if ((id != null) && (value.id == id)) {
           return value;
         }
       }
