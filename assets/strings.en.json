@@ -299,7 +299,8 @@
 
     "panel.browse.entry.academics.gies_checklist.title": "iDegrees New Student Checklist",
     "panel.browse.entry.academics.new_student_checklist.title": "New Student Checklist",
-    "panel.browse.entry.academics.canvas_courses.title": "Courses",
+    "panel.browse.entry.academics.canvas_courses.title": "My Gies Canvas Courses",
+    "panel.browse.entry.academics.student_courses.title": "My Courses",
     "panel.browse.entry.academics.my_illini.title": "My Illini",
     "panel.browse.entry.academics.campus_reminders.title": "Campus Reminders",
 
@@ -408,7 +409,8 @@
     "panel.academics.section.events.label": "Academic Events",
     "panel.academics.section.gies_checklist.label": "iDegrees New Student Checklist",
     "panel.academics.section.uiuc_checklist.label": "New Student Checklist",
-    "panel.academics.section.courses.label": "My Gies Canvas Courses",
+    "panel.academics.section.canvas_courses.label": "My Gies Canvas Courses",
+    "panel.academics.section.student_courses.label": "My Courses",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.events.offline.msg": "No academic events available while offline.",
     "panel.academics.section.events.empty.msg": "No academic events.",
@@ -2348,8 +2350,13 @@
 	"panel.home.safer.test_locations.wait_time.status.label.yellow": "Medium wait time",
 	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
 
-    "panel.canvas_courses.header.title": "Courses",
+    "panel.canvas_courses.header.title": "My Gies Canvas Courses",
     "panel.canvas_courses.load.failed.error.msg": "You do not appear to be enrolled in any Gies Canvas courses.",
+
+    "panel.student_courses.header.title": "My Courses",
+    "panel.student_courses.instructor.title": "Instructor: %s",
+    "panel.student_courses.empty.content.msg": "You do not appear to be enrolled in any courses.",
+    "panel.student_courses.load.failed.error.msg": "Unable to load courses.",
 
     "panel.home_canvas_course.header.title": "Course",
     "panel.home_canvas_course.load.failed.error.msg": "Failed to load course. Please, try again later.",
@@ -2708,10 +2715,16 @@
     "widget.home_prefered_sports.label.womens_sports.hint":"Header 2",
     "widget.home_prefered_sports.label.offline.sports":"Sports are not available while offline.",
     
-    "widget.home_canvas_courses.header.label": "Courses",
-	"widget.home.home_canvas_courses.text.empty.description": "You do not appear to be enrolled in any Gies Canvas courses.",
-    "widget.home.home_canvas_courses.button.all.title": "View All",
-    "widget.home.home_canvas_courses.button.all.hint": "Tap to view all courses",
+    "widget.home.canvas_courses.header.label": "My Gies Canvas Courses",
+	"widget.home.canvas_courses.text.empty.description": "You do not appear to be enrolled in any Gies Canvas courses.",
+    "widget.home.canvas_courses.button.all.title": "View All",
+    "widget.home.canvas_courses.button.all.hint": "Tap to view all courses",
+
+    "widget.home.student_courses.header.label": "My Courses",
+	"widget.home.student_courses.text.empty.description": "You do not appear to be enrolled in any courses.",
+	"widget.home.student_courses.text.failed.description": "Unable to load courses.",
+    "widget.home.student_courses.button.all.title": "View All",
+    "widget.home.student_courses.button.all.hint": "Tap to view all courses",
 
     "widget.home.twitter.header.label": "Twitter",
 	"widget.home.twitter.text.empty.description": "Failed to load tweets.",

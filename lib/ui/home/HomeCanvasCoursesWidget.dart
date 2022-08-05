@@ -6,7 +6,7 @@ import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
+import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
@@ -29,7 +29,7 @@ class HomeCanvasCoursesWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses');
+  static String get title => Localization().getStringEx('widget.home.canvas_courses.header.label', 'My Gies Canvas Courses');
   
   @override
   _HomeCanvasCoursesWidgetState createState() => _HomeCanvasCoursesWidgetState();
@@ -100,7 +100,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   Widget build(BuildContext context) {
 
     return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: Localization().getStringEx('widget.home_canvas_courses.header.label', 'Courses'),
+      title: HomeCanvasCoursesWidget.title,
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
       child: _hasCourses ? _buildCoursesContent() : _buildEmptyContent(),
     );
@@ -137,8 +137,8 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
       ),
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: coursePages.length,),
       LinkButton(
-        title: Localization().getStringEx('widget.home.home_canvas_courses.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.home_canvas_courses.button.all.hint', 'Tap to view all courses'),
+        title: Localization().getStringEx('widget.home.canvas_courses.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.canvas_courses.button.all.hint', 'Tap to view all courses'),
         onTap: _onViewAll,
       ),
     ],);
@@ -146,7 +146,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
   Widget _buildEmptyContent() {
     return HomeMessageCard(
-      message: Localization().getStringEx('widget.home.home_canvas_courses.text.empty.description', 'You do not appear to be enrolled in any Gies Canvas courses.'),
+      message: Localization().getStringEx('widget.home.canvas_courses.text.empty.description', 'You do not appear to be enrolled in any Gies Canvas courses.'),
     );
   }
 
@@ -179,7 +179,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
   void _onViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.courses,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCoursesListPanel()));
   }
 
 
