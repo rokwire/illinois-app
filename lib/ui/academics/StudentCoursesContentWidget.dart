@@ -142,6 +142,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
           icon: Padding(padding: EdgeInsets.only(left: 4), child: Image.asset('images/icon-down.png')),
           isExpanded: false,
           style: getTermDropDownItemStyle(selected: true),
+          //alignment: AlignmentDirectional.centerEnd,
           hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: getTermDropDownItemStyle(selected: true)) : null,
           items: _buildTermDropDownItems(),
           onChanged: _onTermDropDownValueChanged

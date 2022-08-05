@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:illinois/model/Courses.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -9,12 +10,15 @@ import 'package:illinois/service/Courses.dart';
 import 'package:illinois/ui/academics/StudentCoursesContentWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 class HomeStudentCoursesWidget extends StatefulWidget {
   final String? favoriteId;
@@ -48,6 +52,8 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
 
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
+      Courses.notifyTermsChanged,
+      Courses.notifySelectedTermChanged,
     ]);
 
 
@@ -77,6 +83,12 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
+    else if (name == Courses.notifyTermsChanged) {
+      setStateIfMounted(() {});
+    }
+    else if (name == Courses.notifySelectedTermChanged) {
+      _updateCourses(showProgress: true);
+    }
   }
 
   void _onAppLivecycleStateChanged(AppLifecycleState? state) {
@@ -95,12 +107,102 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
 
   @override
   Widget build(BuildContext context) {
+    return _buildSlant();
+  }
 
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: HomeStudentCoursesWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      child: _buildContent(),
+  Widget _buildSlant() {
+    final double flatHeight = 40;
+    final double slantHeight = 65;
+
+    return Column(children: [
+      
+      // Title Row
+      Padding(padding: EdgeInsets.zero, child: 
+        Semantics(container: true, header: true,
+          child: Container(color: Styles().colors?.fillColorPrimary, child:
+            Row(children: <Widget>[
+
+              HomeTitleIcon(image: Image.asset('images/campus-tools.png', excludeFromSemantics: true,)),
+
+              Expanded(child:
+                Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+                  Semantics(label: HomeStudentCoursesWidget.title, header: true, excludeSemantics: true, child:
+                    Text(HomeStudentCoursesWidget.title, style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                  )
+                )
+              ),
+
+              Semantics(container: true,  button: true, child: _buildTermsDropDown(), ),
+              
+              Opacity(opacity: (widget.favoriteId != null) ? 1 : 0, child:
+                HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.SlantHeader, prompt: true),
+              ),
+            ],),
+        ),),
+      ),
+      
+      Stack(children:<Widget>[
+      
+        // Slant
+        Column(children: <Widget>[
+          Container(color: Styles().colors?.fillColorPrimary, height: flatHeight,),
+          Container(color: Styles().colors?.fillColorPrimary, child:
+            CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+              Container(height: slantHeight,),
+            ),
+          ),
+        ],),
+        
+        // Content
+        Padding(padding: EdgeInsets.zero, child:
+          _buildContent(),
+        )
+      ])
+
+    ],);
+  }
+
+  TextStyle getTermDropDownItemStyle({bool selected = false}) => selected ?
+    TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary) :
+    TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary);
+
+  Widget _buildTermsDropDown() {
+    CourseTerm? currentTerm = Courses().displayTerm;
+
+    return Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
+      DropdownButtonHideUnderline(child:
+        DropdownButton<String>(
+          icon: Padding(padding: EdgeInsets.only(left: 4), child: Image.asset('images/icon-down-white.png')),
+          isExpanded: false,
+          style: getTermDropDownItemStyle(selected: false),
+          hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.white)) : null,
+          alignment: AlignmentDirectional.centerEnd,
+          items: _buildTermDropDownItems(),
+          onChanged: _onTermDropDownValueChanged
+        ),
+      ),
     );
+  }
+
+  List<DropdownMenuItem<String>>? _buildTermDropDownItems() {
+    List<CourseTerm>? terms = Courses().terms;
+    String? currentTermId = Courses().displayTermId;
+
+    List<DropdownMenuItem<String>>? items;
+    if (terms != null) {
+      items = <DropdownMenuItem<String>>[];
+      for (CourseTerm term in terms) {
+        items.add(DropdownMenuItem<String>(
+          value: term.id,
+          child: Text(term.name ?? '', style: getTermDropDownItemStyle(selected: term.id == currentTermId),)
+        ));
+      }
+    }
+    return items;
+  }
+
+  void _onTermDropDownValueChanged(String? termId) {
+    Courses().selectedTermId = termId;
   }
 
   Widget _buildContent() {
