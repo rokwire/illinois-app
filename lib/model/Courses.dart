@@ -73,6 +73,7 @@ class Course {
 // CourseSection
 
 class CourseSection {
+  final String? buildingId;
   final String? buildingName;
   final int? room;
 
@@ -82,34 +83,38 @@ class CourseSection {
   final String? days;
   final String? startTime;
   final String? endTime;
+  final String? meetingDates;
 
   final Building? building;
 
   CourseSection({
-    this.buildingName, this.room,
+    this.buildingId, this.buildingName, this.room,
     this.instructionType, this.instructor,
-    this.days, this.startTime, this.endTime,
+    this.days, this.startTime, this.endTime, this.meetingDates,
     this.building
   });
 
   static CourseSection? fromJson(Map<String, dynamic>? json) {
     return (json != null) ? CourseSection(
-      buildingName: JsonUtils.stringValue(json['buildingName']),
+      buildingId: JsonUtils.stringValue(json['buildingid']),
+      buildingName: JsonUtils.stringValue(json['buildingname']),
       room: JsonUtils.intValue(json['room']),
 
       instructionType: JsonUtils.stringValue(json['instructiontype']),
       instructor: JsonUtils.stringValue(json['instructor']),
 
       days: JsonUtils.stringValue(json['days']),
-      startTime: JsonUtils.stringValue(json['starttime']),
-      endTime: JsonUtils.stringValue(json['endtime']),
+      startTime: JsonUtils.stringValue(MapUtils.get2(json, ['starttime', 'start_time'])),
+      endTime: JsonUtils.stringValue(MapUtils.get2(json, ['endtime', 'end_time'])),
+      meetingDates: JsonUtils.stringValue(json['meeting_dates_or_range']),
       
       building: Building.fromJson(JsonUtils.mapValue(json['building'])),
     ) : null;
   }
 
   toJson() => {
-    'buildingName': buildingName,
+    'buildingid': buildingId,
+    'buildingname': buildingName,
     'room': room,
 
     'instructiontype': instructionType,
@@ -118,6 +123,7 @@ class CourseSection {
     'days': days,
     'starttime': startTime,
     'endtime': endTime,
+    'meeting_dates_or_range': meetingDates,
 
     'building': building,
   };
