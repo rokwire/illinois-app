@@ -406,7 +406,7 @@
     "panel.academics.section.events.label": "學術活動",
     "panel.academics.section.gies_checklist.label": "iDegrees 新學生清單",
     "panel.academics.section.uiuc_checklist.label": "新學生清單",
-    "panel.academics.section.courses.label": "我的 Gies 帆布課程",
+    "panel.academics.section.canvas_courses.label": "我的 Gies 帆布課程",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.events.offline.msg": "離線時沒有可用的學術活動.",
     "panel.academics.section.events.empty.msg": "沒有學術活動.",

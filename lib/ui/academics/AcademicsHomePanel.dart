@@ -177,8 +177,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       if (CollectionUtils.isNotEmpty(_contentValues)) {
         if (_contentValues!.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(CheckList.giesOnboarding)) {
           initialContent = AcademicsContent.gies_checklist;
-        } else if (_contentValues!.contains(AcademicsContent.courses)) {
-          initialContent = AcademicsContent.courses;
+        } else if (_contentValues!.contains(AcademicsContent.canvas_courses)) {
+          initialContent = AcademicsContent.canvas_courses;
         }
       }
     }
@@ -191,7 +191,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     } else if (code == 'new_student_checklist') {
       return AcademicsContent.uiuc_checklist;
     } else if (code == 'canvas_courses') {
-      return AcademicsContent.courses;
+      return AcademicsContent.canvas_courses;
     } else if (code == 'academics_events') {
       return AcademicsContent.events;
     } else if (code == 'my_illini') {
@@ -270,7 +270,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return CheckListContentWidget(contentKey: CheckList.giesOnboarding);
       case AcademicsContent.uiuc_checklist:
         return CheckListContentWidget(contentKey: CheckList.uiucOnboarding);
-      case AcademicsContent.courses:
+      case AcademicsContent.canvas_courses:
         return CanvasCoursesContentWidget();
       default:
         return Container();
@@ -293,8 +293,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return Localization().getStringEx('panel.academics.section.gies_checklist.label', 'iDegrees New Student Checklist');
       case AcademicsContent.uiuc_checklist:
         return Localization().getStringEx('panel.academics.section.uiuc_checklist.label', 'New Student Checklist');
-      case AcademicsContent.courses:
-        return Localization().getStringEx('panel.academics.section.courses.label', 'My Gies Canvas Courses');
+      case AcademicsContent.canvas_courses:
+        return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Gies Canvas Courses');
       case AcademicsContent.my_illini:
         return Localization().getStringEx('panel.academics.section.my_illini.label', 'myIllini');
     }
@@ -312,4 +312,4 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 }
 
-enum AcademicsContent { events, gies_checklist, uiuc_checklist, courses, my_illini }
+enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, my_illini }
