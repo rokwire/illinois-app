@@ -18,6 +18,7 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/academics/StudentCoursesContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsPanel.dart';
@@ -463,7 +464,7 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.gies_checklist":        _onTapGiesChecklist(context); break;
       case "academics.new_student_checklist": _onTapNewStudentChecklist(context); break;
       case "academics.canvas_courses":        _onTapCanvasCourses(context); break;
-      case "academics.canvas_courses":        _onTapStudentCourses(context); break;
+      case "academics.student_courses":       _onTapStudentCourses(context); break;
       case "academics.my_illini":             _onTapMyIllini(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
 
@@ -565,7 +566,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapStudentCourses(BuildContext context) {
     Analytics().logSelect(target: "Student Courses");
-    //TND: Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCoursesListPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCoursesListPanel()));
   }
 
   void _onTapMyIllini(BuildContext context) {

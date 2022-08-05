@@ -3,6 +3,8 @@ import 'package:illinois/model/Courses.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Courses.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -287,4 +289,18 @@ class StudentCourseCard extends StatelessWidget {
     NativeCommunicator().launchMapDirections(jsonData: course.toMapsJson());
   }
 
+}
+
+class StudentCoursesListPanel extends StatelessWidget {
+  StudentCoursesListPanel();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: HeaderBar(title: Localization().getStringEx('panel.student_courses.header.title', 'My Courses')),
+      body: Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child: StudentCoursesContentWidget()),
+      backgroundColor: Styles().colors!.white,
+      bottomNavigationBar: uiuc.TabBar()
+    );
+  }
 }
