@@ -100,13 +100,13 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   void _loadMembers(){
     setState(() {
       _isMembersLoading = false;
-      _pendingMembers = _group?.getMembersByStatus(GroupMemberStatus.pending);
+      //TBD: DD - implement with the new APIs
+      _pendingMembers = null;//_group?.getMembersByStatus(GroupMemberStatus.pending);
       _pendingMembers?.sort((member1, member2) => member1.displayName.compareTo(member2.displayName));
 
-      _members = CollectionUtils.isNotEmpty(_group?.members)
-          ? _group!.members!.where((member) => (member.status != GroupMemberStatus.pending)).toList()
-          : [];
-      _members!.sort((member1, member2){
+      //TBD: DD - implement with the new APIs
+      _members = null;//CollectionUtils.isNotEmpty(_group?.members) ? _group!.members!.where((member) => (member.status != GroupMemberStatus.pending)).toList() : [];
+      _members?.sort((member1, member2){
         if(member1.status == member2.status){
           return member1.displayName.compareTo(member2.displayName);
         } else {
@@ -403,7 +403,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 
   bool get _isAdmin {
-    return _group?.currentUserAsMember?.isAdmin ?? false;
+    return _group?.currentMember?.isAdmin ?? false;
   }
 }
 
@@ -553,7 +553,7 @@ class _GroupMemberCard extends StatelessWidget {
   void _onTapMemberCard(BuildContext context) async {
     if (_isAdmin) {
       Analytics().logSelect(target: "Member Detail");
-      await Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberPanel(group: group, member: member)));
+      await Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberPanel(group: group!, memberId: member!.id!)));
     }
   }
 
@@ -566,7 +566,7 @@ class _GroupMemberCard extends StatelessWidget {
   }
 
   bool get _isAdmin {
-    return group?.currentUserAsMember?.isAdmin ?? false;
+    return group?.currentMember?.isAdmin ?? false;
   }
 
   bool get _displayAttended {

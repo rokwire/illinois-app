@@ -82,11 +82,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void initState() {
     super.initState();
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
+    _loadMembersAllowedToPost();
     _post = widget.post ?? GroupPost(); //If no post then prepare data for post creation
     _focusedReply = widget.focusedReply;
     _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
-    _initAllMembersAllowedToPost();
 
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
@@ -300,8 +300,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             ]));
   }
 
-  void _initAllMembersAllowedToPost(){
-    _allMembersAllowedToPost = GroupMembersSelectionWidget.constructAllMembersAllowedToPost(widget.group);
+  void _loadMembersAllowedToPost() {
+    _setLoading(true);
+    Groups().loadMembersAllowedToPost(groupId: widget.group!.id).then((members) {
+      _allMembersAllowedToPost = members;
+      _setLoading(false);
+    });
   }
 
   _buildRepliesSection(){
@@ -974,7 +978,7 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
   }
 
   bool _isCurrentUserCreator(GroupPost? item) {
-    String? currentMemberEmail = widget.group?.currentUserAsMember?.userId;
+    String? currentMemberEmail = widget.group?.currentMember?.userId;
     String? itemMemberUserId = item?.member?.userId;
     return StringUtils.isNotEmpty(currentMemberEmail) &&
         StringUtils.isNotEmpty(itemMemberUserId) &&

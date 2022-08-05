@@ -832,12 +832,11 @@ class _PollsHomePanelFilterTab extends StatelessWidget {
   }
 }
 
-
 enum _PollType { myPolls, recentPolls, groupPolls }
 
 enum _PollFilterTabPosition { left, center, right }
 
-class PollCard extends StatefulWidget{
+class PollCard extends StatefulWidget {
   final Poll? poll;
   final Group? group;
 
@@ -845,15 +844,18 @@ class PollCard extends StatefulWidget{
   _PollCardState createState() => _PollCardState();
 }
 
-class _PollCardState extends State<PollCard>{
+class _PollCardState extends State<PollCard> {
   List<GlobalKey>? _progressKeys;
   double? _progressWidth;
 
   bool _showStartPollProgress = false;
   bool _showEndPollProgress = false;
 
+  GroupStats? _groupStats;
+
   @override
   void initState() {
+    _loadGroupStats();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _evalProgressWidths();
     });
@@ -1092,6 +1094,18 @@ class _PollCardState extends State<PollCard>{
           ));
   }
 
+  void _loadGroupStats() {
+    String? groupId = widget.group?.id;
+    if (StringUtils.isNotEmpty(groupId)) {
+      Groups().loadGroupStats(groupId!).then((stats) {
+        _groupStats = stats;
+        if (mounted) {
+          setState(() {});
+        }
+      });
+    }
+  }
+
   void _onStartPollTapped(){
     _setStartButtonProgress(true);
       Polls().open(widget.poll!.pollId).then((result) => _setStartButtonProgress(false)).catchError((e){
@@ -1181,6 +1195,6 @@ class _PollCardState extends State<PollCard>{
   }
 
   int get _groupMembersCount {
-    return widget.group?.membersCount ?? 0;
+    return _groupStats?.totalCount ?? 0;
   }
 }

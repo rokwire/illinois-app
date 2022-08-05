@@ -183,7 +183,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   void _buildMyGroupsAndPending({List<Group>? myGroups, List<Group>? myPendingGroups}) {
     if (_allGroups != null) {
       for (Group group in _allGroups!) {
-        Member? currentUserAsMember = group.currentUserAsMember;
+        Member? currentUserAsMember = group.currentMember;
         if (currentUserAsMember != null) {
           if (currentUserAsMember.isMemberOrAdmin) {
             myGroups?.add(group);
