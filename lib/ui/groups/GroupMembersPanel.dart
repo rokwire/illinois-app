@@ -17,7 +17,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -48,30 +47,20 @@ class GroupMembersPanel extends StatefulWidget implements AnalyticsPageAttribute
   Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
 }
 
-class _GroupMembersPanelState extends State<GroupMembersPanel> implements NotificationsListener{
+class _GroupMembersPanelState extends State<GroupMembersPanel> implements NotificationsListener {
   Group? _group;
-  bool _isMembersLoading = false;
-  bool _isPendingMembersLoading = false;
-  bool get _isLoading => _isMembersLoading || _isPendingMembersLoading;
+  List<Member>? _visibleMembers;
+  GroupMemberStatus? _selectedMemberStatus;
+  int _loadingProgress = 0;
 
-  bool _showAllRequestVisibility = true;
-
-  List<Member>? _pendingMembers;
-  List<Member>? _members;
-
-  String? _allMembersFilter;
-  String? _selectedMembersFilter;
-  List<String>? _membersFilter;
   String? _searchTextValue;
-
   TextEditingController _searchEditingController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupCreated, Groups.notifyGroupUpdated]);
-    _initMemberFilter();
-    _reloadGroup();
+    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupUpdated]);
+    _loadGroupContent();
   }
 
   @override
@@ -80,81 +69,41 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     NotificationService().unsubscribe(this);
   }
 
-  void _reloadGroup(){
-    setState(() {
-      _isMembersLoading = true;
-    });
-    Groups().loadGroup(widget.groupId).then((Group? group){
-      if (mounted) {
-        if(group != null) {
-          _group = group;
-          _loadMembers();
-        }
-        setState(() {
-          _isMembersLoading = false;
-        });
-      }
+  void _loadGroupContent() {
+    _loadGroup();
+    _loadMembers();
+  }
+
+  void _loadGroup() {
+    _increaseProgress();
+    Groups().loadGroup(widget.groupId).then((Group? group) {
+      _group = group;
+      _decreaseProgress();
     });
   }
 
-  void _loadMembers(){
-    setState(() {
-      _isMembersLoading = false;
-      //TBD: DD - implement with the new APIs
-      _pendingMembers = null;//_group?.getMembersByStatus(GroupMemberStatus.pending);
-      _pendingMembers?.sort((member1, member2) => member1.displayName.compareTo(member2.displayName));
-
-      //TBD: DD - implement with the new APIs
-      _members = null;//CollectionUtils.isNotEmpty(_group?.members) ? _group!.members!.where((member) => (member.status != GroupMemberStatus.pending)).toList() : [];
-      _members?.sort((member1, member2){
-        if(member1.status == member2.status){
-          return member1.displayName.compareTo(member2.displayName);
-        } else {
-          if(member1.isAdmin && !member2.isAdmin) return -1;
-          else if(!member1.isAdmin && member2.isAdmin) return 1;
-          else return 0;
-        }
-      });
-      _refreshAllMembersFilterText();
-      _applyMembersFilter();
+  void _loadMembers() {
+    _increaseProgress();
+    //TBD: DD - use paging
+    List<GroupMemberStatus>? memberStatuses;
+    if (_selectedMemberStatus != null) {
+      memberStatuses = [_selectedMemberStatus!];
+    }
+    Groups().loadMembers(groupId: widget.groupId, statuses: memberStatuses).then((members) {
+      _visibleMembers = members;
+      _decreaseProgress();
     });
-  }
-
-  void _initMemberFilter(){
-    _selectedMembersFilter = _allMembersFilter;
-    _refreshAllMembersFilterText();
-  }
-
-  void _refreshAllMembersFilterText(){
-    if(_selectedMembersFilter == _allMembersFilter){
-      _selectedMembersFilter = _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All Members (#)").replaceAll("#", _members?.length.toString() ?? "0");
-    } else {
-      _allMembersFilter = Localization().getStringEx("panel.manage_members.label.filter_by.all_members", "All Members (#)").replaceAll("#", _members?.length.toString() ?? "0");
-    }
-  }
-  void _applyMembersFilter(){
-    List<String> membersFilter = [];
-    if (_allMembersFilter != null) {
-      membersFilter.add(_allMembersFilter!);
-    }
-    if(CollectionUtils.isNotEmpty(_members)){
-      for(Member member in _members!){
-        if(StringUtils.isNotEmpty(member.officerTitle) && !membersFilter.contains(member.officerTitle)){
-          membersFilter.add(member.officerTitle!);
-        }
-      }
-    }
-    _membersFilter = membersFilter;
-    setState(() {});
   }
 
   @override
   void onNotification(String name, param) {
     if (name == Groups.notifyUserMembershipUpdated) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }
-    else if (param == _group!.id && (name == Groups.notifyGroupCreated || name == Groups.notifyGroupUpdated)){
-      _reloadGroup();
+    else if ((param == _group!.id) && (name == Groups.notifyGroupUpdated)){
+      _loadGroupContent();
     }
   }
 
@@ -167,128 +116,50 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         backgroundColor: Styles().colors!.background,
         appBar: HeaderBar(title: headerTitle),
         body: _isLoading
-            ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ))
-            : RefreshIndicator(onRefresh: _onPullToRefresh, child: SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
-          child:Column(
-            children: <Widget>[
-              Visibility(visible: _isAdmin, child: _buildRequests()),
-              _buildMembers()
-            ],
-          ),
-        )),
-        bottomNavigationBar: uiuc.TabBar(),
-    );
+            ? Center(
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)))
+            : RefreshIndicator(
+                onRefresh: _onPullToRefresh,
+                child: SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child: Column(children: <Widget>[_buildMembers()]))),
+        bottomNavigationBar: uiuc.TabBar());
   }
 
-  Widget _buildRequests(){
-    if((_pendingMembers?.length ?? 0) > 0) {
-      List<Widget> requests = [];
-      for (Member? member in (_pendingMembers!.length > 2 && _showAllRequestVisibility) ? _pendingMembers!.sublist(0, 1) : _pendingMembers!) {
-        if(requests.isNotEmpty){
-          requests.add(Container(height: 10,));
-        }
-        requests.add(_PendingMemberCard(member: member, group: _group,));
-      }
-
-      if(_pendingMembers!.length > 2 && _showAllRequestVisibility){
-        requests.add(Container(
-          padding: EdgeInsets.only(top: 20, bottom: 10),
-          child: SmallRoundedButton(
-            label: Localization().getStringEx("panel.manage_members.button.see_all_requests.title", "See all # requests").replaceAll("#", _pendingMembers!.length.toString()),
-            hint: Localization().getStringEx("panel.manage_members.button.see_all_requests.hint", ""),
-            onTap: () {
-              Analytics().logSelect(target: 'See all requests');
-              setState(() {
-                _showAllRequestVisibility = false;
-              });
-            },
-          ),
-        ));
-      }
-
-      return SectionSlantHeader(title: Localization().getStringEx("panel.manage_members.label.requests", "Requests"),
-        titleIconAsset: 'images/icon-reminder.png',
-        children: <Widget>[
-          Column(
-            children: requests,
-          )
-        ],
-      );
-    }
-    return Container();
-  }
-
-  Widget _buildMembers(){
-    if((_members?.length ?? 0) > 0) {
+  Widget _buildMembers() {
+    if (CollectionUtils.isNotEmpty(_visibleMembers)) {
       List<Widget> members = [];
-      for (Member? member in _members!) {
-        if( !_isMemberMatchingFilter(member) ||
-            !_isMemberMatchingSearch(member)){
+      for (Member member in _visibleMembers!) {
+        if (!_isMemberMatchingSearch(member)) {
           continue;
         }
-        if(members.isNotEmpty){
-          members.add(Container(height: 10,));
+        if (members.isNotEmpty) {
+          members.add(Container(height: 10));
         }
-        members.add(_GroupMemberCard(member: member, group: _group,));
+        late Widget memberCard;
+        if (member.status == GroupMemberStatus.pending) {
+          memberCard = _PendingMemberCard(member: member, group: _group);
+        } else {
+          memberCard = _GroupMemberCard(member: member, group: _group);
+        }
+        members.add(memberCard);
       }
-      if(members.isNotEmpty) {
-        members.add(Container(height: 10,));
+      if (members.isNotEmpty) {
+        members.add(Container(height: 10));
       }
 
       return Container(
-        child: Column(
-          children: <Widget>[
-            Container(
-              child: SectionRibbonHeader(
-                title: Localization().getStringEx("panel.manage_members.label.members", "Members"),
-                titleIconAsset: 'images/icon-member.png',
-              ),
-            ),
-            _buildMembersFilter(),
-            _buildMembersSearch(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: members,
-              ),
-            )
-          ],
-        ),
-      );
+          child: Column(children: <Widget>[
+        Container(
+            child: SectionRibbonHeader(
+                title: (_selectedMemberStatus == GroupMemberStatus.pending)
+                    ? Localization().getStringEx("panel.manage_members.label.requests", "Requests")
+                    : Localization().getStringEx("panel.manage_members.label.members", "Members"),
+                titleIconAsset: 'images/icon-member.png')),
+        _buildMembersSearch(),
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Column(children: members))
+      ]));
     }
     return Container();
-  }
-
-  Widget _buildMembersFilter(){
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        color: Styles().colors!.white,
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                child: GroupDropDownButton<String?>(
-                  emptySelectionText: _allMembersFilter,
-                  initialSelectedValue: _selectedMembersFilter,
-                  items: _membersFilter,
-                  constructTitle: (dynamic title) => title,
-                  decoration: BoxDecoration(),
-                  padding: EdgeInsets.all(0),
-                  onValueChanged: (value){
-                    setState(() {
-                      _selectedMembersFilter = value;
-                    });
-                  },
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildMembersSearch() {
@@ -371,7 +242,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     if ((_group?.syncAuthmanAllowed == true) && (Config().allowGroupsAuthmanSync)) {
       await Groups().syncAuthmanGroup(group: _group!);
     }
-    _reloadGroup();
+    _loadGroupContent();
   }
 
   void _onSearchTextChanged(String text) {
@@ -397,9 +268,22 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         (member?.email?.toLowerCase().contains(_searchTextValue!.toLowerCase())?? false);
   }
 
-  bool _isMemberMatchingFilter(Member? member){
-    return _selectedMembersFilter == _allMembersFilter ||
-        _selectedMembersFilter == member!.officerTitle;
+  void _increaseProgress() {
+    _loadingProgress++;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _decreaseProgress() {
+    _loadingProgress--;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  bool get _isLoading {
+    return (_loadingProgress > 0);
   }
 
   bool get _isAdmin {
