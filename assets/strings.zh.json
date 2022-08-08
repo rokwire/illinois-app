@@ -2899,7 +2899,14 @@
 
 	"model.explore.time.today":"今天",
 	"model.explore.time.tomorrow":"明天",
-	"model.explore.time.at":"在",
+	"model.explore.time.monday": "週一",
+	"model.explore.time.tuesday": "週二",
+	"model.explore.time.wednessday": "週三",
+	"model.explore.time.thursday": "週四",
+	"model.explore.time.friday": "星期五",
+	"model.explore.time.saturday": "週六",
+	"model.explore.time.sunday": "星期日",
+"model.explore.time.at":"在",
 	"model.explore.time.all_day": "一整天",
 
 	"model.groups.member.status.pending": "Pending",

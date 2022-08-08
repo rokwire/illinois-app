@@ -2899,6 +2899,13 @@
 
     "model.explore.time.today": "Hoy",
     "model.explore.time.tomorrow": "Mañana",
+    "model.explore.time.monday": "Lunes",
+    "model.explore.time.tuesday": "martes",
+    "model.explore.time.wednessday": "miércoles",
+    "model.explore.time.thursday": "jueves",
+    "model.explore.time.friday": "Viernes",
+    "model.explore.time.saturday": "sábado",
+    "model.explore.time.sunday": "Domingo",
     "model.explore.time.at": "a",
     "model.explore.time.all_day": "Todo el dia",
 
