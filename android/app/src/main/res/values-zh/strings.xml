@@ -28,6 +28,7 @@
     <string name="places">地方</string>
     <string name="laundries">洗衣房</string>
     <string name="parkings">停車場</string>
+    <string name="student_courses">培訓班</string>
     <string name="ok">好</string>
 
     <!-- MapDirectionsActivity -->

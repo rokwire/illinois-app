@@ -120,6 +120,8 @@
 			}
 			[result appendString:instructionType];
 		}
+
+		return result;
 	}
 	
 	return [self.uiucExploreLocation inaStringForKey:@"description"];
