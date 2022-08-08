@@ -41,16 +41,6 @@ class StudentCourse with Explore {
       (json['coursesection'] != null);
   }
 
-  toMapsJson() => {
-    //TMP: Emulate event for now
-    'eventId': number,
-    'title': title,
-    'location': {
-      'latitude': section?.building?.latitude,
-      'longitude': section?.building?.longitude,
-    }
-  };
-
   bool get hasLocation => section?.building?.hasLocation ?? false;
   
   @override

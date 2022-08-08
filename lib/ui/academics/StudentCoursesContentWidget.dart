@@ -275,7 +275,7 @@ class StudentCourseCard extends StatelessWidget {
 
   void _onLocaltion() {
     Analytics().logSelect(target: "Location Detail");
-    NativeCommunicator().launchMapDirections(jsonData: course.toMapsJson());
+    NativeCommunicator().launchMapDirections(jsonData: course.toJson());
   }
 
 }
