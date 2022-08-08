@@ -78,9 +78,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   void _reloadGroupContent() {
     _loadGroup();
-    _initMembersPagingParamsToDefaults();
-    _visibleMembers = null;
-    _loadMembers();
+    _reloadMembers();
   }
 
   void _loadGroup() {
@@ -100,7 +98,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       if (_selectedMemberStatus != null) {
         memberStatuses = [_selectedMemberStatus!];
       }
-      Groups().loadMembers(groupId: widget.groupId, statuses: memberStatuses, offset: _membersOffset, limit: _membersLimit).then((members) {
+      Groups().loadMembers(groupId: widget.groupId, name: _searchTextValue, statuses: memberStatuses, offset: _membersOffset, limit: _membersLimit).then((members) {
         int resultsCount = members?.length ?? 0;
         if (resultsCount > 0) {
           if (_visibleMembers == null) {
@@ -116,6 +114,12 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         }
       });
     }
+  }
+
+  void _reloadMembers() {
+    _initMembersPagingParamsToDefaults();
+    _visibleMembers = null;
+    _loadMembers();
   }
 
   @override
@@ -152,9 +156,6 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     if (CollectionUtils.isNotEmpty(_visibleMembers)) {
       List<Widget> members = [];
       for (Member member in _visibleMembers!) {
-        if (!_isMemberMatchingSearch(member)) {
-          continue;
-        }
         if (members.isNotEmpty) {
           members.add(Container(height: 10));
         }
@@ -205,7 +206,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                     controller: _searchEditingController,
                     onChanged: (text) => _onSearchTextChanged(text),
                     onSubmitted: (_) => _onTapSearch(),
-                    autofocus: true,
+                    autofocus: false,
                     cursorColor: Styles().colors!.fillColorSecondary,
                     keyboardType: TextInputType.text,
                     style: TextStyle(
@@ -273,22 +274,21 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 
   void _onTapSearch() {
-    setState(() {
-      _searchTextValue = _searchEditingController.text.toString();
-    });
+    String? initialSearchTextValue = _searchTextValue;
+    _searchTextValue = _searchEditingController.text.toString();
+    String? currentSearchTextValue = _searchTextValue;
+    if (!(StringUtils.isEmpty(initialSearchTextValue) && StringUtils.isEmpty(currentSearchTextValue))) {
+      FocusScope.of(context).unfocus();
+      _reloadMembers();
+    }
   }
 
   void _onTapClearSearch() {
-    _searchEditingController.text = "";
-    setState(() {
+    if (StringUtils.isNotEmpty(_searchTextValue)) {
+      _searchEditingController.text = "";
       _searchTextValue = "";
-    });
-  }
-
-  bool _isMemberMatchingSearch(Member? member){
-    return StringUtils.isEmpty(_searchTextValue) ||
-        (member?.name?.toLowerCase().contains(_searchTextValue!.toLowerCase())?? false) ||
-        (member?.email?.toLowerCase().contains(_searchTextValue!.toLowerCase())?? false);
+      _reloadMembers();
+    }
   }
 
   void _scrollListener() {
