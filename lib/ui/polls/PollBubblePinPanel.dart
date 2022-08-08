@@ -239,7 +239,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
       }
     };
     return Container(
-      width: 20+ 20*MediaQuery.of(context).textScaleFactor,
+      width: 24+ 24*MediaQuery.of(context).textScaleFactor,
       child: Semantics(
         label: _initialSemanticsAnnouncement(position),
         hint: " ${position + 1} of $_digitsCount",

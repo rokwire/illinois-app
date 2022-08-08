@@ -43,7 +43,7 @@ class CreatePollPanel extends StatefulWidget {
 class _CreatePollPanelState extends State<CreatePollPanel> {
   final double horizontalPadding = 24;
   final int _defaultOptionsCount = 2;
-  final int _maxOptionsCount = 4;
+  final int _maxOptionsCount = 6;
 
   //Data
   final TextEditingController _questionController = TextEditingController();
@@ -165,7 +165,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         title: Localization().getStringEx("panel.create_poll.text.question", "QUESTION"),
         hint: Localization().getStringEx("panel.create_poll.hint.question", "Ask people…"),
         textController: _questionController,
-        maxLength: 120,
+        maxLength: 250,
         minLines: 3,
         enabled: (_progressPollStatus == null),
       )),

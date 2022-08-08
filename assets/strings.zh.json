@@ -297,7 +297,8 @@
 
 	"panel.browse.entry.academics.gies_checklist.title": "iDegrees 新學生清單",
 	"panel.browse.entry.academics.new_student_checklist.title": "新學生清單",
-	"panel.browse.entry.academics.canvas_courses.title": "培訓班",
+	"panel.browse.entry.academics.canvas_courses.title": "我的 Gies 帆布課程",
+	"panel.browse.entry.academics.student_courses.title": "我的課程",
 	"panel.browse.entry.academics.my_illini.title": "米利尼",
 	"panel.browse.entry.academics.campus_reminders.title": "校園提醒",
 
@@ -406,7 +407,8 @@
     "panel.academics.section.events.label": "學術活動",
     "panel.academics.section.gies_checklist.label": "iDegrees 新學生清單",
     "panel.academics.section.uiuc_checklist.label": "新學生清單",
-    "panel.academics.section.courses.label": "我的 Gies 帆布課程",
+    "panel.academics.section.canvas_courses.label": "我的 Gies 帆布課程",
+    "panel.academics.section.student_courses.label": "我的課程",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.events.offline.msg": "離線時沒有可用的學術活動.",
     "panel.academics.section.events.empty.msg": "沒有學術活動.",
@@ -2338,10 +2340,15 @@
 	"panel.home.safer.test_locations.wait_time.status.label.yellow": "Medium wait time",
 	"panel.home.safer.test_locations.wait_time.status.label.green": "Short wait time",
 
-    "panel.canvas_courses.header.title": "培訓班",
+    "panel.canvas_courses.header.title": "我的 Gies 帆布課程",
     "panel.canvas_courses.load.failed.error.msg": "You do not appear to be enrolled in any Gies Canvas courses.",
 
-	"panel.home_canvas_course.header.title": "課程",
+    "panel.student_courses.header.title": "我的課程",
+    "panel.student_courses.instructor.title": "Instructor: %s",
+    "panel.student_courses.empty.content.msg": "You do not appear to be enrolled in any courses.",
+    "panel.student_courses.load.failed.error.msg": "Unable to load courses.",
+
+		"panel.home_canvas_course.header.title": "課程",
 	"panel.home_canvas_course.load.failed.error.msg": "無法加載課程. 請稍後再試.",
 	"panel.home_canvas_course.button.assignments.title": "作業",
     "panel.home_canvas_course.button.launch.title": "啟動畫布",
@@ -2698,12 +2705,18 @@
 	"widget.home_prefered_sports.label.womens_sports.hint":"标题2",
 	"widget.home_prefered_sports.label.offline.sports":"离线时无法查看运动。",
     
-	"widget.home_canvas_courses.header.label": "培訓班",
-	"widget.home.home_canvas_courses.text.empty.description": "You do not appear to be enrolled in any Gies Canvas courses.",
-	"widget.home.home_canvas_courses.button.all.title": "查看全部",
-	"widget.home.home_canvas_courses.button.all.hint": "點擊查看所有課程",
+	"widget.home.canvas_courses.header.label": "我的 Gies 帆布課程",
+	"widget.home.canvas_courses.text.empty.description": "您似乎沒有註冊任何 Gies Canvas 課程。",
+	"widget.home.canvas_courses.button.all.title": "查看全部",
+	"widget.home.canvas_courses.button.all.hint": "點擊查看所有課程",
 
-	"widget.home.twitter.header.label": "推特",
+	"widget.home.student_courses.header.label": "我的課程",
+	"widget.home.student_courses.text.empty.description": "您似乎沒有註冊任何課程。",
+	"widget.home.student_courses.text.failed.description": "無法加載課程。",
+    "widget.home.student_courses.button.all.title": "查看全部",
+    "widget.home.student_courses.button.all.hint": "點擊查看所有課程",
+
+		"widget.home.twitter.header.label": "推特",
 	"widget.home.twitter.text.empty.description": "未能加載推文。",
   "widget.home.twitter.button.all.title": "查看全部",
   "widget.home.twitter.button.all.hint": "點擊查看所有推文",
