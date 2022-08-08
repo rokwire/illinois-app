@@ -2906,6 +2906,13 @@
 
     "model.explore.time.today": "Today",
     "model.explore.time.tomorrow": "Tomorrow",
+    "model.explore.time.monday": "Monday",
+    "model.explore.time.tuesday": "Tuesday",
+    "model.explore.time.wednessday": "Wednessday",
+    "model.explore.time.thursday": "Thursday",
+    "model.explore.time.friday": "Friday",
+    "model.explore.time.saturday": "Saturday",
+    "model.explore.time.sunday": "Sunday",
     "model.explore.time.at": "at",
     "model.explore.time.all_day": "All day",
 
