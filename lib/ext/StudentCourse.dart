@@ -77,11 +77,6 @@ extension StudentCourseSectionExt on StudentCourseSection {
     }
   }
 
-  String? get displayStartTime => _convertTime(startTime, addIndicator: false) ?? startTime;
-
-
-  String? get displayEndTime => _convertTime(endTime) ?? endTime;
-
   static String? _convertTime(String? time, { bool addIndicator = true}) {
     if ((time != null) && (2 <= time.length)) {
       int? hours = int.tryParse(time.substring(0, 2));
