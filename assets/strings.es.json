@@ -868,6 +868,7 @@
     "panel.explore.header.events.title":"Eventos",
     "panel.explore.header.dining.title":"Comedor de la residencia",
     "panel.explore.header.laundry.title":"Ropa sucia",
+    "panel.explore.header.student_course.title":"Mis cursos",
     "panel.explore.header.state_farm.title":"Orientación de State Farm",
     "panel.explore.button.events.title":"Eventos",
     "panel.explore.button.events.hint":"",
@@ -875,6 +876,8 @@
     "panel.explore.button.dining.hint":"",
     "panel.explore.button.laundry.title":"Ropa sucia",
     "panel.explore.button.laundry.hint":"",
+    "panel.explore.button.student_course.title":"Mis cursos",
+    "panel.explore.button.student_course.hint":"",
     "panel.explore.button.state_farm.title":"Orientación de State Farm",
     "panel.explore.button.state_farm.hint":"",
     "panel.explore.button.directions.title":"Indicaciones",
@@ -912,12 +915,16 @@
     "panel.explore.state.loading.title":"Cargando",
     "panel.explore.state.loading.hint":"Espere",
 
+    "panel.explore.filter.terms.hint":"Filtrar por término",
+
     "panel.explore.state.online.empty.events":"No hay eventos próximos",
     "panel.explore.state.offline.empty.events":"No hay próximos eventos disponibles sin conexión",
     "panel.explore.state.online.empty.dining":"Actualmente no hay restaurantes abiertos",
     "panel.explore.state.offline.empty.dining":"No hay restaurantes disponibles sin conexión",
     "panel.explore.state.online.empty.laundry":"No hay ubicaciones de lavandería abiertas actualmente.",
     "panel.explore.state.offline.empty.laundry":"No hay ubicaciones de lavandería disponibles mientras está desconectado.",
+    "panel.explore.state.online.empty.student_course":"No hay cursos para estudiantes disponibles.",
+    "panel.explore.state.offline.empty.student_course":"No hay cursos para estudiantes disponibles sin conexión.",
     "panel.explore.state.offline.empty.state_farm":"No hay State Farm Wayfinding disponible sin conexión.",
 
     "panel.explore.item.events.name":"Eventos",

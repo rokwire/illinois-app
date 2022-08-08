@@ -870,6 +870,7 @@
     "panel.explore.header.events.title":"Events",
     "panel.explore.header.dining.title":"Residence Hall Dining",
     "panel.explore.header.laundry.title":"Laundry",
+    "panel.explore.header.student_course.title":"My Courses",
     "panel.explore.header.state_farm.title":"State Farm Wayfinding",
     "panel.explore.button.events.title":"Events",
     "panel.explore.button.events.hint":"",
@@ -877,6 +878,8 @@
     "panel.explore.button.dining.hint":"",
     "panel.explore.button.laundry.title":"Laundry",
     "panel.explore.button.laundry.hint":"",
+    "panel.explore.button.student_course.title":"My Courses",
+    "panel.explore.button.student_course.hint":"",
     "panel.explore.button.state_farm.title":"State Farm Wayfinding",
     "panel.explore.button.state_farm.hint":"",
     "panel.explore.button.directions.title":"Directions",
@@ -914,12 +917,16 @@
     "panel.explore.state.loading.title":"Loading",
     "panel.explore.state.loading.hint":"Please wait",
 
+    "panel.explore.filter.terms.hint":"Filter by term",
+
     "panel.explore.state.online.empty.events":"No upcoming events.",
     "panel.explore.state.offline.empty.events":"No upcoming events available while offline.",
     "panel.explore.state.online.empty.dining":"No dining locations are currently open",
     "panel.explore.state.offline.empty.dining":"No dining locations available while offline.",
     "panel.explore.state.online.empty.laundry":"No laundry locations are currently open",
     "panel.explore.state.offline.empty.laundry":"No laundry locations available while offline.",
+    "panel.explore.state.online.empty.student_course":"No student courses available.",
+    "panel.explore.state.offline.empty.student_course":"No student courses available while offline.",
     "panel.explore.state.offline.empty.state_farm":"No State Farm Wayfinding available while offline.",
 
     "panel.explore.item.events.name":"Events",

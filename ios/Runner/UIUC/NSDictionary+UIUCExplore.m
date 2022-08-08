@@ -21,6 +21,7 @@
 #import "NSDictionary+UIUCExplore.h"
 
 #import "NSDictionary+InaTypedValue.h"
+#import "NSDictionary+InaPathKey.h"
 #import "NSDate+InaUtils.h"
 #import "NSDate+UIUCUtils.h"
 
@@ -38,6 +39,9 @@
 	}
 	else if ([self objectForKey:@"lot_id"] != nil) {
 		return UIUCExploreType_Parking;
+	}
+	else if ([self objectForKey:@"coursetitle"] != nil) {
+		return UIUCExploreType_StudentCourse;
 	}
 	else if ([self objectForKey:@"explores"] != nil) {
 		return UIUCExploreType_Explores;
@@ -68,8 +72,9 @@
 
 - (NSString*)uiucExploreTitle {
 	switch (self.uiucExploreType) {
-		case UIUCExploreType_Parking: return [self inaStringForKey:@"lot_name"];
-		default:                      return [self inaStringForKey:@"title"];
+		case UIUCExploreType_Parking:       return [self inaStringForKey:@"lot_name"];
+		case UIUCExploreType_StudentCourse: return [self inaStringForKey:@"coursetitle"];
+		default:                            return [self inaStringForKey:@"title"];
 	}
 }
 
@@ -88,6 +93,34 @@
 			return status;
 		}
 	}
+	else if (exploreType == UIUCExploreType_StudentCourse) {
+		NSMutableString *result = [[NSMutableString alloc] init];
+		NSDictionary *section = [self inaDictForKey:@"coursesection"];
+
+		NSString *building = [section inaStringForKey:@"buildingname"];
+		if (0 < building.length) {
+			if (0 < result.length) {
+				[result appendString: @" "];
+			}
+			[result appendString: building];
+		}
+		
+		NSString *room = [section inaStringForKey:@"room"];
+		if (0 < room.length) {
+			if (0 < result.length) {
+				[result appendString: @" "];
+			}
+			[result appendFormat:@"(%@)", room];
+		}
+	
+		NSString *instructionType = [section inaStringForKey:@"instructiontype"];
+		if (0 < instructionType.length) {
+			if (0 < result.length) {
+				[result appendString: @" "];
+			}
+			[result appendString:instructionType];
+		}
+	}
 	
 	return [self.uiucExploreLocation inaStringForKey:@"description"];
 }
@@ -98,16 +131,18 @@
 
 - (NSDictionary*)uiucExploreLocation {
 	switch (self.uiucExploreType) {
-		case UIUCExploreType_Parking:  return [self inaDictForKey:@"entrance"];
-		default:                       return [self inaDictForKey:@"location"];
+		case UIUCExploreType_Parking:        return [self inaDictForKey:@"entrance"];
+		case UIUCExploreType_StudentCourse:  return [self inaDictForPathKey:@"coursesection.building"];
+		default:                             return [self inaDictForKey:@"location"];
 	}
 }
 
 - (NSString*)uiucExploreAddress {
 	switch (self.uiucExploreType) {
-		case UIUCExploreType_Parking:  return [self inaStringForKey:@"lot_address1"];
-		case UIUCExploreType_Explores: return [self inaStringForKey:@"address"];
-		default:                       return nil;
+		case UIUCExploreType_Parking:        return [self inaStringForKey:@"lot_address1"];
+		case UIUCExploreType_StudentCourse:  return [self inaStringForKey:@"lot_address1"];
+		case UIUCExploreType_Explores:       return [self inaStringForKey:@"Address1"];
+		default:                             return nil;
 	}
 }
 
@@ -145,20 +180,23 @@
 		
 		NSString *exploresName = nil;
 		switch (exploresType) {
-			case UIUCExploreType_Event:   exploresName = @"Events"; break;
-			case UIUCExploreType_Dining:  exploresName = @"Dinings"; break;
-			case UIUCExploreType_Laundry: exploresName = @"Laundries"; break;
-			case UIUCExploreType_Parking: exploresName = @"Parkings"; break;
-			default:                      exploresName = @"Explores"; break;
+			case UIUCExploreType_Event:         exploresName = @"Events"; break;
+			case UIUCExploreType_Dining:        exploresName = @"Dinings"; break;
+			case UIUCExploreType_Laundry:       exploresName = @"Laundries"; break;
+			case UIUCExploreType_Parking:       exploresName = @"Parkings"; break;
+			case UIUCExploreType_StudentCourse: exploresName = @"Courses"; break;
+			default:                            exploresName = @"Explores"; break;
 		}
 		
 		NSString *exploresColor = (exploresType != UIUCExploreType_Unknown) ? [self.class uiucExploreMarkerHexColorFromType:exploresType] : @"#13294b";
+		
+		NSDictionary* firstExplore = explores.firstObject;
 
 		return @{
 			@"type" : @"explores",
 			@"title" : [NSString stringWithFormat:@"%d %@", (int)explores.count, exploresName],
-			@"location" : [explores.firstObject inaDictForKey:@"location"] ?: [NSNull null],
-			@"address": [explores.firstObject inaStringForKey:@"lot_address1"] ?: [NSNull null],
+			@"location" : firstExplore.uiucExploreLocation ?: [NSNull null],
+			@"address": firstExplore.uiucExploreAddress ?: [NSNull null],
 			@"color": exploresColor,
 			@"exploresContentType": @(exploresType),
 			@"explores" : explores,
@@ -174,11 +212,12 @@
 
 NSString* UIUCExploreTypeToString(UIUCExploreType exploreType) {
 	switch (exploreType) {
-		case UIUCExploreType_Event:    return @"event";
-		case UIUCExploreType_Dining:   return @"dining";
-		case UIUCExploreType_Laundry:  return @"laundry";
-		case UIUCExploreType_Parking:  return @"parking";
-		case UIUCExploreType_Explores: return @"explores";
+		case UIUCExploreType_Event:         return @"event";
+		case UIUCExploreType_Dining:        return @"dining";
+		case UIUCExploreType_Laundry:       return @"laundry";
+		case UIUCExploreType_Parking:       return @"parking";
+		case UIUCExploreType_StudentCourse: return @"studnet_course";
+		case UIUCExploreType_Explores:      return @"explores";
 		default: return nil;
 	}
 }
@@ -196,6 +235,9 @@ UIUCExploreType UIUCExploreTypeFromString(NSString* value) {
 		}
 		else if ([value isEqualToString:@"parking"]) {
 			return UIUCExploreType_Parking;
+		}
+		else if ([value isEqualToString:@"studnet_course"]) {
+			return UIUCExploreType_StudentCourse;
 		}
 		else if ([value isEqualToString:@"explores"]) {
 			return UIUCExploreType_Explores;

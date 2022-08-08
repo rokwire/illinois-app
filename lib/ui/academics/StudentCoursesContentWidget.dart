@@ -198,8 +198,8 @@ class StudentCourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String courseSchedule = _courseSchedule;
-    String courseLocation = _courseLocation;
+    String courseSchedule = course.section?.displaySchedule ?? '';
+    String courseLocation = course.section?.displayLocation ?? '';
     
 
     return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(4)), child:
@@ -220,7 +220,7 @@ class StudentCourseCard extends StatelessWidget {
                     
                     Padding(padding: EdgeInsets.only(top: 6), child:
                       Row(children: [Expanded(child:
-                        Text('${course.shortName} (${course.number}) ${course.instructionMethod}', style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),),
+                        Text(course.displayInfo, style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),),
                       )]),
                     ),
                     
@@ -252,7 +252,7 @@ class StudentCourseCard extends StatelessWidget {
                               Image.asset('images/icon-location.png'),
                             ),
                             Expanded(child:
-                              Text(_courseLocation, style:
+                              Text(courseLocation, style:
                                 TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16,
                                   decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1
                                 ),
@@ -271,24 +271,6 @@ class StudentCourseCard extends StatelessWidget {
       ]),
     );
 
-  }
-
-  String get _courseSchedule {
-
-    String displayDays = course.section?.displayDays ?? '';
-    String displayTime = course.section?.displayTime ?? '';
-    if (displayDays.isNotEmpty) {
-      return displayTime.isNotEmpty ? "$displayDays $displayTime" : displayDays;
-    }
-    else {
-      return displayTime;
-    }
-  }
-
-  String get _courseLocation {
-    String buildingName = course.section?.buildingName ?? '';
-    String room = course.section?.room ?? '';
-    return (buildingName.isNotEmpty && room.isNotEmpty) ? "$buildingName $room" : buildingName;
   }
 
   void _onLocaltion() {

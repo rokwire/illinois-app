@@ -11,13 +11,14 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class StudentCourses with Service implements NotificationsListener {
+class StudentCourses with Service implements NotificationsListener, ExploreJsonHandler {
 
   static const String notifyTermsChanged = 'edu.illinois.rokwire.courses.terms.changed';
   static const String notifySelectedTermChanged = 'edu.illinois.rokwire.courses.selected.term.changed';
@@ -41,6 +42,7 @@ class StudentCourses with Service implements NotificationsListener {
   // Service
 
   void createService() {
+    Explore.addJsonHandler(this);
     NotificationService().subscribe(this,[
       AppLivecycle.notifyStateChanged,
     ]);
@@ -194,5 +196,11 @@ class StudentCourses with Service implements NotificationsListener {
       ]''';*/
       return StudentCourse.listFromJson(JsonUtils.decodeList(responseString));
     }
- }
+  }
+
+  // ExploreJsonHandler
+
+  @override bool exploreCanJson(Map<String, dynamic>? json) => StudentCourse.canJson(json);
+  @override Explore? exploreFromJson(Map<String, dynamic>? json) => StudentCourse.fromJson(json);
+
 }

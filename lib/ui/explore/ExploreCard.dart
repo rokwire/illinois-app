@@ -19,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ext/StudentCourse.dart';
+import 'package:illinois/model/StudentCourse.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -349,14 +351,19 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   Widget? _exploreLocationDetail() {
     String iconRes = 'images/icon-location.png';
     String? locationText;
-    if(widget.explore!=null && widget.explore is Event ) {//For Events we show Two Locati
-      if ((widget.explore as Event).displayAsInPerson) {
+    Explore? explore = widget.explore;
+    if(explore is Event ) {//For Events we show Two Locati
+      if (explore.displayAsInPerson) {
         locationText = Localization().getStringEx(
             'panel.explore_detail.event_type.in_person', "In-person event");
-      } else if( !(widget.explore as Event).displayAsVirtual ){ // displayAsInPerson == false && displayAsVirtual == false
-        locationText = widget.explore?.getShortDisplayLocation(widget.locationData);
+      } else if( !explore.displayAsVirtual ){ // displayAsInPerson == false && displayAsVirtual == false
+        locationText = explore.getShortDisplayLocation(widget.locationData);
       }
     }
+    else if (explore is StudentCourse) {
+      locationText = explore.section?.displayLocation;
+    }
+
     if ((locationText != null) && locationText.isNotEmpty) {
       return Semantics(label: locationText, child:Padding(
         padding: _detailPadding,
@@ -469,6 +476,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       return explore.timeDisplayString;
     } else if (explore is Game) {
       return explore.displayTime;
+    } else if (explore is StudentCourse) {
+      return explore.section?.displaySchedule;
     } else {
       return '';
     }

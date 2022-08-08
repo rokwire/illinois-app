@@ -1,9 +1,10 @@
 import 'package:collection/collection.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 // StudentCourse
 
-class StudentCourse {
+class StudentCourse with Explore {
   final String? title;
   final String? shortName;
   final String? number;
@@ -27,8 +28,18 @@ class StudentCourse {
     'courseshortname': shortName,
     'coursenumber': number,
     'instructionmethod': instructionMethod,
-    'coursesection': section,
+    'coursesection': section?.toJson(),
   };
+
+  // ExploreJsonHandler
+
+  static bool canJson(Map<String, dynamic>? json) {
+    return (json != null) &&
+      (json['coursetitle'] != null) &&
+      (json['courseshortname'] != null) &&
+      (json['coursenumber'] != null) &&
+      (json['coursesection'] != null);
+  }
 
   toMapsJson() => {
     //TMP: Emulate event for now
@@ -59,6 +70,29 @@ class StudentCourse {
     (instructionMethod?.hashCode ?? 0) ^
     (section?.hashCode ?? 0);
 
+  ////////////////////////////
+  // Explore implementation
+
+  @override String? get exploreId => number;
+  @override String get exploreTitle => title ?? '';
+  @override String? get exploreSubTitle => '$shortName ($number) $instructionMethod';
+  @override String? get exploreShortDescription => null;
+  @override String? get exploreLongDescription => null;
+  @override DateTime? get exploreStartDateUtc => null;
+  @override String? get exploreImageURL => null;
+  @override String? get explorePlaceId => null;
+  @override ExploreLocation? get exploreLocation => (section?.building != null) ? ExploreLocation(
+    building : section?.building?.name,
+    address : section?.building?.address1,
+    city : section?.building?.city,
+    state : section?.building?.state,
+    zip : section?.building?.zipCode,
+    latitude : section?.building?.latitude,
+    longitude : section?.building?.longitude,
+  ) : null;
+
+  // List<StudentCourse>
+
   static List<StudentCourse>? listFromJson(List<dynamic>? jsonList) {
     List<StudentCourse>? values;
     if (jsonList != null) {
@@ -78,7 +112,7 @@ class StudentCourse {
         ListUtils.add(jsonList, value.toJson());
       }
     }
-    return values;
+    return jsonList;
   }
 }
 
@@ -137,7 +171,7 @@ class StudentCourseSection {
     'endtime': endTime,
     'meeting_dates_or_range': meetingDates,
 
-    'building': building,
+    'building': building?.toJson(),
   };
 
   @override
@@ -189,7 +223,7 @@ class StudentCourseSection {
         ListUtils.add(jsonList, value.toJson());
       }
     }
-    return values;
+    return jsonList;
   }
 }
 
@@ -338,7 +372,7 @@ class Building {
         ListUtils.add(jsonList, value.toJson());
       }
     }
-    return values;
+    return jsonList;
   }
 }
 
@@ -419,7 +453,7 @@ class BuildingEntrance {
         ListUtils.add(jsonList, value.toJson());
       }
     }
-    return values;
+    return jsonList;
   }
 }
 
@@ -478,7 +512,7 @@ class CourseTerm {
         ListUtils.add(jsonList, value.toJson());
       }
     }
-    return values;
+    return jsonList;
   }
 
   static CourseTerm? findInList(List<CourseTerm>? values, {bool? isCurrent, String? id}) {
