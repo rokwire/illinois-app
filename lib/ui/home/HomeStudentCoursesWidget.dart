@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Courses.dart';
+import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Courses.dart';
+import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/academics/StudentCoursesContentWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -39,7 +39,7 @@ class HomeStudentCoursesWidget extends StatefulWidget {
 
 class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> implements NotificationsListener {
 
-  List<Course>? _courses;
+  List<StudentCourse>? _courses;
   bool _loading = false;
   DateTime? _pausedDateTime;
 
@@ -52,8 +52,8 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
 
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
-      Courses.notifyTermsChanged,
-      Courses.notifySelectedTermChanged,
+      StudentCourses.notifyTermsChanged,
+      StudentCourses.notifySelectedTermChanged,
     ]);
 
 
@@ -83,10 +83,10 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
-    else if (name == Courses.notifyTermsChanged) {
+    else if (name == StudentCourses.notifyTermsChanged) {
       setStateIfMounted(() {});
     }
-    else if (name == Courses.notifySelectedTermChanged) {
+    else if (name == StudentCourses.notifySelectedTermChanged) {
       _updateCourses(showProgress: true);
     }
   }
@@ -167,7 +167,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary);
 
   Widget _buildTermsDropDown() {
-    CourseTerm? currentTerm = Courses().displayTerm;
+    CourseTerm? currentTerm = StudentCourses().displayTerm;
 
     return Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
       DropdownButtonHideUnderline(child:
@@ -185,8 +185,8 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
   }
 
   List<DropdownMenuItem<String>>? _buildTermDropDownItems() {
-    List<CourseTerm>? terms = Courses().terms;
-    String? currentTermId = Courses().displayTermId;
+    List<CourseTerm>? terms = StudentCourses().terms;
+    String? currentTermId = StudentCourses().displayTermId;
 
     List<DropdownMenuItem<String>>? items;
     if (terms != null) {
@@ -202,7 +202,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
   }
 
   void _onTermDropDownValueChanged(String? termId) {
-    Courses().selectedTermId = termId;
+    StudentCourses().selectedTermId = termId;
   }
 
   Widget _buildContent() {
@@ -227,7 +227,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
 
     if (1 < visibleCount) {
       List<Widget> coursePages = <Widget>[];
-      for (Course course in _courses!) {
+      for (StudentCourse course in _courses!) {
         coursePages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
           StudentCourseCard(course: course),
         ),);
@@ -269,9 +269,9 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
   }
 
   void _loadCourses() {
-    if (Courses().displayTermId != null) {
+    if (StudentCourses().displayTermId != null) {
       _loading = true;
-      Courses().loadCourses(termId: Courses().displayTermId!).then((List<Course>? courses) {
+      StudentCourses().loadCourses(termId: StudentCourses().displayTermId!).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
           _courses = courses;
           _loading = false;
@@ -281,13 +281,13 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
   }
 
   void _updateCourses({bool showProgress = false}) {
-    if (Courses().displayTermId != null) {
+    if (StudentCourses().displayTermId != null) {
       if (mounted && showProgress) {
         setState(() {
           _loading = true;
         });
       }
-      Courses().loadCourses(termId: Courses().displayTermId!).then((List<Course>? courses) {
+      StudentCourses().loadCourses(termId: StudentCourses().displayTermId!).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
           _courses = courses;
           _loading = false;

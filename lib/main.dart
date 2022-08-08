@@ -24,7 +24,7 @@ import 'package:illinois/service/AppReview.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CheckList.dart';
-import 'package:illinois/service/Courses.dart';
+import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:illinois/service/Dinings.dart';
@@ -141,7 +141,7 @@ void main() async {
     WPGUFMRadio(),
     Laundries(),
     AppReview(),
-    Courses(),
+    StudentCourses(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // Content(),
