@@ -20,6 +20,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -53,9 +54,11 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   PollStatus? _progressPollStatus;
   //Groups
   List<Member>? _groupMembersSelection;
+  List<Member>? _membersAllowedToPost;
 
   @override
   void initState() {
+    _loadMembersAllowedToPost();
     _initDefaultOptionsControllers();
     super.initState();
   }
@@ -107,6 +110,15 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
       }
     }
     _optionsControllers = null;
+  }
+
+  void _loadMembersAllowedToPost() {
+    Groups().loadMembersAllowedToPost(groupId: widget.group?.id).then((members) {
+      _membersAllowedToPost = members;
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   Widget _buildDescription() {
@@ -279,7 +291,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         color: Colors.white,
         child: GroupMembersSelectionWidget(
         selectedMembers: _groupMembersSelection,
-        allMembers: GroupMembersSelectionWidget.constructAllMembersAllowedToPost(widget.group),
+        allMembers: _membersAllowedToPost,
         groupId: widget.group?.id,
         onSelectionChanged: (members){
           setState(() {
