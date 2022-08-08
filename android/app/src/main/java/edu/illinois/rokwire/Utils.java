@@ -151,10 +151,26 @@ public class Utils {
             if (explore == null) {
                 return null;
             }
+
             Object locationObj = explore.get("location");
             if (locationObj instanceof HashMap) {
                 return (HashMap) locationObj;
             }
+
+            Object lotEntranceObj = explore.get("entrance");
+            if (lotEntranceObj instanceof HashMap) {
+                return (HashMap) lotEntranceObj;
+            }
+
+            Object sectionObj = explore.get("coursesection");
+            if (sectionObj instanceof HashMap) {
+                HashMap sectionMap = (HashMap) sectionObj;
+                Object buildingObj = sectionMap.get("building");
+                if (buildingObj instanceof HashMap) {
+                    return (HashMap) buildingObj;
+                }
+            }
+
             return null;
         }
 
@@ -186,29 +202,27 @@ public class Utils {
                 // Json Example:
                 // {"lot_id":"647b7211-9cdf-412b-a682-1fdb68897f86","lot_name":"SFC - E-14 Lot - Illinois","lot_address1":"1800 S. First Street, Champaign, IL 61820","total_spots":"1710","entrance":{"latitude":40.096691,"longitude":-88.238179},"polygon":[{"latitude":40.097938,"longitude":-88.241409},{"latitude":40.09793,"longitude":-88.238657},{"latitude":40.094742,"longitude":-88.238651},{"latitude":40.094733,"longitude":-88.240223},{"latitude":40.095148,"longitude":-88.240245},{"latitude":40.095181,"longitude":-88.24113},{"latitude":40.095636,"longitude":-88.241135},{"latitude":40.095636,"longitude":-88.241393}],"spots_sold":0,"spots_pre_sold":0}
                 Object lotEntranceObj = explore.get("entrance");
-                if (!(lotEntranceObj instanceof HashMap)) {
-                    return null;
+                if (lotEntranceObj instanceof HashMap) {
+                    HashMap lotEntranceMap = (HashMap)lotEntranceObj;
+                    return optLatLng(lotEntranceMap);
                 }
-                HashMap lotEntranceMap = (HashMap)lotEntranceObj;
-                return optLatLng(lotEntranceMap);
             } else if (exploreType == ExploreType.STUDENT_COURSE) {
                 Object sectionObj = explore.get("coursesection");
-                if (!(sectionObj instanceof HashMap)) {
-                    return null;
-                }
-                HashMap sectionMap = (HashMap)sectionObj;
+                if (sectionObj instanceof HashMap) {
+                    HashMap sectionMap = (HashMap)sectionObj;
 
-                Object buildingObj = sectionMap.get("building");
-                if (!(buildingObj instanceof HashMap)) {
-                    return null;
-                }
-                HashMap buildingMap = (HashMap)buildingObj;
+                    Object buildingObj = sectionMap.get("building");
+                    if (buildingObj instanceof HashMap) {
+                        HashMap buildingMap = (HashMap)buildingObj;
 
-                return optLatLng(buildingMap);
+                        return optLatLng(buildingMap);
+                    }
+                }
             } else {
                 HashMap location = optLocation(explore);
                 return optLatLng(location);
             }
+            return null;
         }
 
         public static LatLng optLatLng(HashMap location) {
