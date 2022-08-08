@@ -48,6 +48,7 @@ enum _TagFilter { all, my }
 
 class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener {
   final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All Categories");
+  static final int _defaultAllGroupsLimit = 10;
 
   bool _isFilterLoading = false;
   int _groupsLoadingProgress = 0;
@@ -56,9 +57,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   GroupsContentType? _selectedContentType;
 
   List<Group>? _visibleAllGroups;
+  List<Group>? _userGroups;
   int? _allGroupsOffset;
   int? _allGroupsLimit;
-  List<Group>? _userGroups;
+  ScrollController? _scrollController;
 
   String? _selectedCategory;
   List<String>? _categories;
@@ -79,8 +81,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Connectivity.notifyStatusChanged,
     ]);
     _selectedContentType = widget.contentType;
+    _scrollController = ScrollController();
+    _scrollController!.addListener(_scrollListener);
     _loadFilters();
-    _loadGroupsContent();
+    _reloadGroupsContent();
   }
 
   @override
@@ -104,7 +108,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   ///////////////////////////////////
   // Data Loading
 
-  void _loadGroupsContent() {
+  void _reloadGroupsContent() {
+    _visibleAllGroups = null;
+    _initGroupsPagingParamsToDefaults();
     _loadUserGroups();
     _loadAllGroups();
   }
@@ -118,18 +124,34 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     });
   }
 
-  void _loadAllGroups() {
+  void _loadAllGroups({bool showLoadingIndicator = true}) {
     // Do not load all groups when device is offline
     if (Connectivity().isOffline) {
       return;
     }
-    //TBD: DD - implement paging
-    _increaseGroupsLoadingProgress();
-    Groups().loadGroups(contentType: GroupsContentType.all, allOffset: _allGroupsOffset, allLimit: _allGroupsLimit).then((List<Group>? groups) {
-      _visibleAllGroups = groups;
-      _decreaseGroupsLoadingProgress();
-      _checkGroupsContentLoaded();
-    });
+    if ((_visibleAllGroups == null) || ((_allGroupsLimit != null) && (_allGroupsOffset != null) && !_isLoading)) {
+      if (showLoadingIndicator) {
+        _increaseGroupsLoadingProgress();
+      }
+      Groups()
+          .loadGroups(contentType: GroupsContentType.all, allOffset: _allGroupsOffset, allLimit: _allGroupsLimit)
+          .then((List<Group>? groups) {
+        int resultsCount = groups?.length ?? 0;
+        if (resultsCount > 0) {
+          if (_visibleAllGroups == null) {
+            _visibleAllGroups = <Group>[];
+          }
+          _visibleAllGroups!.addAll(groups!);
+        }
+        _setAllGroupsPagingParams(resultsCount: resultsCount);
+        if (showLoadingIndicator) {
+          _decreaseGroupsLoadingProgress();
+        } else {
+          _updateState();
+        }
+        _checkGroupsContentLoaded();
+      });
+    }
   }
 
   void _checkGroupsContentLoaded() {
@@ -284,7 +306,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             children: <Widget>[
               Container(color: Styles().colors!.background, child:
                 RefreshIndicator(onRefresh: _onPullToRefresh, child:
-                  SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
+                  SingleChildScrollView(scrollDirection: Axis.vertical, controller: _scrollController, physics: AlwaysScrollableScrollPhysics(), child:
                     Column( children: <Widget>[ _buildGroupsContent(), ],),
                   ),
                 ),
@@ -641,7 +663,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   Future<void> _onPullToRefresh() async {
     Analytics().logSelect(target: "Pull To Refresh");
-    _loadGroupsContent();
+    _reloadGroupsContent();
   }
 
   void onTapImage(Group? group){
@@ -656,9 +678,25 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     SettingsProfileContentPanel.present(context);
   }
 
-  void _setAllGroupsPagingParams({int? offset, int? limit}) {
-    _allGroupsLimit = limit;
-    _allGroupsOffset = offset;
+  void _setAllGroupsPagingParams({required int resultsCount}) {
+    if (resultsCount > 0) {
+      _allGroupsOffset = (_allGroupsOffset ?? 0) + resultsCount;
+      _allGroupsLimit = _defaultAllGroupsLimit;
+    } else {
+      _allGroupsOffset = null;
+      _allGroupsLimit = null;
+    }
+  }
+
+  void _initGroupsPagingParamsToDefaults() {
+    _allGroupsOffset = 0;
+    _allGroupsLimit = _defaultAllGroupsLimit;
+  }
+
+  void _scrollListener() {
+    if ((_selectedContentType == GroupsContentType.all) && (_scrollController!.offset >= _scrollController!.position.maxScrollExtent)) {
+      _loadAllGroups(showLoadingIndicator: false);
+    }
   }
   
   bool get _canCreateGroup {
@@ -674,20 +712,20 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
     else if ((name == Groups.notifyGroupCreated) || (name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted)) {
       if (mounted) {
-        _loadGroupsContent();
+        _reloadGroupsContent();
       }
     }
     else if ((name == Auth2.notifyLoginSucceeded) ||  (name == Auth2.notifyLogout)) {
       // Reload content with some delay, do not unmount immidately GroupsCard that could have updated the login state.
       Future.delayed(Duration(microseconds: 300), () {
         if (mounted) {
-          _loadGroupsContent();
+          _reloadGroupsContent();
         }
       });
     }
     else if (name == Connectivity.notifyStatusChanged) {
       if (Connectivity().isOnline && mounted) {
-        _loadGroupsContent();
+        _reloadGroupsContent();
       }
     }
   }
