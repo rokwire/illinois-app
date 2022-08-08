@@ -48,8 +48,13 @@ class GroupMembersPanel extends StatefulWidget implements AnalyticsPageAttribute
 }
 
 class _GroupMembersPanelState extends State<GroupMembersPanel> implements NotificationsListener {
+  static final int _defaultMembersLimit = 10;
+
   Group? _group;
   List<Member>? _visibleMembers;
+  int? _membersOffset;
+  int? _membersLimit;
+  ScrollController? _scrollController;
   GroupMemberStatus? _selectedMemberStatus;
   int _loadingProgress = 0;
 
@@ -60,7 +65,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupUpdated]);
-    _loadGroupContent();
+    _scrollController = ScrollController();
+    _scrollController!.addListener(_scrollListener);
+    _reloadGroupContent();
   }
 
   @override
@@ -69,8 +76,10 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     NotificationService().unsubscribe(this);
   }
 
-  void _loadGroupContent() {
+  void _reloadGroupContent() {
     _loadGroup();
+    _initMembersPagingParamsToDefaults();
+    _visibleMembers = null;
     _loadMembers();
   }
 
@@ -82,17 +91,31 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     });
   }
 
-  void _loadMembers() {
-    _increaseProgress();
-    //TBD: DD - use paging
-    List<GroupMemberStatus>? memberStatuses;
-    if (_selectedMemberStatus != null) {
-      memberStatuses = [_selectedMemberStatus!];
+  void _loadMembers({bool showLoadingIndicator = true}) {
+    if ((_visibleMembers == null) || ((_membersLimit != null) && (_membersOffset != null) && !_isLoading)) {
+      if (showLoadingIndicator) {
+        _increaseProgress();
+      }
+      List<GroupMemberStatus>? memberStatuses;
+      if (_selectedMemberStatus != null) {
+        memberStatuses = [_selectedMemberStatus!];
+      }
+      Groups().loadMembers(groupId: widget.groupId, statuses: memberStatuses, offset: _membersOffset, limit: _membersLimit).then((members) {
+        int resultsCount = members?.length ?? 0;
+        if (resultsCount > 0) {
+          if (_visibleMembers == null) {
+            _visibleMembers = <Member>[];
+          }
+          _visibleMembers!.addAll(members!);
+        }
+        _setMembersPagingParams(resultsCount: resultsCount);
+        if (showLoadingIndicator) {
+          _decreaseProgress();
+        } else {
+          _updateState();
+        }
+      });
     }
-    Groups().loadMembers(groupId: widget.groupId, statuses: memberStatuses).then((members) {
-      _visibleMembers = members;
-      _decreaseProgress();
-    });
   }
 
   @override
@@ -103,7 +126,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       }
     }
     else if ((param == _group!.id) && (name == Groups.notifyGroupUpdated)){
-      _loadGroupContent();
+      _reloadGroupContent();
     }
   }
 
@@ -121,7 +144,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                     strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)))
             : RefreshIndicator(
                 onRefresh: _onPullToRefresh,
-                child: SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), child: Column(children: <Widget>[_buildMembers()]))),
+                child: SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), controller: _scrollController, child: Column(children: <Widget>[_buildMembers()]))),
         bottomNavigationBar: uiuc.TabBar());
   }
 
@@ -242,7 +265,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     if ((_group?.syncAuthmanAllowed == true) && (Config().allowGroupsAuthmanSync)) {
       await Groups().syncAuthmanGroup(group: _group!);
     }
-    _loadGroupContent();
+    _reloadGroupContent();
   }
 
   void _onSearchTextChanged(String text) {
@@ -268,15 +291,38 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         (member?.email?.toLowerCase().contains(_searchTextValue!.toLowerCase())?? false);
   }
 
+  void _scrollListener() {
+    if ((_scrollController!.offset >= _scrollController!.position.maxScrollExtent)) {
+      _loadMembers(showLoadingIndicator: false);
+    }
+  }
+
+   void _initMembersPagingParamsToDefaults() {
+    _membersOffset = 0;
+    _membersLimit = _defaultMembersLimit;
+  }
+
+  void _setMembersPagingParams({required int resultsCount}) {
+    if (resultsCount > 0) {
+      _membersOffset = (_membersOffset ?? 0) + resultsCount;
+      _membersLimit = 10;
+    } else {
+      _membersOffset = null;
+      _membersLimit = null;
+    }
+  }
+
   void _increaseProgress() {
     _loadingProgress++;
-    if (mounted) {
-      setState(() {});
-    }
+    _updateState();
   }
 
   void _decreaseProgress() {
     _loadingProgress--;
+    _updateState();
+  }
+
+  void _updateState() {
     if (mounted) {
       setState(() {});
     }
