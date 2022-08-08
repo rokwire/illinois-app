@@ -357,6 +357,8 @@
     "panel.browse.entry.laundry.my_laundry.title": "My Laundry",
 
     "panel.browse.entry.my.my_groups.title": "My Groups",
+    "panel.browse.entry.my.canvas_courses.title": "My Gies Canvas Courses",
+    "panel.browse.entry.my.student_courses.title": "My Courses",
     "panel.browse.entry.my.my_game_day.title": "My Game Day",
     "panel.browse.entry.my.my_events.title": "My Events",
     "panel.browse.entry.my.my_dining.title": "My Dining Locations",
@@ -2903,6 +2905,13 @@
 
     "model.explore.time.today": "Today",
     "model.explore.time.tomorrow": "Tomorrow",
+    "model.explore.time.monday": "Monday",
+    "model.explore.time.tuesday": "Tuesday",
+    "model.explore.time.wednessday": "Wednessday",
+    "model.explore.time.thursday": "Thursday",
+    "model.explore.time.friday": "Friday",
+    "model.explore.time.saturday": "Saturday",
+    "model.explore.time.sunday": "Sunday",
     "model.explore.time.at": "at",
     "model.explore.time.all_day": "All day",
 

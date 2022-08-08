@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/StudentCourses.dart';
@@ -273,14 +274,14 @@ class StudentCourseCard extends StatelessWidget {
   }
 
   String get _courseSchedule {
-    String time = ((course.section?.startTime?.isNotEmpty ?? false) && (course.section?.endTime?.isNotEmpty ?? false)) ?
-      "${course.section?.startTime} - ${course.section?.endTime}" : "${course.section?.startTime ?? ''}";
-    String days = course.section?.days?.replaceAll(',', ', ') ?? '';
-    if (days.isNotEmpty) {
-      return (time.isNotEmpty) ? "$days $time" : days;
+
+    String displayDays = course.section?.displayDays ?? '';
+    String displayTime = course.section?.displayTime ?? '';
+    if (displayDays.isNotEmpty) {
+      return displayTime.isNotEmpty ? "$displayDays $displayTime" : displayDays;
     }
     else {
-      return time;
+      return displayTime;
     }
   }
 

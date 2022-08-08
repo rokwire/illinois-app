@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Course renamed to StudentCourse [#2169](https://github.com/rokwire/illinois-app/issues/2169).
+- Format Student course schedule time [#2183](https://github.com/rokwire/illinois-app/issues/2183).
+### Added
+- Added My Courses and My Gies Canvas Courses to My section in Browse panel [#2185](https://github.com/rokwire/illinois-app/issues/2185).
 
 ## [4.1.12] - 2022-08-05
 ### Fixed

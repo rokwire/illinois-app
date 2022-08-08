@@ -355,6 +355,8 @@
 	"panel.browse.entry.laundry.my_laundry.title": "我的洗衣店",
 
 	"panel.browse.entry.my.my_groups.title": "我的群組",
+	"panel.browse.entry.my.canvas_courses.title": "我的 Gies 帆布課程",
+	"panel.browse.entry.my.student_courses.title": "我的課程",
 	"panel.browse.entry.my.my_game_day.title": "我的比賽日",
 	"panel.browse.entry.my.my_events.title": "我的活動",
 	"panel.browse.entry.my.my_dining.title": "我的用餐地點",
@@ -2896,7 +2898,14 @@
 
 	"model.explore.time.today":"今天",
 	"model.explore.time.tomorrow":"明天",
-	"model.explore.time.at":"在",
+	"model.explore.time.monday": "週一",
+	"model.explore.time.tuesday": "週二",
+	"model.explore.time.wednessday": "週三",
+	"model.explore.time.thursday": "週四",
+	"model.explore.time.friday": "星期五",
+	"model.explore.time.saturday": "週六",
+	"model.explore.time.sunday": "星期日",
+"model.explore.time.at":"在",
 	"model.explore.time.all_day": "一整天",
 
 	"model.groups.member.status.pending": "Pending",
