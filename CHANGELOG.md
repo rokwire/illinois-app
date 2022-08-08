@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added My Courses and My Gies Canvas Courses to My section in Browse panel [#2185](https://github.com/rokwire/illinois-app/issues/2185).
 - Load groups and members on portions (paging) - task in progress [#2150](https://github.com/rokwire/illinois-app/issues/2150).
+- My Courses added to Map Panel [#2169](https://github.com/rokwire/illinois-app/issues/2169).
 
 ## [4.1.12] - 2022-08-05
 ### Fixed

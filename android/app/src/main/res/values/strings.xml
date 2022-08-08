@@ -28,6 +28,7 @@
     <string name="places">Places</string>
     <string name="laundries">Laundries</string>
     <string name="parkings">Parking lots</string>
+    <string name="student_courses">Courses</string>
     <string name="ok">OK</string>
 
     <!-- MapDirectionsActivity -->

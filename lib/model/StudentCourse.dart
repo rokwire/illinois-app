@@ -1,9 +1,10 @@
 import 'package:collection/collection.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 // StudentCourse
 
-class StudentCourse {
+class StudentCourse with Explore {
   final String? title;
   final String? shortName;
   final String? number;
@@ -27,18 +28,18 @@ class StudentCourse {
     'courseshortname': shortName,
     'coursenumber': number,
     'instructionmethod': instructionMethod,
-    'coursesection': section,
+    'coursesection': section?.toJson(),
   };
 
-  toMapsJson() => {
-    //TMP: Emulate event for now
-    'eventId': number,
-    'title': title,
-    'location': {
-      'latitude': section?.building?.latitude,
-      'longitude': section?.building?.longitude,
-    }
-  };
+  // ExploreJsonHandler
+
+  static bool canJson(Map<String, dynamic>? json) {
+    return (json != null) &&
+      (json['coursetitle'] != null) &&
+      (json['courseshortname'] != null) &&
+      (json['coursenumber'] != null) &&
+      (json['coursesection'] != null);
+  }
 
   bool get hasLocation => section?.building?.hasLocation ?? false;
   
@@ -59,6 +60,29 @@ class StudentCourse {
     (instructionMethod?.hashCode ?? 0) ^
     (section?.hashCode ?? 0);
 
+  ////////////////////////////
+  // Explore implementation
+
+  @override String? get exploreId => number;
+  @override String get exploreTitle => title ?? '';
+  @override String? get exploreSubTitle => '$shortName ($number) $instructionMethod';
+  @override String? get exploreShortDescription => null;
+  @override String? get exploreLongDescription => null;
+  @override DateTime? get exploreStartDateUtc => null;
+  @override String? get exploreImageURL => null;
+  @override String? get explorePlaceId => null;
+  @override ExploreLocation? get exploreLocation => (section?.building != null) ? ExploreLocation(
+    building : section?.building?.name,
+    address : section?.building?.address1,
+    city : section?.building?.city,
+    state : section?.building?.state,
+    zip : section?.building?.zipCode,
+    latitude : section?.building?.latitude,
+    longitude : section?.building?.longitude,
+  ) : null;
+
+  // List<StudentCourse>
+
   static List<StudentCourse>? listFromJson(List<dynamic>? jsonList) {
     List<StudentCourse>? values;
     if (jsonList != null) {
@@ -78,7 +102,7 @@ class StudentCourse {
         ListUtils.add(jsonList, value.toJson());
       }
     }
-    return values;
+    return jsonList;
   }
 }
 
@@ -137,7 +161,7 @@ class StudentCourseSection {
     'endtime': endTime,
     'meeting_dates_or_range': meetingDates,
 
-    'building': building,
+    'building': building?.toJson(),
   };
 
   @override
@@ -189,7 +213,7 @@ class StudentCourseSection {
         ListUtils.add(jsonList, value.toJson());
       }
     }
-    return values;
+    return jsonList;
   }
 }
 
@@ -338,7 +362,7 @@ class Building {
         ListUtils.add(jsonList, value.toJson());
       }
     }
-    return values;
+    return jsonList;
   }
 }
 
@@ -419,21 +443,21 @@ class BuildingEntrance {
         ListUtils.add(jsonList, value.toJson());
       }
     }
-    return values;
+    return jsonList;
   }
 }
 
-// CourseTerm
+// StudentCourseTerm
 
-class CourseTerm {
+class StudentCourseTerm {
   final String? id;
   final String? name;
   final bool? isCurrent;
   
-  CourseTerm({this.id, this.name, this.isCurrent});
+  StudentCourseTerm({this.id, this.name, this.isCurrent});
 
-  static CourseTerm? fromJson(Map<String, dynamic>? json) {
-    return (json != null) ? CourseTerm(
+  static StudentCourseTerm? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? StudentCourseTerm(
       id: JsonUtils.stringValue(json['termid']),
       name: JsonUtils.stringValue(json['term']),
       isCurrent: JsonUtils.boolValue(json['is_current']),
@@ -448,7 +472,7 @@ class CourseTerm {
 
   @override
   bool operator==(dynamic other) =>
-    (other is CourseTerm) &&
+    (other is StudentCourseTerm) &&
     (id == other.id) &&
     (name == other.name) &&
     (isCurrent == other.isCurrent);
@@ -459,31 +483,31 @@ class CourseTerm {
     (name?.hashCode ?? 0) ^
     (isCurrent?.hashCode ?? 0);
 
-  static List<CourseTerm>? listFromJson(List<dynamic>? jsonList) {
-    List<CourseTerm>? values;
+  static List<StudentCourseTerm>? listFromJson(List<dynamic>? jsonList) {
+    List<StudentCourseTerm>? values;
     if (jsonList != null) {
-      values = <CourseTerm>[];
+      values = <StudentCourseTerm>[];
       for (dynamic jsonEntry in jsonList) {
-        ListUtils.add(values, CourseTerm.fromJson(JsonUtils.mapValue(jsonEntry)));
+        ListUtils.add(values, StudentCourseTerm.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return values;
   }
 
-  static List<dynamic>? listToJson(List<CourseTerm>? values) {
+  static List<dynamic>? listToJson(List<StudentCourseTerm>? values) {
     List<dynamic>? jsonList;
     if (values != null) {
       jsonList = <dynamic>[];
-      for (CourseTerm value in values) {
+      for (StudentCourseTerm value in values) {
         ListUtils.add(jsonList, value.toJson());
       }
     }
-    return values;
+    return jsonList;
   }
 
-  static CourseTerm? findInList(List<CourseTerm>? values, {bool? isCurrent, String? id}) {
+  static StudentCourseTerm? findInList(List<StudentCourseTerm>? values, {bool? isCurrent, String? id}) {
     if (values != null) {
-      for (CourseTerm value in values) {
+      for (StudentCourseTerm value in values) {
         if ((isCurrent != null) && (value.isCurrent == isCurrent)) {
           return value;
         }

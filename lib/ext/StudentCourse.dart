@@ -3,6 +3,30 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
+extension StudentCourseExt on StudentCourse {
+
+  String get displayInfo {
+    String result = shortName ?? '';
+    
+    if (number?.isNotEmpty ?? false) {
+      if (result.isNotEmpty) {
+        result += ' ';
+      }
+      result += "($number)";
+    }
+
+    if (instructionMethod?.isNotEmpty ?? false) {
+      if (result.isNotEmpty) {
+        result += ' ';
+      }
+      result += "$instructionMethod";
+    }
+
+    return result;
+  }
+  
+}
+
 extension StudentCourseSectionExt on StudentCourseSection {
   
   static const Map<String, int> _dayAbbreviations = <String, int>{
@@ -14,8 +38,19 @@ extension StudentCourseSectionExt on StudentCourseSection {
     "S"  : DateTime.saturday,
     "Su" : DateTime.sunday
   };
-  
-  String? get displayDays {
+
+  String get displaySchedule {
+    String displayDaysStr = displayDays;
+    String displayTimeStr = displayTime;
+    if (displayDaysStr.isNotEmpty) {
+      return displayTimeStr.isNotEmpty ? "$displayDaysStr $displayTimeStr" : displayDaysStr;
+    }
+    else {
+      return displayTimeStr;
+    }
+  }
+
+  String get displayDays {
     String? result;
     if (days != null) {
       List<String>? dayNames = <String>[];
@@ -51,7 +86,7 @@ extension StudentCourseSectionExt on StudentCourseSection {
       result = dayNames.join(', ');
     }
 
-    return result;
+    return result ?? '';
   }
 
   String get displayTime {
@@ -97,5 +132,8 @@ extension StudentCourseSectionExt on StudentCourseSection {
     return null;
   }
 
+  String get displayLocation {
+    return ((buildingName?.isNotEmpty ?? false) && (room?.isNotEmpty ?? false)) ? "$buildingName $room" : (buildingName ?? '');
+  }
 
 }
