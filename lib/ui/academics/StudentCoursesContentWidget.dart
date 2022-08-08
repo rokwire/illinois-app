@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:illinois/model/Courses.dart';
+import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Courses.dart';
+import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -20,19 +20,19 @@ class StudentCoursesContentWidget extends StatefulWidget {
 
 class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidget> implements NotificationsListener {
 
-  List<Course>? _courses;
+  List<StudentCourse>? _courses;
   bool _loading = false;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      Courses.notifyTermsChanged,
-      Courses.notifySelectedTermChanged,
+      StudentCourses.notifyTermsChanged,
+      StudentCourses.notifySelectedTermChanged,
     ]);
 
-    if (Courses().displayTermId != null) {
+    if (StudentCourses().displayTermId != null) {
       _loading = true;
-      Courses().loadCourses(termId: Courses().displayTermId!).then((List<Course>? courses) {
+      StudentCourses().loadCourses(termId: StudentCourses().displayTermId!).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
           _courses = courses;
           _loading = false;
@@ -52,10 +52,10 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Courses.notifyTermsChanged) {
+    if (name == StudentCourses.notifyTermsChanged) {
       setStateIfMounted(() {});
     }
-    else if (name == Courses.notifySelectedTermChanged) {
+    else if (name == StudentCourses.notifySelectedTermChanged) {
       _updateCourses();
     }
   }
@@ -88,7 +88,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
     ];
     
     if (_courses != null) {
-      for (Course course in _courses!) {
+      for (StudentCourse course in _courses!) {
         courseWidgets.add(Padding(padding: EdgeInsets.only(top: (1 < courseWidgets.length) ? 8 : 0), child:
           StudentCourseCard(course: course,),
         ));
@@ -134,7 +134,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
     TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary);
 
   Widget _buildTermsDropDown() {
-    CourseTerm? currentTerm = Courses().displayTerm;
+    CourseTerm? currentTerm = StudentCourses().displayTerm;
 
     return Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
       DropdownButtonHideUnderline(child:
@@ -152,8 +152,8 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
   }
 
   List<DropdownMenuItem<String>>? _buildTermDropDownItems() {
-    List<CourseTerm>? terms = Courses().terms;
-    String? currentTermId = Courses().displayTermId;
+    List<CourseTerm>? terms = StudentCourses().terms;
+    String? currentTermId = StudentCourses().displayTermId;
 
     List<DropdownMenuItem<String>>? items;
     if (terms != null) {
@@ -169,15 +169,15 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
   }
 
   void _onTermDropDownValueChanged(String? termId) {
-    Courses().selectedTermId = termId;
+    StudentCourses().selectedTermId = termId;
   }
 
   void _updateCourses() {
-    if (Courses().displayTermId != null) {
+    if (StudentCourses().displayTermId != null) {
       setStateIfMounted(() {
         _loading = true;
       });
-      Courses().loadCourses(termId: Courses().displayTermId!).then((List<Course>? courses) {
+      StudentCourses().loadCourses(termId: StudentCourses().displayTermId!).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
           _courses = courses;
           _loading = false;
@@ -188,7 +188,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
 }
 
 class StudentCourseCard extends StatelessWidget {
-  final Course course;
+  final StudentCourse course;
   
   StudentCourseCard({Key? key, required this.course}) : super(key: key);
 

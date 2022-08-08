@@ -1,24 +1,24 @@
 import 'package:collection/collection.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-// Course
+// StudentCourse
 
-class Course {
+class StudentCourse {
   final String? title;
   final String? shortName;
   final String? number;
   final String? instructionMethod;
-  final CourseSection? section;
+  final StudentCourseSection? section;
 
-  Course({this.title, this.shortName, this.number, this.instructionMethod, this.section});
+  StudentCourse({this.title, this.shortName, this.number, this.instructionMethod, this.section});
 
-  static Course? fromJson(Map<String, dynamic>? json) {
-    return (json != null) ? Course(
+  static StudentCourse? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? StudentCourse(
       title: JsonUtils.stringValue(json['coursetitle']),
       shortName: JsonUtils.stringValue(json['courseshortname']),
       number: JsonUtils.stringValue(json['coursenumber']),
       instructionMethod: JsonUtils.stringValue(json['instructionmethod']),
-      section: CourseSection.fromJson(JsonUtils.mapValue(json['coursesection'])),
+      section: StudentCourseSection.fromJson(JsonUtils.mapValue(json['coursesection'])),
     ) : null;
   }
 
@@ -44,7 +44,7 @@ class Course {
   
   @override
   bool operator==(dynamic other) =>
-    (other is Course) &&
+    (other is StudentCourse) &&
     (title == other.title) &&
     (shortName == other.shortName) &&
     (number == other.number) &&
@@ -59,22 +59,22 @@ class Course {
     (instructionMethod?.hashCode ?? 0) ^
     (section?.hashCode ?? 0);
 
-  static List<Course>? listFromJson(List<dynamic>? jsonList) {
-    List<Course>? values;
+  static List<StudentCourse>? listFromJson(List<dynamic>? jsonList) {
+    List<StudentCourse>? values;
     if (jsonList != null) {
-      values = <Course>[];
+      values = <StudentCourse>[];
       for (dynamic jsonEntry in jsonList) {
-        ListUtils.add(values, Course.fromJson(JsonUtils.mapValue(jsonEntry)));
+        ListUtils.add(values, StudentCourse.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return values;
   }
 
-  static List<dynamic>? listToJson(List<Course>? values) {
+  static List<dynamic>? listToJson(List<StudentCourse>? values) {
     List<dynamic>? jsonList;
     if (values != null) {
       jsonList = <dynamic>[];
-      for (Course value in values) {
+      for (StudentCourse value in values) {
         ListUtils.add(jsonList, value.toJson());
       }
     }
@@ -82,9 +82,9 @@ class Course {
   }
 }
 
-// CourseSection
+// StudentCourseSection
 
-class CourseSection {
+class StudentCourseSection {
   final String? buildingId;
   final String? buildingName;
   final String? room;
@@ -99,15 +99,15 @@ class CourseSection {
 
   final Building? building;
 
-  CourseSection({
+  StudentCourseSection({
     this.buildingId, this.buildingName, this.room,
     this.instructionType, this.instructor,
     this.days, this.startTime, this.endTime, this.meetingDates,
     this.building
   });
 
-  static CourseSection? fromJson(Map<String, dynamic>? json) {
-    return (json != null) ? CourseSection(
+  static StudentCourseSection? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? StudentCourseSection(
       buildingId: JsonUtils.stringValue(json['buildingid']),
       buildingName: JsonUtils.stringValue(json['buildingname']),
       room: JsonUtils.stringValue(json['room']),
@@ -142,7 +142,7 @@ class CourseSection {
 
   @override
   bool operator==(dynamic other) =>
-    (other is CourseSection) &&
+    (other is StudentCourseSection) &&
     
     (buildingName == other.buildingName) &&
     (room == other.room) &&
@@ -170,22 +170,22 @@ class CourseSection {
 
     (building?.hashCode ?? 0);
 
-  static List<CourseSection>? listFromJson(List<dynamic>? jsonList) {
-    List<CourseSection>? values;
+  static List<StudentCourseSection>? listFromJson(List<dynamic>? jsonList) {
+    List<StudentCourseSection>? values;
     if (jsonList != null) {
-      values = <CourseSection>[];
+      values = <StudentCourseSection>[];
       for (dynamic jsonEntry in jsonList) {
-        ListUtils.add(values, CourseSection.fromJson(JsonUtils.mapValue(jsonEntry)));
+        ListUtils.add(values, StudentCourseSection.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return values;
   }
 
-  static List<dynamic>? listToJson(List<CourseSection>? values) {
+  static List<dynamic>? listToJson(List<StudentCourseSection>? values) {
     List<dynamic>? jsonList;
     if (values != null) {
       jsonList = <dynamic>[];
-      for (CourseSection value in values) {
+      for (StudentCourseSection value in values) {
         ListUtils.add(jsonList, value.toJson());
       }
     }

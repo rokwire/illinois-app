@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:illinois/model/Courses.dart';
+import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
@@ -17,7 +17,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Courses with Service implements NotificationsListener {
+class StudentCourses with Service implements NotificationsListener {
 
   static const String notifyTermsChanged = 'edu.illinois.rokwire.courses.terms.changed';
   static const String notifySelectedTermChanged = 'edu.illinois.rokwire.courses.selected.term.changed';
@@ -34,9 +34,9 @@ class Courses with Service implements NotificationsListener {
 
   // Singleton Factory
 
-  static final Courses _instance = Courses._internal();
-  factory Courses() => _instance;
-  Courses._internal();
+  static final StudentCourses _instance = StudentCourses._internal();
+  factory StudentCourses() => _instance;
+  StudentCourses._internal();
 
   // Service
 
@@ -177,9 +177,9 @@ class Courses with Service implements NotificationsListener {
     }
   }
 
-  // Courses
+  // StudentCourses
 
-  Future<List<Course>?> loadCourses({required String termId}) async {
+  Future<List<StudentCourse>?> loadCourses({required String termId}) async {
     if (StringUtils.isNotEmpty(Config().gatewayUrl) && StringUtils.isNotEmpty(termId) && StringUtils.isNotEmpty(Auth2().uin)) {
       String url = "${Config().gatewayUrl}/courses/studentcourses?id=${Auth2().uin}&termid=$termId";
       Response? response = await Network().get(url, auth: Auth2(), headers: { ExternalAuthorizationHeader: Auth2().uiucToken?.accessToken });
@@ -192,7 +192,7 @@ class Courses with Service implements NotificationsListener {
         {"coursetitle":"Seminar","courseshortname":"TAM 500","coursenumber":"30964","instructionmethod":"LCD","coursesection":{"days":"Tu,Th","meeting_dates_or_range":"08/22/2022 - 12/07/2022","room":"2035","buildingname":"Campus Instructional Facility","buildingid":"1545","instructiontype":"LCD","instructor":"Sofronis, Petros","start_time":"1600","endtime":"1600","building":{"ID":"","Name":"","Number":"","FullAddress":"","Address1":"","Address2":"","City":"","State":"","ZipCode":"","ImageURL":"","MailCode":"","Entrances":null,"Latitude":0,"Longitude":0}}},
         {"coursetitle":"Digi-Mat Prof Dev. Seminar","courseshortname":"ME 590","coursenumber":"32259","instructionmethod":"LEC","coursesection":{"days":"F","meeting_dates_or_range":"08/22/2022 - 12/07/2022","room":"208","buildingname":"Seitz Materials Research Lab","buildingid":"0066","instructiontype":"LEC","instructor":"Trinkle, Dallas","start_time":"1500","endtime":"1500","building":{"ID":"621521ed-6162-490a-8068-5111f988121c","Name":"Frederick Seitz Materials Research Laboratory","Number":"","FullAddress":"104 S Goodwin Ave  Urbana, IL 61801","Address1":"104 S Goodwin Ave","Address2":"","City":"Urbana","State":"IL","ZipCode":"61801","ImageURL":"https://images.ccf.virtual.illinois.edu/DefaultBuildingImage.png","MailCode":"","Entrances":[{"ID":"2149dd06-b870-45af-a872-a4d1b31a1ef6","Name":"","ADACompliant":false,"Available":true,"ImageURL":"https://images.ccf.virtual.illinois.edu/DefaultEntranceImage.jpg","Latitude":40.111664,"Longitude":-88.2234},{"ID":"a0a95c63-f3f8-42ce-80d6-17886b98d011","Name":"","ADACompliant":false,"Available":true,"ImageURL":"https://images.ccf.virtual.illinois.edu/DefaultEntranceImage.jpg","Latitude":40.111828,"Longitude":-88.223404},{"ID":"b6e4747d-8c08-4648-ae4f-a84c6359c068","Name":"","ADACompliant":false,"Available":true,"ImageURL":"https://images.ccf.virtual.illinois.edu/DefaultEntranceImage.jpg","Latitude":40.11146,"Longitude":-88.223175},{"ID":"e08032ac-de42-4dd8-a618-1e1239920dd0","Name":"","ADACompliant":false,"Available":true,"ImageURL":"https://images.ccf.virtual.illinois.edu/DefaultEntranceImage.jpg","Latitude":40.11153,"Longitude":-88.22274},{"ID":"45ef53a5-36af-442d-928d-232b7c51d7a2","Name":"","ADACompliant":false,"Available":true,"ImageURL":"https://images.ccf.virtual.illinois.edu/DefaultEntranceImage.jpg","Latitude":40.11179,"Longitude":-88.22275},{"ID":"7e6bfb00-be71-4d2d-ad2e-7a9283f9e803","Name":"","ADACompliant":false,"Available":true,"ImageURL":"https://images.ccf.virtual.illinois.edu/DefaultEntranceImage.jpg","Latitude":40.11186,"Longitude":-88.22294}],"Latitude":40.111607,"Longitude":-88.22307}}}
       ]''';*/
-      return Course.listFromJson(JsonUtils.decodeList(responseString));
+      return StudentCourse.listFromJson(JsonUtils.decodeList(responseString));
     }
  }
 }
