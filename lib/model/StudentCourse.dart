@@ -457,17 +457,17 @@ class BuildingEntrance {
   }
 }
 
-// CourseTerm
+// StudentCourseTerm
 
-class CourseTerm {
+class StudentCourseTerm {
   final String? id;
   final String? name;
   final bool? isCurrent;
   
-  CourseTerm({this.id, this.name, this.isCurrent});
+  StudentCourseTerm({this.id, this.name, this.isCurrent});
 
-  static CourseTerm? fromJson(Map<String, dynamic>? json) {
-    return (json != null) ? CourseTerm(
+  static StudentCourseTerm? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? StudentCourseTerm(
       id: JsonUtils.stringValue(json['termid']),
       name: JsonUtils.stringValue(json['term']),
       isCurrent: JsonUtils.boolValue(json['is_current']),
@@ -482,7 +482,7 @@ class CourseTerm {
 
   @override
   bool operator==(dynamic other) =>
-    (other is CourseTerm) &&
+    (other is StudentCourseTerm) &&
     (id == other.id) &&
     (name == other.name) &&
     (isCurrent == other.isCurrent);
@@ -493,31 +493,31 @@ class CourseTerm {
     (name?.hashCode ?? 0) ^
     (isCurrent?.hashCode ?? 0);
 
-  static List<CourseTerm>? listFromJson(List<dynamic>? jsonList) {
-    List<CourseTerm>? values;
+  static List<StudentCourseTerm>? listFromJson(List<dynamic>? jsonList) {
+    List<StudentCourseTerm>? values;
     if (jsonList != null) {
-      values = <CourseTerm>[];
+      values = <StudentCourseTerm>[];
       for (dynamic jsonEntry in jsonList) {
-        ListUtils.add(values, CourseTerm.fromJson(JsonUtils.mapValue(jsonEntry)));
+        ListUtils.add(values, StudentCourseTerm.fromJson(JsonUtils.mapValue(jsonEntry)));
       }
     }
     return values;
   }
 
-  static List<dynamic>? listToJson(List<CourseTerm>? values) {
+  static List<dynamic>? listToJson(List<StudentCourseTerm>? values) {
     List<dynamic>? jsonList;
     if (values != null) {
       jsonList = <dynamic>[];
-      for (CourseTerm value in values) {
+      for (StudentCourseTerm value in values) {
         ListUtils.add(jsonList, value.toJson());
       }
     }
     return jsonList;
   }
 
-  static CourseTerm? findInList(List<CourseTerm>? values, {bool? isCurrent, String? id}) {
+  static StudentCourseTerm? findInList(List<StudentCourseTerm>? values, {bool? isCurrent, String? id}) {
     if (values != null) {
-      for (CourseTerm value in values) {
+      for (StudentCourseTerm value in values) {
         if ((isCurrent != null) && (value.isCurrent == isCurrent)) {
           return value;
         }

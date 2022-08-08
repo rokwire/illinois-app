@@ -120,7 +120,7 @@ class ExplorePanelState extends State<ExplorePanel>
   late EventsDisplayType _selectedEventsDisplayType;
 
   List<dynamic>? _eventCategories;
-  List<CourseTerm>? _studentCourseTerms;
+  List<StudentCourseTerm>? _studentCourseTerms;
   List<Explore>? _displayExplores;
   List<String>?  _filterWorkTimeValues;
   List<String>?  _filterPaymentTypeValues;
@@ -472,7 +472,7 @@ class ExplorePanelState extends State<ExplorePanel>
   List<String> _getFilterTermsValues() {
     List<String> categoriesValues = [];
     if (_studentCourseTerms != null) {
-      for (CourseTerm term in _studentCourseTerms!) {
+      for (StudentCourseTerm term in _studentCourseTerms!) {
         categoriesValues.add(term.name ?? '');
       }
     }
@@ -1462,7 +1462,7 @@ class ExplorePanelState extends State<ExplorePanel>
     selectedFilter.active = _filterOptionsVisible = false;
 
     if (selectedFilter.type == ExploreFilterType.student_course_terms) {
-      CourseTerm? term = ListUtils.entry(_studentCourseTerms, newValueIndex);
+      StudentCourseTerm? term = ListUtils.entry(_studentCourseTerms, newValueIndex);
       if (term != null) {
         StudentCourses().selectedTermId = term.id;
       }

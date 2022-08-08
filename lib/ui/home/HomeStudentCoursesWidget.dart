@@ -167,7 +167,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary);
 
   Widget _buildTermsDropDown() {
-    CourseTerm? currentTerm = StudentCourses().displayTerm;
+    StudentCourseTerm? currentTerm = StudentCourses().displayTerm;
 
     return Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
       DropdownButtonHideUnderline(child:
@@ -185,13 +185,13 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
   }
 
   List<DropdownMenuItem<String>>? _buildTermDropDownItems() {
-    List<CourseTerm>? terms = StudentCourses().terms;
+    List<StudentCourseTerm>? terms = StudentCourses().terms;
     String? currentTermId = StudentCourses().displayTermId;
 
     List<DropdownMenuItem<String>>? items;
     if (terms != null) {
       items = <DropdownMenuItem<String>>[];
-      for (CourseTerm term in terms) {
+      for (StudentCourseTerm term in terms) {
         items.add(DropdownMenuItem<String>(
           value: term.id,
           child: Text(term.name ?? '', style: getTermDropDownItemStyle(selected: term.id == currentTermId),)

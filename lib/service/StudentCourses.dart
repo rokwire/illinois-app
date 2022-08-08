@@ -29,7 +29,7 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
 
   late Directory _appDocDir;
   
-  List<CourseTerm>? _terms;
+  List<StudentCourseTerm>? _terms;
   int _lastTermsCheckTime = 0;
   String? _selectedTermId;
 
@@ -67,7 +67,7 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
     }
     else {
       String? termsJsonString = await _loadTermsStringFromNet();
-      _terms = CourseTerm.listFromJson(JsonUtils.decodeList(termsJsonString));
+      _terms = StudentCourseTerm.listFromJson(JsonUtils.decodeList(termsJsonString));
       if (_terms != null) {
         _saveTermsStringToCache(termsJsonString);
       }
@@ -98,7 +98,7 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
 
   // Terms
 
-  List<CourseTerm>? get terms => _terms;
+  List<StudentCourseTerm>? get terms => _terms;
 
   File _getTermsCacheFile() => File(join(_appDocDir.path, _courseTermsName));
 
@@ -111,8 +111,8 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
     await _getTermsCacheFile().writeAsString(regionsString ?? '', flush: true);
   }
 
-  Future<List<CourseTerm>?> _loadTermsFromCache() async {
-    return CourseTerm.listFromJson(JsonUtils.decodeList(await _loadTermsStringFromCache()));
+  Future<List<StudentCourseTerm>?> _loadTermsFromCache() async {
+    return StudentCourseTerm.listFromJson(JsonUtils.decodeList(await _loadTermsStringFromCache()));
   }
 
   Future<String?> _loadTermsStringFromNet() async {
@@ -124,7 +124,7 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
 
   Future<void> _updateTerms() async {
     String? termsJsonString = await _loadTermsStringFromNet();
-    List<CourseTerm>? terms = CourseTerm.listFromJson(JsonUtils.decodeList(termsJsonString));
+    List<StudentCourseTerm>? terms = StudentCourseTerm.listFromJson(JsonUtils.decodeList(termsJsonString));
     if ((terms != null) && !const DeepCollectionEquality().equals(_terms, terms)) {
       _terms = terms;
       _saveTermsStringToCache(termsJsonString);
@@ -160,20 +160,20 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
     }
   }
 
-  CourseTerm? get _selectedTerm => (_selectedTermId != null) ? CourseTerm.findInList(_terms, id: _selectedTermId) : null;
+  StudentCourseTerm? get _selectedTerm => (_selectedTermId != null) ? StudentCourseTerm.findInList(_terms, id: _selectedTermId) : null;
 
   String? get displayTermId => _selectedTermId ?? _currentTermId ?? _anyTermId;
-  CourseTerm? get displayTerm => _selectedTerm ?? _currentTerm ?? _anyTerm;
+  StudentCourseTerm? get displayTerm => _selectedTerm ?? _currentTerm ?? _anyTerm;
 
-  CourseTerm? get _anyTerm => (_terms?.isNotEmpty ?? false) ? _terms?.first : null;
+  StudentCourseTerm? get _anyTerm => (_terms?.isNotEmpty ?? false) ? _terms?.first : null;
   String? get _anyTermId => _anyTerm?.id;
 
-  CourseTerm? get _currentTerm => CourseTerm.findInList(_terms, isCurrent: true);
+  StudentCourseTerm? get _currentTerm => StudentCourseTerm.findInList(_terms, isCurrent: true);
   String? get _currentTermId => _currentTerm?.id;
 
 
   void _updateSelectedTermId() {
-    if ((_selectedTermId != null) && (CourseTerm.findInList(_terms, id: _selectedTermId) == null)) {
+    if ((_selectedTermId != null) && (StudentCourseTerm.findInList(_terms, id: _selectedTermId) == null)) {
       Storage().selectedCourseTermId = _selectedTermId = null;
       NotificationService().notify(notifySelectedTermChanged);
     }
