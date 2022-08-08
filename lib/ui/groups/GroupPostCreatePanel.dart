@@ -12,9 +12,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'GroupWidgets.dart';
 
 class GroupPostCreatePanel extends StatefulWidget{
-  final Group? group;
+  final Group group;
 
-  const GroupPostCreatePanel({Key? key, this.group}) : super(key: key);
+  GroupPostCreatePanel({required this.group});
 
   @override
   State<StatefulWidget> createState() => _GroupPostCreatePanelState();
@@ -26,7 +26,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   PostDataModel _postData = PostDataModel();
   List<GroupPostNudge>? _postNudges;
   GroupPostNudge? _selectedNudge;
-  bool _loading = false;
+  int _progressLoading = 0;
   //Refresh
   GlobalKey _postImageHolderKey = GlobalKey();
   List<Member>? _selectedMembers;
@@ -35,7 +35,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   @override
   void initState() {
     super.initState();
-    _initAllMembersAllowedToPost();
+    _loadMembersAllowedToPost();
     _loadPostNudges();
   }
 
@@ -75,7 +75,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(height: 12,),
-                  GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group?.id, onSelectionChanged: _onMembersSelectionChanged),
+                  GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group.id, onSelectionChanged: _onMembersSelectionChanged),
                   _buildNudgesWidget(),
                   Container(height: 12,),
                   Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
@@ -128,7 +128,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
           ])),
           Visibility(
-              visible: _loading,
+              visible: _isLoading,
               child: Center(child: CircularProgressIndicator())),
         ])
     );
@@ -136,7 +136,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
   Widget _buildNudgesWidget() {
     // Do not show the nudges for regular members
-    if (!(widget.group?.currentUserIsAdmin ?? false)) {
+    if (!(widget.group.currentUserIsAdmin)) {
       return Container();
     }
     if (CollectionUtils.isEmpty(_postNudges)) {
@@ -227,16 +227,16 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     }
 
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
-    _setLoading(true);
+    _increaseProgress();
 
     GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers); // if no parentId then this is a new post for the group.
-    Groups().createPost(widget.group?.id, post).then((succeeded) {
+    Groups().createPost(widget.group.id, post).then((succeeded) {
       _onCreateFinished(succeeded);
     });
   }
 
   void _onCreateFinished(bool succeeded) {
-    _setLoading(false);
+    _decreaseProgress();
     if (succeeded) {
       Navigator.of(context).pop(true);
     } else {
@@ -244,34 +244,40 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     }
   }
 
-  void _setLoading(bool loading) {
-    if (mounted) {
-      setState(() {
-        _loading = loading;
-      });
-    }
-  }
-
-  void _initAllMembersAllowedToPost(){
-    if((widget.group?.members?.length ?? 0) >0) {
-      _allMembersAllowedToPost = widget.group!.members!.where((member) => _isMemberAllowedToReceivePost(member)).toList();
-    }
+  void _loadMembersAllowedToPost() {
+    _increaseProgress();
+    Groups().loadMembersAllowedToPost(groupId: widget.group.id).then((members) {
+      _allMembersAllowedToPost = members;
+      _decreaseProgress();
+    });
   }
 
   void _loadPostNudges() {
     // Load post nudges only for admins
-    if (widget.group?.currentUserIsAdmin ?? false) {
-      _setLoading(true);
-      Groups().loadPostNudges(groupName: StringUtils.ensureNotEmpty(widget.group?.title)).then((nudges) {
+    if (widget.group.currentUserIsAdmin) {
+      _increaseProgress();
+      Groups().loadPostNudges(groupName: StringUtils.ensureNotEmpty(widget.group.title)).then((nudges) {
         _postNudges = nudges;
-        _setLoading(false);
+        _decreaseProgress();
       });
     }
   }
 
-  bool _isMemberAllowedToReceivePost(Member member){
-    //TMP:
-    // return true;
-    return member.isMemberOrAdmin;
+  void _increaseProgress() {
+    _progressLoading++;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _decreaseProgress() {
+    _progressLoading--;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  bool get _isLoading {
+    return (_progressLoading > 0);
   }
 }
