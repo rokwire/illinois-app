@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Student Course display data format [#2192](https://github.com/rokwire/illinois-app/issues/2192)
 - Guides open links in external browser  [#2155](https://github.com/rokwire/illinois-app/issues/2155).
 - Do not load groups on portions (paging) [#2150](https://github.com/rokwire/illinois-app/issues/2150).
+- Remove reference to "Building Access" in "Connect to Illinois" widget. [#2168](https://github.com/rokwire/illinois-app/issues/2168).
 ### Added
 - Drop down in members panel for filtering by member status [#2150](https://github.com/rokwire/illinois-app/issues/2150).
 
