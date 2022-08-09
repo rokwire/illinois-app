@@ -1307,12 +1307,14 @@
 
     "panel.settings.home.calendar.settings.add_events.label": "Add saved events to calendar",
     "panel.settings.home.calendar.settings.prompt.label": "Prompt when saving events to calendar",
+    "panel.settings.home.calendar.ada.toggle.title": "I require ADA entrances",
     "panel.settings.home.calendar.on_campus.location_services.required.label": "requires location services",
     "panel.settings.home.calendar.on_campus.location_services.not_available.label": "not available",
     "panel.settings.home.calendar.on_campus.radio_button.auto.title": "Automatically detect when I am on Campus",
     "panel.settings.home.calendar.on_campus.radio_button.on.title": "Always make me on campus",
     "panel.settings.home.calendar.on_campus.radio_button.off.title": "Always make me off campus",
     "panel.settings.home.calendar.on_campus.title": "On Campus",
+    "panel.settings.home.calendar.ada.title": "ADA",
 
     "panel.settings.privacy_center.label.title":"Privacy Center",
     "panel.settings.privacy_center.label.description":"Personalize your privacy and data preferences.",

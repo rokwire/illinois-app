@@ -133,9 +133,22 @@
 
 - (NSDictionary*)uiucExploreLocation {
 	switch (self.uiucExploreType) {
-		case UIUCExploreType_Parking:        return [self inaDictForKey:@"entrance"];
 		case UIUCExploreType_StudentCourse:  return [self inaDictForPathKey:@"coursesection.building"];
+		case UIUCExploreType_Parking:        return [self inaDictForKey:@"entrance"];
 		default:                             return [self inaDictForKey:@"location"];
+	}
+}
+
+- (NSDictionary*)uiucExploreDestinationLocation {
+	switch (self.uiucExploreType) {
+		case UIUCExploreType_StudentCourse: {
+			NSDictionary *building = [self inaDictForPathKey:@"coursesection.building"];
+			NSArray *entrances = [building inaArrayForKey:@"entrances"];
+			NSDictionary *entrance = entrances.firstObject;
+			return [entrance isKindOfClass: [NSDictionary class]] ? entrance : building;
+		}
+		case UIUCExploreType_Parking:        return [self inaDictForKey:@"entrance"];
+		default:														 return [self inaDictForKey:@"location"];
 	}
 }
 
