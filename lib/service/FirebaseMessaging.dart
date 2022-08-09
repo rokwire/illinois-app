@@ -562,7 +562,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
       }
     }
     if(Auth2().isLoggedIn){ // Logged user choice stored in the UserPrefs
-      return  Auth2().prefs?.getBoolSetting(settingName: _notifySettingNames [name]?? name, defaultValue: defaultValue);
+      return  Auth2().prefs?.getBoolSetting(_notifySettingNames[name] ?? name, defaultValue: defaultValue);
     }
     return Storage().getNotifySetting(_notifySettingNames[name] ?? name) ?? defaultValue;
   }

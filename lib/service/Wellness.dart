@@ -387,7 +387,7 @@ class Wellness with Service implements NotificationsListener {
   }
 
   bool? _getUserBoolSetting(String settingName) {
-    return Auth2().prefs?.getBoolSetting(settingName: settingName);
+    return Auth2().prefs?.getBoolSetting(settingName);
   }
 
   void _applyUserSetting({required String settingName, dynamic settingValue}) {
