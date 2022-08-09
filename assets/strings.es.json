@@ -2906,13 +2906,6 @@
 
     "model.explore.time.today": "Hoy",
     "model.explore.time.tomorrow": "Mañana",
-    "model.explore.time.monday": "Lunes",
-    "model.explore.time.tuesday": "martes",
-    "model.explore.time.wednessday": "miércoles",
-    "model.explore.time.thursday": "jueves",
-    "model.explore.time.friday": "Viernes",
-    "model.explore.time.saturday": "sábado",
-    "model.explore.time.sunday": "Domingo",
     "model.explore.time.at": "a",
     "model.explore.time.all_day": "Todo el dia",
 
@@ -2924,6 +2917,22 @@
 
     "model.canvas.calendar.event.type.event.label": "Evento",
     "model.canvas.calendar.event.type.assignment.label": "Asignación",
+
+    "model.student_course.location.room.format": "Habitación {Room}",
+    "model.student_course.time.monday": "Lunes",
+    "model.student_course.time.tuesday": "Martes",
+    "model.student_course.time.wednessday": "miércoles",
+    "model.student_course.time.thursday": "Jueves",
+    "model.student_course.time.friday": "Viernes",
+    "model.student_course.time.saturday": "Sábado",
+    "model.student_course.time.sunday": "Domingo",
+    "model.student_course.time.mon": "Lun",
+    "model.student_course.time.tue": "Mar",
+    "model.student_course.time.wed": "Mié",
+    "model.student_course.time.thu": "Jue",
+    "model.student_course.time.fri": "Vie",
+    "model.student_course.time.sat": "Sáb",
+    "model.student_course.time.sun": "Dom",
 
     "model.wellness.todo.category.reminder.type.none.label": "Ninguno",
     "model.wellness.todo.category.reminder.type.morning_of.label": "Mañana de (8:00 AM)",

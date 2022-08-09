@@ -553,37 +553,34 @@ public class Utils {
                 return (String) exploreMap.get("status");
             }
             else if (exporeType == ExploreType.STUDENT_COURSE) {
-                Object sectionObj = exploreMap.get("coursesection");
-                if (sectionObj instanceof HashMap) {
-                    String result = "";
-                    HashMap sectionMap = (HashMap)sectionObj;
+                String result = "";
+                HashMap sectionMap = (HashMap)sectionObj;
 
-                    String building = (String) sectionMap.get("buildingname");
-                    if (building != null) {
-                        if (0 < result.length()) {
-                            result += " ";
-                        }
-                        result += building;
+                String shortName = (String) exploreMap.get("courseshortname");
+                if ((shortName != null) && (0 < shortName.length)) {
+                    if (0 < result.length()) {
+                        result += " ";
                     }
-
-                    String room = (String) sectionMap.get("room");
-                    if (room != null) {
-                        if (0 < result.length()) {
-                            result += " ";
-                        }
-                        result += "(" + room + ")";
-                    }
-
-                    String instructionType = (String) sectionMap.get("instructiontype");
-                    if (instructionType != null) {
-                        if (0 < result.length()) {
-                            result += " ";
-                        }
-                        result += instructionType;
-                    }
-
-                    return result;
+                    result += shortName;
                 }
+
+                String number = (String) exploreMap.get("coursenumber");
+                if ((number != null) && (0 < number.length)) {
+                    if (0 < result.length()) {
+                        result += " ";
+                    }
+                    result += "(" + number + ")";
+                }
+
+                String instructionMethod = (String) exploreMap.get("instructionmethod");
+                if ((instructionMethod != null) && (0 < instructionMethod.length)) {
+                    if (0 < result.length()) {
+                        result += " ";
+                    }
+                    result += instructionMethod;
+                }
+
+                return result;
             }
 
             return null;

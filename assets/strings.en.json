@@ -2913,13 +2913,6 @@
 
     "model.explore.time.today": "Today",
     "model.explore.time.tomorrow": "Tomorrow",
-    "model.explore.time.monday": "Monday",
-    "model.explore.time.tuesday": "Tuesday",
-    "model.explore.time.wednessday": "Wednessday",
-    "model.explore.time.thursday": "Thursday",
-    "model.explore.time.friday": "Friday",
-    "model.explore.time.saturday": "Saturday",
-    "model.explore.time.sunday": "Sunday",
     "model.explore.time.at": "at",
     "model.explore.time.all_day": "All day",
 
@@ -2931,6 +2924,22 @@
 
     "model.canvas.calendar.event.type.event.label": "Event",
     "model.canvas.calendar.event.type.assignment.label": "Assignment",
+
+    "model.student_course.location.room.format": "Room {Room}",
+    "model.student_course.time.monday": "Monday",
+    "model.student_course.time.tuesday": "Tuesday",
+    "model.student_course.time.wednessday": "Wednessday",
+    "model.student_course.time.thursday": "Thursday",
+    "model.student_course.time.friday": "Friday",
+    "model.student_course.time.saturday": "Saturday",
+    "model.student_course.time.sunday": "Sunday",
+    "model.student_course.time.mon": "Mon",
+    "model.student_course.time.tue": "Tue",
+    "model.student_course.time.wed": "Wed",
+    "model.student_course.time.thu": "Thu",
+    "model.student_course.time.fri": "Fri",
+    "model.student_course.time.sat": "Sat",
+    "model.student_course.time.sun": "Sun",
 
     "model.wellness.todo.category.reminder.type.none.label": "None",
     "model.wellness.todo.category.reminder.type.morning_of.label": "Morning Of (8:00 AM)",
