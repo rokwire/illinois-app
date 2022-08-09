@@ -554,10 +554,9 @@ public class Utils {
             }
             else if (exporeType == ExploreType.STUDENT_COURSE) {
                 String result = "";
-                HashMap sectionMap = (HashMap)sectionObj;
 
                 String shortName = (String) exploreMap.get("courseshortname");
-                if ((shortName != null) && (0 < shortName.length)) {
+                if ((shortName != null) && (0 < shortName.length())) {
                     if (0 < result.length()) {
                         result += " ";
                     }
@@ -565,7 +564,7 @@ public class Utils {
                 }
 
                 String number = (String) exploreMap.get("coursenumber");
-                if ((number != null) && (0 < number.length)) {
+                if ((number != null) && (0 < number.length())) {
                     if (0 < result.length()) {
                         result += " ";
                     }
@@ -573,7 +572,7 @@ public class Utils {
                 }
 
                 String instructionMethod = (String) exploreMap.get("instructionmethod");
-                if ((instructionMethod != null) && (0 < instructionMethod.length)) {
+                if ((instructionMethod != null) && (0 < instructionMethod.length())) {
                     if (0 < result.length()) {
                         result += " ";
                     }

@@ -96,7 +96,7 @@
 	else if (exploreType == UIUCExploreType_StudentCourse) {
 		NSMutableString *result = [[NSMutableString alloc] init];
 
-		NSString *shortName = [section inaStringForKey:@"courseshortname"];
+		NSString *shortName = [self inaStringForKey:@"courseshortname"];
 		if (0 < shortName.length) {
 			if (0 < result.length) {
 				[result appendString: @" "];
@@ -104,7 +104,7 @@
 			[result appendString: shortName];
 		}
 		
-		NSString *number = [section inaStringForKey:@"coursenumber"];
+		NSString *number = [self inaStringForKey:@"coursenumber"];
 		if (0 < number.length) {
 			if (0 < result.length) {
 				[result appendString: @" "];
@@ -113,7 +113,7 @@
 			[result appendFormat:@"(%@)", number];
 		}
 	
-		NSString *instructionMethod = [section inaStringForKey:@"instructionmethod"];
+		NSString *instructionMethod = [self inaStringForKey:@"instructionmethod"];
 		if (0 < instructionMethod.length) {
 			if (0 < result.length) {
 				[result appendString: @" "];
