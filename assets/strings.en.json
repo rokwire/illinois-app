@@ -2932,6 +2932,8 @@
     "model.canvas.calendar.event.type.event.label": "Event",
     "model.canvas.calendar.event.type.assignment.label": "Assignment",
 
+    "model.student_course.location.room.format": "Room {Room}",
+
     "model.wellness.todo.category.reminder.type.none.label": "None",
     "model.wellness.todo.category.reminder.type.morning_of.label": "Morning Of (8:00 AM)",
     "model.wellness.todo.category.reminder.type.night_before.label": "Night Before (9:00 PM)",

@@ -2922,13 +2922,15 @@
 	"model.groups.member.status.rejected": "Denied",
 	"model.groups.member.status.unknown": "Unknown",
 
-    "model.canvas.calendar.event.type.event.label": "事件",
-    "model.canvas.calendar.event.type.assignment.label": "任務",
+	"model.canvas.calendar.event.type.event.label": "事件",
+	"model.canvas.calendar.event.type.assignment.label": "任務",
 
-    "model.wellness.todo.category.reminder.type.none.label": "沒有任何",
-    "model.wellness.todo.category.reminder.type.morning_of.label": "上午 (上午 8:00)",
-    "model.wellness.todo.category.reminder.type.night_before.label": "前一天晚上 (晚上 9:00)",
-    "model.wellness.todo.category.reminder.type.specific_time.label": "特定的時間",
+	"model.student_course.location.room.format": "房間 {Room}",
+
+	"model.wellness.todo.category.reminder.type.none.label": "沒有任何",
+	"model.wellness.todo.category.reminder.type.morning_of.label": "上午 (上午 8:00)",
+	"model.wellness.todo.category.reminder.type.night_before.label": "前一天晚上 (晚上 9:00)",
+	"model.wellness.todo.category.reminder.type.specific_time.label": "特定的時間",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",

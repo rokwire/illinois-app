@@ -133,7 +133,23 @@ extension StudentCourseSectionExt on StudentCourseSection {
   }
 
   String get displayLocation {
-    return ((buildingName?.isNotEmpty ?? false) && (room?.isNotEmpty ?? false)) ? "$buildingName $room" : (buildingName ?? '');
+    String result = "";
+
+    if (buildingName?.isNotEmpty ?? false) {
+      if (result.isNotEmpty) {
+        result += ', ';
+      }
+      result += buildingName!;
+    }
+
+    if (room?.isNotEmpty ?? false) {
+      if (result.isNotEmpty) {
+        result += ', ';
+      }
+      result += Localization().getStringEx('model.student_course.location.room.format', 'Room {Room}').replaceAll('{Room}', room!);
+    }
+
+    return result;
   }
 
 }
