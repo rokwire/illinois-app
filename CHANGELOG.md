@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.1.14] - 2022-08-09
 ### Changed
 - Acknowledged "analytics_processed_date" flag from user account for app review requests [#2190](https://github.com/rokwire/illinois-app/issues/2190).
 - Updated Student Course display data format [#2192](https://github.com/rokwire/illinois-app/issues/2192)
