@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Guides open links in external browser  [#2155](https://github.com/rokwire/illinois-app/issues/2155).
 - Do not load groups on portions (paging) [#2150](https://github.com/rokwire/illinois-app/issues/2150).
 - Remove reference to "Building Access" in "Connect to Illinois" widget. [#2168](https://github.com/rokwire/illinois-app/issues/2168).
+- Remove word "Card" from expiration on Illini ID and bus pass [#2181](https://github.com/rokwire/illinois-app/issues/2181).
 ### Added
 - Drop down in members panel for filtering by member status [#2150](https://github.com/rokwire/illinois-app/issues/2150).
 
