@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -29,6 +30,7 @@ class AppReview with Service implements NotificationsListener {
     NotificationService().subscribe(this,[
       AppLivecycle.notifyStateChanged,
       Analytics.notifyEvent,
+      Auth2.notifyAccountChanged,
     ]);
   }
 
@@ -58,6 +60,9 @@ class AppReview with Service implements NotificationsListener {
     }
     else if (name == Analytics.notifyEvent) {
       _onAnalyticsEvent(param);
+    }
+    else if (name == Auth2.notifyAccountChanged) {
+
     }
   }
 
@@ -108,6 +113,11 @@ class AppReview with Service implements NotificationsListener {
   }
 
   bool get _canRequestReview {
+    if (!(Auth2().account?.isAnalyticsProcessed ?? false)) {
+      // Account not enabled for review
+      return false;
+    }
+
     if (Storage().appReviewSessionsCount < Config().appReviewSessionsCount) {
       // Number of sessions is not enough.
       return false;
