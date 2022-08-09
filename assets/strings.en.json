@@ -2090,6 +2090,12 @@
     "panel.manage_members.field.search.title": "Search",
     "panel.manage_members.button.search.clear.title": "Clear",
     "panel.manage_members.button.search.title": "Search",
+    "panel.manage_members.member.status.all.label": "All",
+    "panel.manage_members.member.status.admin.label": "Admin",
+    "panel.manage_members.member.status.member.label": "Member",
+    "panel.manage_members.member.status.pending.label": "Pending",
+    "panel.manage_members.member.status.rejected.label": "Rejected",
+    "panel.manage_members.load.failed.msg": "Failed to load members.",
 
     "panel.pending_member_detail.button.add.title": "Add",
     "panel.pending_member_detail.button.add.hint": "",

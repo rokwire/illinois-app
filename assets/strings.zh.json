@@ -2085,6 +2085,12 @@
 	"panel.manage_members.field.search.title": "搜索",
 	"panel.manage_members.button.search.clear.title": "清除",
 	"panel.manage_members.button.search.title": "搜索",
+    "panel.manage_members.member.status.all.label": "全部",
+    "panel.manage_members.member.status.admin.label": "行政",
+    "panel.manage_members.member.status.member.label": "成員",
+    "panel.manage_members.member.status.pending.label": "待辦的",
+    "panel.manage_members.member.status.rejected.label": "被拒絕",
+    "panel.manage_members.load.failed.msg": "加載成員失敗。",
 
 	"panel.pending_member_detail.button.add.title": "添加",
 	"panel.pending_member_detail.button.add.hint": "",
