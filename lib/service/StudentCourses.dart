@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -13,6 +14,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -185,6 +187,13 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
   Future<List<StudentCourse>?> loadCourses({required String termId}) async {
     if (StringUtils.isNotEmpty(Config().gatewayUrl) && StringUtils.isNotEmpty(termId) && StringUtils.isNotEmpty(Auth2().uin)) {
       String url = "${Config().gatewayUrl}/courses/studentcourses?id=${Auth2().uin}&termid=$termId";
+      Position? position = await _userLocation;
+      if (position != null) {
+        url += "&lat=${position.latitude}&long=${position.longitude}";
+        if (requireAda) {
+          url += "&adaOnly=true";
+        }
+      }
       Response? response = await Network().get(url, auth: Auth2(), headers: { ExternalAuthorizationHeader: Auth2().uiucToken?.accessToken });
       String? responseString = (response?.statusCode == 200) ? response?.body : null;
       /* TMP String? responseString = '''[
@@ -204,6 +213,11 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
   bool get requireAda => (Auth2().prefs?.getBoolSetting(_requireAdaSetting) == true);
   set requireAda(bool value) => Auth2().prefs?.applySetting(_requireAdaSetting, value);
 
+  // User Location
+
+  Future<bool> get _userLocationEnabled async => Auth2().privacyMatch(2) && (await LocationServices().status == LocationServicesStatus.permissionAllowed);
+  Future<Position?> get _userLocation async => await _userLocationEnabled ? await LocationServices().location : null;
+    
   // ExploreJsonHandler
 
   @override bool exploreCanJson(Map<String, dynamic>? json) => StudentCourse.canJson(json);
