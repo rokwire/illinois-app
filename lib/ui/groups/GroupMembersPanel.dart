@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -56,6 +57,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   int? _membersLimit;
   ScrollController? _scrollController;
   GroupMemberStatus? _selectedMemberStatus;
+  List<GroupMemberStatus>? _sortedMemberStatusList;
+  bool _statusValuesVisible = false;
   int _loadingProgress = 0;
 
   String? _searchTextValue;
@@ -67,6 +70,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupUpdated]);
     _scrollController = ScrollController();
     _scrollController!.addListener(_scrollListener);
+    _buildSortedMemberStatusList();
     _reloadGroupContent();
   }
 
@@ -74,6 +78,14 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   void dispose() {
     super.dispose();
     NotificationService().unsubscribe(this);
+  }
+
+  ///
+  /// Constructs alphabetically sorted list of GroupMemberStatus values
+  ///
+  void _buildSortedMemberStatusList() {
+    _sortedMemberStatusList = GroupMemberStatus.values.toList();
+    _sortedMemberStatusList?.sort((s1, s2) => s1.toString().compareTo(s2.toString()));
   }
 
   void _reloadGroupContent() {
@@ -148,12 +160,26 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                     strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary)))
             : RefreshIndicator(
                 onRefresh: _onPullToRefresh,
-                child: SingleChildScrollView(physics: AlwaysScrollableScrollPhysics(), controller: _scrollController, child: Column(children: <Widget>[_buildMembers()]))),
+                child: SingleChildScrollView(
+                    physics: _statusValuesVisible ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+                    controller: _scrollController,
+                    child: _buildMembersContent())),
         bottomNavigationBar: uiuc.TabBar());
   }
 
-  Widget _buildMembers() {
-    if (CollectionUtils.isNotEmpty(_visibleMembers)) {
+  Widget _buildMembersContent() {
+    late Widget contentWidget;
+    if (CollectionUtils.isEmpty(_visibleMembers)) {
+      contentWidget = Center(
+          child: Column(children: <Widget>[
+        Container(height: MediaQuery.of(context).size.height / 5),
+        Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            child: Text(Localization().getStringEx('panel.manage_members.load.failed.msg', 'Failed to load members.'),
+                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
+        Container(height: MediaQuery.of(context).size.height / 4)
+      ]));
+    } else {
       List<Widget> members = [];
       for (Member member in _visibleMembers!) {
         if (members.isNotEmpty) {
@@ -170,20 +196,32 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       if (members.isNotEmpty) {
         members.add(Container(height: 10));
       }
-
-      return Container(
-          child: Column(children: <Widget>[
-        Container(
-            child: SectionRibbonHeader(
-                title: (_selectedMemberStatus == GroupMemberStatus.pending)
-                    ? Localization().getStringEx("panel.manage_members.label.requests", "Requests")
-                    : Localization().getStringEx("panel.manage_members.label.members", "Members"),
-                titleIconAsset: 'images/icon-member.png')),
-        _buildMembersSearch(),
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Column(children: members))
-      ]));
+      contentWidget = Column(children: members);
     }
-    return Container();
+
+    return Column(children: <Widget>[
+      Container(
+          child: SectionRibbonHeader(
+              title: (_selectedMemberStatus == GroupMemberStatus.pending)
+                  ? Localization().getStringEx("panel.manage_members.label.requests", "Requests")
+                  : Localization().getStringEx("panel.manage_members.label.members", "Members"),
+              titleIconAsset: 'images/icon-member.png')),
+      _buildMembersSearch(),
+      Padding(
+          padding: EdgeInsets.only(left: 16, top: 16, right: 16),
+          child: RibbonButton(
+              textColor: Styles().colors!.fillColorSecondary,
+              backgroundColor: Styles().colors!.white,
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+              rightIconAsset: (_statusValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+              label: _memberStatusToString(_selectedMemberStatus),
+              onTap: _onTapRibbonButton)),
+      Stack(children: [
+        Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child: contentWidget),
+        _buildStatusValuesContainer()
+      ])
+    ]);
   }
 
   Widget _buildMembersSearch() {
@@ -203,6 +241,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                   textField: true,
                   excludeSemantics: true,
                   child: TextField(
+                    // Do not allow searching when drop-down values are visible
+                    enabled: !_statusValuesVisible,
+                    readOnly: _statusValuesVisible,
                     controller: _searchEditingController,
                     onChanged: (text) => _onSearchTextChanged(text),
                     onSubmitted: (_) => _onTapSearch(),
@@ -274,6 +315,10 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 
   void _onTapSearch() {
+    if (_statusValuesVisible) {
+      // Do not try to search when drop down values are visible.
+      return;
+    }
     String? initialSearchTextValue = _searchTextValue;
     _searchTextValue = _searchEditingController.text.toString();
     String? currentSearchTextValue = _searchTextValue;
@@ -284,6 +329,10 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 
   void _onTapClearSearch() {
+    if (_statusValuesVisible) {
+      // Do not try to clear search when drop down values are visible.
+      return;
+    }
     if (StringUtils.isNotEmpty(_searchTextValue)) {
       _searchEditingController.text = "";
       _searchTextValue = "";
@@ -312,6 +361,68 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     }
   }
 
+  Widget _buildStatusValuesContainer() {
+    return Visibility(
+        visible: _statusValuesVisible,
+        child: Positioned.fill(child: Stack(children: <Widget>[_buildStatusDismissLayer(), _buildStatusValuesWidget()])));
+  }
+
+  Widget _buildStatusDismissLayer() {
+    return Positioned.fill(
+        child: BlockSemantics(
+            child: GestureDetector(
+                onTap: () {
+                  Analytics().logSelect(target: 'Close Dropdown');
+                  setState(() {
+                    _statusValuesVisible = false;
+                  });
+                },
+                child: Container(color: Styles().colors!.blackTransparent06))));
+  }
+
+  Widget _buildStatusValuesWidget() {
+    List<Widget> widgetList = <Widget>[];
+    widgetList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    if (_selectedMemberStatus != null) {
+      widgetList.add(_buildStatusItem(null));
+    }
+    if (CollectionUtils.isNotEmpty(_sortedMemberStatusList)) {
+      for (GroupMemberStatus status in _sortedMemberStatusList!) {
+        if ((_selectedMemberStatus != status)) {
+          widgetList.add(_buildStatusItem(status));
+        }
+      }
+    }
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: widgetList)));
+  }
+
+  Widget _buildStatusItem(GroupMemberStatus? status) {
+    return RibbonButton(
+        backgroundColor: Styles().colors!.white,
+        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        rightIconAsset: null,
+        rightIcon: null,
+        label: _memberStatusToString(status),
+        onTap: () => _onTapStatusItem(status));
+  }
+
+  void _onTapRibbonButton() {
+    Analytics().logSelect(target: 'Toggle Dropdown');
+    _changeMemberStatusValuesVisibility();
+  }
+
+  void _onTapStatusItem(GroupMemberStatus? status) {
+    Analytics().logSelect(target: '$status');
+    _selectedMemberStatus = status;
+    _reloadMembers();
+    _changeMemberStatusValuesVisibility();
+  }
+
+  void _changeMemberStatusValuesVisibility() {
+    _statusValuesVisible = !_statusValuesVisible;
+    _updateState();
+  }
+
   void _increaseProgress() {
     _loadingProgress++;
     _updateState();
@@ -325,6 +436,21 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   void _updateState() {
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  static String? _memberStatusToString(GroupMemberStatus? status) {
+    switch (status) {
+      case GroupMemberStatus.admin:
+        return Localization().getStringEx('panel.manage_members.member.status.admin.label', 'Admin');
+      case GroupMemberStatus.member:
+        return Localization().getStringEx('panel.manage_members.member.status.member.label', 'Member');
+      case GroupMemberStatus.pending:
+        return Localization().getStringEx('panel.manage_members.member.status.pending.label', 'Pending');
+      case GroupMemberStatus.rejected:
+        return Localization().getStringEx('panel.manage_members.member.status.rejected.label', 'Rejected');
+      default:
+        return Localization().getStringEx('panel.manage_members.member.status.all.label', 'All');
     }
   }
 

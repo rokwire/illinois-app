@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Acknowledged "analytics_processed_date" flag from user account for app review requests [#2190](https://github.com/rokwire/illinois-app/issues/2190).
 - Updated Student Course display data format [#2192](https://github.com/rokwire/illinois-app/issues/2192)
+- Do not load groups on portions (paging) [#2150](https://github.com/rokwire/illinois-app/issues/2150).
+### Added
+- Drop down in members panel for filtering by member status [#2150](https://github.com/rokwire/illinois-app/issues/2150).
 
 ## [4.1.13] - 2022-08-08
 ### Changed

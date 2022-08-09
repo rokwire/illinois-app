@@ -2085,6 +2085,12 @@
     "panel.manage_members.field.search.title": "Búsqueda",
     "panel.manage_members.button.search.clear.title": "Claro",
     "panel.manage_members.button.search.title": "Búsqueda",
+    "panel.manage_members.member.status.all.label": "Todos",
+    "panel.manage_members.member.status.admin.label": "Administrador",
+    "panel.manage_members.member.status.member.label": "Miembro",
+    "panel.manage_members.member.status.pending.label": "Pendiente",
+    "panel.manage_members.member.status.rejected.label": "Rechazado",
+    "panel.manage_members.load.failed.msg": "No se pudieron cargar los miembros.",
 
     "panel.pending_member_detail.button.add.title": "Añadir",
     "panel.pending_member_detail.button.add.hint": "",
