@@ -395,7 +395,6 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
         if (button is Map) {
           String? text = JsonUtils.stringValue(button['text']);
           String? url = JsonUtils.stringValue(button['url']);
-          bool external = JsonUtils.boolValue(button['external']) ?? false;
           Uri? uri = (url != null) ? Uri.tryParse(url) : null;
 
           if (StringUtils.isNotEmpty(text) && StringUtils.isNotEmpty(uri?.scheme)) {
@@ -409,8 +408,8 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                   borderColor: Styles().colors!.fillColorSecondary,
                   borderWidth: 2,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  onTap:() { _onTapLink(url, external: external);  },
-                  rightIcon: external? Image.asset('images/external-link.png', semanticLabel: "external link",) : null,
+                  onTap:() { _onTapLink(url);  },
+                  rightIcon: Image.asset('images/external-link.png', semanticLabel: "external link",),
                 )
               ),
             );
@@ -474,13 +473,9 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     Auth2().prefs?.toggleFavorite(GuideFavorite(id: Guide().entryId(_guideEntry)));
   }
 
-  void _onTapLink(String? url, {bool external = false}) {
-    if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url) && external == false) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
+  void _onTapLink(String? url) {
+      if (UrlUtils.isWebScheme(url)) {
         launch(url!);
-      }
     }
   }
 

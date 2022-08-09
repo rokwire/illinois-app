@@ -112,12 +112,8 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
 
   void _onTapLink(String? url) {
     Analytics().logSelect(target: 'Link: $url');
-    if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
+    if (UrlUtils.isWebScheme(url)) {
         launch(url!);
-      }
     }
   }
 

@@ -133,8 +133,7 @@
     "panel.home.connect.not_logged_in.netid.description.part_2": "university student",
     "panel.home.connect.not_logged_in.netid.description.part_3": " or ",
     "panel.home.connect.not_logged_in.netid.description.part_4": "employee",
-    "panel.home.connect.not_logged_in.netid.description.part_5": "? Sign in with your NetID.",
-    "panel.home.connect.not_logged_in.netid.description.part_6": " (A NetID sign-in is REQUIRED to be able to use the Building Access feature).",
+    "panel.home.connect.not_logged_in.netid.description.part_5": "? Sign in with your NetID to access features connected to your university account.",
     "panel.home.connect.not_logged_in.netid.title": "Sign In with your NetID",
     "panel.home.connect.not_logged_in.phone_or_email.description.part_1": "Don't have a NetID? ",
 	"panel.home.connect.not_logged_in.phone_or_email.description.part_2": "Verify your phone number or sign in by email.",
@@ -2092,6 +2091,12 @@
     "panel.manage_members.field.search.title": "Search",
     "panel.manage_members.button.search.clear.title": "Clear",
     "panel.manage_members.button.search.title": "Search",
+    "panel.manage_members.member.status.all.label": "All",
+    "panel.manage_members.member.status.admin.label": "Admin",
+    "panel.manage_members.member.status.member.label": "Member",
+    "panel.manage_members.member.status.pending.label": "Pending",
+    "panel.manage_members.member.status.rejected.label": "Rejected",
+    "panel.manage_members.load.failed.msg": "Failed to load members.",
 
     "panel.pending_member_detail.button.add.title": "Add",
     "panel.pending_member_detail.button.add.hint": "",
@@ -2577,7 +2582,7 @@
     "widget.home.wallet.meal_plan.label.dining_dollars.text": "Dining Dollars",
 
     "widget.home.wallet.bus_pass.title": "MTD Bus Pass",
-    "widget.home.wallet.bus_pass.label.card_expires.text": "Card Expires: %s",
+    "widget.home.wallet.bus_pass.label.card_expires.text": "Expires: %s",
 
     "widget.home.wallet.illini_id.title": "Illini ID",
 
@@ -2815,7 +2820,7 @@
     "widget.id_card.label.building_access.not_available": "NOT\nAVAILABLE",
 	"widget.bus_pass.header.title": "MTD Bus Pass",
     "widget.card.label.uin.title": "UIN",
-    "widget.card.label.expires.title": "Card Expires",
+    "widget.card.label.expires.title": "Expires",
 
     "widget.group_card.pending.label": "Pending: %s",
 

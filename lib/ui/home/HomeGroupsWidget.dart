@@ -84,7 +84,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   }
 
   void _loadGroups(){
-    Groups().loadGroups(contentType: widget.contentType, allLimit: 5).then((groups) {
+    Groups().loadGroups(contentType: widget.contentType).then((groups) {
       _sortGroups(groups);
       if (mounted) {
         setState(() {
@@ -95,7 +95,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   }
 
   void _updateGroups() {
-    Groups().loadGroups(contentType: widget.contentType, allLimit: 5).then((List<Group>? groups) {
+    Groups().loadGroups(contentType: widget.contentType).then((List<Group>? groups) {
       _sortGroups(groups);
       if (mounted && !DeepCollectionEquality().equals(_groups, groups)) {
         setState(() {
