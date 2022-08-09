@@ -2573,7 +2573,7 @@
 	"widget.home.wallet.meal_plan.label.dining_dollars.text": "餐飲美元",
 
 	"widget.home.wallet.bus_pass.title": "MTD 巴士通票",
-	"widget.home.wallet.bus_pass.label.card_expires.text": "卡過期：%s",
+	"widget.home.wallet.bus_pass.label.card_expires.text": "Expires: %s",
 
 	"widget.home.wallet.illini_id.title": "伊利尼身份證",
 
@@ -2811,7 +2811,7 @@
 	"widget.id_card.label.building_access.not_available": "無法使用",
 	"widget.bus_pass.header.title": "MTD 公交车通行证",
 	"widget.card.label.uin.title": "UIN",
-	"widget.card.label.expires.title": "卡过期",
+	"widget.card.label.expires.title": "Expires",
 
 	"widget.group_card.pending.label": "Pending: %s",
 

@@ -2573,7 +2573,7 @@
     "widget.home.wallet.meal_plan.label.dining_dollars.text": "Dólares para cenar",
 
     "widget.home.wallet.bus_pass.title": "Pase de autobús MTD",
-    "widget.home.wallet.bus_pass.label.card_expires.text": "La tarjeta caduca: %s",
+    "widget.home.wallet.bus_pass.label.card_expires.text": "Expires: %s",
 
     "widget.home.wallet.illini_id.title": "Identificación Illini",
 
@@ -2811,7 +2811,7 @@
     "widget.id_card.label.building_access.not_available": "NO\nDISPONIBLE",
     "widget.bus_pass.header.title": "MTD pase de autobús",
     "widget.card.label.uin.title": "UIN",
-    "widget.card.label.expires.title": "La tarjeta caduca",
+    "widget.card.label.expires.title": "Expires",
 
     "widget.group_card.pending.label": "Pending: %s",
 
