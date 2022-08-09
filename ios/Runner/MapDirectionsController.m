@@ -114,7 +114,7 @@ static NSString * const kTravelModeKey = @"mapDirections.travelMode";
 //		_explore = @{@"title" : @"Mens Restroom",@"location":@{@"latitude":@(40.0964976), @"longitude":@(-88.2364674), @"floor": @(20), @"building":@"State Farm"}};
 //#endif
 
-		_exploreLocation = _explore.uiucExploreLocation;
+		_exploreLocation = _explore.uiucExploreDestinationLocation;
 		_exploreAddress = _explore.uiucExploreAddress;
 	}
 	return self;

@@ -174,6 +174,35 @@ public class Utils {
             return null;
         }
 
+        public static HashMap optStudentCourseLocation(HashMap explore) {
+            return optStudentCourseLocation(explore, false);
+        }
+
+        public static HashMap optStudentCourseLocation(HashMap explore, boolean destinaton) {
+            Object sectionObj = explore.get("coursesection");
+            if (sectionObj instanceof HashMap) {
+                HashMap sectionMap = (HashMap) sectionObj;
+                Object buildingObj = sectionMap.get("building");
+                if (buildingObj instanceof HashMap) {
+                    HashMap buildingMap = (HashMap) buildingObj;
+                    if (destinaton) {
+                        Object entracesObj = buildingMap.get("entrances");
+                        if (entracesObj instanceof ArrayList) {
+                            ArrayList entracesList = (ArrayList) entracesObj;
+                            if (entracesList.size() > 0) {
+                                Object entraceObj = entracesList.get(0);
+                                if (entraceObj instanceof HashMap) {
+                                    return (HashMap) entraceObj;
+                                }
+                            }
+                        }
+                    }
+                    return buildingMap;
+                }
+            }
+            return null;
+        }
+
         public static Integer optLocationFloor(HashMap explore) {
             if (explore == null) {
                 return null;
@@ -264,6 +293,9 @@ public class Utils {
         }
 
         public static MarkerOptions constructMarkerOptions(Context context, Object markerRawObject, View markerLayoutView, View markerGroupLayoutView, IconGenerator iconGenerator) {
+            return constructMarkerOptions(context, markerRawObject, null, markerLayoutView, markerGroupLayoutView, iconGenerator);
+        }
+        public static MarkerOptions constructMarkerOptions(Context context, Object markerRawObject, LatLng location, View markerLayoutView, View markerGroupLayoutView, IconGenerator iconGenerator) {
             if (markerRawObject == null || markerLayoutView == null || markerGroupLayoutView == null || iconGenerator == null) {
                 return null;
             }
@@ -286,7 +318,7 @@ public class Utils {
             if (mapMarkerViewType == MapMarkerViewType.UNKNOWN) {
                 return null;
             }
-            LatLng markerLocation = optLocationLatLng(singleExploreMap);
+            LatLng markerLocation = (location != null) ? location : optLocationLatLng(singleExploreMap);
             if (markerLocation == null) {
                 return null;
             }

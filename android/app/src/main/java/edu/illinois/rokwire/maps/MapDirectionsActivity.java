@@ -289,7 +289,8 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
 
     private void buildExploreMarker() {
         if (exploreLocation != null) {
-            MarkerOptions markerOptions = Utils.Explore.constructMarkerOptions(this, explore, markerLayoutView, markerGroupLayoutView, iconGenerator);
+            LatLng locationLatLng = Utils.Explore.optLatLng(exploreLocation);
+            MarkerOptions markerOptions = Utils.Explore.constructMarkerOptions(this, explore, locationLatLng, markerLayoutView, markerGroupLayoutView, iconGenerator);
             if (markerOptions != null) {
                 exploreMarker = googleMap.addMarker(markerOptions);
                 JSONObject tagJson = Utils.Explore.constructMarkerTagJson(this, exploreMarker.getTitle(), explore);
@@ -326,6 +327,8 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
             if (latLng != null) {
                 this.exploreLocation = Utils.Explore.createLocationMap(latLng);
             }
+        } else if (exploreType == Utils.ExploreType.STUDENT_COURSE) {
+            this.exploreLocation = Utils.Explore.optStudentCourseLocation(singleExplore, true);
         } else {
             this.exploreLocation = Utils.Explore.optLocation(singleExplore);
         }
