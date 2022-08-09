@@ -1,6 +1,5 @@
 
 import 'package:illinois/model/StudentCourse.dart';
-import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
 extension StudentCourseExt on StudentCourse {
@@ -54,31 +53,19 @@ extension StudentCourseSectionExt on StudentCourseSection {
     String? result;
     if (days != null) {
       List<String>? dayNames = <String>[];
-      DateTime now = DateTime.now();
-      DateTime nowUni = AppDateTime().getUniLocalTimeFromUtcTime(now.toUtc()) ?? now;
-      int todayNum = nowUni.weekday;
-      int tomorrowNum = todayNum % DateTime.daysPerWeek + 1;
       List<String> dayAbbreviations = days!.split(',');
       for (String dayAbbreviation in dayAbbreviations) {
         String? dayName;
         int? dayNum = _dayAbbreviations[dayAbbreviation];
         if (dayNum != null) {
-          if (dayNum == todayNum) {
-            dayName = Localization().getStringEx('model.explore.time.today', 'Today');
-          }
-          else if (dayNum == tomorrowNum) {
-            dayName = Localization().getStringEx('model.explore.time.tomorrow', 'Tomorrow');
-          }
-          else {
-            switch(dayNum) {
-              case DateTime.monday:    dayName = Localization().getStringEx('model.explore.time.monday', 'Monday'); break;
-              case DateTime.tuesday:   dayName = Localization().getStringEx('model.explore.time.tuesday', 'Tuesday'); break;
-              case DateTime.wednesday: dayName = Localization().getStringEx('model.explore.time.wednesday', 'Wednesday'); break;
-              case DateTime.thursday:  dayName = Localization().getStringEx('model.explore.time.thursday', 'Thursday'); break;
-              case DateTime.friday:    dayName = Localization().getStringEx('model.explore.time.friday', 'Friday'); break;
-              case DateTime.saturday:  dayName = Localization().getStringEx('model.explore.time.saturday', 'Saturday'); break;
-              case DateTime.sunday:    dayName = Localization().getStringEx('model.explore.time.sunday', 'Sunday'); break;
-            }
+          switch(dayNum) {
+            case DateTime.monday:    dayName = Localization().getStringEx('model.explore.time.mon', 'Mon'); break;
+            case DateTime.tuesday:   dayName = Localization().getStringEx('model.explore.time.tue', 'Tue'); break;
+            case DateTime.wednesday: dayName = Localization().getStringEx('model.explore.time.wed', 'Wed'); break;
+            case DateTime.thursday:  dayName = Localization().getStringEx('model.explore.time.thu', 'Thu'); break;
+            case DateTime.friday:    dayName = Localization().getStringEx('model.explore.time.fri', 'Fri'); break;
+            case DateTime.saturday:  dayName = Localization().getStringEx('model.explore.time.sat', 'Sat'); break;
+            case DateTime.sunday:    dayName = Localization().getStringEx('model.explore.time.sun', 'Sun'); break;
           }
         }
         dayNames.add(dayName ?? dayAbbreviation);
