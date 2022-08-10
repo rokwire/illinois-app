@@ -94,15 +94,18 @@
 	[_mpMapControl showUserPosition:YES];
 	
 	NSDictionary *options = [_parameters inaDictForKey:@"options"];
-	[_mpMapControl setFloorSelectorHidden:((options != nil) && [options inaBoolForKey:@"hideLevels"])];
+	if (options != nil) {
 	
-	if ((options != nil) && [options inaBoolForKey:@"showDebugLocation"]) {
-		_debugStatusLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-		_debugStatusLabel.font = [UIFont boldSystemFontOfSize:12];
-		_debugStatusLabel.textAlignment = NSTextAlignmentCenter;
-		_debugStatusLabel.shadowColor = [UIColor colorWithWhite:1 alpha:0.5];
-		_debugStatusLabel.shadowOffset = CGSizeMake(2, 2);
-		[_gmsMapView addSubview:_debugStatusLabel];
+		_mpMapControl.floorSelectorHidden = ([options inaBoolForKey:@"enableLevels" defaults:true] == false);
+	
+		if ([options inaBoolForKey:@"showDebugLocation"]) {
+			_debugStatusLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+			_debugStatusLabel.font = [UIFont boldSystemFontOfSize:12];
+			_debugStatusLabel.textAlignment = NSTextAlignmentCenter;
+			_debugStatusLabel.shadowColor = [UIColor colorWithWhite:1 alpha:0.5];
+			_debugStatusLabel.shadowOffset = CGSizeMake(2, 2);
+			[_gmsMapView addSubview:_debugStatusLabel];
+		}
 	}
 
 	NSArray *markers = [_parameters inaArrayForKey:@"markers"];

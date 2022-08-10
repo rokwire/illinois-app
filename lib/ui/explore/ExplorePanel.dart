@@ -1114,7 +1114,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return Stack(clipBehavior: Clip.hardEdge, children: <Widget>[
       (_mapAllowed == true) ? MapWidget(
         onMapCreated: _onNativeMapCreated,
-        creationParams: { "myLocationEnabled" : _userLocationEnabled()},
+        creationParams: { "myLocationEnabled" : _userLocationEnabled(), "levelsEnabled": Storage().debugMapShowLevels},
       ) : Container(),
       Positioned(bottom: _mapExploreBarAnimationController.value, left: 0, right: 0, child:
         Container(height: MapBarHeight, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor!, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid),),), child:

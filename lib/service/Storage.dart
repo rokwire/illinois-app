@@ -159,9 +159,9 @@ class Storage extends rokwire.Storage {
   bool? get debugMapLocationProvider => getBoolWithName(debugMapLocationProviderKey, defaultValue: false);
   set debugMapLocationProvider(bool? value) => setBoolWithName(debugMapLocationProviderKey, value);
 
-  static const String debugMapHideLevelsKey  = 'debug_map_hide_levels';
-  bool? get debugMapHideLevels => getBoolWithName(debugMapHideLevelsKey, defaultValue: false);
-  set debugMapHideLevels(bool? value) => setBoolWithName(debugMapHideLevelsKey, value);
+  static const String debugMapShowLevelsKey  = 'debug_map_show_levels';
+  bool? get debugMapShowLevels => getBoolWithName(debugMapShowLevelsKey, defaultValue: false);
+  set debugMapShowLevels(bool? value) => setBoolWithName(debugMapShowLevelsKey, value);
 
   static const String debugLastInboxMessageKey  = 'debug_last_inbox_message';
   String? get debugLastInboxMessage => getStringWithName(debugLastInboxMessageKey);
