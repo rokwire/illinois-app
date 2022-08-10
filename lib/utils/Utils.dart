@@ -29,4 +29,10 @@ class XmlUtils {
     XmlNode? childElementNode = (childElement?.children.length == 1) ? childElement?.children.first : null;
     return (childElementNode?.nodeType == XmlNodeType.TEXT) ? childElementNode?.text : null;
   }
+
+  static String? childCdata(XmlNode? xmlNode, String name, {String? namespace}) {
+    XmlElement? childElement = child(xmlNode, name, namespace: namespace);
+    XmlNode? childElementNode = (childElement?.children.length == 1) ? childElement?.children.first : null;
+    return (childElementNode?.nodeType == XmlNodeType.CDATA) ? childElementNode?.text : null;
+  }
 }
