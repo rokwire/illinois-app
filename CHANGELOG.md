@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Do not prompt the same user for review requests on multiple devices [#2207](https://github.com/rokwire/illinois-app/issues/2207).
 - Hide canvas_courses and student_courses if user is not logged in [#2210](https://github.com/rokwire/illinois-app/issues/2210).
 - Enable "student_courses" in FlexUI from app config [#2210](https://github.com/rokwire/illinois-app/issues/2210).
+### Added
+- Introduce HomeDailyIlliniWidget - display illini feed (Task in progress). [#2208](https://github.com/rokwire/illinois-app/issues/2208).
 
 ## [4.1.14] - 2022-08-09
 ### Changed
