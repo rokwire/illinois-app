@@ -93,6 +93,7 @@
 				"_new_student"                           : ["${config.settings.groups.new_student}"],
 				"_new_student_checklist"                 : ["${config.settings.groups.new_student}"],
 				"canvas"                                 : ["${config.settings.groups.canvas}"],
+				"canvas_courses"                         : ["${config.settings.groups.canvas}"],
 				"mtd_buss_pass"                          : ["${config.settings.groups.mtd_buss_pass}"]
 			},
 			"locations": {
@@ -122,6 +123,7 @@
 				"new_student"                         : { "shibbolethLoggedIn": true },
 				"new_student_checklist"               : { "shibbolethLoggedIn": true },
 				"canvas"                              : { "shibbolethLoggedIn": true },
+				"canvas_courses"                      : { "shibbolethLoggedIn": true },
 	
 				"settings.connect"                    : { "loggedIn": false },
 				"settings.connected"                  : { "loggedIn": true },
