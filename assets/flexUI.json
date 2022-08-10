@@ -5,7 +5,7 @@
 	
 			"home": ["wallet", "my_dining", "dinings", "my_laundry", "laundry",
 				"wellness_todo", "wellness_rings", "wellness_tips", "wellness_resources", 
-				"wpgufm_radio", "twitter", "all_groups", "my_groups", "create_poll", "recent_polls", 
+				"wpgufm_radio", "twitter", "daily_illini", "all_groups", "my_groups", "create_poll", "recent_polls", 
 				"my_events", "suggested_events", "sport_events", "sport_news", "my_athletics", "my_game_day",
 				"my_campus_guide", "campus_reminders", "inbox", "state_farm_center", "app_help", 
 				"gies_checklist", "new_student_checklist", "safer", "student_courses", "canvas_courses",
@@ -37,7 +37,7 @@
 			"browse.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "inbox"],
 			"browse.dinings": ["dinings_all", "dinings_open", "my_dining"],
 			"browse.events": ["suggested_events", "my_events"],
-			"browse.feeds": ["twitter", "wpgufm_radio"],
+			"browse.feeds": ["twitter", "daily_illini", "wpgufm_radio"],
 			"browse.groups": ["all_groups", "my_groups"],
 			"browse.my": ["my_athletics", "my_news", "my_campus_guide", "student_courses", "my_dining", "my_events", "my_game_day", "canvas_courses", "my_groups", "my_laundry", "my_inbox", "wellness_resources"],
 			"browse.notifications": ["inbox", "my_inbox"],

@@ -32,6 +32,10 @@ class DailyIlliniItem {
     return AppDateTime().formatDateTime(localDateTime, format: 'LLLL, d yyyy', ignoreTimeZone: true);
   }
 
+  String? get thumbImageUrl {
+    //TBD: DD - check how this could be retrieved
+  }
+
   static DailyIlliniItem? fromXml(XmlElement? xml) {
     if (xml == null) {
       return null;

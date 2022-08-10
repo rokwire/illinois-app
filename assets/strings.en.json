@@ -2745,6 +2745,13 @@
     "widget.home.twitter.button.all.title": "View All",
     "widget.home.twitter.button.all.hint": "Tap to view all tweets",
 
+    "widget.home.daily_illini.header.label": "Daily Illini",
+    "widget.home.daily_illini.item.page.next.hint": "Next page",
+    "widget.home.daily_illini.item.page.previous.hint": "Previous page",
+    "widget.home.daily_illini.button.all.title": "View All",
+    "widget.home.daily_illini.button.all.hint": "Tap to view the daily illini feed",
+    "widget.home.daily_illini.text.empty.description": "Failed to load daily illini feed.",
+
     "widget.food_detail.label.loading.title": "Loading menu data",
     "widget.food_detail.label.loading.hint": "",
     "widget.food_detail.button.filters_empty.title": "Add Food Filters",

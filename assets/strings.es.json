@@ -2738,6 +2738,13 @@
     "widget.home.twitter.button.all.title": "Ver todo",
     "widget.home.twitter.button.all.hint": "Toca para ver todos los tweets",
 
+    "widget.home.daily_illini.header.label": "Diario Illini",
+    "widget.home.daily_illini.item.page.next.hint": "Siguiente página",
+    "widget.home.daily_illini.item.page.previous.hint": "Pagina anterior",
+    "widget.home.daily_illini.button.all.title": "Ver todo",
+    "widget.home.daily_illini.button.all.hint": "Toque para ver la alimentación diaria de illini",
+    "widget.home.daily_illini.text.empty.description": "No se pudo cargar la alimentación diaria de illini.",
+
     "widget.food_detail.label.loading.title": "Cargando datos del menú",
     "widget.food_detail.label.loading.hint": "",
     "widget.food_detail.button.filters_empty.title": "Agregar filtros de alimentos",
