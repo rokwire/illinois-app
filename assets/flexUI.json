@@ -124,6 +124,7 @@
 				"new_student_checklist"               : { "shibbolethLoggedIn": true },
 				"canvas"                              : { "shibbolethLoggedIn": true },
 				"canvas_courses"                      : { "shibbolethLoggedIn": true },
+				"student_courses"                     : { "shibbolethLoggedIn": true },
 	
 				"settings.connect"                    : { "loggedIn": false },
 				"settings.connected"                  : { "loggedIn": true },
