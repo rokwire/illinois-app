@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -27,11 +29,13 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
   @override
   void initState() {
     NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
+      Connectivity.notifyStatusChanged,
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
     ]);
 
-    if (StudentCourses().displayTermId != null) {
+    if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn) {
       _loading = true;
       StudentCourses().loadCourses(termId: StudentCourses().displayTermId!).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
@@ -53,7 +57,13 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == StudentCourses.notifyTermsChanged) {
+    if (name == Auth2.notifyLoginChanged) {
+      _updateCourses();
+    }
+    else if (name == Connectivity.notifyStatusChanged) {
+      _updateCourses();
+    }
+    else if (name == StudentCourses.notifyTermsChanged) {
       setStateIfMounted(() {});
     }
     else if (name == StudentCourses.notifySelectedTermChanged) {
@@ -69,6 +79,12 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
   Widget _buildContent() {
     if (_loading) {
       return _buildLoadingContent();
+    }
+    else if (Connectivity().isOffline) {
+      return _buildMessageContent(Localization().getStringEx('panel.student_courses.load.offline.error.msg', 'My Courses not available while offline.'));
+    }
+    else if (!Auth2().isOidcLoggedIn) {
+      return _buildMessageContent(Localization().getStringEx('panel.student_courses.load.logged_out.error.msg', 'You need to be logged in to access My Courses.'));
     }
     else if (_courses == null) {
       return _buildMessageContent(Localization().getStringEx('panel.student_courses.load.failed.error.msg', 'Unable to load courses.'));
@@ -174,7 +190,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
   }
 
   void _updateCourses() {
-    if (StudentCourses().displayTermId != null) {
+    if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn) {
       setStateIfMounted(() {
         _loading = true;
       });
@@ -184,6 +200,9 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
           _loading = false;
         });
       });
+    }
+    else {
+        setStateIfMounted(() {});
     }
   }
 }

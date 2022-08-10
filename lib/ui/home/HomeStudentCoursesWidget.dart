@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/academics/StudentCoursesContentWidget.dart';
@@ -15,6 +16,7 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -52,6 +54,8 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
 
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
+      Auth2.notifyLoginChanged,
+      Connectivity.notifyStatusChanged,
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
     ]);
@@ -60,7 +64,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
-          _updateCourses(showProgress: true);
+          _updateCourses();
         }
       });
     }
@@ -83,11 +87,17 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
+    else if (name == Auth2.notifyLoginChanged) {
+      _updateCourses();
+    }
+    else if (name == Connectivity.notifyStatusChanged) {
+      _updateCourses();
+    }
     else if (name == StudentCourses.notifyTermsChanged) {
       setStateIfMounted(() {});
     }
     else if (name == StudentCourses.notifySelectedTermChanged) {
-      _updateCourses(showProgress: true);
+      _updateCourses();
     }
   }
 
@@ -99,7 +109,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _updateCourses();
+          _updateCourses(showProgress: false);
         }
       }
     }
@@ -209,6 +219,12 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     if (_loading) {
       return HomeProgressWidget();
     }
+    else if (Connectivity().isOffline) {
+      return HomeMessageCard(message: Localization().getStringEx('widget.home.student_courses.text.offline.description', 'My Courses not available while offline.'),);
+    }
+    else if (!Auth2().isOidcLoggedIn) {
+      return HomeMessageCard(message: Localization().getStringEx('widget.home.student_courses.text.logged_out.description', 'You need to be logged in to access My Courses.'),);
+    }
     else if (_courses == null) {
       return HomeMessageCard(message: Localization().getStringEx('widget.home.student_courses.text.failed.description', 'Unable to load courses.'),);
     }
@@ -269,7 +285,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
   }
 
   void _loadCourses() {
-    if (StudentCourses().displayTermId != null) {
+    if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn) {
       _loading = true;
       StudentCourses().loadCourses(termId: StudentCourses().displayTermId!).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
@@ -280,8 +296,8 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     }
   }
 
-  void _updateCourses({bool showProgress = false}) {
-    if (StudentCourses().displayTermId != null) {
+  void _updateCourses({bool showProgress = true}) {
+    if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn) {
       if (mounted && showProgress) {
         setState(() {
           _loading = true;
@@ -293,6 +309,9 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
           _loading = false;
         });
       });
+    }
+    else {
+      setStateIfMounted(() { });
     }
   }
 
