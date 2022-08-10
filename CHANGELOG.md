@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Apply empty set of POIs when nothing has loaded in ExplorePanel / Map view [#2203](https://github.com/rokwire/illinois-app/issues/2203).
+- Do not show map levels by default [#2205](https://github.com/rokwire/illinois-app/issues/2205).
 
 ## [4.1.14] - 2022-08-09
 ### Changed

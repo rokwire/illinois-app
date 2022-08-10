@@ -78,6 +78,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
 
     private boolean mapLayoutPassed;
     private boolean enableLocationValue;
+    private boolean enableLevelsValue;
 
     public MapView(Context context, int mapId, Object args) {
         super(context);
@@ -128,7 +129,6 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     }
 
     private void initMapView() {
-        acknowledgeLocationEnabledFromArgs();
         googleMapView = new com.google.android.gms.maps.MapView(context);
         googleMapView.setBackgroundColor(0xFF0000FF);
         addView(googleMapView);
@@ -137,6 +137,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     }
 
     private void initMarkerView() {
+        acknowledgeValuesFromArgs();
         iconGenerator = new IconGenerator(activity);
         iconGenerator.setBackground(activity.getDrawable(R.color.transparent));
         LayoutInflater inflater = (activity != null) ? (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) : null;
@@ -151,6 +152,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         mapControl.setOnMarkerClickListener(this::onMarkerClicked);
         mapControl.setOnMapClickListener(this::onMapClick);
         mapControl.setOnFloorUpdateListener((building, i) -> updateMarkersVisibility());
+        mapControl.enableFloorSelector(enableLevelsValue);
 
         mapControl.init(this::mapControlDidInit);
     }
@@ -166,17 +168,26 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         initMapControl();
     }
 
-    private void acknowledgeLocationEnabledFromArgs() {
+    private void acknowledgeValuesFromArgs() {
         boolean myLocationEnabled = false;
+        boolean levelsEnabled = true;
         if (args instanceof Map) {
-            //{ "myLocationEnabled" : true}
             Map<String, Object> jsonArgs = (Map) args;
+
+            //{ "myLocationEnabled" : true}
             Object myLocationEnabledObj = jsonArgs.get("myLocationEnabled");
             if (myLocationEnabledObj instanceof Boolean) {
                 myLocationEnabled = (Boolean) myLocationEnabledObj;
             }
+
+            //{ "levelsEnabled" : false}
+            Object levelsEnabledObj = jsonArgs.get("levelsEnabled");
+            if (levelsEnabledObj instanceof Boolean) {
+                levelsEnabled = (Boolean) levelsEnabledObj;
+            }
         }
         this.enableLocationValue = myLocationEnabled;
+        this.enableLevelsValue = levelsEnabled;
     }
 
     private void mapControlDidInit(MIError error) {
@@ -201,7 +212,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             // =======================================================================================
             //
             final FloorSelectorInterface floorSelector = mapControl.getFloorSelector();
-            if (floorSelector != null) {
+            if ((floorSelector != null) && enableLevelsValue) {
                 // Hide without animating
                 floorSelector.show(false, false);
                 // ...and show without animating
@@ -249,6 +260,13 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         enableLocationValue = enable;
         if (googleMap != null) {
             googleMap.setMyLocationEnabled(enable);
+        }
+    }
+
+    public void enableLevels(boolean enable) {
+        enableLevelsValue = enable;
+        if (mapControl != null) {
+            mapControl.enableFloorSelector(enable);
         }
     }
 

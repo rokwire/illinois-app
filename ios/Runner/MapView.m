@@ -73,7 +73,8 @@
 - (instancetype)initWithFrame:(CGRect)frame mapId:(int64_t)mapId parameters:(NSDictionary*)parameters {
 	if (self = [self initWithFrame:frame]) {
 		_mapId = mapId;
-		[self enableMyLocation:[parameters inaBoolForKey:@"myLocationEnabled"]];
+		[self enableMyLocation:[parameters inaBoolForKey:@"myLocationEnabled" defaults: false]];
+		[self enableLevels:[parameters inaBoolForKey:@"levelsEnabled" defaults: true]];
 	}
 	return self;
 }
@@ -173,6 +174,13 @@
 	if (_mapView.myLocationEnabled != enableMyLocation) {
 		_mapView.myLocationEnabled = enableMyLocation;
 		_mapView.settings.myLocationButton = enableMyLocation;
+	}
+}
+
+- (void)enableLevels:(bool)enableLevels {
+	BOOL floorSelectorHidden = enableLevels ? FALSE : TRUE;
+	if (_mapControl.floorSelectorHidden != floorSelectorHidden) {
+		_mapControl.floorSelectorHidden = floorSelectorHidden;
 	}
 }
 
@@ -402,6 +410,9 @@
 	} else if ([[call method] isEqualToString:@"enableMyLocation"]) {
 		bool enableMyLocation = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;
 		[_mapView enableMyLocation:enableMyLocation];
+	} else if ([[call method] isEqualToString:@"enableLevels"]) {
+		bool enableLevels = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;
+		[_mapView enableLevels:enableLevels];
 	} else if ([[call method] isEqualToString:@"viewPoi"]) {
 		NSDictionary *parameters = [call.arguments isKindOfClass:[NSDictionary class]] ? call.arguments : nil;
 		NSDictionary *targetJsonMap = [parameters inaDictForKey:@"target"];

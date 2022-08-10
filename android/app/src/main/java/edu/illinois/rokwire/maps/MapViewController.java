@@ -56,6 +56,9 @@ public class MapViewController implements PlatformView, MethodChannel.MethodCall
             } else if ("enableMyLocation".equals(methodCall.method)) {
                 enableMyLocation(methodCall.arguments);
                 result.success(true);
+            } else if ("enableLevels".equals(methodCall.method)) {
+                enableLevels(methodCall.arguments);
+                result.success(true);
             } else if ("viewPoi".equals(methodCall.method)) {
                 Object target = methodCall.argument("target");
                 viewPoi(target);
@@ -94,6 +97,12 @@ public class MapViewController implements PlatformView, MethodChannel.MethodCall
         Boolean enableBool = ((enableObject instanceof Boolean)) ? ((Boolean) enableObject) : null;
         boolean enable = (enableBool != null) && enableBool;
         mapView.enableMyLocation(enable);
+    }
+
+    private void enableLevels(Object enableObject) {
+        Boolean enableBool = ((enableObject instanceof Boolean)) ? ((Boolean) enableObject) : null;
+        boolean enable = (enableBool != null) ? enableBool : true;
+        mapView.enableLevels(enable);
     }
 
     private void showExploresOnMap(Object params) {
