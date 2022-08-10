@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove reference to "Building Access" in "Connect to Illinois" widget. [#2168](https://github.com/rokwire/illinois-app/issues/2168).
 - Remove word "Card" from expiration on Illini ID and bus pass [#2181](https://github.com/rokwire/illinois-app/issues/2181).
 - Acknowledged user locaton and ADA setting when requesting student courses. Build directions route to the firstentrance when navigating to student course. [#2194](https://github.com/rokwire/illinois-app/issues/2194).
+- Editing events with long title and description [#657](https://github.com/rokwire/illinois-app/issues/657).
 ### Added
 - Drop down in members panel for filtering by member status [#2150](https://github.com/rokwire/illinois-app/issues/2150).
 
