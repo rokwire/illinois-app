@@ -768,7 +768,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                       border: Border.all(
                           color: Styles().colors!.fillColorPrimary!,
                           width: 1)),
-                  height: 90,
+                  constraints: BoxConstraints(
+                    minHeight: 90,
+                    maxHeight: 150,
+                  ),
+                  // height: 90,
                   child:
                   Semantics(label:Localization().getStringEx("panel.create_event.title.field","EVENT TITLE FIELD"),
                       hint: Localization().getStringEx("panel.create_event.title.title.hint",""), textField: true, excludeSemantics: true, child:
@@ -776,7 +780,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         controller: _eventTitleController,
                         onChanged: _onTextChanged,
                         decoration: InputDecoration(border: InputBorder.none),
-                        maxLength: 64,
+                        maxLines: null,
                         maxLengthEnforcement: MaxLengthEnforcement.enforced,
                         style: TextStyle(
                             color: Styles().colors!.fillColorPrimary,
@@ -845,6 +849,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           child: TextField(
                             controller: _eventDescriptionController,
                             onChanged: _onTextChanged,
+                            // minLines: 1 ,
+                            maxLines:  null,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: Localization().getStringEx("panel.create_event.additional_info.event.description.hint","Type something"),
@@ -895,7 +901,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                   ))
                 ],
               ),
-            ), 
+            ),
             Container(
               width: 16,
             ),
