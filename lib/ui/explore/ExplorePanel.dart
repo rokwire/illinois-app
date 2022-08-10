@@ -61,7 +61,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
-enum ExploreItem { Events, Dining, Laundry, StudentCourse, StateFarm }
+enum ExploreItem { Events, Dining, Laundry, StudentCourse, StateFarmWayfinding }
 
 enum EventsDisplayType { all, multiple, single }
 
@@ -316,17 +316,27 @@ class ExplorePanelState extends State<ExplorePanel>
   void _updateExploreItems() {
 
     List<ExploreItem> exploreItems = [];
-    exploreItems.add(ExploreItem.Events);
-    exploreItems.add(ExploreItem.Dining);
-    if (_displayType == ListMapDisplayType.Map) {
-      if (FlexUI().hasFeature('laundry')) {
-        exploreItems.add(ExploreItem.Laundry);
+    List<dynamic>? codes = FlexUI()[(_displayType == ListMapDisplayType.Map) ? 'explore.map' : 'explore.list'];
+    if (codes != null) {
+      for (dynamic code in codes) {
+        if (code == 'events') {
+          exploreItems.add(ExploreItem.Events);
+        }
+        else if (code == 'dining') {
+          exploreItems.add(ExploreItem.Dining);
+        }
+        else if (code == 'laundry') {
+          exploreItems.add(ExploreItem.Laundry);
+        }
+        else if (code == 'student_courses') {
+          exploreItems.add(ExploreItem.StudentCourse);
+        }
+        else if (code == 'wayfinding') {
+          exploreItems.add(ExploreItem.StateFarmWayfinding);
+        }
       }
-      exploreItems.add(ExploreItem.StudentCourse);
-      // #1872 Hide State Farm Wayfinding from Map
-      // exploreItems.add(ExploreItem.StateFarm);
     }
-
+    
     if (!ListEquality().equals(_exploreItems, exploreItems)) {
       _exploreItems = exploreItems;
 
@@ -519,7 +529,7 @@ class ExplorePanelState extends State<ExplorePanel>
           task = _loadStudentCourse(selectedFilterList);
           break;
 
-        case ExploreItem.StateFarm:
+        case ExploreItem.StateFarmWayfinding:
           _clearExploresFromMap();
           _viewStateFarmPoi();
           break;
@@ -1265,12 +1275,12 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget _buildOffline() {
     String message;
     switch (_selectedItem) {
-      case ExploreItem.Events:        message = Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..'); break;
-      case ExploreItem.Dining:        message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
-      case ExploreItem.Laundry:       message = Localization().getStringEx('panel.explore.state.offline.empty.laundry', 'No laundry locations available while offline.'); break;
-      case ExploreItem.StudentCourse: message = Localization().getStringEx('panel.explore.state.offline.empty.student_course', 'No student courses available while offline.'); break;
-      case ExploreItem.StateFarm:     message = Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.'); break;
-      default:                        message =  ''; break;
+      case ExploreItem.Events:              message = Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..'); break;
+      case ExploreItem.Dining:              message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
+      case ExploreItem.Laundry:             message = Localization().getStringEx('panel.explore.state.offline.empty.laundry', 'No laundry locations available while offline.'); break;
+      case ExploreItem.StudentCourse:       message = Localization().getStringEx('panel.explore.state.offline.empty.student_course', 'No student courses available while offline.'); break;
+      case ExploreItem.StateFarmWayfinding: message = Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.'); break;
+      default:                              message =  ''; break;
     }
     return SingleChildScrollView(child:
       Center(child:
@@ -1489,34 +1499,34 @@ class ExplorePanelState extends State<ExplorePanel>
 
   static String? exploreItemName(ExploreItem exploreItem) {
     switch (exploreItem) {
-      case ExploreItem.Events:        return Localization().getStringEx('panel.explore.button.events.title', 'Events');
-      case ExploreItem.Dining:        return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
-      case ExploreItem.Laundry:       return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry');
-      case ExploreItem.StudentCourse: return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses');
-      case ExploreItem.StateFarm:     return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
-      default:                        return null;
+      case ExploreItem.Events:              return Localization().getStringEx('panel.explore.button.events.title', 'Events');
+      case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
+      case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry');
+      case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
+      default:                              return null;
     }
   }
 
   static String? exploreItemHint(ExploreItem exploreItem) {
     switch (exploreItem) {
-      case ExploreItem.Events:      return Localization().getStringEx('panel.explore.button.events.hint', '');
-      case ExploreItem.Dining:      return Localization().getStringEx('panel.explore.button.dining.hint', '');
-      case ExploreItem.Laundry:     return Localization().getStringEx('panel.explore.button.laundry.hint', '');
-      case ExploreItem.Laundry:     return Localization().getStringEx('panel.explore.button.student_course.hint', '');
-      case ExploreItem.StateFarm:   return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
-      default:                      return null;
+      case ExploreItem.Events:              return Localization().getStringEx('panel.explore.button.events.hint', '');
+      case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.hint', '');
+      case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.hint', '');
+      case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.student_course.hint', '');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
+      default:                              return null;
     }
   }
 
   static String? _headerBarListTitle(ExploreItem? exploreItem) {
     switch (exploreItem) {
-      case ExploreItem.Events:        return Localization().getStringEx('panel.explore.header.events.title', 'Events');
-      case ExploreItem.Dining:        return Localization().getStringEx('panel.explore.header.dining.title', 'Residence Hall Dining');
-      case ExploreItem.Laundry:       return Localization().getStringEx('panel.explore.header.laundry.title', 'Laundry');
-      case ExploreItem.StudentCourse: return Localization().getStringEx('panel.explore.header.student_course.title', 'Laundry');
-      case ExploreItem.StateFarm:     return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
-      default:                        return null;
+      case ExploreItem.Events:              return Localization().getStringEx('panel.explore.header.events.title', 'Events');
+      case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.header.dining.title', 'Residence Hall Dining');
+      case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.header.laundry.title', 'Laundry');
+      case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.header.student_course.title', 'Laundry');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
+      default:                              return null;
     }
   }
 

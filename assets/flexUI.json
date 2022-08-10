@@ -21,11 +21,9 @@
 			"home.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
 			"home.campus_links": ["due_date_catalog"],
 			"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card", "library_card"],
-			
+
 			"home.twitter.account": ["gies", "", "canvas"],
-	
-			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "my_illini"],
-	
+			
 			"browse": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_links", "campus_resources", "dinings", "events", "feeds", "laundry", "groups", "my", "notifications", "polls", "recent", "state_farm_center", "wallet", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "campus_reminders"],
 			"browse.app_help": ["video_tutorial", "feedback", "review", "faqs"],
@@ -58,6 +56,11 @@
 			"settings.linked.netid": ["info", "remove"],
 			"settings.linked.phone": ["info", "remove", "verify"],
 			"settings.linked.email": ["info", "remove", "verify"],
+	
+			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "my_illini"],
+			
+			"explore.list": ["events", "dining"],
+			"explore.map":  ["events", "dining", "laundry", "student_courses", "wayfinding"],
 	
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 	
