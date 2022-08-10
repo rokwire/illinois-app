@@ -23,6 +23,7 @@ import 'package:flutter/services.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
+import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -94,6 +95,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
       Guide.notifyGuideDetail,
+      Guide.notifyGuideList,
       Localization.notifyStringsUpdated,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
@@ -159,6 +161,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Guide.notifyGuideDetail) {
       _onGuideDetail(param);
+    }
+    else if (name == Guide.notifyGuideList) {
+      _onGuideList(param);
     }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
@@ -445,13 +450,30 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   Future<void> _onGuideDetail(Map<String, dynamic>? content) async {
     String? guideId = (content != null) ? JsonUtils.stringValue(content['guide_id']) : null;
-    if(StringUtils.isNotEmpty(guideId)){
+    if (StringUtils.isNotEmpty(guideId)){
       WidgetsBinding.instance!.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
         Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
           GuideDetailPanel(guideEntryId: guideId,)));
       });
       if (mounted) {
         setState(() {}); // Force the postFrameCallback invokation.
+      }
+    }
+  }
+
+  Future<void> _onGuideList(Map<String, dynamic>? content) async {
+    if (content != null) {
+      String? guide = JsonUtils.stringValue(content['guide']);
+      String? section = JsonUtils.stringValue(content['section']);
+      String? category = JsonUtils.stringValue(content['category']);
+      if ((guide != null) || (section != null) || (category != null)){
+        WidgetsBinding.instance!.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
+          Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
+            GuideListPanel(guide: guide, category: category, section: GuideSection(name: section),)));
+        });
+        if (mounted) {
+          setState(() {}); // Force the postFrameCallback invokation.
+        }
       }
     }
   }

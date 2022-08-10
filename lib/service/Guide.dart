@@ -25,6 +25,7 @@ class Guide with Service implements NotificationsListener {
   
   static const String notifyChanged  = "edu.illinois.rokwire.guide.changed";
   static const String notifyGuideDetail = "edu.illinois.rokwire.guide.detail";
+  static const String notifyGuideList = "edu.illinois.rokwire.guide.list";
 
   static const String campusGuide = "For students";
   static const String campusReminderContentType = "campus-reminder";
@@ -38,7 +39,7 @@ class Guide with Service implements NotificationsListener {
   File?          _cacheFile;
   DateTime?      _pausedDateTime;
 
-  List<Map<String, dynamic>>? _guideDetailsCache;
+  List<Uri>? _guideUriCache;
 
   static final Guide _service = Guide._internal();
   Guide._internal();
@@ -55,7 +56,7 @@ class Guide with Service implements NotificationsListener {
       DeepLink.notifyUri,
       AppLivecycle.notifyStateChanged,
     ]);
-    _guideDetailsCache = <Map<String, dynamic>>[];
+    _guideUriCache = <Uri>[];
   }
 
   @override
@@ -99,7 +100,7 @@ class Guide with Service implements NotificationsListener {
   
   @override
   void initServiceUI() {
-    _processCachedGuideDetails();
+    _processGuideUriCache();
   }
 
   @override
@@ -114,7 +115,7 @@ class Guide with Service implements NotificationsListener {
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     } else if (name == DeepLink.notifyUri) {
-      _onDeepLinkUri(param);
+      _processDeepLinkUri(param);
     }
   }
 
@@ -430,28 +431,34 @@ class Guide with Service implements NotificationsListener {
   // DeepLinks
 
   String get guideDetailUrl => '${DeepLink().appUrl}/guide_detail';
+  String get guideListUrl => '${DeepLink().appUrl}/guide_list';
 
-  void _onDeepLinkUri(Uri? uri) {
+  void _processDeepLinkUri(Uri? uri) {
     if (uri != null) {
-      Uri? guideUri = Uri.tryParse(guideDetailUrl);
+      Uri? guideUri = Uri.tryParse('${DeepLink().appUrl}');
       if ((guideUri != null) &&
           (guideUri.scheme == uri.scheme) &&
-          (guideUri.authority == uri.authority) &&
-          (guideUri.path == uri.path))
+          (guideUri.authority == uri.authority))
       {
-        try { _handleGuideDetail(uri.queryParameters.cast<String, dynamic>()); }
-        catch (e) { print(e.toString()); }
-      }
-    }
-  }
 
-  void _handleGuideDetail(Map<String, dynamic>? params) {
-    if ((params != null) && params.isNotEmpty) {
-      if (_guideDetailsCache != null) {
-        _cacheGuideDetail(params);
-      }
-      else {
-        _processGuideDetail(params);
+        if (uri.path == '/guide_detail') {
+          if (_guideUriCache != null) {
+            _guideUriCache?.add(uri);
+          }
+          else {
+            try { _processGuideDetail(uri.queryParameters.cast<String, dynamic>()); }
+            catch (e) { print(e.toString()); }
+          }
+        }
+        else if (uri.path == '/guide_list') {
+          if (_guideUriCache != null) {
+            _guideUriCache?.add(uri);
+          }
+          else {
+            try { _processGuideList(uri.queryParameters.cast<String, dynamic>()); }
+            catch (e) { print(e.toString()); }
+          }
+        }
       }
     }
   }
@@ -460,20 +467,21 @@ class Guide with Service implements NotificationsListener {
     NotificationService().notify(notifyGuideDetail, params);
   }
 
-  void _cacheGuideDetail(Map<String, dynamic> params) {
-    _guideDetailsCache?.add(params);
+  void _processGuideList(Map<String, dynamic> params) {
+    NotificationService().notify(notifyGuideList, params);
   }
 
-  void _processCachedGuideDetails() {
-    if (_guideDetailsCache != null) {
-      List<Map<String, dynamic>> guideDetailsCache = _guideDetailsCache!;
-      _guideDetailsCache = null;
+  void _processGuideUriCache() {
+    if (_guideUriCache != null) {
+      List<Uri> guideUriCache = _guideUriCache!;
+      _guideUriCache = null;
 
-      for (Map<String, dynamic> guideDetail in guideDetailsCache) {
-        _processGuideDetail(guideDetail);
+      for (Uri uri in guideUriCache) {
+        _processDeepLinkUri(uri);
       }
     }
   }
+
 
   /*static Future<void> _convertFile(String contentFileName, String sourceFileName) async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
