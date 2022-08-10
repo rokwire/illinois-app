@@ -1556,7 +1556,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _placeExploresOnMap() {
-    if ((_nativeMapController != null) && (_displayExplores != null))   {
+    if (_nativeMapController != null)   {
       _nativeMapController!.placePOIs(_displayExplores);
     }
   }
