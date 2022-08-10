@@ -18,10 +18,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/canvas/CanvasCourseHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -32,14 +35,36 @@ class CanvasCoursesContentWidget extends StatefulWidget {
   _CanvasCoursesContentWidgetState createState() => _CanvasCoursesContentWidgetState();
 }
 
-class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget> {
+class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget> implements NotificationsListener {
   List<CanvasCourse>? _courses;
   bool _loading = false;
 
   @override
   void initState() {
-    super.initState();
+    NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
+      Connectivity.notifyStatusChanged,
+    ]);
     _loadCourses();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2.notifyLoginChanged) {
+      _loadCourses();
+    }
+    else if (name == Connectivity.notifyStatusChanged) {
+      _loadCourses();
+    }
   }
 
   @override
@@ -51,10 +76,20 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
     if (_loading) {
       return _buildLoadingContent();
     }
-    if (_courses != null) {
+    else if (Connectivity().isOffline) {
+      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.offline.error.msg', 'My Gies Canvas Courses not available while offline.'),);
+    }
+    else if (!Auth2().isOidcLoggedIn) {
+      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.logged_out.error.msg', 'You need to be logged in to access My Gies Canvas Courses.'),);
+    }
+    else if (_courses == null) {
+      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.failed.error.msg', 'Unable to load courses.'),);
+    }
+    else if (_courses?.isEmpty ?? true) {
+      return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.empty.error.msg', 'You do not appear to be enrolled in any Gies Canvas courses.'),);
+    }
+    else {
       return _buildCoursesContent();
-    } else {
-      return _buildErrorContent();
     }
   }
 
@@ -62,11 +97,11 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
     return _buildCenterWidget(widget: CircularProgressIndicator());
   }
 
-  Widget _buildErrorContent() {
+  Widget _buildMessageContent(String message) {
     return _buildCenterWidget(widget: Padding(
         padding: EdgeInsets.symmetric(horizontal: 28),
         child: Text(
-            Localization().getStringEx('panel.canvas_courses.load.failed.error.msg', 'You do not appear to be enrolled in any Gies Canvas courses.'),
+            message,
             textAlign: TextAlign.center,
             style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18))));
   }
@@ -102,11 +137,16 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
   }
 
   void _loadCourses() {
-    _setLoading(true);
-    Canvas().loadCourses().then((courses) {
-      _courses = courses;
-      _setLoading(false);
-    });
+    if (Connectivity().isNotOffline && Auth2().isOidcLoggedIn) {
+      _setLoading(true);
+      Canvas().loadCourses().then((courses) {
+        _courses = courses;
+        _setLoading(false);
+      });
+    }
+    else  if (mounted) {
+      setState(() {});
+    }
   }
 
   void _setLoading(bool loading) {
