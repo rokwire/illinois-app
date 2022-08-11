@@ -9,7 +9,7 @@
 				"my_events", "suggested_events", "sport_events", "sport_news", "my_athletics", "my_game_day",
 				"my_campus_guide", "campus_reminders", "inbox", "state_farm_center", "app_help", 
 				"gies_checklist", "new_student_checklist", "safer", "student_courses", "canvas_courses",
-				"campus_highlights", "campus_resources", "campus_links",
+				"campus_highlights", "campus_resources",
 				"recent_items", "my_news", "my_inbox"
 			],
 			"home.system": ["tout", "welcome", "emergency", "voter_registration", "connect"],
@@ -19,19 +19,17 @@
 			"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 			"home.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "inbox"],
 			"home.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
-			"home.campus_links": ["due_date_catalog"],
 			"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card", "library_card"],
 
 			"home.twitter.account": ["gies", "", "canvas"],
 			
-			"browse": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_links", "campus_resources", "dinings", "events", "feeds", "laundry", "groups", "my", "notifications", "polls", "recent", "state_farm_center", "wallet", "wellness"],
-			"browse.academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "campus_reminders"],
+			"browse": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_resources", "dinings", "events", "feeds", "laundry", "groups", "my", "notifications", "polls", "recent", "state_farm_center", "wallet", "wellness"],
+			"browse.academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "campus_reminders", "due_date_catalog"],
 			"browse.app_help": ["video_tutorial", "feedback", "review", "faqs"],
 			"browse.athletics": ["my_game_day", "sport_events", "my_athletics", "sport_news", "my_news", "sport_teams"],
 			"browse.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 			"browse.laundry": ["laundry", "my_laundry"],
 			"browse.campus_guide": ["campus_highlights", "campus_guide", "my_campus_guide"],
-			"browse.campus_links": ["due_date_catalog"],
 			"browse.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "inbox"],
 			"browse.dinings": ["dinings_all", "dinings_open", "my_dining"],
 			"browse.events": ["suggested_events", "my_events"],
@@ -175,7 +173,6 @@
 				"wayfinding"                    : false,
 				"create_stadium_poll"           : false,
 				"safer"                         : false,
-				"campus_links"                  : false,
 				"student_courses"               : "${config.settings.studentCoursesEnabled}"
 			}
 		}
@@ -231,7 +228,6 @@
 				"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 				"home.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "inbox"],
 				"home.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
-				"home.campus_links": ["due_date_catalog"],
 				"home.wallet": ["illini_id_card", "illini_cash_card", "meal_plan_card", "bus_pass_card", "library_card"]
 			},
 			"rules": {

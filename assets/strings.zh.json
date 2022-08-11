@@ -265,8 +265,6 @@
 	"panel.browse.section.safer.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
 	"panel.browse.section.campus_guide.title": "校園指南",
 	"panel.browse.section.campus_guide.description": "了解更多關於校園生活的信息。",
-	"panel.browse.section.campus_links.title": "校園鏈接",
-	"panel.browse.section.campus_links.description": "鏈接到許多信息來源，以幫助您在伊利諾伊州享受和繁榮。",
 	"panel.browse.section.campus_resources.title": "校園資源",
 	"panel.browse.section.campus_resources.description": "可讓您訪問您經常使用的應用程序部分的快捷方式。",
 	"panel.browse.section.dinings.title": "用餐",
@@ -300,6 +298,7 @@
 	"panel.browse.entry.academics.student_courses.title": "我的課程",
 	"panel.browse.entry.academics.my_illini.title": "米利尼",
 	"panel.browse.entry.academics.campus_reminders.title": "校園提醒",
+	"panel.browse.entry.academics.due_date_catalog.title": "到期日目錄",
 
 	"panel.browse.entry.app_help.video_tutorial.title": "視頻教程",
 	"panel.browse.entry.app_help.feedback.title": "反饋",
@@ -321,8 +320,6 @@
 	"panel.browse.entry.campus_guide.campus_highlights.title": "校園指南亮點",
 	"panel.browse.entry.campus_guide.campus_guide.title": "完整的校園指南",
 	"panel.browse.entry.campus_guide.my_campus_guide.title": "我的校園指南",
-
-	"panel.browse.entry.campus_links.due_date_catalog.title": "到期日目錄",
 
 	"panel.browse.entry.campus_resources.events.title":"活動",
 	"panel.browse.entry.campus_resources.dining.title":"用餐",
@@ -2892,12 +2889,6 @@
 	"widget.home.state_farm_center.wayfinding.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 	"widget.home.state_farm_center.create_stadium_poll.button.title": "創建體育場投票",
 	"widget.home.state_farm_center.create_stadium_poll.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-
-	"widget.home.campus_links.header.title": "校園鏈接",
-	"widget.home.campus_links.text.empty.description": "在 Campus Links 中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
-	"widget.home.campus_links.date_cat.button.title": "到期日目錄",
-	"widget.home.campus_links.date_cat.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-	"widget.home.campus_links.date_cat.label.offline": "截止日期目錄在離線時不可用。",
 
 	"widget.home.dinings.header.title": "用餐",
 	"widget.home.dinings.text.empty.description": "在 Dinings 中的項目上點擊 \u2606，以便您可以在此處快速找到它們。",
