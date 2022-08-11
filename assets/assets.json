@@ -974,6 +974,27 @@
 				}
 			}
 		}
+	},
+
+	"video_tutorials": {
+		"videos": [
+			{
+				"id": "video.tutorial.3.0",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_overview+(1080p).mp4",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_overview_1080p.srt"
+			},
+			{
+				"id": "video.tutorial.4.0",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.mp4",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.srt"
+			}
+		],
+		"onboarding": { "dev": "video.tutorial.3.0", "test": "video.tutorial.3.0", "production": "video.tutorial.4.0" },
+		"strings": {
+			"en": { "video.tutorial.3.0": "Old Tutorial", "video.tutorial.4.0": "Video Tutorial" },
+			"es": { "video.tutorial.3.0": "Viejo tutorial", "video.tutorial.4.0": "Videotutorial" },
+			"zh": { "video.tutorial.3.0": "舊教程", "video.tutorial.4.0": "視頻教程" }
+		}
 	}
 }
 

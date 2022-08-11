@@ -45,7 +45,7 @@ import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
@@ -469,7 +469,7 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
 
-      case "app_help.video_tutorial":        _onTapVideoTutorial(context); break;
+      case "app_help.video_tutorials":       _onTapVideoTutorials(context); break;
       case "app_help.feedback":              _onTapFeedback(context); break;
       case "app_help.review":                _onTapReview(context); break;
       case "app_help.faqs":                  _onTapFAQs(context); break;
@@ -616,16 +616,21 @@ class _BrowseEntry extends StatelessWidget {
     )));
   }
 
-  bool get _canVideoTutorial => StringUtils.isNotEmpty(Config().videoTutorialUrl);
+  int get _videoTutorialsCount {
+    List<dynamic>? videos = Assets()['video_tutorials.videos'];
+    return videos?.length ?? 0;
+  }
 
-  void _onTapVideoTutorial(BuildContext context) {
-    Analytics().logSelect(target: "Video Tutorial");
+  bool get _canVideoTutorials => (_videoTutorialsCount > 0);
+
+  void _onTapVideoTutorials(BuildContext context) {
+    Analytics().logSelect(target: "Video Tutorials");
     
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.video_tutorial', 'Video Tutorial not available while offline.'));
     }
-    else if (_canVideoTutorial) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel()));
+    else if (_canVideoTutorials) {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel()));
     }
   }
 

@@ -1464,6 +1464,9 @@
     "panel.settings.privacy.privacy.button.set_privacy.slider.increase": "aumentado a",
     "panel.settings.privacy.privacy.button.set_privacy.slider.decrease": "disminuido a",
 
+    "panel.settings.video_tutorials.header.title": "Tutoriales en vídeo",
+    "panel.settings.video_tutorials.empty.msg": "No hay videotutoriales.",
+
     "panel.settings.video_tutorial.header.title": "Videotutorial",
     "panel.settings.video_tutorial.video.missing.msg": "Vídeo faltante",
 
@@ -2869,6 +2872,7 @@
     "widget.home.app_help.header.title": "Ayuda de la aplicación",
     "widget.home.app_help.text.empty.description": "Toca \u2606 en los elementos de la Ayuda de la aplicación para que puedas encontrarlos rápidamente aquí.",
     "widget.home.app_help.video_tutorial.button.title": "Videotutorial",
+    "widget.home.app_help.video_tutorials.button.title": "Tutoriales en vídeo",
     "widget.home.app_help.video_tutorial.button.description": "Mire tutoriales en video para conocer las funciones de la aplicación.",
     "widget.home.app_help.video_tutorial.label.offline": "El videotutorial no está disponible sin conexión.",
     "widget.home.app_help.feedback.button.title": "Suministre realimentación",

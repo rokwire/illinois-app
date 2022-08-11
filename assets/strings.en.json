@@ -1467,6 +1467,9 @@
     "panel.settings.privacy.privacy.button.set_privacy.slider.increase": "increased to",
     "panel.settings.privacy.privacy.button.set_privacy.slider.decrease": "decreased to",
 
+    "panel.settings.video_tutorials.header.title": "Video Tutorials",
+    "panel.settings.video_tutorials.empty.msg": "There are no video tutorials.",
+
     "panel.settings.video_tutorial.header.title": "Video Tutorial",
     "panel.settings.video_tutorial.video.missing.msg": "Missing video",
 
@@ -2876,6 +2879,7 @@
     "widget.home.app_help.header.title": "App Help",
     "widget.home.app_help.text.empty.description": "Tap the \u2606 on items in App Help so you can quickly find them here.",
     "widget.home.app_help.video_tutorial.button.title": "Video Tutorial",
+    "widget.home.app_help.video_tutorials.button.title": "Video Tutorials",
     "widget.home.app_help.video_tutorial.button.description": "Watch video tutorials to learn about app features.",
     "widget.home.app_help.video_tutorial.label.offline": "Video Tutorial not available while offline.",
     "widget.home.app_help.feedback.button.title": "Provide Feedback",

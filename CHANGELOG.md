@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Due Date Catalog to Academics section [#2220](https://github.com/rokwire/illinois-app/issues/2220).
 - Added ability to delete polls in PollsHomePanel [#2153](https://github.com/rokwire/illinois-app/issues/2153).
 - Daily Illini feed with images [#2208](https://github.com/rokwire/illinois-app/issues/2208).
+- Handle more than one video tutorials - defined in app assets [#2230](https://github.com/rokwire/illinois-app/issues/2230).
 ### Deleted
 - Removed Athletics/Teams entry in Browse panel [#2102](https://github.com/rokwire/illinois-app/issues/2102).
 ### Fixed

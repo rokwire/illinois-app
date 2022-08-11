@@ -99,8 +99,6 @@ class Config extends rokwire.Config {
   String? get canvasZoomMeetingUrl   => JsonUtils.stringValue(otherUniversityServices['canvas_zoom_meeting_url']);
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
-  String? get videoTutorialUrl       => JsonUtils.stringValue(otherUniversityServices['video_tutorial_url']);
-  String? get videoTutorialCcUrl     => JsonUtils.stringValue(otherUniversityServices['video_tutorial_cc_url']);
   String? get wellness8DimensionsUrl => JsonUtils.stringValue(otherUniversityServices['wellness_8_dimensions_url']);
   String? get wpgufmRadioUrl         => JsonUtils.stringValue(otherUniversityServices['wpgufm_radio_url']);
   String? get preferredFirstNameStmntUrl => JsonUtils.stringValue(otherUniversityServices['preferred_first_name_stmnt_url']);
