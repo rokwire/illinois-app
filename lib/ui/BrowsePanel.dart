@@ -467,6 +467,7 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.student_courses":       _onTapStudentCourses(context); break;
       case "academics.my_illini":             _onTapMyIllini(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
+      case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
 
       case "app_help.video_tutorial":        _onTapVideoTutorial(context); break;
       case "app_help.feedback":              _onTapFeedback(context); break;
@@ -709,6 +710,16 @@ class _BrowseEntry extends StatelessWidget {
       contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'),
       contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Guide Highlights."),
     )));
+  }
+
+  bool get _canDueDateCatalog => StringUtils.isNotEmpty(Config().dateCatalogUrl);
+
+  void _onTapDueDateCatalog(BuildContext context) {
+    Analytics().logSelect(target: "Due Date Catalog");
+    
+    if (_canDueDateCatalog) {
+      launch(Config().dateCatalogUrl!);
+    }
   }
 
   void _onTapDiningsAll(BuildContext context) {
