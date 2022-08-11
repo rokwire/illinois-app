@@ -75,13 +75,7 @@ class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes
     return group?.analyticsAttributes;
   }
 
-  String? get groupId {
-    if (group != null) {
-      return group?.id;
-    } else {
-      return groupIdentifier;
-    }
-  }
+  String? get groupId => group?.id ?? groupIdentifier;
 }
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> implements NotificationsListener {
@@ -360,28 +354,28 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _loadGroupStats() {
     _increaseProgress();
-    Groups().loadGroupStats(widget.group?.id).then((stats) {
+    Groups().loadGroupStats(widget.groupId).then((stats) {
       _groupStats = stats;
       _decreaseProgress();
     });
   }
 
   void _refreshGroupStats() {
-    Groups().loadGroupStats(widget.group?.id).then((stats) {
+    Groups().loadGroupStats(widget.groupId).then((stats) {
       _groupStats = stats;
     });
   }
 
   void _loadGroupAdmins() {
     _increaseProgress();
-    Groups().loadMembers(groupId: widget.group!.id, statuses: [GroupMemberStatus.admin]).then((admins) {
+    Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.admin]).then((admins) {
       _groupAdmins = admins;
       _decreaseProgress();
     });
   }
 
   void _refreshGroupAdmins() {
-    Groups().loadMembers(groupId: widget.group!.id, statuses: [GroupMemberStatus.admin]).then((admins) {
+    Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.admin]).then((admins) {
       _groupAdmins = admins;
     });
   }
@@ -1479,7 +1473,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _loadAttendedMemberByUin({required String uin}) {
-    Groups().loadMembers(groupId: widget.group!.id).then((members) {
+    Groups().loadMembers(groupId: widget.groupId).then((members) {
       Member? member;
       if (CollectionUtils.isNotEmpty(members)) {
         for (Member groupMember in members!) {
