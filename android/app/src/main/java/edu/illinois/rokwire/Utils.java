@@ -258,12 +258,20 @@ public class Utils {
             if (location == null) {
                 return null;
             }
+
             Object latObj = location.get("latitude");
             Object lngObj = location.get("longitude");
             if (!(latObj instanceof Double) || !(lngObj instanceof Double)) {
                 return null;
             }
-            return new LatLng((Double) latObj, (Double) lngObj);
+
+            Double lat = (Double) latObj;
+            Double lng = (Double) lngObj;
+            if ((lat == 0.0) && (lng == 0.0)) {
+                return null;
+            }
+
+            return new LatLng(lat, lng);
         }
 
         public static Integer optMarkerLocationFloor(Marker marker) {
