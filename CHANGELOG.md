@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Do not show zero lat/long coordinates on maps [#2218](https://github.com/rokwire/illinois-app/issues/2218).
+- Provide user friendly description of Notification section in Browse panel [#1972](https://github.com/rokwire/illinois-app/issues/1972).
 ### Added
 - Added Due Date Catalog to Academics section [#2220](https://github.com/rokwire/illinois-app/issues/2220).
 ### Added
