@@ -1466,6 +1466,9 @@
 	"panel.settings.privacy.privacy.button.set_privacy.slider.increase": "增加到",
 	"panel.settings.privacy.privacy.button.set_privacy.slider.decrease": "减少到",
 
+    "panel.settings.video_tutorials.header.title": "視頻教程",
+    "panel.settings.video_tutorials.empty.msg": "沒有視頻教程。",
+
     "panel.settings.video_tutorial.header.title": "視頻教程",
     "panel.settings.video_tutorial.video.missing.msg": "缺少視頻",
 
@@ -2869,6 +2872,7 @@
 	"widget.home.app_help.header.title": "應用幫助",
 	"widget.home.app_help.text.empty.description": "點擊應用幫助中的項目上的 \u2606，以便您可以在此處快速找到它們。",
 	"widget.home.app_help.video_tutorial.button.title": "視頻教程",
+	"widget.home.app_help.video_tutorials.button.title": "視頻教程",
 	"widget.home.app_help.video_tutorial.button.description": "觀看視頻教程以了解應用程序功能。",
 	"widget.home.app_help.video_tutorial.label.offline": "視頻教程在離線時不可用。",
 	"widget.home.app_help.feedback.button.title": "提供反饋意見",

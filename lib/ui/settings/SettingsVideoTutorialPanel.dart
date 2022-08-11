@@ -19,7 +19,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -30,6 +29,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 
 class SettingsVideoTutorialPanel extends StatefulWidget {
+  final Map<String, dynamic> videoTutorial;
+
+  SettingsVideoTutorialPanel({required this.videoTutorial});
+
   @override
   State<SettingsVideoTutorialPanel> createState() => _SettingsVideoTutorialPanelState();
 }
@@ -57,7 +60,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
   }
 
   void _initVideoPlayer() {
-    String? tutorialUrl = Config().videoTutorialUrl;
+    String? tutorialUrl = widget.videoTutorial['video_url'];
     if (StringUtils.isNotEmpty(tutorialUrl)) {
       _controller = VideoPlayerController.network(tutorialUrl!, closedCaptionFile: _loadClosedCaptions());
       _controller!.addListener(_checkVideoStateChanged);
@@ -79,7 +82,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
 
   Future<ClosedCaptionFile> _loadClosedCaptions() async {
     String? fileContents;
-    String? closedCaptionsUrl = Config().videoTutorialCcUrl;
+    String? closedCaptionsUrl = widget.videoTutorial['cc_url'];
     if (StringUtils.isNotEmpty(closedCaptionsUrl)) {
       Response? response = await Network().get(closedCaptionsUrl);
       int? responseCode = response?.statusCode;
@@ -109,7 +112,9 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Styles().colors!.blackTransparent06,
-        appBar: HeaderBar(title: Localization().getStringEx("panel.settings.video_tutorial.header.title", "Video Tutorial")),
+        appBar: HeaderBar(
+            title: StringUtils.ensureNotEmpty(widget.videoTutorial['title'],
+                defaultValue: Localization().getStringEx("panel.settings.video_tutorial.header.title", "Video Tutorial"))),
         body: Center(child: _buildVideoContent()));
   }
 

@@ -21,11 +21,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2Widgets.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
+import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -66,11 +67,14 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   }
 
   void _initVideoPlayer() {
-    String? tutorialUrl = Config().videoTutorialUrl;
-    if (StringUtils.isNotEmpty(tutorialUrl)) {
-      _controller = VideoPlayerController.network(tutorialUrl!, closedCaptionFile: _loadClosedCaptions());
-      _controller!.addListener(_checkVideoStateChanged);
-      _initializeVideoPlayerFuture = _controller!.initialize().then((_) {
+    Map<String, dynamic>? onboardingVideoTutorial = _loadOnboardingVideoTutorial();
+    if (onboardingVideoTutorial != null) {
+      String? tutorialUrl = onboardingVideoTutorial['video_url'];
+      if (StringUtils.isNotEmpty(tutorialUrl)) {
+        String? ccUrl = onboardingVideoTutorial['cc_url'];
+        _controller = VideoPlayerController.network(tutorialUrl!, closedCaptionFile: _loadClosedCaptions(ccUrl));
+        _controller!.addListener(_checkVideoStateChanged);
+        _initializeVideoPlayerFuture = _controller!.initialize().then((_) {
           _currentCaptionText = _controller!.value.caption.text;
           _ccEnabled = true;
           _showCc(true);
@@ -78,7 +82,8 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
           if (mounted && (ModalRoute.of(context)?.isCurrent ?? false)) {
             _controller?.play(); // Automatically play video after initialization
           }
-      });
+        });
+      }
     }
   }
 
@@ -86,9 +91,35 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     _controller?.dispose();
   }
 
-  Future<ClosedCaptionFile> _loadClosedCaptions() async {
+  Map<String, dynamic>? _loadOnboardingVideoTutorial() {
+    Map<String, dynamic>? videoTutorials = Assets()['video_tutorials'];
+    List<dynamic>? videos = videoTutorials?['videos'];
+    if (CollectionUtils.isEmpty(videos)) {
+      return null;
+    }
+    Map<String, dynamic>? onboardingMap = videoTutorials?['onboarding'];
+    String? onboardingVideoId;
+    String? envKey = configEnvToString(Config().configEnvironment);
+    if (StringUtils.isNotEmpty(envKey)) {
+      onboardingVideoId = onboardingMap?[envKey];
+    }
+    Map<String, dynamic>? videoMap;
+    if (StringUtils.isNotEmpty(onboardingVideoId)) {
+      for(dynamic video in videos!) {
+        if (onboardingVideoId == video['id']) {
+          videoMap = video;
+          break;
+        }
+      }
+    }
+    if (videoMap == null) {
+      videoMap = videos!.first;
+    }
+    return videoMap;
+  }
+
+  Future<ClosedCaptionFile> _loadClosedCaptions(String? closedCaptionsUrl) async {
     String? fileContents;
-    String? closedCaptionsUrl = Config().videoTutorialCcUrl;
     if (StringUtils.isNotEmpty(closedCaptionsUrl)) {
       Response? response = await Network().get(closedCaptionsUrl);
       int? responseCode = response?.statusCode;
