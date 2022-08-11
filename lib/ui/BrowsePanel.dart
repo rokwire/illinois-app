@@ -29,6 +29,7 @@ import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/home/HomeCampusResourcesWidget.dart';
+import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeRecentItemsWidget.dart';
 import 'package:illinois/ui/home/HomeSaferTestLocationsPanel.dart';
@@ -505,6 +506,7 @@ class _BrowseEntry extends StatelessWidget {
       case "events.suggested_events": _onTapSuggestedEvents(context); break;
 
       case "feeds.twitter":      _onTapTwitter(context); break;
+      case "feeds.daily_illini": _onTapDailyIllini(context); break;
       case "feeds.wpgufm_radio": _onTapWPGUFMRadio(context); break;
 
       case "groups.all_groups":  _onTapAllGroups(context); break;
@@ -800,6 +802,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapTwitter(BuildContext context) {
     Analytics().logSelect(target: "Twitter");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return TwitterPanel(); } ));
+  }
+
+  void _onTapDailyIllini(BuildContext context) {
+    Analytics().logSelect(target: "Daily Illini");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DailyIlliniListPanel()));
   }
 
   void _onTapWPGUFMRadio(BuildContext context) {
