@@ -63,7 +63,7 @@ import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
 enum ExploreItem { Events, Dining, Laundry, StudentCourse, StateFarmWayfinding }
 
-enum EventsDisplayType { all, multiple, single }
+enum EventsDisplayType {single, multiple, all}
 
 enum ExploreFilterType { categories, event_time, event_tags, payment_type, work_time, student_course_terms }
 
@@ -83,7 +83,7 @@ class ExplorePanel extends StatefulWidget {
   final bool rootTabDisplay;
   final String? browseGroupId;
 
-  ExplorePanel({this.initialItem = ExploreItem.Events, this.eventsDisplayType = EventsDisplayType.all, this.initialFilter, this.mapDisplayType = ListMapDisplayType.List, this.rootTabDisplay = false, this.browseGroupId });
+  ExplorePanel({this.initialItem = ExploreItem.Events, this.eventsDisplayType = EventsDisplayType.single, this.initialFilter, this.mapDisplayType = ListMapDisplayType.List, this.rootTabDisplay = false, this.browseGroupId });
 
   static Future<void> presentDetailPanel(BuildContext context, {String? eventId}) async {
     List<Event>? events = (eventId != null) ? await Events().loadEventsByIds([eventId]) : null;
@@ -1533,8 +1533,8 @@ class ExplorePanelState extends State<ExplorePanel>
   static String? _eventsDisplayTypeLabel(EventsDisplayType type) {
     switch (type) {
       case EventsDisplayType.all:       return Localization().getStringEx('panel.explore.button.events.display_type.all.label', 'All Events');
-      case EventsDisplayType.multiple:  return Localization().getStringEx('panel.explore.button.events.display_type.multiple.label', 'Multiple Events');
-      case EventsDisplayType.single:    return Localization().getStringEx('panel.explore.button.events.display_type.single.label', 'Single Events');
+      case EventsDisplayType.multiple:  return Localization().getStringEx('panel.explore.button.events.display_type.multiple.label', 'Multi-day events');
+      case EventsDisplayType.single:    return Localization().getStringEx('panel.explore.button.events.display_type.single.label', 'Single day events');
       default:                      return null;
     }
   }

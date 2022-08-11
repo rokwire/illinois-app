@@ -467,6 +467,7 @@ class _BrowseEntry extends StatelessWidget {
       case "academics.student_courses":       _onTapStudentCourses(context); break;
       case "academics.my_illini":             _onTapMyIllini(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
+      case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
 
       case "app_help.video_tutorial":        _onTapVideoTutorial(context); break;
       case "app_help.feedback":              _onTapFeedback(context); break;
@@ -484,8 +485,6 @@ class _BrowseEntry extends StatelessWidget {
 
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
-
-      case "campus_links.due_date_catalog":  _onTapDueDateCatalog(context); break;
 
       case "dinings.dinings_all":            _onTapDiningsAll(context); break;
       case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
@@ -718,10 +717,7 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapDueDateCatalog(BuildContext context) {
     Analytics().logSelect(target: "Due Date Catalog");
     
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.date_cat', 'Due Date Catalog not available while offline.'));
-    }
-    else if (_canDueDateCatalog) {
+    if (_canDueDateCatalog) {
       launch(Config().dateCatalogUrl!);
     }
   }

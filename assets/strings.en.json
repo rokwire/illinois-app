@@ -267,8 +267,6 @@
     "panel.browse.section.safer.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
     "panel.browse.section.campus_guide.title": "Campus Guide",
     "panel.browse.section.campus_guide.description": "Learn more about life on Campus.",
-    "panel.browse.section.campus_links.title": "Campus Links",
-    "panel.browse.section.campus_links.description": "Links to many sources for information that helps you enjoy and prosper at Illinois.",
     "panel.browse.section.campus_resources.title": "Campus Resources",
     "panel.browse.section.campus_resources.description": "Shortcuts to get you to those parts of the app you use regularly.",
     "panel.browse.section.dinings.title": "Dining",
@@ -284,7 +282,7 @@
     "panel.browse.section.my.title": "My",
     "panel.browse.section.my.description": "Personalized views of everything you are interested in.",
     "panel.browse.section.notifications.title": "Notifications",
-    "panel.browse.section.notifications.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.",
+    "panel.browse.section.notifications.description": "Shortcuts to your in-app notifications from groups, academics or athletics events and more.",
     "panel.browse.section.polls.title": "Polls",
     "panel.browse.section.polls.description": "Create, participate and check out results of Polls you and others create.",
     "panel.browse.section.recent.title": "Recent",
@@ -302,6 +300,7 @@
     "panel.browse.entry.academics.student_courses.title": "My Courses",
     "panel.browse.entry.academics.my_illini.title": "My Illini",
     "panel.browse.entry.academics.campus_reminders.title": "Campus Reminders",
+    "panel.browse.entry.academics.due_date_catalog.title": "Due Date Catalog",
 
     "panel.browse.entry.app_help.video_tutorial.title": "Video Tutorial",
     "panel.browse.entry.app_help.feedback.title": "Feedback",
@@ -323,8 +322,6 @@
     "panel.browse.entry.campus_guide.campus_highlights.title": "Campus Guide Highlights",
     "panel.browse.entry.campus_guide.campus_guide.title": "Complete Campus Guide",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "My Campus Guide",
-
-    "panel.browse.entry.campus_links.due_date_catalog.title": "Due Date Catalog",
 
     "panel.browse.entry.campus_resources.events.title":"Events",
     "panel.browse.entry.campus_resources.dining.title":"Dining",
@@ -888,8 +885,8 @@
     "panel.explore.label.spcial_offers.title":"Special Offers",
 
     "panel.explore.button.events.display_type.all.label": "All Events",
-    "panel.explore.button.events.display_type.multiple.label": "Multiple Events",
-    "panel.explore.button.events.display_type.single.label": "Single Events",
+    "panel.explore.button.events.display_type.multiple.label": "Multi-day events",
+    "panel.explore.button.events.display_type.single.label": "Single day events",
 
     "panel.explore.filter.categories.hint":"Filter by category",
     "panel.explore.filter.categories.all":"All Categories",
@@ -2899,12 +2896,6 @@
     "widget.home.state_farm_center.wayfinding.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     "widget.home.state_farm_center.create_stadium_poll.button.title": "Create Stadium Poll",
     "widget.home.state_farm_center.create_stadium_poll.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-
-    "widget.home.campus_links.header.title": "Campus Links",
-    "widget.home.campus_links.text.empty.description": "Tap the \u2606 on items in Campus Links so you can quickly find them here.",
-    "widget.home.campus_links.date_cat.button.title": "Due Date Catalog",
-    "widget.home.campus_links.date_cat.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "widget.home.campus_links.date_cat.label.offline": "Due Date Catalog not available while offline.",
 
     "widget.home.dinings.header.title": "Dining",
     "widget.home.dinings.text.empty.description": "Tap the \u2606 on items in Dinings so you can quickly find them here.",

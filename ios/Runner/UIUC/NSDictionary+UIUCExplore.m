@@ -170,7 +170,8 @@
 	NSDictionary *location = self.uiucExploreLocation;
 	NSNumber *latitude = [location inaNumberForKey:@"latitude"];
 	NSNumber *longitude = [location inaNumberForKey:@"longitude"];
-	return ((latitude != nil) && (longitude != nil)) ? CLLocationCoordinate2DMake(latitude.doubleValue, longitude.doubleValue) : kCLLocationCoordinate2DInvalid;
+	return ((latitude != nil) && (longitude != nil) && ((longitude.doubleValue != 0.0) || (longitude.doubleValue != 0.0))) ?
+		CLLocationCoordinate2DMake(latitude.doubleValue, longitude.doubleValue) : kCLLocationCoordinate2DInvalid;
 }
 
 - (int)uiucExploreLocationFloor {
