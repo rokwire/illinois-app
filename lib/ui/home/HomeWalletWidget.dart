@@ -14,6 +14,7 @@ import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -86,7 +87,8 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      IlliniCash.notifyBallanceUpdated
+      IlliniCash.notifyBallanceUpdated,
+      Connectivity.notifyStatusChanged,
     ]);
     super.initState();
   }
@@ -154,7 +156,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
   // NotificationsListener
 
   void onNotification(String name, dynamic param) {
-    if (name == IlliniCash.notifyBallanceUpdated) {
+    if ((name == IlliniCash.notifyBallanceUpdated) || (name == Connectivity.notifyStatusChanged,)) {
       if (mounted) {
         setState(() {});
       }
