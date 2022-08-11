@@ -17,6 +17,7 @@
 import 'dart:async';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/main.dart';
 import 'package:illinois/model/DailyIllini.dart';
@@ -25,6 +26,7 @@ import 'package:illinois/service/DailyIllini.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/Config.dart';
@@ -162,7 +164,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
         DailyIlliniItem item = _illiniItems![i];
         widgetsList.add(_DailyIlliniItemWidget(
             illiniItem: item,
-            margin: EdgeInsets.only(right: _pageSpacing),
+            margin: EdgeInsets.only(right: _pageSpacing, bottom: 10),
             onTapPrevious: isFirst ? null : _onTapPrevious,
             onTapNext: isLast ? null : _onTapNext));
       }
@@ -179,8 +181,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
     } else {
       Widget contentWidget;
       if (1 < widgetsList.length) {
-        //TBD: DD: Check correct height
-        double pageHeight = MediaQuery.of(context).size.width - 140;
+        double pageHeight = MediaQuery.of(context).size.width;
 
         contentWidget = Container(
             constraints: BoxConstraints(minHeight: pageHeight),
@@ -221,12 +222,101 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
 
   void _onViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    //TBD: DD - implement Daily Illini view all panel
-    // Navigator.push(context, CupertinoPageRoute(builder: (context) => DailyIlliniPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DailyIlliniListPanel()));
   }
 
   void _setLoading(bool loading) {
     _loadingItems = loading;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+}
+
+class DailyIlliniListPanel extends StatefulWidget {
+
+  @override
+  _DailyIlliniListPanelState createState() => _DailyIlliniListPanelState();
+}
+
+class _DailyIlliniListPanelState extends State<DailyIlliniListPanel> {
+
+  List<DailyIlliniItem>? _illiniItems;
+  bool _loadingItems = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFeedItems();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: HeaderBar(title: HomeDailyIlliniWidget.title),
+        body: RefreshIndicator(
+            onRefresh: _onPullToRefresh,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[Expanded(child: _buildContent())])),
+        backgroundColor: Styles().colors!.background);
+  }
+
+  Widget _buildContent() {
+    if (_loadingItems) {
+      return Center(
+          child: SizedBox(
+              height: 32,
+              width: 32,
+              child: CircularProgressIndicator(
+                  strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary!))));
+    } else {
+      if (CollectionUtils.isNotEmpty(_illiniItems)) {
+        int itemsCount = _illiniItems!.length;
+        return ListView.separated(
+            separatorBuilder: (context, index) => Container(height: 24),
+            itemCount: itemsCount,
+            itemBuilder: _buildListItemEntry);
+      } else {
+        return Column(children: <Widget>[
+          Expanded(child: Container(), flex: 1),
+          Text(Localization().getStringEx('widget.home.daily_illini.text.empty.description', 'Failed to load daily illini feed.'),
+              textAlign: TextAlign.center),
+          Expanded(child: Container(), flex: 3)
+        ]);
+      }
+    }
+  }
+  
+  Widget _buildListItemEntry(BuildContext context, int index) {
+    DailyIlliniItem? item = (index < ((_illiniItems?.length) ?? 0)) ? _illiniItems![index] : null;
+    if (item == null) {
+      return Container();
+    }
+    return _DailyIlliniItemWidget(
+        illiniItem: item, margin: (0 < index) ? EdgeInsets.symmetric(horizontal: 16) : EdgeInsets.only(left: 16, right: 16, top: 16));
+  }
+
+  void _loadFeedItems() {
+    _setLoadingItems(true);
+    DailyIllini().loadFeed().then((items) {
+      _illiniItems = items;
+      _setLoadingItems(false);
+    });
+  }
+
+  Future<void> _onPullToRefresh() async {
+    // Reload without progress indicator
+    DailyIllini().loadFeed().then((items) {
+      _illiniItems = items;
+      _updateState();
+    });
+  }
+
+  void _setLoadingItems(bool loading) {
+    _loadingItems = loading;
+    _updateState();
+  }
+
+  void _updateState() {
     if (mounted) {
       setState(() {});
     }
