@@ -485,8 +485,6 @@ class _BrowseEntry extends StatelessWidget {
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
 
-      case "campus_links.due_date_catalog":  _onTapDueDateCatalog(context); break;
-
       case "dinings.dinings_all":            _onTapDiningsAll(context); break;
       case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
 
@@ -711,19 +709,6 @@ class _BrowseEntry extends StatelessWidget {
       contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'),
       contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Guide Highlights."),
     )));
-  }
-
-  bool get _canDueDateCatalog => StringUtils.isNotEmpty(Config().dateCatalogUrl);
-
-  void _onTapDueDateCatalog(BuildContext context) {
-    Analytics().logSelect(target: "Due Date Catalog");
-    
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.date_cat', 'Due Date Catalog not available while offline.'));
-    }
-    else if (_canDueDateCatalog) {
-      launch(Config().dateCatalogUrl!);
-    }
   }
 
   void _onTapDiningsAll(BuildContext context) {

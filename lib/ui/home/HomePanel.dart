@@ -31,7 +31,6 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
-import 'package:illinois/ui/home/HomeCampusLinksWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
@@ -431,15 +430,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeStateFarmCenterWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
         return HomeStateFarmCenterWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
-      }
-    }
-    else if (code == 'campus_links') {
-      if (title) {
-        return HomeCampusLinksWidget.title;
-      } else if (handle) {
-        return HomeCampusLinksWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position,);
-      } else {
-        return HomeCampusLinksWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
       }
     }
 
