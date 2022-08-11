@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Due Date Catalog to Academics section [#2220](https://github.com/rokwire/illinois-app/issues/2220).
 ### Added
 - Fixed GroupDetailPanel when initialized with groupIdentifier [#2223](https://github.com/rokwire/illinois-app/issues/2223).
+- Added ability to delete polls in PollsHomePanel [#2153](https://github.com/rokwire/illinois-app/issues/2153).
 
 ## [4.1.15] - 2022-08-10
 ### Changed

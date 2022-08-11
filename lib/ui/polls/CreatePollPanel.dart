@@ -466,7 +466,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
       Polls().create(poll).then((Poll poll){
         Navigator.pop(context);
       }).catchError((e){
-        Log.d(e);
+        Log.d(e.toString());
         String? errorMessage = Localization().getStringEx("panel.create_poll.message.error.default", "Failed to create poll. Please fill all fields and try again.");
         AppAlert.showDialogResult(context, errorMessage);
       }).whenComplete((){
