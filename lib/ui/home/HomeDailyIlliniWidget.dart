@@ -162,7 +162,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
         DailyIlliniItem item = _illiniItems![i];
         widgetsList.add(_DailyIlliniItemWidget(
             illiniItem: item,
-            margin: EdgeInsets.only(right: _pageSpacing),
+            margin: EdgeInsets.only(right: _pageSpacing, bottom: 10),
             onTapPrevious: isFirst ? null : _onTapPrevious,
             onTapNext: isLast ? null : _onTapNext));
       }
@@ -179,8 +179,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
     } else {
       Widget contentWidget;
       if (1 < widgetsList.length) {
-        //TBD: DD: Check correct height
-        double pageHeight = MediaQuery.of(context).size.width - 140;
+        double pageHeight = MediaQuery.of(context).size.width;
 
         contentWidget = Container(
             constraints: BoxConstraints(minHeight: pageHeight),
