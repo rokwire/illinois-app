@@ -72,7 +72,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
     return Scaffold(
         appBar: _DebugContainer(
             child: RootHeaderBar(
-              title: Localization().getStringEx('panel.settings.home.header.settings.label', 'My Settings'),
+              title: Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'),
               onSettings: _onTapSettings,
           ),
         ),

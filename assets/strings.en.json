@@ -1217,7 +1217,7 @@
     "widget.laundry.room.status.online.text": "Online",
     "widget.laundry.room.status.offline.text": "Offline",
 
-    "panel.settings.home.header.settings.label": "My Settings",
+    "panel.settings.home.header.settings.label": "Settings",
     "panel.settings.home.settings.sections.section.label": "Sign In/Sign Out",
     "panel.settings.home.settings.sections.interests.label": "My Interests",
     "panel.settings.home.settings.sections.food_filter.label": "My Food Filter",

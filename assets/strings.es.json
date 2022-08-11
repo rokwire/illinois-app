@@ -1215,7 +1215,7 @@
     "widget.laundry.room.status.online.text": "En línea",
     "widget.laundry.room.status.offline.text": "Desconectada",
 
-    "panel.settings.home.header.settings.label": "Mi configuración",
+    "panel.settings.home.header.settings.label": "Ajustes",
     "panel.settings.home.settings.sections.section.label": "Iniciar sesión/Cerrar sesión",
     "panel.settings.home.settings.sections.interests.label": "Mis intereses",
     "panel.settings.home.settings.sections.food_filter.label": "Mi filtro de comida",
