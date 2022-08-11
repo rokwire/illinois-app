@@ -465,9 +465,8 @@ class _BrowseEntry extends StatelessWidget {
     switch("$sectionId.$entryId") {
       case "academics.gies_checklist":        _onTapGiesChecklist(context); break;
       case "academics.new_student_checklist": _onTapNewStudentChecklist(context); break;
-      case "academics.canvas_courses":        _onTapCanvasCourses(context); break;
       case "academics.student_courses":       _onTapStudentCourses(context); break;
-      case "academics.my_illini":             _onTapMyIllini(context); break;
+      case "academics.canvas_courses":        _onTapCanvasCourses(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
       case "academics.due_date_catalog":      _onTapDueDateCatalog(context); break;
 
@@ -476,8 +475,11 @@ class _BrowseEntry extends StatelessWidget {
       case "app_help.review":                _onTapReview(context); break;
       case "app_help.faqs":                  _onTapFAQs(context); break;
 
+      case "athletics.my_game_day":          _onTapMyGameDay(context); break;
       case "athletics.sport_events":         _onTapSportEvents(context); break;
+      case "athletics.my_athletics":         _onTapMyAthletics(context); break;
       case "athletics.sport_news":           _onTapSportNews(context); break;
+      case "athletics.my_news":              _onTapMyNews(context); break;
       case "athletics.sport_teams":          _onTapSportTeams(context); break;
 
       case "safer.building_access":          _onTapBuildingAccess(context); break;
@@ -485,17 +487,18 @@ class _BrowseEntry extends StatelessWidget {
       case "safer.my_mckinley":              _onTapMyMcKinley(context); break;
       case "safer.wellness_answer_center":   _onTapWellnessAnswerCenter(context); break;
 
+      case "laundry.laundry":                 _onTapLaundry(context); break;
+      case "laundry.my_laundry":              _onTapMyLaundry(context); break;
+
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
-
-      case "dinings.dinings_all":            _onTapDiningsAll(context); break;
-      case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
+      case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
 
       case "campus_resources.events":       _onTapEvents(context); break;
       case "campus_resources.dining":       _onTapDining(context); break;
       case "campus_resources.athletics":    _onTapAthletics(context); break;
-      case "campus_resources.laundry":      _onTapLaundry(context); break;
       case "campus_resources.illini_cash":  _onTapIlliniCash(context); break;
+      case "campus_resources.laundry":      _onTapLaundry(context); break;
       case "campus_resources.my_illini":    _onTapMyIllini(context); break;
       case "campus_resources.wellness":     _onTapWellness(context); break;
       case "campus_resources.crisis_help":  _onTapCrisisHelp(context); break;
@@ -504,53 +507,56 @@ class _BrowseEntry extends StatelessWidget {
       case "campus_resources.campus_guide": _onTapCampusGuide(context); break;
       case "campus_resources.inbox":        _onTapInbox(context); break;
 
-      case "events.suggested_events": _onTapSuggestedEvents(context); break;
+      case "dinings.dinings_all":            _onTapDiningsAll(context); break;
+      case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
+      case "dinings.my_dining":              _onTapMyDinings(context); break;
 
-      case "feeds.twitter":      _onTapTwitter(context); break;
-      case "feeds.daily_illini": _onTapDailyIllini(context); break;
-      case "feeds.wpgufm_radio": _onTapWPGUFMRadio(context); break;
+      case "events.suggested_events":        _onTapSuggestedEvents(context); break;
+      case "events.my_events":               _onTapMyEvents(context); break;
 
-      case "groups.all_groups":  _onTapAllGroups(context); break;
-      case "groups.my_groups":   _onTapMyGroups(context); break;
+      case "feeds.twitter":                  _onTapTwitter(context); break;
+      case "feeds.daily_illini":             _onTapDailyIllini(context); break;
+      case "feeds.wpgufm_radio":             _onTapWPGUFMRadio(context); break;
 
-      case "laundry.laundry":    _onTapLaundry(context); break;
+      case "groups.all_groups":              _onTapAllGroups(context); break;
+      case "groups.my_groups":               _onTapMyGroups(context); break;
 
-      case "my.my_groups":       _onTapMyGroups(context); break;
-      case "my.canvas_courses":  _onTapCanvasCourses(context); break;
-      case "my.student_courses": _onTapStudentCourses(context); break;
-      case "my.my_game_day":     _onTapMyGameDay(context); break;
-      case "my.my_events":       _onTapMyEvents(context); break;
-      case "my.my_dining":       _onTapMyDinings(context); break;
-      case "my.my_athletics":    _onTapMyAthletics(context); break;
-      case "my.my_news":         _onTapMyNews(context); break;
-      case "my.my_laundry":      _onTapMyLaundry(context); break;
-      case "my.my_inbox":        _onTapMyNotifications(context); break;
-      case "my.my_campus_guide": _onTapMyCampusGuide(context); break;
-      case "my.wellness_resources": _onTapWellnessResources(context); break;
+      case "my.my_athletics":                _onTapMyAthletics(context); break;
+      case "my.my_news":                     _onTapMyNews(context); break;
+      case "my.my_campus_guide":             _onTapMyCampusGuide(context); break;
+      case "my.student_courses":             _onTapStudentCourses(context); break;
+      case "my.my_dining":                   _onTapMyDinings(context); break;
+      case "my.my_events":                   _onTapMyEvents(context); break;
+      case "my.my_game_day":                 _onTapMyGameDay(context); break;
+      case "my.canvas_courses":              _onTapCanvasCourses(context); break;
+      case "my.my_groups":                   _onTapMyGroups(context); break;
+      case "my.my_laundry":                  _onTapMyLaundry(context); break;
+      case "my.my_inbox":                    _onTapMyNotifications(context); break;
+      case "my.wellness_resources":          _onTapWellnessResources(context); break;
 
-      case "notifications.inbox": _onTapInbox(context); break;
-      case "notifications.my_inbox": _onTapMyNotifications(context); break;
+      case "notifications.inbox":            _onTapInbox(context); break;
+      case "notifications.my_inbox":         _onTapMyNotifications(context); break;
 
-      case "polls.create_poll":  _onTapCreatePoll(context); break;
-      case "polls.recent_polls":   _onTapViewPolls(context); break;
+      case "polls.create_poll":              _onTapCreatePoll(context); break;
+      case "polls.recent_polls":             _onTapViewPolls(context); break;
 
-      case "recent.recent_items": _onTapRecentItems(context); break;
+      case "recent.recent_items":            _onTapRecentItems(context); break;
 
-      case "state_farm_center.parking":             _onTapParking(context); break;
-      case "state_farm_center.wayfinding":          _onTapStateFarmWayfinding(context); break;
+      case "state_farm_center.parking":      _onTapParking(context); break;
+      case "state_farm_center.wayfinding":   _onTapStateFarmWayfinding(context); break;
       case "state_farm_center.create_stadium_poll": _onTapCreateStadiumPoll(context); break;
 
-      case "wallet.illini_cash_card": _onTapIlliniCash(context); break;
-      case "wallet.add_illini_cash":  _onTapAddIlliniCash(context); break;
-      case "wallet.meal_plan_card":   _onTapMealPlan(context); break;
-      case "wallet.bus_pass_card":    _onTapBusPass(context); break;
-      case "wallet.illini_id_card":   _onTapIlliniId(context); break;
-      case "wallet.library_card":     _onTapLibraryCard(context); break;
+      case "wallet.illini_cash_card":        _onTapIlliniCash(context); break;
+      case "wallet.add_illini_cash":         _onTapAddIlliniCash(context); break;
+      case "wallet.meal_plan_card":          _onTapMealPlan(context); break;
+      case "wallet.bus_pass_card":           _onTapBusPass(context); break;
+      case "wallet.illini_id_card":          _onTapIlliniId(context); break;
+      case "wallet.library_card":            _onTapLibraryCard(context); break;
 
-      case "wellness.rings": _onTapWellnessRings(context); break;
-      case "wellness.todo":  _onTapWellnessToDo(context); break;
-      case "wellness.tips":  _onTapWellnessTips(context); break;
-      case "wellness.wellness_resources": _onTapWellnessResources(context); break;
+      case "wellness.wellness_resources":    _onTapWellnessResources(context); break;
+      case "wellness.wellness_rings":        _onTapWellnessRings(context); break;
+      case "wellness.wellness_todo":         _onTapWellnessToDo(context); break;
+      case "wellness.wellness_tips":         _onTapWellnessTips(context); break;
     }
   }
 

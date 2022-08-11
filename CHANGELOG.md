@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed GroupDetailPanel when initialized with groupIdentifier [#2223](https://github.com/rokwire/illinois-app/issues/2223).
 - Fixed Add Illini Cash availability when the user is not logged in [#2175](https://github.com/rokwire/illinois-app/issues/2175).
+- Make sure to handle all entries from Browse panel [#2112](https://github.com/rokwire/illinois-app/issues/2112).
 
 ## [4.1.15] - 2022-08-10
 ### Changed
