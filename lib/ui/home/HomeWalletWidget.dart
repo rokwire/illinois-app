@@ -101,6 +101,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
 
   @override
   Widget build(BuildContext context) {
+    String? ballance = IlliniCash().ballance?.balanceDisplayText;
     return GestureDetector(onTap: _onTap, child:
       Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
         ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
@@ -121,11 +122,13 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        VerticalTitleValueSection(
-                          title: Localization().getStringEx('widget.home.wallet.illini_cash.label.current_balance', 'Current Illini Cash Balance'),
-                          value: IlliniCash().ballance?.balanceDisplayText ?? '\$0.00',
-                          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        )
+                        Opacity(opacity: StringUtils.isNotEmpty(ballance) ? 1 : 0, child:
+                          VerticalTitleValueSection(
+                            title: Localization().getStringEx('widget.home.wallet.illini_cash.label.current_balance', 'Current Illini Cash Balance'),
+                            value: ballance,
+                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          ),
+                        ),
                       ),
                       Visibility(visible: SettingsAddIlliniCashPanel.canPresent, child:
                         Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
@@ -156,7 +159,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
   // NotificationsListener
 
   void onNotification(String name, dynamic param) {
-    if ((name == IlliniCash.notifyBallanceUpdated) || (name == Connectivity.notifyStatusChanged,)) {
+    if ((name == IlliniCash.notifyBallanceUpdated) || (name == Connectivity.notifyStatusChanged)) {
       if (mounted) {
         setState(() {});
       }
@@ -193,6 +196,8 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
 
   @override
   Widget build(BuildContext context) {
+    String? mealBalance = IlliniCash().ballance?.mealBalanceDisplayText;
+    String? cafeCreditBalance = IlliniCash().ballance?.cafeCreditBalanceDisplayText;
     return GestureDetector(onTap: _onTap, child:
       Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
         ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
@@ -214,18 +219,22 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        VerticalTitleValueSection(
-                          title: Localization().getStringEx('widget.home.wallet.meal_plan.label.meals_remaining.text', 'Meals Remaining'),
-                          value: IlliniCash().ballance?.mealBalanceDisplayText ?? "0",
-                          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        )
+                        Opacity(opacity: StringUtils.isNotEmpty(mealBalance) ? 1 : 0, child:
+                          VerticalTitleValueSection(
+                            title: Localization().getStringEx('widget.home.wallet.meal_plan.label.meals_remaining.text', 'Meals Remaining'),
+                            value: mealBalance,
+                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          )
+                        ),
                       ),
                       Expanded(child:
-                        VerticalTitleValueSection(
-                          title: Localization().getStringEx('widget.home.wallet.meal_plan.label.dining_dollars.text', 'Dining Dollars'),
-                          value: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0",
-                          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        )
+                        Opacity(opacity: StringUtils.isNotEmpty(cafeCreditBalance) ? 1 : 0, child:
+                          VerticalTitleValueSection(
+                            title: Localization().getStringEx('widget.home.wallet.meal_plan.label.dining_dollars.text', 'Dining Dollars'),
+                            value: cafeCreditBalance,
+                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          ),
+                        ),
                       ),
                     ]),
                   ),
@@ -304,13 +313,15 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        VerticalTitleValueSection(
-                          title: Auth2().authCard?.role ?? '',
-                          titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 24, color: Styles().colors?.fillColorPrimary),
-                          value: StringUtils.isNotEmpty(Auth2().authCard?.expirationDate) ? sprintf(Localization().getStringEx('widget.home.wallet.bus_pass.label.card_expires.text', 'Expires: %s'), [Auth2().authCard?.expirationDate ?? '']) : '',
-                          valueTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary),
-                          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        )
+                        Opacity(opacity: (Auth2().authCard != null) ? 1 : 0, child:
+                          VerticalTitleValueSection(
+                            title: Auth2().authCard?.role ?? '',
+                            titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 24, color: Styles().colors?.fillColorPrimary),
+                            value: StringUtils.isNotEmpty(Auth2().authCard?.expirationDate) ? sprintf(Localization().getStringEx('widget.home.wallet.bus_pass.label.card_expires.text', 'Expires: %s'), [Auth2().authCard?.expirationDate ?? '']) : '',
+                            valueTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary),
+                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          ),
+                        ),
                       ),
                     ]),
                   ),
@@ -389,11 +400,13 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        VerticalTitleValueSection(
-                          title: StringUtils.isNotEmpty(Auth2().authCard?.fullName) ? Auth2().authCard?.fullName : Auth2().fullName,
-                          value: Auth2().authCard?.uin ?? '',
-                          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        )
+                        Opacity(opacity: (Auth2().authCard != null) ? 1 : 0, child:
+                          VerticalTitleValueSection(
+                            title: StringUtils.isNotEmpty(Auth2().authCard?.fullName) ? Auth2().authCard?.fullName : Auth2().fullName,
+                            value: Auth2().authCard?.uin ?? '',
+                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          ),
+                        ),
                       ),
                     ]),
                   ),
