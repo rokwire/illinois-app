@@ -1634,6 +1634,8 @@
     "panel.polls_home.button.log_in.hint": "",
     "panel.polls_home.text.unable_to_present": "Unable to present poll at the moment",
     "panel.polls_home.card.button.message.end_poll.success": "Poll ended successfully",
+    "panel.polls_home.card.button.message.delete_poll.success": "Poll deleted successfully",
+    "panel.polls_home.card.button.prompt.delete_poll": "Delete \"{PollTitle}\" poll?",
     "panel.polls_home.text.privacy_alert.msg": "With your privacy level at {{privacy_level_icon}} , you can't sign in. To create and share polls with people near you, you must set your privacy level to 4 and sign in.",
 
     "panel.poll_prompt.text.someone": "Someone",
