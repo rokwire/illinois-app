@@ -885,8 +885,8 @@
     "panel.explore.label.spcial_offers.title":"Special Offers",
 
     "panel.explore.button.events.display_type.all.label": "All Events",
-    "panel.explore.button.events.display_type.multiple.label": "Multiple Events",
-    "panel.explore.button.events.display_type.single.label": "Single Events",
+    "panel.explore.button.events.display_type.multiple.label": "Multi-day events",
+    "panel.explore.button.events.display_type.single.label": "Single day events",
 
     "panel.explore.filter.categories.hint":"Filter by category",
     "panel.explore.filter.categories.all":"All Categories",
