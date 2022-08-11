@@ -40,6 +40,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Editing events with long title and description [#657](https://github.com/rokwire/illinois-app/issues/657).
 ### Added
 - Drop down in members panel for filtering by member status [#2150](https://github.com/rokwire/illinois-app/issues/2150).
+### Fixed 
+- Fixed Create Event for multiple groups duplicates the event [#2232](https://github.com/rokwire/illinois-app/issues/2232).
 
 ## [4.1.13] - 2022-08-08
 ### Changed
