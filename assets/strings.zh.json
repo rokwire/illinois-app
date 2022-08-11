@@ -376,6 +376,7 @@
 	"panel.browse.entry.state_farm_center.create_stadium_poll.title": "創建體育場投票",
 
 	"panel.browse.entry.wallet.illini_cash_card.title": "伊利尼現金",
+	"panel.browse.entry.wallet.add_illini_cash.title": "添加伊利尼現金",
 	"panel.browse.entry.wallet.meal_plan_card.title": "進食計劃",
 	"panel.browse.entry.wallet.bus_pass_card.title": "巴士通票",
 	"panel.browse.entry.wallet.illini_id_card.title": "伊利尼身份證",
@@ -1063,7 +1064,6 @@
 	"panel.settings.add_illini_cash.error.buy_illini_cash_elligible.text":"收件人没有资格购买Illini现金",
 	"panel.settings.add_illini_cash.message.buy_illini_cash_success.text":"交易已成功处理。",
 	"panel.settings.add_illini_cash.message.offline.text":"Add Illini Cash is are not available while offline.",
-	"panel.settings.add_illini_cash.message.logged_out.text":"You need to be logged in to access Add Illini Cash.",
 
 	"panel.settings.meal_plan.label.title":"大学住宿膳食计划",
 	"panel.settings.meal_plan.button.login_to_view_meal_plan.text":"登录以查看您的用餐计划",

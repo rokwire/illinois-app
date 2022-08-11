@@ -376,6 +376,7 @@
     "panel.browse.entry.state_farm_center.create_stadium_poll.title": "Crear encuesta de estadio",
 
     "panel.browse.entry.wallet.illini_cash_card.title": "Illini Efectivo",
+    "panel.browse.entry.wallet.add_illini_cash.title": "Agregar efectivo Illini",
     "panel.browse.entry.wallet.meal_plan_card.title": "Régimen de comidas",
     "panel.browse.entry.wallet.bus_pass_card.title": "Pase de autobus",
     "panel.browse.entry.wallet.illini_id_card.title": "Identificación Illini",
@@ -1063,7 +1064,6 @@
     "panel.settings.add_illini_cash.error.buy_illini_cash_elligible.text":"El recipiente no es elegible para comprar Illini Cash",
     "panel.settings.add_illini_cash.message.buy_illini_cash_success.text":"Transacción procesada con éxito",
     "panel.settings.add_illini_cash.message.offline.text":"Add Illini Cash is are not available while offline.",
-    "panel.settings.add_illini_cash.message.logged_out.text":"You need to be logged in to access Add Illini Cash.",
 
     "panel.settings.meal_plan.label.title": "Plan de comidas de la universidad",
     "panel.settings.meal_plan.button.login_to_view_meal_plan.text": "Inicie sesión para ver su Plan de comidas",

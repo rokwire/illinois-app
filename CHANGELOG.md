@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Daily Illini feed with images [#2208](https://github.com/rokwire/illinois-app/issues/2208).
 ### Fixed
 - Fixed GroupDetailPanel when initialized with groupIdentifier [#2223](https://github.com/rokwire/illinois-app/issues/2223).
+- Fixed Add Illini Cash availability when the user is not logged in [#2175](https://github.com/rokwire/illinois-app/issues/2175).
 
 ## [4.1.15] - 2022-08-10
 ### Changed

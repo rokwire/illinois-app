@@ -42,6 +42,7 @@ import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
+import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
@@ -540,6 +541,7 @@ class _BrowseEntry extends StatelessWidget {
       case "state_farm_center.create_stadium_poll": _onTapCreateStadiumPoll(context); break;
 
       case "wallet.illini_cash_card": _onTapIlliniCash(context); break;
+      case "wallet.add_illini_cash":  _onTapAddIlliniCash(context); break;
       case "wallet.meal_plan_card":   _onTapMealPlan(context); break;
       case "wallet.bus_pass_card":    _onTapBusPass(context); break;
       case "wallet.illini_id_card":   _onTapIlliniId(context); break;
@@ -757,6 +759,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapIlliniCash(BuildContext context) {
     Analytics().logSelect(target: "Illini Cash");
     SettingsIlliniCashPanel.present(context);
+  }
+
+  void _onTapAddIlliniCash(BuildContext context) {
+    Analytics().logSelect(target: "Add Illini Cash");
+    SettingsAddIlliniCashPanel.present(context);
   }
 
   void _onTapWellness(BuildContext context) {
