@@ -21,7 +21,6 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/academics/StudentCoursesContentWidget.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
-import 'package:illinois/ui/athletics/AthleticsTeamsPanel.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
@@ -480,7 +479,6 @@ class _BrowseEntry extends StatelessWidget {
       case "athletics.my_athletics":         _onTapMyAthletics(context); break;
       case "athletics.sport_news":           _onTapSportNews(context); break;
       case "athletics.my_news":              _onTapMyNews(context); break;
-      case "athletics.sport_teams":          _onTapSportTeams(context); break;
 
       case "safer.building_access":          _onTapBuildingAccess(context); break;
       case "safer.test_locations":           _onTapTestLocations(context); break;
@@ -680,11 +678,6 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapSportNews(BuildContext context) {
     Analytics().logSelect(target: "Athletics News");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
-  }
-
-  void _onTapSportTeams(BuildContext context) {
-    Analytics().logSelect(target: "Athletics Teams");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsTeamsPanel()));
   }
 
   void _onTapBuildingAccess(BuildContext context) {
