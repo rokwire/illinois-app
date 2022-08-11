@@ -1879,15 +1879,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       // Save the event to the other selected groups that the user is admin.
       if (hasGroup && CollectionUtils.isNotEmpty(otherGroupsToSave)) {
         for (Group group in otherGroupsToSave!) {
-          Event? groupEvent = Event.fromOther(mainEvent);
-          groupEvent?.createdByGroupId = group.id;
-          String? groupEventId = await Events().postNewEvent(groupEvent);
-          if (StringUtils.isNotEmpty(groupEventId)) {
-            bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent?.createdByGroupId, eventId: groupEventId, toMembers: _groupMembersSelection);
+          if (StringUtils.isNotEmpty(mainEventId)) {
+            bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: group.id, eventId: mainEventId, toMembers: _groupMembersSelection);
             if (eventLinkedToGroup) {
               // Succeeded to link event to group
               if (eventToDisplay == null) {
-                eventToDisplay = groupEvent;
+                eventToDisplay = mainEvent;
                 groupToDisplay = group;
               }
             } else {
