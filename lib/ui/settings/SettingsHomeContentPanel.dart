@@ -101,17 +101,26 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   }
 
   Widget _buildContent() {
-    return Stack(children: [Padding(padding: EdgeInsets.all(16), child: _contentWidget), _buildContentValuesContainer()]);
+    return Stack(children: [
+      Padding(padding: EdgeInsets.all(16), child:
+        _contentWidget
+      ),
+      _buildContentValuesContainer()
+    ]);
   }
 
   Widget _buildContentValuesContainer() {
     return Visibility(
-        visible: _contentValuesVisible,
-        child: Positioned.fill(child: Stack(children: <Widget>[_buildContentDismissLayer(), _buildContentValuesWidget()])));
+      visible: _contentValuesVisible,
+      child: Container /* Positioned.fill*/ (child:
+        Stack(children: <Widget>[
+          _buildContentDismissLayer(),
+          _buildContentValuesWidget()
+        ])));
   }
 
   Widget _buildContentDismissLayer() {
-    return Positioned.fill(
+    return Container /* Positioned.fill */ (
         child: BlockSemantics(
             child: GestureDetector(
                 onTap: () {
@@ -119,7 +128,11 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: Styles().colors!.blackTransparent06))));
+                child: Container(
+                  color: Styles().colors!.blackTransparent06,
+                  height: MediaQuery.of(context).size.height,
+                  
+                ))));
   }
 
   Widget _buildContentValuesWidget() {
