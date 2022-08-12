@@ -46,6 +46,7 @@ import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
+import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
@@ -458,7 +459,13 @@ class _BrowseEntry extends StatelessWidget {
     );
   }
 
-  String get _title => Localization().getStringEx('panel.browse.entry.$sectionId.$entryId.title', StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
+  String get _title {
+    if ((entryId == 'video_tutorials') && (sectionId == 'app_help')) {
+      return (_videoTutorialsCount > 1) ? Localization().getStringEx('panel.browse.entry.app_help.video_tutorials.title', 'Video Tutorials') : Localization().getStringEx('panel.browse.entry.app_help.video_tutorial.title', 'Video Tutorial');
+    } else {
+      return Localization().getStringEx('panel.browse.entry.$sectionId.$entryId.title', StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
+    }
+  }
 
   void _onTap(BuildContext context) {
     switch("$sectionId.$entryId") {
@@ -617,7 +624,7 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   int get _videoTutorialsCount {
-    List<dynamic>? videos = Assets()['video_tutorials.videos'];
+    List<dynamic>? videos = JsonUtils.listValue(Assets()['video_tutorials.videos']);
     return videos?.length ?? 0;
   }
 
@@ -630,8 +637,40 @@ class _BrowseEntry extends StatelessWidget {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.video_tutorial', 'Video Tutorial not available while offline.'));
     }
     else if (_canVideoTutorials) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel()));
+      List<dynamic>? videoTutorials = _getVideoTutorials();
+      if (_videoTutorialsCount == 1) {
+        Map<String, dynamic>? videoTutorial = JsonUtils.mapValue(videoTutorials?.first);
+        if (videoTutorial != null) {
+          Navigator.push(
+              context,
+              CupertinoPageRoute(
+                  settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
+        }
+      } else {
+        Navigator.push(
+            context,
+            CupertinoPageRoute(
+                settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: videoTutorials)));
+      }
     }
+  }
+
+  List<dynamic>? _getVideoTutorials() {
+    Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
+    if (videoTutorials == null) {
+      return null;
+    }
+    List<dynamic>? videos = JsonUtils.listValue(videoTutorials['videos']);
+    if (CollectionUtils.isEmpty(videos)) {
+      return null;
+    }
+    Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials['strings']);
+    for (dynamic video in videos!) {
+      String? videoId = video['id'];
+      String? videoTitle = StringUtils.getContentString(strings, videoId);
+      video['title'] = videoTitle;
+    }
+    return videos;
   }
 
   bool get _canFeedback => StringUtils.isNotEmpty(Config().feedbackUrl);
