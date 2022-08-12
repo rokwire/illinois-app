@@ -349,7 +349,7 @@ class _DailyIlliniItemWidget extends StatelessWidget {
                   Column(children: [
                     StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
                         ? Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true)
-                        : Container(),
+                        : Image.asset('images/daily-illini-placeholder.jpg'),
                     Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                       Visibility(
                           visible: (onTapPrevious != null),
