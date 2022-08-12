@@ -1847,7 +1847,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       List<Group>? otherGroupsToSave;
 
       // If the event is part of a group - allow the admin to select other groups that one wants to save the event as well.
-      if (hasGroup) {
+      //If event has membersSelection then do not allow linking to other groups
+      if (hasGroup && CollectionUtils.isEmpty(_groupMembersSelection)) {
         List<Group>? otherGroups = await _loadOtherAdminUserGroups();
         if (CollectionUtils.isNotEmpty(otherGroups)) {
           otherGroupsToSave = await showDialog(context: context, barrierDismissible: true, builder: (_) => _GroupsSelectionPopup(groups: otherGroups));
