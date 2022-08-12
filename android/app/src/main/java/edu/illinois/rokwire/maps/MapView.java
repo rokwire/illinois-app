@@ -222,7 +222,14 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     }
 
     private void moveCameraToSpecificPosition() {
-        if ((markers != null) && (markers.size() > 0)) {
+        CameraUpdate cameraUpdate;
+        if ((markers == null) || markers.isEmpty()) {
+            cameraUpdate = CameraUpdateFactory.newLatLngZoom(Constants.DEFAULT_INITIAL_CAMERA_POSITION, Constants.DEFAULT_CAMERA_ZOOM);
+        }
+        else if (markers.size() == 1) {
+            cameraUpdate = CameraUpdateFactory.newLatLngZoom(markers.get(0).getPosition(), Constants.DEFAULT_CAMERA_ZOOM);
+        }
+        else {
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
             for (Marker marker : markers) {
                 builder.include(marker.getPosition());
@@ -231,11 +238,9 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             int width = getResources().getDisplayMetrics().widthPixels;
             int height = getResources().getDisplayMetrics().heightPixels;
             int padding = 150; // offset from edges of the map in pixels
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-            googleMap.animateCamera(cu);
-        } else {
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(Constants.DEFAULT_INITIAL_CAMERA_POSITION, Constants.DEFAULT_CAMERA_ZOOM));
+            cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
         }
+        googleMap.animateCamera(cameraUpdate);
     }
 
     public void applyExplores(ArrayList explores, HashMap options) {
