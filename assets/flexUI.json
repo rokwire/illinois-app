@@ -223,7 +223,7 @@
 						"daily_illini", "wpgufm_radio", "app_help"
 					]
 				},
-				"home.app_help": ["video_tutorials", "feedback", "review", "faqs"],
+				"home.app_help": ["feedback", "review", "faqs"],
 				"home.dinings": ["dinings_all", "dinings_open"],
 				"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 				"home.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "inbox"],
