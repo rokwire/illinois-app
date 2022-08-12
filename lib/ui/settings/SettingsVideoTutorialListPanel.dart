@@ -19,42 +19,20 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsVideoTutorialListPanel extends StatefulWidget {
+  final List<dynamic>? videoTutorials;
+
+  SettingsVideoTutorialListPanel({this.videoTutorials});
+
   @override
   State<SettingsVideoTutorialListPanel> createState() => _SettingsVideoTutorialListPanelState();
 }
 
 class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialListPanel> {
-  List<dynamic>? _videoTutorials;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadVideoTutorials();
-  }
-
-  void _loadVideoTutorials() {
-    Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
-    if (videoTutorials == null) {
-      return;
-    }
-    List<dynamic>? videos = JsonUtils.listValue(videoTutorials['videos']);
-    if (CollectionUtils.isEmpty(videos)) {
-      return;
-    }
-    Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials['strings']);
-    for (dynamic video in videos!) {
-      String? videoId = video['id'];
-      String? videoTitle = _getContentString(strings, videoId);
-      video['title'] = videoTitle;
-    }
-    _videoTutorials = videos;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +43,7 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
   }
 
   Widget _buildContent() {
-    if (CollectionUtils.isEmpty(_videoTutorials)) {
+    if (CollectionUtils.isEmpty(widget.videoTutorials)) {
       return Center(
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 32),
@@ -73,7 +51,7 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
                   style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary))));
     }
     List<Widget> contentList = <Widget>[];
-    for (dynamic video in _videoTutorials!) {
+    for (dynamic video in widget.videoTutorials!) {
       contentList.add(_buildVideoEntry(video));
     }
     return SingleChildScrollView(child: Padding(padding: EdgeInsets.all(16), child: Column(children: contentList)));
@@ -105,16 +83,5 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
   void _onTapVideoTutorial(Map<String, dynamic> video) {
     Analytics().logSelect(target: 'Settings Video Tutorial');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: video)));
-  }
-
-  static String? _getContentString(Map<String, dynamic>? strings, String? key) {
-    if ((strings != null) && (key != null)) {
-      Map<String, dynamic>? mapping = JsonUtils.mapValue(strings[Localization().currentLocale?.languageCode]) ??
-          JsonUtils.mapValue(strings[Localization().defaultLocale?.languageCode]);
-      if (mapping != null) {
-        return JsonUtils.stringValue(mapping[key]);
-      }
-    }
-    return null;
   }
 }

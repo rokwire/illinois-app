@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed initial camera update when displaying single marker, fixed explore location retrieval in iOS [#2216](https://github.com/rokwire/illinois-app/issues/2216).
 ### Changed
+- Updates for Video Tutorials [#2243](https://github.com/rokwire/illinois-app/issues/2243).
 - Do not init default favorites order on pull to refresh in Favorites / Customize in production releasr builds [#2245](https://github.com/rokwire/illinois-app/issues/2245).
 
 ## [4.1.16] - 2022-08-11
