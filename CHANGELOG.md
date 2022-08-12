@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updates for Video Tutorials [#2243](https://github.com/rokwire/illinois-app/issues/2243).
 - Do not init default favorites order on pull to refresh in Favorites / Customize in production releasr builds [#2245](https://github.com/rokwire/illinois-app/issues/2245).
+- Link group event to other groups when created only if members_selection is empty [#2232](https://github.com/rokwire/illinois-app/issues/2232).
 
 ## [4.1.16] - 2022-08-11
 ### Changed
