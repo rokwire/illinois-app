@@ -19,6 +19,7 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -51,12 +52,14 @@ import 'package:illinois/ui/home/HomeWellnessTipsWidget.dart';
 import 'package:illinois/ui/home/HomeWellnessResourcesWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -702,7 +705,12 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   Future<void> _onPullToRefresh() async {
     if (_isEditing) {
-      _initDefaultFavorites();
+      if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
+        _initDefaultFavorites();
+      }
+      else {
+        setStateIfMounted((){});
+      }
     }
     else {
       _updateController.add(HomePanel.notifyRefresh);
