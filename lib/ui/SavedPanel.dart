@@ -20,7 +20,10 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Favorite.dart';
+import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
@@ -30,7 +33,6 @@ import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Dinings.dart';
-import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/Sports.dart';
@@ -173,12 +175,18 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   Widget _buildEmpty() {
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
+    String? favoriteCategory = (widget.favoriteCategories.length == 1) ? widget.favoriteCategories.single : null;
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 48, vertical: 32), child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("panel.saved.message.no_items", "Whoops! Nothing to see here."), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
-        Container(height:8),
-        Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
+        (favoriteCategory != null) ?
+          Html(data: HomeFavoritesWidget.emptyMessageHtml(favoriteCategory) ?? '',
+            onLinkTap: (url, renderContext, attributes, element) => HomeFavoritesWidget.handleLocalUrl(url, context: context, analyticsTarget: 'View Home', analyticsSource: 'SavedPanel($favoriteCategory)'),
+            style: {
+              "body": Style(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.medium, fontSize: FontSize(18), padding: EdgeInsets.zero, margin: EdgeInsets.zero, textAlign: TextAlign.center),
+              "a": Style(color: HomeFavoritesWidget.linkColor(favoriteCategory)),
+            }) :
+          Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
         Expanded(child: Container(), flex: 3),
     ],),);
   }
@@ -196,13 +204,19 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       padding = EdgeInsets.zero;
     }
     else if (widget.favoriteCategories.length == 1) {
-      List<Favorite>? favorites = _favorites[widget.favoriteCategories.first];
+      String favoriteCategory = widget.favoriteCategories.single;
+      List<Favorite>? favorites = _favorites[favoriteCategory];
       if (0 < (favorites?.length ?? 0)) {
         for (int index = 0; index < favorites!.length; index++) {
           contentList.add(Padding(padding: EdgeInsets.only(top: (0 < index) ? 8 : 0), child:
             _SavedItem(favorites[index])
           ));
         }
+        contentList.add(LinkButton(
+          title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
+          hint: Localization().getStringEx('panel.saved.button.all.hint', 'Tap to see all favorite items'),
+          onTap: () => _onViewAll(favoriteCategory),
+        ));
       }
       padding = EdgeInsets.symmetric(horizontal: 16, vertical: 16);
     }
@@ -399,9 +413,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   String? _favoriteCategoryTitle(String favoriteCategory) {
     switch(favoriteCategory) {
       case Event.favoriteKeyName:         return Localization().getStringEx('panel.saved.label.events', 'My Events');
-      case Dining.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.dining', "My Dining");
-      case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Athletics');
-      case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My News');
+      case Dining.favoriteKeyName:        return Localization().getStringEx('panel.saved.label.dining', "My Dining Locations");
+      case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Athletics Events');
+      case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My Athletics News');
       case LaundryRoom.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
       case InboxMessage.favoriteKeyName:  return Localization().getStringEx('panel.saved.label.inbox', 'My Notifications');
@@ -473,10 +487,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     });
   }
 
-
-
-
-
   void _requestAuthorization() async {
     PermissionStatus permissionStatus = await NotificationPermissions.getNotificationPermissionStatus();
     if (permissionStatus != PermissionStatus.unknown) {
@@ -493,8 +503,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
   }
 
-  bool get _laundryAvailable => IlliniCash().ballance?.housingResidenceStatus ?? false;
+  bool get _laundryAvailable => true; // IlliniCash().ballance?.housingResidenceStatus ?? false;
 
+  void _onViewAll(String favoriteCategory) {
+    Analytics().logSelect(target: 'View All');
+    FavoriteExt.launchHome(context, key: favoriteCategory);
+  }
 }
 
 class _SavedItemsList extends StatefulWidget {
@@ -531,7 +545,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
             slantColor: widget.slantColor ?? Styles().colors!.fillColorPrimary,
             children: (0 <  widget.items!.length) ? _buildListItems(context) : _buildEmptyContent(context),),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(
-          label: _showAll ? Localization().getStringEx('panel.saved.events.button.less', "Show Less") : Localization().getStringEx('panel.saved.events.button.all', "Show All"),
+          label: _showAll ? Localization().getStringEx('panel.saved.button.less.title', "Show Less") : Localization().getStringEx('panel.saved.button.more.title', "Show All"),
           onTap: _onViewAllTapped,
         ),),)
       ],
@@ -557,8 +571,6 @@ class _SavedItemsListState extends State<_SavedItemsList>{
     return <Widget>[Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("panel.saved.message.no_items", "Whoops! Nothing to see here."), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
-        Container(height:8),
         Text(Localization().getStringEx("panel.saved.message.no_items.description", "Tap the \u2606 on events, dining locations, and reminders that interest you to quickly find them here."), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
         Expanded(child: Container(), flex: 3),
     ],),)];
@@ -619,7 +631,7 @@ class _SavedItem extends StatelessWidget {
                             button: true,
                             excludeSemantics: true,
                             child:
-                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)))),
+                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: favorite.favoriteStarIcon(selected: isFavorite)))),
                           )
                         ],
                       )

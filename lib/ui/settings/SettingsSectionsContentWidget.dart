@@ -19,18 +19,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsLinkedAccountPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginEmailPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneConfirmPanel.dart';
 import 'package:illinois/ui/settings/SettingsLoginPhoneOrEmailPanel.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -44,8 +45,10 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:package_info/package_info.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsSectionsContentWidget extends StatefulWidget {
+
   @override
   _SettingsSectionsContentWidgetState createState() => _SettingsSectionsContentWidgetState();
 }
@@ -128,7 +131,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
     contentList.add(_buildVersionInfo());
     
-    contentList.add(Container(height: 12,),);
+    contentList.add(Container(height: 24,),);
+
+    contentList.add(_buildCopyright());
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: contentList);
   }
@@ -189,14 +194,14 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_2",
-                          "Verify your phone number or sign in by email to save your preferences and have the same experience on more than one device.")),
+                          "Sign in with your mobile phone number or email address to save your preferences and have the same experience on more than one device.")),
                 ],
               ),
             )),);
           contentList.add(RibbonButton(
             borderRadius: _allRounding,
             border: _allBorder,
-            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Continue"),
+            label: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.title", "Sign in with mobile phone or email"),
             onTap: _onPhoneOrEmailLoginClicked),);
       }
     }
@@ -237,7 +242,8 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   void _popToMe() {
     Navigator.of(context).popUntil((Route route){
-      return AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.runtimeType;
+      return route.settings.name == SettingsHomeContentPanel.routeName;
+      // return AppNavigation.routeRootWidget(route, context: context)?.runtimeType == widget.parentWidget.runtimeType;
     });
   }
 
@@ -331,7 +337,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         contentList.add(RibbonButton(
             border: _allBorder,
             borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Phone Number"),
+            label: Localization().getStringEx("panel.settings.home.phone_ver.button.connect", "Verify Your Mobile Phone Number"),
             onTap: _onPhoneOrEmailLoginClicked));
       }
       else if (code == 'disconnect') {
@@ -610,32 +616,35 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     for (int index = 0; index < codes.length; index++) {
       String code = codes[index];
       if (code == 'netid') {
-        contentList.add(RibbonButton(
+        contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
+          RibbonButton(
             backgroundColor: Styles().colors!.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.netid.title", "Add a NetID"),
             progress: (_connectingNetId == true),
             onTap: _onLinkNetIdClicked),
-        );
+        ));
       }
       else if (code == 'phone') {
-        contentList.add(RibbonButton(
+        contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
+          RibbonButton(
             backgroundColor: Styles().colors!.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.phone.title", "Add a phone number"),
-            onTap: () =>
-                _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.phone)),);
+            onTap: () => _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.phone)),
+        ),);
       }
       else if (code == 'email') {
-        contentList.add(RibbonButton(
+        contentList.add(Padding(padding: EdgeInsets.only(top: contentList.isNotEmpty ? 2 : 0), child:
+          RibbonButton(
             backgroundColor: Styles().colors!.white,
             border: _allBorder, 
             borderRadius: _allRounding,
             label: Localization().getStringEx("panel.settings.home.connect.not_linked.email.title", "Add an email address"),
-            onTap: () =>
-                _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.email)),);
+            onTap: () => _onLinkPhoneOrEmailClicked(SettingsLoginPhoneOrEmailMode.email)),
+        ),);
       }
     }
 
@@ -779,50 +788,50 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
   // Feedback
 
   Widget _buildFeedback() {
-    final String rkwPlatformMacro = '{{rkw_platform_label}}';
-    final String smartHealthyInitiativeMacro = '{{smart_healthy_initiative_label}}';
-    String appDescriptionContent = Localization().getStringEx('panel.settings.home.feedback.app.description.format',
-        'The Illinois App is the official campus app for the University of Illinois Urbana-Champaign. The app is powered by the $rkwPlatformMacro. The Rowkire project is an effort of the $smartHealthyInitiativeMacro, which is funded by the Office of the Provost at the University of Illinois.');
-    int rkwPlatformMacroPosition = appDescriptionContent.indexOf(rkwPlatformMacro);
-    int smartHealthyInitiativeMacroPosition = appDescriptionContent.indexOf(smartHealthyInitiativeMacro);
-    String feedbackMsgStart = appDescriptionContent.substring(0, rkwPlatformMacroPosition);
-    String feedbackMsgMiddle = appDescriptionContent.substring((rkwPlatformMacroPosition + rkwPlatformMacro.length), smartHealthyInitiativeMacroPosition);
-    String feedbackMsgEnd = appDescriptionContent.substring(smartHealthyInitiativeMacroPosition + smartHealthyInitiativeMacro.length);
+    final String rokwirePlatformUrlMacro = '{{rokwire_platform_url}}';
+    final String shciUrlMacro = '{{shci_url}}';
+    String descriptionHtml = Localization().getStringEx("panel.settings.home.feedback.app.description.format",
+        "The Illinois app is the official campus app of the University of Illinois Urbana-Champaign. The app is built on the <a href='$rokwirePlatformUrlMacro'>Rokwire</a> open source software platform. The Rokwire project and the Illinois app are efforts of the <a href='$shciUrlMacro'>Smart, Healthy Communities Initiative</a> in the office of the Provost at the University of Illinois.");
+    descriptionHtml = descriptionHtml.replaceAll(rokwirePlatformUrlMacro, Config().rokwirePlatformUrl ?? '');
+    descriptionHtml = descriptionHtml.replaceAll(shciUrlMacro, Config().smartHealthyInitiativeUrl ?? '');
 
-    return Column(
-      children: <Widget>[
-        Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Text(
-                Localization().getStringEx("panel.settings.home.feedback.title", "App Feedback"),
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
-              ),
-              Container(height: 5,),
-              Text(
-                Localization().getStringEx("panel.settings.home.feedback.description", "Enjoying the app? Missing something? The University of Illinois Smart, Healthy Communities Initiative needs your ideas and input. Thank you!"),
-                style: TextStyle(fontFamily: Styles().fontFamilies!.regular,color: Styles().colors!.textBackground, fontSize: 16),
-              ),
-            ])
+    return Column(children: <Widget>[
+      Padding(padding: EdgeInsets.only(top: 12), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Text(Localization().getStringEx("panel.settings.home.feedback.title", "App Feedback"), style:
+            TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+          Container(height: 5),
+          Text(Localization().getStringEx("panel.settings.home.feedback.description",
+            "Enjoying the app? Missing something? The Illinois app team needs your ideas and input. Thank you!"),
+              style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground, fontSize: 16))
+        ])
+      ),
+      Padding(padding: EdgeInsets.only(top: 12), child:
+        RibbonButton(
+          border: _allBorder,
+          borderRadius: _allRounding,
+          label: Localization().getStringEx("panel.settings.home.button.feedback.title", "Submit Feedback"),
+          onTap: _onFeedbackClicked
+        )
+      ),
+      Padding(padding: EdgeInsets.only(top: 2), child:
+        RibbonButton(
+          border: _allBorder,
+          borderRadius: _allRounding,
+          label: Localization().getStringEx("panel.settings.home.button.review.title", "Review App"),
+          onTap: _onReviewClicked
+        )
+      ),
+      Padding(padding: EdgeInsets.only(top: 20), child:
+        Html(
+          data: StringUtils.ensureNotEmpty(descriptionHtml),
+          onLinkTap: (url, context, attributes, element) => _onTapHtmlLink(url),
+          style: {
+            "body": Style(fontFamily: Styles().fontFamilies!.regularIt, color: Styles().colors!.textBackground, fontSize: FontSize(16), textAlign: TextAlign.left, padding: EdgeInsets.zero, margin: EdgeInsets.zero)
+          }
         ),
-        Padding(
-          padding: EdgeInsets.only(bottom: 20),
-          child: RibbonButton(
-            border: _allBorder,
-            borderRadius: _allRounding,
-            label: Localization().getStringEx("panel.settings.home.button.feedback.title", "Submit Feedback"),
-            onTap: _onFeedbackClicked
-          )
-        ),
-    RichText(text: TextSpan(style: TextStyle(fontFamily: Styles().fontFamilies!.regularIt, color: Styles().colors!.textBackground, fontSize: 16), children: [
-      TextSpan(text: feedbackMsgStart),
-      TextSpan(text: Localization().getStringEx('panel.settings.home.feedback.app.description.rokwire_platform.label', 'Rokwire opensource software platform'), style: TextStyle(decoration: TextDecoration.underline)),
-      TextSpan(text: feedbackMsgMiddle),
-      TextSpan(text: Localization().getStringEx('panel.settings.home.feedback.app.description.smart_healthy_initiative.label', 'Smart, Healthy Communities Initiative'), style: TextStyle(decoration: TextDecoration.underline)),
-      TextSpan(text: feedbackMsgEnd)
-    ]))
-      ],
-    );
+      ),
+    ]);
   }
 
   String _constructFeedbackParams(String? email, String? phone, String? name) {
@@ -861,6 +870,17 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     }
   }
 
+  void _onReviewClicked() {
+    Analytics().logSelect(target: "Provide Review");
+    InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
+  }
+
+  void _onTapHtmlLink(String? url) {
+    if (StringUtils.isNotEmpty(url)) {
+      launch(url!);
+    }
+  }
+
   // Debug
 
   Widget _buildDebug() {
@@ -893,6 +913,16 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         _versionName = packageInfo.version;
       });
     });
+  }
+
+  // Copyright
+  Widget _buildCopyright() {
+    String copyrightLabel =
+        Localization().getStringEx('panel.settings.home.copyright.text', 'Copyright © 2022 University of Illinois Board of Trustees');
+    return Container(
+        alignment: Alignment.center,
+        child: Text(copyrightLabel, textAlign: TextAlign.center,
+            style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)));
   }
 
   // Utilities
@@ -974,34 +1004,3 @@ class _OptionsSection extends StatelessWidget {
   }
 }
 
-class _DebugContainer extends StatefulWidget {
-
-  final Widget _child;
-
-  _DebugContainer({required Widget child}) : _child = child;
-
-  _DebugContainerState createState() => _DebugContainerState();
-}
-
-class _DebugContainerState extends State<_DebugContainer> {
-
-  int _clickedCount = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      child: widget._child,
-      onTap: () {
-        Log.d("On tap debug widget");
-        _clickedCount++;
-
-        if (_clickedCount == 7) {
-          if (Auth2().isDebugManager) {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
-          }
-          _clickedCount = 0;
-        }
-      },
-    );
-  }
-}

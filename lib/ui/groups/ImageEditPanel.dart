@@ -96,7 +96,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
               fontFamily: Styles().fontFamilies!.extraBold,
               letterSpacing: 1),
         ),
-        centerTitle: true);
+        centerTitle: false);
   }
 
   Widget buildContent(){

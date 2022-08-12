@@ -31,9 +31,9 @@ class FlexContent extends rokwire.FlexContent {
   FlexContent({Key? key, String? assetsKey, Map<String, dynamic>? jsonContent, void Function(BuildContext context)? onClose, this.favoriteId, this.updateController}) :
     super(key: key, assetsKey: assetsKey, jsonContent: jsonContent, onClose: onClose);
 
-  static FlexContent? fromAssets(dynamic assetsKey, { String? favoriteId, StreamController<String>? updateController, void Function(BuildContext context)? onClose }) {
+  static FlexContent? fromAssets(dynamic assetsKey, { Key? key, String? favoriteId, StreamController<String>? updateController, void Function(BuildContext context)? onClose }) {
     Map<String, dynamic>? jsonContent = JsonUtils.mapValue(Assets()[assetsKey]);
-    return (jsonContent != null) ? FlexContent(assetsKey: assetsKey, jsonContent: jsonContent, onClose: onClose, favoriteId: favoriteId, updateController: updateController,) : null;
+    return (jsonContent != null) ? FlexContent(key: key, assetsKey: assetsKey, jsonContent: jsonContent, onClose: onClose, favoriteId: favoriteId, updateController: updateController,) : null;
   }
 
   @override

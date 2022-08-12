@@ -54,29 +54,29 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
     
     if (widget.link == true) {
       if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {
-        title = Localization().getStringEx('panel.settings.link.phone.label.title', 'Add Phone Number');
-        description = Localization().getStringEx('panel.settings.link.phone.label.description', 'You may sign in using your phone number as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
-        headingTitle = Localization().getStringEx('panel.settings.link.phone.label.heading', 'ADD MY PHONE NUMBER');
+        title = Localization().getStringEx('panel.settings.link.phone.label.title', 'Add Mobile');
+        description = Localization().getStringEx('panel.settings.link.phone.label.description', 'You may sign in using your mobile phone number as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
+        headingTitle = Localization().getStringEx('panel.settings.link.phone.label.heading', 'ADD MY MOBILE PHONE NUMBER');
         headingHint = Localization().getStringEx('panel.settings.link.phone.label.heading.hint', '');
-        buttonProceedTitle =  Localization().getStringEx('panel.settings.link.phone.button.proceed.title', 'Add Phone Number');
+        buttonProceedTitle =  Localization().getStringEx('panel.settings.link.phone.button.proceed.title', 'Add Mobile');
         buttonProceedHint = Localization().getStringEx('panel.settings.link.phone.button.proceed.hint', '');
         keyboardType = TextInputType.phone;
       }
       else if (widget.mode == SettingsLoginPhoneOrEmailMode.email){
-        title = Localization().getStringEx('panel.settings.link.email.label.title', 'Add Email Address');
+        title = Localization().getStringEx('panel.settings.link.email.label.title', 'Add Email');
         description = Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
         headingTitle = Localization().getStringEx('panel.settings.link.email.label.heading', 'ADD MY EMAIL ADDRESS');
         headingHint =  Localization().getStringEx('panel.settings.link.email.label.heading.hint', '');
-        buttonProceedTitle = Localization().getStringEx('panel.settings.link.email.button.proceed.title', 'Add Email Address');
+        buttonProceedTitle = Localization().getStringEx('panel.settings.link.email.button.proceed.title', 'Add Email');
         buttonProceedHint = Localization().getStringEx('panel.settings.link.email.button.proceed.hint', '');
         keyboardType = TextInputType.emailAddress;
       }
       else {
-        title = Localization().getStringEx('panel.settings.link.both.label.title', 'Add Phone or Email');
-        description = Localization().getStringEx('panel.settings.link.both.label.description', 'You may sign in using your email or phone number as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
-        headingTitle = Localization().getStringEx('panel.settings.link.both.label.heading', 'ADD MY PHONE NUMBER OR EMAIL ADDRESS');
+        title = Localization().getStringEx('panel.settings.link.both.label.title', 'Add Mobile or Email');
+        description = Localization().getStringEx('panel.settings.link.both.label.description', 'You may sign in using your email or mobile phone number as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
+        headingTitle = Localization().getStringEx('panel.settings.link.both.label.heading', 'ADD MY MOBILE PHONE NUMBER OR EMAIL ADDRESS');
         headingHint =  Localization().getStringEx('panel.settings.link.both.label.heading.hint', '');
-        buttonProceedTitle = Localization().getStringEx('panel.settings.link.both.button.proceed.title', 'Add Phone or Email');
+        buttonProceedTitle = Localization().getStringEx('panel.settings.link.both.button.proceed.title', 'Add Mobile or Email');
         buttonProceedHint = Localization().getStringEx('panel.settings.link.both.button.proceed.hint', '');
         keyboardType = TextInputType.emailAddress;
       }
@@ -84,9 +84,9 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
     }
     else {
       if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {
-        title = Localization().getStringEx('panel.settings.login.phone.label.title', 'Sign In with Phone');
-        description = Localization().getStringEx('panel.settings.login.phone.label.description', 'Please enter your phone number and we will send you a verification code.');
-        headingTitle = Localization().getStringEx('panel.settings.login.phone.label.heading', 'Phone Number:');
+        title = Localization().getStringEx('panel.settings.login.phone.label.title', 'Sign In with Mobile');
+        description = Localization().getStringEx('panel.settings.login.phone.label.description', 'To sign in, please enter your email address and follow the steps to sign in by email.');
+        headingTitle = Localization().getStringEx('panel.settings.login.phone.label.heading', 'Mobile Phone Number:');
         headingHint = Localization().getStringEx('panel.settings.login.phone.label.heading.hint', '');
         buttonProceedTitle = Localization().getStringEx('panel.settings.login.phone.button.proceed.title', 'Proceed');
         buttonProceedHint = Localization().getStringEx('panel.settings.login.phone.button.proceed.hint', '');
@@ -94,7 +94,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
       }
       else if (widget.mode == SettingsLoginPhoneOrEmailMode.email){
         title = Localization().getStringEx('panel.settings.login.email.label.title', 'Sign In with Email');
-        description = Localization().getStringEx('panel.settings.login.email.label.description', 'Please enter your email and we will send you a verification email.');
+        description = Localization().getStringEx('panel.settings.login.email.label.description', 'To sign in, please enter your mobile phone number to receive a verification code via text message.');
         headingTitle = Localization().getStringEx('panel.settings.login.email.label.heading', 'Email Address:');
         headingHint = Localization().getStringEx('panel.settings.login.email.label.heading.hint', '');
         buttonProceedTitle = Localization().getStringEx('panel.settings.login.email.button.proceed.title', 'Proceed');
@@ -102,9 +102,9 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
         keyboardType = TextInputType.emailAddress;
       }
       else {
-        title = Localization().getStringEx('panel.settings.login.both.label.title', 'Sign In with Phone or Email');
-        description = Localization().getStringEx('panel.settings.login.both.label.description', 'Please enter your phone number and we will send you a verification code. Or, you can enter your email address to sign in by email.');
-        headingTitle = Localization().getStringEx('panel.settings.login.both.label.heading', 'Phone Number or Email Address:');
+        title = Localization().getStringEx('panel.settings.login.both.label.title', 'Sign In with Mobile or Email');
+        description = Localization().getStringEx('panel.settings.login.both.label.description', 'To sign in, please enter your mobile phone number to receive a verification code via text message. Or, enter your email address and follow the steps to sign in by email.');
+        headingTitle = Localization().getStringEx('panel.settings.login.both.label.heading', 'Mobile Phone Number or Email Address:');
         headingHint = Localization().getStringEx('panel.settings.login.both.label.heading.hint', '');
         buttonProceedTitle = Localization().getStringEx('panel.settings.login.both.button.proceed.title', 'Proceed');
         buttonProceedHint = Localization().getStringEx('panel.settings.login.both.button.proceed.hint', '');

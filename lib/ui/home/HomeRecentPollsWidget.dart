@@ -2,6 +2,8 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -9,6 +11,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -18,6 +21,7 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/polls.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeRecentPollsWidget extends StatefulWidget {
@@ -27,8 +31,8 @@ class HomeRecentPollsWidget extends StatefulWidget {
 
   HomeRecentPollsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -41,7 +45,14 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
 
   List<Poll>? _recentPolls;
   bool _loadingPolls = false;
+  bool _loadingPollsPage = false;
+  bool _hasMorePolls = true;
   DateTime? _pausedDateTime;
+  
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -80,6 +91,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _pageController?.dispose();
     super.dispose();
   }
 
@@ -115,9 +127,9 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
-        title: HomeRecentPollsWidget.title,
-        titleIcon: Image.asset('images/icon-news.png'),
-        child: _buildContent(),
+      title: HomeRecentPollsWidget.title,
+      titleIcon: Image.asset('images/icon-news.png'),
+      child: _buildContent(),
     );
   }
 
@@ -132,7 +144,6 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
     }
     else if (CollectionUtils.isEmpty(_recentPolls)) {
       return HomeMessageCard(
-        title: Localization().getStringEx("widget.home.recent_polls.text.empty", "Whoops! Nothing to see here."),
         message: Localization().getStringEx("widget.home.recent_polls.text.empty.description", "No Recent Polls are available right now."),);
     }
     else {
@@ -142,27 +153,67 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
   }
 
   Widget _buildPollsContent() {
-    List<Widget> contentList = [];
-    if (_recentPolls != null) {
-      int count = min(Config().homeRecentPollsCount, _recentPolls?.length ?? 0);
-      for (int index = 0; index < count; index++) {
-        if (0 < index) {
-          contentList.add(Container(height: 8,));
-        }
-        Poll poll = _recentPolls![index];
-        contentList.add(PollCard(poll: poll, group: _getGroup(poll.groupId)));
+    Widget contentWidget;
+    List<Widget> pages = <Widget>[];
+
+    if (1 < (_recentPolls?.length ?? 0)) {
+
+      for (Poll poll in _recentPolls!) {
+        pages.add(Padding(key: _contentKeys[poll.pollId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
+          PollCard(poll: poll, group: _getGroup(poll.groupId)),
+        ));
       }
-      if (Config().homeRecentPollsCount < (_recentPolls?.length ?? 0)) {
-        contentList.add(
-            LinkButton(
-              title: Localization().getStringEx('widget.home.recent_polls.button.all.title', 'View All'),
-              hint: Localization().getStringEx('widget.home.recent_polls.button.all.hint', 'Tap to view all news'),
-              onTap: _onTapSeeAll,
+
+      if (_loadingPollsPage) {
+        pages.add(Padding(key: _contentKeys['last'] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
+          Container(decoration: BoxDecoration(color: Styles().colors?.white, borderRadius: BorderRadius.circular(5)), child:
+            HomeProgressWidget(
+              padding: EdgeInsets.symmetric(horizontal: 32, vertical: (_pageHeight - 24) / 2),
+              progessSize: Size(24, 24),
+              progressColor: Styles().colors?.fillColorPrimary,
             ),
-        );
+          ),
+        ));
       }
+
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          onPageChanged: _onPageChanged,
+          allowImplicitScrolling: true,
+          children: pages,
+        ),
+      );
     }
-    return Column(children: contentList,);
+    else {
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
+        PollCard(poll: _recentPolls?.first, group: _getGroup(_recentPolls?.first.groupId))
+      );
+    }
+
+    return Column(children: <Widget>[
+      contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      LinkButton(
+        title: Localization().getStringEx('widget.home.recent_polls.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.recent_polls.button.all.hint', 'Tap to view all polls'),
+        onTap: _onTapSeeAll,
+      ),
+    ]);
+  }
+
+  void _onPageChanged(int index) {
+    if (((_recentPolls?.length ?? 0) <= (index + 1)) && _hasMorePolls && !_loadingPollsPage) {
+      _loadNextPollsPage();
+    }
   }
 
   Group? _getGroup(String? groupId) {
@@ -177,8 +228,21 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
     return null;
   }
 
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
+  }
+
   void _onTapSeeAll() {
-    Analytics().logSelect(target: "HomeRecentPolls: View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
 
@@ -189,14 +253,43 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
           _loadingPolls = true;
         });
       }
-      Polls().getRecentPolls(cursor: PollsCursor(offset: 0, limit: Config().homeRecentPollsCount + 1))?.then((PollsChunk? result) {
+      Polls().getRecentPolls(cursor: PollsCursor(offset: 0, limit: max(_recentPolls?.length ?? 0, Config().homeRecentPollsCount + 1)))?.then((PollsChunk? result) {
         if (mounted) {
           setState(() {
             if (showProgress) {
               _loadingPolls = false;
             }
-            if (result?.polls != null) {
+            if ((result?.polls != null) && !DeepCollectionEquality().equals(_recentPolls, result?.polls)) {
               _recentPolls = result?.polls;
+              _pageViewKey = UniqueKey();
+              _pageController = null;
+              _contentKeys.clear();
+            }
+          });
+        }
+      });
+    }
+  }
+
+  void _loadNextPollsPage() {
+    if (Connectivity().isOnline && _hasMorePolls && !_loadingPollsPage) {
+      if (mounted) {
+        setState(() {
+          _loadingPollsPage = true;
+        });
+      }
+      Polls().getRecentPolls(cursor: PollsCursor(offset: _recentPolls?.length, limit: Config().homeRecentPollsCount + 1))?.then((PollsChunk? result) {
+        if (mounted) {
+          setState(() {
+            _loadingPollsPage = false;
+            if (result?.polls != null) {
+              _hasMorePolls = result?.polls?.isNotEmpty ?? false;
+              if (_recentPolls != null) {
+                _recentPolls?.addAll(result!.polls!);
+              }
+              else {
+                _recentPolls = result?.polls;
+              }
             }
           });
         }

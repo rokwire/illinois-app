@@ -2,13 +2,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/CheckList.dart';
-import 'package:illinois/ui/gies/CheckListContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -22,8 +21,8 @@ class HomeCheckListWidget extends StatefulWidget{
 
   const HomeCheckListWidget({Key? key, required this.contentKey, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({required String contentKey, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({required String contentKey, Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title(contentKey: contentKey),
     );
 
@@ -32,10 +31,10 @@ class HomeCheckListWidget extends StatefulWidget{
   static String? title({required String contentKey}) => titleForKey(contentKey);
 
   static String? titleForKey(String contentKey) {
-    if (contentKey == "gies") {
+    if (contentKey == CheckList.giesOnboarding) {
       return Localization().getStringEx( 'widget.checklist.gies.title', 'iDegrees New Student Checklist');
     }
-    else if (contentKey == "new_student") {
+    else if (contentKey == CheckList.uiucOnboarding) {
       return Localization().getStringEx( 'widget.checklist.uiuc.title', 'New Student Checklist');
     }
     else {
@@ -66,8 +65,9 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
         HomeSlantWidget(favoriteId: widget.favoriteId,
           title: widget._title,
           titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-          child: _buildContent(),
           headerAxisAlignment: CrossAxisAlignment.start,
+          childPadding: HomeSlantWidget.defaultChildPadding,
+          child: _buildContent(),
         ),
     );
   }
@@ -127,7 +127,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,
-                  onTap: _onTapContinue,
+                  onTap: () => _onTapContinue(analyticsAction: 'Begin Checklist'),
                 ),
                 Container(height: 16,),
               ],
@@ -158,19 +158,8 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,
-                  onTap: _onTapContinue,
+                  onTap: () => _onTapContinue(analyticsAction: 'Review Checklist'),
                 ),
-                !CheckList(widget.contentKey).supportNotes ? Container() :
-                Column(children: [
-                  Container(height: 12,),
-                  RoundedButton(
-                    label: Localization().getStringEx('widget.gies.button.title.view_notes', "View My Notes"),
-                    backgroundColor: Styles().colors?.white!,
-                    borderColor: Styles().colors?.fillColorSecondary!,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    onTap: _onTapViewNotes,
-                  ),
-                ],),
                 Container(height: 16,),
               ],
             )
@@ -199,7 +188,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                   backgroundColor: Styles().colors?.white!,
                   borderColor: Styles().colors?.fillColorSecondary!,
                   textColor: Styles().colors!.fillColorPrimary,
-                  onTap: _onTapContinue,
+                  onTap: () => _onTapContinue(analyticsAction: 'Continue'),
                 ),
                 Container(height: 16,),
               ],
@@ -207,14 +196,9 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
     );
   }
 
-  void _onTapContinue(){
+  void _onTapContinue({String? analyticsAction}){
+    Analytics().logSelect(target: analyticsAction, source: '${widget.runtimeType}(${widget.contentKey})');
     CheckListPanel.present(context, contentKey: widget.contentKey);
-  }
-
-  void _onTapViewNotes(){
-    showDialog(context: context, builder: (BuildContext context) {
-        return CheckListNotesWidget(contentKey: widget.contentKey ,notes: JsonUtils.decodeList(Storage().getChecklistNotes(widget.contentKey)) ?? []);
-    });
   }
 
   String get _progressText {

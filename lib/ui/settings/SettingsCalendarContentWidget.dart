@@ -16,7 +16,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/OnCampus.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -34,7 +33,7 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [AppLivecycle.notifyStateChanged, OnCampus.notifyChanged]);
+    NotificationService().subscribe(this, [AppLivecycle.notifyStateChanged]);
     super.initState();
   }
 
@@ -48,7 +47,7 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
 
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == OnCampus.notifyChanged) || ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed))) {
+    if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
       setState(() {});
     }
   }
@@ -64,8 +63,6 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
     for (String code in codes) {
       if (code == 'settings') {
         contentList.addAll(_buildCalendarSettings());
-      } else if (code == 'on_campus') {
-        contentList.addAll(_buildOnCampus());
       }
     }
 
@@ -100,12 +97,12 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
             textStyle: TextStyle(
                 fontSize: 16,
                 fontFamily: Styles().fontFamilies!.bold,
-                color: Storage().calendarEnabledToSave! ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent),
+                color: (Storage().calendarEnabledToSave == true) ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent),
             border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4)),
             toggled: Storage().calendarCanPrompt ?? false,
             onTap: () {
-              if (Storage().calendarEnabledToSave == false) {
+              if (Storage().calendarEnabledToSave == true) {
                 setState(() {
                   Storage().calendarCanPrompt = (Storage().calendarCanPrompt != true);
                 });
@@ -125,104 +122,5 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
       ]);
     }
     return contentList;
-  }
-
-  List<Widget> _buildOnCampus() {
-    bool onCampusRegionMonitorEnabled = OnCampus().enabled;
-    bool onCampusRegionMonitorSelected = OnCampus().monitorEnabled;
-    String onCampusRegionMonitorInfo = onCampusRegionMonitorEnabled
-        ? Localization()
-            .getStringEx('panel.settings.home.calendar.on_campus.location_services.required.label', 'requires location services')
-        : Localization()
-            .getStringEx('panel.settings.home.calendar.on_campus.location_services.not_available.label', 'not available');
-    String autoOnCampusInfo = Localization().getStringEx(
-            'panel.settings.home.calendar.on_campus.radio_button.auto.title', 'Automatically detect when I am on Campus') +
-        '\n($onCampusRegionMonitorInfo)';
-
-    bool campusRegionManualInsideSelected = OnCampus().monitorManualInside;
-    bool onCampusSelected = !onCampusRegionMonitorSelected && campusRegionManualInsideSelected;
-    bool offCampusSelected = !onCampusRegionMonitorSelected && !campusRegionManualInsideSelected;
-
-    List<Widget> contentList = [];
-    List<dynamic> codes = FlexUI()['calendar.on_campus'] ?? [];
-    for (String code in codes) {
-      if (code == 'auto') {
-        contentList.add(_buildOnCampusRadioItem(
-            label: autoOnCampusInfo,
-            enabled: onCampusRegionMonitorEnabled,
-            selected: onCampusRegionMonitorSelected,
-            onTap: onCampusRegionMonitorEnabled
-                ? () {
-                    setState(() {
-                      OnCampus().monitorEnabled = true;
-                    });
-                  }
-                : () {}));
-      } else if (code == 'on_campus') {
-        contentList.add(_buildOnCampusRadioItem(
-            label: Localization()
-                .getStringEx('panel.settings.home.calendar.on_campus.radio_button.on.title', 'Always make me on campus'),
-            enabled: true,
-            selected: onCampusSelected,
-            onTap: !onCampusSelected
-                ? () {
-                    setState(() {
-                      OnCampus().monitorEnabled = false;
-                      OnCampus().monitorManualInside = true;
-                    });
-                  }
-                : () {}));
-      } else if (code == 'off_campus') {
-        contentList.add(_buildOnCampusRadioItem(
-            label: Localization()
-                .getStringEx('panel.settings.home.calendar.on_campus.radio_button.off.title', 'Always make me off campus'),
-            enabled: true,
-            selected: offCampusSelected,
-            onTap: !offCampusSelected
-                ? () {
-                    setState(() {
-                      OnCampus().monitorEnabled = false;
-                      OnCampus().monitorManualInside = false;
-                    });
-                  }
-                : () {}));
-      }
-    }
-    
-    if (contentList.isNotEmpty) {
-      contentList.insertAll(0, <Widget>[
-        Container(height: 16),
-        Row(children: [
-          Expanded(
-              child: Text(Localization().getStringEx('panel.settings.home.calendar.on_campus.title', 'On Campus'),
-                  style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies?.bold, color: Styles().colors!.fillColorPrimary)))
-        ])
-      ]);
-    }
-    return contentList;
-  }
-
-  Widget _buildOnCampusRadioItem({required String label, required bool enabled, required bool selected, VoidCallback? onTap}) {
-    String imageAssetName = selected ? 'images/deselected-dark.png' : 'images/deselected.png';
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(height: 4),
-      GestureDetector(
-          onTap: onTap,
-          child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: BoxDecoration(
-                  color: Styles().colors!.white,
-                  border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
-                  borderRadius: BorderRadius.all(Radius.circular(4))),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Expanded(
-                    child: Text(label,
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: Styles().fontFamilies!.bold,
-                            color: (enabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent)))),
-                Padding(padding: EdgeInsets.only(left: 10), child: Image.asset(imageAssetName))
-              ])))
-    ]);
   }
 }

@@ -33,8 +33,8 @@ class HomeTwitterWidget extends StatefulWidget {
 
   HomeTwitterWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -232,7 +232,6 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
 
     if (pages.isEmpty) {
       return HomeMessageCard(
-        title: Localization().getStringEx('widget.home.twitter.text.empty', 'Whoops! Nothing to see here.'),
         message: Localization().getStringEx('widget.home.twitter.text.empty.description', 'Failed to load tweets.'),
       );
     }
@@ -336,7 +335,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   }
 
   void _onDropDownValueChanged(String? value) {
-    Analytics().logSelect(target: "Twitter account selected: $value");
+    Analytics().logSelect(target: "Twitter account selected: $value", source: widget.runtimeType.toString());
     Storage().selectedTwitterAccount = _selectedAccountKey = (value != _defaultAccountKey) ? value : null;
     _refresh(count: Config().twitterTweetsCount);
   }
@@ -354,7 +353,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
   }
 
   void _onViewAll() {
-    Analytics().logSelect(target: "Home Twitter Widget View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => TwitterPanel()));
   }
 
@@ -612,7 +611,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
   }
 
   void _onDropDownValueChanged(String? value) {
-    Analytics().logSelect(target: "Twitter account selected: $value");
+    Analytics().logSelect(target: "Twitter account selected: $value", source: widget.runtimeType.toString());
     Storage().selectedTwitterAccount = _selectedAccountKey = (value != _defaultAccountKey) ? value : null;
     _refresh(count: Config().twitterTweetsCount);
   }
@@ -662,6 +661,52 @@ class _TweetWidget extends StatelessWidget {
                     InkWell(onTap: () => _onTap(context), child:
                       Image.network(tweet!.media!.imageUrl!, excludeFromSemantics: true)) :
                   Container(),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Visibility(
+                          visible: onTapPrevious!=null,
+                          child: Semantics(
+                              label: "Previous Page",
+                              button: true,
+                              child: GestureDetector(
+                                  onTap: onTapPrevious?? (){},
+                                  child: Container(
+                                    padding: EdgeInsets.all(24),
+                                    child: Text(
+                                      "<",
+                                      semanticsLabel: "",
+                                      style: TextStyle(
+                                        color : Styles().colors!.fillColorPrimary,
+                                        fontFamily: Styles().fontFamilies!.bold,
+                                        fontSize: 26,
+                                      ),),)
+                              )
+                          )
+                      ),
+                      Visibility(
+                          visible: onTapNext!=null,
+                          child: Semantics(
+                              label: "Next Page",
+                              button: true,
+                              child: GestureDetector(
+                                  onTap: onTapNext?? (){},
+                                  child: Container(
+                                    padding: EdgeInsets.all(24),
+                                    child: Text(
+                                      ">",
+                                      semanticsLabel: "",
+                                      style: TextStyle(
+                                        color : Styles().colors!.fillColorPrimary,
+                                        fontFamily: Styles().fontFamilies!.bold,
+                                        fontSize: 26,
+                                      ),),)
+                              )
+                          )
+                      )
+                    ],
+                  ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), child:
                     //Text(tweet.text, style: TextStyle(color: Styles().colors.fillColorPrimary, fontFamily: Styles().fontFamilies.medium, fontSize: 16, ),),
                     Html(data: tweet!.html,
@@ -681,53 +726,6 @@ class _TweetWidget extends StatelessWidget {
                 Text(tweet?.displayTime ?? '', style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 14, ),),
               ],)
             ),
-
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Visibility(
-                  visible: onTapPrevious!=null,
-                  child: Semantics(
-                    label: "Previous Page",
-                    button: true,
-                    child: GestureDetector(
-                      onTap: onTapPrevious?? (){},
-                      child: Container(
-                        padding: EdgeInsets.all(24),
-                        child: Text(
-                          "<",
-                          semanticsLabel: "",
-                          style: TextStyle(
-                            color : Styles().colors!.fillColorPrimary,
-                            fontFamily: Styles().fontFamilies!.bold,
-                            fontSize: 26,
-                          ),),)
-                    )
-                  )
-                ),
-                Visibility(
-                  visible: onTapNext!=null,
-                  child: Semantics(
-                    label: "Next Page",
-                    button: true,
-                    child: GestureDetector(
-                      onTap: onTapNext?? (){},
-                      child: Container(
-                        padding: EdgeInsets.all(24),
-                        child: Text(
-                          ">",
-                          semanticsLabel: "",
-                          style: TextStyle(
-                            color : Styles().colors!.fillColorPrimary,
-                            fontFamily: Styles().fontFamilies!.bold,
-                            fontSize: 26,
-                          ),),)
-                    )
-                  )
-                )
-              ],
-            )
           ])
       )
     );

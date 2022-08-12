@@ -17,6 +17,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -24,9 +25,9 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -40,7 +41,7 @@ import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
-import 'package:rokwire_plugin/ui/widgets/section_header.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -51,8 +52,8 @@ class HomeSuggestedEventsWidget extends StatefulWidget {
 
   HomeSuggestedEventsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -64,12 +65,17 @@ class HomeSuggestedEventsWidget extends StatefulWidget {
 
 class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> implements NotificationsListener {
 
-  Set<String>?   _availableCategories;
-  Set<String>?   _categoriesFilter;
-  Set<String>?   _tagsFilter;
-  List<Event>?   _events;
-  bool?          _loadingEvents;
-  DateTime?      _pausedDateTime;
+  Set<String>?    _availableCategories;
+  Set<String>?    _categoriesFilter;
+  Set<String>?    _tagsFilter;
+  List<Event>?    _events;
+  bool?           _loadingEvents;
+  DateTime?       _pausedDateTime;
+  
+  PageController? _pageController;
+  Key?            _pageViewKey;
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double    _pageSpacing = 16;
 
   @override
   void initState() {
@@ -99,6 +105,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
+    _pageController?.dispose();
     super.dispose();
   }
 
@@ -202,6 +209,9 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
               _tagsFilter = tagsFilter;
               _categoriesFilter = categoriesFilter;
               _events = _randomSelection(events, Config().homeUpcomingEventsCount);
+              _pageViewKey = UniqueKey();
+              _pageController = null;
+              _contentKeys.clear();
             });
           }
         }
@@ -212,6 +222,9 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
               _tagsFilter = null;
               _categoriesFilter = null;
               _events = _randomSelection(events, Config().homeUpcomingEventsCount);
+              _pageViewKey = UniqueKey();
+              _pageController = null;
+              _contentKeys.clear();
             });
           });
         }
@@ -266,82 +279,85 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
 
   @override
   Widget build(BuildContext context) {
-    if (CollectionUtils.isNotEmpty(_events)) {
-      return 
-        Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-          _EventsRibbonHeader(
-            title: Localization().getStringEx('widget.home.suggested_events.label.events_for_you', 'Suggested Events'),
-            subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home.suggested_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
-            favoriteId: widget.favoriteId,
-            rightIconAsset: 'images/settings-white.png',
-            rightIconAction: () {
-              Analytics().logSelect(target: "Events for you - settings");
-              SettingsHomeContentPanel.present(context, content: SettingsContent.interests);
-            },
-          ),
-          Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: _buildListItems(context)),
-          LinkButton(
-            title: Localization().getStringEx('widget.home.suggested_events.button.all.title', 'View All'),
-            hint: Localization().getStringEx('widget.home.suggested_events.button.all.hint', 'Tap to view all events'),
-            onTap: _navigateToExploreEvents,
-          ),
-        ]);
-    }
-    else {
-      return Container();
-    }
+    return Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+      _EventsRibbonHeader(
+        title: Localization().getStringEx('widget.home.suggested_events.label.events_for_you', 'Suggested Events'),
+        subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home.suggested_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
+        favoriteId: widget.favoriteId,
+        rightIconAsset: 'images/settings-white.png',
+        rightIconAction: _navigateToSettings,
+      ),
+      Stack(children:<Widget>[
+        _buildSlant(),
+        _buildContent(),
+      ]),
+    ]);
   }
 
-  List<Widget> _buildListItems(BuildContext context) {
-    List<Widget> widgets = [];
-    if (_events?.isNotEmpty ?? false) {
+  Widget _buildSlant() {
+    return Column(children: <Widget>[
+      Container(color:  Styles().colors!.fillColorPrimary, height: 45,),
+      Container(color: Styles().colors!.fillColorPrimary, child:
+        CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft), child:
+          Container(height: 65,),
+        )),
+    ],);
+  }
+
+  Widget _buildContent() {
+    return (_events?.isEmpty ?? true) ? HomeMessageCard(
+      message: Localization().getStringEx("widget.home.suggested_events.text.empty.description", "There are no suggested events available."),
+    ) : _buildEventsContent();
+  }
+
+  Widget _buildEventsContent() {
+    Widget contentWidget;
+    List<Widget> pages = <Widget>[];
+    if (1 < (_events?.length ?? 0)) {
+
       for (Event event in _events!) {
-        if (widgets.isEmpty && StringUtils.isNotEmpty(event.eventImageUrl)) {
-          widgets.add(ImageSlantHeader(
-            slantImageColor: Styles().colors!.fillColorSecondaryTransparent05,
-            slantImageAsset: 'images/slant-down-right.png',
-            //applyHorizontalPadding: false,
-            child: _buildItemCard(context: context, item: event, showSmallImage: false),
-            imageUrl: event.eventImageUrl
-          ));
-        }
-        else {
-          widgets.add(_buildItemCard(context: context, item: event),);
-        }
+        pages.add(Padding(key: _contentKeys[event.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 4), child:
+          ExploreCard(explore: event, showTopBorder: true, horizontalPadding: 0, onTap: () => _onTapEvent(event),
+        )
+        ));
       }
 
-      /*for (int i = widgets.isNotEmpty ? 1 : 0; i < _events!.length; i++) {
-        Event event = _events![i];
-        widgets.add(ImageHolderListItem(
-            placeHolderDividerResource: Styles().colors!.fillColorSecondaryTransparent05,
-            placeHolderSlantResource: 'images/slant-down-right.png',
-            applyHorizontalPadding: false,
-            child: _buildItemCard(context: context, item: event, showSmallImage: (i != 0)),
-            imageUrl: i == 0 ? event.eventImageUrl : null));
-      }*/
-    }
-    return widgets;
-  }
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
 
-  Widget _buildItemCard({BuildContext? context, Event? item, bool? showSmallImage}) {
-    if (item != null) {
-      return Padding(padding: EdgeInsets.only(top: 16), child:
-        ExploreCard(
-          explore: item,
-          showTopBorder: true,
-          showSmallImage: showSmallImage,
-          onTap: () => _onTapEvent(item),
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          allowImplicitScrolling: true,
+          children: pages,
         ),
       );
     }
-    return Container();
+    else {
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 4), child:
+        ExploreCard(explore: _events?.first, showTopBorder: true, horizontalPadding: 0, onTap: () => _onTapEvent(_events?.first))
+      );
+    }
+
+    return Column(children: <Widget>[
+      contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      LinkButton(
+        title: Localization().getStringEx('widget.home.suggested_events.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.suggested_events.button.all.hint', 'Tap to view all events'),
+        onTap: _navigateToExploreEvents,
+      ),
+    ]);
   }
 
+
   void _onTapEvent(Event? event) {
-    Analytics().logSelect(target: "HomeUpcomingEvents event: ${event?.exploreId}");
+    Analytics().logSelect(target: "Event: '${event?.title}'", source: widget.runtimeType.toString());
 
     if (event?.isComposite ?? false) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: event)));
@@ -354,9 +370,27 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
     }
   }
 
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
+  }
+
   void _navigateToExploreEvents() {
-    Analytics().logSelect(target: "HomeUpcomingEvents View all events");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events)));
+  }
+
+  void _navigateToSettings() {
+    Analytics().logSelect(target: "Settings", source: widget.runtimeType.toString());
+    SettingsHomeContentPanel.present(context, content: SettingsContent.interests);
   }
 }
 

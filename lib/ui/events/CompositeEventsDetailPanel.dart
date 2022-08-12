@@ -262,6 +262,11 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
       details.add(location);
     }
 
+    Widget? online = _exploreOnlineDetail();
+    if (online != null) {
+      details.add(online);
+    }
+
     Widget? price = _eventPriceDetail();
     if (price != null) {
       details.add(price);
@@ -329,7 +334,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
 
   Widget? _exploreLocationDetail() {
     String? locationText = widget.parentEvent?.getLongDisplayLocation(_locationData);
-    if (!(widget.parentEvent?.isVirtual ?? false) && widget.parentEvent?.location != null && (locationText != null) && locationText.isNotEmpty) {
+    if ((widget.parentEvent?.displayAsInPerson ?? false) && widget.parentEvent?.location != null && (locationText != null) && locationText.isNotEmpty) {
       return GestureDetector(
         onTap: _onLocationDetailTapped,
         child: Semantics(
@@ -345,6 +350,40 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                   Padding(
                     padding: EdgeInsets.only(right: 10),
                     child:Image.asset('images/icon-location.png'),
+                  ),
+                  Expanded(child: Text(locationText,
+                      style: TextStyle(
+                          fontFamily: Styles().fontFamilies!.medium,
+                          fontSize: 16,
+                          color: Styles().colors!.textBackground))),
+                ],
+              ),
+            )
+        ),
+      );
+    } else {
+      return null;
+    }
+  }
+
+  Widget? _exploreOnlineDetail() {
+    String? locationText = widget.parentEvent?.virtualEventUrl ?? widget.parentEvent?.location?.description;
+    if ((widget.parentEvent?.displayAsVirtual ?? false) && widget.parentEvent?.location != null && (locationText != null) && locationText.isNotEmpty) {
+      return GestureDetector(
+        onTap: _onLocationDetailTapped,
+        child: Semantics(
+            label: locationText,
+            hint: Localization().getStringEx('panel.explore_detail.button.directions.hint', ''),
+            button: true,
+            excludeSemantics: true,
+            child:Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child:Image.asset('images/laptop.png'), //TBD update icon res
                   ),
                   Expanded(child: Text(locationText,
                       style: TextStyle(

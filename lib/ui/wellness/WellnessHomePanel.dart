@@ -33,7 +33,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum WellnessContent { dailyTips, rings, todo, resources, podcast, struggling }
+enum WellnessContent { dailyTips, rings, todo, podcast, resources, struggling }
 
 class WellnessHomePanel extends StatefulWidget {
   final WellnessContent? content;
@@ -48,7 +48,6 @@ class WellnessHomePanel extends StatefulWidget {
 class _WellnessHomePanelState extends State<WellnessHomePanel> {
   static WellnessContent? _lastSelectedContent;
   late WellnessContent _selectedContent;
-  ScrollController _scrollController = ScrollController();
   bool _contentValuesVisible = false;
 
   @override
@@ -62,32 +61,26 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
     return Scaffold(
         appBar: headerBar,
         body: Column(children: <Widget>[
+          Padding(
+              padding: EdgeInsets.only(left: 16, top: 16, right: 16),
+              child: RibbonButton(
+                  textColor: Styles().colors!.fillColorSecondary,
+                  backgroundColor: Styles().colors!.white,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                  rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+                  label: _getContentLabel(_selectedContent),
+                  onTap: _changeSettingsContentValuesVisibility)),
           Expanded(
-              child: SingleChildScrollView(
-                  controller: _scrollController,
-                  physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null),
-                  child: Container(
-                      color: Styles().colors!.background,
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Padding(
-                            padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-                            child: RibbonButton(
-                                textColor: Styles().colors!.fillColorSecondary,
-                                backgroundColor: Styles().colors!.white,
-                                borderRadius: BorderRadius.all(Radius.circular(5)),
-                                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                                rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-                                label: _getContentLabel(_selectedContent),
-                                onTap: _changeSettingsContentValuesVisibility)),
-                        _buildContent()
-                      ]))))
+              child: Stack(children: [
+            Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: SingleChildScrollView(child: Padding(padding: EdgeInsets.only(bottom: 16), child: _contentWidget))),
+            _buildContentValuesContainer()
+          ]))
         ]),
         backgroundColor: Styles().colors!.background,
         bottomNavigationBar: navigationBar);
-  }
-
-  Widget _buildContent() {
-    return Stack(children: [Padding(padding: EdgeInsets.symmetric(vertical: 16), child: _contentWidget), _buildContentValuesContainer()]);
   }
 
   Widget _buildContentValuesContainer() {
@@ -216,7 +209,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   static String _getContentLabel(WellnessContent section, { String? language }) {
     switch (section) {
       case WellnessContent.dailyTips:
-        return _loadContentString('panel.wellness.section.daily_tips.label', 'Wellness Daily Tips', language: language);
+        return _loadContentString('panel.wellness.section.daily_tips.label', 'Today\'s Wellness Tip', language: language);
       case WellnessContent.rings:
         return _loadContentString('panel.wellness.section.rings.label', 'Daily Wellness Rings', language: language);
       case WellnessContent.todo:
@@ -237,7 +230,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
 
 // WellnessFavorite
 
-class WellnessFavorite implements Favorite {
+class WellnessFavorite extends Favorite {
   final String? id;
   final String? category;
   WellnessFavorite(this.id, {this.category});

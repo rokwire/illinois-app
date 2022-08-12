@@ -75,20 +75,15 @@ class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes
     return group?.analyticsAttributes;
   }
 
-  String? get groupId {
-    if (group != null) {
-      return group?.id;
-    } else {
-      return groupIdentifier;
-    }
-  }
+  String? get groupId => group?.id ?? groupIdentifier;
 }
 
 class _GroupDetailPanelState extends State<GroupDetailPanel> implements NotificationsListener {
 
   final int          _postsPageSize = 8;
 
-  Group?              _group;
+  Group?             _group;
+  GroupStats?        _groupStats;
   int                _progress = 0;
   bool               _confirmationLoading = false;
   bool               _updatingEvents = false;
@@ -114,19 +109,19 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _memberAttendLoading = false;
 
   bool get _isMember {
-    return _group?.currentUserAsMember?.isMember ?? false;
+    return _group?.currentMember?.isMember ?? false;
   }
 
   bool get _isAdmin {
-    return _group?.currentUserAsMember?.isAdmin ?? false;
+    return _group?.currentMember?.isAdmin ?? false;
   }
 
   bool get _isMemberOrAdmin {
-    return _group?.currentUserAsMember?.isMemberOrAdmin ?? false;
+    return _group?.currentMember?.isMemberOrAdmin ?? false;
   }
 
   bool get _isPending{
-    return _group?.currentUserAsMember?.isPendingMember ?? false;
+    return _group?.currentMember?.isPendingMember ?? false;
   }
 
   bool get _isPublic {
@@ -142,9 +137,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       return false;
     }
 
-    Member? currentMemberUser = _group?.currentUserAsMember;
+    Member? currentMemberUser = _group?.currentMember;
     if (currentMemberUser?.isAdmin ?? false) {
-      return ((_group?.adminsCount ?? 0) > 1); // Do not allow an admin to leave group if he/she is the only one admin.
+      return ((_groupStats?.adminsCount ?? 0) > 1); // Do not allow an admin to leave group if he/she is the only one admin.
     } else {
       return currentMemberUser?.isMember ?? false;
     }
@@ -185,6 +180,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Polls.notifyStatusChanged,
       Polls.notifyVoteChanged,
       Polls.notifyResultsChanged,
+      Polls.notifyLifecycleDelete,
       Connectivity.notifyStatusChanged,
     ]);
 
@@ -199,6 +195,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _loadGroup({bool loadEvents = false}) {
+    _loadGroupStats();
     _increaseProgress();
     // Load group if the device is online, otherwise - use widget's argument
     if (Connectivity().isOnline) {
@@ -214,7 +211,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (mounted) {
       if (group != null) {
         _group = group;
-        _groupAdmins = _group!.getMembersByStatus(GroupMemberStatus.admin);
+        _loadGroupAdmins();
         _loadInitialPosts();
         _loadPolls();
       }
@@ -233,7 +230,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           if (refreshEvents) {
             _refreshEvents();
           }
-          _groupAdmins = _group!.getMembersByStatus(GroupMemberStatus.admin);
+          _refreshGroupAdmins();
         });
         _refreshCurrentPosts();
         _refreshPolls();
@@ -355,6 +352,34 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     }
   }
 
+  void _loadGroupStats() {
+    _increaseProgress();
+    Groups().loadGroupStats(widget.groupId).then((stats) {
+      _groupStats = stats;
+      _decreaseProgress();
+    });
+  }
+
+  void _refreshGroupStats() {
+    Groups().loadGroupStats(widget.groupId).then((stats) {
+      _groupStats = stats;
+    });
+  }
+
+  void _loadGroupAdmins() {
+    _increaseProgress();
+    Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.admin]).then((admins) {
+      _groupAdmins = admins;
+      _decreaseProgress();
+    });
+  }
+
+  void _refreshGroupAdmins() {
+    Groups().loadMembers(groupId: widget.groupId, statuses: [GroupMemberStatus.admin]).then((admins) {
+      _groupAdmins = admins;
+    });
+  }
+
   void _cancelMembershipRequest() {
     _setConfirmationLoading(true);
     Groups().cancelRequestMembership(_group).whenComplete(() {
@@ -445,7 +470,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     else if (name == Groups.notifyGroupPostsUpdated) {
       _refreshCurrentPosts(delta: param is int ? param : null);
     } 
-    else if (name == Polls.notifyCreated) {
+    else if ((name == Polls.notifyCreated)
+             || (name == Polls.notifyLifecycleDelete)) {
       _refreshPolls();
     } 
     else if (name == Polls.notifyVoteChanged
@@ -473,6 +499,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _refreshGroup(refreshEvents: true);
+          _refreshGroupStats();
         }
       }
     }
@@ -575,7 +602,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     List<Widget> commands = [];
 
     String members;
-    int membersCount = _group?.membersCount ?? 0;
+    int membersCount = _groupStats?.activeMembersCount ?? 0;
     if (membersCount == 0) {
       members = Localization().getStringEx("panel.group_detail.members.count.empty", "No Current Members");
     }
@@ -586,7 +613,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       members = sprintf(Localization().getStringEx("panel.group_detail.members.count.format", "%s Current Members"),[membersCount]);
     }
 
-    int pendingCount = _group?.pendingCount ?? 0;
+    int pendingCount = _groupStats?.pendingCount ?? 0;
     String pendingMembers;
     if (_group!.currentUserIsAdmin && pendingCount > 0) {
       pendingMembers = pendingCount > 1 ?
@@ -597,7 +624,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       pendingMembers = "";
     }
 
-    int attendedCount = _group?.attendedCount ?? 0;
+    int attendedCount = _groupStats?.attendedCount ?? 0;
     String? attendedMembers;
     if (_group!.currentUserIsAdmin && (_group!.attendanceGroup == true)) {
       if (attendedCount == 0) {
@@ -779,7 +806,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     if (CollectionUtils.isNotEmpty(_groupEvents)) {
       for (Event? groupEvent in _groupEvents!) {
-        content.add(GroupEventCard(groupEvent: groupEvent, group: _group, isAdmin: _isAdmin));
+        content.add(GroupEventCard(groupEvent: groupEvent, group: _group));
       }
 
       content.add(Padding(padding: EdgeInsets.only(top: 16), child:
@@ -1157,7 +1184,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onGroupOptionsTap() {
     Analytics().logSelect(target: 'Group Options', attributes: _group?.analyticsAttributes);
-    int membersCount = _group?.membersCount ?? 0;
+    int membersCount = _groupStats?.activeMembersCount ?? 0;
     String? confirmMsg = (membersCount > 1)
         ? sprintf(
             Localization().getStringEx(
@@ -1347,7 +1374,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
       border: Border.all(color: Styles().colors!.textSurface!, width: 1),
       alignment: Alignment.center,
-      infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The University of Illinois takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may report group names or content that are obscene, threatening, or harassing to group administrator(s). Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.'),
+      infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The University of Illinois takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.'),
       infoTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
       closeIcon: Image.asset('images/close-orange-small.png'),
     ),);
@@ -1394,40 +1421,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               .getStringEx('panel.group_detail.attendance.qr_code.uin.not_valid.msg', 'This QR code does not contain valid UIN number.'));
       return;
     }
-
-    Member? member = _getExistingGroupMember(uin: uin);
-    if (member != null) {
-      // The member already attended.
-      if (_checkMemberAttended(member: member)) {
-        AppAlert.showDialogResult(
-            context,
-            sprintf(
-                Localization()
-                    .getStringEx('panel.group_detail.attendance.member.attended.msg', 'Student with UIN "%s" already attended on "%s"'),
-                [uin, _getAttendedDateTimeFormatted(member: member)]));
-      }
-      // Attend the member to the group
-      else {
-        _attendMember(member: member);
-      }
-    } else {
-      // Do not allow a student to attend to authman group which one is not member of.
-      if (_group?.authManEnabled == true) {
-        AppAlert.showDialogResult(
-            context,
-            sprintf(
-                Localization().getStringEx('panel.group_detail.attendance.authman.uin.not_member.msg',
-                    'Student with UIN "%s" is not a member of this group and is not allowed to attend.'),
-                [uin]));
-      } 
-      // Create new member and attend to non-authman group
-      else {
-        member = Member();
-        member.status = GroupMemberStatus.member;
-        member.externalId = uin;
-        _attendMember(member: member);
-      }
-    }
+    _loadAttendedMemberByUin(uin: uin);
   }
 
   void _attendMember({required Member member}) {
@@ -1478,20 +1472,54 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return null;
   }
 
-  ///
-  /// Returns group member by uin, null - otherwise
-  ///
-  Member? _getExistingGroupMember({required String uin}) {
-    List<Member>? members = _group?.members;
-    if (CollectionUtils.isEmpty(members)) {
-      return null;
-    }
-    for (Member member in members!) {
-      if (member.isMemberOrAdmin && (member.externalId == uin)) {
-        return member;
+  void _loadAttendedMemberByUin({required String uin}) {
+    Groups().loadMembers(groupId: widget.groupId).then((members) {
+      Member? member;
+      if (CollectionUtils.isNotEmpty(members)) {
+        for (Member groupMember in members!) {
+          if (groupMember.isMemberOrAdmin && (groupMember.externalId == uin)) {
+            member = groupMember;
+            break;
+          }
+        }
+      }
+      _onAttendedMemberLoaded(uin: uin, member: member);
+    });
+  }
+
+  void _onAttendedMemberLoaded({required String uin, Member? member}) {
+    if (member != null) {
+      // The member already attended.
+      if (_checkMemberAttended(member: member)) {
+        AppAlert.showDialogResult(
+            context,
+            sprintf(
+                Localization()
+                    .getStringEx('panel.group_detail.attendance.member.attended.msg', 'Student with UIN "%s" already attended on "%s"'),
+                [uin, _getAttendedDateTimeFormatted(member: member)]));
+      }
+      // Attend the member to the group
+      else {
+        _attendMember(member: member);
+      }
+    } else {
+      // Do not allow a student to attend to authman group which one is not member of.
+      if (_group?.authManEnabled == true) {
+        AppAlert.showDialogResult(
+            context,
+            sprintf(
+                Localization().getStringEx('panel.group_detail.attendance.authman.uin.not_member.msg',
+                    'Student with UIN "%s" is not a member of this group and is not allowed to attend.'),
+                [uin]));
+      }
+      // Create new member and attend to non-authman group
+      else {
+        member = Member();
+        member.status = GroupMemberStatus.member;
+        member.externalId = uin;
+        _attendMember(member: member);
       }
     }
-    return null;
   }
 
   ///
@@ -1556,14 +1584,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapCreatePost() {
     Analytics().logSelect(target: "Create Post", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group))).then((result) {
-      if (_refreshingPosts != true) {
-        _refreshCurrentPosts();
-      }
-      if (result == true) {
-        _shouldScrollToLastAfterRefresh = true;
-      }
-    });
+    if (_group != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostCreatePanel(group: _group!))).then((result) {
+        if (_refreshingPosts != true) {
+          _refreshCurrentPosts();
+        }
+        if (result == true) {
+          _shouldScrollToLastAfterRefresh = true;
+        }
+      });
+    }
   }
 
   void _onTapCreatePoll() {
@@ -1588,7 +1618,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       // Do not try to refresh group if the device is offline
       return;
     }
-    if (_group?.syncAuthmanAllowed == true) {
+    if ((_group?.syncAuthmanAllowed == true) && (_group?.attendanceGroup == true)) {
       await Groups().syncAuthmanGroup(group: _group!);
     }
     Group? group = await Groups().loadGroup(widget.groupId); // The same as _refreshGroup(refreshEvents: true) but use await to show the pull to refresh progress indicator properly
@@ -1596,9 +1626,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if(mounted) {
         setState(() {
           _group = group;
-          _groupAdmins = _group!.getMembersByStatus(GroupMemberStatus.admin);
         });
       }
+      _refreshGroupAdmins();
+      _refreshGroupStats();
       _refreshEvents();
       _refreshCurrentPosts();
     }

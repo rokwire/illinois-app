@@ -25,6 +25,7 @@ class Auth2 extends rokwire.Auth2 {
   static String get notifyLoginChanged      => rokwire.Auth2.notifyLoginChanged;
   static String get notifyLoginFinished     => rokwire.Auth2.notifyLoginFinished;
   static String get notifyLogout            => rokwire.Auth2.notifyLogout;
+  static String get notifyAccountChanged    => rokwire.Auth2.notifyAccountChanged;
   static String get notifyProfileChanged    => rokwire.Auth2.notifyProfileChanged;
   static String get notifyPrefsChanged      => rokwire.Auth2.notifyPrefsChanged;
   static String get notifyUserDeleted       => rokwire.Auth2.notifyUserDeleted;
@@ -100,6 +101,8 @@ class Auth2 extends rokwire.Auth2 {
   void onAppLivecycleStateChanged(AppLifecycleState? state) {
     super.onAppLivecycleStateChanged(state);
     if (state == AppLifecycleState.resumed) {
+      //TMP: Log.d('Core Access Token: ${token?.accessToken}', lineLength: 512);
+      //TMP: Log.d('UIUC Access Token: ${uiucToken?.accessToken}', lineLength: 512);
       _refreshAuthCardIfNeeded();
     }
   }

@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -25,7 +26,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class WellnessManageToDoCategoriesPanel extends StatefulWidget {
   final ToDoCategory? category;
@@ -36,10 +36,11 @@ class WellnessManageToDoCategoriesPanel extends StatefulWidget {
 }
 
 class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCategoriesPanel> implements NotificationsListener {
+  static final List<String> _availableCategoryHexColors = ['#E45434', '#F5821E', '#54A747', '#009FD4', '#1D58A7', '#662d91'];
+
   ToDoCategory? _category;
   List<ToDoCategory>? _categories;
   Color? _selectedColor;
-  Color? _tmpColor;
   TextEditingController _nameController = TextEditingController();
   bool _loading = false;
 
@@ -110,20 +111,15 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   Widget _buildColorsRowWidget() {
+    List<Widget> colorWidgets = [];
+    for (String colorHex in _availableCategoryHexColors) {
+      colorWidgets.add(_buildColorEntry(color: UiColors.fromHex(colorHex), isSelected: (_selectedColor == UiColors.fromHex(colorHex))));
+    }
     return Center(
         child: Padding(
             padding: EdgeInsets.only(top: 20),
             child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                  _buildColorEntry(
-                      color: Styles().colors!.fillColorSecondary!, isSelected: (_selectedColor == Styles().colors!.fillColorSecondary)),
-                  _buildColorEntry(color: Styles().colors!.diningColor!, isSelected: (_selectedColor == Styles().colors!.diningColor)),
-                  _buildColorEntry(color: Styles().colors!.placeColor!, isSelected: (_selectedColor == Styles().colors!.placeColor)),
-                  _buildColorEntry(color: Styles().colors!.accentColor2!, isSelected: (_selectedColor == Styles().colors!.accentColor2)),
-                  _buildColorEntry(color: Styles().colors!.accentColor3!, isSelected: (_selectedColor == Styles().colors!.accentColor3)),
-                  _buildColorEntry(imageAsset: 'images/icon-color-edit.png'),
-                ]))));
+                scrollDirection: Axis.horizontal, child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: colorWidgets))));
   }
 
   Widget _buildColorEntry({Color? color, String? imageAsset, bool isSelected = false}) {
@@ -133,31 +129,6 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
         onTap: () => _onTapColor(color),
         child: Container(
             width: 50, height: 50, decoration: BoxDecoration(color: color, image: image, border: border, shape: BoxShape.circle))));
-  }
-
-  Widget _buildColorPickerDialog() {
-    return SingleChildScrollView(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-      ColorPicker(pickerColor: Styles().colors!.fillColorSecondary!, onColorChanged: _onColorChanged),
-      Padding(
-          padding: EdgeInsets.only(top: 20),
-          child: Center(
-              child: Row(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
-            RoundedButton(
-                label: Localization().getStringEx('panel.wellness.categories.manage.color.pick.cancel.button', 'Cancel'),
-                contentWeight: 0,
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                fontSize: 16,
-                onTap: _onTapCancelColorSelection),
-            Container(width: 30),
-            RoundedButton(
-                label: Localization().getStringEx('panel.wellness.categories.manage.color.pick.select.button', 'Select'),
-                contentWeight: 0,
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                fontSize: 16,
-                onTap: _onTapSelectColor)
-          ])))
-    ]));
   }
 
   Widget _buildEditCategoryButtons() {
@@ -234,25 +205,12 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                   child: Text(StringUtils.ensureNotEmpty(category.name),
                       style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 14))),
               Expanded(child: Container()),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Image.asset('images/icon-edit-white.png'))
+              Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Image.asset('images/edit-white.png'))
             ])));
   }
 
-  void _onColorChanged(Color newColor) {
-    _tmpColor = newColor;
-  }
-
-  void _onTapCancelColorSelection() {
-    Navigator.of(context).pop();
-  }
-
-  void _onTapSelectColor() {
-    _selectedColor = _tmpColor;
-    Navigator.of(context).pop();
-    _updateState();
-  }
-
   void _onTapEditCategory(ToDoCategory category) {
+    Analytics().logSelect(target: "Edit ${category.name}");
     _category = category;
     _nameController.text = StringUtils.ensureNotEmpty(_category?.name);
     _selectedColor = _category?.color;
@@ -260,6 +218,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   void _onTapDelete() {
+    Analytics().logSelect(target: "Delete");
     if (_category == null) {
       AppAlert.showDialogResult(
           context,
@@ -290,6 +249,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   void _onTapSave() {
+    Analytics().logSelect(target: "Save");
     _hideKeyboard();
     String name = _nameController.text;
     if (StringUtils.isEmpty(name)) {
@@ -312,12 +272,9 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   }
 
   void _onTapColor(Color? color) async {
+    Analytics().logSelect(target: "Color: $color");
     _hideKeyboard();
-    if (color == null) {
-      AppAlert.showCustomDialog(context: context, contentWidget: _buildColorPickerDialog()).then((_) {
-        _tmpColor = null;
-      });
-    } else {
+    if (color != null) {
       _selectedColor = color;
       _updateState();
     }

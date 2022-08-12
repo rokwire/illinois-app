@@ -15,10 +15,15 @@ import 'package:rokwire_plugin/utils/utils.dart';
 extension EventExt on Event {
 
   // Explore
+  bool get displayAsInPerson =>
+       isInPerson ?? !(isVirtual == true); // if (isInPerson == null && isVirtual == null) => isInPerson = true //Old event that miss isInPerson flag should be InPerson events by default
 
-  String? get typeDisplayString => (isVirtual == true)
-      ? Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event")
-      : Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+  bool get displayAsVirtual =>
+      isVirtual ?? false;
+
+  String? get typeDisplayString => ((displayAsVirtual == true) ? Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event") : "" )
+      +(displayAsVirtual && displayAsInPerson  ? ", " : "")
+      +((displayAsInPerson == true) ? Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event") : "");
 
   bool get isFavorite => isRecurring
     ? Auth2().isListFavorite(recurringEvents?.cast<Favorite>())
@@ -68,10 +73,11 @@ extension EventExt on Event {
   ///
 
   String? get displayDateTime {
-    final String dateFormat = 'MMM dd';
-    int eventDays = (endDateGmt?.difference(startDateGmt!).inDays ?? 0).abs();
-    bool eventIsMoreThanOneDay = (eventDays >= 1);
-    if (eventIsMoreThanOneDay) {
+    String dateFormat = 'MMM dd';
+    if (isMoreThanOneDay) {
+      if (isNotTheSameYear) {
+        dateFormat += ' yyyy';
+      }
       String? startDateFormatted = AppDateTime().formatDateTime(startDateGmt, format: dateFormat);
       String? endDateFormatted = AppDateTime().formatDateTime(endDateGmt, format: dateFormat);
       return '$startDateFormatted - $endDateFormatted';

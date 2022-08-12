@@ -20,9 +20,9 @@ import 'package:url_launcher/url_launcher.dart';
 class HomeToutWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final void Function()? onEdit;
+  final void Function() onEdit;
   
-  HomeToutWidget({Key? key, this.favoriteId, this.updateController, this.onEdit});
+  HomeToutWidget({Key? key, this.favoriteId, this.updateController, required this.onEdit});
 
   @override
   _HomeToutWidgetState createState() => _HomeToutWidgetState();
@@ -67,7 +67,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   @override
   Widget build(BuildContext context) {
     String? imageUrl = _imageUrl;
-    String? title2 = _title2;
+    String? title2 = _firstName;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       (imageUrl != null) ? _buildImageWidget(imageUrl) : Container(),
       Container(padding: EdgeInsets.only(bottom: 16,), color: Styles().colors?.fillColorPrimary, child:
@@ -91,10 +91,11 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
               ],),
             )
           ),
-          GestureDetector(onTap: widget.onEdit, child:
-            Padding(padding: EdgeInsets.only(top: 16, right: 16), child: Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
-                        style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18, 
-                        decoration: TextDecoration.underline, decorationColor: Styles().colors?.textColorPrimary, decorationThickness: 1)))
+          GestureDetector(onTap: _onCustomize, child:
+            Padding(padding: EdgeInsets.only(top: 16, right: 16), child:
+              Text(Localization().getStringEx('widget.home.tout.customize.label', 'Customize'),
+                style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 18, 
+                decoration: TextDecoration.underline, decorationColor: Styles().colors?.textColorPrimary, decorationThickness: 1)))
           ),
         ],)
       )
@@ -150,11 +151,11 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   String? get _title1 {
     if (_dayPart != null) {
       String greeting = AppDateTimeUtils.getDayPartGreeting(dayPart: _dayPart);
-      if (Auth2().firstName?.isNotEmpty ?? false) {
+      if (_firstName?.isNotEmpty ?? false) {
         return "$greeting,";
       }
       else {
-        return StringUtils.capitalize("$greeting!", allWords: true);
+        return StringUtils.capitalize("$greeting!", allWords: false);
       }
     }
     else {
@@ -162,8 +163,8 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
     }
   }
 
-  String? get _title2 {
-    return Auth2().firstName;
+  String? get _firstName {
+    return Auth2().account?.authType?.uiucUser?.firstName ?? Auth2().profile?.firstName;
   }
 
   bool _shouldUpdateImage({DayPart? dayPart}) {
@@ -196,8 +197,13 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   }
 
   void _onInfo() {
-    Analytics().logSelect(target: "Search");
+    Analytics().logSelect(target: "Info", source: widget.runtimeType.toString());
     _InfoDialog.show(context);
+  }
+
+  void _onCustomize() {
+    Analytics().logSelect(target: 'Customize', source: widget.runtimeType.toString());
+    widget.onEdit();
   }
 
   // NotificationsListener
@@ -223,9 +229,9 @@ class _InfoDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String selfServiceUrlMacro = '{{student_self_service_url}}';
-    String contentHtml = Localization().getStringEx("widget.home.tout.popup.info.content", "Illinois app uses your first name from <a href='{{student_self_service_url}}'>Student Self-Service</a>. You can change your preferred name under Personal Information and Preferred First Name.");
-    contentHtml = contentHtml.replaceAll(selfServiceUrlMacro, Config().studentSelfServiceUrl ?? '');
+    final String preferredFirstNameUrlMacro = '{{preferred_first_name_url}}';
+    String contentHtml = Localization().getStringEx("widget.home.tout.popup.info.content", "To change your first name in the Illinois app, review the <a href='{{preferred_first_name_url}}'>preferred name instructions</a>.");
+    contentHtml = contentHtml.replaceAll(preferredFirstNameUrlMacro, Config().preferredFirstNameStmntUrl ?? '');
     return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
       Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), alignment: Alignment.center, child: 
         Container(decoration: BoxDecoration(color: Styles().colors?.fillColorPrimary, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white, width: 1)), child:
@@ -239,7 +245,7 @@ class _InfoDialog extends StatelessWidget {
                       onLinkTap: (url, renderContext, attributes, element) => _onTapLink(context, url),
                       style: {
                         "body": Style(color: Styles().colors?.white, fontFamily: Styles().fontFamilies!.bold, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
-                        "a": Style(color: Styles().colors?.fillColorSecondaryVariant),
+                        "a": Style(color: Styles().colors?.white),
                       },),
                     //Text('Illinois app uses your first name from Student Self-Service. You can change your preferred name under Personal Information and Preferred First Name',
                     //  style: TextStyle(color: Styles().colors?.white, fontSize: 16, fontFamily: Styles().fontFamilies!.bold,),

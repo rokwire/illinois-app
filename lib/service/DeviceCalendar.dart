@@ -1,7 +1,5 @@
 
 import 'package:flutter/foundation.dart';
-import 'package:illinois/model/Canvas.dart';
-import 'package:illinois/service/Canvas.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -96,9 +94,6 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
     else if (data is GuideFavorite){
       return _DeviceCalendarEvent.fromGuide(data);
     }
-    else if (data is CanvasCalendarEvent){
-      return _DeviceCalendarEvent.fromCanvasCalendarEvent(data);
-    }
 
     return null;
   }
@@ -132,15 +127,5 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
         startDate: Guide().reminderDate(guideEntryData),
         deepLinkUrl: "${Guide().guideDetailUrl}?guide_id=${guide?.id}"
       ) : null;
-  }
-
-  static _DeviceCalendarEvent? fromCanvasCalendarEvent(CanvasCalendarEvent? event){
-    return (event != null) ? _DeviceCalendarEvent(
-        title: event.title,
-        internalEventId: event.id?.toString(),
-        startDate: event.startAtLocal,
-        endDate: event.endAtLocal,
-        deepLinkUrl: "${Canvas().canvasEventDetailUrl}?event_id=${event.id}"
-    ) : null;
   }
 }

@@ -35,8 +35,8 @@ class HomeCreatePollWidget extends StatefulWidget {
 
   HomeCreatePollWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -70,8 +70,8 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
           title: Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"),
           titleIcon: Image.asset('images/icon-browse-quick-polls.png', scale: 32 / 18,),
           flatHeight: 0, slantHeight: 0,
+          childPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
           child: _buildContent(),
-          childPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
       ));
   }
 
@@ -79,7 +79,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Text(Localization().getStringEx("widget.home_create_poll.text.title","Quickly Create and Share Polls."), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, ),),
         Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-        Text((_canCreatePoll?Localization().getStringEx("widget.home_create_poll.text.description","People near you will be notified to vote through the Illinois app or you can provide them with the 4 Digit Poll #."):
+        Text((_canCreatePoll?Localization().getStringEx("widget.home_create_poll.text.description","People in your Group can be notified to vote through the Illinois app. Or you can give voters the four-digit poll number."):
         Localization().getStringEx("widget.home_create_poll.text.description.login","You need to be logged in to create and share polls with people near you.")),
           style: TextStyle(color: Color(0xff494949), fontFamily: Styles().fontFamilies!.medium, fontSize: 16,),),),
         _buildButtons()
@@ -111,6 +111,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   }
 
   void _onCreatePoll() {
+    Analytics().logSelect(target: "Create Poll", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));
 
   }
@@ -120,7 +121,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
   }
 
   void _onLogin(){
-    Analytics().logSelect(target: "Login");
+    Analytics().logSelect(target: "Login", source: widget.runtimeType.toString());
     if (_authLoading != true) {
       setState(() { _authLoading = true; });
       Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {

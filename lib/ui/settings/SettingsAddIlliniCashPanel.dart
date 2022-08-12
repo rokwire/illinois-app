@@ -42,14 +42,11 @@ class SettingsAddIlliniCashPanel extends StatefulWidget {
 
   SettingsAddIlliniCashPanel({this.scrollController});
 
-  static bool get canPresent => Connectivity().isNotOffline && Auth2().isOidcLoggedIn;
+  static bool get canPresent => Connectivity().isNotOffline /*&& Auth2().isOidcLoggedIn*/;
 
   static void present(BuildContext context) {
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx("panel.settings.add_illini_cash.message.offline.text", "Add Illini Cash is are not available while offline."));
-    }
-    else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(context, Localization().getStringEx("panel.settings.add_illini_cash.message.logged_out.text", "You need to be logged in to access Add Illini Cash."));
     }
     else {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsAddIlliniCashPanel()));
@@ -631,16 +628,11 @@ class _SettingsAddIlliniCashPanelState
                                                           color: Styles().colors!.fillColorSecondary!))),
                                               child: GestureDetector(
                                                 onTap: _onTermsAndConditionsTapped,
-                                                child: Text(
-                                                  Localization().getStringEx(
-                                                      "panel.settings.add_illini_cash.label.agree",
-                                                      "terms & conditions"),
-                                                  style: TextStyle(
-                                                    fontFamily: Styles().fontFamilies!.regular,
-                                                    fontSize: 16,
-                                                    color: Styles().colors!.fillColorPrimary,
-                                                  ),
-                                                ),
+                                                child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                                                  Text(Localization().getStringEx("panel.settings.add_illini_cash.label.agree", "terms & conditions"),
+                                                   style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
+                                                  Padding(padding: EdgeInsets.only(left: 3), child: Image.asset('images/external-link.png'))
+                                                ]),
                                               ))),
                                     ],
                                   ),

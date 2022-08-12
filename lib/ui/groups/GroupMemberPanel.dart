@@ -27,30 +27,26 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
 class GroupMemberPanel extends StatefulWidget implements AnalyticsPageAttributes {
-  final Group? group;
-  final Member? member;
+  final Group group;
+  final String memberId;
 
-  String? get groupId => group?.id;
-  String? get memberId => member?.id;
-
-  GroupMemberPanel({this.group, this.member});
+  GroupMemberPanel({required this.group, required this.memberId});
 
   @override
   _GroupMemberPanelState createState() => _GroupMemberPanelState();
 
   @override
-  Map<String, dynamic>? get analyticsPageAttributes => group?.analyticsAttributes;
+  Map<String, dynamic>? get analyticsPageAttributes => group.analyticsAttributes;
 }
 
-class _GroupMemberPanelState extends State<GroupMemberPanel>{
+class _GroupMemberPanelState extends State<GroupMemberPanel> {
+  Group? _group;
   Member? _member;
-  late Group _group;
-  bool _isLoading = false;
+  int _progressLoading = 0;
   bool _isAdmin = false;
   bool _updating = false;
   bool _removing = false;
@@ -58,42 +54,25 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   @override
   void initState() {
     super.initState();
-    _reloadGroup();
+    _loadGroup();
+    _loadMember();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  void _loadGroup() {
+    _increaseProgress();
+    Groups().loadGroup(widget.group.id).then((group) {
+      _group = group;
+      _decreaseProgress();
+    });
   }
 
-  void _reloadGroup(){
-    if(mounted) {
-      setState(() {
-        _isLoading = true;
-      });
-      Groups().loadGroup(widget.groupId).then((Group? group) {
-        if (mounted) {
-          if (group != null) {
-            _group = group;
-            _loadMember();
-          }
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      });
-    }
-  }
-
-  void _loadMember(){
-    if(mounted) {
-      if (CollectionUtils.isNotEmpty(_group.members)) {
-        setState(() {
-          _member = _group.getMembersById(widget.memberId);
-          _isAdmin = _member!.isAdmin;
-        });
-      }
-    }
+  void _loadMember() {
+    _increaseProgress();
+    Groups().loadMembers(groupId: widget.group.id, memberId: widget.memberId).then((members) {
+      _member = members?.first;
+      _isAdmin = _member?.isAdmin ?? false;
+      _decreaseProgress();
+    });
   }
 
   void _updateMemberStatus() {
@@ -108,7 +87,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
       bool newIsAdmin = !_isAdmin;
 
       GroupMemberStatus status = newIsAdmin ? GroupMemberStatus.admin : GroupMemberStatus.member;
-      Groups().updateMembership(widget.group, widget.member, status).then((bool succeed) {
+      Groups().updateMembership(_group, widget.memberId, status).then((bool succeed) {
         if (mounted) {
           setState(() {
             _updating = false;
@@ -126,7 +105,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
   }
 
   Future<void> _removeMembership() async{
-    bool success = await Groups().deleteMembership(widget.group, widget.member);
+    bool success = await Groups().deleteMembership(_group, widget.memberId);
     if(!success){
       throw sprintf(Localization().getStringEx("panel.member_detail.label.error.format", "Unable to remove %s from this group"), [_member?.displayShortName ?? ""]);
     }
@@ -193,8 +172,8 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
     );
   }
 
-  Widget _buildDetails(BuildContext context){
-    bool canAdmin = _group.currentUserIsAdmin;
+  Widget _buildDetails(BuildContext context) {
+    bool canAdmin = _group?.currentUserIsAdmin ?? false;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -329,5 +308,23 @@ class _GroupMemberPanelState extends State<GroupMemberPanel>{
         },
       ),
     );
+  }
+
+  void _increaseProgress() {
+    _progressLoading++;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _decreaseProgress() {
+    _progressLoading--;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  bool get _isLoading {
+    return (_progressLoading > 0);
   }
 }

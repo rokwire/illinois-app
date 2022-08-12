@@ -16,6 +16,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/ext/Favorite.dart';
 
 class SettingsInboxHomeContentWidget extends StatefulWidget {
   SettingsInboxHomeContentWidget();
@@ -143,7 +144,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   Widget _buildListEntry(BuildContext context, int index) {
     dynamic entry = ((_contentList != null) && (0 <= index) && (index < _contentList!.length)) ? _contentList![index] : null;
     if (entry is InboxMessage) {
-      return _InboxMessageCard(
+      return InboxMessageCard(
         message: entry,
         selected: (_isEditMode == true) ? _selectedMessageIds.contains(entry.messageId) : null,
         onTap: () => _onTapMessage(entry));
@@ -829,12 +830,12 @@ enum _FilterType {
   Category, Time
 }
 
-class _InboxMessageCard extends StatefulWidget {
+class InboxMessageCard extends StatefulWidget {
   final InboxMessage? message;
   final bool? selected;
   final void Function()? onTap;
   
-  _InboxMessageCard({this.message, this.selected, this.onTap });
+  InboxMessageCard({this.message, this.selected, this.onTap });
 
   @override
   _InboxMessageCardState createState() {
@@ -842,7 +843,7 @@ class _InboxMessageCard extends StatefulWidget {
   }
 }
 
-class _InboxMessageCardState extends State<_InboxMessageCard> implements NotificationsListener {
+class _InboxMessageCardState extends State<InboxMessageCard> implements NotificationsListener {
 
   late bool _isFavorite;
 
@@ -875,6 +876,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
   @override
   Widget build(BuildContext context) {
     double leftPadding = (widget.selected != null) ? 12 : 16;
+    Image? favoriteStarIcon = widget.message?.favoriteStarIcon(selected: _isFavorite);
     return Container(
         decoration: BoxDecoration(
           color: Styles().colors!.white,
@@ -897,14 +899,14 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
                 Expanded(child:
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     StringUtils.isNotEmpty(widget.message?.category) ?
-                      Padding(padding: EdgeInsets.only(bottom: 3), child:
+                      Padding(padding: EdgeInsets.only(bottom: 3, right: 12), child:
                         Row(children: [
                           Expanded(child:
                             Text(widget.message?.category ?? '', semanticsLabel: "Category: ${widget.message?.category ?? ''}, ",style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))
                       )])) : Container(),
                     
                     StringUtils.isNotEmpty(widget.message?.subject) ?
-                      Padding(padding: EdgeInsets.only(bottom: 4), child:
+                      Padding(padding: EdgeInsets.only(bottom: 4, right: 12), child:
                         Row(children: [
                           Expanded(child:
                             Text(widget.message?.subject ?? '', semanticsLabel: "Subject: ${widget.message?.subject ?? ''}, ", style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
@@ -927,7 +929,7 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
             ),
           ),
           Container(color: Styles().colors!.fillColorSecondary, height: 4),
-          Visibility(visible: Auth2().canFavorite, child:
+          Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
             Align(alignment: Alignment.topRight, child:
             Semantics(
               label: _isFavorite
@@ -939,8 +941,8 @@ class _InboxMessageCardState extends State<_InboxMessageCard> implements Notific
               button: true,
               child:
               GestureDetector(onTap: _onTapFavorite, child:
-                Container(padding: EdgeInsets.all(9), child:
-                  Image.asset(_isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,)
+                Container(padding: EdgeInsets.only(left: 9, right: 9, top: 13, bottom: 9), child:
+                  favoriteStarIcon
             ),)),),),
         ],)
     );

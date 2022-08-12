@@ -15,13 +15,14 @@
  */
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:math';
+import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/main.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -29,10 +30,12 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -43,8 +46,8 @@ class HomeWellnessResourcesWidget extends StatefulWidget {
 
   const HomeWellnessResourcesWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -57,10 +60,19 @@ class HomeWellnessResourcesWidget extends StatefulWidget {
 
 class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidget> implements NotificationsListener {
 
-  List<dynamic>? _commands;
+  List<dynamic>? _favoriteCommands;
   Map<String, dynamic>? _strings;
+  
   PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  String? _currentFavoriteId;
+  int _currentPage = -1;
   final double _pageSpacing = 16;
+
+  static const String localScheme = 'local';
+  static const String localUrlMacro = '{{local_url}}';
+
 
   @override
   void initState() {
@@ -71,15 +83,9 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
-        setState(() {
-          _initContent();
-        });
+        _updateContent();
       });
     }
-
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
 
     _initContent();
     super.initState();
@@ -98,11 +104,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   void onNotification(String name, dynamic param) {
     if ((name == Assets.notifyChanged) ||
         (name == Auth2UserPrefs.notifyFavoritesChanged)) {
-      if (mounted) {
-        setState(() {
-          _initContent();
-        });
-      }
+        _updateContent();
     }
   }
 
@@ -111,46 +113,74 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessResourcesWidget.title,
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      childPadding: EdgeInsets.zero,
       child: _buildContent(),
     );
   }
 
   Widget _buildContent() {
-    return  (_commands?.isEmpty ?? true) ? HomeMessageCard(
-      title: Localization().getStringEx("widget.home.wellness_resources.text.empty", "Whoops! Nothing to see here."),
-      message: Localization().getStringEx("widget.home.wellness_resources.text.empty.description", "Tap the \u2606 on items in Wellness Resources so you can quickly find them here."),
-    ) : _buildResourceContent();
+    return  (_favoriteCommands?.isEmpty ?? true) ? _buildEmpty() : _buildResourceContent();
+  }
+
+  Widget _buildEmpty() {
+    String favoriteKey = WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey);
+    String message = Localization().getStringEx("widget.home.wellness_resources.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Wellness Resources</b></a> so you can quickly find them here.")
+      .replaceAll(localUrlMacro, '$localScheme://$favoriteKey');
+
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+      Container(decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        padding: EdgeInsets.all(16),
+        child: Html(data: message,
+          onLinkTap: (url, renderContext, attributes, element) => _handleLocalUrl(url),
+          style: {
+            "body": Style(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+            "a": Style(color: Styles().colors?.fillColorSecondary),
+          },
+        ),
+      ),
+    );
   }
 
   Widget _buildResourceContent() {
     Widget contentWidget;
-    int visibleCount = min(Config().homeWellnessResourcesCount, _commands?.length ?? 0);
+    int visibleCount = _favoriteCommands?.length ?? 0; // Config().homeWellnessResourcesCount
     if (1 < visibleCount) {
-
-      double pageHeight = 18 * MediaQuery.of(context).textScaleFactor + 2 * 16;
 
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
-        Map<String, dynamic>? command = JsonUtils.mapValue(_commands![index]);
+        Map<String, dynamic>? command = JsonUtils.mapValue(_favoriteCommands![index]);
         Widget? button = (command != null) ? _buildResourceButton(command) : null;
         if (button != null) {
-          pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child: button));
+          String? commandId = JsonUtils.stringValue(command!['id']);
+          pages.add(Padding(key: _contentKeys[commandId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child: button));
         }
       }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          onPageChanged: _onCurrentPageChanged,
+          allowImplicitScrolling: true,
+          children: pages,
+        ),
       );
     }
     else {
       contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-        _buildResourceButton(JsonUtils.mapValue(_commands?.first) ?? {})
+        _buildResourceButton(JsonUtils.mapValue(_favoriteCommands?.first) ?? {})
       );
     }
 
     return Column(children: [
       contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.wellness_resources.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.wellness_resources.button.all.hint', 'Tap to view all wellness resources'),
@@ -189,21 +219,103 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   void _initContent() {
     Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${WellnessResourcesContentWidget.wellnessCategoryKey}']) ;
     _strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
-    _commands = null;
     List<dynamic>? commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
-    if (commands != null) {
-      _commands = [];
-      for (dynamic entry in commands) {
-        Map<String, dynamic>? command = JsonUtils.mapValue(entry);
-        if (command != null) {
-          String? id = JsonUtils.stringValue(command['id']);
-          Favorite favorite = WellnessFavorite(id, category: WellnessResourcesContentWidget.wellnessCategoryKey);
-          if (Auth2().prefs?.isFavorite(favorite) ?? false) {
-            _commands?.add(entry);
+    WellnessResourcesContentWidget.ensureDefaultFavorites(commands);
+    _favoriteCommands = _filterFavoriteCommands(commands);
+    if (_favoriteCommands?.isNotEmpty ?? false) {
+      _currentPage = 0;
+
+      Map<String, dynamic>? command = JsonUtils.mapValue(_favoriteCommands!.first);
+      _currentFavoriteId =  (command != null) ? JsonUtils.stringValue(command['id']) : null;
+    }
+  }
+
+  void _updateContent() {
+    Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${WellnessResourcesContentWidget.wellnessCategoryKey}']) ;
+    Map<String, dynamic>? strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
+    List<dynamic>? commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
+    WellnessResourcesContentWidget.ensureDefaultFavorites(commands);
+    List<dynamic>? favoriteCommands = _filterFavoriteCommands(commands);
+
+    if (mounted && (favoriteCommands != null) && !DeepCollectionEquality().equals(_favoriteCommands, favoriteCommands)) {
+      setState(() {
+        _favoriteCommands = favoriteCommands;
+        _strings = strings;
+        _updateCurrentPage();
+      });
+    }
+  }
+
+  static List<dynamic>? _filterFavoriteCommands(List<dynamic>? commands) {
+    List<dynamic>? favoriteCommands;
+    LinkedHashSet<String>? wellnessFavorites = Auth2().prefs?.getFavorites(WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey));
+    if ((wellnessFavorites != null) && (commands != null)) {
+      favoriteCommands = [];
+      for (String favoriteId in wellnessFavorites) {
+        for (dynamic entry in commands) {
+          Map<String, dynamic>? command = JsonUtils.mapValue(entry);
+          if (command != null) {
+            String? commandId = JsonUtils.stringValue(command['id']);
+            if (commandId == favoriteId)  {
+              favoriteCommands.add(entry);
+              break;
+            }
           }
         }
       }
     }
+    return favoriteCommands;
+  }
+
+  int _findFavorite(String? favoriteId) {
+    if (_favoriteCommands != null) {
+      for (int index = 0; index < _favoriteCommands!.length; index++) {
+        Map<String, dynamic>? command = JsonUtils.mapValue(_favoriteCommands![index]);
+        String? commandId = (command != null) ? JsonUtils.stringValue(command['id']) : null;
+        if (commandId == favoriteId) {
+          return index;
+        }
+      }
+    }
+    return -1;
+  }
+
+  void _updateCurrentPage() {
+    if (_favoriteCommands?.isNotEmpty ?? false)  {
+      int currentPage = (_currentFavoriteId != null) ? _findFavorite(_currentFavoriteId!) : -1;
+      if (currentPage < 0) {
+        currentPage = max(0, min(_currentPage, _favoriteCommands!.length - 1));
+      }
+
+      Map<String, dynamic>? command = JsonUtils.mapValue(ListUtils.entry(_favoriteCommands, _currentPage = currentPage));
+      _currentFavoriteId = (command != null) ? JsonUtils.stringValue(command['id']) : null;
+    }
+    else {
+      _currentPage = -1;
+      _currentFavoriteId = null;
+    }
+
+    _pageViewKey = UniqueKey();
+    _pageController = null;
+    _contentKeys.clear();
+  }
+
+  void _onCurrentPageChanged(int index) {
+    Map<String, dynamic>? command = JsonUtils.mapValue(ListUtils.entry(_favoriteCommands, _currentPage = index));
+    _currentFavoriteId = (command != null) ? JsonUtils.stringValue(command['id']) : null;
+  }
+
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
   }
 
   String? _getString(String? key, {String? languageCode}) {
@@ -219,13 +331,22 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     return null;
   }
 
+  void _handleLocalUrl(String? url) {
+    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+    if ((uri?.scheme == localScheme) && (uri?.host.toLowerCase() == WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey).toLowerCase())) {
+      Analytics().logSelect(target: "View Home", source: widget.runtimeType.toString());
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.resources,)));
+    }
+  }
+
   void _onViewAll() {
-    Analytics().logSelect(target: "HomeWellnessResourcesWidget View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.resources,)));
   }
 
   void _onCommand(Map<String, dynamic> command) {
-    Analytics().logSelect(target: _getString(JsonUtils.stringValue(command['id']), languageCode: Localization().defaultLocale?.languageCode),);
+    String? resourceName = _getString(JsonUtils.stringValue(command['id']), languageCode: Localization().defaultLocale?.languageCode);
+    Analytics().logSelect(target: "Resource: '$resourceName'" , source: widget.runtimeType.toString());
     _launchUrl(JsonUtils.stringValue(command['url']));
   }
 

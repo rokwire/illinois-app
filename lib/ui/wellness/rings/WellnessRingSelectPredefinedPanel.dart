@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/wellness/WellnessReing.dart';
+import 'package:illinois/model/wellness/WellnessRing.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/WellnessRings.dart';
+import 'package:illinois/ui/wellness/rings/WellnessRingCreatePane.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -10,8 +12,6 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 
-import 'WellnessRingCreatePane.dart';
-import 'WellnessRingWidgets.dart';
 
 class WellnessRingSelectPredefinedPanel extends StatefulWidget{
   @override
@@ -20,18 +20,18 @@ class WellnessRingSelectPredefinedPanel extends StatefulWidget{
 
 class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPredefinedPanel> implements NotificationsListener{
   static const List<Map<String,dynamic>> PREDEFINED_RING_BUTTONS = [
-    {"ring":{'name': "Hobby", 'goal': 2, 'color_hex': '#f5821e', 'id': "id_predefined_0", 'unit':'session'},
+    {"ring":{'name': "Hobby", 'value': 1, 'color_hex': '#f5821e', 'ring_id': "id_predefined_0", 'unit':'session'},
       "name":"Hobby Ring",
-      "description":"Use this ring to motivate you to engage in your hobby in some small way every day. It’s important to have your own free time, even if it’s small some days.",
-      "example": "Examples for filling out this ring could be reading, sketching, playing an instrument, or whatever hobbies you enjoy!"},
-    {"ring":{'name': "Movement", 'goal': 16, 'color_hex': '#54a747', 'id': "id_predefined_1", 'unit':'activity'},
+      "description":"Use this ring to motivate you to engage in a hobby in some way every day. It’s important to have your own free time, even if it’s only for a couple minutes.",
+      "example": "Examples include reading, sketching, playing an instrument, or whatever hobbies you enjoy!"},
+    {"ring":{'name': "Movement", 'value': 1, 'color_hex': '#54a747', 'ring_id': "id_predefined_1", 'unit':'activity'},
       "name":"Movement Ring",
       "description":"Use this ring to motivate you to do something active every day, even if it's daily stretching or taking a short walk! A small amount of physical activity every day can improve your overall mood and motivation.",
-      "example":"Examples for filling out this ring could be going on a walk, rock climbing, dancing, stretching, or whatever exercise you enjoy!"},
-    {"ring":{'name': "Mindfulness", 'goal': 10, 'color_hex': '#09fd4' , 'id': "id_predefined_2", 'unit':'moment'},
+      "example":"Examples include going on a walk, rock climbing, dancing, stretching, or whatever exercise you enjoy!"},
+    {"ring":{'name': "Mindfulness", 'value': 1, 'color_hex': '#09fd4' , 'ring_id': "id_predefined_2", 'unit':'moment'},
       "name":"Mindfulness",
-      "description":"Use this ring to motivate you to focus on the present moment. Taking even a small amount of time for  intentional practice, like journaling or breathing exercises, can help reduce overall stress.",
-      "example": "Examples could include drinking a certain amount of water throughout the day, taking your daily vitamin, etc."},
+      "description":"Use this ring to motivate you to focus on the present moment. Taking even a small amount of time for intentional practice, like journaling or breathing exercises, can help reduce overall stress.",
+      "example": "Examples include journaling, breathing exercises, meditation, or whatever mindful practice you enjoy!"},
     {"name" : "Custom Ring",
       "description":"Create a ring for whatever habit you want to build or maintain for yourself! Ex: use this ring to motivate you to drink water every day!",
       "example": "Examples could include drinking a certain amount of water throughout the day, taking your daily vitamin, etc."},
@@ -67,7 +67,7 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                       Container(height: 14,),
-                      WellnessWidgetHelper.buildWellnessHeader(),
+                      // WellnessWidgetHelper.buildWellnessHeader(),
                       Container(height: 16,),
                       Container(
                         child: Text(Localization().getStringEx('panel.wellness.ring.select.description', 'Select a ring type or create your own custom ring.'),
@@ -99,16 +99,14 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
   Widget _buildPredefinedButtons(){
     List<Widget> content = [];
     for(Map<String, dynamic> jsonData in PREDEFINED_RING_BUTTONS){  WellnessRingDefinition? data = WellnessRingDefinition.fromJson(JsonUtils.mapValue(jsonData["ring"]));
-      bool exists = data != null && WellnessRings().wellnessRings!= null && WellnessRings().wellnessRings!.any((var ring) => ring.id == data.id); //TODO remove check by id if it comes from server (check by name)
+      bool exists = data != null && WellnessRings().wellnessRings!= null && WellnessRings().wellnessRings!.any((var ring) => ring.name == data.name); //TODO remove check by id if it comes from server (check by name)
       if((data!=null && !exists)|| data == null){
         content.add(_WellnessRingButton(
             label: JsonUtils.stringValue(jsonData["name"])??"",
             toggled: _selectedButton == jsonData,
             description: JsonUtils.stringValue(jsonData["description"]),
-            onTapWidget: (context){
-              _selectedButton = jsonData;
-              _refreshState();
-            }));
+            onTapWidget: (_) => _onButton(jsonData)
+        ));
         content.add(Container(height: 20,));
       }
     }
@@ -118,7 +116,14 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
     );
   }
 
+  void _onButton(Map<String, dynamic> jsonData) {
+    Analytics().logSelect(target: JsonUtils.stringValue(jsonData["name"]));
+    _selectedButton = jsonData;
+    _refreshState();
+  }
+
   void _openDetailPanel(){
+    Analytics().logSelect(target: 'Next');
     if(_selectedButton == null){
       return;
     }

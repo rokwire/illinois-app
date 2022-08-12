@@ -1,9 +1,9 @@
 
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -14,6 +14,7 @@ import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -28,8 +29,8 @@ class HomeAthliticsEventsWidget extends StatefulWidget {
 
   HomeAthliticsEventsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -42,9 +43,12 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
 
   List<Game>? _games;
   bool _loadingGames = false;
-  final double _pageSpacing = 16;
-  PageController? _pageController;
   DateTime? _pausedDateTime;
+
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -62,10 +66,6 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
         }
       });
     }
-
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
 
     if (Connectivity().isOnline) {
       _loadingGames = true;
@@ -104,12 +104,25 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
     }
   }
 
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _refreshGames();
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.athletics_events.text.title', 'Athletics Events'),
       titleIcon: Image.asset('images/icon-calendar.png'),
-      childPadding: EdgeInsets.zero,
       child: _buildContent(),
     );
   }
@@ -126,7 +139,6 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
     }
     else if (CollectionUtils.isEmpty(_games)) {
       return HomeMessageCard(
-        title: Localization().getStringEx("widget.home.athletics_events.text.empty", "Whoops! Nothing to see here."),
         message: Localization().getStringEx("widget.home.athletics_events.text.empty.description", "No Athletics Events are available right now."),
       );
     }
@@ -142,17 +154,27 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
 
     if (1 < visibleCount) {
       
-      double pageHeight = (24 + 16) * MediaQuery.of(context).textScaleFactor + 20 + (24 + 8 + 18) + 12 + 10 + 12 + 24 + 12;
-
       List<Widget> pages = <Widget>[];
-      for (Game game in _games!) {
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
+      for (int index = 0; index < visibleCount; index++) {
+        Game game = _games![index];
+        pages.add(Padding(key: _contentKeys[game.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
           AthleticsCard(game: game, onTap: () => _onTapGame(game), showInterests: true, margin: EdgeInsets.zero,),),
         );
       }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          allowImplicitScrolling : true,
+          children: pages),
       );
     }
     else {
@@ -163,6 +185,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
     
     return Column(children: <Widget>[
       contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.athletics_events.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.athletics_events.button.all.hint', 'Tap to view all events'),
@@ -173,7 +196,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
 
 
   void _onTapGame(Game game) {
-    Analytics().logSelect(target: "Game: "+game.title);
+    Analytics().logSelect(target: "Game: '${game.title}'" , source: widget.runtimeType.toString());
     if (Connectivity().isNotOffline) {
       Navigator.push(context, CupertinoPageRoute( builder: (context) => AthleticsGameDetailPanel(game: game)));
     }
@@ -183,7 +206,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
   }
 
   void _onTapSeeAll() {
-    Analytics().logSelect(target: "HomeAthleticsEvents: View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Events, initialFilter: ExploreFilter(type: ExploreFilterType.categories, selectedIndexes: {3}))));
   }
 
@@ -195,31 +218,34 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
         });
       }
       Sports().loadGames(limit: Config().homeAthleticsEventsCount).then((List<Game>? games) {
-        if (mounted) {
+        if (mounted && !DeepCollectionEquality().equals(_games, games)) {
           setState(() {
-            if (showProgress) {
-              _loadingGames = false;
-            }
-            if (games != null) {
-              _games = games;
-            }
+            _games = games;
+            _pageViewKey = UniqueKey();
+            _pageController = null;
+            _contentKeys.clear();
+          });
+        }
+      }).whenComplete(() {
+        if (mounted && showProgress) {
+          setState(() {
+            _loadingGames = false;
           });
         }
       });
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      _pausedDateTime = DateTime.now();
-    }
-    else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
-        if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _refreshGames();
-        }
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
       }
     }
+
+    return minContentHeight ?? 0;
   }
 }

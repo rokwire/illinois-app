@@ -23,6 +23,7 @@ import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
+import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/explore/ExploreCard.dart';
@@ -30,18 +31,16 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:sprintf/sprintf.dart';
 
-import 'athletics/AthleticsGameDetailPanel.dart';
-
-class SearchPanel extends StatefulWidget {
+class ExploreSearchPanel extends StatefulWidget {
   final Map<String, dynamic>? searchData;
 
-  const SearchPanel({Key? key, this.searchData}) : super(key: key);
+  const ExploreSearchPanel({Key? key, this.searchData}) : super(key: key);
 
   @override
-  _SearchPanelState createState() => _SearchPanelState();
+  _ExploreSearchPanelState createState() => _ExploreSearchPanelState();
 }
 
-class _SearchPanelState extends State<SearchPanel> {
+class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
   TextEditingController _textEditingController = TextEditingController();
   String? _searchLabel = Localization().getStringEx('panel.search.label.search_for', 'Searching only Events Titles');
   int _resultsCount = 0;

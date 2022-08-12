@@ -1,9 +1,9 @@
 
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -14,6 +14,7 @@ import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -28,8 +29,8 @@ class HomeAthliticsNewsWidget extends StatefulWidget {
 
   HomeAthliticsNewsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -42,9 +43,12 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
 
   List<News>? _news;
   bool _loadingNews = false;
-  final double _pageSpacing = 16;
-  PageController? _pageController;
   DateTime? _pausedDateTime;
+
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -62,10 +66,6 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
         }
       });
     }
-
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
 
     if (Connectivity().isOnline) {
       _loadingNews = true;
@@ -104,12 +104,25 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
     }
   }
 
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _refreshNews();
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home.athletics_news.text.title', 'Athletics News'),
         titleIcon: Image.asset('images/icon-news.png'),
-        childPadding: EdgeInsets.zero,
         child: _buildContent(),
     );
   }
@@ -126,7 +139,6 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
     }
     else if (CollectionUtils.isEmpty(_news)) {
       return HomeMessageCard(
-        title: Localization().getStringEx("widget.home.athletics_news.text.empty", "Whoops! Nothing to see here."),
         message: Localization().getStringEx("widget.home.athletics_news.text.empty.description", "No Athletics News are available right now."),
       );
     }
@@ -142,17 +154,28 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
 
     if (1 < visibleCount) {
 
-      double pageHeight = (14 + 24 * 2) * MediaQuery.of(context).textScaleFactor + 2 * 24 + 10 + 12 + 12 + 16;
-
       List<Widget> pages = <Widget>[];
-      for (News news in _news!) {
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
+      for (int index = 0; index < visibleCount; index++) {
+        News news = _news![index];
+        pages.add(Padding(key: _contentKeys[news.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
           AthleticsNewsCard(news: news, onTap: () => _onTapNews(news))
         ));
       }
 
-      contentWidget = Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-        ExpandablePageView(controller: _pageController, children: pages, estimatedPageSize: pageHeight),
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          allowImplicitScrolling: true,
+          children: pages,
+        ),
       );
     }
     else {
@@ -163,6 +186,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
 
     return Column(children: <Widget>[
       contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.athletics_news.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.athletics_news.button.all.hint', 'Tap to view all news'),
@@ -172,12 +196,12 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
   }
 
   void _onTapNews(News news) {
-    Analytics().logSelect(target: "news: "+news.title!);
+    Analytics().logSelect(target: "News: '${news.title}'", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsArticlePanel(article: news)));
   }
 
   void _onTapSeeAll() {
-    Analytics().logSelect(target: "HomeAthleticsNews: View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsNewsListPanel()));
   }
 
@@ -189,31 +213,34 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
         });
       }
       Sports().loadNews(null, Config().homeAthleticsNewsCount).then((List<News>? news) {
-        if (mounted) {
+        if (mounted && !DeepCollectionEquality().equals(news, _news)) {
           setState(() {
-            if (showProgress) {
-              _loadingNews = false;
-            }
-            if (news != null) {
-              _news = news;
-            }
+            _news = news;
+            _pageViewKey = UniqueKey();
+            _pageController = null;
+            _contentKeys.clear();
+          });
+        }
+      }).whenComplete(() {
+        if (mounted && showProgress) {
+          setState(() {
+            _loadingNews = false;
           });
         }
       });
     }
   }
 
-  void _onAppLivecycleStateChanged(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      _pausedDateTime = DateTime.now();
-    }
-    else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
-        if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _refreshNews();
-        }
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
       }
     }
+
+    return minContentHeight ?? 0;
   }
 }

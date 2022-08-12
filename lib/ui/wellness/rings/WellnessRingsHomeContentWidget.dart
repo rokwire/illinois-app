@@ -16,13 +16,14 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/wellness/WellnessReing.dart';
-import 'package:illinois/service/Storage.dart';
+import 'package:illinois/model/wellness/WellnessRing.dart';
+import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingCreatePane.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingWidgets.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingSelectPredefinedPanel.dart';
+import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -52,8 +53,8 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
       _ringsData = rings;
       if(mounted) setState(() {});
     });
-    if (Storage().isUserAccessedWellnessRings != true) {
-      Storage().userAccessedWellnessRings = true;
+    if (Wellness().isRingsAccessed != true) {
+      Wellness().ringsAccessed(true);
       WidgetsBinding.instance!.addPostFrameCallback((_) {
         _showWelcomePopup();
       });
@@ -72,7 +73,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Container(height: 8,),
-          WellnessWidgetHelper.buildWellnessHeader(),
+          // WellnessWidgetHelper.buildWellnessHeader(),
           Container(height: 12,),
           _buildTabButtonRow(),
           _buildContent()
@@ -113,11 +114,12 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
           Container(height: 20,),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 6),
-            child: Text(Localization().getStringEx('panel.wellness.rings.description.label', "See your recent progress in one place by checking your log for the lat 14 days."),
+            child: Text(Localization().getStringEx('panel.wellness.rings.description.label', "See your recent progress in one place by checking your log for the last 14 days."),
               style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
           )),
           Container(height: 15,),
           _buildHistoryList(),
+          _buildClearHistoryButton()
         ],
       )
 
@@ -145,8 +147,9 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
   Widget _buildHistoryList(){
     var historyData = WellnessRings().getAccomplishmentsHistory();
     List<Widget> content = [];
-    if(historyData!=null && historyData.isNotEmpty){
-      for(var accomplishmentsPerDay in historyData.entries) {
+    var accomplishmentsDates = historyData?.entries.toList().reversed;
+    if(accomplishmentsDates!=null && accomplishmentsDates.isNotEmpty){
+      for(var accomplishmentsPerDay in accomplishmentsDates) {
         content.add(AccomplishmentCard(date: accomplishmentsPerDay.key, accomplishments: accomplishmentsPerDay.value));
         content.add(Container(height: 15,));
       }
@@ -158,37 +161,78 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     );
   }
 
+  Widget _buildClearHistoryButton(){
+    return  WellnessRings().haveHistory ?
+      Container(
+        padding: EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+        child: SmallRoundedButton(label: 'Clear History',
+          onTap: (){
+            Analytics().logSelect(target: 'Clear History', source: widget.runtimeType.toString());
+            WellnessRings().deleteRecords().then((success) {
+              if(success == false){
+                AppAlert.showDialogResult(context, "Unable to clear history");
+              }
+            });
+          },
+          backgroundColor: Colors.white,
+          // padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+          borderColor: Styles().colors!.fillColorSecondary,
+          textColor: Styles().colors!.fillColorPrimary,
+          rightIcon: Container(),
+        ),
+      )
+    : Container();
+  }
+
   Widget _buildButtons(){
     List<Widget> content = [];
     if(_ringsData != null && _ringsData!.isNotEmpty) {
-      for (WellnessRingDefinition? definition  in _ringsData!) {
-        if (definition != null) {
-          content.add(WellnessRingButton(
-              label: definition.name ?? "",
-              color: definition.color,
-              description: "${WellnessRings()
-                  .getRingDailyValue(definition.id)
-                  .toInt()}/${definition.goal.toInt()} ${definition.unit}s",
-              onTapIncrease: (context) {
-                WellnessRings().addRecord(
-                    WellnessRingRecord(value: 1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
-              },
-            onTapDecrease: (context) {
-              WellnessRings().addRecord(
-                  WellnessRingRecord(value: -1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
-            },
-              onTapEdit: (context){
-                Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingCreatePanel(data: definition, initialCreation: false,)));
-              },
-          ));
-          content.add(Container(height: 15,));
-        }
+      for (WellnessRingDefinition definition  in _ringsData!) {
+        content.add(WellnessRingButton(
+            label: definition.name ?? "",
+            color: definition.color,
+            description: "${WellnessRings().getRingDailyValue(definition.id).toInt()}/${definition.goal.toInt()} ${definition.unit}",
+            onTapIncrease: (_) => _onTapIncrease(definition),
+            onTapDecrease: (_) => onTapDecrease(definition),
+            onTapEdit: (_) => _onTapEdit(definition),
+        ));
+        content.add(Container(height: 15,));
       }
     }
 
     return Container(
       child: Column(children: content,),
     );
+  }
+
+  Future<void> _onTapIncrease(WellnessRingDefinition definition) async {
+    Analytics().logWellnessRing(
+      action: Analytics.LogWellnessActionComplete,
+      source: widget.runtimeType.toString(),
+      item: definition,
+    );
+    await WellnessRings().addRecord(WellnessRingRecord(value: 1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
+  }
+
+  Future<void> onTapDecrease(WellnessRingDefinition definition) async {
+    Analytics().logWellnessRing(
+      action: Analytics.LogWellnessActionUncomplete,
+      source: widget.runtimeType.toString(),
+      item: definition,
+    );
+    await WellnessRings().addRecord(WellnessRingRecord(value: -1, dateCreatedUtc: DateTime.now(), wellnessRingId: definition.id));
+  }
+
+  void _onTapEdit(WellnessRingDefinition definition) {
+    Analytics().logSelect(target: 'Edit', source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingCreatePanel(data: definition, initialCreation: false,)));
+  }
+
+  void _onTapCreate() {
+    Analytics().logSelect(target: 'Create New Ring', source: widget.runtimeType.toString());
+    if(WellnessRings().canAddRing) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessRingSelectPredefinedPanel()));
+    }
   }
 
   Widget _buildCreateRingButton(){
@@ -200,13 +244,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     return Visibility(
         visible: WellnessRings().canAddRing,
         child: Semantics(label: label, hint: description, button: true, excludeSemantics: true,
-          child: GestureDetector(onTap: (){
-            if(enabled) {
-              Analytics().logSelect(target: "Create new ring");
-              Navigator.push(context, CupertinoPageRoute(
-                  builder: (context) => WellnessRingSelectPredefinedPanel()));
-            }
-          },
+          child: GestureDetector(onTap: _onTapCreate,
           child: Container(
           // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
@@ -270,12 +308,18 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
               Align(
                   alignment: Alignment.topRight,
                   child: GestureDetector(
-                      onTap: () => {Navigator.of(context).pop()},
+                      onTap: _onClose,
                       child: Padding(padding: EdgeInsets.all(11), child: Image.asset('images/icon-x-orange.png'))))
             ])));
   }
 
+  void _onClose() {
+    Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
+    Navigator.of(context).pop();
+  }
+
   void _onTabChanged({required _WellnessRingsTab tab}) {
+    Analytics().logSelect(target: tab.toString(), source: widget.runtimeType.toString());
     if (_selectedTab != tab) {
       _selectedTab = tab;
       if (mounted) {

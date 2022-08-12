@@ -12,9 +12,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'GroupWidgets.dart';
 
 class GroupPostCreatePanel extends StatefulWidget{
-  final Group? group;
+  final Group group;
 
-  const GroupPostCreatePanel({Key? key, this.group}) : super(key: key);
+  GroupPostCreatePanel({required this.group});
 
   @override
   State<StatefulWidget> createState() => _GroupPostCreatePanelState();
@@ -24,9 +24,9 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   static final double _outerPadding = 16;
 
   PostDataModel _postData = PostDataModel();
-  List<GroupPostTemplate>? _postTemplates;
-  GroupPostTemplate? _selectedTemplate;
-  bool _loading = false;
+  List<GroupPostNudge>? _postNudges;
+  GroupPostNudge? _selectedNudge;
+  int _progressLoading = 0;
   //Refresh
   GlobalKey _postImageHolderKey = GlobalKey();
   List<Member>? _selectedMembers;
@@ -35,8 +35,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   @override
   void initState() {
     super.initState();
-    _initAllMembersAllowedToPost();
-    _loadPostTemplates();
+    _loadMembersAllowedToPost();
+    _loadPostNudges();
   }
 
   @override
@@ -57,7 +57,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
               fontFamily: Styles().fontFamilies!.extraBold,
               letterSpacing: 1),
           ),
-          centerTitle: true),
+          centerTitle: false),
         backgroundColor: Styles().colors!.background,
         bottomNavigationBar: uiuc.TabBar(),
         body: Stack(alignment: Alignment.topCenter, children: [
@@ -75,8 +75,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(height: 12,),
-                  GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group?.id, onSelectionChanged: _onMembersSelectionChanged),
-                  _buildTemplatesWidget(),
+                  GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group.id, onSelectionChanged: _onMembersSelectionChanged),
+                  _buildNudgesWidget(),
                   Container(height: 12,),
                   Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
                     style: TextStyle(
@@ -128,24 +128,24 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
           ])),
           Visibility(
-              visible: _loading,
+              visible: _isLoading,
               child: Center(child: CircularProgressIndicator())),
         ])
     );
   }
 
-  Widget _buildTemplatesWidget() {
-    // Do not show the templates for regular members
-    if (!(widget.group?.currentUserIsAdmin ?? false)) {
+  Widget _buildNudgesWidget() {
+    // Do not show the nudges for regular members
+    if (!(widget.group.currentUserIsAdmin)) {
       return Container();
     }
-    if (CollectionUtils.isEmpty(_postTemplates)) {
+    if (CollectionUtils.isEmpty(_postNudges)) {
       return Container();
     }
     return Padding(
         padding: EdgeInsets.only(bottom: 12),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(Localization().getStringEx('panel.group.detail.post.create.templates.label', 'Templates'),
+          Text(Localization().getStringEx('panel.group.detail.post.create.nudges.label', 'Nudges'),
               style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary)),
           Padding(
               padding: EdgeInsets.only(top: 5),
@@ -157,14 +157,14 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                   child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: DropdownButtonHideUnderline(
-                          child: DropdownButton<GroupPostTemplate?>(
+                          child: DropdownButton<GroupPostNudge?>(
                               icon: Icon(Icons.arrow_drop_down, color: Styles().colors!.fillColorSecondary),
                               isExpanded: true,
                               style: TextStyle(
                                   fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),
-                              items: _templatesDropDownItems,
-                              value: _selectedTemplate,
-                              onChanged: _onTemplateChanged)))))
+                              items: _nudgesDropDownItems,
+                              value: _selectedNudge,
+                              onChanged: _onNudgeChanged)))))
         ]));
   }
 
@@ -176,25 +176,25 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     }
   }
 
-  List<DropdownMenuItem<GroupPostTemplate?>> get _templatesDropDownItems {
-    List<DropdownMenuItem<GroupPostTemplate?>> items = [];
-    if (CollectionUtils.isNotEmpty(_postTemplates)) {
-      for (GroupPostTemplate template in _postTemplates!) {
-        items.add(DropdownMenuItem(value: template, child: Text(StringUtils.ensureNotEmpty(template.subject))));
+  List<DropdownMenuItem<GroupPostNudge?>> get _nudgesDropDownItems {
+    List<DropdownMenuItem<GroupPostNudge?>> items = [];
+    if (CollectionUtils.isNotEmpty(_postNudges)) {
+      for (GroupPostNudge nudge in _postNudges!) {
+        items.add(DropdownMenuItem(value: nudge, child: Text(StringUtils.ensureNotEmpty(nudge.subject))));
       }
     }
     items.add(DropdownMenuItem(
-        value: null, child: Text(Localization().getStringEx('panel.group.detail.post.create.templates.custom.label', 'Custom'))));
+        value: null, child: Text(Localization().getStringEx('panel.group.detail.post.create.nudges.custom.label', 'Custom'))));
     return items;
   }
 
-  void _onTemplateChanged(GroupPostTemplate? template) {
-    _selectedTemplate = template;
+  void _onNudgeChanged(GroupPostNudge? nudge) {
+    _selectedNudge = nudge;
     String? subject;
     String? body;
-    if (_selectedTemplate != null) {
-      subject = _selectedTemplate?.subject;
-      body = _selectedTemplate?.body;
+    if (_selectedNudge != null) {
+      subject = _selectedNudge?.subject;
+      body = _selectedNudge?.body;
     }
     _postData.subject = subject;
     _postData.body = body;
@@ -227,16 +227,16 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     }
 
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
-    _setLoading(true);
+    _increaseProgress();
 
     GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers); // if no parentId then this is a new post for the group.
-    Groups().createPost(widget.group?.id, post).then((succeeded) {
+    Groups().createPost(widget.group.id, post).then((succeeded) {
       _onCreateFinished(succeeded);
     });
   }
 
   void _onCreateFinished(bool succeeded) {
-    _setLoading(false);
+    _decreaseProgress();
     if (succeeded) {
       Navigator.of(context).pop(true);
     } else {
@@ -244,34 +244,40 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     }
   }
 
-  void _setLoading(bool loading) {
+  void _loadMembersAllowedToPost() {
+    _increaseProgress();
+    Groups().loadMembersAllowedToPost(groupId: widget.group.id).then((members) {
+      _allMembersAllowedToPost = members;
+      _decreaseProgress();
+    });
+  }
+
+  void _loadPostNudges() {
+    // Load post nudges only for admins
+    if (widget.group.currentUserIsAdmin) {
+      _increaseProgress();
+      Groups().loadPostNudges(groupName: StringUtils.ensureNotEmpty(widget.group.title)).then((nudges) {
+        _postNudges = nudges;
+        _decreaseProgress();
+      });
+    }
+  }
+
+  void _increaseProgress() {
+    _progressLoading++;
     if (mounted) {
-      setState(() {
-        _loading = loading;
-      });
+      setState(() {});
     }
   }
 
-  void _initAllMembersAllowedToPost(){
-    if((widget.group?.members?.length ?? 0) >0) {
-      _allMembersAllowedToPost = widget.group!.members!.where((member) => _isMemberAllowedToReceivePost(member)).toList();
+  void _decreaseProgress() {
+    _progressLoading--;
+    if (mounted) {
+      setState(() {});
     }
   }
 
-  void _loadPostTemplates() {
-    // Load post templates only for admins
-    if (widget.group?.currentUserIsAdmin ?? false) {
-      _setLoading(true);
-      Groups().loadPostTemplates(groupName: StringUtils.ensureNotEmpty(widget.group?.title)).then((templates) {
-        _postTemplates = templates;
-        _setLoading(false);
-      });
-    }
-  }
-
-  bool _isMemberAllowedToReceivePost(Member member){
-    //TMP:
-    // return true;
-    return member.isMemberOrAdmin;
+  bool get _isLoading {
+    return (_progressLoading > 0);
   }
 }

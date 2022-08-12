@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -613,7 +614,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     return Stack(clipBehavior: Clip.hardEdge, children: <Widget>[
       (_mapAllowed == true) ? MapWidget(
         onMapCreated: _onNativeMapCreated,
-        creationParams: { "myLocationEnabled" : _userLocationEnabled()},
+        creationParams: { "myLocationEnabled" : _userLocationEnabled(), "levelsEnabled": Storage().debugMapShowLevels},
       ) : Container(),
       Positioned(
           bottom: _mapExploreBarAnimationController.value,

@@ -33,7 +33,7 @@ extension GroupExt on Group {
   }
 
   Color? get currentUserStatusColor {
-    Member? member = currentUserAsMember;
+    Member? member = currentMember;
     if(member?.status != null){
       return groupMemberStatusToColor(member!.status);
     }
@@ -105,7 +105,7 @@ extension GroupExt on Group {
   }
 
   String? get currentUserStatusText {
-    Member? member = currentUserAsMember;
+    Member? member = currentMember;
     if(member?.status != null){
       return groupMemberStatusToDisplayString(member!.status);
     }

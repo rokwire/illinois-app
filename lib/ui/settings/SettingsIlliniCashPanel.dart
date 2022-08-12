@@ -18,6 +18,8 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/model/IlliniCash.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -35,6 +37,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsIlliniCashPanel extends StatefulWidget {
 
@@ -220,6 +223,13 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   Widget _buildAddIlliniCashSection() {
+    final String servicesUrlMacro = '{{services_url}}';
+    final String whiteSpaceMacro = '{{white_space}}';
+    final String externalLinIconMacro = '{{external_link_icon}}';
+    String contentHtml = Localization().getStringEx("panel.settings.illini_cash.label.for_yourself_or", "Use Illini Cash to purchase food, books, printing, and <a href='{{services_url}}'>other selected services</a>{{white_space}}<img src='asset:{{external_link_icon}}' alt=''/> with your Illinois app or i-card.");
+    contentHtml = contentHtml.replaceAll(servicesUrlMacro, Config().illiniCashServicesUrl ?? '');
+    contentHtml = contentHtml.replaceAll(externalLinIconMacro, 'images/external-link.png');
+    contentHtml = contentHtml.replaceAll(whiteSpaceMacro, '&nbsp;');
     return Container(
         color: Colors.white,
         child: Column(
@@ -229,14 +239,12 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                 'images/icon-schedule.png'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text(
-                Localization().getStringEx("panel.settings.illini_cash.label.for_yourself_or", "For yourself or someone else"),
-                style: TextStyle(
-                    color: Styles().colors!.fillColorPrimary,
-                    fontSize: 14,
-                    fontFamily: Styles().fontFamilies!.regular
-                ),
-              ),
+              child: Html(data: contentHtml,
+                      onLinkTap: (url, renderContext, attributes, element) => _onTapLink(context, url),
+                      style: {
+                        "body": Style(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: FontSize(14), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                        "a": Style(color: Styles().colors?.fillColorSecondaryVariant),
+                      })
             ),
             Row(
               children: <Widget>[
@@ -367,7 +375,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
       return Container();
     }
     if (_transactionsLoading) {
-      return Center(child: Padding(padding: EdgeInsets.only(bottom: 20),
+      return Center(child: Padding(padding: EdgeInsets.only(top: 8, bottom: 20),
         child: CircularProgressIndicator(),),);
     }
     if (_startDate == null || _endDate == null ||
@@ -379,7 +387,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
         label: text, hint: Localization().getStringEx(
           'panel.settings.illini_cash.transactions.message.start_end_validation.hint',
           ''), excludeSemantics: true, child: Center(child: Padding(
-        padding: EdgeInsets.only(left: 40, right: 40, bottom: 20),
+        padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 20),
         child: Text(text,
           style: TextStyle(color: Styles().colors!.fillColorPrimary,
               fontSize: 16,
@@ -388,11 +396,11 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     if (_transactions == null || _transactions!.isEmpty) {
       String text = Localization().getStringEx(
           'panel.settings.illini_cash.transactions.message.no_transactions.text',
-          'There is no transactions for the selected period');
+          'There are no transactions for the selected period.');
       return Semantics(label: text, hint: Localization().getStringEx(
           'panel.settings.illini_cash.transactions.message.no_transactions.hint',
           ''), excludeSemantics: true, child: Center(child: Padding(
-        padding: EdgeInsets.only(left: 40, right: 40, bottom: 20),
+        padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 20),
         child: Text(text,
           textAlign: TextAlign.center,
           style: TextStyle(color: Styles().colors!.fillColorPrimary,
@@ -573,6 +581,13 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   void _onTapViewHistory() {
     Analytics().logSelect(target: "View History");
     _loadTransactions();
+  }
+
+  void _onTapLink(BuildContext context, String? url) {
+    Analytics().logAlert(text: "Info", selection: "Other Select Services");
+    if (StringUtils.isNotEmpty(url)) {
+      launch(url!);
+    }
   }
 
   void _showTransactionsProgress(bool loading, {bool changeState = true}) {

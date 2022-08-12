@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInfoContentWidget.dart';
@@ -40,8 +39,11 @@ class SettingsProfileContentPanel extends StatefulWidget {
   static void present(BuildContext context, {SettingsProfileContent? content}) {
     Navigator.push(
         context,
-        CupertinoPageRoute(
-            settings: RouteSettings(name: routeName), builder: (context) => SettingsProfileContentPanel._(content: content)));
+        PageRouteBuilder(
+            settings: RouteSettings(name: routeName),
+            pageBuilder: (context, animation1, animation2) => SettingsProfileContentPanel._(content: content),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero));
   }
 }
 
@@ -66,29 +68,30 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: RootHeaderBar(title: Localization().getStringEx('panel.settings.profile.header.profile.label', 'My Profile')),
-        body: Column(children: <Widget>[
-          Expanded(
-              child: SingleChildScrollView(
-                  physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null),
-                  child: Container(
-                      color: Styles().colors!.background,
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Padding(
-                            padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-                            child: RibbonButton(
-                                textColor: Styles().colors!.fillColorSecondary,
-                                backgroundColor: Styles().colors!.white,
-                                borderRadius: BorderRadius.all(Radius.circular(5)),
-                                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                                rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-                                label: _getContentLabel(_selectedContent),
-                                onTap: _changeSettingsContentValuesVisibility)),
-                        _buildContent()
-                      ]))))
-        ]),
-        backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: uiuc.TabBar());
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile')),
+      body: Column(children: <Widget>[
+        Expanded(child:
+          SingleChildScrollView(physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
+                RibbonButton(
+                  textColor: Styles().colors!.fillColorSecondary,
+                  backgroundColor: Styles().colors!.white,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                  rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+                  label: _getContentLabel(_selectedContent),
+                  onTap: _changeSettingsContentValuesVisibility
+                )
+              ),
+              _buildContent()
+            ])
+          )
+        )
+      ]),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: uiuc.TabBar()
+    );
   }
 
 

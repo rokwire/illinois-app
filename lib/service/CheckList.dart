@@ -22,17 +22,19 @@ abstract class CheckList with Service implements NotificationsListener{
   static const String notifyPageCompleted  = "edu.illinois.rokwire.gies.service.page.completed";
   static const String notifySwipeToPage  = "edu.illinois.rokwire.gies.service.action.swipe.page";
   static const String notifyContentChanged  = "edu.illinois.rokwire.gies.service.content.changed";
-  static const String notifyStudentInfoChanged  = "edu.illinois.rokwire.gies.service.content.student_info.changed";
   static const String notifyExecuteCustomWidgetAction  = "edu.illinois.rokwire.gies.service.content.execute.widget.action";
 
   //Custom actions
   static const String widgetActionRequestGroup  = "edu.illinois.rokwire.checklist.gies.widget.action.request.group";
 
+  static const String giesOnboarding = "gies_onboarding";
+  static const String uiucOnboarding = "uiuc_onboarding";
+
   // Singleton instance wrapper
   factory CheckList(String serviceName){
     switch (serviceName){
-      case "gies" : return _GiesCheckListInstanceWrapper();
-      case "new_student" : return _StudentCheckListInstanceWrapper();
+      case giesOnboarding : return _GiesCheckListInstanceWrapper();
+      case uiucOnboarding : return _StudentCheckListInstanceWrapper();
     }
     return _GiesCheckListInstanceWrapper(); //default
   }
@@ -54,9 +56,6 @@ abstract class CheckList with Service implements NotificationsListener{
   List<int>? _progressSteps;
 
   DateTime? _pausedDateTime;
-
-  //custom widgets data
-  Map<String, dynamic>? _studentInfo;
 
   // String checklistName();
 
@@ -101,7 +100,6 @@ abstract class CheckList with Service implements NotificationsListener{
     _buildProgressSteps();
     _loadPageVerification();
     _ensureNavigationPages();
-    _refreshUserInfo();
     if (_pages != null) {
       await super.initService();
     }
@@ -153,15 +151,15 @@ abstract class CheckList with Service implements NotificationsListener{
 
   Future<String?> _loadContentStringFromNet() async {
     //TMP: load from app assets
-    // if(_contentName == "new_student"){
+    // if(_contentName == CheckList.uiucOnboarding){
     //   return AppBundle.loadString('assets/newStudent.json');
-    // } else if(_contentName == "gies"){
+    // } else {
     //   return AppBundle.loadString('assets/gies.json');
     // }
 
     try {
       List<dynamic> result;
-      String contentItemCategory = _contentName + '_checklist';
+      String contentItemCategory = _contentName + '_checklists';
       Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': [contentItemCategory]}), auth: Auth2());
       List<dynamic>? responseList = (response?.statusCode == 200) ? JsonUtils.decodeList(response?.body)  : null;
       if (responseList != null) {
@@ -198,17 +196,8 @@ abstract class CheckList with Service implements NotificationsListener{
     return JsonUtils.decodeList(await AppBundle.loadString('assets/gies.json'));
   }
 
-  Future<void> _refreshUserInfo() async{
-    _loadUserInfo().then((value){
-      if(_studentInfo != value) {
-        _studentInfo = value;
-        NotificationService().notify(notifyStudentInfoChanged, {_contentName: ""});
-      }
-    });
-  }
-
-  Future<dynamic> _loadUserInfo() async {
-    if(_contentName != "gies"){
+  Future<dynamic> loadUserInfo() async {
+    if(_contentName != giesOnboarding){
       return null;
     }
     if (StringUtils.isEmpty(Config().gatewayUrl)) {
@@ -235,6 +224,31 @@ abstract class CheckList with Service implements NotificationsListener{
     }
   }
 
+  Future<List<dynamic>?> loadCourses() async {
+    if(_contentName != giesOnboarding){
+      return null;
+    }
+    if (StringUtils.isEmpty(Config().gatewayUrl)) {
+      Log.e('Missing gateway url.');
+      return null;
+    }
+
+    String? contactInfoUrl = "${Config().gatewayUrl}/courses/giescourses?id=${Auth2().uin}";
+    String? token = Auth2().uiucToken?.accessToken;
+
+    Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: {"External-Authorization":token});
+
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    Log.d("Student Courses Request: ${response?.request.toString()}  Response: $responseCode : $responseString");
+
+    if (responseCode == 200) {
+      return JsonUtils.decodeList(responseString);
+    } else {
+      Log.e('Failed to load Contact Info. Response code: $responseCode, Response:\n$responseString');
+      return null;
+    }
+  }
   void _buildProgressSteps() {
     _progressPages = Map<int, Set<String>>();
     if ((_pages != null) && _pages!.isNotEmpty) {
@@ -564,14 +578,6 @@ abstract class CheckList with Service implements NotificationsListener{
     return false;
   }
 
-  bool get supportNotes{
-    return false; //Remove Notes buttons if we don't support them anymore. Hide for now
-  }
-
-  Map<String, dynamic>? get studentInfo{
-    return _studentInfo;
-  }
-
   String get _cacheFileName => "$_contentName.json";
   //Utils
   bool _pageCanComplete(Map? page) {
@@ -675,9 +681,6 @@ abstract class CheckList with Service implements NotificationsListener{
         name == Groups.notifyUserGroupsUpdated) {
       _loadPageVerification(notify: true);
     }
-    else if (name == Auth2.notifyLoginSucceeded) {
-      _refreshUserInfo();
-    }
     else if (name == AppLivecycle.notifyStateChanged) {
       if (param == AppLifecycleState.resumed) {
         //TMP: test
@@ -706,7 +709,7 @@ class _GiesCheckListInstanceWrapper extends CheckList{
 
   factory _GiesCheckListInstanceWrapper() => _instance;
 
-  _GiesCheckListInstanceWrapper._internal() : super.fromName("gies");
+  _GiesCheckListInstanceWrapper._internal() : super.fromName(CheckList.giesOnboarding);
 }
 
 class _StudentCheckListInstanceWrapper extends CheckList{
@@ -714,5 +717,5 @@ class _StudentCheckListInstanceWrapper extends CheckList{
 
   factory _StudentCheckListInstanceWrapper() => _instance;
 
-  _StudentCheckListInstanceWrapper._internal() : super.fromName("new_student");
+  _StudentCheckListInstanceWrapper._internal() : super.fromName(CheckList.uiucOnboarding);
 }

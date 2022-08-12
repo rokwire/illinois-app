@@ -15,8 +15,10 @@
  */
 
 import 'dart:async';
-import 'dart:math';
+import 'dart:collection';
 
+import 'package:collection/collection.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -30,6 +32,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/News.dart';
@@ -58,11 +61,11 @@ class HomeRecentItemsWidget extends StatefulWidget {
 
   HomeRecentItemsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
-  static String get title => Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed');
+  static String get title => Localization().getStringEx('widget.home.recent_items.label.header.title', 'Recently Viewed');
 
   @override
   _HomeRecentItemsWidgetState createState() => _HomeRecentItemsWidgetState();
@@ -71,6 +74,11 @@ class HomeRecentItemsWidget extends StatefulWidget {
 class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implements NotificationsListener {
 
   Iterable<RecentItem>? _recentItems;
+  
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -84,22 +92,26 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
-          if (mounted) {
+          if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
             setState(() {
-              _recentItems = RecentItems().recentItems;
+              _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
+              _pageViewKey = UniqueKey();
+              _pageController = null;
+              _contentKeys.clear();
             });
           }
         }
       });
     }
 
-    _recentItems = RecentItems().recentItems;
+    _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
   }
 
   @override
   void dispose() {
-    super.dispose();
     NotificationService().unsubscribe(this);
+    _pageController?.dispose();
+    super.dispose();
   }
 
   // NotificationsListener
@@ -109,9 +121,12 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
     if (name == RecentItems.notifyChanged) {
       if (mounted) {
         SchedulerBinding.instance?.addPostFrameCallback((_) {
-          if (mounted) {
+          if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
             setState(() {
-              _recentItems = RecentItems().recentItems;
+              _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
+              _pageViewKey = UniqueKey();
+              _pageController = null;
+              _contentKeys.clear();
             });
           }
         });
@@ -126,55 +141,80 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
   @override
   Widget build(BuildContext context) {
-    
-    return Visibility(visible: CollectionUtils.isNotEmpty(_recentItems), child:
-      HomeSlantWidget(favoriteId: widget.favoriteId,
-          title: Localization().getStringEx('panel.home.label.recently_viewed', 'Recently Viewed'),
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-          child: Column(children: _buildListItems(),)
-      ),
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
+      title: HomeRecentItemsWidget.title,
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      child: _buildContent(),
     );
-
+  }
+    
+  Widget _buildContent() {
+    return (_recentItems?.isEmpty ?? true) ? HomeMessageCard(
+      message: Localization().getStringEx("widget.home.recent_items.text.empty.description", "There are no recently viewed items available."),
+    ) : _buildRecentContent();
   }
 
-  List<Widget> _buildListItems() {
-    List<Widget> widgets =  [];
-    if (_recentItems?.isNotEmpty ?? false) {
-      
-      int itemsCount = _recentItems!.length;
-      int visibleCount = min(Config().homeRecentItemsCount, itemsCount);
+  Widget _buildRecentContent() {
+    Widget contentWidget;
+    List<Widget> pages = <Widget>[];
 
+    if (1 < (_recentItems?.length ?? 0)) {
+
+      // Config().homeRecentItemsCount
       for (RecentItem item in _recentItems!) {
-        if (0 < visibleCount) {
-          if (0 < widgets.length) {
-            widgets.add(Container(height: 4));
-          }
-          widgets.add(HomeRecentItemCard(recentItem: item));
-          visibleCount--;
-        }
-        else {
-          break;
-        }
-      }
-
-      if (Config().homeRecentItemsCount < itemsCount) {
-        widgets.add(LinkButton(
-          title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'View All'),
-          hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to view all items'),
-          onTap: _onSeeAll,
+        pages.add(Padding(key: _contentKeys[item.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
+          HomeRecentItemCard(recentItem: item),
         ));
       }
-      else {
-        widgets.add(Container(height: 16,));
+
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
       }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          allowImplicitScrolling: true,
+          children: pages),
+      );
+    }
+    else {
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
+        HomeRecentItemCard(recentItem: _recentItems!.first)
+      );
     }
 
-    return widgets;
+    return Column(children: <Widget>[
+      contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      LinkButton(
+        title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to view all items'),
+        onTap: _onSeeAll,
+      ),
+    ]);
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: "HomeRecentItemsWidget View All");
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => HomeRecentItemsPanel()));
+  }
+
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
   }
 }
 
@@ -195,7 +235,7 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
   void initState() {
     super.initState();
     NotificationService().subscribe(this, RecentItems.notifyChanged);
-    _recentItems = RecentItems().recentItems;
+    _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
   }
 
   @override
@@ -209,9 +249,9 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
   @override
   void onNotification(String name, dynamic param) {
     if (name == RecentItems.notifyChanged) {
-      if (mounted) {
+      if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
         setState(() {
-          _recentItems = RecentItems().recentItems;
+          _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
         });
       }
     }
@@ -249,9 +289,9 @@ class _HomeRecentItemsPanelState extends State<HomeRecentItemsPanel> implements 
   }
 
   Future<void> _onPullToRefresh() async {
-    if (mounted) {
+    if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
       setState(() {
-        _recentItems = RecentItems().recentItems;
+        _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
       });
     }
   }
@@ -413,12 +453,12 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
   }
 
   void _onTapFavorite() {
-    Analytics().logSelect(target: "Favorite: ${widget.recentItem.title}");
+    Analytics().logSelect(target: "Favorite: '${widget.recentItem.title}'", source: widget.runtimeType.toString());
     Auth2().prefs?.toggleFavorite(widget.recentItem.favorite);
   }
 
   void _onTapItem() {
-    Analytics().logSelect(target: "HomeRecentItemCard clicked: ${widget.recentItem.title}");
+    Analytics().logSelect(target: "Recent Item: '${widget.recentItem.title}'", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => _getDetailPanel(widget.recentItem)));
   }
 

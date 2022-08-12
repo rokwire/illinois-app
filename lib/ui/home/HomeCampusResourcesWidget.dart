@@ -54,8 +54,8 @@ class HomeCampusResourcesWidget extends StatefulWidget {
 
   HomeCampusResourcesWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -66,7 +66,7 @@ class HomeCampusResourcesWidget extends StatefulWidget {
 
 class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> implements NotificationsListener {
 
-  List<String>? _displayCodes;
+  List<String>? _favoriteCodes;
   Set<String>? _availableCodes;
 
   @override
@@ -84,8 +84,8 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
       });
     }
 
+    _favoriteCodes = _buildFavoriteCodes();
     _availableCodes = _buildAvailableCodes();
-    _displayCodes = _buildDisplayCodes();
 
     super.initState();
   }
@@ -103,7 +103,7 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
       _updateAvailableCodes();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _updateDisplayCodes();
+      _updateFavoriteCodes();
     }
   }
 
@@ -113,17 +113,15 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
     return contentCodes.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home.campus_resources.label.campus_tools', 'Campus Resources'),
         titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-        child: Padding(padding: EdgeInsets.only(bottom: 24), child:
-          HomeCampusResourcesGridWidget(favoriteCategory: widget.favoriteId, contentCodes: contentCodes, promptFavorite: true,)
-        )
-        ,
+        childPadding: HomeSlantWidget.defaultChildPadding,
+        child: HomeCampusResourcesGridWidget(favoriteCategory: widget.favoriteId, contentCodes: contentCodes, promptFavorite: true,)
     ) : Container();
   }
 
   List<String> _buildContentCodes() {
     List<String> contentCodesList = <String>[];
-    if (_displayCodes != null) {
-      for (String code in _displayCodes!.reversed) {
+    if (_favoriteCodes != null) {
+      for (String code in _favoriteCodes!.reversed) {
         if ((_availableCodes == null) || _availableCodes!.contains(code)) {
           contentCodesList.add(code);
         }
@@ -144,27 +142,16 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
     }
   }
 
-  List<String>? _buildDisplayCodes() {
+  List<String>? _buildFavoriteCodes() {
     LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
-    if (favorites == null) {
-      // Build a default set of favorites
-      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.campus_resources'));
-      if (fullContent != null) {
-        favorites = LinkedHashSet<String>.from(fullContent.reversed);
-        Future.delayed(Duration(), () {
-          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites);
-        });
-      }
-    }
-    
     return (favorites != null) ? List.from(favorites) : null;
   }
 
-  void _updateDisplayCodes() {
-    List<String>? displayCodes = _buildDisplayCodes();
-    if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes) && mounted) {
+  void _updateFavoriteCodes() {
+    List<String>? favoriteCodes = _buildFavoriteCodes();
+    if ((favoriteCodes != null) && !DeepCollectionEquality().equals(_favoriteCodes, favoriteCodes) && mounted) {
       setState(() {
-        _displayCodes = displayCodes;
+        _favoriteCodes = favoriteCodes;
       });
     }
   }
@@ -333,32 +320,32 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
   }
 
   void _onTapEvents(BuildContext context) {
-    Analytics().logSelect(target: "Events");
+    Analytics().logSelect(target: "Events", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Events); } ));
   }
     
   void _onTapDining(BuildContext context) {
-    Analytics().logSelect(target: "Dining");
+    Analytics().logSelect(target: "Dining", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return ExplorePanel(initialItem: ExploreItem.Dining); } ));
   }
 
   void _onTapAthletics(BuildContext context) {
-    Analytics().logSelect(target: "Athletics");
+    Analytics().logSelect(target: "Athletics", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsHomePanel()));
   }
 
   void _onTapIlliniCash(BuildContext context) {
-    Analytics().logSelect(target: "Illini Cash");
+    Analytics().logSelect(target: "Illini Cash", source: runtimeType.toString());
     SettingsIlliniCashPanel.present(context);
   }
 
   void _onTapLaundry(BuildContext context) {
-    Analytics().logSelect(target: "Laundry");
+    Analytics().logSelect(target: "Laundry", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
   }
 
   void _onTapMyIllini(BuildContext context) {
-    Analytics().logSelect(target: "My Illini");
+    Analytics().logSelect(target: "My Illini", source: runtimeType.toString());
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
     }
@@ -387,14 +374,14 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
   }
 
   void _onTapWellness(BuildContext context) {
-    Analytics().logSelect(target: "Wellness");
+    Analytics().logSelect(target: "Wellness", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel()));
   }
 
   bool get _canCrisisHelp => StringUtils.isNotEmpty(Config().crisisHelpUrl);
   
   void _onTapCrisisHelp(BuildContext context) {
-    Analytics().logSelect(target: "Crisis Help");
+    Analytics().logSelect(target: "Crisis Help", source: runtimeType.toString());
     String? url = Config().crisisHelpUrl;
     if (StringUtils.isNotEmpty(url)) {
       launch(url!);
@@ -404,22 +391,22 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
   }
 
   void _onTapGroups(BuildContext context) {
-    Analytics().logSelect(target: "Groups");
+    Analytics().logSelect(target: "Groups", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel()));
   }
 
   void _onTapQuickPolls(BuildContext context) {
-    Analytics().logSelect(target: "Quick Polls");
+    Analytics().logSelect(target: "Quick Polls", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => PollsHomePanel()));
   }
 
   void _onTapCampusGuide(BuildContext context) {
-    Analytics().logSelect(target: "Campus Guide");
+    Analytics().logSelect(target: "Campus Guide", source: runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
   }
 
   void _onTapInbox(BuildContext context) {
-    Analytics().logSelect(target: "Inbox");
+    Analytics().logSelect(target: "Inbox", source: runtimeType.toString());
     SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
   }
 }
@@ -435,7 +422,7 @@ class CampusResourceButton extends StatelessWidget {
 
   const CampusResourceButton({ Key? key, this.favorite, this.title,  this.hint, this.iconAsset,  this.onTap, this.promptFavorite = true }) : super(key: key);
 
-  bool get _canFavorite => FlexUI().contentSourceEntry((favorite?.category != null) ? 'home.${favorite?.category}' : 'home')?.contains(favorite?.favoriteId) ?? false;
+  bool get _canFavorite => FlexUI()[(favorite?.category != null) ? 'home.${favorite?.category}' : 'home']?.contains(favorite?.favoriteId) ?? false;
 
   @override
   Widget build(BuildContext context) {

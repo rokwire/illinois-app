@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -23,7 +24,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 
-class CheckListPanel extends StatefulWidget {
+class CheckListPanel extends StatelessWidget {
   final String contentKey;
 
   const CheckListPanel({Key? key, required this.contentKey}) : super(key: key);
@@ -41,36 +42,33 @@ class CheckListPanel extends StatefulWidget {
   }
 
   static String? _offlineMessage(String contentKey) {
-    if (contentKey == "gies") {
+    if (contentKey == CheckList.giesOnboarding) {
       return Localization().getStringEx('widget.checklist.gies.offline', 'iDegrees New Student Checklist not available while offline.');
-    } else if (contentKey == "new_student") {
+    } else if (contentKey == CheckList.uiucOnboarding) {
       return Localization().getStringEx('widget.checklist.uiuc.offline', 'New Student Checklist not available while offline.');
     }
   }
 
   static String? _loggedOutMessage(String contentKey) {
-    if (contentKey == "gies") {
+    if (contentKey == CheckList.giesOnboarding) {
       return Localization().getStringEx('widget.checklist.gies.logged_out', 'You need to be logged in to access iDegrees New Student Checklist.');
-    } else if (contentKey == "new_student") {
+    } else if (contentKey == CheckList.uiucOnboarding) {
       return Localization().getStringEx('widget.checklist.uiuc.logged_out', 'You need to be logged in to access New Student Checklist.');
     }
   }
 
   @override
-  State<StatefulWidget> createState() => _CheckListPanelState();
-}
-
-class _CheckListPanelState extends State<CheckListPanel> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HeaderBar(title: _title), body: SingleChildScrollView(child: CheckListContentWidget(contentKey: widget.contentKey)));
+      appBar: HeaderBar(title: _title),
+      body: CheckListContentWidget(contentKey: contentKey, panelDisplay: true,)
+    );
   }
 
   String get _title {
-    if (widget.contentKey == "gies") {
+    if (contentKey == CheckList.giesOnboarding) {
       return Localization().getStringEx('widget.checklist.gies.title', 'iDegrees New Student Checklist');
-    } else if (widget.contentKey == "new_student") {
+    } else if (contentKey == CheckList.uiucOnboarding) {
       return Localization().getStringEx('widget.checklist.uiuc.title', 'New Student Checklist');
     }
 

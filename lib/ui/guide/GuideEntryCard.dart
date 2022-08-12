@@ -10,7 +10,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -112,12 +111,8 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
 
   void _onTapLink(String? url) {
     Analytics().logSelect(target: 'Link: $url');
-    if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
+    if (UrlUtils.isWebScheme(url)) {
         launch(url!);
-      }
     }
   }
 

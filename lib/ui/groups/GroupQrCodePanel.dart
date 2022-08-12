@@ -29,6 +29,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupQrCodePanel extends StatefulWidget {
   final Group? group;
@@ -55,7 +56,8 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
 
   Future<Uint8List?> _loadQrImageBytes() async {
     String deepLink = '${Groups().groupDetailUrl}?group_id=${widget.group!.id}';
-    String? qrCodeValue = Config().deepLinkRedirectUrl(deepLink);
+    String? redirectUrl = Config().deepLinkRedirectUrl;
+    String? qrCodeValue = StringUtils.isNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
     return await NativeCommunicator().getBarcodeImageData({
       'content': qrCodeValue,
       'format': 'qrCode',

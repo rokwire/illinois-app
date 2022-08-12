@@ -1,15 +1,9 @@
 import 'dart:async';
-import 'dart:collection';
-import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:collection/collection.dart';
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/main.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -20,7 +14,7 @@ import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
 import 'package:illinois/ui/wallet/IDCardPanel.dart';
 import 'package:illinois/ui/wallet/MTDBusPassPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -35,8 +29,8 @@ class HomeWalletWidget extends StatefulWidget {
 
   HomeWalletWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -46,108 +40,16 @@ class HomeWalletWidget extends StatefulWidget {
   State<HomeWalletWidget> createState() => _HomeWalletWidgetState();
 }
 
-class _HomeWalletWidgetState extends State<HomeWalletWidget> implements NotificationsListener {
+class _HomeWalletWidgetState extends HomeCompoundWidgetState<HomeWalletWidget> {
 
-  List<String>? _favoriteCodes;
-  Set<String>? _availableCodes;
-  List<String>? _displayCodes;
-  PageController? _pageController;
-  String? _currentCode;
-  int _currentIndex = -1;
-  final double _pageSpacing = 16;
+  _HomeWalletWidgetState() : super(direction: Axis.horizontal);
+
+  @override String? get favoriteId => widget.favoriteId;
+  @override String? get title => HomeWalletWidget.title;
+  @override String? get emptyMessage => Localization().getStringEx("widget.home.wallet.text.empty.description", "Tap the \u2606 on items in Wallet so you can quickly find them here.");
 
   @override
-  void initState() {
-    NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
-      Auth2UserPrefs.notifyFavoritesChanged,
-    ]);
-
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-        }
-      });
-    }
-
-    _availableCodes = _buildAvailableCodes();
-    _favoriteCodes = _buildFavoriteCodes();
-    _displayCodes = _buildDisplayCodes();
-
-    if (_displayCodes?.isNotEmpty ?? false) {
-      _currentIndex = 0;
-      _currentCode = _displayCodes?.first;
-    }
-    
-    double screenWidth = MediaQuery.of(App.instance?.currentContext ?? context).size.width;
-    double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
-    _pageController = PageController(viewportFraction: pageViewport);
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    NotificationService().unsubscribe(this);
-    _pageController?.dispose();
-    super.dispose();
-  }
-
-  // NotificationsListener
-
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      _updateAvailableCodes();
-    }
-    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _updateFavoriteCodes();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: Localization().getStringEx('widget.home.wallet.label.title', 'Wallet'),
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      childPadding: EdgeInsets.zero,
-      child: _buildContent(),
-    );
-  }
-
-  Widget _buildContent() {
-    if (CollectionUtils.isEmpty(_displayCodes)) {
-      return HomeMessageCard(
-        title: Localization().getStringEx("widget.home.wallet.text.empty", "Whoops! Nothing to see here."),
-        message: Localization().getStringEx("widget.home.wallet.text.empty.description", "Tap the \u2606 on items in Wallet so you can quickly find them here."),
-      );
-    }
-    else if (_displayCodes?.length == 1) {
-      return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child: _widgetFromCode(_displayCodes?.first) ?? Container());
-    }
-    else {
-      double pageHeight = max(20 * MediaQuery.of(context).textScaleFactor + 2 * 8, 18 + 2 * 16) + 1 + 24 * MediaQuery.of(context).textScaleFactor + 3 * 8 + 2;
-
-      List<Widget> pages = <Widget>[];
-      for (String code in _displayCodes!) {
-        pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child: _widgetFromCode(code) ?? Container()));
-      }
-
-      return Padding(padding: EdgeInsets.only(top: 8), child:
-        Container(constraints: BoxConstraints(minHeight: pageHeight), child:
-          ExpandablePageView(
-            controller: _pageController,
-            estimatedPageSize: pageHeight,
-            onPageChanged: _onCurrentPageChanged,
-            children: pages,
-          ),
-        ),
-      );
-    }
-
-  }
-
-  Widget? _widgetFromCode(String? code) {
+  Widget? widgetFromCode(String code) {
     if (code == 'illini_cash_card') {
       return HomeIlliniCashWalletWidget(favorite: HomeFavorite(code, category: widget.favoriteId), updateController: widget.updateController,);
     }
@@ -165,85 +67,6 @@ class _HomeWalletWidgetState extends State<HomeWalletWidget> implements Notifica
     }
     else {
       return null;
-    }
-  }
-
-  //  List<dynamic>? contentListCodes = FlexUI()['home.wallet'];
-
-  Set<String>? _buildAvailableCodes() => JsonUtils.setStringsValue(FlexUI()['home.wallet']);
-
-  void _updateAvailableCodes() {
-    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home.wallet']);
-    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
-      setState(() {
-        _availableCodes = availableCodes;
-        _displayCodes = _buildDisplayCodes();
-        _updateCurrentPage();
-      });
-    }
-  }
-
-  List<String>? _buildFavoriteCodes() {
-    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
-    if (favorites == null) {
-      // Build a default set of favorites
-      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.wallet'));
-      if (fullContent != null) {
-        favorites = LinkedHashSet<String>.from(fullContent.reversed);
-        Future.delayed(Duration(), () {
-          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites);
-        });
-      }
-    }
-    
-    return (favorites != null) ? List.from(favorites) : null;
-  }
-
-  void _updateFavoriteCodes() {
-    List<String>? favoriteCodes = _buildFavoriteCodes();
-    if ((favoriteCodes != null) && !DeepCollectionEquality().equals(_favoriteCodes, favoriteCodes) && mounted) {
-      setState(() {
-        _favoriteCodes = favoriteCodes;
-        _displayCodes = _buildDisplayCodes();
-        _updateCurrentPage();
-      });
-    }
-  }
-
-  List<String> _buildDisplayCodes() {
-    List<String> displayCodes = <String>[];
-    if (_favoriteCodes != null) {
-      for (String code in _favoriteCodes!.reversed) {
-        if ((_availableCodes == null) || _availableCodes!.contains(code)) {
-          Widget? contentEntry = _widgetFromCode(code);
-          if (contentEntry != null) {
-            displayCodes.add(code);
-          }
-        }
-      }
-    }
-    return displayCodes;
-  }
-
-  void _onCurrentPageChanged(int index) {
-    _currentCode = ListUtils.entry(_displayCodes, _currentIndex = index);
-  }
-
-  void _updateCurrentPage() {
-    if (_displayCodes?.isNotEmpty ?? false) {
-      int currentPage = (_currentCode != null) ? _displayCodes!.indexOf(_currentCode!) : -1;
-      if (currentPage < 0) {
-        currentPage = max(0, min(_currentIndex, _displayCodes!.length - 1));
-      }
-      _currentCode = _displayCodes![currentPage];
-      if (currentPage != _currentIndex) {
-        _currentIndex = currentPage;
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
-          if (_pageController?.hasClients ?? false) {
-            _pageController?.jumpToPage(currentPage);
-          }
-        });
-      }
     }
   }
 }
@@ -264,7 +87,8 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      IlliniCash.notifyBallanceUpdated
+      IlliniCash.notifyBallanceUpdated,
+      Connectivity.notifyStatusChanged,
     ]);
     super.initState();
   }
@@ -277,6 +101,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
 
   @override
   Widget build(BuildContext context) {
+    String? ballance = IlliniCash().ballance?.balanceDisplayText;
     return GestureDetector(onTap: _onTap, child:
       Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
         ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
@@ -297,11 +122,13 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        VerticalTitleValueSection(
-                          title: Localization().getStringEx('widget.home.wallet.illini_cash.label.current_balance', 'Current Illini Cash Balance'),
-                          value: IlliniCash().ballance?.balanceDisplayText ?? '\$0.00',
-                          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        )
+                        Opacity(opacity: StringUtils.isNotEmpty(ballance) ? 1 : 0, child:
+                          VerticalTitleValueSection(
+                            title: Localization().getStringEx('widget.home.wallet.illini_cash.label.current_balance', 'Current Illini Cash Balance'),
+                            value: ballance,
+                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          ),
+                        ),
                       ),
                       Visibility(visible: SettingsAddIlliniCashPanel.canPresent, child:
                         Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
@@ -320,19 +147,19 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
   }
 
   void _onTap() {
-    Analytics().logSelect(target: 'Illini Cash');
+    Analytics().logSelect(target: 'Illini Cash', source: widget.runtimeType.toString());
     SettingsIlliniCashPanel.present(context);
   }
 
   void _onTapPlus() {
-    Analytics().logSelect(target: "Add Illini Cash");
+    Analytics().logSelect(target: "Add Illini Cash", source: widget.runtimeType.toString());
     SettingsAddIlliniCashPanel.present(context);
   }
 
   // NotificationsListener
 
   void onNotification(String name, dynamic param) {
-    if (name == IlliniCash.notifyBallanceUpdated) {
+    if ((name == IlliniCash.notifyBallanceUpdated) || (name == Connectivity.notifyStatusChanged)) {
       if (mounted) {
         setState(() {});
       }
@@ -369,6 +196,8 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
 
   @override
   Widget build(BuildContext context) {
+    String? mealBalance = IlliniCash().ballance?.mealBalanceDisplayText;
+    String? cafeCreditBalance = IlliniCash().ballance?.cafeCreditBalanceDisplayText;
     return GestureDetector(onTap: _onTap, child:
       Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
         ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
@@ -390,18 +219,22 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        VerticalTitleValueSection(
-                          title: Localization().getStringEx('widget.home.wallet.meal_plan.label.meals_remaining.text', 'Meals Remaining'),
-                          value: IlliniCash().ballance?.mealBalanceDisplayText ?? "0",
-                          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        )
+                        Opacity(opacity: StringUtils.isNotEmpty(mealBalance) ? 1 : 0, child:
+                          VerticalTitleValueSection(
+                            title: Localization().getStringEx('widget.home.wallet.meal_plan.label.meals_remaining.text', 'Meals Remaining'),
+                            value: mealBalance,
+                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          )
+                        ),
                       ),
                       Expanded(child:
-                        VerticalTitleValueSection(
-                          title: Localization().getStringEx('widget.home.wallet.meal_plan.label.dining_dollars.text', 'Dining Dollars'),
-                          value: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0",
-                          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        )
+                        Opacity(opacity: StringUtils.isNotEmpty(cafeCreditBalance) ? 1 : 0, child:
+                          VerticalTitleValueSection(
+                            title: Localization().getStringEx('widget.home.wallet.meal_plan.label.dining_dollars.text', 'Dining Dollars'),
+                            value: cafeCreditBalance,
+                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          ),
+                        ),
                       ),
                     ]),
                   ),
@@ -415,7 +248,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
   }
 
   void _onTap() {
-    Analytics().logSelect(target: 'Meal Plan');
+    Analytics().logSelect(target: 'Meal Plan', source: widget.runtimeType.toString());
     SettingsMealPlanPanel.present(context);
   }
 
@@ -480,13 +313,15 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        VerticalTitleValueSection(
-                          title: Auth2().authCard?.role ?? '',
-                          titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 24, color: Styles().colors?.fillColorPrimary),
-                          value: StringUtils.isNotEmpty(Auth2().authCard?.expirationDate) ? sprintf(Localization().getStringEx('widget.home.wallet.bus_pass.label.card_expires.text', 'Card Expires: %s'), [Auth2().authCard?.expirationDate ?? '']) : '',
-                          valueTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary),
-                          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        )
+                        Opacity(opacity: (Auth2().authCard != null) ? 1 : 0, child:
+                          VerticalTitleValueSection(
+                            title: Auth2().authCard?.role ?? '',
+                            titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 24, color: Styles().colors?.fillColorPrimary),
+                            value: StringUtils.isNotEmpty(Auth2().authCard?.expirationDate) ? sprintf(Localization().getStringEx('widget.home.wallet.bus_pass.label.card_expires.text', 'Expires: %s'), [Auth2().authCard?.expirationDate ?? '']) : '',
+                            valueTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary),
+                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          ),
+                        ),
                       ),
                     ]),
                   ),
@@ -500,7 +335,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
   }
 
   void _onTap() {
-    Analytics().logSelect(target: 'Bus Pass');
+    Analytics().logSelect(target: 'Bus Pass', source: widget.runtimeType.toString());
     MTDBusPassPanel.present(context);
   }
 
@@ -565,11 +400,13 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        VerticalTitleValueSection(
-                          title: StringUtils.isNotEmpty(Auth2().authCard?.fullName) ? Auth2().authCard?.fullName : Auth2().fullName,
-                          value: Auth2().authCard?.uin ?? '',
-                          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        )
+                        Opacity(opacity: (Auth2().authCard != null) ? 1 : 0, child:
+                          VerticalTitleValueSection(
+                            title: StringUtils.isNotEmpty(Auth2().authCard?.fullName) ? Auth2().authCard?.fullName : Auth2().fullName,
+                            value: Auth2().authCard?.uin ?? '',
+                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          ),
+                        ),
                       ),
                     ]),
                   ),
@@ -583,7 +420,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
   }
 
   void _onTap() {
-    Analytics().logSelect(target: 'Illini ID');
+    Analytics().logSelect(target: 'Illini ID', source: widget.runtimeType.toString());
      IDCardPanel.present(context);
   }
 
@@ -678,7 +515,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
   }
 
   void _onTap() {
-    Analytics().logSelect(target: 'Library Card');
+    Analytics().logSelect(target: 'Library Card', source: widget.runtimeType.toString());
   }
 
   void _loadLibraryBarcode() {

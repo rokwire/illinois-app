@@ -1,12 +1,13 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -25,8 +26,8 @@ class HomeCampusHighlightsWidget extends StatefulWidget {
 
   HomeCampusHighlightsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -39,6 +40,11 @@ class HomeCampusHighlightsWidget extends StatefulWidget {
 class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget> implements NotificationsListener {
 
   List<Map<String, dynamic>>? _promotedItems;
+
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double _pageSpacing = 16;
 
   @override
   void initState() {
@@ -55,18 +61,19 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
-          _updatePromotedItems();
+          Guide().refresh();
         }
       });
     }
 
-    _promotedItems = Guide().promotedList;
+    _promotedItems = List<Map<String, dynamic>>.from(Guide().promotedList ?? <Map<String, dynamic>>[]);
   }
 
   @override
   void dispose() {
-    super.dispose();
     NotificationService().unsubscribe(this);
+    _pageController?.dispose();
+    super.dispose();
   }
 
   // NotificationsListener
@@ -96,48 +103,98 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(visible: CollectionUtils.isNotEmpty(_promotedItems), child:
-        HomeSlantWidget(favoriteId: widget.favoriteId,
-          title: Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-          child: Column(children: _buildPromotedList(),) 
-        ),
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
+      title: Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      child: _buildContent() 
     );
+  }
+
+  Widget _buildContent() {
+    return  (_promotedItems?.isEmpty ?? true) ? HomeMessageCard(
+      message: Localization().getStringEx("widget.home.campus_guide_highlights.text.empty.description", "There are no active Campus Guide Highlights."),
+    ) : _buildPromotedContent();
+  }
+
+  Widget _buildPromotedContent() {
+    Widget contentWidget;
+    int visibleCount = _promotedItems?.length ?? 0; // Config().homeCampusHighlightsCount
+
+    if (1 < visibleCount) {
+      
+      List<Widget> pages = <Widget>[];
+      for (int index = 0; index < visibleCount; index++) {
+        Map<String, dynamic>? promotedItem = JsonUtils.mapValue(_promotedItems![index]);
+        pages.add(Padding(key: _contentKeys[Guide().entryId(promotedItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 2), child:
+          GuideEntryCard(promotedItem)
+        ));
+      }
+
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          allowImplicitScrolling: true,
+          children: pages,
+        ),
+      );
+
+    }
+    else {
+      contentWidget = Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        GuideEntryCard(_promotedItems?.first)
+      );
+    }
+
+    return Column(children: <Widget>[
+      contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
+      LinkButton(
+            title: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.title', 'View All'),
+            hint: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.hint', 'Tap to view all highlights'),
+        onTap: _onSeeAll,
+      ),
+    ]);
   }
 
   void _updatePromotedItems() {
     List<Map<String, dynamic>>? promotedItems = Guide().promotedList;
-    if (!DeepCollectionEquality().equals(_promotedItems, promotedItems)) {
+    if (mounted && (promotedItems != null) && !DeepCollectionEquality().equals(_promotedItems, promotedItems)) {
       setState(() {
-        _promotedItems = promotedItems;
+        _promotedItems = List<Map<String, dynamic>>.from(promotedItems);
+        _pageViewKey = UniqueKey();
+        _pageController = null;
+        _contentKeys.clear();
       });
     }
   }
 
-  List<Widget> _buildPromotedList() {
-    List<Widget> contentList = <Widget>[];
-    if (_promotedItems != null) {
-      int promotedCount = min(_promotedItems!.length, Config().homeCampusHighlightsCount);
-      for (int index = 0; index < promotedCount; index++) {
-        Map<String, dynamic>? promotedItem = _promotedItems![index];
-        if (contentList.isNotEmpty) {
-          contentList.add(Container(height: 8,));
-        }
-        contentList.add(GuideEntryCard(promotedItem));
-      }
-      if (promotedCount < _promotedItems!.length) {
-          contentList.add(LinkButton(
-            title: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.title', 'View All'),
-            hint: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.hint', 'Tap to view all highlights'),
-            onTap: _onSeeAll,
-          ));
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for(GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
       }
     }
-    return contentList;
+
+    return minContentHeight ?? 0;
   }
 
   void _onSeeAll() {
-    Analytics().logSelect(target: "HomeCampusHighlightsWidget View All");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(contentList: _promotedItems, contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'))));
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
+      contentList: _promotedItems,
+      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Guide Highlights."),
+    )));
   }
 }

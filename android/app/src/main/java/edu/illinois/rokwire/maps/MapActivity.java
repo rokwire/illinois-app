@@ -268,8 +268,8 @@ public class MapActivity extends AppCompatActivity implements MeridianLocationMa
 
     protected void afterMapControlInitialized() {
         mapControl.selectFloor(0);
-        boolean hideLevels = Utils.Map.getValueFromPath(options, "hideLevels", false);
-        mapControl.enableFloorSelector(!hideLevels);
+        boolean showLevels = Utils.Map.getValueFromPath(options, "enableLevels", true);
+        mapControl.enableFloorSelector(showLevels);
         startPositioning(null);
         fillMarkers();
     }

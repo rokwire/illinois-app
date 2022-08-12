@@ -15,20 +15,13 @@
  */
 
 import 'dart:async';
-import 'dart:collection';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeDiningWidget extends StatefulWidget {
 
@@ -37,149 +30,53 @@ class HomeDiningWidget extends StatefulWidget {
 
   const HomeDiningWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widgets.home.dinings.header.title', 'Dining');
+  static String get title => Localization().getStringEx('widget.home.dinings.header.title', 'Dining');
 
   @override
   State<StatefulWidget> createState() => _HomeDiningWidgetState();
 }
 
-class _HomeDiningWidgetState extends State<HomeDiningWidget> implements NotificationsListener{
+class _HomeDiningWidgetState extends HomeCompoundWidgetState<HomeDiningWidget> {
 
-  List<String>? _displayCodes;
-  Set<String>? _availableCodes;
-
-  @override
-  void initState() {
-    super.initState();
-
-    NotificationService().subscribe(this, [
-      FlexUI.notifyChanged,
-      Auth2UserPrefs.notifyFavoritesChanged,
-    ]);
-
-    if (widget.updateController != null) {
-      widget.updateController!.stream.listen((String command) {
-        if (command == HomePanel.notifyRefresh) {
-        }
-      });
-    }
-
-    _availableCodes = _buildAvailableCodes();
-    _displayCodes = _buildDisplayCodes();
-  }
+  @override String? get favoriteId => widget.favoriteId;
+  @override String? get title => HomeDiningWidget.title;
+  @override String? get emptyMessage => Localization().getStringEx("widget.home.dinings.text.empty.description", "Tap the \u2606 on items in Dinings so you can quickly find them here.");
 
   @override
-  void dispose() {
-    NotificationService().unsubscribe(this);
-    super.dispose();
-  }
-
-  // NotificationsListener
-  @override
-  void onNotification(String name, dynamic param) {
-    if (name == FlexUI.notifyChanged) {
-      _updateAvailableCodes();
+  Widget? widgetFromCode(String code) {
+    if (code == 'dinings_all') {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.dinings.all.button.title', 'Residence Hall Dining'),
+        description: Localization().getStringEx('widget.home.dinings.all.button.description', 'Students, faculty, staff, and guests are welcome to eat at any residence hall dining location.'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        onTap: _onTapDiningsAll,
+      );
     }
-    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _updateDisplayCodes();
+    else if (code == 'dinings_open') {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.dinings.open.button.title', 'Residence Hall Dining Open Now'),
+        description: Localization().getStringEx('widget.home.dinings.open.button.description', 'Quick access to any locations that are currently open.'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        onTap: _onTapDiningsOpen,
+      );
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> commandsList = _buildCommandsList();
-    return commandsList.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: HomeDiningWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      child: Column(children: commandsList,),
-      //flatHeight: 0, slantHeight: 0, childPadding: EdgeInsets.all(16),
-    ) : Container();
-  }
-
-  List<Widget> _buildCommandsList() {
-    List<Widget> contentList = <Widget>[];
-    if (_displayCodes != null) {
-      for (String code in _displayCodes!.reversed) {
-        if ((_availableCodes == null) || _availableCodes!.contains(code)) {
-          Widget? contentEntry;
-          if (code == 'dinings_all') {
-            contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widgets.home.dinings.all.button.title', 'Residence Hall Dining'),
-              description: Localization().getStringEx('widgets.home.dinings.all.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
-              favorite: HomeFavorite(code, category: widget.favoriteId),
-              onTap: _onTapDiningsAll,
-            );
-          }
-          else if (code == 'dinings_open') {
-            contentEntry = HomeCommandButton(
-              title: Localization().getStringEx('widgets.home.dinings.open.button.title', 'Residence Hall Dining Open Now'),
-              description: Localization().getStringEx('widgets.home.dinings.open.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
-              favorite: HomeFavorite(code, category: widget.favoriteId),
-              onTap: _onTapDiningsOpen,
-            );
-          }
-
-          if (contentEntry != null) {
-            if (contentList.isNotEmpty) {
-              contentList.add(Container(height: 6,));
-            }
-            contentList.add(contentEntry);
-          }
-        }
-      }
-
-    }
-   return contentList;
-  }
-
-  Set<String>? _buildAvailableCodes() => JsonUtils.setStringsValue(FlexUI()['home.dinings']);
-
-  void _updateAvailableCodes() {
-    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()['home.dinings']);
-    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
-      setState(() {
-        _availableCodes = availableCodes;
-      });
+    else {
+      return null;
     }
   }
-
-  List<String>? _buildDisplayCodes() {
-    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
-    if (favorites == null) {
-      // Build a default set of favorites
-      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.dinings'));
-      if (fullContent != null) {
-        favorites = LinkedHashSet<String>.from(fullContent.reversed);
-        Future.delayed(Duration(), () {
-          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites);
-        });
-      }
-    }
-    
-    return (favorites != null) ? List.from(favorites) : null;
-  }
-
-  void _updateDisplayCodes() {
-    List<String>? displayCodes = _buildDisplayCodes();
-    if ((displayCodes != null) && !DeepCollectionEquality().equals(_displayCodes, displayCodes) && mounted) {
-      setState(() {
-        _displayCodes = displayCodes;
-      });
-    }
-  }
-
+  
   void _onTapDiningsAll() {
-    Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining");
+    Analytics().logSelect(target: "Residence Hall Dining", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining) ));
   }
 
   void _onTapDiningsOpen() {
-    Analytics().logSelect(target: "HomeDiningWidget: Residence Hall Dining Open Now");
+    Analytics().logSelect(target: "Residence Hall Dining Open Now", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExplorePanel(initialItem: ExploreItem.Dining, initialFilter: ExploreFilter(type: ExploreFilterType.work_time, selectedIndexes: {1}))));
   }
 }

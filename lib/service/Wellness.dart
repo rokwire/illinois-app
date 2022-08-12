@@ -26,7 +26,6 @@ import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -46,9 +45,12 @@ class Wellness with Service implements NotificationsListener {
   static const String notifyContentChanged = "edu.illinois.rokwire.wellness.content.changed";
   static const String notifyDailyTipChanged = "edu.illinois.rokwire.wellness.daily_tip.changed";
 
+  static final String _userAccessedToDoListSetting = 'edu.illinois.rokwire.settings.wellness.todo.list.accessed';
+  static final String _userAccessedRingsSetting = 'edu.illinois.rokwire.settings.wellness.rings.accessed';
+
   static const String _contentCacheFileName = "wellness.content.json";
-  static const String _tipsContentCategoty = "wellness.tips";
-  static const List<String> _contentCategories = [_tipsContentCategoty];
+  static const String _tipsContentCategory = "wellness_tips";
+  static const List<String> _contentCategories = [_tipsContentCategory];
 
   File? _contentCacheFile;
   Map<String, dynamic>? _contentMap;
@@ -304,7 +306,7 @@ class Wellness with Service implements NotificationsListener {
   void refreshDailyTip() => _updateDailyTip(force: true);
 
   String? get _randomTipId {
-    Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategoty] : null;
+    Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategory] : null;
     List<dynamic>? entries = (tipsContent != null) ? JsonUtils.listValue(tipsContent['entries']) : null;
     if ((entries != null) && (0 < entries.length)) {
       int entryIndex = Random().nextInt(entries.length);
@@ -315,13 +317,13 @@ class Wellness with Service implements NotificationsListener {
   }
 
   String? _tipString({String? tipId}) {
-    Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategoty] : null;
+    Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategory] : null;
     Map<String, dynamic>? strings = (tipsContent != null) ? JsonUtils.mapValue(tipsContent['strings']) : null;
-    return _getContentString(strings, tipId);
+    return StringUtils.getContentString(strings, tipId);
   }
 
   bool _hasTip({String? tipId}) {
-    Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategoty] : null;
+    Map<String, dynamic>? tipsContent = (_contentMap != null) ? _contentMap![_tipsContentCategory] : null;
     List<dynamic>? entries = (tipsContent != null) ? JsonUtils.listValue(tipsContent['entries']) : null;
     if ((entries != null) && (0 < entries.length)) {
       for (dynamic entry in entries) {
@@ -333,19 +335,6 @@ class Wellness with Service implements NotificationsListener {
       }
     }
     return false;
-  }
-
-  static String? _getContentString(Map<String, dynamic>? strings,  String? key, {String? languageCode}) {
-    if ((strings != null) && (key != null)) {
-      Map<String, dynamic>? mapping =
-        JsonUtils.mapValue(strings[languageCode]) ??
-        JsonUtils.mapValue(strings[Localization().currentLocale?.languageCode]) ??
-        JsonUtils.mapValue(strings[Localization().defaultLocale?.languageCode]);
-      if (mapping != null) {
-        return JsonUtils.stringValue(mapping[key]);
-      }
-    }
-    return null;
   }
 
 
@@ -363,6 +352,32 @@ class Wellness with Service implements NotificationsListener {
         }
       }
     }
+  }
+
+  // Common User Settings
+
+  bool? get isToDoListAccessed {
+    return _getUserBoolSetting(_userAccessedToDoListSetting);
+  }
+
+  void toDoListAccessed(bool accessed) {
+    _applyUserSetting(settingName: _userAccessedToDoListSetting, settingValue: accessed);
+  }
+
+  bool? get isRingsAccessed {
+    return _getUserBoolSetting(_userAccessedRingsSetting);
+  }
+
+  void ringsAccessed(bool accessed) {
+    _applyUserSetting(settingName: _userAccessedRingsSetting, settingValue: accessed);
+  }
+
+  bool? _getUserBoolSetting(String settingName) {
+    return Auth2().prefs?.getBoolSetting(settingName);
+  }
+
+  void _applyUserSetting({required String settingName, dynamic settingValue}) {
+    Auth2().prefs?.applySetting(settingName, settingValue);
   }
 
   // Getters

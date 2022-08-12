@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -56,6 +57,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   DateTime? _offsetDate;
   rokwire.ConfigEnvironment? _selectedEnv;
   Set<String> _rangingRegionIds = Set();
+  bool _preparingRatingApp = false;
 
   final TextEditingController _mapThresholdDistanceController = TextEditingController();
   final TextEditingController _geoFenceRegionRadiusController = TextEditingController();
@@ -162,7 +164,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     ToggleRibbonButton(label: 'Disable live game check', toggled: Storage().debugDisableLiveGameCheck ?? false, onTap: _onDisableLiveGameCheckToggled),
                     ToggleRibbonButton(label: 'Display all times in Central Time', toggled: !Storage().useDeviceLocalTimeZone!, onTap: _onUseDeviceLocalTimeZoneToggled),
                     ToggleRibbonButton(label: 'Show map location source', toggled: Storage().debugMapLocationProvider ?? false, onTap: _onMapLocationProvider),
-                    ToggleRibbonButton(label: 'Show map levels', toggled: !Storage().debugMapHideLevels!, onTap: _onMapShowLevels),
+                    ToggleRibbonButton(label: 'Show map levels', toggled: Storage().debugMapShowLevels!, onTap: _onMapShowLevels),
                     //Container(height: 1, color: Styles().colors!.surfaceAccent),
                     
                     Container(color: Colors.white, child: Padding(padding: EdgeInsets.only(top: 16), child: Container(height: 1, color: Styles().colors!.surfaceAccent))),
@@ -359,6 +361,30 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                       child: Container(height: 1, color: Styles().colors?.textSurface ,),),
 
+                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: 'Rate App',
+                            backgroundColor: Styles().colors!.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors!.fillColorPrimary,
+                            borderColor: Styles().colors!.fillColorPrimary,
+                            progress: _preparingRatingApp,
+                            onTap: _onTapRateApp))),
+
+                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                        child: RoundedButton(
+                            label: 'Review App',
+                            backgroundColor: Styles().colors!.background,
+                            fontSize: 16.0,
+                            textColor: Styles().colors!.fillColorPrimary,
+                            borderColor: Styles().colors!.fillColorPrimary,
+                            onTap: _onTapReviewApp))),
+
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      child: Container(height: 1, color: Styles().colors?.textSurface ,),),
+
 
                     Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                       child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -538,7 +564,7 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
   void _onMapShowLevels() {
     setState(() {
-      Storage().debugMapHideLevels = !Storage().debugMapHideLevels!;
+      Storage().debugMapShowLevels = (Storage().debugMapShowLevels != true);
     });
   }
 
@@ -688,6 +714,31 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
           _selectedEnv = Config().configEnvironment = env;
         });
     }
+  }
+
+  void _onTapRateApp() async {
+    if (!_preparingRatingApp) {
+      setState(() {
+        _preparingRatingApp = true;
+      });
+      Future.delayed(Duration(milliseconds: 500)).then((_) {
+        final InAppReview inAppReview = InAppReview.instance;
+        inAppReview.isAvailable().then((bool result) {
+          if (mounted) {
+            setState(() {
+              _preparingRatingApp = false;
+            });
+            if (result) {
+              inAppReview.requestReview();
+            }
+          }
+        });
+      });
+    }
+  }
+
+  void _onTapReviewApp() {
+    InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
   }
 
   void _onTapHttpProxy() {

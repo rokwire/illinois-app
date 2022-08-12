@@ -1,6 +1,6 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/model/wellness/WellnessReing.dart';
+import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/WellnessRings.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:intl/intl.dart';
@@ -139,56 +139,62 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
         controller.animateTo(completion, );
       }
 
-      return AnimatedBuilder(
+      return Semantics(
+          // label: "${data.name} Ring, completed ${WellnessRings().getRingDailyValue(data.id)} of ${data.goal} ${data.unit}s",
+          child:AnimatedBuilder(
         animation: controller,
         builder: (context, child) {
-          return Container(
-            width: innerContentSize,
-            height: innerContentSize,
-            child: Stack(
-              children: [
-                Center(
-                    child: SizedBox(
-                          height: innerContentSize,
-                          width: innerContentSize,
-                          child: CircularProgressIndicator(
-                            strokeWidth: widget.strokeSize.toDouble(),
-                            value: controller!.value >= 1 ? 0.9975 : controller.value,
-                            // * (completion) >= 1 ? 0.999 : completion, // Simulate padding in the end
-                            color: data.color,
-                            backgroundColor: Colors.white,
-                          )),
-                    ),
-                Center(
-                    child:
-                    Container(
-                      width: innerContentSize,
-                      height: innerContentSize,
-                      decoration: BoxDecoration(
-                          color: Styles().colors!.surfaceAccent!,
-                          shape: BoxShape.circle
+          return Semantics(
+            // label: "${data.name} Ring, completed ${WellnessRings().getRingDailyValue(data.id)} of ${data.goal} ${data.unit}s",
+            child:Container(
+              width: innerContentSize,
+              height: innerContentSize,
+              child: Stack(
+                children: [
+                  Center(
+                      child: SizedBox(
+                            height: innerContentSize,
+                            width: innerContentSize,
+                            child: CircularProgressIndicator(
+                              semanticsLabel: "${data.name} Ring Progress indicator",// tbd localize
+                              semanticsValue: "completed ${WellnessRings().getRingDailyValue(data.id).toInt()} of ${data.goal.toInt()} ${data.unit}s", // tbd localize
+                              strokeWidth: widget.strokeSize.toDouble(),
+                              value: controller!.value >= 1 ? 0.9975 : controller.value,
+                              // * (completion) >= 1 ? 0.999 : completion, // Simulate padding in the end
+                              color: data.color,
+                              backgroundColor: Colors.white,
+                            )),
                       ),
-                    )),
-                Center(
-                    child: Container(
-                      width: innerContentSize - widget.borderWidth,
-                      height: innerContentSize - widget.borderWidth,
-                      decoration: BoxDecoration(
-                          color: widget.backgroundColor ??
-                              Styles().colors!.white!,
-                          shape: BoxShape.circle
-                      ),
+                  Center(
                       child:
-                      childWidget ??
-                          Center(child: Text("TBD",
-                            style: TextStyle(fontSize: 40),)),
-                    )
-                ),
-              ],
-            ),
+                      Container(
+                        width: innerContentSize,
+                        height: innerContentSize,
+                        decoration: BoxDecoration(
+                            color: Styles().colors!.surfaceAccent!,
+                            shape: BoxShape.circle
+                        ),
+                      )),
+                  Center(
+                      child: Container(
+                        width: innerContentSize - widget.borderWidth,
+                        height: innerContentSize - widget.borderWidth,
+                        decoration: BoxDecoration(
+                            color: widget.backgroundColor ??
+                                Styles().colors!.white!,
+                            shape: BoxShape.circle
+                        ),
+                        child: childWidget ??
+                            Center(child: Text("TBD",
+                              style: TextStyle(fontSize: 40),)),
+                      )
+                  ),
+                ],
+              ),
+            )
           );
         },
-      );
+      ));
     }
     return Container();
   }
@@ -320,8 +326,8 @@ class WellnessRingButton extends StatefulWidget{
   final Color? color;
   final bool enabled;
   final void Function(BuildContext context)? onTapWidget;
-  final void Function(BuildContext context)? onTapDecrease;
-  final void Function(BuildContext context)? onTapIncrease;
+  final Future<void> Function(BuildContext context)? onTapDecrease;
+  final Future<void> Function(BuildContext context)? onTapIncrease;
   final void Function(BuildContext context)? onTapEdit;
 
   const WellnessRingButton({Key? key, required this.label, this.description, this.color, this.enabled = true, this.onTapIncrease, this.onTapEdit, this.onTapDecrease, this.onTapWidget}) : super(key: key);
@@ -332,10 +338,12 @@ class WellnessRingButton extends StatefulWidget{
 }
 
 class _WellnessRingButtonState extends State<WellnessRingButton>{
+  bool _increaseLoading = false;
+  bool _decreaseLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(label: widget.label, hint: widget.description, button: true, excludeSemantics: true, child:
+    return Semantics(label: "${widget.label} Ring. ", hint: widget.description, explicitChildNodes: true, child: // tbd localize
     GestureDetector(onTap: () => widget.enabled && widget.onTapWidget!=null? widget.onTapWidget!(context): null, child:
     Container(
       // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
@@ -354,13 +362,11 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                Text(widget.label ,
-                  style: TextStyle(color: Colors.white,
-                    fontFamily: Styles().fontFamilies!.bold, fontSize: 14), textAlign: TextAlign.start,),
+                Text(widget.label , semanticsLabel: "",
+                  style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 14), textAlign: TextAlign.start,),
                 widget.description==null ? Container():
-                Text(widget.description ?? "" ,
-                  style: TextStyle(color: Colors.white,
-                      fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.end,),
+                Text(widget.description ?? "" , semanticsLabel: "",
+                  style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.end,),
                 ],),)),
               Container(
                 child: Row(
@@ -382,39 +388,93 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
   }
 
   Widget get _editRingButton{
-    return GestureDetector(
-        onTap: (){ if (widget.onTapEdit!=null) widget.onTapEdit!(this.context);},
+    return Semantics(label: "${widget.label} Ring Edit Button", hint: "double tap to edit ring details", inMutuallyExclusiveGroup: true, excludeSemantics: true, // tbd localize
+      child:GestureDetector(
+        onTap: (){
+          if (widget.onTapEdit!=null)
+            widget.onTapEdit!(this.context);
+        },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Image.asset('images/edit-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
-        ));
+        )));
   }
   Widget get _increaseValueButton{
-    return GestureDetector(
-        onTap: (){ if (widget.onTapIncrease!=null) widget.onTapIncrease!(this.context);},
+    return Semantics(label: "${widget.label} Ring Increase Button", hint: "double tap to increase with 1", inMutuallyExclusiveGroup: true, excludeSemantics: true, // tbd localize
+      child:GestureDetector(
+        onTap: (){
+          if (widget.onTapIncrease!=null){
+            if(mounted){ setState(() {_increaseLoading = true;});}
+
+            widget.onTapIncrease!(this.context).
+              then((_) {
+              AppSemantics.announceMessage(context, "${widget.label} Ring Increased with 1") ; // tbd localize
+                if(mounted){ setState(() {_increaseLoading = false;});}
+              });
+        }},
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
-        ));
+          height: 40, width: 40,
+          child: Stack(
+            children : [
+              Center(
+                child:Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Visibility(visible: _increaseLoading, child: Center(child: CircularProgressIndicator(color: Colors.white),)),
+              )),
+              Center(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+                ))
+            ]
+        ))
+
+    ));
   }
 
   Widget get _decreaseValueButton{
-    return GestureDetector(
-        onTap: (){ if (widget.onTapDecrease!=null) widget.onTapDecrease!(this.context);},
+    return Semantics(label: "${widget.label} Ring Decrease Button", hint: "double tap to decrease with 1", inMutuallyExclusiveGroup: true, excludeSemantics: true,// tbd localize
+        child: GestureDetector(
+        onTap: (){ 
+          if (widget.onTapDecrease!=null){
+            if(mounted){setState(() {_decreaseLoading = true;});}
+
+            widget.onTapDecrease!(this.context).
+              then((value) {
+               AppSemantics.announceMessage(context, "${widget.label} Ring Decreased with 1") ;// tbd localize
+               if(mounted){ setState(() {_decreaseLoading = false;});}
+              });
+          }
+        },
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          child: Image.asset('images/group-decrease.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
-        ));
+          height: 40, width: 40,
+          child:  Stack(
+            children : [
+              Center(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Visibility(visible: _decreaseLoading, child: Center(child: CircularProgressIndicator(color: Colors.white,),)),
+              )),
+              Center(
+                child:Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Image.asset('images/group-decrease.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+              ))
+            ]
+          )
+        )
+    ));
   }
 }
 
 class SmallWellnessRingButton extends StatefulWidget{
   final String label;
+  final String description;
   final Color? color;
   final bool enabled;
-  final void Function(BuildContext context)? onTapWidget;
+  final Future<void> Function(BuildContext context)? onTapWidget;
 
-  const SmallWellnessRingButton({Key? key, required this.label, this.color, this.enabled = true, this.onTapWidget}) : super(key: key);
+  const SmallWellnessRingButton({Key? key, required this.label, this.color, this.enabled = true, this.onTapWidget, this.description = ""}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _SmallWellnessRingButtonState();
@@ -422,12 +482,23 @@ class SmallWellnessRingButton extends StatefulWidget{
 }
 
 class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
+  bool _increaseLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(label: widget.label, button: true, excludeSemantics: true, child:
-    GestureDetector(onTap: () => widget.enabled && widget.onTapWidget!=null? widget.onTapWidget!(context): null, child:
-    Container(
+    return Semantics(label: "${widget.label} Ring", hint: "double tap to increase with 1", button: true, excludeSemantics: true,// tbd localize
+      child: GestureDetector(
+      onTap: (){
+        if (widget.onTapWidget!=null){
+          if(mounted){setState(() {_increaseLoading = true;});}
+
+          widget.onTapWidget!(this.context).
+          then((value) {
+            if(mounted){ setState(() {_increaseLoading = false;});}
+          });
+        }
+      },
+      child: Container(
       // padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Expanded(child:
@@ -439,14 +510,16 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
               Expanded(
                   flex: 5,
                   child: Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(widget.label ,
-                          style: TextStyle(color: Colors.white,
-                              fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.start,),
-                      ],),)),
+                    child:
+                    RichText(
+                        textAlign: TextAlign.left,
+                        text: TextSpan(
+                            children:[
+                              TextSpan(text: "${widget.label}  ", style : TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 14), semanticsLabel: ""),
+                              TextSpan(text: widget.description, style : TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 14),),
+                            ]
+                        )),
+                    )),
               Container(
                 child: Row(
                   children: [
@@ -467,9 +540,21 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
     return GestureDetector(
         onTap: (){},
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
-        ));
+            height: 35, width: 35,
+            child: Stack(
+                children : [
+                  Center(
+                      child:Container(
+                        padding: EdgeInsets.symmetric(horizontal: 7, vertical: 7),
+                        child: Visibility(visible: _increaseLoading, child: Center(child: CircularProgressIndicator(color: Colors.white),)),
+                      )),
+                  Center(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                        child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+                      ))
+                ]
+            )));
   }
 }
 

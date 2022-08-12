@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -39,20 +38,31 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
 
   SettingsNotificationsContentPanel._({this.content});
 
-  static void present(BuildContext context, { SettingsNotificationsContent? content}) {
+  static void present(BuildContext context, {SettingsNotificationsContent? content}) {
     if (content == SettingsNotificationsContent.inbox) {
       if (Connectivity().isOffline) {
-        AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
+        AppAlert.showOfflineMessage(
+            context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
+      } else if (!Auth2().isOidcLoggedIn) {
+        AppAlert.showMessage(context,
+            Localization().getStringEx('panel.browse.label.logged_out.inbox', 'You need to be logged in to access Notifications.'));
+      } else {
+        Navigator.push(
+            context,
+            PageRouteBuilder(
+                settings: RouteSettings(name: routeName),
+                pageBuilder: (context, animation1, animation2) => SettingsNotificationsContentPanel._(content: content),
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero));
       }
-      else if (!Auth2().isOidcLoggedIn) {
-        AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.inbox', 'You need to be logged in to access Notifications.'));
-      }
-      else {
-        Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: routeName), builder: (context) => SettingsNotificationsContentPanel._(content: content)));
-      }
-    }
-    else {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: routeName), builder: (context) => SettingsNotificationsContentPanel._(content: content)));
+    } else {
+      Navigator.push(
+          context,
+          PageRouteBuilder(
+              settings: RouteSettings(name: routeName),
+              pageBuilder: (context, animation1, animation2) => SettingsNotificationsContentPanel._(content: content),
+              transitionDuration: Duration.zero,
+              reverseTransitionDuration: Duration.zero));
     }
   }
 
@@ -101,7 +111,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: RootHeaderBar(
-            key: _headerBarKey, title: Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'My Notifications')),
+            key: _headerBarKey, title: Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications')),
         body: Column(children: <Widget>[
           Expanded(
               child:

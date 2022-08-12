@@ -184,7 +184,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       String url =  "${Config().illiniCashBaseUrl}/StudentSummary/$uin/$firstName/$lastName";
       String analyticsUrl = "${Config().illiniCashBaseUrl}/StudentSummary/$analyticsUin/$analyticsFirstName/$analyticsLastName";
       Response? response;
-      try { response = await Network().get(url, analyticsUrl: analyticsUrl); } on Exception catch(e) { print(e.toString()); }
+      try { response = await Network().get(url, analyticsUrl: analyticsUrl, auth: this); } on Exception catch(e) { print(e.toString()); }
       int responseCode = response?.statusCode ?? -1;
       if ((response != null) && responseCode >= 200 && responseCode <= 301) {
         String responseString = response.body;

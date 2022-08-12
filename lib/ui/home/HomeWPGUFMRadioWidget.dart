@@ -17,22 +17,23 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
 
   const HomeWPGUFMRadioWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio');
+  static String get title => Localization().getStringEx('widget.home.radio.title', 'WPGU 107.1 FM');
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(visible: _isEnabled, child:
-        HomeSlantWidget(favoriteId: favoriteId,
-          title: Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'),
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-          childPadding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 32),
-          child: _WPGUFMRadioControl(borderRadius: BorderRadius.all(Radius.circular(6)),),
-        ),
+    return HomeSlantWidget(favoriteId: favoriteId,
+      title: HomeWPGUFMRadioWidget.title,
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      childPadding: HomeSlantWidget.defaultChildPadding,
+      child: _isEnabled ? _WPGUFMRadioControl(borderRadius: BorderRadius.all(Radius.circular(6)),) : HomeMessageCard(
+        message: Localization().getStringEx('widget.home.radio.disabled.message', 'WPGU 107.1 FM is not enabled.'),
+        margin: EdgeInsets.only(top: 8, bottom: 16),
+      ),
     );
   }
 
@@ -56,7 +57,7 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
               Expanded(child:
                 Padding(padding: EdgeInsets.all(8), child:
                   Center(child:
-                    Text(Localization().getStringEx('widget.home.radio.title', 'WPGU FM Radio'), style: TextStyle(fontSize: 20, color: Colors.white),),
+                    Text(HomeWPGUFMRadioWidget.title, style: TextStyle(fontSize: 20, color: Colors.white),),
                   ),
                 ),
               ),
@@ -76,7 +77,7 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
   }
 
   static void _onClosePopup(BuildContext context) {
-    Analytics().logSelect(target: 'Close');
+    Analytics().logSelect(target: 'Close', source: 'HomeWPGUFMRadioWidget');
     Navigator.of(context).pop();
   }
 }
@@ -119,7 +120,7 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
   Widget _buildContentCard() {
     String? buttonTitle, iconAsset;
     if (WPGUFMRadio().isInitialized) {
-      buttonTitle = WPGUFMRadio().isPlaying ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'Play');
+      buttonTitle = WPGUFMRadio().isPlaying ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'TUNE IN');
       iconAsset = WPGUFMRadio().isPlaying ? 'images/button-pause-orange.png' : 'images/button-play-orange.png';
     }
     else if (WPGUFMRadio().isInitializing) {
@@ -150,7 +151,7 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
                                 Padding(padding: EdgeInsets.all(16), child:
                                   Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors!.fillColorSecondary! , width: 3))), child:
                                     Padding(padding: EdgeInsets.only(left: 10), child:
-                                    Row(children: [Expanded(child: Text(buttonTitle ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 24, color: Styles().colors?.fillColorPrimary)))]))))),
+                                    Row(children: [Expanded(child: Text(buttonTitle ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary)))]))))),
                             ],),
                           ),
                         ),
@@ -176,7 +177,7 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
 
 
   void _onTapPlayPause() {
-    Analytics().logSelect(target: 'Play/Pause');
+    Analytics().logSelect(target: 'Play/Pause', source: 'HomeWPGUFMRadioWidget');
     WPGUFMRadio().togglePlayPause();
   }
 

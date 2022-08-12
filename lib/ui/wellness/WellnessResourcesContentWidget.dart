@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
@@ -37,6 +40,43 @@ class WellnessResourcesContentWidget extends StatefulWidget {
 
   @override
   State<WellnessResourcesContentWidget> createState() => _WellnessResourcesContentWidgetState();
+
+  static void ensureDefaultFavorites(List<dynamic>? commands) {
+    String favoriteKey = WellnessFavorite.favoriteKeyName(category: wellnessCategoryKey);
+    if ((Auth2().prefs?.getFavorites(favoriteKey) == null) && (commands != null)) {
+
+      List<dynamic> sortedCommands = List.from(commands);
+      
+      sortedCommands.sort((dynamic entry1, dynamic entry2) {
+        
+        Map<String, dynamic>? command1 = JsonUtils.mapValue(entry1);
+        int? favorite1 = (command1 != null) ? JsonUtils.intValue(command1['favorite']) : null;
+        
+        Map<String, dynamic>? command2 = JsonUtils.mapValue(entry2);
+        int? favorite2 = (command2 != null) ? JsonUtils.intValue(command2['favorite']) : null;
+
+        if (favorite1 != null) {
+          return (favorite2 != null) ? favorite1.compareTo(favorite2) : 1;
+        }
+        else {
+          return (favorite2 != null) ? -1 : 0; 
+        }
+      });
+      
+      LinkedHashSet<String> favoriteIds = LinkedHashSet<String>();
+      for (dynamic entry in sortedCommands.reversed) {
+        Map<String, dynamic>? command = JsonUtils.mapValue(entry);
+        if (command != null) {
+          String? id = JsonUtils.stringValue(command['id']);
+          int? favorite = JsonUtils.intValue(command['favorite']);
+          if ((id != null) && (favorite != null)) {
+            favoriteIds.add(id);
+          }
+        }
+      }
+      Auth2().prefs?.setFavorites(favoriteKey, favoriteIds);
+    }
+  }
 }
 
 class _WellnessResourcesContentWidgetState extends State<WellnessResourcesContentWidget> implements NotificationsListener {
@@ -85,20 +125,9 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
 
   Widget _buildContent() {
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Column(children: [
-      _buildHeader(),
       _buildLargeButtonsContainer(),
       _buildRegularButtonsContainer(),
     ]));
-  }
-
-  Widget _buildHeader() {
-    return Padding(padding: EdgeInsets.only(left: 5, bottom: 10, right: 5), child:
-      Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Text(Localization().getStringEx('panel.wellness.resources.header.label', 'Wellness Resources'),
-          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)
-        ),
-      ]),
-    );
   }
 
   Widget _buildLargeButtonsContainer() {
@@ -164,6 +193,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
     Map<String, dynamic>? content = JsonUtils.mapValue(Assets()['wellness.${widget.wellnessCategory}']) ;
     _commands = (content != null) ? JsonUtils.listValue(content['commands']) : null;
     _strings = (content != null) ? JsonUtils.mapValue(content['strings']) : null;
+    WellnessResourcesContentWidget.ensureDefaultFavorites(_commands);
   }
 
   String? _getString(String? key, {String? languageCode}) {
@@ -180,7 +210,10 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
   }
 
   void _onCommand(Map<String, dynamic> command) {
-    Analytics().logSelect(target: _getString(JsonUtils.stringValue(command['id']), languageCode: Localization().defaultLocale?.languageCode),);
+    Analytics().logSelect(
+      target: _getString(JsonUtils.stringValue(command['id']), languageCode: Localization().defaultLocale?.languageCode),
+      source: widget.runtimeType.toString()
+    );
     _launchUrl(JsonUtils.stringValue(command['url']));
   }
 

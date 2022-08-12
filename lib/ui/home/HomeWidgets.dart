@@ -1,5 +1,10 @@
 
 
+import 'dart:collection';
+import 'dart:math';
+
+import 'package:collection/collection.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -7,8 +12,11 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -62,8 +70,20 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
   Widget _buildContent(BuildContext context, {bool dropTarget = false }) {
     return Column(key: _contentKey, children: <Widget>[
       Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors?.fillColorSecondary : ((widget.position == 0) ? Styles().colors!.surfaceAccent : Colors.transparent),),
-
-      LongPressDraggable<HomeFavorite>(
+      Semantics(
+        container: true,
+        inMutuallyExclusiveGroup: true,
+        onIncrease: (){
+          widget.dragAndDropHost?.onAccessibilityMove(dragFavoriteId: widget.favoriteId, delta: 1);
+          AppSemantics.announceMessage(context, " moved one position above");
+          // AppSemantics.requestSemanticsUpdates(context);
+        },
+        onDecrease: (){
+          widget.dragAndDropHost?.onAccessibilityMove(dragFavoriteId: widget.favoriteId, delta: -1);
+          AppSemantics.announceMessage(context, " moved one position below");
+          // AppSemantics.requestSemanticsUpdates(context);
+        },
+       child: LongPressDraggable<HomeFavorite>(
         data: HomeFavorite(widget.favoriteId),
         axis: Axis.vertical,
         //affinity: Axis.vertical,
@@ -75,7 +95,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
         feedback: HomeDragFeedback(title: widget.title),
         child: Row(crossAxisAlignment: widget.crossAxisAlignment, children: <Widget>[
 
-          Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
+          Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
             Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
               Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
             ),
@@ -92,7 +112,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
                 
           HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.Handle, prompt: true),
         ],),
-      ),
+      )),
 
       Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors?.fillColorSecondary : Styles().colors!.surfaceAccent,),
     ]);
@@ -203,6 +223,8 @@ class _HomeDropTargetWidgetState extends State<HomeDropTargetWidget> {
 
 class HomeSlantWidget extends StatelessWidget {
 
+  static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 16);
+
   final String? title;
   final Image? titleIcon;
   final CrossAxisAlignment headerAxisAlignment;
@@ -224,7 +246,7 @@ class HomeSlantWidget extends StatelessWidget {
     this.slantHeight = 65,
 
     this.child,
-    this.childPadding = const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 24),
+    this.childPadding = EdgeInsets.zero,
     
     this.favoriteId,
   }) : super(key: key);
@@ -338,20 +360,29 @@ class HomeFavoriteButton extends FavoriteButton {
   void onFavorite(BuildContext context) {
     Analytics().logSelect(target: "Favorite: $favorite");
 
+    bool? isFavorite = this.isFavorite;
     if (prompt) {
-      promptFavorite(context, favorite).then((bool? result) {
+      promptFavorite(context, favorite: favorite, isFavorite: isFavorite).then((bool? result) {
         if (result == true) {
-          toggleFavorite();
+          _toggleFavorite(isFavorite: isFavorite);
         }
       });
     }
     else {
-      toggleFavorite();
+      _toggleFavorite(isFavorite: isFavorite);
     }
   }
 
   @override
   void toggleFavorite() {
+    _toggleFavorite(isFavorite: isFavorite);
+  }
+  
+  void _toggleFavorite({bool? isFavorite}) {
+    _setFavorite(isFavorite != true);
+  }
+  
+  void _setFavorite(bool value) {
     if (favorite?.id != null) {
       if (favorite?.category == null) {
         // process toggle home panel widget
@@ -361,54 +392,62 @@ class HomeFavoriteButton extends FavoriteButton {
           for(String sectionEntry in avalableSectionFavorites) {
             favorites.add(HomeFavorite(sectionEntry, category: favorite?.id));
           }
-          Auth2().prefs?.setListFavorite(favorites, (isFavorite != true));
+          Auth2().prefs?.setListFavorite(favorites, value);
+          HomeFavorite.log(favorites, value);
         }
         else {
-          super.toggleFavorite();
+          Auth2().prefs?.setFavorite(favorite, value);
+          HomeFavorite.log(favorite, value);
         }
       }
       else { 
         // process toggle home widget entry
         HomeFavorite sectionFavorite = HomeFavorite(favorite?.category);
-        if (isFavorite == true) {
+        if (value) {
+          // turn on home widget entry
+          if (Auth2().prefs?.isFavorite(sectionFavorite) ?? false) {
+            // turn on only home widget entry
+            Auth2().prefs?.setFavorite(favorite, value);
+            HomeFavorite.log(favorite, value);
+          }
+          else {
+            // turn on both home widget entry and home widget itself
+            List<Favorite> favorites = <Favorite>[favorite!, sectionFavorite];
+            Auth2().prefs?.setListFavorite(favorites, value);
+            HomeFavorite.log(favorites, value);
+          }
+        }
+        else {
           // turn off home widget entry
           int sectionFavoritesCount = 0;
           List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.category}']);
           if (avalableSectionFavorites != null) {
-            for(String sectionEntry in avalableSectionFavorites) {
+            for (String sectionEntry in avalableSectionFavorites) {
               if (Auth2().prefs?.isFavorite(HomeFavorite(sectionEntry, category: favorite?.category)) ?? false) {
                 sectionFavoritesCount++;
               }
             }
           }
-          if (1 < sectionFavoritesCount) {
-            // turn off only home widget entry
-            super.toggleFavorite();
-          }
-          else {
+          if (sectionFavoritesCount <= 1) {
             // turn off both home widget entry and home widget itself
-            Auth2().prefs?.setListFavorite(<Favorite>[favorite!, sectionFavorite], false);
-          }
-        }
-        else {
-          // turn on home widget entry
-          if (Auth2().prefs?.isFavorite(sectionFavorite) ?? false) {
-            // turn on only home widget entry
-            super.toggleFavorite();
+            List<Favorite> favorites = <Favorite>[favorite!, sectionFavorite];
+            Auth2().prefs?.setListFavorite(favorites, value);
+            HomeFavorite.log(favorites, value);
           }
           else {
-            // turn on both home widget entry and home widget itself
-            Auth2().prefs?.setListFavorite(<Favorite>[favorite!, sectionFavorite], true);
+            // turn off only home widget entry
+            Auth2().prefs?.setFavorite(favorite, value);
+            HomeFavorite.log(favorite, value);
           }
         }
       }
     }
   }
 
-  static Future<bool?> promptFavorite(BuildContext context, Favorite? favorite) async {
+  static Future<bool?> promptFavorite(BuildContext context, { Favorite? favorite, bool? isFavorite }) async {
     if (kReleaseMode) {
 
-      String message = (Auth2().prefs?.isFavorite(favorite) ?? false) ?
+      String message = (isFavorite ?? Auth2().prefs?.isFavorite(favorite) ?? false) ?
         Localization().getStringEx('widget.home.prompt.remove.favorite', 'Are you sure you want to REMOVE this item from your favorites?') :
         Localization().getStringEx('widget.home.prompt.add.favorite', 'Are you sure you want to ADD this favorite?');
       
@@ -532,7 +571,7 @@ class HomeMessageCard extends StatelessWidget {
   HomeMessageCard({Key? key,
     this.title,
     this.message,
-    this.margin = const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16),
+    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
   }) : super(key: key);
   
   @override
@@ -563,15 +602,243 @@ class HomeMessageCard extends StatelessWidget {
 // HomeProgressWidget
 
 class HomeProgressWidget extends StatelessWidget {
+  final EdgeInsetsGeometry padding;
+  final Size progessSize;
+  final double progessWidth;
+  final Color? progressColor;
+
+  HomeProgressWidget({Key? key,
+    this.padding = const EdgeInsets.only(left: 16, right: 16, top: 96, bottom: 32),
+    this.progessSize = const Size(24, 24),
+    this.progessWidth = 3,
+    this.progressColor,
+  }) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 96, bottom: 32), child:
+    return Padding(padding: padding, child:
       Center(child:
-        Container(height: 24, width: 24, child:
-          CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
+        Container(width: progessSize.width, height: progessSize.height, child:
+          CircularProgressIndicator(strokeWidth: progessWidth, valueColor: AlwaysStoppedAnimation<Color?>(progressColor ?? Styles().colors?.fillColorSecondary), )
         ),
       ),
     );
+  }
+}
+
+////////////////////////////
+// HomeCompoundWidgetState
+
+abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T> implements NotificationsListener {
+
+  final Axis direction;
+  HomeCompoundWidgetState({this.direction = Axis.vertical});
+
+  // Overrides
+
+  String? get favoriteId;
+  String  get contentKey => 'home.$favoriteId';
+  
+  String? get title;
+  Image?  get titleIcon => Image.asset('images/campus-tools.png', excludeFromSemantics: true);
+  
+  String? get emptyTitle => null;
+  String? get emptyMessage;
+
+  double  get pageSpacing => 16;
+  double  get contentSpacing => 16;
+  double  get contentInnerSpacing => 8;
+
+  @protected
+  Widget? widgetFromCode(String code);
+
+  // Data
+
+  List<String>? _favoriteCodes;
+  Set<String>? _availableCodes;
+  List<String>? _displayCodes;
+  
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  String? _currentCode;
+  int _currentPage = -1;
+
+  @override
+  void initState() {
+    NotificationService().subscribe(this, [
+      FlexUI.notifyChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
+    ]);
+
+    _availableCodes = _buildAvailableCodes();
+    _favoriteCodes = _buildFavoriteCodes();
+    _displayCodes = _buildDisplayCodes();
+    
+    if (direction == Axis.horizontal) {
+      if (_displayCodes?.isNotEmpty ?? false) {
+        _currentPage = 0;
+        _currentCode = _displayCodes?.first;
+      }
+    }
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    _pageController?.dispose();
+    super.dispose();
+  }
+
+  
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == FlexUI.notifyChanged) {
+      _updateAvailableCodes();
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      _updateFavoriteCodes();
+    }
+  }
+
+  // Content
+
+  @override
+  Widget build(BuildContext context) {
+    return HomeSlantWidget(favoriteId: favoriteId,
+      title: title,
+      titleIcon: titleIcon,
+      childPadding: EdgeInsets.zero,
+      child: _buildContent(),
+    );
+  }
+
+  Widget _buildContent() {
+    if (CollectionUtils.isEmpty(_displayCodes)) {
+      return HomeMessageCard(title: emptyTitle, message: emptyMessage,);
+    }
+    else if (_displayCodes?.length == 1) {
+      return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: contentSpacing), child:
+        widgetFromCode(_displayCodes!.single) ?? Container()
+      );
+    }
+    else if (direction == Axis.horizontal) {
+      List<Widget> pages = <Widget>[];
+      for (String code in _displayCodes!) {
+        pages.add(Padding(key: _contentKeys[code] ??= GlobalKey(), padding: EdgeInsets.only(right: pageSpacing, bottom: contentSpacing), child: widgetFromCode(code) ?? Container()));
+      }
+
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage);
+      }
+
+      return
+        Column(children: [
+          Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+            ExpandablePageView(
+              key: _pageViewKey,
+              controller: _pageController,
+              estimatedPageSize: _pageHeight,
+              onPageChanged: _onCurrentPageChanged,
+              allowImplicitScrolling: true,
+              children: pages,
+            ),
+          ),
+          AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+        ],);
+
+    }
+    else { // (direction == Axis.vertical)
+      List<Widget> contentList = <Widget>[];
+      for (String code in _displayCodes!) {
+        contentList.add(Padding(padding: EdgeInsets.only(bottom: contentInnerSpacing), child: widgetFromCode(code) ?? Container()));
+      }
+
+      return Padding(padding: EdgeInsets.only(left: contentSpacing, right: contentSpacing, bottom: max(contentSpacing - contentInnerSpacing, 0), ), child:
+        Column(children: contentList,),
+      );
+    }
+  }
+
+
+  Set<String>? _buildAvailableCodes() => JsonUtils.setStringsValue(FlexUI()[contentKey]);
+
+  void _updateAvailableCodes() {
+    Set<String>? availableCodes = JsonUtils.setStringsValue(FlexUI()[contentKey]);
+    if ((availableCodes != null) && !DeepCollectionEquality().equals(_availableCodes, availableCodes) && mounted) {
+      setState(() {
+        _availableCodes = availableCodes;
+        _displayCodes = _buildDisplayCodes();
+        _updateCurrentPage();
+      });
+    }
+  }
+
+  List<String>? _buildFavoriteCodes() {
+    LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: favoriteId));
+    return (favorites != null) ? List.from(favorites) : null;
+  }
+
+  void _updateFavoriteCodes() {
+    List<String>? favoriteCodes = _buildFavoriteCodes();
+    if ((favoriteCodes != null) && !DeepCollectionEquality().equals(_favoriteCodes, favoriteCodes) && mounted) {
+      setState(() {
+        _favoriteCodes = favoriteCodes;
+        _displayCodes = _buildDisplayCodes();
+        _updateCurrentPage();
+      });
+    }
+  }
+
+  List<String> _buildDisplayCodes() {
+    List<String> displayCodes = <String>[];
+    if (_favoriteCodes != null) {
+      for (String code in _favoriteCodes!.reversed) {
+        if ((_availableCodes == null) || _availableCodes!.contains(code)) {
+          Widget? contentEntry = widgetFromCode(code);
+          if (contentEntry != null) {
+            displayCodes.add(code);
+          }
+        }
+      }
+    }
+    return displayCodes;
+  }
+
+  double get _pageHeight {
+
+    double? minContentHeight;
+    for (GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+
+    return minContentHeight ?? 0;
+  }
+
+  void _onCurrentPageChanged(int index) {
+    _currentCode = ListUtils.entry(_displayCodes, _currentPage = index);
+  }
+
+  void _updateCurrentPage() {
+    if ((_displayCodes?.isNotEmpty ?? false) && (direction == Axis.horizontal)) {
+      int currentPage = (_currentCode != null) ? _displayCodes!.indexOf(_currentCode!) : -1;
+      if (currentPage < 0) {
+        currentPage = max(0, min(_currentPage, _displayCodes!.length - 1));
+      }
+
+      _currentCode = _displayCodes![_currentPage = currentPage];
+
+      _pageViewKey = UniqueKey();
+      _pageController = null;
+    }
   }
 }
