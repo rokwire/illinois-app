@@ -862,9 +862,7 @@ class _GroupCardState extends State<GroupCard> {
                 Expanded(child:
                   _buildUpdateTime(),
                 ),
-                Visibility(visible: (widget.group?.authManEnabled ?? false) && (widget.displayType != GroupCardDisplayType.homeGroups), child:
-                  _buildMembersCount()
-                )
+                _buildMembersCount()
               ])
               // : Container()
             ]),

@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Member count is only displayed for some groups [#2250](https://github.com/rokwire/illinois-app/issues/2250)
 
 ## [4.1.17] - 2022-08-12
 ### Added
