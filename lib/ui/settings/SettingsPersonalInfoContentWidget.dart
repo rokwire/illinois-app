@@ -266,14 +266,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       Column(children:<Widget>[
         Row(children: [
           Expanded(child:
-            Text(Localization().getStringEx('panel.settings.home.calendar.ada.title', 'ADA'), style:
+            Text(Localization().getStringEx('panel.settings.home.calendar.ada.title', 'Accessibility Needs'), style:
               TextStyle(fontSize: 20, fontFamily: Styles().fontFamilies?.bold, color: Styles().colors!.fillColorPrimary)
             ),
           ),
         ]),
         Container(height: 4),
         ToggleRibbonButton(
-          label: Localization().getStringEx('panel.settings.home.calendar.ada.toggle.title', 'I require ADA entrances'),
+          label: Localization().getStringEx('panel.settings.home.calendar.ada.toggle.title', 'Display ADA accessible building entrances for My Courses'),
           border: Border.all(color: Styles().colors!.surfaceAccent!),
           toggled: StudentCourses().requireAda,
           onTap: _onRequireAdaToggled)
