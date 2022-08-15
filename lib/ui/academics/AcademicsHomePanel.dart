@@ -21,7 +21,7 @@ import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
-import 'package:illinois/ui/academics/StudentCoursesContentWidget.dart';
+import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
