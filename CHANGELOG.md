@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated My Courses load fail message [#2277](https://github.com/rokwire/illinois-app/issues/2277).
+- Updated Favorites: App Help / Submit Review entry description [#2279](https://github.com/rokwire/illinois-app/issues/2279).
 
 ## [4.1.18] - 2022-08-15
 ### Fixed

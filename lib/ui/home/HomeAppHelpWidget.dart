@@ -78,7 +78,7 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
     else if ((code == 'review') && _canReview) {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.app_help.review.button.title', 'Submit Review'),
-        description: Localization().getStringEx('widget.home.app_help.review.button.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum mauris diam, vitae interdum orci imperdiet et. Proin vehicula pellentesque dignissim.'),
+        description: Localization().getStringEx('widget.home.app_help.review.button.description', 'Rate this app. Tell others what you think.'),
         favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onReview,
       );
