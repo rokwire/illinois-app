@@ -397,6 +397,8 @@ public class Utils {
                         TextView markerTitleView = markerLayoutView.findViewById(R.id.markerTitleView);
                         String markerTitle = marker.getTitle();
                         markerTitleView.setText(shortTitle != null ? shortTitle : markerTitle);
+                        TextView markerSnippetView = markerLayoutView.findViewById(R.id.markerSnippetView);
+                        markerSnippetView.setVisibility(GONE);
                     }
                 } else {
                     ImageView markerGroupCircleView = markerGroupLayoutView.findViewById(R.id.markerGroupCircleView);
@@ -418,6 +420,11 @@ public class Utils {
                     String markerTitle = marker.getTitle();
                     String shortTitle = Utils.Explore.optExploreMarkerShortTitle(marker);
                     markerTitleView.setText(passedSecondThreshold ? markerTitle : shortTitle);
+                    TextView markerSnippetView = markerLayoutView.findViewById(R.id.markerSnippetView);
+                    String snippetText = marker.getSnippet();
+                    boolean showSnippet = !Utils.Str.isEmpty(snippetText) && passedSecondThreshold;
+                    markerSnippetView.setText(snippetText);
+                    markerSnippetView.setVisibility(showSnippet ? VISIBLE : GONE);
                 } else {
                     ImageView markerGroupCircleView = markerGroupLayoutView.findViewById(R.id.markerGroupCircleView);
                     int imageViewSize = context.getResources().getDimensionPixelSize(passedSecondThreshold ? R.dimen.group_marker_image_size_second : R.dimen.group_marker_image_size_first);
