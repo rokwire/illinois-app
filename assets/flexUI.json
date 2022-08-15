@@ -71,7 +71,7 @@
 	
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 			
-			"features": ["authentication", "create_poll", "parking_lot_directions", "gies", "new_student", "canvas", "safer", "laundry", "mtd_buss_pass"],
+			"features": ["authentication", "create_poll", "parking_lot_directions", "gies", "new_student", "canvas", "safer", "laundry", "mtd_bus_pass"],
 			
 			"launch":["emergency"]
 			
@@ -95,7 +95,7 @@
 				"_new_student_checklist"                 : ["${config.settings.groups.new_student}"],
 				"canvas"                                 : ["${config.settings.groups.canvas}"],
 				"canvas_courses"                         : ["${config.settings.groups.canvas}"],
-				"mtd_buss_pass"                          : ["${config.settings.groups.mtd_buss_pass}"]
+				"mtd_bus_pass"                           : ["${config.settings.groups.mtd_bus_pass}"]
 			},
 			"locations": {
 			},
