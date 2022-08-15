@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Member count is only displayed for some groups [#2250](https://github.com/rokwire/illinois-app/issues/2250).
 ### Added
 - "Due Date Catalog" to Academics panel drop-down [#2260](https://github.com/rokwire/illinois-app/issues/2260).
+### Changed
+- Default Daily Illini image placeholder [#2264](https://github.com/rokwire/illinois-app/issues/2264).
 
 ## [4.1.17] - 2022-08-12
 ### Added
