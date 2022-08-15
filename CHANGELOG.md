@@ -5,10 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
 ## [4.1.18] - 2022-08-15
 ### Fixed
 - Member count is only displayed for some groups [#2250](https://github.com/rokwire/illinois-app/issues/2250).
 - Android: set the proper text for snippet view in mapview markers. Show/hide snippet view based on the zoom level [#2268](https://github.com/rokwire/illinois-app/issues/2268).
+- Fixed MTD Bus Pass availability for target group members [#2250](https://github.com/rokwire/illinois-app/issues/2250).
 ### Added
 - "Due Date Catalog" to Academics panel drop-down [#2260](https://github.com/rokwire/illinois-app/issues/2260).
 - Bring back FAQs entry in App Help [#2267](https://github.com/rokwire/illinois-app/issues/2267).
