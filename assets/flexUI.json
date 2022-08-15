@@ -55,7 +55,7 @@
 			"settings.linked.phone": ["info", "remove", "verify"],
 			"settings.linked.email": ["info", "remove", "verify"],
 	
-			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "my_illini"],
+			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "due_date_catalog", "my_illini"],
 			
 			"explore.list": ["events", "dining"],
 			"explore.map":  ["events", "dining", "laundry", "student_courses", "wayfinding"],
