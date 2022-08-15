@@ -218,7 +218,6 @@
 	"panel.browse.label.offline.create_event":"离线时无法创建活动。",
 	"panel.browse.label.offline.manage_interrest":"离线时无法管理兴趣。",
 	"panel.browse.label.offline.feedback":"离线时无法提供反馈。",
-	"panel.browse.label.offline.faqs": "離線時無法使用常見問題解答。",
 	"panel.browse.label.offline.crisis_help": "離線時無法使用危機幫助。",
 	"panel.browse.label.offline.date_cat": "截止日期目錄在離線時不可用。",
   "panel.browse.label.offline.video_tutorial": "離線時無法使用視頻教程.",
@@ -2882,9 +2881,8 @@
 	"widget.home.app_help.feedback.panel.title": "提供反饋意見",
 	"widget.home.app_help.review.button.title": "提交評論",
 	"widget.home.app_help.review.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum mauris diam, vitae interdum orci imperdiet et. Proin vehicula pellentesque dignissim.",
-"widget.home.app_help.faqs.button.title": "常見問題",
+	"widget.home.app_help.faqs.button.title": "常見問題",
 	"widget.home.app_help.faqs.button.description": "在常見問題中檢查您的問題。",
-	"widget.home.app_help.faqs.label.offline": "離線時無法使用常見問題解答。",
 	"widget.home.app_help.faqs.panel.title": "常見問題",
 
 	"widget.home.state_farm_center.header.title": "州立農場中心",

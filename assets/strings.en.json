@@ -220,7 +220,6 @@
     "panel.browse.label.offline.create_event": "Create an event is not available while offline.",
     "panel.browse.label.offline.manage_interrest": "Manage interests is not available while offline.",
     "panel.browse.label.offline.feedback": "Providing a feedback is not available while offline.",
-    "panel.browse.label.offline.faqs": "FAQs is not available while offline.",
     "panel.browse.label.offline.crisis_help": "Crisis Help is not available while offline.",
     "panel.browse.label.offline.date_cat": "Due Date Catalog not available while offline.",
     "panel.browse.label.offline.video_tutorial": "Video Tutorial not available while offline.",
@@ -2891,7 +2890,6 @@
     "widget.home.app_help.review.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum mauris diam, vitae interdum orci imperdiet et. Proin vehicula pellentesque dignissim.",
     "widget.home.app_help.faqs.button.title": "FAQs",
     "widget.home.app_help.faqs.button.description": "Check your question in frequently asked questions.",
-    "widget.home.app_help.faqs.label.offline": "FAQs is not available while offline.",
     "widget.home.app_help.faqs.panel.title": "FAQs",
 
     "widget.home.state_farm_center.header.title": "State Farm Center",
