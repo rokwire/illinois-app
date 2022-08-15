@@ -341,7 +341,9 @@ class StudentCourseDetailPanel extends StatelessWidget {
             child: CustomScrollView(
               scrollDirection: Axis.vertical,
               slivers: <Widget>[
-                SliverToutHeaderBar(),
+                SliverToutHeaderBar(
+                  flexRightToLeftTriangleColor: Colors.white,
+                ),
                 SliverList(
                   delegate: SliverChildListDelegate(
                       [
