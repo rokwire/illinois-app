@@ -218,7 +218,6 @@
     "panel.browse.label.offline.create_event": "Crear evento no disponible sin conexión.",
     "panel.browse.label.offline.manage_interrest": "Gestionar intereses no disponibles sin conexión.",
     "panel.browse.label.offline.feedback": "Proporcionar un comentario no está disponible sin conexión.",
-    "panel.browse.label.offline.faqs": "Las preguntas frecuentes no están disponibles sin conexión.",
     "panel.browse.label.offline.crisis_help": "Crisis Help no está disponible sin conexión.",
     "panel.browse.label.offline.date_cat": "El catálogo de fecha de vencimiento no está disponible sin conexión.",
     "panel.browse.label.offline.video_tutorial": "Video tutorial no disponible sin conexión.",
@@ -2884,7 +2883,6 @@
     "widget.home.app_help.review.button.description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In condimentum mauris diam, vitae interdum orci imperdiet et. Proin vehicula pellentesque dignissim.",
     "widget.home.app_help.faqs.button.title": "Preguntas frecuentes",
     "widget.home.app_help.faqs.button.description": "Consulta tu duda en preguntas frecuentes.",
-    "widget.home.app_help.faqs.label.offline": "Las preguntas frecuentes no están disponibles sin conexión.",
     "widget.home.app_help.faqs.panel.title": "Preguntas frecuentes",
 
     "widget.home.state_farm_center.header.title": "Centro de granja estatal",

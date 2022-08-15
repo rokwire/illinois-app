@@ -14,7 +14,7 @@
 			],
 			"home.system": ["tout", "welcome", "emergency", "voter_registration", "connect"],
 			"home.connect": ["netid", "phone_or_email"],
-			"home.app_help": ["feedback", "review", "faqs"],
+			"home.app_help": ["faqs", "feedback", "review"],
 			"home.dinings": ["dinings_all", "dinings_open"],
 			"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 			"home.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "inbox"],
@@ -25,7 +25,7 @@
 			
 			"browse": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_resources", "dinings", "events", "feeds", "laundry", "groups", "my", "notifications", "polls", "recent", "state_farm_center", "wallet", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "campus_reminders", "due_date_catalog"],
-			"browse.app_help": ["video_tutorials", "feedback", "review", "faqs"],
+			"browse.app_help": ["faqs", "feedback", "review", "video_tutorials"],
 			"browse.athletics": ["my_game_day", "sport_events", "my_athletics", "sport_news", "my_news"],
 			"browse.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 			"browse.laundry": ["laundry", "my_laundry"],
@@ -169,7 +169,6 @@
 			"enable" : {
 				"library_card"                  : false,
 				"emergency"                     : false,
-				"faqs"                          : false,
 				"wayfinding"                    : false,
 				"create_stadium_poll"           : false,
 				"safer"                         : false,
@@ -223,7 +222,7 @@
 						"daily_illini", "wpgufm_radio", "app_help"
 					]
 				},
-				"home.app_help": ["feedback", "review", "faqs"],
+				"home.app_help": ["faqs", "feedback", "review"],
 				"home.dinings": ["dinings_all", "dinings_open"],
 				"home.safer": ["building_access", "test_locations", "my_mckinley", "wellness_answer_center"],
 				"home.campus_resources": ["events", "dining", "athletics", "illini_cash", "laundry", "my_illini", "wellness", "crisis_help", "groups", "quick_polls", "campus_guide", "inbox"],
