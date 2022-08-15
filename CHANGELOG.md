@@ -781,6 +781,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Link to plugin 1.0.0.
 - Various controls moved to plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
 
+## [3.2.38] - 2022-04-25
+### Changed
+- Increased version number to generate a Zenodo citation.
+
 ## [3.2.37] - 2022-03-17
 ### Fixed
 - Await complete initialization after OIDC login before displaying IDCardPanel from Building Access home widget [#1467](https://github.com/rokwire/illinois-app/issues/1467).
