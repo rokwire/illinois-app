@@ -316,7 +316,7 @@ class StudentCoursesListPanel extends StatelessWidget {
 class StudentCourseDetailPanel extends StatelessWidget {
   final StudentCourse? course;
 
-  StudentCourseDetailPanel({Key? key, this.course) : super(key: key);
+  StudentCourseDetailPanel({Key? key, this.course}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
