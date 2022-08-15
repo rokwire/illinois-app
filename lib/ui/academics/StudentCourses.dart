@@ -334,6 +334,148 @@ class StudentCourseDetailPanel extends StatelessWidget {
   }
 
   Widget _buildContent() {
-    return Container(); 
+    return   Column(
+      children: <Widget>[
+        Expanded(
+          child: Container(
+            child: CustomScrollView(
+              scrollDirection: Axis.vertical,
+              slivers: <Widget>[
+                SliverToutHeaderBar(),
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                      [
+                        Stack(
+                          children: <Widget>[
+                            Container(
+                                color: Colors.white,
+                                child: Column(
+                                  children: <Widget>[
+                                    Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Column(
+                                          children: <Widget>[
+                                            Padding(
+                                                padding:
+                                                EdgeInsets.only(right: 20, left: 20),
+                                                child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: <Widget>[
+                                                      _buildTitle(),
+                                                      _buildDisplayInfo(),
+                                                      _buildInstructor(),
+                                                      _buildSchedule(),
+                                                      _buildLocation(),
+                                                    ]
+                                                )),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                            )
+                          ],
+                        )
+                      ],
+                      addSemanticIndexes:false),
+                )
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTitle(){
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                course?.title ?? "",
+                style: TextStyle(
+                    fontSize: 24,
+                    color: Styles().colors!.fillColorPrimary,
+                    letterSpacing: 1),
+              ),
+            ),
+          ],
+        ));
+  }
+
+  Widget _buildDisplayInfo(){
+    return  course?.displayInfo != null?
+    Padding(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Text(
+          course?.displayInfo ?? "",
+          style: TextStyle(
+              fontSize: 16,
+              color: Styles().colors!.textBackground),
+        )) :
+    Container();
+  }
+
+  Widget _buildInstructor(){
+    return
+      Padding(padding: EdgeInsets.symmetric(vertical: 10),
+        child: Row(children: [Expanded(child:
+          Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [course?.section?.instructor ?? '']), style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: 16),)
+        )]),
+    );
+  }
+
+  Widget _buildSchedule(){
+    String courseSchedule = course?.section?.displaySchedule ?? '';
+    return Visibility(visible: courseSchedule.isNotEmpty, child:
+      Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+        Row(children: [
+          Padding(padding: EdgeInsets.only(right: 6), child:
+          Image.asset('images/icon-calendar.png'),
+          ),
+          Expanded(child:
+            Text(courseSchedule, style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),),
+          )
+
+        ],),
+      ),
+    );
+  }
+
+  Widget _buildLocation(){
+    String courseLocation = course?.section?.displayLocation ?? '';
+    return Visibility(visible: courseLocation.isNotEmpty && (course?.hasLocation ?? false), child:
+      InkWell(onTap: _onLocation, child:
+        Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
+          Row(children: [
+            Padding(padding: EdgeInsets.only(right: 6), child:
+              Image.asset('images/icon-location.png'),
+            ),
+            Expanded(child:
+              Text(courseLocation, style:
+                TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16,
+                  decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1
+                ),
+              ),
+            )
+          ],),
+        ),
+      ),
+    );
+  }
+
+  void _onLocation() {
+    Analytics().logSelect(target: "Location Detail");
+    if(course?.toJson()!=null) {
+      NativeCommunicator().launchMapDirections(jsonData: course!.toJson());
+    }
   }
 }
