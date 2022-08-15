@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
@@ -57,7 +58,7 @@ class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttribu
       return LaundryRoomDetailPanel(room: explore);
     }
     else if (explore is StudentCourse) {
-      return null; // TBD
+      return StudentCourseDetailPanel(course: explore,);
     }
     else { // Default for unexpected type
       return null;
