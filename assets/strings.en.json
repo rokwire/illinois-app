@@ -2373,8 +2373,8 @@
 
     "panel.student_courses.header.title": "My Courses",
     "panel.student_courses.instructor.title": "Instructor: %s",
-    "panel.student_courses.empty.content.msg": "You do not appear to be enrolled in any courses.",
-    "panel.student_courses.load.failed.error.msg": "Unable to load courses.",
+    "panel.student_courses.empty.content.msg": "You do not appear to be enrolled in any courses for the selected term.",
+    "panel.student_courses.load.failed.error.msg": "It appears you have no courses registered for the selected term.",
     "panel.student_courses.load.offline.error.msg": "My Courses not available while offline.",
     "panel.student_courses.load.logged_out.error.msg": "You need to be logged in to access My Courses.",
 
@@ -2741,10 +2741,10 @@
     "widget.home.canvas_courses.button.all.hint": "Tap to view all courses",
 
     "widget.home.student_courses.header.label": "My Courses",
-	"widget.home.student_courses.text.empty.description": "You do not appear to be enrolled in any courses.",
+	"widget.home.student_courses.text.empty.description": "You do not appear to be enrolled in any courses for the selected term.",
     "widget.home.student_courses.text.offline.description": "My Courses not available while offline.",
     "widget.home.student_courses.text.logged_out.description": "You need to be logged in to access My Courses.",
-	"widget.home.student_courses.text.failed.description": "Unable to load courses.",
+	"widget.home.student_courses.text.failed.description": "It appears you have no courses registered for the selected term.",
     "widget.home.student_courses.button.all.title": "View All",
     "widget.home.student_courses.button.all.hint": "Tap to view all courses",
 
