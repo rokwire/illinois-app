@@ -95,32 +95,25 @@
 	}
 	else if (exploreType == UIUCExploreType_StudentCourse) {
 		NSMutableString *result = [[NSMutableString alloc] init];
+		NSDictionary *secton = [self inaDictForKey:@"coursesection"];
 
-		NSString *shortName = [self inaStringForKey:@"courseshortname"];
-		if (0 < shortName.length) {
+		NSString *buildingName = [secton inaStringForKey:@"buildingname"];
+		if (0 < buildingName.length) {
 			if (0 < result.length) {
-				[result appendString: @" "];
+				[result appendString: @", "];
 			}
-			[result appendString: shortName];
+			[result appendString: buildingName];
 		}
 		
-		NSString *number = [self inaStringForKey:@"coursenumber"];
-		if (0 < number.length) {
+		NSString *room = [secton inaStringForKey:@"room"];
+		if (0 < room.length) {
 			if (0 < result.length) {
-				[result appendString: @" "];
+				[result appendString: @", "];
 			}
 			
-			[result appendFormat:@"(%@)", number];
+			[result appendFormat: NSLocalizedString(@"Room %@", nil), room];
 		}
 	
-		NSString *instructionMethod = [self inaStringForKey:@"instructionmethod"];
-		if (0 < instructionMethod.length) {
-			if (0 < result.length) {
-				[result appendString: @" "];
-			}
-			[result appendString:instructionMethod];
-		}
-
 		return result;
 	}
 	

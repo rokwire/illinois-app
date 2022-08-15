@@ -45,6 +45,7 @@
 
     <!-- MapActivity -->
     <string name="mapTitle">Mapas</string>
+    <string name="room_label">Habitación %1$s</string>
 
     <!-- MapPickLocationActivity -->
     <string name="pick_location">Elegir ubicación</string>
