@@ -348,7 +348,13 @@ class _DailyIlliniItemWidget extends StatelessWidget {
                 child: Column(children: <Widget>[
                   Column(children: [
                     StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
-                        ? Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true)
+                        ? Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true,
+                            loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child;
+                            }
+                            return Padding(padding: EdgeInsets.symmetric(vertical: 30), child: CircularProgressIndicator());
+                          })
                         : Row(children: [Expanded(child: Image.asset('images/daily-illini-placeholder.jpg', fit: BoxFit.fill))]),
                     Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                       _buildNavigationButton(
