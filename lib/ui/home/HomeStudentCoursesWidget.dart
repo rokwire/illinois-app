@@ -226,10 +226,10 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
       return HomeMessageCard(message: Localization().getStringEx('widget.home.student_courses.text.logged_out.description', 'You need to be logged in to access My Courses.'),);
     }
     else if (_courses == null) {
-      return HomeMessageCard(message: Localization().getStringEx('widget.home.student_courses.text.failed.description', 'Unable to load courses.'),);
+      return HomeMessageCard(message: Localization().getStringEx('widget.home.student_courses.text.failed.description', 'It appears you have no courses registered for the selected term.'),);
     }
     else if (_courses?.isEmpty ?? true) {
-      return HomeMessageCard(message: Localization().getStringEx('widget.home.student_courses.text.empty.description', 'You do not appear to be enrolled in any courses.'),);
+      return HomeMessageCard(message: Localization().getStringEx('widget.home.student_courses.text.empty.description', 'You do not appear to be enrolled in any courses for the selected term.'),);
     }
     else {
       return _buildCoursesContent();

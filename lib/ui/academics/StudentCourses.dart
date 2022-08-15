@@ -88,10 +88,10 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
       return _buildMessageContent(Localization().getStringEx('panel.student_courses.load.logged_out.error.msg', 'You need to be logged in to access My Courses.'));
     }
     else if (_courses == null) {
-      return _buildMessageContent(Localization().getStringEx('panel.student_courses.load.failed.error.msg', 'Unable to load courses.'));
+      return _buildMessageContent(Localization().getStringEx('panel.student_courses.load.failed.error.msg', 'It appears you have no courses registered for the selected term.'));
     }
     else if (_courses?.isEmpty ?? true) {
-      return _buildMessageContent(Localization().getStringEx('panel.student_courses.empty.content.msg', 'You do not appear to be enrolled in any courses.'));
+      return _buildMessageContent(Localization().getStringEx('panel.student_courses.empty.content.msg', 'You do not appear to be enrolled in any courses for the selected term.'));
     }
     else {
       return _buildCoursesContent();

@@ -2366,8 +2366,8 @@
 
     "panel.student_courses.header.title": "Mis cursos",
     "panel.student_courses.instructor.title": "Instructor: %s",
-    "panel.student_courses.empty.content.msg": "You do not appear to be enrolled in any courses.",
-    "panel.student_courses.load.failed.error.msg": "Unable to load courses.",
+    "panel.student_courses.empty.content.msg": "No parece estar inscrito en ningún curso para el término seleccionado.",
+    "panel.student_courses.load.failed.error.msg": "Parece que no tiene cursos registrados para el término seleccionado.",
     "panel.student_courses.load.offline.error.msg": "My Courses not available while offline.",
     "panel.student_courses.load.logged_out.error.msg": "You need to be logged in to access My Courses.",
 
@@ -2734,10 +2734,10 @@
     "widget.home.canvas_courses.button.all.hint": "Toca para ver todos los cursos",
 
     "widget.home.student_courses.header.label": "Mis cursos",
-	"widget.home.student_courses.text.empty.description": "No parece estar inscrito en ningún curso.",
-    "widget.home.student_courses.text.offline.description": "Mis cursos no están disponibles sin conexión.",
+	"widget.home.student_courses.text.empty.description": "No parece estar inscrito en ningún curso para el período seleccionado",
+    "widget.home.student_courses.text.offline.description": "No parece estar inscrito en ningún curso para el término seleccionado.",
     "widget.home.student_courses.text.logged_out.description": "Debe iniciar sesión para acceder a Mis cursos.",
-	"widget.home.student_courses.text.failed.description": "No se pueden cargar los cursos.",
+	"widget.home.student_courses.text.failed.description": "Parece que no tiene cursos registrados para el término seleccionado.",
     "widget.home.student_courses.button.all.title": "Ver todo",
     "widget.home.student_courses.button.all.hint": "Toca para ver todos los cursos",
 

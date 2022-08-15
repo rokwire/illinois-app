@@ -2367,7 +2367,7 @@
 	"panel.student_courses.header.title": "我的課程",
 	"panel.student_courses.instructor.title": "Instructor: %s",
 	"panel.student_courses.empty.content.msg": "You do not appear to be enrolled in any courses.",
-	"panel.student_courses.load.failed.error.msg": "Unable to load courses.",
+	"panel.student_courses.load.failed.error.msg": "您似乎沒有註冊所選學期的任何課程。",
 	"panel.student_courses.load.offline.error.msg": "My Courses not available while offline.",
 	"panel.student_courses.load.logged_out.error.msg": "You need to be logged in to access My Courses.",
 
@@ -2734,10 +2734,10 @@
 	"widget.home.canvas_courses.button.all.hint": "點擊查看所有課程",
 
 	"widget.home.student_courses.header.label": "我的課程",
-	"widget.home.student_courses.text.empty.description": "您似乎沒有註冊任何課程。",
+	"widget.home.student_courses.text.empty.description": "您似乎沒有註冊所選學期的任何課程。",
 	"widget.home.student_courses.text.offline.description": "我的課程在離線時不可用。",
 	"widget.home.student_courses.text.logged_out.description": "您需要登錄才能訪問我的課程。",
-	"widget.home.student_courses.text.failed.description": "無法加載課程。",
+	"widget.home.student_courses.text.failed.description": "您似乎沒有為所選學期註冊的課程。",
 	"widget.home.student_courses.button.all.title": "查看全部",
 	"widget.home.student_courses.button.all.hint": "點擊查看所有課程",
 
