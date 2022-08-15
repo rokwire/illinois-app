@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/StudentCourse.dart';
@@ -220,81 +221,86 @@ class StudentCourseCard extends StatelessWidget {
     String courseSchedule = course.section?.displaySchedule ?? '';
     String courseLocation = course.section?.displayLocation ?? '';
     
-
-    return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(4)), child:
-      Stack(children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Styles().colors!.surface,
-            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-            borderRadius: BorderRadius.all(Radius.circular(4)),
-          ),
-          child:
-                Padding(padding: EdgeInsets.all(16), child:
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    
+    return InkWell(onTap: () => _onCard(context), child:
+      ClipRRect(borderRadius: BorderRadius.all(Radius.circular(4)), child:
+        Stack(children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Styles().colors!.surface,
+              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(4)),
+            ),
+            child:
+              Padding(padding: EdgeInsets.all(16), child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  
+                  Row(children: [Expanded(child:
+                    Text(course.title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 18),),
+                  )]),
+                  
+                  Padding(padding: EdgeInsets.only(top: 6), child:
                     Row(children: [Expanded(child:
-                      Text(course.title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 18),),
+                      Text(course.displayInfo, style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),),
                     )]),
-                    
+                  ),
+                  
+                  Padding(padding: EdgeInsets.zero, child:
+                    Row(children: [Expanded(child:
+                      Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [course.section?.instructor ?? '']), style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),)
+                    )]),
+                  ),
+                  
+                  Visibility(visible: courseSchedule.isNotEmpty, child:
                     Padding(padding: EdgeInsets.only(top: 6), child:
-                      Row(children: [Expanded(child:
-                        Text(course.displayInfo, style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),),
-                      )]),
+                      Row(children: [
+                        Padding(padding: EdgeInsets.only(right: 6), child:
+                          Image.asset('images/icon-calendar.png'),
+                        ),
+                        Expanded(child:
+                          Text(courseSchedule, style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),),
+                        )
+                        
+                      ],),
                     ),
-                    
-                    Padding(padding: EdgeInsets.zero, child:
-                      Row(children: [Expanded(child:
-                        Text(sprintf(Localization().getStringEx('panel.student_courses.instructor.title', 'Instructor: %s'), [course.section?.instructor ?? '']), style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),)
-                      )]),
-                    ),
-                    
-                    Visibility(visible: courseSchedule.isNotEmpty, child:
-                      Padding(padding: EdgeInsets.only(top: 6), child:
+                  ),
+                  
+                  Visibility(visible: courseLocation.isNotEmpty && course.hasLocation, child:
+                    InkWell(onTap: _onLocaltion, child:
+                      Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
                         Row(children: [
                           Padding(padding: EdgeInsets.only(right: 6), child:
-                            Image.asset('images/icon-calendar.png'),
+                            Image.asset('images/icon-location.png'),
                           ),
                           Expanded(child:
-                            Text(courseSchedule, style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),),
+                            Text(courseLocation, style:
+                              TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16,
+                                decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1
+                              ),
+                            ),
                           )
                           
                         ],),
                       ),
                     ),
-                    
-                    Visibility(visible: courseLocation.isNotEmpty && course.hasLocation, child:
-                      InkWell(onTap: _onLocaltion, child:
-                        Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
-                          Row(children: [
-                            Padding(padding: EdgeInsets.only(right: 6), child:
-                              Image.asset('images/icon-location.png'),
-                            ),
-                            Expanded(child:
-                              Text(courseLocation, style:
-                                TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16,
-                                  decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1
-                                ),
-                              ),
-                            )
-                            
-                          ],),
-                        ),
-                      ),
-                    ),
+                  ),
 
-                  ],)
-                ),
-        ),
-        Container(color: Styles().colors?.fillColorSecondary, height: 4),
-      ]),
+                ],)
+              ),
+          ),
+          Container(color: Styles().colors?.fillColorSecondary, height: 4),
+        ]),
+      ),
     );
-
   }
 
   void _onLocaltion() {
     Analytics().logSelect(target: "Location Detail");
     NativeCommunicator().launchMapDirections(jsonData: course.toJson());
+  }
+
+  void _onCard(BuildContext context) {
+    Analytics().logSelect(target: "Student Course: ${course.title}");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => StudentCourseDetailPanel(course: course)));
   }
 
 }
