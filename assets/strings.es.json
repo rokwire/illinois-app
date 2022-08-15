@@ -407,6 +407,7 @@
     "panel.academics.section.uiuc_checklist.label": "Lista de verificación para nuevos estudiantes",
     "panel.academics.section.canvas_courses.label": "Mis cursos Gies Canvas",
     "panel.academics.section.student_courses.label": "Mis cursos",
+    "panel.academics.section.due_date_catalog.label": "Catálogo de fecha de vencimiento",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.events.offline.msg": "No hay eventos académicos disponibles sin conexión.",
     "panel.academics.section.events.empty.msg": "Sin eventos académicos.",
