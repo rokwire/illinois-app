@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -30,6 +31,7 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeAppHelpWidget extends StatefulWidget {
 
@@ -142,14 +144,19 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
   void _onFAQs() {
     Analytics().logSelect(target: "FAQs", source: widget.runtimeType.toString());
 
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.app_help.faqs.label.offline', 'FAQs is not available while offline.'));
-    }
-    else if (_canFAQs) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
-        url: Config().faqsUrl,
-        title: Localization().getStringEx('widget.home.app_help.faqs.panel.title', 'FAQs'),
-      )));
+    if (_canFAQs) {
+      String url = Config().faqsUrl!;
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else if (UrlUtils.launchInternal(url)){
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
+          url: url, title: Localization().getStringEx('widget.home.app_help.faqs.panel.title', 'FAQs'),
+        )));
+      }
+      else{
+        launch(url);
+      }
     }
   }
 

@@ -347,40 +347,17 @@ class _DailyIlliniItemWidget extends StatelessWidget {
                 clipBehavior: Clip.none,
                 child: Column(children: <Widget>[
                   Column(children: [
-                    StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
-                        ? Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true)
-                        : Image.asset('images/daily-illini-placeholder.jpg'),
+                    _buildImage(),
                     Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Visibility(
-                          visible: (onTapPrevious != null),
-                          child: Semantics(
-                              label: Localization().getStringEx('widget.home.daily_illini.item.page.previous.hint', 'Previous page'),
-                              button: true,
-                              child: GestureDetector(
-                                  onTap: onTapPrevious ?? () {},
-                                  child: Container(
-                                      padding: EdgeInsets.all(24),
-                                      child: Text("<",
-                                          semanticsLabel: "",
-                                          style: TextStyle(
-                                              color: Styles().colors!.fillColorPrimary,
-                                              fontFamily: Styles().fontFamilies!.bold,
-                                              fontSize: 26)))))),
-                      Visibility(
-                          visible: (onTapNext != null),
-                          child: Semantics(
-                              label: Localization().getStringEx('widget.home.daily_illini.item.page.next.hint', 'Next page'),
-                              button: true,
-                              child: GestureDetector(
-                                  onTap: onTapNext ?? () {},
-                                  child: Container(
-                                      padding: EdgeInsets.all(24),
-                                      child: Text(">",
-                                          semanticsLabel: "",
-                                          style: TextStyle(
-                                              color: Styles().colors!.fillColorPrimary,
-                                              fontFamily: Styles().fontFamilies!.bold,
-                                              fontSize: 26))))))
+                      _buildNavigationButton(
+                          navigationDirection: '<',
+                          semanticsLabel: Localization().getStringEx('widget.home.daily_illini.item.page.previous.hint', 'Previous page'),
+                          onTap: onTapPrevious),
+                      _buildNavigationButton(
+                          navigationDirection: '>',
+                          semanticsLabel: Localization().getStringEx('widget.home.daily_illini.item.page.next.hint', 'Next page'),
+                          onTap: onTapNext)
+                      
                     ]),
                     Padding(
                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -393,6 +370,40 @@ class _DailyIlliniItemWidget extends StatelessWidget {
                       child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
                           style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 14)))
                 ]))));
+  }
+
+  Widget _buildImage() {
+    return StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
+        ? Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true, loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) {
+              return child;
+            }
+            return Padding(padding: EdgeInsets.symmetric(vertical: 30), child: CircularProgressIndicator());
+          }, errorBuilder: (context, error, stackTrace) {
+            return _defaultPlaceholderImage();
+          })
+        : _defaultPlaceholderImage();
+  }
+
+  Widget _defaultPlaceholderImage() {
+    return Row(children: [Expanded(child: Image.asset('images/daily-illini-placeholder.jpg', fit: BoxFit.fill))]);
+  }
+
+  Widget _buildNavigationButton({required String navigationDirection, required String semanticsLabel, void Function()? onTap}) {
+    return Visibility(
+        visible: (onTap != null),
+        child: Semantics(
+            label: semanticsLabel,
+            button: true,
+            child: GestureDetector(
+                onTap: onTap ?? () {},
+                child: Container(
+                    color: Colors.transparent,
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                    child: Text(navigationDirection,
+                        semanticsLabel: "",
+                        style:
+                            TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 26))))));
   }
 
   void _onTap() {

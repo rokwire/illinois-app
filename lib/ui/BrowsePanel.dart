@@ -12,6 +12,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -703,14 +704,19 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapFAQs(BuildContext context) {
     Analytics().logSelect(target: "FAQs");
 
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.faqs', 'FAQs is not available while offline.'));
-    }
-    else if (_canFAQs) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
-        url: Config().faqsUrl,
-        title: Localization().getStringEx('panel.settings.faqs.label.title', 'FAQs'),
-      )));
+    if (_canFAQs) {
+      String url = Config().faqsUrl!;
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else if (UrlUtils.launchInternal(url)){
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
+          url: url, title: Localization().getStringEx('panel.settings.faqs.label.title', 'FAQs'),
+        )));
+      }
+      else{
+        launch(url);
+      }
     }
   }
 

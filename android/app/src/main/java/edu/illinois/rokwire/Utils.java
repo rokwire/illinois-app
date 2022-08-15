@@ -397,6 +397,8 @@ public class Utils {
                         TextView markerTitleView = markerLayoutView.findViewById(R.id.markerTitleView);
                         String markerTitle = marker.getTitle();
                         markerTitleView.setText(shortTitle != null ? shortTitle : markerTitle);
+                        TextView markerSnippetView = markerLayoutView.findViewById(R.id.markerSnippetView);
+                        markerSnippetView.setVisibility(GONE);
                     }
                 } else {
                     ImageView markerGroupCircleView = markerGroupLayoutView.findViewById(R.id.markerGroupCircleView);
@@ -418,6 +420,11 @@ public class Utils {
                     String markerTitle = marker.getTitle();
                     String shortTitle = Utils.Explore.optExploreMarkerShortTitle(marker);
                     markerTitleView.setText(passedSecondThreshold ? markerTitle : shortTitle);
+                    TextView markerSnippetView = markerLayoutView.findViewById(R.id.markerSnippetView);
+                    String snippetText = marker.getSnippet();
+                    boolean showSnippet = !Utils.Str.isEmpty(snippetText) && passedSecondThreshold;
+                    markerSnippetView.setText(snippetText);
+                    markerSnippetView.setVisibility(showSnippet ? VISIBLE : GONE);
                 } else {
                     ImageView markerGroupCircleView = markerGroupLayoutView.findViewById(R.id.markerGroupCircleView);
                     int imageViewSize = context.getResources().getDimensionPixelSize(passedSecondThreshold ? R.dimen.group_marker_image_size_second : R.dimen.group_marker_image_size_first);
@@ -595,28 +602,22 @@ public class Utils {
             else if (exporeType == ExploreType.STUDENT_COURSE) {
                 String result = "";
 
-                String shortName = (String) exploreMap.get("courseshortname");
-                if ((shortName != null) && (0 < shortName.length())) {
+                HashMap sectionMap = Utils.Map.getMapValueForKey(exploreMap, "coursesection");
+
+                String buildingName = Utils.Map.getStringValueForKey(sectionMap, "buildingname");
+                if ((buildingName != null) && (0 < buildingName.length())) {
                     if (0 < result.length()) {
-                        result += " ";
+                        result += ", ";
                     }
-                    result += shortName;
+                    result += buildingName;
                 }
 
-                String number = (String) exploreMap.get("coursenumber");
-                if ((number != null) && (0 < number.length())) {
+                String room = Utils.Map.getStringValueForKey(sectionMap, "room");
+                if ((room != null) && (0 < room.length())) {
                     if (0 < result.length()) {
-                        result += " ";
+                        result += ", ";
                     }
-                    result += "(" + number + ")";
-                }
-
-                String instructionMethod = (String) exploreMap.get("instructionmethod");
-                if ((instructionMethod != null) && (0 < instructionMethod.length())) {
-                    if (0 < result.length()) {
-                        result += " ";
-                    }
-                    result += instructionMethod;
+                    result += context.getString(R.string.room_label, room);
                 }
 
                 return result;
@@ -700,6 +701,40 @@ public class Utils {
     }
 
     public static class Map {
+
+        // Value for Key
+
+        public static HashMap getMapValueForKey(HashMap map, String key) {
+            Object valueObj = ((map != null) && (key != null)) ? map.get(key) : null;
+            return (valueObj instanceof HashMap) ? (HashMap)valueObj : null;
+        }
+
+        public static String getStringValueForKey(HashMap map, String key) {
+            Object valueObj = ((map != null) && (key != null)) ? map.get(key) : null;
+            return (valueObj instanceof String) ? (String)valueObj : null;
+        }
+
+        public static int getIntValueForKey(HashMap map, String key) {
+            Object valueObj = ((map != null) && (key != null)) ? map.get(key) : null;
+            return (valueObj instanceof Integer) ? (Integer)valueObj : null;
+        }
+
+        public static long getLongValueForKey(HashMap map, String key) {
+            Object valueObj = ((map != null) && (key != null)) ? map.get(key) : null;
+            return (valueObj instanceof Long) ? (Long)valueObj : null;
+        }
+
+        public static double getDoubleValueForKey(HashMap map, String key) {
+            Object valueObj = ((map != null) && (key != null)) ? map.get(key) : null;
+            return (valueObj instanceof Double) ? (Double)valueObj : null;
+        }
+
+        public static boolean getBooleanValueForKey(HashMap map, String key) {
+            Object valueObj = ((map != null) && (key != null)) ? map.get(key) : null;
+            return (valueObj instanceof Boolean) ? (Boolean)valueObj : null;
+        }
+
+        // Value for Path
 
         public static String getValueFromPath(Object object, String path, String defaultValue) {
             Object valueObject = getValueFromPath(object, path);

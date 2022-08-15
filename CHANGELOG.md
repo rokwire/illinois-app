@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Member count is only displayed for some groups [#2250](https://github.com/rokwire/illinois-app/issues/2250).
+- Android: set the proper text for snippet view in mapview markers. Show/hide snippet view based on the zoom level [#2268](https://github.com/rokwire/illinois-app/issues/2268).
 ### Added
 - "Due Date Catalog" to Academics panel drop-down [#2260](https://github.com/rokwire/illinois-app/issues/2260).
+- Bring back FAQs entry in App Help [#2267](https://github.com/rokwire/illinois-app/issues/2267).
+### Changed
+- Default Daily Illini image placeholder [#2264](https://github.com/rokwire/illinois-app/issues/2264).
+- Show building name and room in map popup [#2263](https://github.com/rokwire/illinois-app/issues/2263)
 
 ## [4.1.17] - 2022-08-12
 ### Added
