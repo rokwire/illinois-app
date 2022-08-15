@@ -79,6 +79,8 @@
 		"rules": {
 			"roles" : {
 	
+				"student_courses"                        : ["student"],
+
 				"onboarding.login_netid"                 : ["student", "OR", "employee"],
 				"onboarding.login_phone"                 : ["NOT", ["employee", "OR", "student"]],
 				"onboarding.verify_phone"                : ["NOT", ["employee", "OR", "student"]],
