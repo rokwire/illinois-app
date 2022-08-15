@@ -8,7 +8,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/StudentCourses.dart';
-import 'package:illinois/ui/academics/StudentCoursesContentWidget.dart';
+import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
