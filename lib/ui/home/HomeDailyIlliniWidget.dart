@@ -347,15 +347,7 @@ class _DailyIlliniItemWidget extends StatelessWidget {
                 clipBehavior: Clip.none,
                 child: Column(children: <Widget>[
                   Column(children: [
-                    StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
-                        ? Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true,
-                            loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) {
-                              return child;
-                            }
-                            return Padding(padding: EdgeInsets.symmetric(vertical: 30), child: CircularProgressIndicator());
-                          })
-                        : Row(children: [Expanded(child: Image.asset('images/daily-illini-placeholder.jpg', fit: BoxFit.fill))]),
+                    _buildImage(),
                     Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                       _buildNavigationButton(
                           navigationDirection: '<',
@@ -378,6 +370,23 @@ class _DailyIlliniItemWidget extends StatelessWidget {
                       child: Text(StringUtils.ensureNotEmpty(illiniItem?.displayPubDate),
                           style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.medium, fontSize: 14)))
                 ]))));
+  }
+
+  Widget _buildImage() {
+    return StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
+        ? Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true, loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) {
+              return child;
+            }
+            return Padding(padding: EdgeInsets.symmetric(vertical: 30), child: CircularProgressIndicator());
+          }, errorBuilder: (context, error, stackTrace) {
+            return _defaultPlaceholderImage();
+          })
+        : _defaultPlaceholderImage();
+  }
+
+  Widget _defaultPlaceholderImage() {
+    return Row(children: [Expanded(child: Image.asset('images/daily-illini-placeholder.jpg', fit: BoxFit.fill))]);
   }
 
   Widget _buildNavigationButton({required String navigationDirection, required String semanticsLabel, void Function()? onTap}) {
