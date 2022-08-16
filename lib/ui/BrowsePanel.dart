@@ -668,7 +668,7 @@ class _BrowseEntry extends StatelessWidget {
     Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials['strings']);
     for (dynamic video in videos!) {
       String? videoId = video['id'];
-      String? videoTitle = StringUtils.getContentString(strings, videoId);
+      String? videoTitle = Localization().getContentString(strings, videoId);
       video['title'] = videoTitle;
     }
     return videos;
