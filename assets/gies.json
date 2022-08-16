@@ -151,6 +151,7 @@
   },
   {
     "content":[
+      {"widget": "student_courses_list"},
       {
         "bullets":[
           "<a href='https://onlinestudents.giesbusiness.illinois.edu/current-students/course-offerings/imba'>iMBA Course Offerings</a>",

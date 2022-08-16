@@ -15,13 +15,14 @@
  */
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -29,10 +30,12 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -43,8 +46,8 @@ class HomeWellnessResourcesWidget extends StatefulWidget {
 
   const HomeWellnessResourcesWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -66,6 +69,10 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   String? _currentFavoriteId;
   int _currentPage = -1;
   final double _pageSpacing = 16;
+
+  static const String localScheme = 'local';
+  static const String localUrlMacro = '{{local_url}}';
+
 
   @override
   void initState() {
@@ -111,14 +118,31 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   }
 
   Widget _buildContent() {
-    return  (_favoriteCommands?.isEmpty ?? true) ? HomeMessageCard(
-      message: Localization().getStringEx("widget.home.wellness_resources.text.empty.description", "Tap the \u2606 on items in Wellness Resources so you can quickly find them here."),
-    ) : _buildResourceContent();
+    return  (_favoriteCommands?.isEmpty ?? true) ? _buildEmpty() : _buildResourceContent();
+  }
+
+  Widget _buildEmpty() {
+    String favoriteKey = WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey);
+    String message = Localization().getStringEx("widget.home.wellness_resources.text.empty.description", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Wellness Resources</b></a> so you can quickly find them here.")
+      .replaceAll(localUrlMacro, '$localScheme://$favoriteKey');
+
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
+      Container(decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        padding: EdgeInsets.all(16),
+        child: Html(data: message,
+          onLinkTap: (url, renderContext, attributes, element) => _handleLocalUrl(url),
+          style: {
+            "body": Style(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+            "a": Style(color: Styles().colors?.fillColorSecondary),
+          },
+        ),
+      ),
+    );
   }
 
   Widget _buildResourceContent() {
     Widget contentWidget;
-    int visibleCount = min(Config().homeWellnessResourcesCount, _favoriteCommands?.length ?? 0);
+    int visibleCount = _favoriteCommands?.length ?? 0; // Config().homeWellnessResourcesCount
     if (1 < visibleCount) {
 
       List<Widget> pages = <Widget>[];
@@ -143,6 +167,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
           controller: _pageController,
           estimatedPageSize: _pageHeight,
           onPageChanged: _onCurrentPageChanged,
+          allowImplicitScrolling: true,
           children: pages,
         ),
       );
@@ -155,6 +180,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
     return Column(children: [
       contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.wellness_resources.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.wellness_resources.button.all.hint', 'Tap to view all wellness resources'),
@@ -222,15 +248,18 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
   static List<dynamic>? _filterFavoriteCommands(List<dynamic>? commands) {
     List<dynamic>? favoriteCommands;
-    if (commands != null) {
+    LinkedHashSet<String>? wellnessFavorites = Auth2().prefs?.getFavorites(WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey));
+    if ((wellnessFavorites != null) && (commands != null)) {
       favoriteCommands = [];
-      for (dynamic entry in commands) {
-        Map<String, dynamic>? command = JsonUtils.mapValue(entry);
-        if (command != null) {
-          String? id = JsonUtils.stringValue(command['id']);
-          Favorite favorite = WellnessFavorite(id, category: WellnessResourcesContentWidget.wellnessCategoryKey);
-          if (Auth2().prefs?.isFavorite(favorite) ?? false) {
-            favoriteCommands.add(entry);
+      for (String favoriteId in wellnessFavorites) {
+        for (dynamic entry in commands) {
+          Map<String, dynamic>? command = JsonUtils.mapValue(entry);
+          if (command != null) {
+            String? commandId = JsonUtils.stringValue(command['id']);
+            if (commandId == favoriteId)  {
+              favoriteCommands.add(entry);
+              break;
+            }
           }
         }
       }
@@ -300,6 +329,14 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
       }
     }
     return null;
+  }
+
+  void _handleLocalUrl(String? url) {
+    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+    if ((uri?.scheme == localScheme) && (uri?.host.toLowerCase() == WellnessFavorite.favoriteKeyName(category: WellnessResourcesContentWidget.wellnessCategoryKey).toLowerCase())) {
+      Analytics().logSelect(target: "View Home", source: widget.runtimeType.toString());
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.resources,)));
+    }
   }
 
   void _onViewAll() {

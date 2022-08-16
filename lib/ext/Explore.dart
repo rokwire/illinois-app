@@ -105,6 +105,9 @@ extension ExploreExt on Explore {
     else if (exploresType == "place") {
       return Localization().getStringEx('panel.explore.item.places.name', 'Places');
     }
+    else if (exploresType == "studentcourse") {
+      return Localization().getStringEx('panel.explore.item.courses.name', 'Courses');
+    }
     else {
       return Localization().getStringEx('panel.explore.item.unknown.name', 'Explores');
     }

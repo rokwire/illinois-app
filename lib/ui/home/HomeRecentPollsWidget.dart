@@ -11,6 +11,7 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -30,8 +31,8 @@ class HomeRecentPollsWidget extends StatefulWidget {
 
   HomeRecentPollsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -153,9 +154,10 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
 
   Widget _buildPollsContent() {
     Widget contentWidget;
+    List<Widget> pages = <Widget>[];
+
     if (1 < (_recentPolls?.length ?? 0)) {
 
-      List<Widget> pages = <Widget>[];
       for (Poll poll in _recentPolls!) {
         pages.add(Padding(key: _contentKeys[poll.pollId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
           PollCard(poll: poll, group: _getGroup(poll.groupId)),
@@ -186,6 +188,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
           controller: _pageController,
           estimatedPageSize: _pageHeight,
           onPageChanged: _onPageChanged,
+          allowImplicitScrolling: true,
           children: pages,
         ),
       );
@@ -198,6 +201,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
 
     return Column(children: <Widget>[
       contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.recent_polls.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.recent_polls.button.all.hint', 'Tap to view all polls'),

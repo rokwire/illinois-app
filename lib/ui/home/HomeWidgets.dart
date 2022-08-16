@@ -12,6 +12,8 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -68,8 +70,20 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
   Widget _buildContent(BuildContext context, {bool dropTarget = false }) {
     return Column(key: _contentKey, children: <Widget>[
       Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors?.fillColorSecondary : ((widget.position == 0) ? Styles().colors!.surfaceAccent : Colors.transparent),),
-
-      LongPressDraggable<HomeFavorite>(
+      Semantics(
+        container: true,
+        inMutuallyExclusiveGroup: true,
+        onIncrease: (){
+          widget.dragAndDropHost?.onAccessibilityMove(dragFavoriteId: widget.favoriteId, delta: 1);
+          AppSemantics.announceMessage(context, " moved one position above");
+          // AppSemantics.requestSemanticsUpdates(context);
+        },
+        onDecrease: (){
+          widget.dragAndDropHost?.onAccessibilityMove(dragFavoriteId: widget.favoriteId, delta: -1);
+          AppSemantics.announceMessage(context, " moved one position below");
+          // AppSemantics.requestSemanticsUpdates(context);
+        },
+       child: LongPressDraggable<HomeFavorite>(
         data: HomeFavorite(widget.favoriteId),
         axis: Axis.vertical,
         //affinity: Axis.vertical,
@@ -81,7 +95,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
         feedback: HomeDragFeedback(title: widget.title),
         child: Row(crossAxisAlignment: widget.crossAxisAlignment, children: <Widget>[
 
-          Semantics(label: 'Drag Handle' /* TBD: Localization */, button: true, child:
+          Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
             Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
               Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
             ),
@@ -98,7 +112,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
                 
           HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.Handle, prompt: true),
         ],),
-      ),
+      )),
 
       Container(height: 2, color: (dropTarget && (_dropAnchorAlignment == CrossAxisAlignment.end)) ? Styles().colors?.fillColorSecondary : Styles().colors!.surfaceAccent,),
     ]);
@@ -365,6 +379,10 @@ class HomeFavoriteButton extends FavoriteButton {
   }
   
   void _toggleFavorite({bool? isFavorite}) {
+    _setFavorite(isFavorite != true);
+  }
+  
+  void _setFavorite(bool value) {
     if (favorite?.id != null) {
       if (favorite?.category == null) {
         // process toggle home panel widget
@@ -374,52 +392,52 @@ class HomeFavoriteButton extends FavoriteButton {
           for(String sectionEntry in avalableSectionFavorites) {
             favorites.add(HomeFavorite(sectionEntry, category: favorite?.id));
           }
-          Auth2().prefs?.setListFavorite(favorites, (isFavorite != true));
-          HomeFavorite.log(favorites, isFavorite != true);
+          Auth2().prefs?.setListFavorite(favorites, value);
+          HomeFavorite.log(favorites, value);
         }
         else {
-          super.toggleFavorite();
-          HomeFavorite.log(favorite, isFavorite != true);
+          Auth2().prefs?.setFavorite(favorite, value);
+          HomeFavorite.log(favorite, value);
         }
       }
       else { 
         // process toggle home widget entry
         HomeFavorite sectionFavorite = HomeFavorite(favorite?.category);
-        if (isFavorite == true) {
+        if (value) {
+          // turn on home widget entry
+          if (Auth2().prefs?.isFavorite(sectionFavorite) ?? false) {
+            // turn on only home widget entry
+            Auth2().prefs?.setFavorite(favorite, value);
+            HomeFavorite.log(favorite, value);
+          }
+          else {
+            // turn on both home widget entry and home widget itself
+            List<Favorite> favorites = <Favorite>[favorite!, sectionFavorite];
+            Auth2().prefs?.setListFavorite(favorites, value);
+            HomeFavorite.log(favorites, value);
+          }
+        }
+        else {
           // turn off home widget entry
           int sectionFavoritesCount = 0;
           List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite?.category}']);
           if (avalableSectionFavorites != null) {
-            for(String sectionEntry in avalableSectionFavorites) {
+            for (String sectionEntry in avalableSectionFavorites) {
               if (Auth2().prefs?.isFavorite(HomeFavorite(sectionEntry, category: favorite?.category)) ?? false) {
                 sectionFavoritesCount++;
               }
             }
           }
-          if (1 < sectionFavoritesCount) {
-            // turn off only home widget entry
-            super.toggleFavorite();
-            HomeFavorite.log(favorite, false);
-          }
-          else {
+          if (sectionFavoritesCount <= 1) {
             // turn off both home widget entry and home widget itself
             List<Favorite> favorites = <Favorite>[favorite!, sectionFavorite];
-            Auth2().prefs?.setListFavorite(favorites, false);
-            HomeFavorite.log(favorites, false);
-          }
-        }
-        else {
-          // turn on home widget entry
-          if (Auth2().prefs?.isFavorite(sectionFavorite) ?? false) {
-            // turn on only home widget entry
-            super.toggleFavorite();
-            HomeFavorite.log(favorite, true);
+            Auth2().prefs?.setListFavorite(favorites, value);
+            HomeFavorite.log(favorites, value);
           }
           else {
-            // turn on both home widget entry and home widget itself
-            List<Favorite> favorites = <Favorite>[favorite!, sectionFavorite];
-            Auth2().prefs?.setListFavorite(favorites, true);
-            HomeFavorite.log(favorites, true);
+            // turn off only home widget entry
+            Auth2().prefs?.setFavorite(favorite, value);
+            HomeFavorite.log(favorite, value);
           }
         }
       }
@@ -720,15 +738,21 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
         _pageController = PageController(viewportFraction: pageViewport, initialPage: _currentPage);
       }
 
-      return Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
-        ExpandablePageView(
-          key: _pageViewKey,
-          controller: _pageController,
-          estimatedPageSize: _pageHeight,
-          onPageChanged: _onCurrentPageChanged,
-          children: pages,
-        ),
-      );
+      return
+        Column(children: [
+          Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+            ExpandablePageView(
+              key: _pageViewKey,
+              controller: _pageController,
+              estimatedPageSize: _pageHeight,
+              onPageChanged: _onCurrentPageChanged,
+              allowImplicitScrolling: true,
+              children: pages,
+            ),
+          ),
+          AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+        ],);
+
     }
     else { // (direction == Axis.vertical)
       List<Widget> contentList = <Widget>[];
@@ -758,17 +782,6 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
 
   List<String>? _buildFavoriteCodes() {
     LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: favoriteId));
-    if (favorites == null) {
-      // Build a default set of favorites
-      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry(contentKey));
-      if (fullContent != null) {
-        favorites = LinkedHashSet<String>.from(fullContent.reversed);
-        Future.delayed(Duration(), () {
-          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: favoriteId), favorites);
-        });
-      }
-    }
-    
     return (favorites != null) ? List.from(favorites) : null;
   }
 
@@ -801,7 +814,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   double get _pageHeight {
 
     double? minContentHeight;
-    for(GlobalKey contentKey in _contentKeys.values) {
+    for (GlobalKey contentKey in _contentKeys.values) {
       final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
       if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
         minContentHeight = renderBox.size.height;

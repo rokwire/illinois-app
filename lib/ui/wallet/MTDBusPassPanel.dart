@@ -124,63 +124,50 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              Container(
-                height: _headingH1,
-                color: _activeColor,
-              ),
-              Container(
-                height: _headingH2,
-                color: _activeColor,
-                child: CustomPaint(
-                  painter: TrianglePainter(painterColor: _backgroundColor),
-                  child: Container(),
-                ),
-              ),
-              Expanded(
-                  child: Container(
-                color: _backgroundColor,
-              ))
-            ],
+    return Scaffold(body:
+      Stack(children: <Widget>[
+        Column(children: <Widget>[
+          Container(height: _headingH1, color: _activeColor,),
+          Container(height: _headingH2, color: _activeColor, child:
+            CustomPaint(painter: TrianglePainter(painterColor: _backgroundColor), child: Container(),),
           ),
-          Column(children: <Widget>[
-            Expanded(child:_buildBusContent()),
-            SafeArea(
-              child: Align(
-                  alignment: Alignment.bottomCenter, child:
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 10),
-                      child:Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
-                      InkWell(
-                        onTap: _onClose,
-                        child:  Image.asset('images/close-white-large.png', excludeFromSemantics: true,)
-                      ),
-                    ))),
-            ),
-          ]),
-          SafeArea(
-            child: Stack(
-              children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.all(16),
-                    child:Semantics(header: true, child: Text(
-                      Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"),
-                      style: TextStyle(color: Color(0xff0f2040), fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),
-                    ),
-                    )),
-                Align(
-                    alignment: Alignment.topRight,
-                    child:Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
-                    InkWell(
-                        onTap: _onClose, child: Container(width: 48, height: 48, alignment: Alignment.center, child: Image.asset('images/close-blue.png', excludeFromSemantics: true,))),
-                    )
+          Expanded(child:
+            Container(color: _backgroundColor,),
+          )
+        ],),
+        Column(children: <Widget>[
+          Expanded(child: _buildBusContent()),
+          SafeArea(child:
+            Align(alignment: Alignment.bottomCenter, child:
+              Padding(padding: EdgeInsets.only(bottom: 10), child:
+                Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
+                  InkWell(onTap: _onClose, child:
+                    Image.asset('images/close-white-large.png', excludeFromSemantics: true,)
+                  ),
                 ),
-              ],
+              ),
             ),
+          ),
+        ]),
+        SafeArea(child:
+          Stack(children: <Widget>[
+            Padding( padding: EdgeInsets.all(16), child:
+              Semantics(header: true, child:
+                Text(Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"), style:
+                  TextStyle(color: Color(0xff0f2040), fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),
+                ),
+              ),
+            ),
+            Align(alignment: Alignment.topRight, child:
+              Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
+                InkWell(onTap: _onClose, child:
+                  Container(width: 48, height: 48, alignment: Alignment.center, child:
+                    Image.asset('images/close-blue.png', excludeFromSemantics: true,)
+                  ),
+                ),
+              )
+            ),
+          ],),
           ),
         ],
       ),
@@ -188,34 +175,37 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Widget _buildBusContent() {
+    bool busPassAvailable = FlexUI().hasFeature('mtd_bus_pass');
+    String description = busPassAvailable ?
+      Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus operator as you board.") :
+      Localization().getStringEx("panel.bus_pass.error.disabled.text", "You do not have an MTD Bus Pass.");
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
-      Column(
-        children: <Widget>[
-          _buildAvatar(),
-          Text(
-            Auth2().authCard?.role ?? '',
-            style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 36, color: Styles().colors!.white),
+      Column(children: <Widget>[
+        _buildAvatar(),
+        Text(Auth2().authCard?.role ?? '', style:
+          TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 36, color: Styles().colors!.white),
+        ),
+        BusClockWidget(),
+        Align(alignment: Alignment.center, child:
+          Padding(padding: EdgeInsets.only(top: 10), child:
+            _buildBusNumberContent()
+          )
+        ),
+        Align(alignment: Alignment.center, child:
+          Padding(padding: EdgeInsets.only(top: 20), child:
+            Opacity(opacity: busPassAvailable ? 1 : 0, child:
+              Image.asset('images/mtd-logo.png', excludeFromSemantics: true,),
+            )
           ),
-          BusClockWidget(),
-          Align(alignment: Alignment.center, child: Padding(padding: EdgeInsets.only(top: 10), child: _buildBusNumberContent())),
-          Align(alignment: Alignment.center, child: Padding(padding: EdgeInsets.only(top: 20), child: Image.asset('images/mtd-logo.png', excludeFromSemantics: true,))),
-          Align(
-              alignment: Alignment.center,
-              child: Container(
-                width: _photoSize,
-                padding: EdgeInsets.only(top: 12, left: 6, right: 6),
-                child: Text(
-                  Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus operator as you board."),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.regular,
-                    fontSize: 16,
-                    color: Styles().colors!.white,
-                  ),
-                ),
-              )),
-        ],
-      )
+        ),
+        Align(alignment: Alignment.center, child:
+          Container(width: _photoSize, padding: EdgeInsets.only(top: 12, left: 6, right: 6), child:
+            Text(description, textAlign: TextAlign.center, style:
+              TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.white,),
+            ),
+          ),
+        ),
+      ],)
     );
   }
 
@@ -270,7 +260,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Widget _buildBusNumberContent() {
-    bool busNumberVisible = FlexUI().hasFeature('mtd_bus_number') && StringUtils.isNotEmpty(_busNumber);
+    bool busNumberVisible = StringUtils.isNotEmpty(_busNumber);
     return Visibility(visible: busNumberVisible, child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[

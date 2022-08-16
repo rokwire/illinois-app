@@ -55,6 +55,8 @@ import 'package:http/http.dart';
 
 class Analytics extends rokwire.Analytics implements NotificationsListener {
 
+  static const String notifyEvent = "edu.illinois.rokwire.analytics.event";
+
   // Log Data
 
   // Standard (shared) Attributes
@@ -618,8 +620,10 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
 
   @override
   void logEvent(Map<String, dynamic> event, { List<String> defaultAttributes = DefaultAttributes, int? timestamp }) {
+    NotificationService().notify(notifyEvent, event);
+
     if (Auth2().privacyMatch(2)) {
-      
+
       event[LogEventPageName] = _currentPageName;
 
       Map<String, dynamic> analyticsEvent = {
@@ -714,7 +718,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
           analyticsEvent[LogStdStudentFirstYear] = IlliniCash().studentClassification?.firstYear;
         }
       }
-
+      
       super.logEvent(analyticsEvent, timestamp: timestamp ?? nowUtc.millisecondsSinceEpoch);
     }
   }

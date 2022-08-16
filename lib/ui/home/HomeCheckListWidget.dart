@@ -21,8 +21,8 @@ class HomeCheckListWidget extends StatefulWidget{
 
   const HomeCheckListWidget({Key? key, required this.contentKey, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({required String contentKey, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({required String contentKey, Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title(contentKey: contentKey),
     );
 

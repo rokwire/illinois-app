@@ -10,12 +10,19 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
+class GroupPostReportAbuseOptions {
+  final bool reportToDeanOfStudents;
+  final bool reportToGroupAdmins;
+  GroupPostReportAbuseOptions({ this.reportToDeanOfStudents = false, this.reportToGroupAdmins = false});
+}
+
 class GroupPostReportAbuse extends StatefulWidget {
 
+  final GroupPostReportAbuseOptions options;
   final String? groupId;
   final String? postId;
 
-  GroupPostReportAbuse({Key? key, this.groupId, this.postId}) : super(key: key);
+  GroupPostReportAbuse({Key? key, required this.options, this.groupId, this.postId}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupPostReportAbuseState();
@@ -57,12 +64,26 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
   }
 
   Widget _buildContent() {
+    String? title;
+    if (widget.options.reportToDeanOfStudents && !widget.options.reportToGroupAdmins) {
+      title = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students');
+    }
+    else if (!widget.options.reportToDeanOfStudents && widget.options.reportToGroupAdmins) {
+      title = Localization().getStringEx('panel.group.detail.post.report_abuse.group_admins.description.text', 'Report obscene, threatening, or harassing content to Group Administrators');
+    }
+    else if (widget.options.reportToDeanOfStudents && widget.options.reportToGroupAdmins) {
+      title = Localization().getStringEx('panel.group.detail.post.report_abuse.both.description.text', 'Report violation of Student Code to Dean of Students and obscene, threatening, or harassing content to Group Administrators');
+    }
+    else {
+      title = '';
+    }
+
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(top: 16), child:
         Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 24, top: 16), child:
-              Text(Localization().getStringEx('panel.group.detail.post.report_abuse.description.text', 'Report violation of Student Code to Dean of Students'), textAlign: TextAlign.center,
+              Text(title, textAlign: TextAlign.center,
                 style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),
               )
             )
@@ -168,7 +189,13 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
       _sending = true;
     });
 
-    Groups().reportAbuse(groupId: widget.groupId, postId: widget.postId, comment: _commentController.text).then((bool result) {
+    Groups().reportAbuse(
+      groupId: widget.groupId,
+      postId: widget.postId,
+      comment: _commentController.text,
+      reportToDeanOfStudents: widget.options.reportToDeanOfStudents,
+      reportToGroupAdmins: widget.options.reportToGroupAdmins,
+    ).then((bool result) {
       if (mounted) {
         setState(() {
           _sending = false;

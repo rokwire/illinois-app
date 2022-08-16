@@ -54,8 +54,8 @@ class HomeCampusResourcesWidget extends StatefulWidget {
 
   HomeCampusResourcesWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -144,17 +144,6 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
 
   List<String>? _buildFavoriteCodes() {
     LinkedHashSet<String>? favorites = Auth2().prefs?.getFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId));
-    if (favorites == null) {
-      // Build a default set of favorites
-      List<String>? fullContent = JsonUtils.listStringsValue(FlexUI().contentSourceEntry('home.campus_resources'));
-      if (fullContent != null) {
-        favorites = LinkedHashSet<String>.from(fullContent.reversed);
-        Future.delayed(Duration(), () {
-          Auth2().prefs?.setFavorites(HomeFavorite.favoriteKeyName(category: widget.favoriteId), favorites);
-        });
-      }
-    }
-    
     return (favorites != null) ? List.from(favorites) : null;
   }
 
@@ -433,7 +422,7 @@ class CampusResourceButton extends StatelessWidget {
 
   const CampusResourceButton({ Key? key, this.favorite, this.title,  this.hint, this.iconAsset,  this.onTap, this.promptFavorite = true }) : super(key: key);
 
-  bool get _canFavorite => FlexUI().contentSourceEntry((favorite?.category != null) ? 'home.${favorite?.category}' : 'home')?.contains(favorite?.favoriteId) ?? false;
+  bool get _canFavorite => FlexUI()[(favorite?.category != null) ? 'home.${favorite?.category}' : 'home']?.contains(favorite?.favoriteId) ?? false;
 
   @override
   Widget build(BuildContext context) {

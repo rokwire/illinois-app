@@ -25,12 +25,10 @@ import 'package:illinois/ui/canvas/CanvasWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:rokwire_plugin/rokwire_plugin.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 class CanvasCourseHomePanel extends StatefulWidget {
   final int? courseId;
@@ -116,12 +114,8 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
     Analytics().logSelect(target: 'Canvas Course -> Launch Canvas');
     String? courseDeepLinkFormat = Config().canvasCourseDeepLinkFormat;
     String? courseDeepLink = StringUtils.isNotEmpty(courseDeepLinkFormat) ? sprintf(courseDeepLinkFormat!, [_course!.id]) : null;
-    bool? appLaunched = await RokwirePlugin.launchApp({"deep_link": courseDeepLink});
-    if (appLaunched != true) {
-      String? canvasStoreUrl = Config().canvasStoreUrl;
-      if ((canvasStoreUrl != null) && await url_launcher.canLaunch(canvasStoreUrl)) {
-        await url_launcher.launch(canvasStoreUrl, forceSafariVC: false);
-      }
+    if (StringUtils.isNotEmpty(courseDeepLink)) {
+      await Canvas().openCanvasAppDeepLink(courseDeepLink!);
     }
   }
 

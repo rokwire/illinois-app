@@ -23,6 +23,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -40,8 +41,8 @@ class HomeCampusRemindersWidget extends StatefulWidget {
 
   HomeCampusRemindersWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -154,6 +155,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,
+          allowImplicitScrolling: true,
           children: pages,
         ),
       );
@@ -166,6 +168,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     }
     return Column(children: <Widget>[
       contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.campus_reminders.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.campus_reminders.button.all.hint', 'Tap to view all reminders'),

@@ -21,7 +21,6 @@ import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
-import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/Wellness.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoItemDetailPanel.dart';
 import 'package:illinois/ui/wellness/todo/WellnessManageToDoCategoriesPanel.dart';
@@ -55,8 +54,8 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     _selectedTab = _ToDoTab.daily;
     _initCalendarDates();
     _loadToDoItems();
-    if (Storage().isUserAccessedWellnessToDo != true) {
-      Storage().userAccessedWellnessToDo = true;
+    if (Wellness().isToDoListAccessed != true) {
+      Wellness().toDoListAccessed(true);
       WidgetsBinding.instance!.addPostFrameCallback((_) {
         _showWelcomePopup();
       });
@@ -109,10 +108,10 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       Expanded(
           child: _TabButton(
               position: _TabButtonPosition.last,
-              selected: (_selectedTab == _ToDoTab.reminders),
-              label: Localization().getStringEx('panel.wellness.todo.tab.reminders.label', 'Reminders'),
-              hint: Localization().getStringEx('panel.wellness.todo.tab.reminders.hint', ''),
-              onTap: () => _onTabChanged(tab: _ToDoTab.reminders)))
+              selected: (_selectedTab == _ToDoTab.weekly),
+              label: Localization().getStringEx('panel.wellness.todo.tab.weekly.label', 'Weekly'),
+              hint: Localization().getStringEx('panel.wellness.todo.tab.weekly.hint', ''),
+              onTap: () => _onTabChanged(tab: _ToDoTab.weekly)))
     ]);
   }
 
@@ -160,7 +159,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   }
 
   Widget _buildCalendarWidget() {
-    if (_selectedTab != _ToDoTab.reminders) {
+    if (_selectedTab != _ToDoTab.weekly) {
       return Container();
     }
     TextStyle smallStyle = TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular);
@@ -168,8 +167,13 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
         padding: EdgeInsets.only(top: 13),
         child: Column(children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Text(StringUtils.ensureNotEmpty(_formattedCalendarMonthLabel),
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
+            Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
+              Text(StringUtils.ensureNotEmpty(_formattedCalendarMonthLabel),
+                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
+              GestureDetector(
+                  onTap: _onTapCalendarInfo,
+                  child: Padding(padding: EdgeInsets.only(left: 5), child: Image.asset('images/icon-more-info.png')))
+            ]),
             Expanded(child: Container()),
             GestureDetector(
                 onTap: _onTapPreviousWeek,
@@ -272,7 +276,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   Widget _buildCalendarToDoItem(ToDoItem? item) {
     double widgetSize = 30;
     bool hasReminder = (item?.reminderDateTimeUtc != null);
-    return GestureDetector(
+    return  GestureDetector(
         onTap: () => _onTapCalendarItem(item),
         child: Container(
             height: widgetSize,
@@ -446,7 +450,12 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     if (item == null) {
       return;
     }
-    AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.zero, contentWidget: _ToDoItemReminderDialog(item: item));
+    if (item.reminderDateTime != null) {
+      Navigator.push(
+          context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel(item: item, optionalFieldsExpanded: true)));
+    } else {
+      AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.zero, contentWidget: _ToDoItemReminderDialog(item: item));
+    }
   }
 
   void _onTapManageCategories() {
@@ -457,6 +466,14 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   void _onTapAddItem() {
     Analytics().logSelect(target: "Add Item", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessToDoItemDetailPanel()));
+  }
+
+  void _onTapCalendarInfo() {
+    Analytics().logSelect(target: "Calendar Info", source: widget.runtimeType.toString());
+    AppAlert.showMessage(
+        context,
+        Localization()
+            .getStringEx('panel.wellness.todo.items.calendar.info.msg', 'Tap on a dot to set a reminder or to edit item details.'));
   }
 
   void _initCalendarDates() {
@@ -500,7 +517,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       case _ToDoTab.category:
         key = item.category?.name;
         break;
-      case _ToDoTab.reminders:
+      case _ToDoTab.weekly:
         key = item.displayDueDate;
         break;
     }
@@ -600,9 +617,9 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   String get _formattedCalendarMonthLabel {
     if (_calendarStartDate.month != _calendarEndDate.month) {
-      return AppDateTime().formatDateTime(_calendarStartDate, format: 'MMMM', ignoreTimeZone: true)! +
+      return AppDateTime().formatDateTime(_calendarStartDate, format: 'MMM', ignoreTimeZone: true)! +
           ' / ' +
-          AppDateTime().formatDateTime(_calendarEndDate, format: 'MMMM yyyy', ignoreTimeZone: true)!;
+          AppDateTime().formatDateTime(_calendarEndDate, format: 'MMM yyyy', ignoreTimeZone: true)!;
     } else {
       return AppDateTime().formatDateTime(_calendarStartDate, format: 'MMMM yyyy', ignoreTimeZone: true)!;
     }
@@ -640,12 +657,16 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
           decoration: BoxDecoration(color: widget.item.color, borderRadius: BorderRadius.all(Radius.circular(10))),
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
           child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            _buildCompletedWidget(color: widget.item.color),
-            Expanded(
-                child: Text(StringUtils.ensureNotEmpty(widget.item.name),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold))),
-            GestureDetector(onTap: () => _onTapEdit(widget.item), child: Image.asset('images/edit-white.png'))
+             Expanded(
+                 // child:AppSemantics.buildCheckBoxSemantics( selected: widget.item.isCompleted, title: widget.item.name,
+                 child:Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                _buildCompletedWidget(color: widget.item.color),
+                Expanded(
+                    child: Text(StringUtils.ensureNotEmpty(widget.item.name),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold))),
+            ])),
+            Semantics(label: "Edit", button: true, child: GestureDetector(onTap: () => _onTapEdit(widget.item), child: Image.asset('images/edit-white.png', excludeFromSemantics: true,)))
           ])),
       Visibility(visible: _loading, child: CircularProgressIndicator())
     ]);
@@ -659,7 +680,8 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
             decoration: BoxDecoration(color: Styles().colors!.white, shape: BoxShape.circle),
             height: viewWidgetSize,
             width: viewWidgetSize);
-    return GestureDetector(onTap: _onTapCompleted, child: Padding(padding: EdgeInsets.only(right: 20), child: viewWidget));
+    return AppSemantics.buildCheckBoxSemantics( selected: widget.item.isCompleted, title: widget.item.name,
+    child:GestureDetector(onTap: _onTapCompleted, child: Padding(padding: EdgeInsets.only(right: 20), child: viewWidget)));
   }
 
   void _onTapCompleted() {
@@ -669,6 +691,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
       item: widget.item,
     );
     widget.item.isCompleted = !widget.item.isCompleted;
+    AppSemantics.announceCheckBoxStateChange(context, widget.item.isCompleted , widget.item.name);
     _setLoading(true);
     Wellness().updateToDoItem(widget.item).then((success) {
       if (!success) {
@@ -692,7 +715,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
   }
 }
 
-enum _ToDoTab { daily, category, reminders }
+enum _ToDoTab { daily, category, weekly }
 
 enum _TabButtonPosition { first, middle, last }
 
@@ -879,6 +902,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
     );
     _setLoading(true);
     _item.reminderDateTimeUtc = _reminderDateTime.toUtc();
+    _item.reminderType = ToDoReminderType.specific_time;
     Wellness().updateToDoItem(_item).then((success) {
       _setLoading(false);
       if (!success) {

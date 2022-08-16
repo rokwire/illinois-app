@@ -82,11 +82,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void initState() {
     super.initState();
     NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
+    _loadMembersAllowedToPost();
     _post = widget.post ?? GroupPost(); //If no post then prepare data for post creation
     _focusedReply = widget.focusedReply;
     _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
-    _initAllMembersAllowedToPost();
 
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
@@ -136,63 +136,48 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           _buildRepliesSection(),
           _buildPostEdit(),
           ],)),
-       Container(
-                key: _sliverHeaderKey,
-                color: Styles().colors!.background,
-                padding: EdgeInsets.only(left: _outerPadding, bottom: 3),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                                child: Semantics(
-                                    sortKey: OrdinalSortKey(1),
-                                    container: true,
-                                    child: Text(
-                                        StringUtils.ensureNotEmpty(_post?.subject),
-                                        maxLines: 5,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            fontFamily:
-                                            Styles().fontFamilies!.bold,
-                                            fontSize: 24,
-                                            color: Styles()
-                                                .colors!
-                                                .fillColorPrimary)))),
-                            Visibility(visible: _isEditPostVisible && !widget.hidePostOptions, child:
-                              Semantics(container: true, sortKey: OrdinalSortKey(5), child:
-                                Container(child:
-                                  Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.edit.label', "Edit"), button: true, child:
-                                    GestureDetector(onTap: _onTapEditMainPost, child:
-                                      Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                                        Image.asset('images/icon-edit.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
+          Container(key: _sliverHeaderKey, color: Styles().colors!.background, padding: EdgeInsets.only(left: _outerPadding, bottom: 3), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+              Row(children: [
+                Expanded(child:
+                  Semantics(sortKey: OrdinalSortKey(1), container: true, child:
+                    Text(StringUtils.ensureNotEmpty(_post?.subject), maxLines: 5, overflow: TextOverflow.ellipsis, style:
+                      TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 24, color: Styles().colors!.fillColorPrimary)
+                    )
+                  )
+                ),
 
-                            Visibility(visible: _isDeletePostVisible && !widget.hidePostOptions, child:
-                              Semantics(container: true, sortKey: OrdinalSortKey(5), child:
-                                Container(child:
-                                  Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.delete.label', "Delete"), button: true, child:
-                                    GestureDetector(onTap: _onTapDeletePost, child:
-                                        Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                                          Image.asset('images/trash.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
+                Visibility(visible: _isEditPostVisible && !widget.hidePostOptions, child:
+                  Semantics(container: true, sortKey: OrdinalSortKey(5), child:
+                    Container(child:
+                      Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.edit.label', "Edit"), button: true, child:
+                        GestureDetector(onTap: _onTapEditMainPost, child:
+                          Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
+                            Image.asset('images/icon-edit.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
 
-                            Visibility(visible: _isReplyVisible && !widget.hidePostOptions, child:
-                              Semantics(label: Localization().getStringEx('panel.group.detail.post.button.report.label', "Report"), button: true, child:
-                                GestureDetector( onTap: _onTapHeaderReportAbuse, child:
-                                    Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                                      Image.asset('images/icon-feedback.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
+                Visibility(visible: _isDeletePostVisible && !widget.hidePostOptions, child:
+                  Semantics(container: true, sortKey: OrdinalSortKey(5), child:
+                    Container(child:
+                      Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.delete.label', "Delete"), button: true, child:
+                        GestureDetector(onTap: _onTapDeletePost, child:
+                            Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
+                              Image.asset('images/trash.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
 
-                            Visibility(visible: _isReportAbuseVisible && !widget.hidePostOptions, child:
-                              Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"), button: true, child:
-                                GestureDetector(onTap: _onTapHeaderReply, child:
-                                    Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 16), child:
-                                      Image.asset('images/icon-group-post-reply.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
+                Visibility(visible: _isReportAbuseVisible && !widget.hidePostOptions, child:
+                  Semantics(label: Localization().getStringEx('panel.group.detail.post.button.report.label', "Report"), button: true, child:
+                    GestureDetector( onTap: () => _onTapReportAbusePostOptions(), child:
+                        Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
+                          Image.asset('images/icon-feedback.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
 
-                          ]),
-                    ]))
+                Visibility(visible: _isReplyVisible && !widget.hidePostOptions, child:
+                  Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"), button: true, child:
+                    GestureDetector(onTap: _onTapHeaderReply, child:
+                        Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 16), child:
+                          Image.asset('images/icon-group-post-reply.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
+
+              ]),
+            ])
+          )
       ]),
       Visibility(
           visible: _loading,
@@ -315,8 +300,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             ]));
   }
 
-  void _initAllMembersAllowedToPost(){
-    _allMembersAllowedToPost = GroupMembersSelectionWidget.constructAllMembersAllowedToPost(widget.group);
+  void _loadMembersAllowedToPost() {
+    _setLoading(true);
+    Groups().loadMembersAllowedToPost(groupId: widget.group!.id).then((members) {
+      _allMembersAllowedToPost = members;
+      _setLoading(false);
+    });
   }
 
   _buildRepliesSection(){
@@ -564,6 +553,36 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     });
   }
 
+  void _onTapReportAbusePostOptions() {
+    Analytics().logSelect(target: 'Post Options');
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Styles().colors!.white,
+      isScrollControlled: true,
+      isDismissible: true,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
+                leftIconAsset: "images/icon-feedback.png",
+                label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), post: widget.post),
+              )),
+              Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
+                leftIconAsset: "images/icon-feedback.png",
+                label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
+                onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: widget.post),
+              )),
+            ],
+          ),
+        );
+      });
+  }
+
   void _onTapReplyOptions(GroupPost? reply) {
     Analytics().logSelect(target: 'Reply Options');
     showModalBottomSheet(
@@ -604,11 +623,13 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
                 leftIconAsset: "images/icon-feedback.png",
-                label: Localization().getStringEx("panel.group.detail.post.button.report.label", "Report"),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _onTapMenuReportAbuse(reply);
-                },
+                label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
+                onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents: true), post: reply),
+              )),
+              Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
+                leftIconAsset: "images/icon-feedback.png",
+                label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
+                onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: reply),
               )),
             ],
           ),
@@ -674,16 +695,22 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _scrollToPostEdit();
   }
 
-  void _onTapHeaderReportAbuse() {
-    Analytics().logSelect(target: 'Report Abuse');
-    Navigator.of(context).push(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(groupId: widget.group?.id, postId: widget.post?.id)));
+  void _onTapReportAbuse({required GroupPostReportAbuseOptions options, GroupPost? post}) {
+    String? analyticsTarget;
+    if (options.reportToDeanOfStudents && !options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.students_dean.description.text', 'Report violation of Student Code to Dean of Students');
+    }
+    else if (!options.reportToDeanOfStudents && options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.group_admins.description.text', 'Report obscene, threatening, or harassing content to Group Administrators');
+    }
+    else if (options.reportToDeanOfStudents && options.reportToGroupAdmins) {
+      analyticsTarget = Localization().getStringEx('panel.group.detail.post.report_abuse.both.description.text', 'Report violation of Student Code to Dean of Students and obscene, threatening, or harassing content to Group Administrators');
+    }
+    Analytics().logSelect(target: analyticsTarget);
+
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(options: options, groupId: widget.group?.id, postId: (post ?? widget.post)?.id)));
   }
 
-  void _onTapMenuReportAbuse(GroupPost? post) {
-    Analytics().logSelect(target: 'Report Abuse');
-    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (context) => GroupPostReportAbuse(groupId: widget.group?.id, postId: post?.id)));
-  }
-  
   void _onTapEditMainPost(){
     _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl, members: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:_post?.members, upToDateMembers: _allMembersAllowedToPost));
     if(mounted){
@@ -951,7 +978,7 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
   }
 
   bool _isCurrentUserCreator(GroupPost? item) {
-    String? currentMemberEmail = widget.group?.currentUserAsMember?.userId;
+    String? currentMemberEmail = widget.group?.currentMember?.userId;
     String? itemMemberUserId = item?.member?.userId;
     return StringUtils.isNotEmpty(currentMemberEmail) &&
         StringUtils.isNotEmpty(itemMemberUserId) &&

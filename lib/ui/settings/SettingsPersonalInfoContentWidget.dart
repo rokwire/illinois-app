@@ -21,8 +21,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/OnCampus.dart';
+import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -98,6 +100,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       _buildProfilePicture(),
       _buildInfoContent(),
       _buildOnCampusSettings(),
+      _buildAdaSettings(),
       _buildAccountManagementOptions(),
       _buildDeleteMyAccount()
     ]);
@@ -258,6 +261,26 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       );
   }
 
+  Widget _buildAdaSettings() {
+    return Padding(padding: EdgeInsets.only(top: 25), child:
+      Column(children:<Widget>[
+        Row(children: [
+          Expanded(child:
+            Text(Localization().getStringEx('panel.settings.home.calendar.ada.title', 'Accessibility Needs'), style:
+              TextStyle(fontSize: 20, fontFamily: Styles().fontFamilies?.bold, color: Styles().colors!.fillColorPrimary)
+            ),
+          ),
+        ]),
+        Container(height: 4),
+        ToggleRibbonButton(
+          label: Localization().getStringEx('panel.settings.home.calendar.ada.toggle.title', 'Display ADA accessible building entrances for My Courses'),
+          border: Border.all(color: Styles().colors!.surfaceAccent!),
+          toggled: StudentCourses().requireAda,
+          onTap: _onRequireAdaToggled)
+      ]),
+    );
+  }
+
   //OnCampus Settings
 
   Widget _buildOnCampusSettings() {
@@ -324,8 +347,16 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     ]);
   }
 
+  void _onRequireAdaToggled() {
+    Analytics().logSelect(target: 'I require ADA entrances');
+    setStateIfMounted(() {
+      StudentCourses().requireAda = !StudentCourses().requireAda;
+    });
+  }
+
   void _onTapOnCampusAuto() {
     if (OnCampus().enabled && !OnCampus().monitorEnabled) {
+      Analytics().logSelect(target: 'Automatically detect when I am on Campus');
       setState(() {
         OnCampus().monitorEnabled = true;
       });
@@ -334,6 +365,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
 
   void _onTapOnCampusOn() {
     if ((OnCampus().monitorEnabled || !OnCampus().monitorManualInside)) {
+      Analytics().logSelect(target: 'Always make me on campus');
       setState(() {
         OnCampus().monitorEnabled = false;
         OnCampus().monitorManualInside = true;
@@ -343,6 +375,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
 
   void _onTapOnCampusOff() {
     if ((OnCampus().monitorEnabled || OnCampus().monitorManualInside)) {
+      Analytics().logSelect(target: 'Always make me off campus');
       setState(() {
         OnCampus().monitorEnabled = false;
         OnCampus().monitorManualInside = false;

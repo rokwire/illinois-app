@@ -23,3 +23,5 @@
 // Returns the distance between two LatLngs, in meters.
 double CLLocationCoordinate2DInaDistance(CLLocationCoordinate2D from, CLLocationCoordinate2D to);
 
+bool CLLocationCoordinate2DIsEqual(CLLocationCoordinate2D point1, CLLocationCoordinate2D point2);
+

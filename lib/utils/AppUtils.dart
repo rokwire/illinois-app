@@ -152,6 +152,79 @@ class AppSemantics {
           context.findRenderObject()!.sendSemanticsEvent(AnnounceSemanticsEvent(message,TextDirection.ltr));
         }
     }
+
+    static void requestSemanticsUpdates(BuildContext? context){
+      if(context != null){
+        context.findRenderObject()?.markNeedsSemanticsUpdate();
+        // context.findRenderObject()?.sendSemanticsEvent(semanticsEvent);
+      }
+    }
+
+
+    //These navigation buttons are designed to improve the Accessibility support for horizontal scroll elements
+    // static Widget createPageViewNavigationButtons({Function? onTapPrevious, Function? onTapNext}){
+    //   return Row(
+    //     mainAxisSize: MainAxisSize.max,
+    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //     children: [
+    //       Visibility(
+    //           visible: onTapPrevious != null,
+    //           child: Semantics(
+    //               // enabled: prevEnabled,
+    //               label: "Previous Page",
+    //               button: true,
+    //               child: GestureDetector(
+    //                   onTap: (){if(onTapPrevious!= null) onTapPrevious();},
+    //                   child: Container(
+    //                     padding: EdgeInsets.all(24),
+    //                     child: Text(
+    //                       "<",
+    //                       semanticsLabel: "",
+    //                       style: TextStyle(
+    //                         color : Styles().colors!.fillColorPrimary,
+    //                         fontFamily: Styles().fontFamilies!.bold,
+    //                         fontSize: 26,
+    //                       ),),)
+    //               )
+    //           )
+    //       ),
+    //       Visibility(
+    //           visible: onTapNext != null,
+    //           child: Semantics(
+    //               label: "Next Page",
+    //               button: true,
+    //               child: GestureDetector(
+    //                   onTap: (){if(onTapNext!= null) onTapNext();},
+    //                   child: Container(
+    //                     padding: EdgeInsets.all(24),
+    //                     child: Text(
+    //                       ">",
+    //                       semanticsLabel: "",
+    //                       style: TextStyle(
+    //                         color : Styles().colors!.fillColorPrimary,
+    //                         fontFamily: Styles().fontFamilies!.bold,
+    //                         fontSize: 26,
+    //                       ),),)
+    //               )
+    //           )
+    //       )
+    //     ],
+    //   );
+    // }
+    //
+    // static void _onTapNext(PageController? _pageController, {Function? onRefresh}){
+    //   _pageController?.nextPage(duration: Duration(seconds: 1), curve: Curves.easeIn);
+    //   if(onRefresh!=null){
+    //     onRefresh();
+    //   }
+    // }
+    //
+    // static void _onTapPrevious(PageController? _pageController, {Function? onRefresh}){
+    //   _pageController?.previousPage(duration: Duration(seconds: 1), curve: Curves.easeIn);
+    //   if(onRefresh!=null){
+    //     onRefresh();
+    //   }
+    // }
 }
 
 class AppDateTimeUtils {

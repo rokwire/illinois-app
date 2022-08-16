@@ -20,6 +20,7 @@ import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -42,7 +43,7 @@ class CreatePollPanel extends StatefulWidget {
 class _CreatePollPanelState extends State<CreatePollPanel> {
   final double horizontalPadding = 24;
   final int _defaultOptionsCount = 2;
-  final int _maxOptionsCount = 4;
+  final int _maxOptionsCount = 6;
 
   //Data
   final TextEditingController _questionController = TextEditingController();
@@ -53,9 +54,11 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   PollStatus? _progressPollStatus;
   //Groups
   List<Member>? _groupMembersSelection;
+  List<Member>? _membersAllowedToPost;
 
   @override
   void initState() {
+    _loadMembersAllowedToPost();
     _initDefaultOptionsControllers();
     super.initState();
   }
@@ -109,6 +112,15 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     _optionsControllers = null;
   }
 
+  void _loadMembersAllowedToPost() {
+    Groups().loadMembersAllowedToPost(groupId: widget.group?.id).then((members) {
+      _membersAllowedToPost = members;
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
   Widget _buildDescription() {
     return Container(
         color: Styles().colors!.white,
@@ -153,7 +165,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         title: Localization().getStringEx("panel.create_poll.text.question", "QUESTION"),
         hint: Localization().getStringEx("panel.create_poll.hint.question", "Ask people…"),
         textController: _questionController,
-        maxLength: 120,
+        maxLength: 250,
         minLines: 3,
         enabled: (_progressPollStatus == null),
       )),
@@ -279,7 +291,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         color: Colors.white,
         child: GroupMembersSelectionWidget(
         selectedMembers: _groupMembersSelection,
-        allMembers: GroupMembersSelectionWidget.constructAllMembersAllowedToPost(widget.group),
+        allMembers: _membersAllowedToPost,
         groupId: widget.group?.id,
         onSelectionChanged: (members){
           setState(() {
@@ -454,7 +466,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
       Polls().create(poll).then((Poll poll){
         Navigator.pop(context);
       }).catchError((e){
-        Log.d(e);
+        Log.d(e.toString());
         String? errorMessage = Localization().getStringEx("panel.create_poll.message.error.default", "Failed to create poll. Please fill all fields and try again.");
         AppAlert.showDialogResult(context, errorMessage);
       }).whenComplete((){

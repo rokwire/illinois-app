@@ -19,15 +19,19 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:in_app_review/in_app_review.dart';
+import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeAppHelpWidget extends StatefulWidget {
 
@@ -36,8 +40,8 @@ class HomeAppHelpWidget extends StatefulWidget {
 
   const HomeAppHelpWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -55,12 +59,12 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
 
   @override
   Widget? widgetFromCode(String code) {
-    if ((code == 'video_tutorial') && _canVideoTutorial) {
+    if ((code == 'video_tutorials') && _canVideoTutorials) {
       return HomeCommandButton(
-        title: Localization().getStringEx('widget.home.app_help.video_tutorial.button.title', 'Video Tutorial'),
+        title: ((_videoTutorialsCount > 1) ? Localization().getStringEx('widget.home.app_help.video_tutorials.button.title', 'Video Tutorials') : Localization().getStringEx('widget.home.app_help.video_tutorial.button.title', 'Video Tutorial')),
         description: Localization().getStringEx('widget.home.app_help.video_tutorial.button.description', 'Watch video tutorials to learn about app features.'),
         favorite: HomeFavorite(code, category: widget.favoriteId),
-        onTap: _onVideoTutorial,
+        onTap: _onVideoTutorials,
       );
     }
     else if ((code == 'feedback') && _canFeedback) {
@@ -69,6 +73,14 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
         description: Localization().getStringEx('widget.home.app_help.feedback.button.description', 'Enjoying the app? Missing something? The University of Illinois Smart, Healthy Communities Initiative needs your ideas and input. Thank you!'),
         favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onFeedback,
+      );
+    }
+    else if ((code == 'review') && _canReview) {
+      return HomeCommandButton(
+        title: Localization().getStringEx('widget.home.app_help.review.button.title', 'Submit Review'),
+        description: Localization().getStringEx('widget.home.app_help.review.button.description', 'Rate this app. Tell others what you think.'),
+        favorite: HomeFavorite(code, category: widget.favoriteId),
+        onTap: _onReview,
       );
     }
     else if ((code == 'faqs') && _canFAQs) {
@@ -84,15 +96,20 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
     }
   }
 
-  bool get _canVideoTutorial => StringUtils.isNotEmpty(Config().videoTutorialUrl);
+  int get _videoTutorialsCount {
+    List<dynamic>? videos = Assets()['video_tutorials.videos'];
+    return videos?.length ?? 0;
+  }
 
-  void _onVideoTutorial() {
+  bool get _canVideoTutorials => (_videoTutorialsCount > 0);
+
+  void _onVideoTutorials() {
     Analytics().logSelect(target: "Video Tutorial", source: widget.runtimeType.toString());
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.app_help.video_tutorial.label.offline', 'Video Tutorial not available while offline.'));
     }
-    else if (_canVideoTutorial) {
-      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel()));
+    else if (_canVideoTutorials) {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel()));
     }
   }
 
@@ -115,19 +132,31 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
     }
   }
 
+  bool get _canReview => true;
+
+  void _onReview() {
+    Analytics().logSelect(target: "Review", source: widget.runtimeType.toString());
+    InAppReview.instance.openStoreListing(appStoreId: Config().appStoreId);
+  }
+
   bool get _canFAQs => StringUtils.isNotEmpty(Config().faqsUrl);
 
   void _onFAQs() {
     Analytics().logSelect(target: "FAQs", source: widget.runtimeType.toString());
 
-    if (Connectivity().isOffline) {
-      AppAlert.showOfflineMessage(context, Localization().getStringEx('widget.home.app_help.faqs.label.offline', 'FAQs is not available while offline.'));
-    }
-    else if (_canFAQs) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
-        url: Config().faqsUrl,
-        title: Localization().getStringEx('widget.home.app_help.faqs.panel.title', 'FAQs'),
-      )));
+    if (_canFAQs) {
+      String url = Config().faqsUrl!;
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else if (UrlUtils.launchInternal(url)){
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(
+          url: url, title: Localization().getStringEx('widget.home.app_help.faqs.panel.title', 'FAQs'),
+        )));
+      }
+      else{
+        launch(url);
+      }
     }
   }
 

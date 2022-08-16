@@ -149,9 +149,9 @@ class ToDoItem {
       case ToDoReminderType.none:
         return Localization().getStringEx('model.wellness.todo.category.reminder.type.none.label', 'None');
       case ToDoReminderType.morning_of:
-        return Localization().getStringEx('model.wellness.todo.category.reminder.type.morning_of.label', 'Morning Of');
+        return Localization().getStringEx('model.wellness.todo.category.reminder.type.morning_of.label', 'Morning Of (8:00 AM)');
       case ToDoReminderType.night_before:
-        return Localization().getStringEx('model.wellness.todo.category.reminder.type.night_before.label', 'Night Before');
+        return Localization().getStringEx('model.wellness.todo.category.reminder.type.night_before.label', 'Night Before (9:00 PM)');
       case ToDoReminderType.specific_time:
         return Localization().getStringEx('model.wellness.todo.category.reminder.type.specific_time.label', 'Specific Time');
       default:

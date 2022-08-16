@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -317,7 +318,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     return Stack(clipBehavior: Clip.hardEdge, children: <Widget>[
       (_mapAllowed == true) ? MapWidget(
         onMapCreated: _onNativeMapCreated,
-        creationParams: { "myLocationEnabled": _userLocationEnabled()},
+        creationParams: { "myLocationEnabled": _userLocationEnabled(), "levelsEnabled": Storage().debugMapShowLevels},
       ) : Container(),
       
       Positioned(bottom: _mapLaundryBarAnimationController.value, left: 0, right: 0, child:

@@ -78,6 +78,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
 
     private boolean mapLayoutPassed;
     private boolean enableLocationValue;
+    private boolean enableLevelsValue;
 
     public MapView(Context context, int mapId, Object args) {
         super(context);
@@ -128,7 +129,6 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     }
 
     private void initMapView() {
-        acknowledgeLocationEnabledFromArgs();
         googleMapView = new com.google.android.gms.maps.MapView(context);
         googleMapView.setBackgroundColor(0xFF0000FF);
         addView(googleMapView);
@@ -137,6 +137,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     }
 
     private void initMarkerView() {
+        acknowledgeValuesFromArgs();
         iconGenerator = new IconGenerator(activity);
         iconGenerator.setBackground(activity.getDrawable(R.color.transparent));
         LayoutInflater inflater = (activity != null) ? (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) : null;
@@ -151,6 +152,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         mapControl.setOnMarkerClickListener(this::onMarkerClicked);
         mapControl.setOnMapClickListener(this::onMapClick);
         mapControl.setOnFloorUpdateListener((building, i) -> updateMarkersVisibility());
+        mapControl.enableFloorSelector(enableLevelsValue);
 
         mapControl.init(this::mapControlDidInit);
     }
@@ -166,17 +168,26 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         initMapControl();
     }
 
-    private void acknowledgeLocationEnabledFromArgs() {
+    private void acknowledgeValuesFromArgs() {
         boolean myLocationEnabled = false;
+        boolean levelsEnabled = true;
         if (args instanceof Map) {
-            //{ "myLocationEnabled" : true}
             Map<String, Object> jsonArgs = (Map) args;
+
+            //{ "myLocationEnabled" : true}
             Object myLocationEnabledObj = jsonArgs.get("myLocationEnabled");
             if (myLocationEnabledObj instanceof Boolean) {
                 myLocationEnabled = (Boolean) myLocationEnabledObj;
             }
+
+            //{ "levelsEnabled" : false}
+            Object levelsEnabledObj = jsonArgs.get("levelsEnabled");
+            if (levelsEnabledObj instanceof Boolean) {
+                levelsEnabled = (Boolean) levelsEnabledObj;
+            }
         }
         this.enableLocationValue = myLocationEnabled;
+        this.enableLevelsValue = levelsEnabled;
     }
 
     private void mapControlDidInit(MIError error) {
@@ -201,7 +212,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             // =======================================================================================
             //
             final FloorSelectorInterface floorSelector = mapControl.getFloorSelector();
-            if (floorSelector != null) {
+            if ((floorSelector != null) && enableLevelsValue) {
                 // Hide without animating
                 floorSelector.show(false, false);
                 // ...and show without animating
@@ -211,7 +222,14 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     }
 
     private void moveCameraToSpecificPosition() {
-        if ((markers != null) && (markers.size() > 0)) {
+        CameraUpdate cameraUpdate;
+        if ((markers == null) || markers.isEmpty()) {
+            cameraUpdate = CameraUpdateFactory.newLatLngZoom(Constants.DEFAULT_INITIAL_CAMERA_POSITION, Constants.DEFAULT_CAMERA_ZOOM);
+        }
+        else if (markers.size() == 1) {
+            cameraUpdate = CameraUpdateFactory.newLatLngZoom(markers.get(0).getPosition(), Constants.DEFAULT_CAMERA_ZOOM);
+        }
+        else {
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
             for (Marker marker : markers) {
                 builder.include(marker.getPosition());
@@ -220,11 +238,9 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             int width = getResources().getDisplayMetrics().widthPixels;
             int height = getResources().getDisplayMetrics().heightPixels;
             int padding = 150; // offset from edges of the map in pixels
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-            googleMap.animateCamera(cu);
-        } else {
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(Constants.DEFAULT_INITIAL_CAMERA_POSITION, Constants.DEFAULT_CAMERA_ZOOM));
+            cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
         }
+        googleMap.animateCamera(cameraUpdate);
     }
 
     public void applyExplores(ArrayList explores, HashMap options) {
@@ -249,6 +265,13 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         enableLocationValue = enable;
         if (googleMap != null) {
             googleMap.setMyLocationEnabled(enable);
+        }
+    }
+
+    public void enableLevels(boolean enable) {
+        enableLevelsValue = enable;
+        if (mapControl != null) {
+            mapControl.enableFloorSelector(enable);
         }
     }
 

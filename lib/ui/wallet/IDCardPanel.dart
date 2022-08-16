@@ -218,7 +218,7 @@ class _IDCardPanelState extends State<IDCardPanel>
 
   Widget _buildCardContent() {
     
-    String? cardExpires = Localization().getStringEx('widget.card.label.expires.title', 'Card Expires');
+    String? cardExpires = Localization().getStringEx('widget.card.label.expires.title', 'Expires');
     String? expirationDate = Auth2().authCard?.expirationDate;
     String cardExpiresText = (0 < (expirationDate?.length ?? 0)) ? "$cardExpires $expirationDate" : "";
     String roleDisplayString = (Auth2().authCard?.needsUpdate ?? false) ? Localization().getStringEx("widget.id_card.label.update_i_card", "Update your i-card") : (Auth2().authCard?.role ?? "");

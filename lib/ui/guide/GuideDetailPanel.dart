@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -12,7 +11,6 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -408,8 +406,9 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                   borderColor: Styles().colors!.fillColorSecondary,
                   borderWidth: 2,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  onTap:() { _onTapLink(url);  }
-                )              
+                  onTap:() { _onTapLink(url);  },
+                  rightIcon: Image.asset('images/external-link.png', semanticLabel: "external link",),
+                )
               ),
             );
           }
@@ -473,12 +472,8 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
   }
 
   void _onTapLink(String? url) {
-    if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
+      if (UrlUtils.isWebScheme(url)) {
         launch(url!);
-      }
     }
   }
 

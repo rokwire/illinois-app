@@ -7,6 +7,7 @@ import 'package:illinois/ui/groups/GroupsHomePanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -24,8 +25,8 @@ class HomeMyGroupsWidget extends StatefulWidget {
 
   const HomeMyGroupsWidget({Key? key, required this.contentType, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({required GroupsContentType contentType, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({required GroupsContentType contentType, Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: titleForContentType(contentType),
     );
 
@@ -123,8 +124,10 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
       for (Group? group in _groups!) {
         if (group != null) {
           pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
-            GroupCard(group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
-          ));
+            Semantics(
+              // excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),
+             child: GroupCard(group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+          )));
         }
       }
     }
@@ -143,8 +146,10 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
           key: _pageViewKey,
           controller: _pageController,
           children: pages,
+          allowImplicitScrolling : true,
         )
       ),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.my_groups.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.my_groups.button.all.hint', 'Tap to view all groups'),
@@ -184,7 +189,6 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
     }
     return HomeMessageCard(message: message,);
   }
-
 
   @override
   void onNotification(String name, param) {

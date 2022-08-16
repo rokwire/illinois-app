@@ -395,7 +395,7 @@ class _EventContent extends StatefulWidget {
   @override
   createState()=> _EventContentState();
 
-  bool get isAdmin => group?.currentUserAsMember?.isAdmin ?? false;
+  bool get isAdmin => group?.currentMember?.isAdmin ?? false;
 }
 
 class _EventContentState extends State<_EventContent> implements NotificationsListener {
@@ -803,6 +803,8 @@ class GroupCard extends StatefulWidget {
 class _GroupCardState extends State<GroupCard> {
   static const double _smallImageSize = 64;
 
+  GroupStats? _groupStats;
+
   final GlobalKey _contentKey = GlobalKey();
   Size? _contentSize;
   bool? _bussy;
@@ -810,7 +812,7 @@ class _GroupCardState extends State<GroupCard> {
   @override
   void initState() {
     super.initState();
-
+    _loadGroupStats();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _evalContentSize();
     });
@@ -818,7 +820,7 @@ class _GroupCardState extends State<GroupCard> {
 
   @override
   Widget build(BuildContext context) {
-    String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), [StringUtils.ensureNotEmpty(widget.group?.pendingCount.toString())]);
+    String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), [StringUtils.ensureNotEmpty((_groupStats?.pendingCount ?? 0).toString())]);
     String? groupCategory = StringUtils.ensureNotEmpty(widget.group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
     return GestureDetector(onTap: () => _onTapCard(context), child:
       Padding(padding: widget.margin, child:
@@ -851,7 +853,7 @@ class _GroupCardState extends State<GroupCard> {
                 _buildImage()
               ]),
               (widget.displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) : Container(),
-              Visibility(visible: (widget.group?.currentUserIsAdmin ?? false) && ((widget.group?.pendingCount ?? 0) > 0), child:
+              Visibility(visible: (widget.group?.currentUserIsAdmin ?? false) && ((_groupStats?.pendingCount ?? 0) > 0), child:
                 Text(pendingCountText, overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackgroundVariant,),),
               ),
               Container(height: 4),
@@ -860,9 +862,7 @@ class _GroupCardState extends State<GroupCard> {
                 Expanded(child:
                   _buildUpdateTime(),
                 ),
-                Visibility(visible: (widget.group?.authManEnabled ?? false) && (widget.displayType != GroupCardDisplayType.homeGroups), child:
-                  _buildMembersCount()
-                )
+                _buildMembersCount()
               ])
               // : Container()
             ]),
@@ -997,13 +997,22 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   Widget _buildMembersCount() {
-    int count = widget.group?.membersCount ?? 0;
+    int count = _groupStats?.activeMembersCount ?? 0;
     String membersLabel = (count == 1)
         ? Localization().getStringEx('widget.group_card.member.label', 'member')
         : Localization().getStringEx('widget.group_card.members.label', 'members');
     return Container(
         child: Text('$count $membersLabel',
             style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface)));
+  }
+
+   void _loadGroupStats() {
+    Groups().loadGroupStats(widget.group?.id).then((stats) {
+      _groupStats = stats;
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   void _onTapCard(BuildContext context) {
@@ -1677,18 +1686,6 @@ class GroupMembersSelectionWidget extends StatefulWidget{
 
     return selection;
   }
-
-  static List<Member>? constructAllMembersAllowedToPost(Group? group){
-    if((group?.members?.length ?? 0) >0) {
-     return group!.members!.where((member) => _isMemberAllowedToReceivePost(member)).toList();
-    }
-
-    return null;
-  }
-
-  static bool _isMemberAllowedToReceivePost(Member member){
-    return member.isMemberOrAdmin;
-  }
 }
 
 class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
@@ -1870,26 +1867,18 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
     }
   }
 
-  void _loadAllMembersAllowedToPost(){
-    Groups().loadGroup(widget.groupId).then((Group? group) {
-      if (mounted && (group != null)) {
+  void _loadAllMembersAllowedToPost() {
+    Groups().loadMembersAllowedToPost(groupId: widget.groupId).then((members) {
+      if (mounted && CollectionUtils.isNotEmpty(members)) {
         setState(() {
-          if((group.members?.length ?? 0) >0) {
-            _allMembersAllowedToPost = group.members!.where((member) => _isMemberAllowedToReceivePost(member)).toList();
+            _allMembersAllowedToPost = members;
             if((_allMembersAllowedToPost?.isNotEmpty ?? false) && (widget.selectedMembers?.isNotEmpty ?? false)){
               //If we have successfully loaded the group data -> refresh initial selection
                _onSelectionChanged(GroupMembersSelectionWidget.constructUpdatedMembersList(upToDateMembers: _allMembersAllowedToPost, selection: widget.selectedMembers)); //Notify Parent widget with the updated values
             }
-          }
         });
       }
     });
-  }
-
-  bool _isMemberAllowedToReceivePost(Member member){
-    //TMP:
-    // return true;
-    return member.isMemberOrAdmin;
   }
 
   List<List<Member>>? get _storedMembersSelections{
@@ -2076,20 +2065,27 @@ class GroupPollCard extends StatefulWidget{
 }
 
 class _GroupPollCardState extends State<GroupPollCard> {
+  GroupStats? _groupStats;
+
   List<GlobalKey>? _progressKeys;
   double? _progressWidth;
 
   @override
   void initState() {
+    _loadGroupStats();
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _evalProgressWidths();
     });
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  void _loadGroupStats() {
+    Groups().loadGroupStats(widget.group?.id).then((stats) {
+      _groupStats = stats;
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -2346,7 +2342,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
   }
 
   int get _groupMembersCount {
-    return widget.group?.membersCount ?? 0;
+    return _groupStats?.activeMembersCount ?? 0;
   }
 
   void _onPollOptionsTap() {

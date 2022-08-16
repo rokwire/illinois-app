@@ -185,15 +185,16 @@ class Game with Explore implements Favorite {
   /// Requirement 2: 'If an event is longer than 1 day, then please show the Date as (for example) Sep 26 - Sep 29.'
   ///
   String get displayTime {
-    int gameEventDays = (endDateTimeUtc?.difference(dateTimeUtc!).inDays ?? 0).abs();
-    bool eventIsMoreThanOneDay = (gameEventDays >= 1);
     int hourUtc = dateTimeUtc!.hour;
     int minuteUtc = dateTimeUtc!.minute;
     int secondUtc = dateTimeUtc!.second;
     int millisUtc = dateTimeUtc!.millisecond;
     bool useStringDateTimes = (hourUtc == 0 && minuteUtc == 0 && secondUtc == 0 && millisUtc == 0);
-    final String displayDateFormat = 'MMM dd';
-    if (eventIsMoreThanOneDay) {
+    String displayDateFormat = 'MMM dd';
+    if (isMoreThanOneDay) {
+      if (isNotTheSameYear) {
+        displayDateFormat += ' yyyy';
+      }
       DateTime? startDisplayDate = useStringDateTimes ? date : dateTimeUtc;
       DateTime? endDisplayDate = useStringDateTimes ? (endDate ?? endDateTimeUtc) : endDateTimeUtc;
       String? startDateFormatted = AppDateTime().formatDateTime(startDisplayDate, format: displayDateFormat, ignoreTimeZone: useStringDateTimes);
@@ -206,6 +207,17 @@ class Game with Explore implements Favorite {
     } else {
       return AppDateTimeUtils.getDisplayDateTime(dateTimeUtc, allDay: allDay ?? false);
     }
+  }
+
+  bool get isMoreThanOneDay {
+    int gameEventDays = (endDateTimeUtc?.difference(dateTimeUtc!).inDays ?? 0).abs();
+    return (gameEventDays >= 1);
+  }
+
+  bool get isNotTheSameYear {
+    int startYear = dateTimeUtc?.year ?? 0;
+    int endYear = endDateTimeUtc?.year ?? 0;
+    return (startYear != endYear);
   }
 
   String? get imageUrl {

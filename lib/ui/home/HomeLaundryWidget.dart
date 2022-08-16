@@ -5,7 +5,6 @@ import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Laundry.dart';
-import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
@@ -15,6 +14,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -31,8 +31,8 @@ class HomeLaundryWidget extends StatefulWidget {
 
   HomeLaundryWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
@@ -174,6 +174,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,
+          allowImplicitScrolling: true,
           children: pages,
         ),
       );
@@ -186,6 +187,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
 
     return Column(children: <Widget>[
       contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.laundry.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.laundry.button.all.hint', 'Tap to view all laundries'),
@@ -282,10 +284,6 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> implements Notificati
     bool isFavorite = Auth2().isFavorite(widget.room);
     Color? headerColor = Styles().colors?.accentColor2;
     String? title = widget.room?.name;
-    String? cardDetailText = widget.room?.displayStatus;
-    Color? cardDetailTextColor = widget.room?.favoriteDetailTextColor ?? Styles().colors?.textBackground;
-    Image? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? widget.room?.favoriteDetailIcon : null;
-    bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
 
     return GestureDetector(onTap: widget.onTap, child:
       Semantics(label: title, child:
@@ -321,19 +319,6 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> implements Notificati
                       )
                     ],
                   ),
-
-                  Visibility(visible: detailVisible, child:
-                    Semantics(label: cardDetailText, excludeSemantics: true, child:
-                      Padding(padding: EdgeInsets.only(top: 12), child:
-                        (cardDetailImage != null) ? 
-                        Row(children: <Widget>[
-                          Padding(padding: EdgeInsets.only(right: 10), child: cardDetailImage,),
-                          Expanded(child:
-                            Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: cardDetailTextColor)),
-                          )
-                        ],) :
-                        Text(cardDetailText ?? '', semanticsLabel: "", style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: cardDetailTextColor)),
-                  )),),
                 ]),
               ),
             )

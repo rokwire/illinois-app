@@ -73,7 +73,8 @@
 - (instancetype)initWithFrame:(CGRect)frame mapId:(int64_t)mapId parameters:(NSDictionary*)parameters {
 	if (self = [self initWithFrame:frame]) {
 		_mapId = mapId;
-		[self enableMyLocation:[parameters inaBoolForKey:@"myLocationEnabled"]];
+		[self enableMyLocation:[parameters inaBoolForKey:@"myLocationEnabled" defaults: false]];
+		[self enableLevels:[parameters inaBoolForKey:@"levelsEnabled" defaults: true]];
 	}
 	return self;
 }
@@ -176,6 +177,13 @@
 	}
 }
 
+- (void)enableLevels:(bool)enableLevels {
+	BOOL floorSelectorHidden = enableLevels ? FALSE : TRUE;
+	if (_mapControl.floorSelectorHidden != floorSelectorHidden) {
+		_mapControl.floorSelectorHidden = floorSelectorHidden;
+	}
+}
+
 #pragma mark POI
 
 - (void)applyPOI:(NSDictionary*)poi {
@@ -188,11 +196,13 @@
 
 - (void)acknowledgePOI {
 	if ((_poi != nil) && _didFirstLayout) {
-		double latitude = [_poi inaDoubleForKey:@"latitude"];
-		double longitude = [_poi inaDoubleForKey:@"longitude"];
-		int zoom = [_poi inaIntForKey:@"zoom"];
+		NSNumber *latitude = [_poi inaNumberForKey:@"latitude"];
+		NSNumber *longitude = [_poi inaNumberForKey:@"longitude"];
+		CLLocationCoordinate2D location = ((latitude != nil) && (longitude != nil) && ((longitude.doubleValue != 0.0) || (longitude.doubleValue != 0.0))) ?
+			CLLocationCoordinate2DMake(latitude.doubleValue, longitude.doubleValue) : kInitialCameraLocation;
+		int zoom = [_poi inaIntForKey:@"zoom" defaults:kInitialCameraZoom];
 
-		GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:latitude longitude:longitude zoom:(_currentZoom = zoom)];
+		GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:location.latitude longitude:location.longitude zoom:(_currentZoom = zoom)];
 		GMSCameraUpdate *update = [GMSCameraUpdate setCamera:camera];
 		[_mapView moveCamera:update];
 		_poi = nil;
@@ -212,13 +222,11 @@
 
 	for (NSDictionary *explore in _explores) {
 		if ([explore isKindOfClass:[NSDictionary class]]) {
-			NSDictionary *exploreLocation = [explore inaDictForKey:@"location"];
-			if (exploreLocation != nil) {
-				CLLocationDegrees latitude = [exploreLocation inaDoubleForKey:@"latitude"];
-				CLLocationDegrees longitude = [exploreLocation inaDoubleForKey:@"longitude"];
+			CLLocationCoordinate2D exploreCoordinate = explore.uiucExploreLocationCoordinate;
+			if (CLLocationCoordinate2DIsValid(exploreCoordinate)) {
 
 				GMSMarker *marker = [[GMSMarker alloc] init];
-				marker.position = CLLocationCoordinate2DMake(latitude, longitude);
+				marker.position = CLLocationCoordinate2DMake(exploreCoordinate.latitude, exploreCoordinate.longitude);
 
 				MapMarkerView *iconView = [MapMarkerView createFromExplore:explore];
 				marker.iconView = iconView;
@@ -245,10 +253,21 @@
 		}
 	}
 
-	if ((bounds != nil) && _didFirstLayout) {
+	if (_didFirstLayout) {
 		_currentZoom = 0;
-		GMSCameraUpdate *update = [GMSCameraUpdate fitBounds:bounds withPadding:50.0f];
-		[_mapView moveCamera:update];
+
+		GMSCameraUpdate *cameraUpdate = nil;
+		if ((bounds == nil) || !bounds.isValid) {
+			cameraUpdate = [GMSCameraUpdate setTarget:kInitialCameraLocation zoom: kInitialCameraZoom];
+		}
+		else if (CLLocationCoordinate2DIsEqual(bounds.northEast, bounds.southWest)) {
+			cameraUpdate = [GMSCameraUpdate setTarget:bounds.northEast zoom: kInitialCameraZoom];
+		}
+		else {
+			cameraUpdate = [GMSCameraUpdate fitBounds:bounds withPadding:50.0f];
+		}
+
+		[_mapView moveCamera:cameraUpdate];
 		// idleAtCameraPosition -> updateMarkers
 	}
 	else {
@@ -264,7 +283,7 @@
 		NSDictionary *explore = nil, *exploreLocation = nil;
 		if ([marker.userData isKindOfClass:[NSDictionary class]]) {
 			explore = [marker.userData inaDictForKey:@"explore"];
-			exploreLocation = [explore inaDictForKey:@"location"];
+			exploreLocation = explore.uiucExploreLocation;
 		}
 
 		MapMarkerView *iconView = [marker.iconView isKindOfClass:[MapMarkerView class]] ? ((MapMarkerView*)marker.iconView) : nil;
@@ -402,6 +421,9 @@
 	} else if ([[call method] isEqualToString:@"enableMyLocation"]) {
 		bool enableMyLocation = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;
 		[_mapView enableMyLocation:enableMyLocation];
+	} else if ([[call method] isEqualToString:@"enableLevels"]) {
+		bool enableLevels = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;
+		[_mapView enableLevels:enableLevels];
 	} else if ([[call method] isEqualToString:@"viewPoi"]) {
 		NSDictionary *parameters = [call.arguments isKindOfClass:[NSDictionary class]] ? call.arguments : nil;
 		NSDictionary *targetJsonMap = [parameters inaDictForKey:@"target"];

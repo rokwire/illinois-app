@@ -15,14 +15,15 @@
  */
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
+import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -89,10 +90,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyGroupsNotification,
       FirebaseMessaging.notifyHomeNotification,
       FirebaseMessaging.notifyInboxNotification,
+      FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
       Events.notifyEventDetail,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
       Guide.notifyGuideDetail,
+      Guide.notifyGuideList,
       Localization.notifyStringsUpdated,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
@@ -102,6 +105,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyCalendarSelectionPopup,
       DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
+      HomePanel.notifyCustomize,
     ]);
 
     _tabs = _getTabs();
@@ -158,6 +162,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == Guide.notifyGuideDetail) {
       _onGuideDetail(param);
     }
+    else if (name == Guide.notifyGuideList) {
+      _onGuideList(param);
+    }
     else if (name == Localization.notifyStringsUpdated) {
       if (mounted) {
         setState(() { });
@@ -189,6 +196,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == FirebaseMessaging.notifyInboxNotification) {
       _onFirebaseInboxNotification();
     }
+    else if (name == FirebaseMessaging.notifyCanvasAppDeepLinkNotification) {
+      _onFirebaseCanvasAppDeepLinkNotification(param);
+    }
+    else if (name == HomePanel.notifyCustomize) {
+      _onSelectHome();
+    }
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
     }
@@ -198,6 +211,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if (mounted) {
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
       _selectTab(tabIndex);
+    }
+  }
+
+  void _onSelectHome() {
+    int? homeIndex = _getIndexByRootTab(RootTab.Home) ?? _getIndexByRootTab(RootTab.Favorites);
+    if (mounted && (homeIndex != null)) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      _selectTab(homeIndex);
     }
   }
 
@@ -250,8 +271,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     return ((0 <= index) && (index < _tabs.length)) ? _tabs[index] : null;
   }
 
-  int _getIndexByRootTab(RootTab? rootTab) {
-    return (rootTab != null) ? _tabs.indexOf(rootTab) : -1;
+  int? _getIndexByRootTab(RootTab? rootTab) {
+    int index = (rootTab != null) ? _tabs.indexOf(rootTab) : -1;
+    return (0 <= index) ? index : null;
   }
 
   Widget? _getTabPanelAtIndex(int index) {
@@ -428,13 +450,30 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   Future<void> _onGuideDetail(Map<String, dynamic>? content) async {
     String? guideId = (content != null) ? JsonUtils.stringValue(content['guide_id']) : null;
-    if(StringUtils.isNotEmpty(guideId)){
+    if (StringUtils.isNotEmpty(guideId)){
       WidgetsBinding.instance!.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
         Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
           GuideDetailPanel(guideEntryId: guideId,)));
       });
       if (mounted) {
         setState(() {}); // Force the postFrameCallback invokation.
+      }
+    }
+  }
+
+  Future<void> _onGuideList(Map<String, dynamic>? content) async {
+    if (content != null) {
+      String? guide = JsonUtils.stringValue(content['guide']);
+      String? section = JsonUtils.stringValue(content['section']);
+      String? category = JsonUtils.stringValue(content['category']);
+      if ((guide != null) || (section != null) || (category != null)){
+        WidgetsBinding.instance!.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
+          Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
+            GuideListPanel(guide: guide, category: category, section: GuideSection(name: section),)));
+        });
+        if (mounted) {
+          setState(() {}); // Force the postFrameCallback invokation.
+        }
       }
     }
   }
@@ -512,7 +551,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       if (mounted) {
         setState(() {
           _tabs = tabs;
-          _currentTabIndex = (currentRootTab != null) ? max(_getIndexByRootTab(currentRootTab), 0)  : 0;
+          _currentTabIndex = (currentRootTab != null) ? (_getIndexByRootTab(currentRootTab) ?? 0)  : 0;
           
           // Do not initialize _currentTabIndex as initialIndex because we get empty panel content.
           // Initialize TabController with initialIndex = 0 and then manually animate to desired tab index.
@@ -522,7 +561,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       }
       else {
         _tabs = tabs;
-        _currentTabIndex = (currentRootTab != null) ? max(_getIndexByRootTab(currentRootTab), 0)  : 0;
+        _currentTabIndex = (currentRootTab != null) ? (_getIndexByRootTab(currentRootTab) ?? 0)  : 0;
         _tabBarController = TabController(length: _tabs.length, vsync: this, initialIndex: _currentTabIndex);
       }
     }
@@ -612,6 +651,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _onFirebaseInboxNotification() {
     SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+  }
+  
+  void _onFirebaseCanvasAppDeepLinkNotification(dynamic param) {
+    if (param is Map<String, dynamic>) {
+      String? deepLink = JsonUtils.stringValue(param['deep_link']);
+      Canvas().openCanvasAppDeepLink(StringUtils.ensureNotEmpty(deepLink));
+    }
   }
 }
 

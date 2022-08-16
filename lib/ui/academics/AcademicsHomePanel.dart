@@ -21,6 +21,7 @@ import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
+import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -144,12 +145,17 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 
   Widget? _buildContentItemRightIcon(AcademicsContent contentItem) {
-    return (contentItem == AcademicsContent.my_illini)
-        ? Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Image.asset('images/icon-login-grey.png'),
-            Padding(padding: EdgeInsets.only(left: 6), child: Image.asset('images/icon-external-link-grey.png'))
-          ])
-        : null;
+    switch (contentItem) {
+      case AcademicsContent.my_illini:
+        return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Image.asset('images/icon-login-grey.png'),
+          Padding(padding: EdgeInsets.only(left: 6), child: Image.asset('images/icon-external-link-grey.png'))
+        ]);
+      case AcademicsContent.due_date_catalog:
+        return Padding(padding: EdgeInsets.only(left: 6), child: Image.asset('images/icon-external-link-grey.png'));
+      default:
+        return null;
+    }
   }
 
   void _buildContentValues() {
@@ -177,8 +183,10 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       if (CollectionUtils.isNotEmpty(_contentValues)) {
         if (_contentValues!.contains(AcademicsContent.gies_checklist) && !_isCheckListCompleted(CheckList.giesOnboarding)) {
           initialContent = AcademicsContent.gies_checklist;
-        } else if (_contentValues!.contains(AcademicsContent.courses)) {
-          initialContent = AcademicsContent.courses;
+        } else if (_contentValues!.contains(AcademicsContent.canvas_courses)) {
+          initialContent = AcademicsContent.canvas_courses;
+        } else if (_contentValues!.contains(AcademicsContent.student_courses)) {
+          initialContent = AcademicsContent.student_courses;
         }
       }
     }
@@ -191,9 +199,13 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     } else if (code == 'new_student_checklist') {
       return AcademicsContent.uiuc_checklist;
     } else if (code == 'canvas_courses') {
-      return AcademicsContent.courses;
+      return AcademicsContent.canvas_courses;
+    } else if (code == 'student_courses') {
+      return AcademicsContent.student_courses;
     } else if (code == 'academics_events') {
       return AcademicsContent.events;
+    } else if (code == 'due_date_catalog') {
+      return AcademicsContent.due_date_catalog;
     } else if (code == 'my_illini') {
       return AcademicsContent.my_illini;
     } else {
@@ -203,9 +215,12 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
 
   void _onTapContentItem(AcademicsContent contentItem) {
     Analytics().logSelect(target: '$contentItem');
-    // Open My Illini in an external browser
     if (contentItem == AcademicsContent.my_illini) {
+      // Open My Illini in an external browser
       _onMyIlliniSelected();
+    } else if (contentItem == AcademicsContent.due_date_catalog) {
+      // Open Due Date Catalog in an external browser
+      _onTapDueDateCatalog();
     } else {
       _selectedContent = _lastSelectedContent = contentItem;
     }
@@ -251,8 +266,15 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     }
   }
 
+  void _onTapDueDateCatalog() {
+    Analytics().logSelect(target: "Due Date Catalog");
+    if (StringUtils.isNotEmpty(Config().dateCatalogUrl)) {
+      launch(Config().dateCatalogUrl!);
+    }
+  }
+
   Widget get _contentWidget {
-    return ((_selectedContent == AcademicsContent.gies_checklist) || (_selectedContent == AcademicsContent.uiuc_checklist)) ?
+    return ((_selectedContent == AcademicsContent.gies_checklist) || (_selectedContent == AcademicsContent.uiuc_checklist) || (_selectedContent == AcademicsContent.student_courses)) ?
       _rawContentWidget :
       SingleChildScrollView(child:
         Padding(padding: EdgeInsets.only(bottom: 16), child:
@@ -262,7 +284,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
 }
 
   Widget get _rawContentWidget {
-    // There is no content for AcademicsContent.my_illini - it is a web url opened in an external browser
+    // There is no content for AcademicsContent.my_illini and AcademicsContent.due_date_catalog - it is a web url opened in an external browser
     switch (_selectedContent) {
       case AcademicsContent.events:
         return AcademicsEventsContentWidget();
@@ -270,8 +292,10 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return CheckListContentWidget(contentKey: CheckList.giesOnboarding);
       case AcademicsContent.uiuc_checklist:
         return CheckListContentWidget(contentKey: CheckList.uiucOnboarding);
-      case AcademicsContent.courses:
+      case AcademicsContent.canvas_courses:
         return CanvasCoursesContentWidget();
+      case AcademicsContent.student_courses:
+        return StudentCoursesContentWidget();
       default:
         return Container();
     }
@@ -293,8 +317,12 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return Localization().getStringEx('panel.academics.section.gies_checklist.label', 'iDegrees New Student Checklist');
       case AcademicsContent.uiuc_checklist:
         return Localization().getStringEx('panel.academics.section.uiuc_checklist.label', 'New Student Checklist');
-      case AcademicsContent.courses:
-        return Localization().getStringEx('panel.academics.section.courses.label', 'My Gies Canvas Courses');
+      case AcademicsContent.canvas_courses:
+        return Localization().getStringEx('panel.academics.section.canvas_courses.label', 'My Gies Canvas Courses');
+      case AcademicsContent.student_courses:
+        return Localization().getStringEx('panel.academics.section.student_courses.label', 'My Courses');
+      case AcademicsContent.due_date_catalog:
+        return Localization().getStringEx('panel.academics.section.due_date_catalog.label', 'Due Date Catalog');
       case AcademicsContent.my_illini:
         return Localization().getStringEx('panel.academics.section.my_illini.label', 'myIllini');
     }
@@ -312,4 +340,4 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 }
 
-enum AcademicsContent { events, gies_checklist, uiuc_checklist, courses, my_illini }
+enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, student_courses, due_date_catalog, my_illini }

@@ -112,7 +112,7 @@ class NativeCommunicator with Service {
         'explore': jsonData,
         'options': {
           'showDebugLocation': Storage().debugMapLocationProvider,
-          'hideLevels': Storage().debugMapHideLevels,
+          'enableLevels': Storage().debugMapShowLevels,
         }});
 
       Analytics().logMapHide();
@@ -155,7 +155,7 @@ class NativeCommunicator with Service {
         'target': target,
         'options': {
           'showDebugLocation': Storage().debugMapLocationProvider,
-          'hideLevels': Storage().debugMapHideLevels,
+          'enableLevels': Storage().debugMapShowLevels ,
         },
         'markers': markers,
       });

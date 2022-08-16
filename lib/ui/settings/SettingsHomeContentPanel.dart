@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsSectionsContentWidget.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class SettingsHomeContentPanel extends StatefulWidget {
@@ -41,13 +45,14 @@ class SettingsHomeContentPanel extends StatefulWidget {
   _SettingsHomeContentPanelState createState() => _SettingsHomeContentPanelState();
 
   static void present(BuildContext context, {SettingsContent? content}) {
-    Navigator.push(
-        context,
-        PageRouteBuilder(
-            settings: RouteSettings(name: routeName),
-            pageBuilder: (context, animation1, animation2) => SettingsHomeContentPanel._(content: content),
-            transitionDuration: Duration.zero,
-            reverseTransitionDuration: Duration.zero));
+    if (ModalRoute.of(context)?.settings.name != routeName) {
+      Navigator.push(context, PageRouteBuilder(
+        settings: RouteSettings(name: routeName),
+        pageBuilder: (context, animation1, animation2) => SettingsHomeContentPanel._(content: content),
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero)
+      );
+    }
   }
 }
 
@@ -66,7 +71,11 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: _DebugContainer(
-            child: RootHeaderBar(title: Localization().getStringEx('panel.settings.home.header.settings.label', 'My Settings'))),
+            child: RootHeaderBar(
+              title: Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'),
+              onSettings: _onTapSettings,
+          ),
+        ),
         body: Column(children: <Widget>[
           Expanded(
               child: SingleChildScrollView(
@@ -92,17 +101,26 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   }
 
   Widget _buildContent() {
-    return Stack(children: [Padding(padding: EdgeInsets.all(16), child: _contentWidget), _buildContentValuesContainer()]);
+    return Stack(children: [
+      Padding(padding: EdgeInsets.all(16), child:
+        _contentWidget
+      ),
+      _buildContentValuesContainer()
+    ]);
   }
 
   Widget _buildContentValuesContainer() {
     return Visibility(
-        visible: _contentValuesVisible,
-        child: Positioned.fill(child: Stack(children: <Widget>[_buildContentDismissLayer(), _buildContentValuesWidget()])));
+      visible: _contentValuesVisible,
+      child: Container /* Positioned.fill*/ (child:
+        Stack(children: <Widget>[
+          _buildContentDismissLayer(),
+          _buildContentValuesWidget()
+        ])));
   }
 
   Widget _buildContentDismissLayer() {
-    return Positioned.fill(
+    return Container /* Positioned.fill */ (
         child: BlockSemantics(
             child: GestureDetector(
                 onTap: () {
@@ -110,7 +128,11 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
                     _contentValuesVisible = false;
                   });
                 },
-                child: Container(color: Styles().colors!.blackTransparent06))));
+                child: Container(
+                  color: Styles().colors!.blackTransparent06,
+                  height: MediaQuery.of(context).size.height,
+                  
+                ))));
   }
 
   Widget _buildContentValuesWidget() {
@@ -134,14 +156,20 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   }
 
   void _onTapContentItem(SettingsContent contentItem) {
+    if (contentItem == SettingsContent.favorites) {
+      NotificationService().notify(HomePanel.notifyCustomize);
+    }
+    else {
     _selectedContent = _lastSelectedContent = contentItem;
+    }
     _changeSettingsContentValuesVisibility();
   }
 
   void _changeSettingsContentValuesVisibility() {
-    _contentValuesVisible = !_contentValuesVisible;
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _contentValuesVisible = !_contentValuesVisible;
+      });
     }
   }
 
@@ -157,8 +185,14 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return AthleticsTeamsWidget();
       case SettingsContent.calendar:
         return SettingsCalendarContentWidget();
-      default:
+      case SettingsContent.favorites:
         return Container();
+    }
+  }
+
+  void _onTapSettings() {
+    if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
     }
   }
 
@@ -176,11 +210,13 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
       case SettingsContent.calendar:
         return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'My Calendar Settings');
+      case SettingsContent.favorites:
+        return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'My Favorites');
     }
   }
 }
 
-enum SettingsContent { sections, interests, food_filters, sports, calendar }
+enum SettingsContent { sections, interests, food_filters, sports, calendar, favorites }
 
 class _DebugContainer extends StatefulWidget implements PreferredSizeWidget {
   final Widget _child;

@@ -32,6 +32,7 @@ import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/News.dart';
@@ -60,8 +61,8 @@ class HomeRecentItemsWidget extends StatefulWidget {
 
   HomeRecentItemsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
-    HomeHandleWidget(favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
   static String get title => Localization().getStringEx('widget.home.recent_items.label.header.title', 'Recently Viewed');
@@ -155,11 +156,11 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
   Widget _buildRecentContent() {
     Widget contentWidget;
+    List<Widget> pages = <Widget>[];
 
     if (1 < (_recentItems?.length ?? 0)) {
 
       // Config().homeRecentItemsCount
-      List<Widget> pages = <Widget>[];
       for (RecentItem item in _recentItems!) {
         pages.add(Padding(key: _contentKeys[item.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
           HomeRecentItemCard(recentItem: item),
@@ -177,6 +178,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
           key: _pageViewKey,
           controller: _pageController,
           estimatedPageSize: _pageHeight,
+          allowImplicitScrolling: true,
           children: pages),
       );
     }
@@ -188,6 +190,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
     return Column(children: <Widget>[
       contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to view all items'),

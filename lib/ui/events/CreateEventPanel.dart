@@ -768,7 +768,11 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                       border: Border.all(
                           color: Styles().colors!.fillColorPrimary!,
                           width: 1)),
-                  height: 90,
+                  constraints: BoxConstraints(
+                    minHeight: 90,
+                    maxHeight: 150,
+                  ),
+                  // height: 90,
                   child:
                   Semantics(label:Localization().getStringEx("panel.create_event.title.field","EVENT TITLE FIELD"),
                       hint: Localization().getStringEx("panel.create_event.title.title.hint",""), textField: true, excludeSemantics: true, child:
@@ -776,7 +780,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                         controller: _eventTitleController,
                         onChanged: _onTextChanged,
                         decoration: InputDecoration(border: InputBorder.none),
-                        maxLength: 64,
+                        maxLines: null,
                         maxLengthEnforcement: MaxLengthEnforcement.enforced,
                         style: TextStyle(
                             color: Styles().colors!.fillColorPrimary,
@@ -845,6 +849,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           child: TextField(
                             controller: _eventDescriptionController,
                             onChanged: _onTextChanged,
+                            // minLines: 1 ,
+                            maxLines:  null,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: Localization().getStringEx("panel.create_event.additional_info.event.description.hint","Type something"),
@@ -895,7 +901,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                   ))
                 ],
               ),
-            ), 
+            ),
             Container(
               width: 16,
             ),
@@ -1841,7 +1847,8 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       List<Group>? otherGroupsToSave;
 
       // If the event is part of a group - allow the admin to select other groups that one wants to save the event as well.
-      if (hasGroup) {
+      //If event has membersSelection then do not allow linking to other groups
+      if (hasGroup && CollectionUtils.isEmpty(_groupMembersSelection)) {
         List<Group>? otherGroups = await _loadOtherAdminUserGroups();
         if (CollectionUtils.isNotEmpty(otherGroups)) {
           otherGroupsToSave = await showDialog(context: context, barrierDismissible: true, builder: (_) => _GroupsSelectionPopup(groups: otherGroups));
@@ -1873,15 +1880,12 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       // Save the event to the other selected groups that the user is admin.
       if (hasGroup && CollectionUtils.isNotEmpty(otherGroupsToSave)) {
         for (Group group in otherGroupsToSave!) {
-          Event? groupEvent = Event.fromOther(mainEvent);
-          groupEvent?.createdByGroupId = group.id;
-          String? groupEventId = await Events().postNewEvent(groupEvent);
-          if (StringUtils.isNotEmpty(groupEventId)) {
-            bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: groupEvent?.createdByGroupId, eventId: groupEventId, toMembers: _groupMembersSelection);
+          if (StringUtils.isNotEmpty(mainEventId)) {
+            bool eventLinkedToGroup = await Groups().linkEventToGroup(groupId: group.id, eventId: mainEventId, toMembers: _groupMembersSelection);
             if (eventLinkedToGroup) {
               // Succeeded to link event to group
               if (eventToDisplay == null) {
-                eventToDisplay = groupEvent;
+                eventToDisplay = mainEvent;
                 groupToDisplay = group;
               }
             } else {

@@ -27,6 +27,7 @@ typedef NS_ENUM(NSInteger, UIUCExploreType) {
 	UIUCExploreType_Dining,
 	UIUCExploreType_Laundry,
 	UIUCExploreType_Parking,
+	UIUCExploreType_StudentCourse,
 	UIUCExploreType_Explores,
 };
 
@@ -42,6 +43,7 @@ UIUCExploreType UIUCExploreTypeFromString(NSString* value);
 @property (nonatomic, readonly) NSArray* uiucExplores;
 @property (nonatomic, readonly) NSString* uiucExploreAddress;
 @property (nonatomic, readonly) NSDictionary* uiucExploreLocation;
+@property (nonatomic, readonly) NSDictionary* uiucExploreDestinationLocation;
 @property (nonatomic, readonly) CLLocationCoordinate2D uiucExploreLocationCoordinate;
 @property (nonatomic, readonly) NSArray* uiucExplorePolygon;
 @property (nonatomic, readonly) int uiucExploreLocationFloor;

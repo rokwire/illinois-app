@@ -19,6 +19,9 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/ext/StudentCourse.dart';
+import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -227,7 +230,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
     String? category = _exploreCategory;
     bool isFavorite = widget.explore?.isFavorite ?? false;
-    bool starVisible = Auth2().canFavorite;
+    bool starVisible = Auth2().canFavorite && (widget.explore is Favorite);
     String leftLabel = "";
     TextStyle leftLabelStyle;
     if (StringUtils.isNotEmpty(category)) {
@@ -347,32 +350,40 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   }
 
   Widget? _exploreLocationDetail() {
-    String iconRes = 'images/icon-location.png';
     String? locationText;
-    if(widget.explore!=null && widget.explore is Event ) {//For Events we show Two Locati
-      if ((widget.explore as Event).displayAsInPerson) {
-        locationText = Localization().getStringEx(
-            'panel.explore_detail.event_type.in_person', "In-person event");
-      } else if( !(widget.explore as Event).displayAsVirtual ){ // displayAsInPerson == false && displayAsVirtual == false
-        locationText = widget.explore?.getShortDisplayLocation(widget.locationData);
+    void Function()? onLocationTap;
+
+    Explore? explore = widget.explore;
+    if (explore is Event ) {//For Events we show Two Locati
+      if (explore.displayAsInPerson) {
+        locationText = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
+      } else if (!explore.displayAsVirtual) { // displayAsInPerson == false && displayAsVirtual == false
+        locationText = explore.getShortDisplayLocation(widget.locationData);
       }
     }
+    else if (explore is StudentCourse) {
+      locationText = explore.section?.displayLocation;
+      onLocationTap = _onTapExploreLocation;
+    }
+
     if ((locationText != null) && locationText.isNotEmpty) {
-      return Semantics(label: locationText, child:Padding(
-        padding: _detailPadding,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Image.asset(iconRes, excludeFromSemantics: true,),
-            Padding(
-              padding: _iconPadding,
-            ),
-            Expanded(child: Text(locationText,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.medium,
-                    fontSize: 14,
-                    color: Styles().colors!.textBackground))),
-          ],
+      return Semantics(label: locationText, button: (onLocationTap != null), child:
+        InkWell(onTap: onLocationTap, child:
+          Padding(padding: _detailPadding, child:
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Padding(padding: _iconPadding, child:
+                Image.asset('images/icon-location.png', excludeFromSemantics: true,)
+              ),
+              Expanded(child:
+                Text(locationText, style: (onLocationTap != null) ?
+                  TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.textBackground,
+                    decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1,
+                  ) :
+                  TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.textBackground)
+                )
+              ),
+            ],
+          ),
         ),
       ));
     } else {
@@ -469,6 +480,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       return explore.timeDisplayString;
     } else if (explore is Game) {
       return explore.displayTime;
+    } else if (explore is StudentCourse) {
+      return explore.section?.displaySchedule;
     } else {
       return '';
     }
@@ -534,6 +547,11 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   void _onTapExploreCardStar() {
     Analytics().logSelect(target: "Favorite: ${widget.explore?.exploreTitle}");
     widget.explore?.toggleFavorite();
+  }
+
+  void _onTapExploreLocation() {
+    Analytics().logSelect(target: "Location Detail");
+    NativeCommunicator().launchMapDirections(jsonData: widget.explore?.toJson());
   }
 
   void _onTapSmallExploreCard({BuildContext? context, _EventCardType? cardType, Event? parentEvent, Event? subEvent}) {
