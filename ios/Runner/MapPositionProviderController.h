@@ -19,10 +19,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FlutterCompletion.h"
-#import <GoogleMaps/GoogleMaps.h>
 #import <MapsIndoors/MapsIndoors.h>
 #import <Meridian/Meridian.h>
+
+#import "MapController.h"
 
 typedef NS_ENUM(NSInteger, MPPositionProviderSource) {
 	MPPositionProviderSource_Meridian,
@@ -30,7 +30,7 @@ typedef NS_ENUM(NSInteger, MPPositionProviderSource) {
 };
 
 
-@interface MapPositionProviderController : UIViewController<FlutterCompletionHandler, GMSMapViewDelegate, MPMapControlDelegate, CLLocationManagerDelegate, MRLocationManagerDelegate, MPPositionProvider> {
+@interface MapPositionProviderController : MapController<MPMapControlDelegate, CLLocationManagerDelegate, MRLocationManagerDelegate, MPPositionProvider> {
 	//	MPPositionProvider
 	BOOL                                            _mpPositionProviderPreferAlwaysLocationPermission;
 	BOOL                                            _mpPositionProviderLocationServicesActive;
@@ -41,10 +41,7 @@ typedef NS_ENUM(NSInteger, MPPositionProviderSource) {
 
 	id<MPPositionProvider>                          _mpLastPositionProvider;
 }
-@property (nonatomic, strong) NSDictionary*         parameters;
-@property (nonatomic, strong) FlutterCompletion     completionHandler;
 
-@property (nonatomic, strong) GMSMapView*           gmsMapView;
 @property (nonatomic, strong) MPMapControl*         mpMapControl;
 @property (nonatomic, strong) UILabel*              debugStatusLabel;
 
@@ -66,8 +63,6 @@ typedef NS_ENUM(NSInteger, MPPositionProviderSource) {
 
 @property (nonatomic, weak)   id<MPPositionProviderDelegate>
                                                     mpPositionProviderDelegate;
-
-- (instancetype)initWithParameters:(NSDictionary*)parameters completionHandler:(FlutterCompletion)completionHandler;
 
 - (void)layoutSubViews;
 

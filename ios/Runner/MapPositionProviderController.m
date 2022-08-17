@@ -47,8 +47,6 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
-		self.navigationItem.title = NSLocalizedString(@"Maps", nil);
-
 		_mrAppKey = [MREditorKey keyWithIdentifier:[AppDelegate.sharedInstance.keys uiucConfigStringForPathKey:@"meridian.app_id"]];
 		_mrTimeoutInterval = 10.0;
 		_mrSleepInterval = 10.0;
@@ -63,37 +61,16 @@
 	return self;
 }
 
-- (instancetype)initWithParameters:(NSDictionary*)parameters completionHandler:(FlutterCompletion)completionHandler {
-	if (self = [self init]) {
-		_parameters = parameters;
-		_completionHandler = completionHandler;
-	}
-	return self;
-}
-
 - (void)loadView {
 
-	self.view = [[UIView alloc] initWithFrame:CGRectZero];
-	self.view.backgroundColor = [UIColor whiteColor];
-	
-	NSDictionary *target = [_parameters inaDictForKey:@"target"];
-	CLLocationDegrees latitude = [target inaDoubleForKey:@"latitude"] ?: kInitialCameraLocation.latitude;
-	CLLocationDegrees longitude = [target inaDoubleForKey:@"longitude"] ?: kInitialCameraLocation.longitude;
-	float zoom = [target inaFloatForKey:@"zoom"] ?: kInitialCameraZoom;
-	
-	GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:latitude longitude:longitude zoom:zoom];
-	_gmsMapView = [GMSMapView mapWithFrame:CGRectZero camera:camera];
-	_gmsMapView.delegate = self;
-	//_gmsMapView.myLocationEnabled = YES;
-	//_gmsMapView.settings.compassButton = YES;
-	//_gmsMapView.settings.myLocationButton = YES;
-	[self.view addSubview:_gmsMapView];
+	[super loadView];
 
-	_mpMapControl = [[MPMapControl alloc] initWithMap:_gmsMapView];
+
+	_mpMapControl = [[MPMapControl alloc] initWithMap:self.gmsMapView];
 	_mpMapControl.delegate = self;
 	[_mpMapControl showUserPosition:YES];
 	
-	NSDictionary *options = [_parameters inaDictForKey:@"options"];
+	NSDictionary *options = [self.parameters inaDictForKey:@"options"];
 	if (options != nil) {
 	
 		_mpMapControl.floorSelectorHidden = ([options inaBoolForKey:@"enableLevels" defaults:true] == false);
@@ -104,32 +81,14 @@
 			_debugStatusLabel.textAlignment = NSTextAlignmentCenter;
 			_debugStatusLabel.shadowColor = [UIColor colorWithWhite:1 alpha:0.5];
 			_debugStatusLabel.shadowOffset = CGSizeMake(2, 2);
-			[_gmsMapView addSubview:_debugStatusLabel];
+			[self.gmsMapView addSubview:_debugStatusLabel];
 		}
 	}
-
-	NSArray *markers = [_parameters inaArrayForKey:@"markers"];
-	for (NSDictionary *markerJson in markers) {
-		if ([markerJson isKindOfClass:[NSDictionary class]]) {
-			GMSMarker *marker = [[GMSMarker alloc] init];
-			CLLocationDegrees markerLatitude = [markerJson inaDoubleForKey:@"latitude"];
-			CLLocationDegrees markerLongitude = [markerJson inaDoubleForKey:@"longitude"];
-			marker.position = CLLocationCoordinate2DMake(markerLatitude, markerLongitude);
-			marker.title = [markerJson inaStringForKey:@"name"];
-			marker.snippet = [markerJson inaStringForKey:@"description"];
-			marker.map = _gmsMapView;
-		}
-	}
-}
-
-- (void)viewDidLayoutSubviews {
-	[super viewDidLayoutSubviews];
-	[self layoutSubViews];
 }
 
 - (void)layoutSubViews {
+	[super layoutSubViews];
 	CGSize contentSize = self.view.frame.size;
-	_gmsMapView.frame = CGRectMake(0, 0, contentSize.width, contentSize.height);
 
 	if (_debugStatusLabel != nil) {
 		CGFloat labelH = 12;
@@ -497,11 +456,6 @@
 
 - (void)setProviderType:(MPPositionProviderType)providerType {
 	_mpPositionProviderType = providerType;
-}
-
-#pragma mark GMSMapViewDelegate
-
-- (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
 }
 
 #pragma mark MPMapControlDelegate
