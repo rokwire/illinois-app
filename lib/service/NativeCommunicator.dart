@@ -155,7 +155,6 @@ class NativeCommunicator with Service {
         'target': target,
         'options': {
           'showDebugLocation': Storage().debugMapLocationProvider,
-          'enableLevels': Storage().debugMapShowLevels ,
         },
         'markers': markers,
       });
