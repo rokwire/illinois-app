@@ -1526,6 +1526,13 @@
 	"panel.create_event.back.prompt":"是否要保存更改？",
 	"panel.create_event.failed.msg":"創建此事件時出錯.",
 	"panel.create_event.groups.failed.msg": "為以下群組創建此活動時出錯: ",
+	"panel.create_event.additional_info.group.description.private":"This event will only show up on your group's page.",
+	"panel.create_event.additional_info.group.description.public":"This event will show up on your group's page and also on the event's page.",
+	"panel.create_event.location.lat.title":"EVENT LATITUDE",
+	"panel.create_event.location.long.title":"EVENT LONGITUDE",
+	"panel.create_event.button.free.title":"Is this event free?",
+	"panel.create_event.price.label.title":"Cost Description (eg: $10, Donation suggested)",
+	"panel.create_event.button.attendance.title":"Attendance required",
 
 	"panel.profile_info.header.title":"个人信息",
 	"panel.profile_info.net_id.title":"UIN",
