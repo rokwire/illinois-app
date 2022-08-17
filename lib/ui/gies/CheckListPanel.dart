@@ -51,9 +51,9 @@ class CheckListPanel extends StatelessWidget {
 
   static String? _loggedOutMessage(String contentKey) {
     if (contentKey == CheckList.giesOnboarding) {
-      return Localization().getStringEx('widget.checklist.gies.logged_out', 'You need to be logged in to access iDegrees New Student Checklist.');
+      return Localization().getStringEx('widget.checklist.gies.logged_out', 'You need to be logged in with your NetID to access iDegrees New Student Checklist. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.');
     } else if (contentKey == CheckList.uiucOnboarding) {
-      return Localization().getStringEx('widget.checklist.uiuc.logged_out', 'You need to be logged in to access New Student Checklist.');
+      return Localization().getStringEx('widget.checklist.uiuc.logged_out', 'You need to be logged in with your NetID to access New Student Checklist. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.');
     }
   }
 
