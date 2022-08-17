@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - The text for logged out messages [#2290](https://github.com/rokwire/illinois-app/issues/2290).
+- Messages when there are no group members [#2299](https://github.com/rokwire/illinois-app/issues/2299).
 
 ## [4.1.20] - 2022-08-15
 ### Changed
