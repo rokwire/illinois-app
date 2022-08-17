@@ -22,7 +22,7 @@
 #import "GeneratedPluginRegistrant.h"
 #import "AppKeys.h"
 #import "MapView.h"
-#import "MapController.h"
+#import "MapPositionProviderController.h"
 #import "MapDirectionsController.h"
 #import "MapLocationPickerController.h"
 
@@ -295,7 +295,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 }
 
 - (void)handleMapWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	MapController *mapController = [[MapController alloc] initWithParameters:parameters completionHandler:^(id returnValue) {
+	MapPositionProviderController *mapController = [[MapPositionProviderController alloc] initWithParameters:parameters completionHandler:^(id returnValue) {
 		result(returnValue);
 	}];
 	[self.navigationViewController pushViewController:mapController animated:YES];

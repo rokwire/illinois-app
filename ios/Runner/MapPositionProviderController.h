@@ -1,5 +1,5 @@
 //
-//  MapController.h
+//  MapPositionProviderController.h
 //  Runner
 //
 //  Created by Mihail Varbanov on 7/11/19.
@@ -30,7 +30,7 @@ typedef NS_ENUM(NSInteger, MPPositionProviderSource) {
 };
 
 
-@interface MapController : UIViewController<FlutterCompletionHandler, GMSMapViewDelegate, MPMapControlDelegate, CLLocationManagerDelegate, MRLocationManagerDelegate, MPPositionProvider> {
+@interface MapPositionProviderController : UIViewController<FlutterCompletionHandler, GMSMapViewDelegate, MPMapControlDelegate, CLLocationManagerDelegate, MRLocationManagerDelegate, MPPositionProvider> {
 	//	MPPositionProvider
 	BOOL                                            _mpPositionProviderPreferAlwaysLocationPermission;
 	BOOL                                            _mpPositionProviderLocationServicesActive;

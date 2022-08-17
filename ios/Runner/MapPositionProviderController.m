@@ -1,5 +1,5 @@
 //
-//  MapController.m
+//  MapPositionProviderController.m
 //  Runner
 //
 //  Created by Mihail Varbanov on 7/11/19.
@@ -18,7 +18,7 @@
 // limitations under the License.
 //
 
-#import "MapController.h"
+#import "MapPositionProviderController.h"
 #import "AppDelegate.h"
 #import "AppKeys.h"
 #import "MapMarkerView.h"
@@ -36,14 +36,14 @@
 #import <Foundation/Foundation.h>
 
 
-@interface MapController() 
+@interface MapPositionProviderController()
 
 @end
 
 /////////////////////////////////
-// MapController
+// MapPositionProviderController
 
-@implementation MapController
+@implementation MapPositionProviderController
 
 - (instancetype)init {
 	if (self = [super init]) {
