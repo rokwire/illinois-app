@@ -529,7 +529,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   String? get _loggedOutMessage {
     switch(widget.favoriteKey) {
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.logged_out.inbox', 'You need to be logged in to access My Notifications.');
+      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.logged_out.inbox', 'You need to be logged in with your NetID to access My Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.');
     }
     return null;
   }
