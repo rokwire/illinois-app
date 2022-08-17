@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - The text for logged out messages [#2290](https://github.com/rokwire/illinois-app/issues/2290).
 - Messages when there are no group members [#2299](https://github.com/rokwire/illinois-app/issues/2299).
+- Removed MapsIndoors from Map Widget and launchMap native handler [#2298](https://github.com/rokwire/illinois-app/issues/2298).
 
 ## [4.1.20] - 2022-08-15
 ### Changed
