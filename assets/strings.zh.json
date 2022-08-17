@@ -2092,7 +2092,11 @@
     "panel.manage_members.member.status.member.label": "成員",
     "panel.manage_members.member.status.pending.label": "待辦的",
     "panel.manage_members.member.status.rejected.label": "被拒絕",
-    "panel.manage_members.load.failed.msg": "加載成員失敗。",
+    "panel.manage_members.status.admin.empty.message": "沒有管理員。",
+    "panel.manage_members.status.member.empty.message": "沒有成員。",
+    "panel.manage_members.status.pending.empty.message": "沒有待處理的成員。",
+    "panel.manage_members.status.rejected.empty.message": "沒有被拒絕的成員。",
+    "panel.manage_members.status.all.empty.message": "沒有成員。",
 
 	"panel.pending_member_detail.button.add.title": "添加",
 	"panel.pending_member_detail.button.add.hint": "",

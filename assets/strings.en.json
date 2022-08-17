@@ -2097,7 +2097,11 @@
     "panel.manage_members.member.status.member.label": "Member",
     "panel.manage_members.member.status.pending.label": "Pending",
     "panel.manage_members.member.status.rejected.label": "Rejected",
-    "panel.manage_members.load.failed.msg": "Failed to load members.",
+    "panel.manage_members.status.admin.empty.message": "There are no admins.",
+    "panel.manage_members.status.member.empty.message": "There are no members.",
+    "panel.manage_members.status.pending.empty.message": "There are no pending members.",
+    "panel.manage_members.status.rejected.empty.message": "There are no rejected members.",
+    "panel.manage_members.status.all.empty.message": "There are no members.",
 
     "panel.pending_member_detail.button.add.title": "Add",
     "panel.pending_member_detail.button.add.hint": "",
