@@ -73,7 +73,7 @@ import edu.illinois.rokwire.MainActivity;
 import edu.illinois.rokwire.R;
 import edu.illinois.rokwire.Utils;
 
-public class MapActivity extends AppCompatActivity implements MeridianLocationManager.LocationUpdateListener, PositionProvider {
+public class MapPositionProviderActivity extends AppCompatActivity implements MeridianLocationManager.LocationUpdateListener, PositionProvider {
     //region Class fields
 
     //Google Maps
@@ -652,7 +652,7 @@ public class MapActivity extends AppCompatActivity implements MeridianLocationMa
     //region Utilities
 
     protected String getLogTag() {
-        return MapActivity.class.getSimpleName();
+        return MapPositionProviderActivity.class.getSimpleName();
     }
 
     //endregion

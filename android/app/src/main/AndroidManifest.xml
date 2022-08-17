@@ -117,7 +117,7 @@
             android:configChanges="orientation|keyboardHidden"/>
 
         <activity
-            android:name=".maps.MapActivity"
+            android:name=".maps.MapPositionProviderActivity"
             android:theme="@style/DefaultTheme"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"/>
