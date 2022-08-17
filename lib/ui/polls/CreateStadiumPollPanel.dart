@@ -37,7 +37,7 @@ class CreateStadiumPollPanel extends StatefulWidget {
   
   static void present(BuildContext context) {
     if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.create_stadium_poll', 'You need to be logged in to create Stadium Poll.'));
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.create_stadium_poll', 'You need to be logged in with your NetID to create a Stadium Poll. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
     }
     else if (!Auth2().hasRole('stadium poll manager')) {
       AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.no_rights.create_stadium_poll', 'You have no rights to create a Stadium Poll.'));
