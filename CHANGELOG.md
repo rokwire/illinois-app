@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- The next build on `develop` should refer to version 4.2.0 -->
 ### Fixed
 - Move "getContentString" method to Localization service [#2291](https://github.com/rokwire/illinois-app/issues/2291).
+
+## [4.1.21] - 2022-08-17
 ### Changed
 - The text for logged out messages [#2290](https://github.com/rokwire/illinois-app/issues/2290).
 - Messages when there are no group members [#2299](https://github.com/rokwire/illinois-app/issues/2299).
