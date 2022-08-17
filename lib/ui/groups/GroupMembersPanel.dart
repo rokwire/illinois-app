@@ -175,7 +175,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         Container(height: MediaQuery.of(context).size.height / 5),
         Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
-            child: Text(Localization().getStringEx('panel.manage_members.load.failed.msg', 'Failed to load members.'),
+            child: Text(_getEmptyMembersMessage(), textAlign: TextAlign.center,
                 style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
         Container(height: MediaQuery.of(context).size.height / 4)
       ]));
@@ -436,6 +436,21 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   void _updateState() {
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  String _getEmptyMembersMessage() {
+    switch (_selectedMemberStatus) {
+      case GroupMemberStatus.admin:
+        return Localization().getStringEx('panel.manage_members.status.admin.empty.message', 'There are no admins.');
+      case GroupMemberStatus.member:
+        return Localization().getStringEx('panel.manage_members.status.member.empty.message', 'There are no members.');
+      case GroupMemberStatus.pending:
+        return Localization().getStringEx('panel.manage_members.status.pending.empty.message', 'There are no pending members.');
+      case GroupMemberStatus.rejected:
+        return Localization().getStringEx('panel.manage_members.status.rejected.empty.message', 'There are no rejected members.');
+      default: // All
+        return Localization().getStringEx('panel.manage_members.status.all.empty.message', 'There are no members.');
     }
   }
 
