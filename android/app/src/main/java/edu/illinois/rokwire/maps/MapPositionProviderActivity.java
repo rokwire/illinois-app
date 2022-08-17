@@ -28,8 +28,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.VolleyError;
 import com.arubanetworks.meridian.editor.EditorKey;
@@ -41,13 +39,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.mapsindoors.mapssdk.MPPositionResult;
 import com.mapsindoors.mapssdk.MapControl;
 import com.mapsindoors.mapssdk.MapsIndoors;
@@ -61,24 +53,18 @@ import com.mapsindoors.mapssdk.errors.MIError;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import edu.illinois.rokwire.Constants;
 import edu.illinois.rokwire.MainActivity;
 import edu.illinois.rokwire.R;
 import edu.illinois.rokwire.Utils;
 
-public class MapPositionProviderActivity extends AppCompatActivity implements MeridianLocationManager.LocationUpdateListener, PositionProvider {
+public class MapPositionProviderActivity extends MapActivity implements MeridianLocationManager.LocationUpdateListener, PositionProvider {
     //region Class fields
-
-    //Google Maps
-    private SupportMapFragment mapFragment;
-    protected GoogleMap googleMap;
 
     //Android Location
     private FusedLocationProviderClient fusedLocationClient;
@@ -105,9 +91,7 @@ public class MapPositionProviderActivity extends AppCompatActivity implements Me
     private OnPositionUpdateListener mpPositionUpdateListener;
 
     private boolean firstLocationUpdatePassed;
-    private HashMap target;
     private HashMap options;
-    private ArrayList<HashMap> markers;
     private TextView debugStatusView;
     private boolean showDebugLocation;
 
@@ -118,13 +102,9 @@ public class MapPositionProviderActivity extends AppCompatActivity implements Me
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.map_layout);
 
-        initHeaderBar();
-        initParameters();
         initUiViews();
         initCoreLocation();
-        initMap();
         initMeridian();
     }
 
@@ -191,28 +171,12 @@ public class MapPositionProviderActivity extends AppCompatActivity implements Me
 
     //region Common initialization
 
-    private void initHeaderBar() {
-        setSupportActionBar(findViewById(R.id.toolbar));
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayShowTitleEnabled(false);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-        }
-    }
-
-    private void initParameters() {
-        Serializable targetSerializable = getIntent().getSerializableExtra("target");
-        if (targetSerializable instanceof HashMap) {
-            this.target = (HashMap) targetSerializable;
-        }
+    @Override
+    protected void initParameters() {
+        super.initParameters();
         Serializable optionsSerializable = getIntent().getSerializableExtra("options");
         if (optionsSerializable instanceof HashMap) {
             this.options = (HashMap) optionsSerializable;
-        }
-        Serializable markersSerializable = getIntent().getSerializableExtra("markers");
-        if (markersSerializable instanceof List) {
-            this.markers = (ArrayList<HashMap>) markersSerializable;
         }
     }
 
@@ -228,19 +192,9 @@ public class MapPositionProviderActivity extends AppCompatActivity implements Me
 
     //region Map views initialization
 
-    private void initMap() {
-        mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment));
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this::didGetMapAsync);
-        }
-    }
-
-    private void didGetMapAsync(GoogleMap map) {
-        googleMap = map;
-        double latitude = Utils.Map.getValueFromPath(target, "latitude", Constants.DEFAULT_INITIAL_CAMERA_POSITION.latitude);
-        double longitude = Utils.Map.getValueFromPath(target, "longitude", Constants.DEFAULT_INITIAL_CAMERA_POSITION.longitude);
-        double zoom = Utils.Map.getValueFromPath(target, "zoom", Constants.DEFAULT_CAMERA_ZOOM);
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(new LatLng(latitude, longitude), (float)zoom)));
+    @Override
+    protected void afterMapInitialized() {
+        super.afterMapInitialized();
         initMapControl();
     }
 
@@ -271,27 +225,6 @@ public class MapPositionProviderActivity extends AppCompatActivity implements Me
         boolean showLevels = Utils.Map.getValueFromPath(options, "enableLevels", true);
         mapControl.enableFloorSelector(showLevels);
         startPositioning(null);
-        fillMarkers();
-    }
-
-    private void fillMarkers(){
-        if(markers!=null && !markers.isEmpty()){
-            for(HashMap markerData: markers){
-                Object latVal =  markerData.get("latitude");
-                Object lngVal =  markerData.get("longitude");
-
-                double lat = latVal instanceof Double? (double)latVal :
-                        latVal instanceof Integer? Double.valueOf((int)latVal) : 0;
-                double lng = lngVal instanceof Double? (double)lngVal :
-                        lngVal instanceof Integer? Double.valueOf((int)lngVal) : 0;
-                String name = markerData.containsKey("name")?(String) markerData.get("name") : "";
-                String description = markerData.containsKey("description") && markerData.get("description")!=null?(String) markerData.get("description") : "";
-
-                googleMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(lat, lng))
-                        .title(name).snippet(description)).showInfoWindow();
-            }
-        }
     }
 
     //endregion

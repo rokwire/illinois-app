@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import edu.illinois.rokwire.maps.MapActivity;
 import edu.illinois.rokwire.maps.MapPositionProviderActivity;
 import edu.illinois.rokwire.maps.MapDirectionsActivity;
 import edu.illinois.rokwire.maps.MapViewFactory;
@@ -225,7 +226,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         HashMap targetMap = (target instanceof HashMap) ? (HashMap) target : null;
         HashMap optionsMap = (options instanceof HashMap) ? (HashMap) options : null;
         ArrayList<HashMap> markersValues = (markers instanceof  ArrayList) ? ( ArrayList<HashMap>) markers : null;
-        Intent intent = new Intent(this, MapPositionProviderActivity.class);
+        Intent intent = new Intent(this, MapActivity.class);
         Bundle serializableExtras = new Bundle();
         serializableExtras.putSerializable("target", targetMap);
         serializableExtras.putSerializable("options", optionsMap);
