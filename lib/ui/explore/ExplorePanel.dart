@@ -225,73 +225,13 @@ class ExplorePanelState extends State<ExplorePanel>
     return Scaffold(
         appBar: headerBarWidget,
         body: RefreshIndicator(
-            onRefresh: () => _loadExplores(progress: false),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Visibility(
-                  visible: (_displayType == ListMapDisplayType.Map),
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-                      child: RibbonButton(
-                          textColor: Styles().colors!.fillColorSecondary,
-                          backgroundColor: Styles().colors!.white,
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                          rightIconAsset: (_itemsDropDownValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-                          label: exploreItemName(_selectedItem!),
-                          onTap: _changeItemsDropDownValuesVisibility))),
-              Expanded(
-                  child: Stack(children: [
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                  Visibility(
-                      visible: (_selectedItem == ExploreItem.Events),
-                      child: Padding(
-                          padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-                          child: RibbonButton(
-                              textColor: Styles().colors!.fillColorSecondary,
-                              backgroundColor: Styles().colors!.white,
-                              borderRadius: BorderRadius.all(Radius.circular(5)),
-                              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                              rightIconAsset: (_eventsDisplayDropDownValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-                              label: _eventsDisplayTypeLabel(_selectedEventsDisplayType),
-                              onTap: _changeEventsDisplayDropDownValuesVisibility))),
-                  Expanded(
-                      child: Stack(children: [
-                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child: Wrap(children: _buildFilterWidgets())),
-                      Expanded(
-                          child: Container(
-                              color: Styles().colors!.background, child: Stack(children: <Widget>[_buildMapView(), _buildListView()])))
-                    ]),
-                    _buildEventsDisplayTypesDropDownContainer(),
-                    _buildFilterValuesContainer()
-                  ]))
-                ]),
-                _buildExploreItemsDropDownContainer()
-              ]))
-            ])),
+          onRefresh: () => _loadExplores(progress: false),
+          child: _buildContent(),
+        ),
         backgroundColor: Styles().colors!.background,
         bottomNavigationBar: widget.rootTabDisplay ? null : uiuc.TabBar());
   }
 
-  void _changeItemsDropDownValuesVisibility() {
-    if (_filterOptionsVisible) {
-      _deactivateSelectedFilters();
-    }
-    _itemsDropDownValuesVisible = !_itemsDropDownValuesVisible;
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _changeEventsDisplayDropDownValuesVisibility() {
-    if (_filterOptionsVisible) {
-      _deactivateSelectedFilters();
-    }
-    _eventsDisplayDropDownValuesVisible = !_eventsDisplayDropDownValuesVisible;
-    if (mounted) {
-      setState(() {});
-    }
-  }
 
   void _initExploreItems() {
     if (Auth2().privacyMatch(2)) {
@@ -954,10 +894,64 @@ class ExplorePanelState extends State<ExplorePanel>
     Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreSearchPanel()));
   }
 
+  Widget _buildContent() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Visibility(visible: (_displayType == ListMapDisplayType.Map), child:
+        Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
+          _buildExploreItemsDropDownButton(),
+        ),
+      ),
+      Expanded(child:
+        Stack(children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Visibility(visible: (_selectedItem == ExploreItem.Events), child:
+              Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
+                _buildEventsDisplayTypesDropDownButton(),
+              ),
+            ),
+            Expanded(child:
+              Stack(children: [
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
+                    Wrap(children: _buildFilterWidgets()),
+                  ),
+                  Expanded(child:
+                    Container(color: Styles().colors!.background, child:
+                      Stack(children: <Widget>[
+                        _buildMapView(),
+                        _buildListView(),
+                      ]),
+                    ),
+                  ),
+                ]),
+                _buildEventsDisplayTypesDropDownContainer(),
+                _buildFilterValuesContainer()
+              ]),
+            ),
+          ]),
+          _buildExploreItemsDropDownContainer()
+        ]),
+      ),
+    ]);
+  }
+
+  Widget _buildExploreItemsDropDownButton() {
+    return RibbonButton(
+      textColor: Styles().colors!.fillColorSecondary,
+      backgroundColor: Styles().colors!.white,
+      borderRadius: BorderRadius.all(Radius.circular(5)),
+      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      rightIconAsset: (_itemsDropDownValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+      label: _exploreItemName(_selectedItem!),
+      hint: _exploreItemHint(_selectedItem!),
+      onTap: _changeExploreItemsDropDownValuesVisibility
+    );
+  }
+
   Widget _buildExploreItemsDropDownContainer() {
     return Visibility(
         visible: _itemsDropDownValuesVisible,
-        child: Positioned.fill(child: Stack(children: <Widget>[_buildExploreDropDownDismissLayer(), _buildItemsDropDownWidget()])));
+        child: Positioned.fill(child: Stack(children: <Widget>[_buildExploreDropDownDismissLayer(), _buildExploreItemsDropDownWidget()])));
   }
 
   Widget _buildExploreDropDownDismissLayer() {
@@ -972,7 +966,7 @@ class ExplorePanelState extends State<ExplorePanel>
                 child: Container(color: Styles().colors!.blackTransparent06))));
   }
 
-  Widget _buildItemsDropDownWidget() {
+  Widget _buildExploreItemsDropDownWidget() {
     List<Widget> itemList = <Widget>[];
     itemList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
     for (ExploreItem exploreItem in _exploreItems) {
@@ -988,14 +982,36 @@ class ExplorePanelState extends State<ExplorePanel>
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
         rightIconAsset: null,
-        label: exploreItemName(exploreItem),
+        label: _exploreItemName(exploreItem),
         onTap: () => _onTapExploreItem(exploreItem));
   }
 
   void _onTapExploreItem(ExploreItem item) {
-    Analytics().logSelect(target: exploreItemName(item));
+    Analytics().logSelect(target: _exploreItemName(item));
     selectItem(item);
-    _changeItemsDropDownValuesVisibility();
+    _changeExploreItemsDropDownValuesVisibility();
+  }
+
+  void _changeExploreItemsDropDownValuesVisibility() {
+    if (_filterOptionsVisible) {
+      _deactivateSelectedFilters();
+    }
+    _itemsDropDownValuesVisible = !_itemsDropDownValuesVisible;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Widget _buildEventsDisplayTypesDropDownButton() {
+    return RibbonButton(
+      textColor: Styles().colors!.fillColorSecondary,
+      backgroundColor: Styles().colors!.white,
+      borderRadius: BorderRadius.all(Radius.circular(5)),
+      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      rightIconAsset: (_eventsDisplayDropDownValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+      label: _eventsDisplayTypeLabel(_selectedEventsDisplayType),
+      onTap: _changeEventsDisplayDropDownValuesVisibility
+    );
   }
 
   Widget _buildEventsDisplayTypesDropDownContainer() {
@@ -1045,6 +1061,16 @@ class ExplorePanelState extends State<ExplorePanel>
       _loadExplores();
     }
     _changeEventsDisplayDropDownValuesVisibility();
+  }
+
+  void _changeEventsDisplayDropDownValuesVisibility() {
+    if (_filterOptionsVisible) {
+      _deactivateSelectedFilters();
+    }
+    _eventsDisplayDropDownValuesVisible = !_eventsDisplayDropDownValuesVisible;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Widget _buildListView() {
@@ -1498,7 +1524,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
-  static String? exploreItemName(ExploreItem exploreItem) {
+  static String? _exploreItemName(ExploreItem exploreItem) {
     switch (exploreItem) {
       case ExploreItem.Events:              return Localization().getStringEx('panel.explore.button.events.title', 'Events');
       case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
@@ -1509,7 +1535,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
-  static String? exploreItemHint(ExploreItem exploreItem) {
+  static String? _exploreItemHint(ExploreItem exploreItem) {
     switch (exploreItem) {
       case ExploreItem.Events:              return Localization().getStringEx('panel.explore.button.events.hint', '');
       case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.hint', '');
