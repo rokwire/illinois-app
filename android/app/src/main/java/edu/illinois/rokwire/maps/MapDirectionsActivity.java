@@ -71,7 +71,7 @@ import edu.illinois.rokwire.MainActivity;
 import edu.illinois.rokwire.R;
 import edu.illinois.rokwire.Utils;
 
-public class MapDirectionsActivity extends MapActivity implements OnRouteResultListener, OnLegSelectedListener {
+public class MapDirectionsActivity extends MapPositionProviderActivity implements OnRouteResultListener, OnLegSelectedListener {
 
     //region Class fields
 

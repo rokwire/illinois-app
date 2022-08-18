@@ -58,13 +58,14 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
       Connectivity.notifyStatusChanged,
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
+      StudentCourses.notifyCachedCoursesChanged,
     ]);
 
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
-          _updateCourses();
+          _updateCourses(forceLoad: true);
         }
       });
     }
@@ -98,6 +99,11 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     }
     else if (name == StudentCourses.notifySelectedTermChanged) {
       _updateCourses();
+    }
+    else if (name == StudentCourses.notifyCachedCoursesChanged) {
+      if (StudentCourses().displayTermId == param) {
+        _updateCourses();
+      }
     }
   }
 
@@ -285,7 +291,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
   }
 
   void _loadCourses() {
-    if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn) {
+    if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn && !_loading) {
       _loading = true;
       StudentCourses().loadCourses(termId: StudentCourses().displayTermId!).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
@@ -296,14 +302,14 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     }
   }
 
-  void _updateCourses({bool showProgress = true}) {
-    if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn) {
+  void _updateCourses({bool forceLoad = false, bool showProgress = true}) {
+    if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn && !_loading) {
       if (mounted && showProgress) {
         setState(() {
           _loading = true;
         });
       }
-      StudentCourses().loadCourses(termId: StudentCourses().displayTermId!).then((List<StudentCourse>? courses) {
+      StudentCourses().loadCourses(termId: StudentCourses().displayTermId!, forceLoad: forceLoad).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
           _courses = courses;
           _loading = false;

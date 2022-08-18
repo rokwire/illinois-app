@@ -31,12 +31,11 @@
 #import "NSDictionary+UIUCExplore.h"
 
 #import <GoogleMaps/GoogleMaps.h>
-#import <MapsIndoors/MapsIndoors.h>
 
 /////////////////////////////////
 // MapView
 
-@interface MapView()<GMSMapViewDelegate, MPMapControlDelegate> {
+@interface MapView()<GMSMapViewDelegate> {
 	int64_t       _mapId;
 	NSArray*      _explores;
 	NSDictionary* _poi;
@@ -46,7 +45,6 @@
 	bool          _enabled;
 }
 @property (nonatomic, readonly) GMSMapView*     mapView;
-@property (nonatomic, readonly) MPMapControl*   mapControl;
 @end
 
 @implementation MapView
@@ -61,9 +59,6 @@
 		_mapView.accessibilityElementsHidden = NO;
 		[self addSubview:_mapView];
 
-		_mapControl = [[MPMapControl alloc] initWithMap:_mapView];
-		_mapControl.delegate = self;
-		
 		_markers = [[NSMutableSet alloc] init];
 		_enabled = true;
 	}
@@ -74,7 +69,6 @@
 	if (self = [self initWithFrame:frame]) {
 		_mapId = mapId;
 		[self enableMyLocation:[parameters inaBoolForKey:@"myLocationEnabled" defaults: false]];
-		[self enableLevels:[parameters inaBoolForKey:@"levelsEnabled" defaults: true]];
 	}
 	return self;
 }
@@ -177,13 +171,6 @@
 	}
 }
 
-- (void)enableLevels:(bool)enableLevels {
-	BOOL floorSelectorHidden = enableLevels ? FALSE : TRUE;
-	if (_mapControl.floorSelectorHidden != floorSelectorHidden) {
-		_mapControl.floorSelectorHidden = floorSelectorHidden;
-	}
-}
-
 #pragma mark POI
 
 - (void)applyPOI:(NSDictionary*)poi {
@@ -241,6 +228,7 @@
 
 				marker.zIndex = 1;
 				marker.userData = @{ @"explore" : explore };
+				marker.map = _mapView;
 				[_markers addObject:marker];
 				
 				if (bounds == nil) {
@@ -277,8 +265,6 @@
 
 - (void)updateMarkers {
 
-	int currentFloor = _mapControl.currentFloor.intValue;
-	
 	for (GMSMarker *marker in _markers) {
 		NSDictionary *explore = nil, *exploreLocation = nil;
 		if ([marker.userData isKindOfClass:[NSDictionary class]]) {
@@ -290,22 +276,7 @@
 		if ((iconView != nil) && (exploreLocation != nil)) {
 			iconView.displayMode =  (_mapView.camera.zoom < kMarkerThresold1Zoom) ? MapMarkerDisplayMode_Plain : ((_mapView.camera.zoom < kMarkerThresold2Zoom) ? MapMarkerDisplayMode_Title : MapMarkerDisplayMode_Extended);
 		}
-
-		NSNumber *markerFloor = nil;
-		if (exploreLocation != nil) {
-			markerFloor = [exploreLocation inaNumberForKey:@"floor"];
-		}
-		
-		bool markerVisible = ((markerFloor == nil) || (markerFloor.intValue == currentFloor));
-
-		if (markerVisible && (marker.map == nil)) {
-			marker.map = _mapView;
-		}
-		else if (!markerVisible && (marker.map != nil)) {
-			marker.map = nil;
-		}
 	}
-
 }
 
 #pragma mark GMSMapViewDelegate
@@ -339,13 +310,6 @@
 		[self updateMarkers];
 	}
 }
-
-#pragma mark MPDirectionsRendererDelegate
-
-- (void)floorDidChange:(NSNumber*)floor {
-	[self updateMarkers];
-}
-
 
 @end
 
@@ -421,9 +385,6 @@
 	} else if ([[call method] isEqualToString:@"enableMyLocation"]) {
 		bool enableMyLocation = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;
 		[_mapView enableMyLocation:enableMyLocation];
-	} else if ([[call method] isEqualToString:@"enableLevels"]) {
-		bool enableLevels = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;
-		[_mapView enableLevels:enableLevels];
 	} else if ([[call method] isEqualToString:@"viewPoi"]) {
 		NSDictionary *parameters = [call.arguments isKindOfClass:[NSDictionary class]] ? call.arguments : nil;
 		NSDictionary *targetJsonMap = [parameters inaDictForKey:@"target"];

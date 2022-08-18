@@ -15,13 +15,13 @@
  */
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/canvas/CanvasCourseHomePanel.dart';
 import 'package:illinois/ui/canvas/CanvasWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -37,15 +37,13 @@ class CanvasCoursesContentWidget extends StatefulWidget {
 
 class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget> implements NotificationsListener {
   List<CanvasCourse>? _courses;
-  bool _loading = false;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      Auth2.notifyLoginChanged,
-      Connectivity.notifyStatusChanged,
+      Canvas.notifyCoursesUpdated,
     ]);
-    _loadCourses();
+    _courses = Canvas().courses;
     super.initState();
   }
 
@@ -59,11 +57,8 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth2.notifyLoginChanged) {
-      _loadCourses();
-    }
-    else if (name == Connectivity.notifyStatusChanged) {
-      _loadCourses();
+    if (name == Canvas.notifyCoursesUpdated) {
+      _updateCourses();
     }
   }
 
@@ -73,10 +68,7 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
   }
 
   Widget _buildContent() {
-    if (_loading) {
-      return _buildLoadingContent();
-    }
-    else if (Connectivity().isOffline) {
+    if (Connectivity().isOffline) {
       return _buildMessageContent(Localization().getStringEx('panel.canvas_courses.load.offline.error.msg', 'My Gies Canvas Courses not available while offline.'),);
     }
     else if (!Auth2().isOidcLoggedIn) {
@@ -91,10 +83,6 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
     else {
       return _buildCoursesContent();
     }
-  }
-
-  Widget _buildLoadingContent() {
-    return _buildCenterWidget(widget: CircularProgressIndicator());
   }
 
   Widget _buildMessageContent(String message) {
@@ -136,23 +124,9 @@ class _CanvasCoursesContentWidgetState extends State<CanvasCoursesContentWidget>
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CanvasCourseHomePanel(courseId: courseId)));
   }
 
-  void _loadCourses() {
-    if (Connectivity().isNotOffline && Auth2().isOidcLoggedIn) {
-      _setLoading(true);
-      Canvas().loadCourses().then((courses) {
-        _courses = courses;
-        _setLoading(false);
-      });
-    }
-    else  if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _setLoading(bool loading) {
-    _loading = loading;
-    if (mounted) {
-      setState(() {});
-    }
+  void _updateCourses() {
+    setStateIfMounted(() {
+      _courses = Canvas().courses;
+    });
   }
 }

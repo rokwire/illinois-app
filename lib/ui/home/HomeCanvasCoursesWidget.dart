@@ -1,19 +1,16 @@
 import 'dart:async';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/Canvas.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesListPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/canvas/CanvasCourseHomePanel.dart';
@@ -40,7 +37,6 @@ class HomeCanvasCoursesWidget extends StatefulWidget {
 class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> implements NotificationsListener {
 
   List<CanvasCourse>? _courses;
-  DateTime? _pausedDateTime;
 
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
@@ -49,14 +45,9 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
   @override
   void initState() {
 
-    // TBD: Search for Canvas().loadCourses() and think of caching courses content. Examples: Config, GeoFence, Groups
-
     NotificationService().subscribe(this, [
-      AppLivecycle.notifyStateChanged,
-      Auth2.notifyLoginChanged,
-      Connectivity.notifyStatusChanged,
+      Canvas.notifyCoursesUpdated
     ]);
-
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
@@ -66,7 +57,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
       });
     }
 
-    _loadCourses();
+    _courses = Canvas().courses;
     super.initState();
   }
 
@@ -81,28 +72,8 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
-      _onAppLivecycleStateChanged(param);
-    }
-    else if (name == Auth2.notifyLoginChanged) {
+    if (name == Canvas.notifyCoursesUpdated) {
       _updateCourses();
-    }
-    else if (name == Connectivity.notifyStatusChanged) {
-      _updateCourses();
-    }
-  }
-
-  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
-    if (state == AppLifecycleState.paused) {
-      _pausedDateTime = DateTime.now();
-    }
-    else if (state == AppLifecycleState.resumed) {
-      if (_pausedDateTime != null) {
-        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
-        if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _updateCourses();
-        }
-      }
     }
   }
 
@@ -172,33 +143,12 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
     ],);
   }
 
-  void _loadCourses() {
-    if (Connectivity().isNotOffline && Auth2().isOidcLoggedIn) {
-      Canvas().loadCourses().then((courses) {
-        if (mounted) {
-          setState(() {
-            _courses = courses;
-          });
-        }
-      });
-    }
-  }
-
   void _updateCourses() {
-    if (Connectivity().isNotOffline && Auth2().isOidcLoggedIn) {
-      Canvas().loadCourses().then((List<CanvasCourse>? courses) {
-        if (mounted && !DeepCollectionEquality().equals(_courses, _courses)) {
-          setState(() {
-            _courses = courses;
-            _pageViewKey = UniqueKey();
-            _pageController = null;
-          });
-        }
-      });
-    }
-    else {
-      setStateIfMounted((){});
-    }
+    setStateIfMounted(() {
+      _courses = Canvas().courses;
+      _pageViewKey = UniqueKey();
+      _pageController = null;
+    });
   }
 
   void _onTapCourse(CanvasCourse course) {
