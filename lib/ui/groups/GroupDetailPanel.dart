@@ -1495,7 +1495,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             context,
             sprintf(
                 Localization()
-                    .getStringEx('panel.group_detail.attendance.member.attended.msg', 'Student with UIN "%s" already attended on "%s"'),
+                    .getStringEx('panel.group_detail.attendance.member.attended.msg.format', 'Student with UIN "%s" already attended on "%s"'),
                 [uin, _getAttendedDateTimeFormatted(member: member)]));
       }
       // Attend the member to the group

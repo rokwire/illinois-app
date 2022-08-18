@@ -1969,11 +1969,15 @@
 	"panel.groups_create.authman.group.name.label": "Membership name",
 	"panel.groups_create.prompt.msg.title": "The University of Illinois takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.",
     "panel.groups_create.attendance_group.label": "Enable attendance checking",
+	"panel.groups_create.auto_join.enabled.label": "Group can be joined automatically?",
+	"panel.groups_create.only_admins_create_polls.enabled.label": "Only admins can create Polls",
 
 	"panel.groups.common.privacy.title.private": "Private",
 	"panel.groups.common.privacy.title.public":  "Public",
 	"panel.groups.common.privacy.description.short.private": "Only members can see group events and posts, unless an event is marked public.",
 	"panel.groups.common.privacy.description.short.public":  "Only members can see group events and posts, unless an event is marked public.",
+	"panel.groups.common.privacy.description.long.private": "Anyone who uses the app can find this group if they search and match the full name. Only admins can see who is in the group.",
+	"panel.groups.common.privacy.description.long.public":  "Anyone who uses the app will see this group. Only admins can see who is in the group.",
     "panel.groups.common.private.search.hidden.label": "Make Group Hidden",
     "panel.groups.common.private.search.hidden.description": "A hidden group is unsearchable.",
 
@@ -2053,7 +2057,11 @@
     "panel.group_detail.attendance.authman.uin.not_member.msg": "Student with UIN '%s' is not a member of this group and is not allowed to attend.",
     "panel.group_detail.attendance.member.succeeded.msg": "Successfully tagged member as attended.",
     "panel.group_detail.attendance.member.failed.msg": "Failed to tag member as attended. Please try again.",
-
+	"panel.group_detail.label.polls": "Polls",
+	"panel.group_detail.button.create_poll.title": "Create Poll",
+	"panel.group_detail.button.policy.hint": "Tap to ready policy statement",
+	"panel.group_detail.attendance.member.attended.msg.format": "Student with UIN \"%s\" already attended on \"%s\"",
+	
 	"panel.group_qr_code.alert.no_qr_code.msg": "There is no QR Code",
 	"panel.group_qr_code.alert.save.success.pictures": "Pictures",
 	"panel.group_qr_code.alert.save.success.gallery": "Gallery",
