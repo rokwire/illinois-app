@@ -34,11 +34,12 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
       Connectivity.notifyStatusChanged,
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
+      StudentCourses.notifyCachedCoursesChanged,
     ]);
 
     if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn) {
       _loading = true;
-      StudentCourses().loadCourses(termId: StudentCourses().displayTermId!).then((List<StudentCourse>? courses) {
+      StudentCourses().loadCourses(termId: StudentCourses().displayTermId!, forceLoad: true).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
           _courses = courses;
           _loading = false;
@@ -69,6 +70,11 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
     }
     else if (name == StudentCourses.notifySelectedTermChanged) {
       _updateCourses();
+    }
+    else if (name == StudentCourses.notifyCachedCoursesChanged) {
+      if (StudentCourses().displayTermId == param) {
+        _updateCourses(forceLoad: false);
+      }
     }
   }
 
@@ -190,12 +196,12 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
     StudentCourses().selectedTermId = termId;
   }
 
-  void _updateCourses() {
+  void _updateCourses({bool forceLoad = true}) {
     if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn) {
       setStateIfMounted(() {
         _loading = true;
       });
-      StudentCourses().loadCourses(termId: StudentCourses().displayTermId!).then((List<StudentCourse>? courses) {
+      StudentCourses().loadCourses(termId: StudentCourses().displayTermId!, forceLoad: forceLoad).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
           _courses = courses;
           _loading = false;
