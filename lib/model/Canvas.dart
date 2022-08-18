@@ -47,20 +47,6 @@ class CanvasCourse {
     (id?.hashCode ?? 0) ^
     (name?.hashCode ?? 0) ^
     (accessRestrictedByDate?.hashCode ?? 0);
-
-  static List<CanvasCourse>? listFromJson(List<dynamic>? jsonList) {
-    if (CollectionUtils.isEmpty(jsonList)) {
-      return null;
-    }
-    List<CanvasCourse>? courses;
-    if (jsonList != null) {
-      courses = <CanvasCourse>[];
-      for (dynamic jsonEntry in jsonList) {
-        ListUtils.add(courses, CanvasCourse.fromJson(jsonEntry));
-      }
-    }
-    return courses;
-  }
 }
 
 ////////////////////////////////

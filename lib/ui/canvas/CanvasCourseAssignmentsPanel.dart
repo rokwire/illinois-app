@@ -47,7 +47,7 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
   void initState() {
     super.initState();
     _selectedCourseId = widget.courseId;
-    _loadCourses();
+    _courses = Canvas().courses;
     _loadAssignments();
   }
 
@@ -362,14 +362,6 @@ class _CanvasCourseAssignmentsPanelState extends State<CanvasCourseAssignmentsPa
         }
       });
     }
-  }
-
-  void _loadCourses() {
-    _increaseProgress();
-    Canvas().loadCourses().then((courses) {
-      _courses = courses;
-      _decreaseProgress();
-    });
   }
 
   void _increaseProgress() {
