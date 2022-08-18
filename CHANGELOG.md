@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Move "getContentString" method to Localization service [#2291](https://github.com/rokwire/illinois-app/issues/2291).
 
+## [4.1.21] - 2022-08-17
+### Changed
+- The text for logged out messages [#2290](https://github.com/rokwire/illinois-app/issues/2290).
+- Messages when there are no group members [#2299](https://github.com/rokwire/illinois-app/issues/2299).
+- Removed MapsIndoors from Map Widget and launchMap native handler [#2298](https://github.com/rokwire/illinois-app/issues/2298).
+
+## [4.1.20] - 2022-08-15
+### Changed
+- Version number for resubmission [#2295](https://github.com/rokwire/illinois-app/issues/2295).
+
 ## [4.1.19] - 2022-08-15
 ### Changed
 - Updated My Courses load fail message [#2277](https://github.com/rokwire/illinois-app/issues/2277).
@@ -789,6 +799,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Link to plugin 1.0.0.
 - Various controls moved to plugin [#1325](https://github.com/rokwire/illinois-app/issues/1325).
+
+## [3.2.38] - 2022-04-25
+### Changed
+- Increased version number to generate a Zenodo citation.
 
 ## [3.2.37] - 2022-03-17
 ### Fixed
