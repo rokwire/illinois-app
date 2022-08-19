@@ -130,7 +130,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
         Column(children: [
           Container(height: _sliverHeaderHeight ?? 0,),
-          _isEditMainPost || StringUtils.isNotEmpty(_post?.imageUrl) //TBD remove if statement
+          _isEditMainPost || StringUtils.isNotEmpty(_post?.imageUrl)
             ? ImageChooserWidget(key: _postImageHolderKey, imageUrl: _post?.imageUrl, buttonVisible: _isEditMainPost, onImageChanged: (url) => _mainPostUpdateData?.imageUrl = url,)
             : Container(),
           _buildPostContent(),
