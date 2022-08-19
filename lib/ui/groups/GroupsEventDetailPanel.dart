@@ -246,7 +246,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
     String iconRes = "images/location.png" ;
     String? locationId = widget.event?.location?.locationId;
-    String? locationText = _event?.getLongDisplayLocation(null); //TBD decide if we need distance calculation - pass _locationData
+    String? locationText = _event?.getLongDisplayLocation(null); // if we need distance calculation - pass _locationData
     String? value = locationId ?? locationText;
     bool isValueVisible = StringUtils.isNotEmpty(value);
     return GestureDetector(
@@ -543,7 +543,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                   'widget.card.button.favorite.on.hint', ''),
               button: true,
-              child: Image.asset(isFavorite ? 'images/icon-star-white-transluent.png' : 'images/icon-star-white-frame-bold.png') //TBD selected image res
+              child: Image.asset(isFavorite ? 'images/icon-star-white-transluent.png' : 'images/icon-star-white-frame-bold.png')
           )));
   }
 
