@@ -2317,6 +2317,9 @@
     "panel.group.detail.post.button.report.group_admins.label": "Report to Group Administrator(s)",
     "panel.group.detail.post.create.nudges.custom.label": "Custom",
     "panel.group.detail.post.create.nudges.label": "Nudges",
+    "panel.group.detail.post.edit.hint": "Edit the post",
+    "panel.group.detail.post.updated.ago.format": "Updated %s ago",
+    "panel.group.detail.post.create.button.cancel.title": "Cancel",
 
     "panel.group.detail.post.report_abuse.header.title": "Report",
     "panel.group.detail.post.report_abuse.students_dean.description.text": "Report violation of Student Code to Dean of Students",

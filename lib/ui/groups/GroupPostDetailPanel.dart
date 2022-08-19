@@ -36,6 +36,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
+import 'package:sprintf/sprintf.dart';
 
 class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final GroupPost? post;
@@ -229,7 +230,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                         maxLines: null,
                                         autofocus: true,
                                         decoration: InputDecoration(
-                                            hintText: "Edit the post",
+                                            hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
                                             border: OutlineInputBorder(
                                                 borderSide: BorderSide(
                                                     color: Styles().colors!.mediumGray!,
@@ -275,7 +276,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               child: Text(
                                   StringUtils.ensureNotEmpty(
                                       _post?.displayDateTime),
-                                  semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
+                                  semanticsLabel:  sprintf(Localization().getStringEx("panel.group.detail.post.updated.ago.format", "Updated %s ago"),[widget.post?.displayDateTime ?? ""]),
                                   style: TextStyle(
                                       fontFamily:
                                       Styles().fontFamilies!.medium,
@@ -385,7 +386,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           wrapContent: true,
           buttonVisible: _editingReply!=null,
           onImageChanged: (String imageUrl) => _replyEditData?.imageUrl = imageUrl,
-          imageSemanticsLabel: "Reply", //TBD localize
+          imageSemanticsLabel: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"),
         )
      );
   }
