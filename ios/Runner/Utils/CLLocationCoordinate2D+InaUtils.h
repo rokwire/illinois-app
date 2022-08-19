@@ -25,3 +25,4 @@ double CLLocationCoordinate2DInaDistance(CLLocationCoordinate2D from, CLLocation
 
 bool CLLocationCoordinate2DIsEqual(CLLocationCoordinate2D point1, CLLocationCoordinate2D point2);
 
+bool CLLocationCoordinate2DIsNear(CLLocationCoordinate2D coord1, CLLocationCoordinate2D coord2, double tolerance);

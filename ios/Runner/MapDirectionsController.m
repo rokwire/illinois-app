@@ -22,6 +22,7 @@
 #import "AppDelegate.h"
 #import "AppKeys.h"
 #import "MapMarkerView.h"
+#import "Navigation.h"
 
 #import "NSDictionary+UIUCConfig.h"
 #import "NSDictionary+InaTypedValue.h"
@@ -348,6 +349,7 @@ static NSString * const kTravelModeKey = @"mapDirections.travelMode";
 - (void)buildRoute {
 	MPTravelMode travelMode = ((0 <= _navTravelModesCtrl.selectedSegmentIndex) && (_navTravelModesCtrl.selectedSegmentIndex < _countof(kTravelModes))) ? kTravelModes[_navTravelModesCtrl.selectedSegmentIndex] : MPTravelModeWalking;;
 	[self buildRouteWithTravelMode:travelMode];
+	//[self buildRoute2WithTravelMode:kNavTravelModeWalking];
 }
 
 - (void)buildRouteWithTravelMode:(MPTravelMode)travelMode {
@@ -373,6 +375,22 @@ static NSString * const kTravelModeKey = @"mapDirections.travelMode";
 		}
 	}];
 }
+
+/*- (void)buildRoute2WithTravelMode:(NSString*)travelMode {
+	[_activityStatus setText:NSLocalizedString(@"Looking for route...", nil)];
+	[_activityIndicator startAnimating];
+
+	MPPoint *orgPoint = _mpPositionResult.geometry;
+	MPPoint *dstPoint = [[MPPoint alloc] initWithLat:[_exploreLocation inaDoubleForKey:@"latitude"] lon:[_exploreLocation inaDoubleForKey:@"longitude"] zValue:[_exploreLocation inaIntegerForKey:@"floor"]];
+	
+	NSLog(@"Lookup Route: [%.6f, %.6f] @ level %d -> [%.6f, %.6f] @ level %d", orgPoint.lat, orgPoint.lng, orgPoint.zIndex, dstPoint.lat, dstPoint.lng, dstPoint.zIndex);
+	__weak typeof(self) weakSelf = self;
+	[Navigation findRouteFromOrigin:orgPoint.getCoordinate destination:dstPoint.getCoordinate travelMode:travelMode completionHandler:^(NavRoute *route, NSError *error) {
+		//weakSelf.mpRoute = route;
+		weakSelf.mpRouteError = error;
+		[weakSelf didBuildRoute];
+	}];
+}*/
 
 - (void)didBuildRoute {
 	
