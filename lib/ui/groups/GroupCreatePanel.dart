@@ -587,7 +587,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Widget _buildCanAutojoinLayout(){
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
-      child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.auto_join.enabled.label", "Group can be joined automatically?"),//TBD localize
+      child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.auto_join.enabled.label", "Group can be joined automatically?"),
         value: _group?.canJoinAutomatically,
         onTap: () {
           if (_group?.canJoinAutomatically != null) {
@@ -649,7 +649,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Widget _buildPollsLayout(){
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
-      child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.only_admins_create_polls.enabled.label", "Only admins can create Polls"), //TBD localization
+      child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.only_admins_create_polls.enabled.label", "Only admins can create Polls"),
           value: _group?.onlyAdminsCanCreatePolls,
           onTap: _onTapOnlyAdminCreatePolls
       ),

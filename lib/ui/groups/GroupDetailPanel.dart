@@ -937,7 +937,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             titleIconAsset: 'images/icon-calendar.png',
             rightIconAsset: _canCreatePoll? 'images/icon-add-20x18.png' : null,
             rightIconAction: _canCreatePoll? _onTapCreatePoll : null,
-            rightIconLabel: _canCreatePoll? Localization().getStringEx('panel.group_detail.button.create_poll.title', 'Create Poll') : null,//TBD Localization
+            rightIconLabel: _canCreatePoll? Localization().getStringEx('panel.group_detail.button.create_poll.title', 'Create Poll') : null,
             children: pollsContentList)
       ]),
       _pollsLoading
@@ -1495,7 +1495,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             context,
             sprintf(
                 Localization()
-                    .getStringEx('panel.group_detail.attendance.member.attended.msg', 'Student with UIN "%s" already attended on "%s"'),
+                    .getStringEx('panel.group_detail.attendance.member.attended.msg.format', 'Student with UIN "%s" already attended on "%s"'),
                 [uin, _getAttendedDateTimeFormatted(member: member)]));
       }
       // Attend the member to the group
