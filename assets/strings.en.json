@@ -2151,6 +2151,9 @@
     "panel.pending_member_detail.button.deny_member.title": "Deny Member",
     "panel.pending_member_detail.button.deny_reason.title": "Provide Deny Reason",
     "panel.pending_member_detail.button.selection.title": "Make Selection Above",
+    "panel.pending_member_detail.label.accept": " accept ",
+    "panel.pending_member_detail.label.reject": " reject ",
+    "panel.pending_member_detail.button.deny.text": "Deny",
 
     "panel.member_detail.label.status": "STATUS",
     "panel.member_detail.label.officer_title": "OFFICER TITLE",
