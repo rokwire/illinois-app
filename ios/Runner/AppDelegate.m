@@ -68,7 +68,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 @property (nonatomic) LaunchScreenView *launchScreenView;
 
 // Init Keys
-@property (nonatomic) NSDictionary* keys;
+@property (nonatomic) NSDictionary* config;
 
 // Interface Orientations
 @property (nonatomic) NSSet *supportedInterfaceOrientations;
@@ -211,6 +211,16 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 }
 
+#pragma mark Config
+
+- (NSDictionary*)secretKeys {
+	return [_config inaDictForKey:@"secretKeys"];
+}
+
+- (NSDictionary*)thirdPartyServices {
+	return [_config inaDictForKey:@"thirdPartyServices"];
+}
+
 #pragma mark Flutter APIs
 
 - (void)handleFlutterAPIFromCall:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -245,11 +255,11 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 }
 
 - (void)handleInitWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	self.keys = [parameters inaDictForKey:@"keys"];
+	self.config = [parameters inaDictForKey:@"config"];
 	
 	// Configure the Meridian SDK
-	NSString *meridianApplicationToken = [_keys uiucConfigStringForPathKey:@"meridian.app_token"];
-	int meridianDomainRegion = [_keys uiucConfigIntForPathKey:@"meridian.domain_region"];
+	NSString *meridianApplicationToken = [self.secretKeys uiucConfigStringForPathKey:@"meridian.app_token"];
+	int meridianDomainRegion = [self.secretKeys uiucConfigIntForPathKey:@"meridian.domain_region"];
 	if (meridianApplicationToken != nil) {
 		MRConfig *config = [MRConfig new];
 		config.applicationToken = meridianApplicationToken;
@@ -258,13 +268,13 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 	
 	// Initialize Google Maps SDK
-	NSString *googleMapsAPIKey = [_keys uiucConfigStringForPathKey:@"google.maps.api_key"];
+	NSString *googleMapsAPIKey = [self.secretKeys uiucConfigStringForPathKey:@"google.maps.api_key"];
 	if (0 < googleMapsAPIKey.length) {
 		[GMSServices provideAPIKey:googleMapsAPIKey];
 	}
 
 	// Initialize Maps Indoors SDK
-	NSString *mapsIndoorsAPIKey = [_keys uiucConfigStringForPathKey:@"mapsindoors.api_key"];
+	NSString *mapsIndoorsAPIKey = [self.secretKeys uiucConfigStringForPathKey:@"mapsindoors.api_key"];
 	if ((0 < mapsIndoorsAPIKey.length) && (0 < googleMapsAPIKey.length)) {
 		[MapsIndoors provideAPIKey:mapsIndoorsAPIKey googleAPIKey:googleMapsAPIKey];
 	}

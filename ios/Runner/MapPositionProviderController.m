@@ -47,7 +47,7 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
-		_mrAppKey = [MREditorKey keyWithIdentifier:[AppDelegate.sharedInstance.keys uiucConfigStringForPathKey:@"meridian.app_id"]];
+		_mrAppKey = [MREditorKey keyWithIdentifier:[AppDelegate.sharedInstance.secretKeys uiucConfigStringForPathKey:@"meridian.app_id"]];
 		_mrTimeoutInterval = 10.0;
 		_mrSleepInterval = 10.0;
 

@@ -25,7 +25,9 @@
 
 @interface AppDelegate : FlutterAppDelegate
 @property (nonatomic, readonly) FlutterMethodChannel* flutterMethodChannel;
-@property (nonatomic, readonly) NSDictionary* keys;
+@property (nonatomic, readonly) NSDictionary* config;
+@property (nonatomic, readonly) NSDictionary* secretKeys;
+@property (nonatomic, readonly) NSDictionary* thirdPartyServices;
 + (instancetype)sharedInstance;
 @end
 

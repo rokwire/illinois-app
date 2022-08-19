@@ -232,16 +232,16 @@ public class MapPositionProviderActivity extends MapActivity implements Meridian
     //region Meridian
 
     protected void initMeridian() {
-        HashMap keys = (MainActivity.getInstance() != null) ? MainActivity.getInstance().getKeys() : null;
-        String mrAppKeyValue = (keys != null) ? Utils.Map.getValueFromPath(keys, "meridian.app_id", "") : "";
+        HashMap secretKeys = (MainActivity.getInstance() != null) ? MainActivity.getInstance().getSecretKeys() : null;
+        String mrAppKeyValue = (secretKeys != null) ? Utils.Map.getValueFromPath(secretKeys, "meridian.app_id", "") : "";
         mrAppKey = new EditorKey(mrAppKeyValue);
         mrLocationManager = new MeridianLocationManager(this, mrAppKey, this);
         loadMeridianMaps();
     }
 
     private void loadMeridianMaps() {
-        HashMap keys = (MainActivity.getInstance() != null) ? MainActivity.getInstance().getKeys() : null;
-        String groupId = (keys != null) ? Utils.Map.getValueFromPath(keys, "meridian.group_id", "") : "";
+        HashMap secretKeys = (MainActivity.getInstance() != null) ? MainActivity.getInstance().getSecretKeys() : null;
+        String groupId = (secretKeys != null) ? Utils.Map.getValueFromPath(secretKeys, "meridian.group_id", "") : "";
         MapInfoGroupRequest mrMapsRequest = new MapInfoGroupRequest.Builder().
                 setAppKey(mrAppKey).
                 setGroupId(groupId).
