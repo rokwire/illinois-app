@@ -502,8 +502,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   Widget _buildTagButton(String tag){
     return
       Semantics(
-        label: tag + Localization().getStringEx("panel.groups_create.tags.label.tag", " tag, "),
-        hint: Localization().getStringEx("panel.groups_create.tags.label.tag.hint", "double tab to remove tag"),
+        label: sprintf(Localization().getStringEx("panel.groups_settings.tags.label.tag.format", "%s tag, "),[tag]),
+        hint: Localization().getStringEx("panel.groups_settings.tags.label.tag.hint", "double tab to remove tag"),
         button: true,
         excludeSemantics: true,
         child:InkWell(
@@ -652,7 +652,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   Widget _buildMembershipLayout(){
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount) ?
-      (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_settings.tags.label.question","Question(s)")) :
+      sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format","%s Question(s)"), [questionsCount.toString()]) :
       Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
 
     return
@@ -858,7 +858,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     return Container(
       color: Styles().colors!.background,
       padding: EdgeInsets.symmetric(horizontal: 16),
-      child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.only_admins_create_polls.enabled.label", "Only admins can create Polls"), //TBD localization
+      child: _buildSwitch(title: Localization().getStringEx("panel.groups_settings.only_admins_create_polls.enabled.label", "Only admins can create Polls"),
           value: _group?.onlyAdminsCanCreatePolls,
           onTap: _onTapOnlyAdminCreatePolls
       ),
@@ -900,7 +900,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   Widget _buildCanAutoJoinLayout(){
     return Container( color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
-        child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.auto_join.enabled.label", "Group can be joined automatically?"),//TBD localize
+        child: _buildSwitch(title: Localization().getStringEx("panel.groups_settings.auto_join.enabled.label", "Group can be joined automatically?"),
           value: _group?.canJoinAutomatically,
           onTap: () {
             if (_group?.canJoinAutomatically != null) {

@@ -2256,6 +2256,11 @@
 	"panel.groups_settings.authman.enabled.label": "Is this a managed membership group?",
 	"panel.groups_settings.authman.group.name.label": "Membership name",
     "panel.groups_settings.attendance_group.label": "Enable attendance checking",
+	"panel.groups_settings.only_admins_create_polls.enabled.label": "Only admins can create Polls",
+	"panel.groups_settings.auto_join.enabled.label": "Group can be joined automatically?",
+	"panel.groups_settings.tags.label.question.format": "%s Question(s)",
+	"panel.groups_settings.tags.label.tag.format": "%s tag, ",
+	"panel.groups_settings.tags.label.tag.hint": "double tab to remove tag",
 
 	"panel.group.tags.header.title": "Group Tags",
 	"panel.group.tags.button.done.title": "Done",
