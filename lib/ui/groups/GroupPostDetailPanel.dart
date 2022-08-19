@@ -314,7 +314,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (_focusedReply != null) {
       replies = _generateFocusedThreadList();
     }
-    else if (_editingReply != null) { //TBD check this
+    else if (_editingReply != null) {
       replies = [_editingReply!];
     }
     else {
