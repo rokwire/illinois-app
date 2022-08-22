@@ -31,15 +31,32 @@
 
 @implementation Navigation
 
-+ (void)findRouteFromOrigin:(CLLocationCoordinate2D)origin destination:(CLLocationCoordinate2D)destination travelMode:(NSString*)travelMode completionHandler:(void(^)(NavRoute* route, NSError* error))completionHandler {
++ (void)findRouteFromOrigin:(CLLocationCoordinate2D)origin destination:(CLLocationCoordinate2D)destination travelMode:(NSString*)travelMode
+		completionHandler:(void(^)(NavRoute* route, NSError* error))completionHandler {
+	[self _findRoutesFromOrigin:origin destination:destination travelMode:travelMode alternatives:false completionHandler:^(NSArray<NavRoute*>*routes, NSError* error) {
+		if (completionHandler != nil) {
+			completionHandler(routes.firstObject, error);
+		}
+	}];
+	
+}
+
++ (void)findRoutesFromOrigin:(CLLocationCoordinate2D)origin destination:(CLLocationCoordinate2D)destination travelMode:(NSString*)travelMode
+		completionHandler:(void(^)(NSArray<NavRoute*>* route, NSError* error))completionHandler {
+	[self _findRoutesFromOrigin:origin destination:destination travelMode:travelMode alternatives:true completionHandler:completionHandler];
+}
+
++ (void)_findRoutesFromOrigin:(CLLocationCoordinate2D)origin destination:(CLLocationCoordinate2D)destination travelMode:(NSString*)travelMode alternatives:(bool)alternatives
+		completionHandler:(void(^)(NSArray<NavRoute*>* routes, NSError* error))completionHandler {
 	NSString *apiUrl = [AppDelegate.sharedInstance.thirdPartyServices inaStringForKey:@"google_directions_url"];
 	NSString *apiKey = [AppDelegate.sharedInstance.secretKeys uiucConfigStringForPathKey:@"google.maps.api_key"];
 	if ((0 < apiUrl.length) && (0 < apiKey.length)) {
-		NSString *requestUrl = [NSString stringWithFormat:@"%@?origin=%.6f,%.6f&destination=%.6f,%.6f&mode=%@&language=%@&key=%@",
+		NSString *requestUrl = [NSString stringWithFormat:@"%@?origin=%.6f,%.6f&destination=%.6f,%.6f&mode=%@&alternatives=%@&language=%@&key=%@",
 			apiUrl,
 			origin.latitude, origin.longitude,
 			destination.latitude, destination.longitude,
 			travelMode,
+			alternatives ? @"true" : @"false",
 			NSLocale.currentLocale.languageCode,
 			apiKey
 		];
@@ -49,7 +66,7 @@
 		NSURLSessionDataTask *task = [session dataTaskWithRequest:urlRequest completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
 			if (completionHandler != nil) {
 				dispatch_async(dispatch_get_main_queue(), ^{
-					[self findRouteTaskDidFinishWithResponse:response data:data error:error completionHandler:completionHandler];
+					[self _didFindRoutesFromOrigin:response data:data error:error completionHandler:completionHandler];
 				});
 			}
 		}];
@@ -61,7 +78,8 @@
 	}
 }
 
-+ (void)findRouteTaskDidFinishWithResponse:(NSURLResponse*)response data:(NSData*)data error:(NSError*)error completionHandler:(void(^)(NavRoute* route, NSError* error))completionHandler {
++ (void)_didFindRoutesFromOrigin:(NSURLResponse*)response data:(NSData*)data error:(NSError*)error
+		completionHandler:(void(^)(NSArray<NavRoute*>* route, NSError* error))completionHandler {
 	if (data != nil) {
 		NSInteger responseCode = [response isKindOfClass:[NSHTTPURLResponse class]] ? ((NSHTTPURLResponse*)response).statusCode : -1;
 		if (responseCode == 200) {
@@ -71,9 +89,8 @@
 				NSString *status = [responseJson inaStringForKey:@"status"];
 				if ([status compare:@"OK" options:NSCaseInsensitiveSearch] == NSOrderedSame) {
 					NSArray<NavRoute*> *routes = [NavRoute createListFromJsonList:[responseJson inaArrayForKey:@"routes"]];
-					NavRoute *route = routes.firstObject;
-					if (route != nil) {
-						completionHandler(route, nil);
+					if (routes != nil) {
+						completionHandler(routes, nil);
 					}
 					else {
 						completionHandler(nil, [NSError errorWithDomain:@"edu.illinois.rokwire" code:3 userInfo:@{ NSLocalizedDescriptionKey : NSLocalizedString(@"Invalid server response.", nil) }]);

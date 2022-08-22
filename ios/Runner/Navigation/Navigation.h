@@ -29,6 +29,7 @@
 
 @interface Navigation : NSObject
 + (void)findRouteFromOrigin:(CLLocationCoordinate2D)origin destination:(CLLocationCoordinate2D)destination travelMode:(NSString*)travelMode completionHandler:(void(^)(NavRoute* route, NSError* error))completionHandler;
++ (void)findRoutesFromOrigin:(CLLocationCoordinate2D)origin destination:(CLLocationCoordinate2D)destination travelMode:(NSString*)travelMode completionHandler:(void(^)(NSArray<NavRoute*>* route, NSError* error))completionHandler;
 @end
 
 //////////////////////////////////////////////
