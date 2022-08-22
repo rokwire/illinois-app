@@ -134,11 +134,11 @@
 }
 
 - (void)applyJsonData:(NSDictionary*)jsonData {
-	_summary		    = [jsonData inaStringForKey:@"summary"];
-	_copyrights		  = [jsonData inaStringForKey:@"copyrights"];
-	_bounds			    = [NavBounds createFromJsonData:[jsonData inaDictForKey:@"bounds"]];
-	_overviewPoints	= [NavCoord createListFromEncodedString:[[jsonData inaDictForKey:@"overview_polyline"] inaStringForKey:@"points"]];
-	_legs			      = [NavRouteLeg createListFromJsonList:[jsonData inaArrayForKey:@"legs"]];
+	_summary		      = [jsonData inaStringForKey:@"summary"];
+	_copyrights		    = [jsonData inaStringForKey:@"copyrights"];
+	_bounds			      = [NavBounds createFromJsonData:[jsonData inaDictForKey:@"bounds"]];
+	_overviewPolyline = [NavPolyline createFromJsonData:[jsonData inaDictForKey:@"overview_polyline"]];
+	_legs			        = [NavRouteLeg createListFromJsonList:[jsonData inaArrayForKey:@"legs"]];
 }
 
 + (NSArray<NavRoute*>*)createListFromJsonList:(NSArray*)jsonList {
@@ -157,26 +157,6 @@
 	return result;
 }
 
-+ (NSString*)loadUrlFromOrigin:(NavCoord*)origin toDestination:(NavCoord*)destination {
-	return [self loadUrlFromOrigin:origin toDestination:destination throughWaypoints:nil withAlternatives:true];
-}
-
-+ (NSString*)loadUrlFromOrigin:(NavCoord*)origin toDestination:(NavCoord*)destination throughWaypoints:(NSArray*)waypoints withAlternatives:(bool)alternatives {
-
-	NSString *waypointsParam = @"";
-	if (waypoints != nil) {
-		NSString *waypointsList = @"";
-		for (NavCoord *waypoint in waypoints) {
-			waypointsList = [waypointsList stringByAppendingFormat:@"|via:%.6f,%.6f", waypoint.latitude, waypoint.longitude];
-		}
-		if (0 < waypointsList.length) {
-			waypointsParam = [NSString stringWithFormat:@"&waypoints=optimize:true%@", waypointsList]; //  stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
-		}
-	}
-	
-	return [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/directions/json?origin=%.6f,%.6f&destination=%.6f,%.6f%@&sensor=true&alternatives=%@&mode=driving&language=en&units=imperial", origin.latitude, origin.longitude, destination.latitude, destination.longitude, waypointsParam, alternatives ? @"true" : @"false"];
-}
-
 - (NavCoord*)startLocation {
 	return _legs.firstObject.startLocation;
 }
@@ -193,33 +173,39 @@
 	return _legs.lastObject.endAddress;
 }
 
-- (NSString*)description {
-	NSString *description = @"";
-	
-	NavRouteLeg *leg = _legs.firstObject;
-	if (0 < leg.distance.text) {
-		if (0 < description.length)
-			description = [description stringByAppendingString:@" / "];
-		description = [description stringByAppendingString:leg.distance.text];
+- (NSNumber*)distance {
+	if (_legs != nil) {
+		NSInteger totalDistance = 0;
+		for (NavRouteLeg* leg in _legs) {
+			totalDistance += leg.distance.value;
+		}
+		return [NSNumber numberWithInteger:totalDistance];
 	}
-	if (0 < leg.duration.text) {
-		if (0 < description.length)
-			description = [description stringByAppendingString:@" / "];
-		description = [description stringByAppendingString:leg.duration.text];
-	}
-	return description;
+	return nil;
 }
+
+- (NSNumber*)duration {
+	if (_legs != nil) {
+		NSInteger totalDuration = 0;
+		for (NavRouteLeg* leg in _legs) {
+			totalDuration += leg.duration.value;
+		}
+		return [NSNumber numberWithInteger:totalDuration];
+	}
+	return nil;
+}
+
 
 - (NSString*)logString {
 	NSMutableString *logString = [[NSMutableString alloc] init];
 	for (NavRouteLeg *leg in _legs) {
 		for (NavRouteStep *step in leg.steps) {
 
-			[logString appendString:step.instructionHtml];
+			[logString appendString:step.instructionsHtml];
 			[logString appendString:@"\n"];
 
 			NSInteger startLen = logString.length;
-			for (NavCoord* point in step.points) {
+			for (NavCoord* point in step.polyline.coordinates) {
 				if (startLen < logString.length)
 					[logString appendString:@", "];
 				[logString appendFormat:@"{%.6f, %.6f}", point.latitude, point.longitude];
@@ -294,13 +280,14 @@
 }
 
 - (void)applyJsonData:(NSDictionary*)jsonData {
-	_travelMode      = [jsonData inaStringForKey:@"travel_mode"];
-	_instructionHtml = [jsonData inaStringForKey:@"html_instructions"];
-	_startLocation   = [NavCoord createFromJsonData:[jsonData inaDictForKey:@"start_location"]];
-	_endLocation     = [NavCoord createFromJsonData:[jsonData inaDictForKey:@"end_location"]];
-	_duration        = [NavIntVal createFromJsonData:[jsonData inaDictForKey:@"duration"]];
-	_distance        = [NavIntVal createFromJsonData:[jsonData inaDictForKey:@"distance"]];
-	_points          = [NavCoord createListFromEncodedString:[[jsonData inaDictForKey:@"polyline"] inaStringForKey:@"points"]];
+	_travelMode       = [jsonData inaStringForKey:@"travel_mode"];
+	_instructionsHtml = [jsonData inaStringForKey:@"html_instructions"];
+	_startLocation    = [NavCoord createFromJsonData:[jsonData inaDictForKey:@"start_location"]];
+	_endLocation      = [NavCoord createFromJsonData:[jsonData inaDictForKey:@"end_location"]];
+	_duration         = [NavIntVal createFromJsonData:[jsonData inaDictForKey:@"duration"]];
+	_distance         = [NavIntVal createFromJsonData:[jsonData inaDictForKey:@"distance"]];
+	_polyline         = [NavPolyline createFromJsonData:[jsonData inaDictForKey:@"polyline"]];
+	_maneuver         = [jsonData inaStringForKey:@"maneuver"];
 }
 
 + (NSArray<NavRouteStep*>*)createListFromJsonList:(NSArray*)jsonList {
@@ -324,10 +311,10 @@
 //////////////////////////////////////////////
 // NavTravelMode
 
-NSString * const kNavTravelModeWalking   = @"walking";
-NSString * const kNavTravelModeBicycling = @"bicycling";
-NSString * const kNavTravelModeDriving   = @"driving";
-NSString * const kNavTravelModeTransit   = @"transit";
+NSString* kNavTravelModeWalking   = @"walking";
+NSString* kNavTravelModeBicycling = @"bicycling";
+NSString* kNavTravelModeDriving   = @"driving";
+NSString* kNavTravelModeTransit   = @"transit";
 
 //////////////////////////////////////////////
 // NavCoord
@@ -428,6 +415,32 @@ NSString * const kNavTravelModeTransit   = @"transit";
 @end
 
 //////////////////////////////////////////////
+// NavPolyline
+
+@implementation NavPolyline
+
+- (instancetype)initWithJsonData:(NSDictionary*)jsonData {
+	if(self = [self init]) {
+		[self applyJsonData:jsonData];
+	}
+	return self;
+}
+
++ (instancetype)createFromJsonData:(NSDictionary*)jsonData {
+	return (jsonData != nil) ? [[NavPolyline alloc] initWithJsonData:jsonData] : nil;
+}
+
+- (void)applyJsonData:(NSDictionary*)jsonData {
+	_points = [jsonData inaStringForKey:@"points"];
+}
+
+- (NSArray<NavCoord*>*) coordinates {
+	return [NavCoord createListFromEncodedString:_points];
+}
+
+@end
+
+//////////////////////////////////////////////
 // NavIntVal
 
 @implementation NavIntVal
@@ -444,7 +457,7 @@ NSString * const kNavTravelModeTransit   = @"transit";
 }
 
 - (void)applyJsonData:(NSDictionary*)jsonData {
-	_value = [jsonData inaIntForKey:@"value"];
+	_value = [jsonData inaIntegerForKey:@"value"];
 	_text  = [jsonData inaStringForKey:@"text"];
 }
 

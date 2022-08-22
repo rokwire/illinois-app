@@ -22,7 +22,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CLLocation.h>
 
-@class NavRoute, NavRouteLeg, NavRouteStep, NavCoord, NavBounds, NavIntVal;
+@class NavRoute, NavRouteLeg, NavRouteStep, NavCoord, NavBounds, NavPolyline, NavIntVal;
 
 //////////////////////////////////////////////
 // Navigation
@@ -40,23 +40,21 @@
 @property (nonatomic, strong) NSString* summary;
 @property (nonatomic, strong) NSString* copyrights;
 @property (nonatomic, strong) NavBounds* bounds;
-@property (nonatomic, strong) NSArray<NavCoord*>* overviewPoints;
+@property (nonatomic, strong) NavPolyline* overviewPolyline;
 @property (nonatomic, strong) NSArray<NavRouteLeg*>* legs;
 
-@property (nonatomic, readonly)  NSString* startAddress;
-@property (nonatomic, readonly)  NSString* endAddress;
-@property (nonatomic, readonly)  NavCoord* startLocation;
-@property (nonatomic, readonly)  NavCoord* endLocation;
-@property (nonatomic, readonly)  NSString* description;
-@property (nonatomic, readonly)  NSString* logString;
+@property (nonatomic, readonly) NSString* startAddress;
+@property (nonatomic, readonly) NSString* endAddress;
+@property (nonatomic, readonly) NavCoord* startLocation;
+@property (nonatomic, readonly) NavCoord* endLocation;
+@property (nonatomic, readonly) NSNumber* distance;
+@property (nonatomic, readonly) NSNumber* duration;
+@property (nonatomic, readonly) NSString* logString;
 
 - (instancetype)initWithJsonData:(NSDictionary*)jsonData;
 + (instancetype)createFromJsonData:(NSDictionary*)jsonData;
 
 + (NSArray<NavRoute*>*)createListFromJsonList:(NSArray*)jsonList;
-+ (NSString*)loadUrlFromOrigin:(NavCoord*)origin toDestination:(NavCoord*)destination;
-+ (NSString*)loadUrlFromOrigin:(NavCoord*)origin toDestination:(NavCoord*)destination throughWaypoints:(NSArray*)waypoints withAlternatives:(bool)alternatives;
-
 @end
 
 //////////////////////////////////////////////
@@ -83,12 +81,13 @@
 @interface NavRouteStep : NSObject
 
 @property (nonatomic, strong) NSString* travelMode;
-@property (nonatomic, strong) NSString* instructionHtml;
+@property (nonatomic, strong) NSString* instructionsHtml;
 @property (nonatomic, strong) NavCoord* startLocation;
 @property (nonatomic, strong) NavCoord* endLocation;
 @property (nonatomic, strong) NavIntVal* duration;
 @property (nonatomic, strong) NavIntVal* distance;
-@property (nonatomic, strong) NSArray<NavCoord*>* points;
+@property (nonatomic, strong) NavPolyline* polyline;
+@property (nonatomic, strong) NSString* maneuver;
 
 - (instancetype)initWithJsonData:(NSDictionary*)jsonData;
 + (instancetype)createFromJsonData:(NSDictionary*)jsonData;
@@ -98,10 +97,10 @@
 //////////////////////////////////////////////
 // NavTravelMode
 
-extern NSString * const kNavTravelModeWalking;
-extern NSString * const kNavTravelModeBicycling;
-extern NSString * const kNavTravelModeDriving;
-extern NSString * const kNavTravelModeTransit;
+extern NSString * kNavTravelModeWalking;
+extern NSString * kNavTravelModeBicycling;
+extern NSString * kNavTravelModeDriving;
+extern NSString * kNavTravelModeTransit;
 
 //////////////////////////////////////////////
 // NavCoord
@@ -141,11 +140,23 @@ extern NSString * const kNavTravelModeTransit;
 @end
 
 //////////////////////////////////////////////
+// NavPolyline
+
+@interface NavPolyline : NSObject
+
+@property (nonatomic, strong) NSString *points;
+@property (nonatomic, readonly) NSArray<NavCoord*>* coordinates;
+
+- (instancetype)initWithJsonData:(NSDictionary*)jsonData;
++ (instancetype)createFromJsonData:(NSDictionary*)jsonData;
+@end
+
+//////////////////////////////////////////////
 // NavIntVal
 
 @interface NavIntVal : NSObject
 
-@property (nonatomic, assign) int		value;
+@property (nonatomic, assign) NSInteger value;
 @property (nonatomic, strong) NSString	*text;
 
 - (instancetype)initWithJsonData:(NSDictionary*)jsonData;
