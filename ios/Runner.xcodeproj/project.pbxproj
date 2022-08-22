@@ -12,6 +12,7 @@
 		2605FF55236C13A6002F71BE /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */; };
 		2626D94B22DC99C800F6BC2F /* NSString+InaJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94922DC99C700F6BC2F /* NSString+InaJson.m */; };
 		2626D94E22DCB80000F6BC2F /* MapMarkerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94D22DCB80000F6BC2F /* MapMarkerView.m */; };
+		264C99E828B3DA150089848F /* maps-icon-marker-origin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */; };
 		266DC99628ACD972007F51EA /* MapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 266DC99528ACD972007F51EA /* MapController.m */; };
 		268F30F122E5DD7900547FE1 /* travel-mode-walk@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30ED22E5DD7900547FE1 /* travel-mode-walk@2x.png */; };
 		268F30F222E5DD7900547FE1 /* travel-mode-transit@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EE22E5DD7900547FE1 /* travel-mode-transit@2x.png */; };
@@ -86,6 +87,7 @@
 		2626D94A22DC99C700F6BC2F /* NSString+InaJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+InaJson.h"; sourceTree = "<group>"; };
 		2626D94C22DCB80000F6BC2F /* MapMarkerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapMarkerView.h; sourceTree = "<group>"; };
 		2626D94D22DCB80000F6BC2F /* MapMarkerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapMarkerView.m; sourceTree = "<group>"; };
+		264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-origin@2x.png"; sourceTree = "<group>"; };
 		2668953022E1E074003CAB94 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		266DC99428ACD972007F51EA /* MapController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapController.h; sourceTree = "<group>"; };
 		266DC99528ACD972007F51EA /* MapController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapController.m; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 				26962B512306E8000026240A /* maps-icon-marker-pin-30@2x.png */,
 				26962B532306E8000026240A /* maps-icon-marker-pin-40@2x.png */,
 				26962B582306EB190026240A /* maps-icon-marker-pin-50@2x.png */,
+				264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */,
 			);
 			path = Images;
 			sourceTree = "<group>";
@@ -482,6 +485,7 @@
 				268F647F22DF15F700A85AFD /* button-icon-nav-refresh.png in Resources */,
 				268F648122DF200300A85AFD /* button-icon-nav-location.png in Resources */,
 				269F83E622D73E7400CC11A4 /* maps-icon-marker-circle-10@2x.png in Resources */,
+				264C99E828B3DA150089848F /* maps-icon-marker-origin@2x.png in Resources */,
 				269F83E922D73E7400CC11A4 /* maps-icon-marker-circle-40@2x.png in Resources */,
 				26A170EC22DDFB6500299773 /* button-icon-nav-prev.png in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,

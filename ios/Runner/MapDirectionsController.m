@@ -96,6 +96,9 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 @property (nonatomic, assign) bool                  navRouteLoading;
 @property (nonatomic, strong) GMSMarker*            gmsExploreMarker;
 @property (nonatomic, strong) GMSPolygon*           gmsExplorePolygone;
+@property (nonatomic, strong) GMSMarker*            gmsSegmentStartMarker;
+@property (nonatomic, strong) GMSMarker*            gmsSegmentEndMarker;
+@property (nonatomic, strong) GMSPolyline*          gmsSegmentPolyline;
 
 @end
 
@@ -397,7 +400,7 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 			if (_clLocation != nil) {
 				// Position camera on user location
 				CLLocationCoordinate2D currentLocationCoord = CLLocationCoordinate2DMake(_clLocation.coordinate.latitude, _clLocation.coordinate.longitude);
-				GMSCameraUpdate *cameraUpdate = [GMSCameraUpdate setTarget:currentLocationCoord];
+				GMSCameraUpdate *cameraUpdate = [GMSCameraUpdate setTarget:currentLocationCoord  zoom:kInitialCameraZoom];
 				[self.gmsMapView moveCamera:cameraUpdate];
 			}
 		}
@@ -410,7 +413,7 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 			[_activityStatus setText:@""];
 			
 			// Position camera on explore location
-			GMSCameraUpdate *cameraUpdate = [GMSCameraUpdate setTarget:_exploreLocation.uiucLocationCoordinate];
+			GMSCameraUpdate *cameraUpdate = [GMSCameraUpdate setTarget:_exploreLocation.uiucLocationCoordinate  zoom:kInitialCameraZoom];
 			[self.gmsMapView moveCamera:cameraUpdate];
 			
 			[self updateNav];
@@ -466,32 +469,16 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 
 	if (_navRoute != nil) {
 		[self buildRoutePolyline];
+		_gmsSegmentStartMarker = [self buildSegmentMarker];
+		_gmsSegmentEndMarker = [self buildSegmentMarker];
+		_gmsSegmentPolyline = [self buildSegmentPolyline];
 		_navRouteSegment = NavRouteSegmentMake(-1, -1);
 		_gmsRouteCameraPosition = self.gmsMapView.camera;
 		_navStatus = NavStatus_Start;
-
 	}
 	[self updateNav];
 
-	GMSMutablePath *path = [[GMSMutablePath alloc] init];
-	[path addCoordinate:_clLocation.coordinate];
-	[path addCoordinate:_exploreLocation.uiucLocationCoordinate]; // explore location
-
-	NSArray *explorePolygon = _explore.uiucExplorePolygon;
-	if (0 < explorePolygon.count) {
-		for (NSDictionary *point in explorePolygon) {
-			if ([point isKindOfClass:[NSDictionary class]]) {
-				[path addCoordinate:point.uiucLocationCoordinate];
-			}
-		}
-	}
-
-	GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] initWithPath:path];
-
-	if (_navRoute.bounds != nil) {
-		bounds = [bounds includingCoordinate:CLLocationCoordinate2DMake(_navRoute.bounds.northeast.coordinate.latitude, _navRoute.bounds.northeast.coordinate.longitude)];
-		bounds = [bounds includingCoordinate:CLLocationCoordinate2DMake(_navRoute.bounds.southwest.coordinate.latitude, _navRoute.bounds.southwest.coordinate.longitude)];
-	}
+	GMSCoordinateBounds *bounds = [self buildRouteBounds];
 	GMSCameraUpdate *cameraUpdate = [GMSCameraUpdate fitBounds:bounds withPadding:50.0f];
 	[self.gmsMapView moveCamera:cameraUpdate];
 
@@ -518,7 +505,7 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 		_gmsExploreMarker.title = iconView.title;
 		_gmsExploreMarker.snippet = iconView.descr;
 		_gmsExploreMarker.groundAnchor = iconView.anchor;
-		_gmsExploreMarker.zIndex = 1;
+		_gmsExploreMarker.zIndex = 10;
 		_gmsExploreMarker.userData = @{ @"explore" : _explore };
 		_gmsExploreMarker.map = self.gmsMapView;
 		[self updateExploreMarker];
@@ -538,7 +525,7 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 		GMSMutablePath *path = [[GMSMutablePath alloc] init];
 		for (NSDictionary *point in explorePolygon) {
 			if ([point isKindOfClass:[NSDictionary class]]) {
-				[path addLatitude:[point inaDoubleForKey:@"latitude"] longitude:[point inaDoubleForKey:@"longitude"]];
+				[path addCoordinate:point.uiucLocationCoordinate];
 			}
 		}
 		if (0 < path.count) {
@@ -573,6 +560,47 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 
 - (void)clearRoutePolyline {
 
+}
+
+- (GMSCoordinateBounds*)buildRouteBounds {
+	GMSMutablePath *path = [[GMSMutablePath alloc] init];
+	[path addCoordinate:_clLocation.coordinate];
+	[path addCoordinate:_exploreLocation.uiucLocationCoordinate]; // explore location
+
+	if (_navRoute.bounds != nil) {
+		[path addCoordinate:CLLocationCoordinate2DMake(_navRoute.bounds.northeast.coordinate.latitude, _navRoute.bounds.northeast.coordinate.longitude)];
+		[path addCoordinate:CLLocationCoordinate2DMake(_navRoute.bounds.southwest.coordinate.latitude, _navRoute.bounds.southwest.coordinate.longitude)];
+	}
+
+	NSArray *explorePolygon = _explore.uiucExplorePolygon;
+	if (0 < explorePolygon.count) {
+		for (NSDictionary *point in explorePolygon) {
+			if ([point isKindOfClass:[NSDictionary class]]) {
+				[path addCoordinate:point.uiucLocationCoordinate];
+			}
+		}
+	}
+
+	return [[GMSCoordinateBounds alloc] initWithPath:path];
+}
+
+- (GMSMarker*)buildSegmentMarker {
+	GMSMarker *segmentMarker = [[GMSMarker alloc] init];
+	segmentMarker.icon = [UIImage imageNamed:@"maps-icon-marker-origin"];
+	segmentMarker.groundAnchor = CGPointMake(0.5, 0.5);
+	segmentMarker.zIndex = 9;
+	//segmentMarker.position = ...;
+	//segmentMarker.map = self.gmsMapView;
+	return segmentMarker;
+}
+
+- (GMSPolyline*)buildSegmentPolyline {
+	GMSPolyline *segmentPolyline = [[GMSPolyline alloc] init];
+	segmentPolyline.strokeColor = [UIColor inaColorWithHex:@"3474d6"];
+	segmentPolyline.strokeWidth = 5;
+	segmentPolyline.zIndex = 8;
+	//segmentPolyline.map = self.gmsMapView;
+	return segmentPolyline;
 }
 
 #pragma mark Navigation
@@ -698,8 +726,18 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 - (void)didNavRefresh {
 	_navRoute = nil;
 	_navRouteError = nil;
+
 	_gmsRoutePolyline.map = nil;
 	_gmsRoutePolyline = nil;
+
+	_gmsSegmentStartMarker.map = nil;
+	_gmsSegmentStartMarker = nil;
+
+	_gmsSegmentEndMarker.map = nil;
+	_gmsSegmentEndMarker = nil;
+
+	_gmsSegmentPolyline.map = nil;
+	_gmsSegmentPolyline = nil;
 	
 	_navRouteSegment = NavRouteSegmentMake(-1, -1);
 	_navStatus = NavStatus_Unknown;
@@ -720,9 +758,19 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 
 		_navRoute = nil;
 		_navRouteError = nil;
+		
 		_gmsRoutePolyline.map = nil;
 		_gmsRoutePolyline = nil;
 		
+		_gmsSegmentStartMarker.map = nil;
+		_gmsSegmentStartMarker = nil;
+
+		_gmsSegmentEndMarker.map = nil;
+		_gmsSegmentEndMarker = nil;
+
+		_gmsSegmentPolyline.map = nil;
+		_gmsSegmentPolyline = nil;
+
 		_navRouteSegment = NavRouteSegmentMake(-1, -1);
 		_navStatus = NavStatus_Unknown;
 		_navAutoUpdate = false;
@@ -770,8 +818,54 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 }
 
 - (void)applyNavSegment:(NavRouteSegment)segment {
-	_navRouteSegment = segment;
-	//TBD: add segment poligon and update camera
+	if (!NavRouteSegmentIsEqual(_navRouteSegment, segment)) {
+		_navRouteSegment = segment;
+		[self updateOnNavSegment];
+	}
+}
+
+- (void)updateOnNavSegment {
+	NSInteger legIndex = _navRouteSegment.legIndex;
+	NavRouteLeg *leg = ((0 <= legIndex) && (legIndex < _navRoute.legs.count)) ? [_navRoute.legs objectAtIndex:legIndex] : nil;
+
+	NSInteger stepIndex = _navRouteSegment.stepIndex;
+	NavRouteStep *step = ((0 <= stepIndex) && (stepIndex < leg.steps.count)) ? [leg.steps objectAtIndex:stepIndex] : nil;
+	
+	GMSCameraUpdate *cameraUpdate = nil;
+	if (step != nil) {
+		CLLocationCoordinate2D startLocation = step.startLocation.coordinate;
+		CLLocationCoordinate2D endLocation = step.endLocation.coordinate;
+		if (!CLLocationCoordinate2DIsEqual(startLocation, endLocation)) {
+			_gmsSegmentStartMarker.position = startLocation;
+			_gmsSegmentStartMarker.map = self.gmsMapView;
+
+			_gmsSegmentEndMarker.position = endLocation;
+			_gmsSegmentEndMarker.map = self.gmsMapView;
+			
+			_gmsSegmentPolyline.path = [GMSPath pathFromEncodedPath:step.polyline.points];
+			_gmsSegmentPolyline.map = self.gmsMapView;
+			
+			GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] initWithPath:_gmsSegmentPolyline.path];
+			cameraUpdate = [GMSCameraUpdate fitBounds:bounds withPadding:50.0f];
+		}
+		else {
+			_gmsSegmentStartMarker.position = startLocation;
+			_gmsSegmentStartMarker.map = self.gmsMapView;
+			_gmsSegmentEndMarker.map = nil;
+			_gmsSegmentPolyline.map = nil;
+			cameraUpdate = [GMSCameraUpdate setTarget:startLocation zoom:self.gmsMapView.camera.zoom];
+		}
+	}
+	else {
+		_gmsSegmentStartMarker.map = nil;
+		_gmsSegmentEndMarker.map = nil;
+		_gmsSegmentPolyline.map = nil;
+
+		GMSCoordinateBounds *bounds = [self buildRouteBounds];
+		cameraUpdate = [GMSCameraUpdate fitBounds:bounds withPadding:50.0f];
+	}
+	
+	[self.gmsMapView animateWithCameraUpdate:cameraUpdate];
 }
 
 - (void)notifyRouteStart {
