@@ -74,6 +74,11 @@
     "thin_italic": "ProximaNovaThinIt"
   },
   "text_style": {
-    "header_bar": { "font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "textColorPrimary"}
+    "header_bar": { "font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "textColorPrimary"},
+    "group_card_category": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
+    "group_card_title": { "font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary"},
+    "group_card_detail": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackgroundVariant"},
+    "group_card_detail_small": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textSurface"},
+    "group_card_heading": { "font_family": "ProximaNovaBold", "size": 12.0, "color": "white"}
   }
 }
