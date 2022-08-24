@@ -350,7 +350,7 @@ class Storage extends rokwire.Storage {
   set wellnessDailyTipTime(int? value) => setIntWithName(wellnessDailyTipTimeKey, value);
 
   // App Review
-  String? get _appReviewVersion  => AppVersion.majorVersion(Config().appVersion, 2);
+  String? get _appReviewVersion  => Config().appMajorVersion;
   
   String get appReviewSessionsCountKey  => 'edu.illinois.rokwire.$_appReviewVersion.app_review.sessions.count';
   int get appReviewSessionsCount => getIntWithName(appReviewSessionsCountKey, defaultValue: 0)!;
