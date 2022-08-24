@@ -837,14 +837,14 @@ class _GroupCardState extends State<GroupCard> {
                         Text(groupCategory,
                           overflow: TextOverflow.ellipsis,
                           maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
-                          style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+                          style: Styles().getTextStyle("widget.group.card.category")
                         )
                       ),
                     ]),
                     Row(children: [
                       Expanded(child:
                         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
+                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style:  Styles().getTextStyle("widget.group.card.title"))
                         )
                       )
                     ]),
@@ -854,7 +854,7 @@ class _GroupCardState extends State<GroupCard> {
               ]),
               (widget.displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) : Container(),
               Visibility(visible: (widget.group?.currentUserIsAdmin ?? false) && ((_groupStats?.pendingCount ?? 0) > 0), child:
-                Text(pendingCountText, overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackgroundVariant,),),
+                Text(pendingCountText, overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().getTextStyle("widget.group.card.detail"),),
               ),
               Container(height: 4),
               // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
@@ -945,7 +945,7 @@ class _GroupCardState extends State<GroupCard> {
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(2))),
         child: Text(text,
-          style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white))));
+          style: Styles().getTextStyle("widget.group.card.heading"))));
   }
 
   Widget _buildHeadingWrapLabel(String text) {
@@ -992,7 +992,7 @@ class _GroupCardState extends State<GroupCard> {
           _timeUpdatedText,
           maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface,),
+          style: Styles().getTextStyle("widget.group.card.detail_small")
     ));
   }
 
@@ -1003,7 +1003,7 @@ class _GroupCardState extends State<GroupCard> {
         : Localization().getStringEx('widget.group_card.members.label', 'members');
     return Container(
         child: Text('$count $membersLabel',
-            style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface)));
+            style: Styles().getTextStyle("widget.group.card.detail_small")));
   }
 
    void _loadGroupStats() {
