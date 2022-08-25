@@ -472,8 +472,9 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
   }
 
   void _onTapLink(String? url) {
-      if (UrlUtils.isWebScheme(url)) {
-        launch(url!);
+    Analytics().logSelect(target: 'Link: $url');
+    if (StringUtils.isNotEmpty(url)) {
+      launch(url!);
     }
   }
 
