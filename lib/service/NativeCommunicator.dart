@@ -185,15 +185,6 @@ class NativeCommunicator with Service {
     }
   }
 
-  Future<void> addCardToWallet(List<int> cardData) async {
-    try {
-      String cardBase64Data = base64Encode(cardData);
-      await _platformChannel.invokeMethod('addToWallet', { "cardBase64Data" : cardBase64Data });
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-  }
-
   Future<List<DeviceOrientation>?> enabledOrientations(List<DeviceOrientation> orientationsList) async {
     List<DeviceOrientation>? result;
     try {

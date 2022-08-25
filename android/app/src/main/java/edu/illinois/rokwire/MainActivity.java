@@ -482,9 +482,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     handleSetLaunchScreenStatus(methodCall.arguments);
                     result.success(true);
                     break;
-                case Constants.APP_ADD_CARD_TO_WALLET_KEY:
-                    result.success(false);
-                    break;
                 case Constants.APP_ENABLED_ORIENTATIONS_KEY:
                     Object orientations = methodCall.argument("orientations");
                     List<String> orientationsList = handleEnabledOrientations(orientations);
