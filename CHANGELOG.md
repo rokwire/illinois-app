@@ -6,7 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Removed any references to PassKit.framework [1851](https://github.com/rokwire/illinois-app/issues/1851).
+- Removed any references to PassKit.framework [#1851](https://github.com/rokwire/illinois-app/issues/1851).
+### Fixed
+- Fixed am/pm indicator evaluation in StudentCourseSecrtion [#2310](https://github.com/rokwire/illinois-app/issues/2310).
 
 ## [4.1.21] - 2022-08-17
 ### Changed
