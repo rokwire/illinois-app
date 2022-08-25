@@ -89,8 +89,8 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
 
   @override
   Widget build(BuildContext context) {
-    TextStyle valueStyle = TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold);
-    TextStyle hintStyle = TextStyle(color: Styles().colors!.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies!.regular);
+    TextStyle? valueStyle = Styles().getTextStyle("widget.group.dropdown_button.value");
+    TextStyle? hintStyle = Styles().getTextStyle("widget.group.dropdown_button.hint");
 
     String? buttonTitle = _getButtonTitleText();
     String? buttonDescription = _getButtonDescriptionText();
@@ -138,7 +138,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                 Container(
                   padding: EdgeInsets.only(right: 42, bottom: 12),
                   child: Text(buttonDescription,
-                    style: TextStyle(color: Styles().colors!.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                    style: Styles().getTextStyle("widget.group.dropdown_button.hint"),
                   ),
                 )
               )
@@ -166,10 +166,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                         child: Text(
                           title,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontFamily: isSelected? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular,
-                              color: Styles().colors!.fillColorPrimary,
-                              fontSize: 16),
+                          style: isSelected? Styles().getTextStyle("widget.group.dropdown_button.item.selected") :  Styles().getTextStyle("widget.group.dropdown_button.item.not_selected")
                         ),
                       )),
                   isSelected
@@ -181,7 +178,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
             Container(
               padding: EdgeInsets.only(right: 30),
               child: Text(description,
-                style: TextStyle(color: Styles().colors!.mediumGray, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                style: Styles().getTextStyle("widget.group.dropdown_button.hint")
               ),
             ),
             Container(height: 11),
@@ -262,7 +259,7 @@ class GroupMembershipAddButton extends StatelessWidget {
         child: Padding(padding: EdgeInsets.only(left:16, right: 8, ),
           child: Center(
             child: Row(children: <Widget>[
-              Text(title!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: enabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent),),
+              Text(title!, style:  enabled ? Styles().getTextStyle("widget.group.add_membership_button.title.enabled") : Styles().getTextStyle("widget.group.add_membership_button.title.disabled") ),
             ],)
           )
         ),
@@ -312,7 +309,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                     child: Text(
                       message!,
                       textAlign: TextAlign.left,
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.white),
+                      style: Styles().getTextStyle("widget.dialog.message.regular"),
                     ),
                   ),
                   Row(
@@ -431,13 +428,13 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     List<Widget> content = [
       Padding(padding: EdgeInsets.only(bottom: 8, right: 8), child:
         Container(constraints: BoxConstraints(minHeight: 64), child:
-          Text(widget.event?.title ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary),),
+          Text(widget.event?.title ?? '',  style:Styles().getTextStyle("widget.card.title.large")),
       )),
     ];
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
       Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
       Expanded(child:
-      Text(widget.event?.timeDisplayString ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),)
+      Text(widget.event?.timeDisplayString ?? '', style: Styles().getTextStyle("widget.card.detail.small_variant"))
       ),
     ],)),);
 
@@ -629,10 +626,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                     padding: EdgeInsets.only(left: 10, top: 10),
                     child: Text(
                       Localization().getStringEx("widget.add_image.heading", "Select Image"),
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: Styles().fontFamilies!.medium,
-                          fontSize: 24),
+                      style: Styles().getTextStyle("widget.dialog.message.large")
                     ),
                   ),
                   Spacer(),
@@ -643,10 +637,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                       child: Text(
                         '\u00D7',
                         semanticsLabel: "Close Button", //TBD localization
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: Styles().fontFamilies!.medium,
-                            fontSize: 50),
+                        style: Styles().getTextStyle('widget.dialog.button.close'),
                       ),
                     ),
                   )
@@ -837,14 +828,14 @@ class _GroupCardState extends State<GroupCard> {
                         Text(groupCategory,
                           overflow: TextOverflow.ellipsis,
                           maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
-                          style: Styles().getTextStyle("widget.group.card.category")
+                          style: Styles().getTextStyle("widget.card.title.small")
                         )
                       ),
                     ]),
                     Row(children: [
                       Expanded(child:
                         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style:  Styles().getTextStyle("widget.group.card.title"))
+                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style:  Styles().getTextStyle("widget.card.title.large"))
                         )
                       )
                     ]),
@@ -854,7 +845,7 @@ class _GroupCardState extends State<GroupCard> {
               ]),
               (widget.displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) : Container(),
               Visibility(visible: (widget.group?.currentUserIsAdmin ?? false) && ((_groupStats?.pendingCount ?? 0) > 0), child:
-                Text(pendingCountText, overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().getTextStyle("widget.group.card.detail"),),
+                Text(pendingCountText, overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().getTextStyle("widget.card.detail.regular"),),
               ),
               Container(height: 4),
               // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
@@ -945,7 +936,7 @@ class _GroupCardState extends State<GroupCard> {
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(2))),
         child: Text(text,
-          style: Styles().getTextStyle("widget.group.card.heading"))));
+          style: Styles().getTextStyle("widget.card.heading"))));
   }
 
   Widget _buildHeadingWrapLabel(String text) {
@@ -992,7 +983,7 @@ class _GroupCardState extends State<GroupCard> {
           _timeUpdatedText,
           maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
           overflow: TextOverflow.ellipsis,
-          style: Styles().getTextStyle("widget.group.card.detail_small")
+          style: Styles().getTextStyle("widget.card.detail.small")
     ));
   }
 
@@ -1003,7 +994,7 @@ class _GroupCardState extends State<GroupCard> {
         : Localization().getStringEx('widget.group_card.members.label', 'members');
     return Container(
         child: Text('$count $membersLabel',
-            style: Styles().getTextStyle("widget.group.card.detail_small")));
+            style: Styles().getTextStyle("widget.card.detail.small")));
   }
 
    void _loadGroupStats() {
@@ -1048,7 +1039,7 @@ class _GroupCardState extends State<GroupCard> {
     String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
     String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
 
-    return RichText(text: TextSpan(style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold), children: [
+    return RichText(text: TextSpan(style: Styles().getTextStyle('"widget.card.description.small_variant'), children: [
       TextSpan(text: privacyMsgStart),
       WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget()),
       TextSpan(text: privacyMsgEnd)
@@ -1059,7 +1050,7 @@ class _GroupCardState extends State<GroupCard> {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
     return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
       Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-        Text(privacyLevel, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))
+        Text(privacyLevel, style: Styles().getTextStyle('widget.card.title.regular_variant'))
       ),
     );
   }
@@ -1139,18 +1130,18 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           child: Text(StringUtils.ensureNotEmpty(widget.post!.subject),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
-                              style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 18, color: Styles().colors!.fillColorPrimary))),
+                              style: Styles().getTextStyle('widget.card.title.regular') )),
                       Visibility(
                           visible: isRepliesLabelVisible,
                           child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
                                 child: Text(StringUtils.ensureNotEmpty(visibleRepliesCount.toString()),
-                                    style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14))),
+                                    style: Styles().getTextStyle('widget.card.description.small'))),
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
                                 child: Text(StringUtils.ensureNotEmpty(repliesLabel),
-                                    style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14)))
+                                    style: Styles().getTextStyle('widget.card.description.small')))
                           ])),
                     ]),
                     Row(
@@ -1200,7 +1191,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               padding: EdgeInsets.only(right: 6),
                               child:Text(StringUtils.ensureNotEmpty(memberName),
                                 textAlign: TextAlign.left,
-                                style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary)),
+                                style: Styles().getTextStyle('widget.card.description.small')),
                           )),
                           Expanded(
                             flex: 2,
@@ -1209,7 +1200,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               child: Text(StringUtils.ensureNotEmpty(widget.post?.displayDateTime),
                                 semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
                                 textAlign: TextAlign.right,
-                                style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary))),
+                                style: Styles().getTextStyle('widget.card.description.small'))),
                           )),
                         ],
                       )
@@ -1304,7 +1295,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Semantics( child:
                   Text(StringUtils.ensureNotEmpty(widget.reply?.member?.displayShortName),
-                    style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
+                    style: Styles().getTextStyle("widget.card.title.small")),
                 ),
                 Visibility(
                     visible: StringUtils.isNotEmpty(widget.iconPath),
@@ -1371,13 +1362,13 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                           child: Container(
                             child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
                                 semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
-                                style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.fillColorPrimary))),)),
+                                style: Styles().getTextStyle('widget.card.description.small'))),)),
                       Visibility(
                         visible: isRepliesLabelVisible,
                         child: Expanded(child: Container(
                           child: Semantics(child: Text("$visibleRepliesCount $repliesLabel",
                               textAlign: TextAlign.right,
-                              style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, decoration: TextDecoration.underline,)
+                              style: Styles().getTextStyle('widget.card.description.small_underline')
                         ))),
                       ))
                 ],),)))
@@ -1493,11 +1484,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                                   Localization().getStringEx(
                                       'panel.group.detail.post.create.link.label',
                                       'Link'),
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.black,
-                                      fontFamily:
-                                      Styles().fontFamilies!.medium)))))
+                                  style: Styles().getTextStyle('widget.group.input_field.link')))))
                     ])),
             Padding(
                 padding: EdgeInsets.only(top: 8, bottom: 16),
@@ -1516,10 +1503,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                             borderSide: BorderSide(
                                 color: Styles().colors!.mediumGray!,
                                 width: 0.0))),
-                    style: TextStyle(
-                        color: Styles().colors!.textBackground,
-                        fontSize: 16,
-                        fontFamily: Styles().fontFamilies!.regular))),
+                    style: Styles().getTextStyle(''))),
           ],
         )
     );
@@ -1612,20 +1596,14 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
               Localization().getStringEx(
                   'panel.group.detail.post.create.dialog.link.edit.header',
                   'Edit Link'),
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Styles().colors!.fillColorPrimary,
-                  fontFamily: Styles().fontFamilies!.medium)),
+              style: Styles().getTextStyle('widget.group.input_field.heading')),
           Padding(
               padding: EdgeInsets.only(top: 16),
               child: Text(
                   Localization().getStringEx(
                       'panel.group.detail.post.create.dialog.link.text.label',
                       'Link Text:'),
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies!.regular,
-                      color: Styles().colors!.fillColorPrimary))),
+                  style: Styles().getTextStyle('widget.group.input_field.detail'))),
           Padding(
               padding: EdgeInsets.only(top: 6),
               child: TextField(
@@ -1635,20 +1613,14 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Styles().colors!.mediumGray!, width: 0.0))),
-                  style: TextStyle(
-                      color: Styles().colors!.textBackground,
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies!.regular))),
+                  style: Styles().getTextStyle('widget.group.input_field.field'))),
           Padding(
               padding: EdgeInsets.only(top: 16),
               child: Text(
                   Localization().getStringEx(
                       'panel.group.detail.post.create.dialog.link.url.label',
                       'Link URL:'),
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies!.regular,
-                      color: Styles().colors!.fillColorPrimary))),
+                  style: Styles().getTextStyle('widget.group.input_field.detail'))),
           Padding(
               padding: EdgeInsets.only(top: 6),
               child: TextField(
@@ -1658,10 +1630,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Styles().colors!.mediumGray!, width: 0.0))),
-                  style: TextStyle(
-                      color: Styles().colors!.textBackground,
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies!.regular)))
+                  style: Styles().getTextStyle('widget.group.input_field.field')))
         ]);
   }
 }
