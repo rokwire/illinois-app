@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Optimized Groups /user/login API call [#2316](https://github.com/rokwire/illinois-app/issues/2316).
+- Removed any references to PassKit.framework [#1851](https://github.com/rokwire/illinois-app/issues/1851).
 
 ## [4.2.0] - 2022-08-18
 ### Fixed
