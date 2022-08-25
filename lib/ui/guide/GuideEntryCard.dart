@@ -111,7 +111,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
 
   void _onTapLink(String? url) {
     Analytics().logSelect(target: 'Link: $url');
-    if (UrlUtils.isWebScheme(url)) {
+    if (StringUtils.isNotEmpty(url)) {
         launch(url!);
     }
   }
