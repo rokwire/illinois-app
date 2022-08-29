@@ -79,6 +79,7 @@
     "header_bar": { "font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "textColorPrimary"},
 
     "widget.detail.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
+    "widget.detail.small": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textBackground"},
 
     "widget.dialog.button.close" : {"font_family": "ProximaNovaMedium", "size": 50.0, "color": "white"},
     "widget.dialog.message.regular" : {"font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "white"},
@@ -98,6 +99,13 @@
     "widget.card.detail.small_variant": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textBackground"},
     "widget.card.detail.tiny": { "font_family": "ProximaNovaRegular", "size": 12.0, "color": "textBackground"},
     "widget.card.detail.tiny_variant": { "font_family": "ProximaNovaBold", "size": 12.0, "color": "textBackground"},
+
+    "widget.explore.card.detail.small": { "font_family": "ProximaNovaMedium", "size": 12.0, "color": "textBackground"},
+    "widget.explore.card.detail.regular": { "font_family": "ProximaNovaMedium", "size": 14.0, "color": "textBackground"},
+    "widget.explore.card.detail.regular.underline": { "font_family": "ProximaNovaMedium", "size": 14.0, "color": "textBackground",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+    "widget.explore.card.detail.large": { "font_family": "ProximaNovaMedium", "size": 16.0, "color": "textBackground"},
+    "widget.explore.card.title.regular":  {"font_family": "ProximaNovaRegular", "size": 18.0, "color": "fillColorPrimary"},
+    "widget.explore.card.title.large":  {"font_family": "ProximaNovaRegular", "size": 20.0, "color": "fillColorPrimary"},
 
     "widget.group.card.poll.title": { "font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary", "height":  1.2},
     "widget.group.card.poll.option": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground", "height":  1.25,  "weight" :  "w500"},
