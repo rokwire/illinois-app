@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
@@ -1017,7 +1018,7 @@ class _GroupCardState extends State<GroupCard> {
 
   void _onTapCard(BuildContext context) {
     Analytics().logSelect(target: "Group: ${widget.group?.title}");
-    if (Auth2().privacyMatch(4)) {
+    if (FlexUI().hasFeature('authentication')) {
       if (Auth2().isOidcLoggedIn) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: widget.group)));
       }

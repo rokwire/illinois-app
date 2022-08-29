@@ -812,7 +812,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   bool get _canSignIn{
-    return Auth2().privacyMatch(4);
+    return FlexUI().hasFeature('authentication');
   }
 }
 

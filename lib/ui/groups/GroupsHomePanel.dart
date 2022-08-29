@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -74,6 +75,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Groups.notifyGroupDeleted,
       Auth2.notifyLoginSucceeded,
       Auth2.notifyLogout,
+      FlexUI.notifyChanged,
       Connectivity.notifyStatusChanged,
     ]);
     _selectedContentType = widget.contentType;
@@ -182,7 +184,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   bool get _showMyGroups {
-    return Auth2().privacyMatch(4);
+    return FlexUI().hasFeature('authentication');
   }
 
   void _buildMyGroupsAndPending({List<Group>? myGroups, List<Group>? myPendingGroups}) {
@@ -680,6 +682,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           _reloadGroupsContent();
         }
       });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      if (mounted) {
+        _reloadGroupsContent();
+      }
     }
     else if (name == Connectivity.notifyStatusChanged) {
       if (Connectivity().isOnline && mounted) {
