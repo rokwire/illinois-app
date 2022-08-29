@@ -350,7 +350,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
   }
 
   bool get _showFinishSetupWidget{
-    return !Auth2().isLoggedIn && FlexUI().hasFeature('authentication');
+    return !Auth2().isLoggedIn && FlexUI().isAuthenticationAvailable;
   }
 
   @override

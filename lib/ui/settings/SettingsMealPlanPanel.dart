@@ -697,7 +697,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   bool get _canSignIn{
-    return FlexUI().hasFeature('authentication');
+    return FlexUI().isAuthenticationAvailable;
   }
 
   // NotificationsListener

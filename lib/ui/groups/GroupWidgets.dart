@@ -1018,7 +1018,7 @@ class _GroupCardState extends State<GroupCard> {
 
   void _onTapCard(BuildContext context) {
     Analytics().logSelect(target: "Group: ${widget.group?.title}");
-    if (FlexUI().hasFeature('authentication')) {
+    if (FlexUI().isAuthenticationAvailable) {
       if (Auth2().isOidcLoggedIn) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: widget.group)));
       }

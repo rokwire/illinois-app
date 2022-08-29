@@ -184,7 +184,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   bool get _showMyGroups {
-    return FlexUI().hasFeature('authentication');
+    return FlexUI().isAuthenticationAvailable;
   }
 
   void _buildMyGroupsAndPending({List<Group>? myGroups, List<Group>? myPendingGroups}) {
@@ -660,7 +660,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
   
   bool get _canCreateGroup {
-    return Auth2().isOidcLoggedIn && FlexUI().hasFeature('sharing');
+    return Auth2().isOidcLoggedIn && FlexUI().isSharingAvailable;
   }
 
   ///////////////////////////////////

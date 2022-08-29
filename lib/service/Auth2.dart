@@ -86,7 +86,7 @@ class Auth2 extends rokwire.Auth2 {
   }
 
   void _checkEnabled() {
-    if (isLoggedIn && !FlexUI().hasFeature('authentication')) {
+    if (isLoggedIn && !FlexUI().isAuthenticationAvailable) {
       logout();
     }
   }

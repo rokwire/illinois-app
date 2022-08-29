@@ -695,7 +695,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   bool get _canSignIn{
-    return FlexUI().hasFeature('authentication');
+    return FlexUI().isAuthenticationAvailable;
   }
 
   // NotificationsListener
