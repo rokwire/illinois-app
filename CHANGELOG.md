@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Optimized Groups /user/login API call [#2316](https://github.com/rokwire/illinois-app/issues/2316).
+- Improved scheduling of app review prompt [#2321](https://github.com/rokwire/illinois-app/issues/2321).
+
+## [4.1.22] - 2022-08-25
+- Removed any references to PassKit.framework [#1851](https://github.com/rokwire/illinois-app/issues/1851).
+### Fixed
+- Fixed am/pm indicator evaluation in StudentCourseSecrtion [#2310](https://github.com/rokwire/illinois-app/issues/2310).
+- Fixed opening tel and mail protocol links from Student Guide pages [#2315](https://github.com/rokwire/illinois-app/issues/2315).
 
 ## [4.2.0] - 2022-08-18
 ### Fixed

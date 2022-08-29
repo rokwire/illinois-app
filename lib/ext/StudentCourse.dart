@@ -101,22 +101,29 @@ extension StudentCourseSectionExt on StudentCourseSection {
 
   static String? _convertTime(String? time, { bool addIndicator = true}) {
     if ((time != null) && (2 <= time.length)) {
-      int? hours = int.tryParse(time.substring(0, 2));
+      int? hours = int.tryParse(time.substring(0, 2))?.abs();
       if (hours != null) {
         String indicator;
-        if (12 < hours) {
-          hours -= 12;
-          indicator = 'pm';
+        if ((0 <= hours) && (hours < 12)) {
+          if (hours < 1) {
+            hours += 12;
+          }
+          indicator = addIndicator ? 'am' : '';
+        }
+        else if ((12 <= hours) && (hours < 24)) {
+          if (12 < hours) {
+            hours -= 12;
+          }
+          indicator = addIndicator ? 'pm' : '';
         }
         else {
-          indicator = 'am';
+          indicator = '';
         }
-        String minutesStr = time.substring(2);
-        String indicatorStr = addIndicator ? indicator : '';
-        return "$hours:$minutesStr$indicatorStr";
+        String minutes = time.substring(2);
+        return "$hours:$minutes$indicator";
       }
     }
-    return null;
+    return time;
   }
 
   String get displayLocation {

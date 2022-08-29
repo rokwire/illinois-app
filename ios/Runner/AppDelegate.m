@@ -40,7 +40,6 @@
 #import <ZXingObjC/ZXingObjC.h>
 
 #import <UserNotifications/UserNotifications.h>
-#import <PassKit/PassKit.h>
 
 static NSString *const kFIRMessagingFCMTokenNotification = @"com.firebase.iid.notif.fcm-token";
 
@@ -57,7 +56,7 @@ NSString* _interfaceOrientationToString(UIInterfaceOrientation value);
 UIInterfaceOrientation _interfaceOrientationFromMask(UIInterfaceOrientationMask value);
 UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation value);
 
-@interface AppDelegate()<UINavigationControllerDelegate, UNUserNotificationCenterDelegate, FIRMessagingDelegate, PKAddPassesViewControllerDelegate> {
+@interface AppDelegate()<UINavigationControllerDelegate, UNUserNotificationCenterDelegate, FIRMessagingDelegate> {
 }
 
 // Flutter
@@ -67,10 +66,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 // Launch View
 @property (nonatomic) LaunchScreenView *launchScreenView;
-
-// PassKit
-@property (nonatomic) PKAddPassesViewController *passViewController;
-@property (nonatomic) FlutterResult passFlutterResult;
 
 // Init Keys
 @property (nonatomic) NSDictionary* keys;
@@ -238,9 +233,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"setLaunchScreenStatus"]) {
 		[self handleSetLaunchScreenStatusWithParameters:parameters result:result];
 	}
-	else if ([call.method isEqualToString:@"addToWallet"]) {
-		[self handleAddToWalletWithParameters:parameters result:result];
-	}
 	else if ([call.method isEqualToString:@"enabledOrientations"]) {
 		[self handleEnabledOrientationsWithParameters:parameters result:result];
 	}
@@ -310,13 +302,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 - (void)handleSetLaunchScreenStatusWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
 	NSString *statusText = [parameters inaStringForKey:@"status"];
 	[self setLaunchScreenStatusText:statusText];
-	result(nil);
-}
-
-- (void)handleAddToWalletWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	NSString *base64CardData = [parameters inaStringForKey:@"cardBase64Data"];
-	NSData *cardData = [[NSData alloc] initWithBase64EncodedString:base64CardData options:0];
-	[self addPassToWallet:cardData result:result];
 	result(nil);
 }
 
@@ -529,59 +514,6 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 	else {
 		return FALSE;
-	}
-}
-
-#pragma mark PassKit
-
-- (void)addPassToWallet:(NSData*)passData result:(FlutterResult)result {
-	if (_passViewController != nil) {
-		NSLog(@"PassKit: currently adding a pass");
-		result(@(NO));
-	}
-	else if (!PKAddPassesViewController.canAddPasses) {
-		NSLog(@"PassKit: cannot add passes");
-		result(@(NO));
-	}
-	else {
-		NSError *error = nil;
-		PKPass *pass = [[PKPass alloc] initWithData:passData error:&error];
-		if ((pass != nil) && (error == nil)) {
-			PKAddPassesViewController *passViewController = [[PKAddPassesViewController alloc] initWithPass:pass];
-			if (passViewController != nil) {
-				__weak typeof(self) weakSelf = self;
-				passViewController.delegate = self;
-				[_navigationViewController.topViewController presentViewController:passViewController animated:YES completion:^{
-					weakSelf.passFlutterResult = result;
-					weakSelf.passViewController = passViewController;
-				}];
-			}
-			else {
-				NSLog(@"PassKit: failed to create add pass controller");
-				result(@(NO));
-			}
-		}
-		else {
-			NSLog(@"PassKit: failed to create pass: %@", error.localizedDescription);
-			result(@(NO));
-		}
-	}
-}
-
-
-#pragma mark PKAddPassesViewControllerDelegate
-
-- (void)addPassesViewControllerDidFinish:(PKAddPassesViewController *)controller {
-	if (controller == _passViewController) {
-		__weak typeof(self) weakSelf = self;
-		[controller dismissViewControllerAnimated:YES completion:^{
-			FlutterResult result = weakSelf.passFlutterResult;
-			weakSelf.passFlutterResult = nil;
-			weakSelf.passViewController = nil;
-			if (result != nil) {
-				result(@(YES));
-			}
-		}];
 	}
 }
 
