@@ -203,7 +203,7 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
 
   @override
   Widget build(BuildContext context) {
-    bool directionsVisible = FlexUI().hasFeature('parking_lot_directions') && (widget.inventory!.entrance != null);
+    bool directionsVisible = (widget.inventory!.entrance != null);
     return Semantics(container: true, child: Container(color: Colors.white, child: Row(
       children: <Widget>[
         Expanded(
