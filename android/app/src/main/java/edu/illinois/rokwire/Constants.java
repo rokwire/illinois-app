@@ -41,8 +41,8 @@ public class Constants {
     static final int SELECT_LOCATION_ACTIVITY_RESULT_CODE = 2;
     public static final String LOCATION_PICKER_DATA_FORMAT = "{\"location\":{\"latitude\":%f,\"longitude\":%f,\"floor\":%d,\"description\":\"%s\",\"location_id\":\"%s\",\"name\":\"%s\"}}";
     public static final float INDOORS_BUILDING_ZOOM = 17.0f;
-    public static final String ANALYTICS_ROUTE_LOCATION_FORMAT = "{\"latitude\":%f,\"longitude\":%f,\"floor\":%d}";
-    public static final String ANALYTICS_USER_LOCATION_FORMAT = "{\"latitude\":%f,\"longitude\":%f,\"floor\":%d,\"timestamp\":%d}";
+    public static final String ANALYTICS_ROUTE_LOCATION_FORMAT = "{\"latitude\":%f,\"longitude\":%f}";
+    public static final String ANALYTICS_USER_LOCATION_FORMAT = "{\"latitude\":%f,\"longitude\":%f,\"timestamp\":%d}";
 
     // Shared Prefs
     static final String DEFAULT_SHARED_PREFS_FILE_NAME = "default_shared_prefs";

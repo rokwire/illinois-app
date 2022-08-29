@@ -38,9 +38,15 @@ import androidx.annotation.NonNull;
 import edu.illinois.rokwire.MainActivity;
 import edu.illinois.rokwire.R;
 import edu.illinois.rokwire.Utils;
+import edu.illinois.rokwire.navigation.model.NavCoord;
 import edu.illinois.rokwire.navigation.model.NavRoute;
 
 public class Navigation {
+
+    public static final String TRAVEL_MODE_WALKING = "walking";
+    public static final String TRAVEL_MODE_BICYCLING = "bicycling";
+    public static final String TRAVEL_MODE_DRIVING = "driving";
+    public static final String TRAVEL_MODE_TRANSIT = "transit";
 
     private static final String TAG = Navigation.class.getCanonicalName();
 
@@ -60,7 +66,11 @@ public class Navigation {
         }
     }
 
-    public void findRoutesFromOrigin(@NonNull LatLng origin, @NonNull LatLng destination, @NonNull String travelMode, boolean alternatives) {
+    public void findRoutesFromOrigin(@NonNull NavCoord origin, @NonNull NavCoord destination, @NonNull String travelMode) {
+        findRoutesFromOrigin(origin, destination, travelMode, false);
+    }
+
+    public void findRoutesFromOrigin(@NonNull NavCoord origin, @NonNull NavCoord destination, @NonNull String travelMode, boolean alternatives) {
         String apiUrl = null;
         String apiKey = null;
         if (MainActivity.getInstance() != null) {
@@ -68,7 +78,7 @@ public class Navigation {
             apiKey = Utils.Map.getValueFromPath(MainActivity.getInstance().getSecretKeys(), "google.maps.api_key", null);
         }
         String url = String.format(getCurrentLocale(), "%s?origin=%.6f,%.6f&destination=%.6f,%.6f&mode=%s&alternatives=%s&language=%s&key=%s",
-                apiUrl, origin.latitude, origin.longitude, destination.latitude, destination.longitude, travelMode, (alternatives ? "true" : "false"), getCurrentLocale().getLanguage(), apiKey);
+                apiUrl, origin.getLat(), origin.getLng(), destination.getLat(), destination.getLng(), travelMode, (alternatives ? "true" : "false"), getCurrentLocale().getLanguage(), apiKey);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> notifyResponse(response, null),

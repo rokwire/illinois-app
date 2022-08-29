@@ -25,13 +25,13 @@ import java.util.List;
 import edu.illinois.rokwire.Utils;
 
 public class NavRouteLeg {
-    private NavIntVal distance;
-    private NavIntVal duration;
-    private NavCoord startLocation;
-    private NavCoord endLocation;
-    private String startAddress;
-    private String endAddress;
-    private List<NavRouteStep> steps;
+    private final NavIntVal distance;
+    private final NavIntVal duration;
+    private final NavCoord startLocation;
+    private final NavCoord endLocation;
+    private final String startAddress;
+    private final String endAddress;
+    private final List<NavRouteStep> steps;
 
     public NavRouteLeg(JSONObject json) {
         this.distance = new NavIntVal(Utils.Json.getJsonObjectForKey(json, "distance"));

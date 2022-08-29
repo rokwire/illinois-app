@@ -37,7 +37,6 @@
     <string name="locationFailedMsg">Failed to detect current location.</string>
     <string name="start">START</string>
     <string name="finish">FINISH</string>
-    <string name="routeDistanceDurationFormat">%1$d m | %2$d sec</string>
     <string name="routeLegStepFormat">Leg %1$d / Step %2$d</string>
     <string name="mile">mile</string>
     <string name="miles">miles</string>

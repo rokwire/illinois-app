@@ -37,7 +37,6 @@
     <string name="locationFailedMsg">無法檢測到當前位置.</string>
     <string name="start">開始</string>
     <string name="finish">完</string>
-    <string name="routeDistanceDurationFormat">%1$d 分 | %2$d 秒</string>
     <string name="routeLegStepFormat">腿 %1$d / 步 %2$d</string>
     <string name="mile">英里</string>
     <string name="miles">英里</string>

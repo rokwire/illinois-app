@@ -16,15 +16,23 @@
 
 package edu.illinois.rokwire.navigation.model;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.illinois.rokwire.Utils;
 
 public class NavCoord {
-    private double lat;
-    private double lng;
+    private final double lat;
+    private final double lng;
+
+    public NavCoord(double lat, double lng) {
+        this.lat = lat;
+        this.lng = lng;
+    }
 
     public NavCoord(JSONObject json) {
         this.lat = Utils.Json.getDoubleValueForKey(json, "lat");
@@ -32,8 +40,36 @@ public class NavCoord {
     }
 
     public static List<NavCoord> createListFromEncodedString(String encodedString) {
-        //TBD: implement
-        return null;
+        List<NavCoord> poly = new ArrayList<>();
+        int index = 0, len = encodedString.length();
+        int lat = 0, lng = 0;
+
+        while (index < len) {
+            int b, shift = 0, result = 0;
+            do {
+                b = encodedString.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lat += dlat;
+
+            shift = 0;
+            result = 0;
+            do {
+                b = encodedString.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lng += dlng;
+
+            NavCoord p = new NavCoord((((double) lat / 1E5)),
+                    (((double) lng / 1E5)));
+            poly.add(p);
+        }
+
+        return poly;
     }
 
     public double getLat() {
@@ -42,5 +78,9 @@ public class NavCoord {
 
     public double getLng() {
         return lng;
+    }
+
+    public LatLng toLatLng() {
+        return new LatLng(lat, lng);
     }
 }

@@ -25,7 +25,6 @@ import java.util.List;
 import edu.illinois.rokwire.Utils;
 
 public class NavRoute {
-    //TBD: implement
     private NavBounds bounds;
     private String copyrights;
     private String summary;
@@ -75,5 +74,27 @@ public class NavRoute {
 
     public NavPolyline getPolyline() {
         return polyline;
+    }
+
+    public Integer getDistance() {
+        if (getLegs() != null) {
+            int totalDistance = 0;
+            for (NavRouteLeg leg : getLegs()) {
+                totalDistance += leg.getDistance().getValue();
+            }
+            return totalDistance;
+        }
+        return null;
+    }
+
+    public Integer getDuration() {
+        if (getLegs() != null) {
+            int totalDuration = 0;
+            for (NavRouteLeg leg : getLegs()) {
+                totalDuration += leg.getDuration().getValue();
+            }
+            return totalDuration;
+        }
+        return null;
     }
 }

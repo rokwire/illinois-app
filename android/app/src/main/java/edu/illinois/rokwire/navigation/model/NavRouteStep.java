@@ -25,13 +25,14 @@ import java.util.List;
 import edu.illinois.rokwire.Utils;
 
 public class NavRouteStep {
-    private NavIntVal distance;
-    private NavIntVal duration;
-    private NavCoord startLocation;
-    private NavCoord endLocation;
-    private String htmlInstructions;
-    private NavPolyline polyline;
-    private String travelMode;
+    private final NavIntVal distance;
+    private final NavIntVal duration;
+    private final NavCoord startLocation;
+    private final NavCoord endLocation;
+    private final String htmlInstructions;
+    private final String maneuver;
+    private final NavPolyline polyline;
+    private final String travelMode;
 
     public NavRouteStep(JSONObject json) {
         this.distance = new NavIntVal(Utils.Json.getJsonObjectForKey(json, "distance"));
@@ -39,6 +40,7 @@ public class NavRouteStep {
         this.startLocation = new NavCoord(Utils.Json.getJsonObjectForKey(json, "start_location"));
         this.endLocation = new NavCoord(Utils.Json.getJsonObjectForKey(json, "end_location"));
         this.htmlInstructions = Utils.Json.getStringValueForKey(json, "html_instructions");
+        this.maneuver = Utils.Json.getStringValueForKey(json, "maneuver");
         this.polyline = new NavPolyline(Utils.Json.getJsonObjectForKey(json, "polyline"));
         this.travelMode = Utils.Json.getStringValueForKey(json, "travel_mode");
     }
@@ -76,6 +78,10 @@ public class NavRouteStep {
 
     public String getHtmlInstructions() {
         return htmlInstructions;
+    }
+
+    public String getManeuver() {
+        return maneuver;
     }
 
     public NavPolyline getPolyline() {

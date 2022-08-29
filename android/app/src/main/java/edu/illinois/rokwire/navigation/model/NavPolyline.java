@@ -23,7 +23,7 @@ import java.util.List;
 import edu.illinois.rokwire.Utils;
 
 public class NavPolyline {
-    private String points;
+    private final String points;
 
     public NavPolyline(JSONObject json) {
         this.points = Utils.Json.getStringValueForKey(json, "points");
