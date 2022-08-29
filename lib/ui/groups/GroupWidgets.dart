@@ -845,7 +845,7 @@ class _GroupCardState extends State<GroupCard> {
               ]),
               (widget.displayType == GroupCardDisplayType.homeGroups) ? Expanded(child: Container()) : Container(),
               Visibility(visible: (widget.group?.currentUserIsAdmin ?? false) && ((_groupStats?.pendingCount ?? 0) > 0), child:
-                Text(pendingCountText, overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().getTextStyle("widget.card.detail.regular"),),
+                Text(pendingCountText, overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().getTextStyle("widget.card.detail.regular_variant"),),
               ),
               Container(height: 4),
               // (displayType == GroupCardDisplayType.myGroup || displayType == GroupCardDisplayType.homeGroups) ?
@@ -1675,7 +1675,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
         children: [
           Row(
             children: [
-              Text("To: ", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),),
+              Text("To: ", style: Styles().getTextStyle('widget.group.member_selection.title'),),
               Expanded(
                 child: _buildDropDown(),
               )
@@ -1685,7 +1685,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
             onTap: _onTapEdit,
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 8),
-              child: Text(selectedMembersText, style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies!.bold, decoration: TextDecoration.underline),),
+              child: Text(selectedMembersText, style: Styles().getTextStyle("widget.group.member_selection.selected_entry"),),
             )
           ),
           Visibility(
@@ -1721,7 +1721,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
                     // style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
                     // value: _currentSelection,
                     items: _buildDropDownItems,
-                    hint: Text(_selectionText,  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),),
+                    hint: Text(_selectionText,  style: Styles().getTextStyle('widget.group.member_selection.title') ,),
                     onChanged: widget.enabled? (GroupMemberSelectionData? data) {
                       _onDropDownItemChanged(data);
                     } : null,
@@ -1744,7 +1744,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
               Expanded(child:
                 Container(color: Styles().colors!.fillColorPrimary,
                   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  child:Text("Select Recipient(s)", style: TextStyle(color: Colors.white),))
+                  child:Text("Select Recipient(s)", style:  Styles().getTextStyle('widget.group.member_selection.dropdown.item'),))
           )
           ])))
     );
@@ -1771,7 +1771,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
           Expanded(
               child:Container(
                   padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: Text(title, maxLines: 2, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12),)
+                  child: Text(title, maxLines: 2, style: Styles().getTextStyle('widget.group.member_selection.dropdown.item'))
               ))
         ]
     );
@@ -1785,7 +1785,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
           Expanded(
             child:Container(
               padding: EdgeInsets.symmetric(horizontal: 5),
-              child: Text(title, maxLines: 2, style: TextStyle(fontSize: 18,overflow: TextOverflow.ellipsis),)
+              child: Text(title, maxLines: 2, style: Styles().getTextStyle('widget.group.member_selection.dropdown.item.selected') ,)
           ))
       ]
     );
@@ -2086,7 +2086,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
     }
 
     Widget cardBody = ((poll.status == PollStatus.opened) && (poll.settings?.hideResultsUntilClosed ?? false)) ?
-      Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends."), style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 15, fontWeight: FontWeight.w500),) :
+      Text(Localization().getStringEx("panel.poll_prompt.text.rule.detail.hide_result", "Results will not be shown until the poll ends."), style: Styles().getTextStyle('widget.card.detail.regular'),) :
       Column(children: _buildCheckboxOptions(),);
 
     return Column(children: <Widget>[
@@ -2101,9 +2101,9 @@ class _GroupPollCardState extends State<GroupPollCard> {
             Row(children: <Widget>[
               Expanded(child:
                 Semantics(label:semanticsQuestionText, excludeSemantics: true, child:
-                  Text(wantsToKnow, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w600))),
+                  Text(wantsToKnow, style: Styles().getTextStyle('widget.card.detail.tiny'))),
               ),
-              Text(pin, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12)),
+              Text(pin, style: Styles().getTextStyle('widget.card.detail.tiny_variant')),
               Visibility(visible: _GroupPollOptionsState._hasPollOptions(widget), child:
                 Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
                   GestureDetector(onTap: _onPollOptionsTap, child:
@@ -2117,7 +2117,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
             Padding(padding: EdgeInsets.only(right: 16), child:
               Column(children: [
                 Container(height: 12,),
-                Text(poll.title!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, height: 1.2)),
+                Text(poll.title!, style: Styles().getTextStyle('widget.group.card.poll.title')),
                 Container(height:12),
                 cardBody,
                 Container(height:25),
@@ -2125,10 +2125,10 @@ class _GroupPollCardState extends State<GroupPollCard> {
                   Padding(padding: EdgeInsets.only(bottom: 12), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Text(pollVotesStatus, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, ),),
+                        Text(pollVotesStatus, style: Styles().getTextStyle('widget.card.detail.tiny'),),
                       ),
                       Expanded(child:
-                        Text(pollStatus ?? "", textAlign: TextAlign.right, style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.bold, fontSize: 12, ),))
+                        Text(pollStatus ?? "", textAlign: TextAlign.right, style: Styles().getTextStyle('widget.card.detail.tiny_variant'),))
                     ],),
                   ),
                 ),
@@ -2200,7 +2200,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
               Row(children: <Widget>[
                 Expanded( child:
                 Padding( padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: Text(option, style: TextStyle(color: useCustomColor?Styles().colors!.white:Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w500,height: 1.25),),)),
+                  child: Text(option, style: useCustomColor? Styles().getTextStyle('widget.group.card.poll.option_variant')  : Styles().getTextStyle('widget.group.card.poll.option')),)),
                 Visibility( visible: didVote,
                     child:Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/checkbox-small.png',),)
                 ),
@@ -2210,7 +2210,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
             ),
             Expanded(
               flex: 5,
-              child: Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: TextStyle(color: votesColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 14, fontWeight: FontWeight.w500,height: 1.29),),),
+              child: Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign: TextAlign.right,style: Styles().getTextStyle('widget.group.card.poll.votes'),),),
             )
           ],)
           ))));
@@ -2238,15 +2238,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
                     borderRadius: BorderRadius.circular(24.0),
                   ),
                   child: Center(
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.bold,
-                        fontSize: 16,
-                        height: 1.38,
-                        color: Styles().colors!.fillColorPrimary,
-                      ),
-                    ),
+                    child: Text(title, style: Styles().getTextStyle("widget.card.description.small"),),
                   ),
                 ),
                 Visibility(visible: loading,

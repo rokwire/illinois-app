@@ -92,9 +92,17 @@
     "widget.card.description.small": { "font_family": "ProximaNovaMedium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.card.description.small_underline": { "font_family": "ProximaNovaMedium", "size": 14.0, "decoration": "underline"},
     "widget.card.description.small_variant": { "font_family": "ProximaNovaBold", "size": 14.0, "color": "fillColorPrimary"},
-    "widget.card.detail.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackgroundVariant"},
+    "widget.card.detail.regular_variant": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackgroundVariant"},
+    "widget.card.detail.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
     "widget.card.detail.small": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textSurface"},
     "widget.card.detail.small_variant": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textBackground"},
+    "widget.card.detail.tiny": { "font_family": "ProximaNovaRegular", "size": 12.0, "color": "textBackground"},
+    "widget.card.detail.tiny_variant": { "font_family": "ProximaNovaBold", "size": 12.0, "color": "textBackground"},
+
+    "widget.group.card.poll.title": { "font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary", "height":  1.2},
+    "widget.group.card.poll.option": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground", "height":  1.25,  "weight" :  "w500"},
+    "widget.group.card.poll.option_variant": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "white", "height":  1.25,  "weight" :  "w500"},
+    "widget.group.card.poll.votes": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textBackground", "height":  1.29,  "weight" :  "w500"},
 
     "widget.group.dropdown_button.value": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.group.dropdown_button.hint": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "mediumGray"},
@@ -109,6 +117,10 @@
     "widget.group.input_field.detail": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.group.input_field.field": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
 
-    "widget.group.member_selection.title" : {"font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"}
+    "widget.group.member_selection.title" : {"font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.group.member_selection.selected_entry" : {"font_family": "ProximaNovaBold", "size": 18.0, "decoration": "underline"},
+    "widget.group.member_selection.dropdown.item" : {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "white"},
+    "widget.group.member_selection.dropdown.item.selected" : {"font_family": "ProximaNovaRegular", "size": 18.0, "overflow": "ellipsis"},
+    "widget.group.member_selection.dropdown.header" : {"font_family": "ProximaNovaRegular", "size": 12.0, "color": "fillColorPrimary"}
   }
 }
