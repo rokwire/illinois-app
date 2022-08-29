@@ -53,4 +53,7 @@
     <string name="select_location_msg">Por favor, seleccione una ubicación</string>
     <string name="location_label">Ubicación: %1$s</string>
     <string name="save">Salvar</string>
+
+    <!-- Navigation -->
+    <string name="invalid_server_response">Respuesta del servidor no válida</string>
 </resources>

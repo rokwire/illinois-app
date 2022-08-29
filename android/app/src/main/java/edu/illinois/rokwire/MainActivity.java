@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.Set;
 
 import edu.illinois.rokwire.maps.MapActivity;
-import edu.illinois.rokwire.maps.MapPositionProviderActivity;
 import edu.illinois.rokwire.maps.MapDirectionsActivity;
 import edu.illinois.rokwire.maps.MapViewFactory;
 import edu.illinois.rokwire.maps.MapPickLocationActivity;

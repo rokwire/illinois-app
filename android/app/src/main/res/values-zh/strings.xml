@@ -53,4 +53,7 @@
     <string name="select_location_msg">請選擇一個位置</string>
     <string name="location_label">位置: %1$s</string>
     <string name="save">保存</string>
+
+    <!-- Navigation -->
+    <string name="invalid_server_response">服務器響應無效</string>
 </resources>
