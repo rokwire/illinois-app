@@ -10,6 +10,7 @@ import 'package:http/http.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -261,7 +262,7 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
 
   // User Location
 
-  Future<bool> get _userLocationEnabled async => Auth2().privacyMatch(2) && (await LocationServices().status == LocationServicesStatus.permissionAllowed);
+  Future<bool> get _userLocationEnabled async => FlexUI().isLocationServicesAvailable && (await LocationServices().status == LocationServicesStatus.permissionAllowed);
   Future<Position?> get _userLocation async => await _userLocationEnabled ? await LocationServices().location : null;
     
   // ExploreJsonHandler

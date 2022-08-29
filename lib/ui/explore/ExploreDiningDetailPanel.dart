@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
@@ -84,6 +85,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged
     ]);
 
     _reloadDiningIfNeed();
@@ -122,7 +124,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
   }
 
   Future<void> _loadCurrentLocation() async {
-    _locationData = Auth2().privacyMatch(2) ? await LocationServices().location : null;
+    _locationData = FlexUI().isLocationServicesAvailable ? await LocationServices().location : null;
   }
 
   void _updateCurrentLocation() {
@@ -619,6 +621,9 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
       _updateCurrentLocation();
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
+      _updateCurrentLocation();
+    }
+    else if (name == FlexUI.notifyChanged) {
       _updateCurrentLocation();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {

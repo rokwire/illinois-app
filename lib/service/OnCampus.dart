@@ -65,7 +65,7 @@ class OnCampus with Service implements NotificationsListener {
 
   // Implementation
 
-  bool get enabled => Auth2().privacyMatch(2) && (LocationServices().lastStatus != LocationServicesStatus.serviceDisabled);
+  bool get enabled => FlexUI().isLocationServicesAvailable && (LocationServices().lastStatus != LocationServicesStatus.serviceDisabled);
 
   bool get isGies => FlexUI().isGiesAvailable;
 

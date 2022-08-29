@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
@@ -81,6 +82,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
     ]);
 
     _addRecentItem();
@@ -99,7 +101,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
   }
 
   Future<void> _loadCurrentLocation() async {
-    _locationData = Auth2().privacyMatch(2) ? await LocationServices().location : null;
+    _locationData = FlexUI().isLocationServicesAvailable ? await LocationServices().location : null;
   }
 
   void _updateCurrentLocation() {
@@ -924,6 +926,9 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       _updateCurrentLocation();
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
+      _updateCurrentLocation();
+    }
+    else if (name == FlexUI.notifyChanged) {
       _updateCurrentLocation();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {

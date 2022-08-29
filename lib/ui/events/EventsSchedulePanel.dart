@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -106,6 +107,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       NativeCommunicator.notifyMapSelectExplore,
       NativeCommunicator.notifyMapClearExplore,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
+      FlexUI.notifyChanged,
     ]);
     _initFilters();
     _initLocationService();
@@ -781,7 +783,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   bool _userLocationEnabled() {
-    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
+    return FlexUI().isLocationServicesAvailable && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
   }
 
   //EventsLoading
@@ -923,7 +925,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   //LocationServices
   _initLocationService(){
-    if (Auth2().privacyMatch(2)) {
+    if (FlexUI().isLocationServicesAvailable) {
       LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
@@ -966,12 +968,15 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       _onNativeMapClearExplore(param['mapId']);
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      _onPrivacyLevelChanged();
+      _updateLocationServicesStatus();
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateLocationServicesStatus();
     }
   }
 
-  _onPrivacyLevelChanged(){
-    if (Auth2().privacyMatch(2)) {
+  void _updateLocationServicesStatus(){
+    if (FlexUI().isLocationServicesAvailable) {
       LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _refresh((){});
@@ -983,7 +988,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   void _onLocationServicesStatusChanged(LocationServicesStatus? status) {
-    if (Auth2().privacyMatch(2)) {
+    if (FlexUI().isLocationServicesAvailable) {
       _locationServicesStatus = status;
       _refresh((){});
     }
