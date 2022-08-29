@@ -576,7 +576,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   }
 
   Map<String, dynamic>? get _location {
-    Position? location = Auth2().privacyMatch(3) ? LocationServices().lastLocation : null;
+    Position? location = Auth2().privacyMatch(2) ? LocationServices().lastLocation : null;
     return (location != null) ? {
       'latitude': location.latitude,
       'longitude': location.longitude,
