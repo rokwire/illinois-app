@@ -71,7 +71,7 @@
 	
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 			
-			"features": ["authentication", "create_poll", "parking_lot_directions", "gies", "new_student", "canvas", "safer", "laundry", "mtd_bus_pass"],
+			"features": ["authentication", "sharing", "parking_lot_directions", "gies", "new_student", "canvas", "safer", "laundry", "mtd_bus_pass"],
 			
 			"launch":["emergency"]
 			
@@ -117,7 +117,8 @@
 				"onboarding.confirm_phone"        : 3,
 				"onboarding.sport_prefs"          : 3,
 	
-				"authentication"                  : 4
+				"authentication"                  : 4,
+				"sharing"                         : 5
 			},
 			"auth": {
 				"connect"                             : { "loggedIn": false },

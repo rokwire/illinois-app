@@ -660,7 +660,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
   
   bool get _canCreateGroup {
-    return Auth2().isOidcLoggedIn && Auth2().privacyMatch(5);
+    return Auth2().isOidcLoggedIn && FlexUI().hasFeature('sharing');
   }
 
   ///////////////////////////////////

@@ -545,7 +545,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   bool get _couldCreatePoll {
-    return FlexUI().hasFeature('create_poll');
+    return FlexUI().hasFeature('sharing');
   }
 
   bool get _canCreatePoll {

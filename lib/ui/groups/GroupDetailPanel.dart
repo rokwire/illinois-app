@@ -19,6 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -158,11 +159,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get _canCreatePost {
-    return _isAdmin || (_isMember && Auth2().privacyMatch(5));
+    return _isAdmin || (_isMember && FlexUI().hasFeature('sharing'));
   }
 
   bool get _canCreatePoll {
-    return _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && Auth2().privacyMatch(5));
+    return _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && FlexUI().hasFeature('sharing'));
   }
 
   @override
@@ -181,6 +182,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Polls.notifyVoteChanged,
       Polls.notifyResultsChanged,
       Polls.notifyLifecycleDelete,
+      FlexUI.notifyChanged,
       Connectivity.notifyStatusChanged,
     ]);
 
@@ -457,9 +459,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   @override
   void onNotification(String name, dynamic param) {
     if (name == Groups.notifyUserMembershipUpdated) {
-      if (mounted) {
-        setState(() {});
-      }
+      setStateIfMounted(() {});
     }
     else if (name == Groups.notifyGroupEventsUpdated) {
       _loadEvents();
@@ -481,6 +481,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     } 
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
+    } 
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
     } 
     else if (name == Connectivity.notifyStatusChanged) {
       if (Connectivity().isOnline && mounted) {
