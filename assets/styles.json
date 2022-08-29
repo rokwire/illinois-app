@@ -129,6 +129,9 @@
     "widget.group.member_selection.selected_entry" : {"font_family": "ProximaNovaBold", "size": 18.0, "decoration": "underline"},
     "widget.group.member_selection.dropdown.item" : {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "white"},
     "widget.group.member_selection.dropdown.item.selected" : {"font_family": "ProximaNovaRegular", "size": 18.0, "overflow": "ellipsis"},
-    "widget.group.member_selection.dropdown.header" : {"font_family": "ProximaNovaRegular", "size": 12.0, "color": "fillColorPrimary"}
+    "widget.group.member_selection.dropdown.header" : {"font_family": "ProximaNovaRegular", "size": 12.0, "color": "fillColorPrimary"},
+
+    "panel.event_schedule.teb.selected" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
+    "panel.event_schedule.teb.not_selected" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "fillColorPrimary"}
   }
 }

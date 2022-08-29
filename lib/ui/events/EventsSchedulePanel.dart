@@ -1102,7 +1102,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                           Expanded(
                             child: Text(
                               widget.event!.title!,
-                              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.extraBold),
+                              style: Styles().getTextStyle('widget.card.title.large'),
                             ),
                           ),
                           Visibility(
@@ -1133,7 +1133,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 4, left: 28),
-                    child: Text(widget.event?.displaySuperTime ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium)),
+                    child: Text(widget.event?.displaySuperTime ?? '', style: Styles().getTextStyle('widget.explore.card.detail.regular')),
                   )
                 ]),
               ),
@@ -1173,7 +1173,7 @@ class _EventTabView extends StatelessWidget{
             ),
             child: Center(
                 child: Text(text!,
-                    style: TextStyle(fontFamily: selected! ? Styles().fontFamilies!.extraBold : Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
+                    style: selected! ? Styles().getTextStyle('panel.event_schedule.teb.selected') : Styles().getTextStyle('panel.event_schedule.teb.not_selected') )),
           )),
     );
   }
