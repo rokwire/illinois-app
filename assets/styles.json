@@ -41,6 +41,7 @@
     "black"                                           : "#000000",
     "blackTransparent06"                    :"#99000000",
     "blackTransparent018"                   :"#30000000",
+    "blackTransparent038"                   :"#61000000",
 
     "mediumGray"                            :"#717372",
     "mediumGray1"                           :"#535353",
@@ -132,6 +133,11 @@
     "widget.group.member_selection.dropdown.header" : {"font_family": "ProximaNovaRegular", "size": 12.0, "color": "fillColorPrimary"},
 
     "panel.event_schedule.teb.selected" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
-    "panel.event_schedule.teb.not_selected" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "fillColorPrimary"}
-  }
+    "panel.event_schedule.teb.not_selected" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "fillColorPrimary"},
+    "panel.event_schedule.title" : {"font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary"},
+    "panel.event_schedule.category" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
+    "panel.event_schedule.map.description" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "blackTransparent038"},
+    "panel.event_schedule.search.edit" : {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"}
+  },
+  "usage" : " Styles().getTextStyle('') "
 }

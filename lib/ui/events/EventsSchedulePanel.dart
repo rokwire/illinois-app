@@ -247,22 +247,12 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   Widget _buildDateTitle(String date){
-    return Text(date,
-      style: TextStyle(
-        fontSize: 20,
-        color: Styles().colors!.fillColorPrimary,
-        fontFamily: Styles().fontFamilies!.extraBold
-      ),
+    return Text(date, style: Styles().getTextStyle('panel.event_schedule.title')
     );
   }
 
   Widget _buildCategoryTitle(String category){
-    return Text(category,
-        style: TextStyle(
-            fontSize: 16,
-            color: Styles().colors!.textBackground,
-            fontFamily: Styles().fontFamilies!.extraBold
-        ));
+    return Text(category, style: Styles().getTextStyle('panel.event_schedule.category'));
   }
 
   Widget _buildEventCart(Event event) {
@@ -378,10 +368,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   autofocus: true,
                   cursorColor: Styles().colors!.fillColorSecondary,
                   keyboardType: TextInputType.text,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies!.regular,
-                      color: Styles().colors!.textBackground),
+                  style: Styles().getTextStyle('panel.event_schedule.search.edit'),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                   ),
@@ -634,16 +621,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                     children: <Widget>[
                       Text((title != null) ? title : "",
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Styles().colors!.fillColorPrimary,
-                              fontFamily: Styles().fontFamilies!.extraBold,
-                              fontSize: 20)),
+                          style: Styles().getTextStyle('panel.event_schedule.title')),
                       Text((description != null) ? description : "",
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.black38,
-                              fontFamily: Styles().fontFamilies!.medium,
-                              fontSize: 16)),
+                          style: Styles().getTextStyle('panel.event_schedule.map.description')),
                       Container(
                         height: 8,
                       ),
