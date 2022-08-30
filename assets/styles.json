@@ -126,11 +126,13 @@
     "widget.group.input_field.detail": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.group.input_field.field": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
 
-    "widget.group.member_selection.title" : {"font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
-    "widget.group.member_selection.selected_entry" : {"font_family": "ProximaNovaBold", "size": 18.0, "decoration": "underline"},
-    "widget.group.member_selection.dropdown.item" : {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "white"},
-    "widget.group.member_selection.dropdown.item.selected" : {"font_family": "ProximaNovaRegular", "size": 18.0, "overflow": "ellipsis"},
-    "widget.group.member_selection.dropdown.header" : {"font_family": "ProximaNovaRegular", "size": 12.0, "color": "fillColorPrimary"},
+    "widget.group.members.title" : {"font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.group.members.card.entry" : {"font_family": "ProximaNovaBold", "size": 12.0, "color": "white"},
+    "widget.group.members.search" : {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
+    "widget.group.members.selected_entry" : {"font_family": "ProximaNovaBold", "size": 18.0, "decoration": "underline"},
+    "widget.group.members.dropdown.item" : {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "white"},
+    "widget.group.members.dropdown.item.selected" : {"font_family": "ProximaNovaRegular", "size": 18.0, "overflow": "ellipsis"},
+    "widget.group.members.dropdown.header" : {"font_family": "ProximaNovaRegular", "size": 12.0, "color": "fillColorPrimary"},
 
     "panel.event_schedule.teb.selected" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
     "panel.event_schedule.teb.not_selected" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "fillColorPrimary"},

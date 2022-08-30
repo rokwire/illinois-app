@@ -1675,7 +1675,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
         children: [
           Row(
             children: [
-              Text("To: ", style: Styles().getTextStyle('widget.group.member_selection.title'),),
+              Text("To: ", style: Styles().getTextStyle('widget.group.members.title'),),
               Expanded(
                 child: _buildDropDown(),
               )
@@ -1685,7 +1685,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
             onTap: _onTapEdit,
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 8),
-              child: Text(selectedMembersText, style: Styles().getTextStyle("widget.group.member_selection.selected_entry"),),
+              child: Text(selectedMembersText, style: Styles().getTextStyle("widget.group.members.selected_entry"),),
             )
           ),
           Visibility(
@@ -1721,7 +1721,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
                     // style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.bold),
                     // value: _currentSelection,
                     items: _buildDropDownItems,
-                    hint: Text(_selectionText,  style: Styles().getTextStyle('widget.group.member_selection.title') ,),
+                    hint: Text(_selectionText,  style: Styles().getTextStyle('widget.group.members.title') ,),
                     onChanged: widget.enabled? (GroupMemberSelectionData? data) {
                       _onDropDownItemChanged(data);
                     } : null,
@@ -1744,7 +1744,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
               Expanded(child:
                 Container(color: Styles().colors!.fillColorPrimary,
                   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  child:Text("Select Recipient(s)", style:  Styles().getTextStyle('widget.group.member_selection.dropdown.item'),))
+                  child:Text("Select Recipient(s)", style:  Styles().getTextStyle('widget.group.members.dropdown.item'),))
           )
           ])))
     );
@@ -1771,7 +1771,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
           Expanded(
               child:Container(
                   padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: Text(title, maxLines: 2, style: Styles().getTextStyle('widget.group.member_selection.dropdown.item'))
+                  child: Text(title, maxLines: 2, style: Styles().getTextStyle('widget.group.members.dropdown.item'))
               ))
         ]
     );
@@ -1785,7 +1785,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
           Expanded(
             child:Container(
               padding: EdgeInsets.symmetric(horizontal: 5),
-              child: Text(title, maxLines: 2, style: Styles().getTextStyle('widget.group.member_selection.dropdown.item.selected') ,)
+              child: Text(title, maxLines: 2, style: Styles().getTextStyle('widget.group.members.dropdown.item.selected') ,)
           ))
       ]
     );
