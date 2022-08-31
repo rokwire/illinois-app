@@ -78,6 +78,7 @@ class FlexUI extends rokwire.FlexUI {
   bool get isSharingAvailable => hasFeature('sharing');
   bool get isPersonalizationAvailable => hasFeature('personalization');
   bool get isNotificationsAvailable => hasFeature('notifications');
+  bool get isPaymentInfornationAvailable => hasFeature('payment_information');
   bool get isAnalyticsAvailable => hasFeature('analytics');
 
   bool get isGiesAvailable => hasFeature('gies');
