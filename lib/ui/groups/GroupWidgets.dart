@@ -434,7 +434,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
       Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
       Expanded(child:
-      Text(widget.event?.timeDisplayString ?? '', style: Styles().getTextStyle("widget.card.detail.small_variant"))
+      Text(widget.event?.timeDisplayString ?? '', style: Styles().getTextStyle("widget.card.detail.small"))
       ),
     ],)),);
 
@@ -936,7 +936,7 @@ class _GroupCardState extends State<GroupCard> {
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(2))),
         child: Text(text,
-          style: Styles().getTextStyle("widget.card.heading"))));
+          style: Styles().getTextStyle("widget.card.heading.small"))));
   }
 
   Widget _buildHeadingWrapLabel(String text) {
@@ -983,7 +983,7 @@ class _GroupCardState extends State<GroupCard> {
           _timeUpdatedText,
           maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
           overflow: TextOverflow.ellipsis,
-          style: Styles().getTextStyle("widget.card.detail.small")
+          style: Styles().getTextStyle("widget.card.detail.small_variant")
     ));
   }
 
@@ -994,7 +994,7 @@ class _GroupCardState extends State<GroupCard> {
         : Localization().getStringEx('widget.group_card.members.label', 'members');
     return Container(
         child: Text('$count $membersLabel',
-            style: Styles().getTextStyle("widget.card.detail.small")));
+            style: Styles().getTextStyle("widget.card.detail.small_variant")));
   }
 
    void _loadGroupStats() {
