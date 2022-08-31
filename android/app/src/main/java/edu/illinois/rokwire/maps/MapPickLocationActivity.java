@@ -18,12 +18,9 @@ package edu.illinois.rokwire.maps;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -33,17 +30,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.mapsindoors.mapssdk.MPLocation;
-import com.mapsindoors.mapssdk.MapControl;
-import com.mapsindoors.mapssdk.MapsIndoors;
-import com.mapsindoors.mapssdk.errors.MIError;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
 import edu.illinois.rokwire.Constants;
@@ -52,11 +41,7 @@ import edu.illinois.rokwire.Utils;
 
 public class MapPickLocationActivity extends AppCompatActivity {
 
-    private static final String TAG = MapPickLocationActivity.class.getSimpleName();
-
-    private SupportMapFragment mapFragment;
     private GoogleMap googleMap;
-    private MapControl mapControl;
     private TextView locationInfoTextView;
     private Marker customLocationMarker;
     private Marker selectedMarker;
@@ -76,54 +61,6 @@ public class MapPickLocationActivity extends AppCompatActivity {
         updateLocationInfo(null);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (mapControl != null) {
-            mapControl.onStart();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mapControl != null) {
-            mapControl.onStop();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mapControl != null) {
-            mapControl.onResume();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mapControl != null) {
-            mapControl.onPause();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mapControl != null) {
-            mapControl.onDestroy();
-        }
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        if (mapControl != null) {
-            mapControl.onLowMemory();
-        }
-    }
-
     public void onSaveClicked(View view) {
         if (selectedMarker == null) {
             Utils.showDialog(this, getString(R.string.app_name),
@@ -132,17 +69,12 @@ public class MapPickLocationActivity extends AppCompatActivity {
                     getString(R.string.ok), null, null, false);
             return;
         }
-        String resultData = null;
+        String resultData;
         if (selectedMarker == customLocationMarker) {
             resultData = (String) selectedMarker.getTag();
         } else {
-            MPLocation location = mapControl.getLocation(selectedMarker);
-            if (location != null) {
-                resultData = String.format(Locale.getDefault(), Constants.LOCATION_PICKER_DATA_FORMAT,
-                        selectedMarker.getPosition().latitude, selectedMarker.getPosition().longitude,
-                        location.getFloor(), (selectedMarker.getSnippet() != null ? selectedMarker.getSnippet() : ""),
-                        location.getId(), location.getName());
-            }
+            resultData = String.format(Locale.getDefault(), Constants.LOCATION_PICKER_DATA_FORMAT,
+                    selectedMarker.getPosition().latitude, selectedMarker.getPosition().longitude);
         }
         Intent resultDataIntent = new Intent();
         resultDataIntent.putExtra("location", resultData);
@@ -169,14 +101,14 @@ public class MapPickLocationActivity extends AppCompatActivity {
                 initialLocation = Utils.Explore.optLocation(explore);
             }
         }
-        initialCameraPosition = Constants.DEFAULT_INITIAL_CAMERA_POSITION;
-        if (initialLocation != null) {
-            initialCameraPosition = Utils.Explore.optLatLng(initialLocation);
+        initialCameraPosition = Utils.Explore.optLatLng(initialLocation);
+        if (initialCameraPosition == null) {
+            initialCameraPosition = Constants.DEFAULT_INITIAL_CAMERA_POSITION;
         }
     }
 
     private void initMapFragment() {
-        mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment));
+        SupportMapFragment mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment));
         if (mapFragment != null) {
             mapFragment.getMapAsync(this::didGetMapAsync);
         }
@@ -185,122 +117,33 @@ public class MapPickLocationActivity extends AppCompatActivity {
     private void didGetMapAsync(GoogleMap map) {
         googleMap = map;
         googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialCameraPosition, Constants.INDOORS_BUILDING_ZOOM));
-        setupMapsIndoors();
-        loadInitialLocation();
-    }
-
-    private void setupMapsIndoors() {
-        mapControl = new MapControl(this);
-        mapControl.setGoogleMap(googleMap, mapFragment.getView());
-        mapControl.setOnMarkerClickListener(marker -> {
+        googleMap.setOnMarkerClickListener(marker -> {
             setSelectedLocationMarker(marker);
             return true;
         });
-        mapControl.setOnMapClickListener(this::onMapClicked);
-        mapControl.setOnFloorUpdateListener((building, i) -> onFloorUpdate());
-        mapControl.init(this::mapControlDidInit);
-    }
-
-    private void mapControlDidInit(MIError error) {
-        runOnUiThread(() -> {
-            if (error == null) {
-                mapControl.selectFloor(0);
-            } else {
-                Log.e(TAG, error.message);
-            }
-        });
+        googleMap.setOnMapClickListener(this::onMapClicked);
+        googleMap.setIndoorEnabled(true);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialCameraPosition, Constants.INDOORS_BUILDING_ZOOM));
+        loadInitialLocation();
     }
 
     private void loadInitialLocation() {
         if (initialLocation != null) {
-            String locationId = null;
-            Object locationIdObj = initialLocation.get("location_id");
-            if (locationIdObj instanceof String) {
-                locationId = (String) locationIdObj;
-            }
-            // MapsIndoors removed mapControl.getMarker(locationId) in version 3.x.x
-            MPLocation mpLocation = (locationId != null) ? MapsIndoors.getLocationById(locationId) : null;
-            int floorIndex = Utils.Explore.optFloor(initialLocation);
-            selectedMarker = createCustomLocationMarker(initialLocation);
-            mapControl.selectFloor(floorIndex);
-            updateLocationInfo(selectedMarker);
-        }
-    }
-
-    private boolean onMapClicked(@NonNull LatLng latLng, @Nullable List<MPLocation> list) {
-        runOnUiThread(() -> {
-            if ((selectedMarker != null) || (customLocationMarker != null)) {
-                clearCustomLocationMarker();
-                setSelectedLocationMarker(null);
-            } else {
-                Marker customMarker = createCustomLocationMarker(latLng);
-                setSelectedLocationMarker(customMarker);
-            }
-        });
-        return true;
-    }
-
-    private void onFloorUpdate() {
-        updateCustomLocationMarker();
-        updateSelectedMarker();
-    }
-
-    private void updateCustomLocationMarker() {
-        if (customLocationMarker == null) {
-            return;
-        }
-        int floorIndex;
-        Object userDataObj = customLocationMarker.getTag();
-        if (userDataObj instanceof Integer) {
-            floorIndex = (Integer) userDataObj;
-        } else {
-            floorIndex = getFloorIndexFromMarkerTag(userDataObj);
-        }
-        boolean markerVisible = (floorIndex == mapControl.getCurrentFloorIndex());
-        if (markerVisible && (!customLocationMarker.isInfoWindowShown())) {
-            customLocationMarker.setVisible(true);
-            customLocationMarker.showInfoWindow();
-        } else if (!markerVisible && (customLocationMarker.isInfoWindowShown())) {
-            customLocationMarker.hideInfoWindow();
-            customLocationMarker.setVisible(false);
-        }
-    }
-
-    private int getFloorIndexFromMarkerTag(Object markerTag) {
-        if (!(markerTag instanceof String)) {
-            return 0;
-        }
-        JSONObject tagJson = null;
-        try {
-            tagJson = new JSONObject((String) markerTag);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Integer floorIndex = null;
-        if (tagJson != null) {
-            floorIndex = tagJson.optInt("floor", 0);
-        }
-        return (floorIndex != null) ? floorIndex : 0;
-    }
-
-    private void updateSelectedMarker() {
-        if (selectedMarker == null) {
-            return;
-        }
-        int floorIndex = 0;
-        if (selectedMarker == customLocationMarker) {
-            floorIndex = getFloorIndexFromMarkerTag(customLocationMarker);
-        } else {
-            MPLocation location = mapControl.getLocation(selectedMarker);
-            if (location != null) {
-                floorIndex = location.getFloor();
+            LatLng latLng = Utils.Explore.optLatLng(initialLocation);
+            if (latLng != null) {
+                selectedMarker = createCustomLocationMarker(initialLocation);
+                updateLocationInfo(selectedMarker);
             }
         }
-        if (floorIndex == mapControl.getCurrentFloorIndex()) {
-            selectedMarker.showInfoWindow();
+    }
+
+    private void onMapClicked(LatLng latLng) {
+        if ((selectedMarker != null) || (customLocationMarker != null)) {
+            clearCustomLocationMarker();
+            setSelectedLocationMarker(null);
         } else {
-            selectedMarker.hideInfoWindow();
+            Marker customMarker = createCustomLocationMarker(latLng);
+            setSelectedLocationMarker(customMarker);
         }
     }
 
@@ -311,6 +154,9 @@ public class MapPickLocationActivity extends AppCompatActivity {
         Object nameObj = locationMap.get("name");
         if (nameObj instanceof String) {
             locationName = (String) nameObj;
+        }
+        if (Utils.Str.isEmpty(locationName)) {
+            locationName = String.format(Locale.getDefault(), "%f, %f", latLng.latitude, latLng.longitude);
         }
         String locationDesc = null;
         Object descrObj = locationMap.get("description");
@@ -323,7 +169,7 @@ public class MapPickLocationActivity extends AppCompatActivity {
         markerOptions.title(locationName);
         markerOptions.snippet(locationDesc);
         customLocationMarker = googleMap.addMarker(markerOptions);
-        String tag = String.format(Locale.getDefault(), Constants.LOCATION_PICKER_DATA_FORMAT, latLng.latitude, latLng.longitude, Utils.Explore.optFloor(locationMap), locationDesc, "", locationName);
+        String tag = String.format(Locale.getDefault(), Constants.LOCATION_PICKER_DATA_FORMAT, latLng.latitude, latLng.longitude);
         customLocationMarker.setTag(tag);
         customLocationMarker.showInfoWindow();
         return customLocationMarker;
@@ -342,8 +188,7 @@ public class MapPickLocationActivity extends AppCompatActivity {
         markerOptions.title(title);
         customLocationMarker = googleMap.addMarker(markerOptions);
         String userData = String.format(Locale.getDefault(), Constants.LOCATION_PICKER_DATA_FORMAT,
-                latLng.latitude, latLng.longitude, mapControl.getCurrentFloorIndex(),
-                "", "", "");//empty "name", "description" and empty "location_id"
+                latLng.latitude, latLng.longitude);
         customLocationMarker.setTag(userData);
         customLocationMarker.showInfoWindow();
         return customLocationMarker;
@@ -375,8 +220,7 @@ public class MapPickLocationActivity extends AppCompatActivity {
     private void updateLocationInfo(Marker marker) {
         String locationInfoText;
         if (marker != null) {
-            MPLocation location = mapControl.getLocation(marker);
-            String locationName = (location != null) ? location.getName() : marker.getTitle();
+            String locationName = marker.getTitle();
             locationInfoText = getString(R.string.location_label, locationName);
         } else {
             locationInfoText = getString(R.string.select_location_msg);

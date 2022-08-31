@@ -35,7 +35,6 @@
 #import "Security+UIUCUtils.h"
 
 #import <GoogleMaps/GoogleMaps.h>
-#import <MapsIndoors/MapsIndoors.h>
 #import <Firebase/Firebase.h>
 #import <ZXingObjC/ZXingObjC.h>
 
@@ -68,7 +67,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 @property (nonatomic) LaunchScreenView *launchScreenView;
 
 // Init Keys
-@property (nonatomic) NSDictionary* keys;
+@property (nonatomic) NSDictionary* config;
 
 // Interface Orientations
 @property (nonatomic) NSSet *supportedInterfaceOrientations;
@@ -82,17 +81,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 	__weak typeof(self) weakSelf = self;
 	
-//	Configure the Meridian SDK
-//	MRConfig *config = [MRConfig new];
-//	config.domainConfig.domainRegion = kMeridianDomainRegion;
-//	config.applicationToken = kMeridianAppToken;
-//	[Meridian configure:config];
-
 //	Initialize Google Maps SDK
 //	[GMSServices provideAPIKey:kGoogleAPIKey];
-
-//	Initialize Maps Indoors SDK
-//	[MapsIndoors provideAPIKey:kMapsIndoorsAPIKey googleAPIKey:kGoogleAPIKey];
 
 	// Initialize Firebase SDK
 	[FIRApp configure];
@@ -211,6 +201,16 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 }
 
+#pragma mark Config
+
+- (NSDictionary*)secretKeys {
+	return [_config inaDictForKey:@"secretKeys"];
+}
+
+- (NSDictionary*)thirdPartyServices {
+	return [_config inaDictForKey:@"thirdPartyServices"];
+}
+
 #pragma mark Flutter APIs
 
 - (void)handleFlutterAPIFromCall:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -245,28 +245,12 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 }
 
 - (void)handleInitWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
-	self.keys = [parameters inaDictForKey:@"keys"];
-	
-	// Configure the Meridian SDK
-	NSString *meridianApplicationToken = [_keys uiucConfigStringForPathKey:@"meridian.app_token"];
-	int meridianDomainRegion = [_keys uiucConfigIntForPathKey:@"meridian.domain_region"];
-	if (meridianApplicationToken != nil) {
-		MRConfig *config = [MRConfig new];
-		config.applicationToken = meridianApplicationToken;
-		config.domainConfig.domainRegion = meridianDomainRegion;
-		[Meridian configure:config];
-	}
+	self.config = [parameters inaDictForKey:@"config"];
 	
 	// Initialize Google Maps SDK
-	NSString *googleMapsAPIKey = [_keys uiucConfigStringForPathKey:@"google.maps.api_key"];
+	NSString *googleMapsAPIKey = [self.secretKeys uiucConfigStringForPathKey:@"google.maps.api_key"];
 	if (0 < googleMapsAPIKey.length) {
 		[GMSServices provideAPIKey:googleMapsAPIKey];
-	}
-
-	// Initialize Maps Indoors SDK
-	NSString *mapsIndoorsAPIKey = [_keys uiucConfigStringForPathKey:@"mapsindoors.api_key"];
-	if ((0 < mapsIndoorsAPIKey.length) && (0 < googleMapsAPIKey.length)) {
-		[MapsIndoors provideAPIKey:mapsIndoorsAPIKey googleAPIKey:googleMapsAPIKey];
 	}
 
 	result(@(YES));
