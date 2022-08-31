@@ -621,7 +621,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   void logEvent(Map<String, dynamic> event, { List<String> defaultAttributes = DefaultAttributes, int? timestamp }) {
     NotificationService().notify(notifyEvent, event);
 
-    if (Auth2().privacyMatch(2)) {
+    if (FlexUI().isAnalyticsAvailable) {
 
       event[LogEventPageName] = _currentPageName;
 
