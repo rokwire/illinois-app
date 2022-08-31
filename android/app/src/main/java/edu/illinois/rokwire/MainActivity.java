@@ -30,13 +30,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.arubanetworks.meridian.Meridian;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-import com.mapsindoors.mapssdk.MapsIndoors;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -105,10 +103,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    public HashMap getConfig() {
-        return config;
-    }
-
     public HashMap getSecretKeys() {
         return Utils.Map.getMapValueForKey(config, "secretKeys");
     }
@@ -171,43 +165,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private void initWithParams(Object configObj) {
         this.config = (configObj instanceof HashMap) ? ((HashMap)configObj) : null;
-        HashMap secretKeys = this.getSecretKeys();
-        if (secretKeys == null) {
-            return;
-        }
-
-        // Google Maps cannot be initialized dynamically. Its api key has to be in AndroidManifest.xml file.
-        // Read it from config for MapsIndoors.
-        String googleMapsApiKey = Utils.Map.getValueFromPath(secretKeys, "google.maps.api_key", null);
-
-        // MapsIndoors
-        String mapsIndoorsApiKey = Utils.Map.getValueFromPath(secretKeys, "mapsindoors.api_key", null);
-        if (!Utils.Str.isEmpty(mapsIndoorsApiKey)) {
-            MapsIndoors.initialize(
-                    getApplicationContext(),
-                    mapsIndoorsApiKey
-            );
-        }
-        if (!Utils.Str.isEmpty(googleMapsApiKey)) {
-            MapsIndoors.setGoogleAPIKey(googleMapsApiKey);
-        }
-
-        // Meridian
-        try {
-            String meridianEditorToken = Utils.Map.getValueFromPath(secretKeys, "meridian.app_token", null);
-            Meridian.DomainRegion[] domainRegions = Meridian.DomainRegion.values();
-            int domainRegionIndex = Utils.Map.getValueFromPath(secretKeys, "meridian.domain_region", 0);
-            Meridian.DomainRegion domainRegion = (domainRegionIndex < domainRegions.length) ? domainRegions[domainRegionIndex] : Meridian.DomainRegion.DomainRegionDefault;
-            Meridian.configure(this, meridianEditorToken);
-            Meridian.getShared().setDomainRegion(domainRegion);
-            //if (!Utils.Str.isEmpty(meridianEditorToken)) {
-            //    Meridian.getShared().setEditorToken(meridianEditorToken);
-            //}
-        }
-        catch (Exception e)
-        {
-            Log.d(TAG, "Failed to generate uuid");
-        }
     }
 
     private void launchMapsDirections(Object explore, Object options) {
