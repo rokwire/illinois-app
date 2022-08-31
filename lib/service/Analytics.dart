@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/ToDo.dart' as wellness;
 import 'package:illinois/model/wellness/WellnessRing.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/polls.dart';
@@ -50,8 +51,6 @@ import 'package:uuid/uuid.dart';
 import 'package:notification_permissions/notification_permissions.dart' as Notifications;
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
-
-
 
 class Analytics extends rokwire.Analytics implements NotificationsListener {
 
@@ -576,7 +575,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   }
 
   Map<String, dynamic>? get _location {
-    Position? location = Auth2().privacyMatch(3) ? LocationServices().lastLocation : null;
+    Position? location = FlexUI().isLocationServicesAvailable ? LocationServices().lastLocation : null;
     return (location != null) ? {
       'latitude': location.latitude,
       'longitude': location.longitude,
@@ -622,7 +621,7 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   void logEvent(Map<String, dynamic> event, { List<String> defaultAttributes = DefaultAttributes, int? timestamp }) {
     NotificationService().notify(notifyEvent, event);
 
-    if (Auth2().privacyMatch(2)) {
+    if (FlexUI().isAnalyticsAvailable) {
 
       event[LogEventPageName] = _currentPageName;
 

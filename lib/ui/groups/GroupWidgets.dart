@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
@@ -53,6 +54,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:illinois/service/Auth2.dart' as illinois;
 import 'package:illinois/service/Polls.dart' as illinois;
 
 /////////////////////////////////////
@@ -403,7 +405,10 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+    ]);
     super.initState();
   }
 
@@ -418,7 +423,10 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {});
+      setStateIfMounted(() {});
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
     }
   }
 
@@ -453,7 +461,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
       Align(alignment: Alignment.topRight, child:
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
             Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              Visibility(visible: Auth2().canFavorite,
+              Visibility(visible: illinois.Auth2().canFavorite,
                 child: Semantics(
                   label: isFavorite ? Localization().getStringEx(
                       'widget.card.button.favorite.off.title',
@@ -1017,7 +1025,7 @@ class _GroupCardState extends State<GroupCard> {
 
   void _onTapCard(BuildContext context) {
     Analytics().logSelect(target: "Group: ${widget.group?.title}");
-    if (Auth2().privacyMatch(4)) {
+    if (FlexUI().isAuthenticationAvailable) {
       if (Auth2().isOidcLoggedIn) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(group: widget.group)));
       }

@@ -2,10 +2,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
@@ -30,6 +32,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
     super.initState();
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
     ]);
     _isFavorite = Auth2().isFavorite(GuideFavorite(id: guideEntryId));
   }
@@ -45,9 +48,12 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {
+      setStateIfMounted(() {
         _isFavorite = Auth2().isFavorite(GuideFavorite(id: guideEntryId));
       });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
     }
   }
 

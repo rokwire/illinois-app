@@ -17,10 +17,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/RecentItem.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/RecentItems.dart';
 import 'package:illinois/ui/laundry/LaundryRequestIssuePanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -59,7 +61,10 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+    ]);
     RecentItems().addRecentItem(RecentItem.fromSource(widget.room));
     Analytics().logMapShow();
     _load();
@@ -318,8 +323,11 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       if (mounted) {
-        setState(() {});
+        setStateIfMounted(() {});
       }
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
     }
   }
 }

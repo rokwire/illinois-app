@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -51,6 +53,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     NotificationService().subscribe(this, [
       Guide.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
     ]);
     _guideEntry = Guide().entryById(widget.guideEntryId);
     _isFavorite = Auth2().isFavorite(GuideFavorite(id: widget.guideEntryId));
@@ -69,14 +72,17 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
   @override
   void onNotification(String name, dynamic param) {
     if (name == Guide.notifyChanged) {
-      setState(() {
+      setStateIfMounted(() {
         _guideEntry = Guide().entryById(widget.guideEntryId);
       });
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {
+      setStateIfMounted(() {
         _isFavorite = Auth2().isFavorite(GuideFavorite(id: widget.guideEntryId));
       });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted((){});
     }
   }
 

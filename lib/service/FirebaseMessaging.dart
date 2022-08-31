@@ -19,6 +19,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -156,6 +157,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
       Auth2UserPrefs.notifyInterestsChanged,
       Auth2.notifyProfileChanged,
       Auth2.notifyUserDeleted,
+      FlexUI.notifyChanged,
       AppLivecycle.notifyStateChanged,
       Inbox.notifyInboxUserInfoChanged
     ]);
@@ -192,6 +194,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (name == Auth2.notifyUserDeleted) {
       _updateSubscriptions();
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateNotifySettingsSubscriptions();
     }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param); 
@@ -389,7 +394,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   bool? get notificationsPaused {return _getStoredSetting(_pauseNotificationKey,);}
 
   bool get _notifySettingsAvailable  {
-    return Auth2().privacyMatch(4);
+    return FlexUI().isNotificationsAvailable;
   }
 
   bool? _getNotifySetting(String name) {

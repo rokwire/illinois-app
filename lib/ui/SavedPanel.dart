@@ -22,15 +22,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Favorite.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:rokwire_plugin/service/assets.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
@@ -87,6 +89,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
+      FlexUI.notifyChanged,
       Assets.notifyChanged,
       Guide.notifyChanged,
     ]);
@@ -113,6 +116,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
     else if (name == Auth2.notifyLoginChanged) {
       _refreshFavorites(showProgress: false);
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _requestPermissionsStatus();
+      setStateIfMounted(() { });
     }
     else if (name == Assets.notifyChanged) {
       _refreshFavorites(favoriteCategories: {Dining.favoriteKeyName}, showProgress: false);
@@ -445,7 +452,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _requestPermissionsStatus(){
-    if (Platform.isIOS && Auth2().privacyMatch(4)) {
+    if (Platform.isIOS && FlexUI().isNotificationsAvailable) {
 
       NotificationPermissions.getNotificationPermissionStatus().then((PermissionStatus status) {
         if ((status == PermissionStatus.unknown) && mounted) {

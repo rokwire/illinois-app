@@ -16,10 +16,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -69,6 +69,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       NativeCommunicator.notifyMapSelectExplore,
       NativeCommunicator.notifyMapClearExplore,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
+      FlexUI.notifyChanged,
     ]);
 
     LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
@@ -116,12 +117,15 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       _onNativeMapClearExplore(param['mapId']);
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      _updateOnPrivacyLevelChanged();
+      _updateLocationServicesStatus();
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateLocationServicesStatus();
     }
   }
 
-  void _updateOnPrivacyLevelChanged() {
-    if (Auth2().privacyMatch(2)) {
+  void _updateLocationServicesStatus() {
+    if (FlexUI().isLocationServicesAvailable) {
       LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _enableMyLocationOnMap();
@@ -133,7 +137,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   void _onLocationServicesStatusChanged(LocationServicesStatus? status) {
-    if (Auth2().privacyMatch(2)) {
+    if (FlexUI().isLocationServicesAvailable) {
       _locationServicesStatus = status;
       _enableMyLocationOnMap();
     }
@@ -460,7 +464,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   bool _userLocationEnabled() {
-    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
+    return FlexUI().isLocationServicesAvailable && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
   }
 
   void _placeLaundryRoomsOnMap(List<LaundryRoom>? rooms) {

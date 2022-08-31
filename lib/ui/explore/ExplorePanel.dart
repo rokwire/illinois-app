@@ -31,7 +31,7 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
 import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/flex_ui.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Storage.dart';
@@ -234,7 +234,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
 
   void _initExploreItems() {
-    if (Auth2().privacyMatch(2)) {
+    if (FlexUI().isLocationServicesAvailable) {
       LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
@@ -293,7 +293,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   bool _userLocationEnabled() {
-    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
+    return FlexUI().isLocationServicesAvailable && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
   }
 
   void _initFilters() {
@@ -1679,9 +1679,10 @@ class ExplorePanelState extends State<ExplorePanel>
       _loadExplores();
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      _onPrivacyLevelChanged();
+      _updateLocationServicesStatus();
     }
     else if (name == FlexUI.notifyChanged) {
+      _updateLocationServicesStatus();
       _updateExploreItems();
     }
     else if (name == Styles.notifyChanged){
@@ -1706,8 +1707,8 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
-  void _onPrivacyLevelChanged() {
-    if (Auth2().privacyMatch(2)) {
+  void _updateLocationServicesStatus() {
+    if (FlexUI().isLocationServicesAvailable) {
       LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _updateExploreItems();
@@ -1719,7 +1720,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _onLocationServicesStatusChanged(LocationServicesStatus? status) {
-    if (Auth2().privacyMatch(2)) {
+    if (FlexUI().isLocationServicesAvailable) {
       _locationServicesStatus = status;
       _updateExploreItems();
     }

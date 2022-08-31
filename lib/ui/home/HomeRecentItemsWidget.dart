@@ -25,6 +25,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -40,7 +41,7 @@ import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/ext/RecentItem.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/RecentItems.dart';
@@ -315,7 +316,10 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+    ]);
     super.initState();
   }
 
@@ -329,7 +333,8 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+    if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
+        (name == FlexUI.notifyChanged)) {
       if (mounted){
         setState(() {});
       }

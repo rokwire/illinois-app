@@ -375,7 +375,7 @@ class _IDCardPanelState extends State<IDCardPanel>
     return ((qrCodeContent != null) && (0 < qrCodeContent.length)) ? qrCodeContent : Auth2().authCard?.uin;
   }
 
-  bool get _hasBuildingAccess => FlexUI().hasFeature('safer');
+  bool get _hasBuildingAccess => FlexUI().isSaferAvailable;
 
 }
 
