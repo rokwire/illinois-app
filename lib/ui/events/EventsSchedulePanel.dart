@@ -1083,7 +1083,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                           Expanded(
                             child: Text(
                               widget.event!.title!,
-                              style: Styles().getTextStyle('widget.card.title.large'),
+                              style: Styles().getTextStyle('widget.title.large'),
                             ),
                           ),
                           Visibility(

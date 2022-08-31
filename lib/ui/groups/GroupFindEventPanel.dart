@@ -578,7 +578,7 @@ class _EventCardState extends State<_EventCard>{
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(StringUtils.isNotEmpty(widget.event.exploreTitle) ? widget.event.exploreTitle! : "",
-                            style: Styles().getTextStyle('widget.card.title.large')
+                            style: Styles().getTextStyle('widget.title.large')
                           ),
                           Container(height: 4,),
                           _exploreTimeDetail()

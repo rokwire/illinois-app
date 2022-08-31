@@ -21,6 +21,7 @@
     "textSurface"                           :"#404040",
     "textSurfaceTransparent15"              :"#26404040",
     "textSurfaceAccent"                     :"#404040",
+    "textVariant"                                 : "#ff494949",
     "textBackground"                        :"#404040",
     "textbackgroundVariant"                 :"#404040",
 
@@ -80,23 +81,27 @@
     "header_bar": { "font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "textColorPrimary"},
 
     "widget.heading.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "white"},
+    "widget.heading.small": { "font_family": "ProximaNovaBold", "size": 12.0, "color": "white"},
+    "widget.message.large": {"font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.title.large": { "font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.title.small" : {"font_family": "ProximaNovaBold", "size": 12.0, "color": "fillColorPrimary"},
+    "widget.detail.fat": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "textBackground"},
     "widget.detail.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
     "widget.detail.small": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textBackground"},
+    "widget.description.regular": { "font_family": "ProximaNovaMedium", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.description.small": { "font_family": "ProximaNovaMedium", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.description.small_underline": { "font_family": "ProximaNovaMedium", "size": 14.0, "decoration": "underline"},
+    "widget.description.small_variant": { "font_family": "ProximaNovaBold", "size": 14.0, "color": "fillColorPrimary"},
 
     "widget.dialog.button.close" : {"font_family": "ProximaNovaMedium", "size": 50.0, "color": "white"},
+    "widget.dialog.message.medium" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "white"},
     "widget.dialog.message.regular" : {"font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "white"},
     "widget.dialog.message.large": { "font_family": "ProximaNovaMedium", "size": 24.0, "color": "white"},
 
-
-    "widget.card.heading.small": { "font_family": "ProximaNovaBold", "size": 12.0, "color": "white"},
-    "widget.card.title.large": { "font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.card.detail.regular_variant": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackgroundVariant"},
     "widget.card.title.regular": { "font_family": "ProximaNovaBold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.card.title.regular_variant": { "font_family": "ProximaNovaExtraBold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.card.title.small": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
-    "widget.card.description.small": { "font_family": "ProximaNovaMedium", "size": 14.0, "color": "fillColorPrimary"},
-    "widget.card.description.small_underline": { "font_family": "ProximaNovaMedium", "size": 14.0, "decoration": "underline"},
-    "widget.card.description.small_variant": { "font_family": "ProximaNovaBold", "size": 14.0, "color": "fillColorPrimary"},
-    "widget.card.detail.regular_variant": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackgroundVariant"},
     "widget.card.detail.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
     "widget.card.detail.small_variant": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textSurface"},
     "widget.card.detail.small_variant2": { "font_family": "ProximaNovaMedium", "size": 14.0, "color": "textBackground"},
@@ -141,7 +146,14 @@
     "panel.event_schedule.title" : {"font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary"},
     "panel.event_schedule.category" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
     "panel.event_schedule.map.description" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "blackTransparent038"},
-    "panel.event_schedule.search.edit" : {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"}
+    "panel.event_schedule.search.edit" : {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
+
+    "panel.group.title.lage" : {"font_family": "ProximaNovaExtraBold", "size": 32.0, "color": "fillColorPrimary"},
+    "panel.group.button.leave.title" : {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_thickness" : 1.5, "decoration_color":  "fillColorSecondary"},
+    "panel.group.button.show_older.title" : {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline"},
+    "panel.group.detail.fat" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "textVariant"},
+    "panel.group.detail.tag.heading" : {"font_family": "ProximaNovaBold", "size": 12.0, "color": "textSurface"},
+    "panel.group.detail.tag.title" : {"font_family": "ProximaNovaRegular"}
   },
   "usage" : " Styles().getTextStyle('') "
 }

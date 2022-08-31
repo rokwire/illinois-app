@@ -428,7 +428,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     List<Widget> content = [
       Padding(padding: EdgeInsets.only(bottom: 8, right: 8), child:
         Container(constraints: BoxConstraints(minHeight: 64), child:
-          Text(widget.event?.title ?? '',  style:Styles().getTextStyle("widget.card.title.large")),
+          Text(widget.event?.title ?? '',  style:Styles().getTextStyle("widget.title.large")),
       )),
     ];
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
@@ -835,7 +835,7 @@ class _GroupCardState extends State<GroupCard> {
                     Row(children: [
                       Expanded(child:
                         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style:  Styles().getTextStyle("widget.card.title.large"))
+                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style:  Styles().getTextStyle("widget.title.large"))
                         )
                       )
                     ]),
@@ -936,7 +936,7 @@ class _GroupCardState extends State<GroupCard> {
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(2))),
         child: Text(text,
-          style: Styles().getTextStyle("widget.card.heading.small"))));
+          style: Styles().getTextStyle("widget.heading.small"))));
   }
 
   Widget _buildHeadingWrapLabel(String text) {
@@ -1039,7 +1039,7 @@ class _GroupCardState extends State<GroupCard> {
     String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
     String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
 
-    return RichText(text: TextSpan(style: Styles().getTextStyle('"widget.card.description.small_variant'), children: [
+    return RichText(text: TextSpan(style: Styles().getTextStyle('"widget.description.small_variant'), children: [
       TextSpan(text: privacyMsgStart),
       WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget()),
       TextSpan(text: privacyMsgEnd)
@@ -1137,11 +1137,11 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
                                 child: Text(StringUtils.ensureNotEmpty(visibleRepliesCount.toString()),
-                                    style: Styles().getTextStyle('widget.card.description.small'))),
+                                    style: Styles().getTextStyle('widget.description.small'))),
                             Padding(
                                 padding: EdgeInsets.only(left: 8),
                                 child: Text(StringUtils.ensureNotEmpty(repliesLabel),
-                                    style: Styles().getTextStyle('widget.card.description.small')))
+                                    style: Styles().getTextStyle('widget.description.small')))
                           ])),
                     ]),
                     Row(
@@ -1191,7 +1191,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               padding: EdgeInsets.only(right: 6),
                               child:Text(StringUtils.ensureNotEmpty(memberName),
                                 textAlign: TextAlign.left,
-                                style: Styles().getTextStyle('widget.card.description.small')),
+                                style: Styles().getTextStyle('widget.description.small')),
                           )),
                           Expanded(
                             flex: 2,
@@ -1200,7 +1200,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                               child: Text(StringUtils.ensureNotEmpty(widget.post?.displayDateTime),
                                 semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
                                 textAlign: TextAlign.right,
-                                style: Styles().getTextStyle('widget.card.description.small'))),
+                                style: Styles().getTextStyle('widget.description.small'))),
                           )),
                         ],
                       )
@@ -1362,13 +1362,13 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                           child: Container(
                             child: Semantics(child: Text(StringUtils.ensureNotEmpty(widget.reply?.displayDateTime),
                                 semanticsLabel: "Updated ${widget.reply?.displayDateTime ?? ""} ago",
-                                style: Styles().getTextStyle('widget.card.description.small'))),)),
+                                style: Styles().getTextStyle('widget.description.small'))),)),
                       Visibility(
                         visible: isRepliesLabelVisible,
                         child: Expanded(child: Container(
                           child: Semantics(child: Text("$visibleRepliesCount $repliesLabel",
                               textAlign: TextAlign.right,
-                              style: Styles().getTextStyle('widget.card.description.small_underline')
+                              style: Styles().getTextStyle('widget.description.small_underline')
                         ))),
                       ))
                 ],),)))
@@ -2238,7 +2238,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
                     borderRadius: BorderRadius.circular(24.0),
                   ),
                   child: Center(
-                    child: Text(title, style: Styles().getTextStyle("widget.card.description.small"),),
+                    child: Text(title, style: Styles().getTextStyle("widget.description.small"),),
                   ),
                 ),
                 Visibility(visible: loading,
