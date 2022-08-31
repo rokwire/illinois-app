@@ -15,10 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -40,7 +42,10 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+    ]);
     super.initState();
   }
 
@@ -55,7 +60,10 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {});
+      setStateIfMounted(() {});
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
     }
   }
 

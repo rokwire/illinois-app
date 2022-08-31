@@ -26,7 +26,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -1047,7 +1047,10 @@ class EventScheduleCard extends StatefulWidget {
 class _EventScheduleCardState extends State<EventScheduleCard> implements NotificationsListener {
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+    ]);
     super.initState();
   }
 
@@ -1062,7 +1065,10 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {});
+      setStateIfMounted(() {});
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
     }
   }
 

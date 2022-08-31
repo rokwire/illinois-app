@@ -22,10 +22,11 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:rokwire_plugin/model/group.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -926,13 +927,15 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
       _updateCurrentLocation();
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      _updateCurrentLocation();
-    }
-    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
       _updateCurrentLocation();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {});
+      setStateIfMounted(() {});
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
+      _updateCurrentLocation();
     }
   }
 }

@@ -8,6 +8,7 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -260,7 +261,10 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> implements Notificati
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+    ]);
     super.initState();
   }
 
@@ -275,7 +279,10 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> implements Notificati
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {});
+      setStateIfMounted(() {});
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
     }
   }
 

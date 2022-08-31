@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -10,7 +11,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -66,7 +67,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       setState(() {});
     });
 
-    NotificationService().subscribe(this, [Groups.notifyGroupEventsUpdated]);
+    NotificationService().subscribe(this, [
+      Groups.notifyGroupEventsUpdated,
+      FlexUI.notifyChanged,
+    ]);
     super.initState();
   }
 
@@ -757,11 +761,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   void onNotification(String name, param) {
     if (name == Groups.notifyGroupEventsUpdated) {
       Events().getEventById(_event?.eventId).then((event) {
-        setState(() {
+        setStateIfMounted(() {
           if (event != null)
             event = _event;
         });
       });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() { });
     }
   }
 }

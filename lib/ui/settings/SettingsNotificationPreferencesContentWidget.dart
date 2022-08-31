@@ -19,8 +19,8 @@ import 'dart:io';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -44,6 +44,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     NotificationService().subscribe(this, [
       AppLivecycle.notifyStateChanged,
       FirebaseMessaging.notifySettingUpdated,
+      FlexUI.notifyChanged,
     ]);
 
     _checkNotificationsEnabled();
@@ -331,8 +332,8 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
 //    FirebaseMessaging().notifyDiningSpecials = !FirebaseMessaging().notifyDiningSpecials;
 //  }
 
-  bool get _notificationsEnabled{
-    return _notificationsAuthorized && _matchPrivacyLevel;
+  bool get _notificationsEnabled {
+    return _notificationsAuthorized && FlexUI().isPersonalizationAvailable;
   }
 
   bool get _athleticsSubNotificationsEnabled {
@@ -347,10 +348,6 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     return _notificationsEnabled && !FirebaseMessaging().notificationsPaused!;
   }
 
-  bool get _matchPrivacyLevel{
-    return Auth2().privacyMatch(4);
-  }
-
   String? get _notificationsStatus{
     return _notificationsEnabled?Localization().getStringEx("panel.settings.notifications.label.status.enabled", "Enabled"): Localization().getStringEx("panel.settings.notifications.label.status.disabled", "Disabled");
   }
@@ -362,6 +359,10 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
         _checkNotificationsEnabled();
       }
     } else if (name == FirebaseMessaging.notifySettingUpdated) {
+      if (mounted) {
+        setState(() {});
+      }
+    } else if (name == FlexUI.notifyChanged) {
       if (mounted) {
         setState(() {});
       }
