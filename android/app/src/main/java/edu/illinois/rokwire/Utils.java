@@ -304,6 +304,7 @@ public class Utils {
         public static MarkerOptions constructMarkerOptions(Context context, Object markerRawObject, View markerLayoutView, View markerGroupLayoutView, IconGenerator iconGenerator) {
             return constructMarkerOptions(context, markerRawObject, null, markerLayoutView, markerGroupLayoutView, iconGenerator);
         }
+
         public static MarkerOptions constructMarkerOptions(Context context, Object markerRawObject, LatLng location, View markerLayoutView, View markerGroupLayoutView, IconGenerator iconGenerator) {
             if (markerRawObject == null || markerLayoutView == null || markerGroupLayoutView == null || iconGenerator == null) {
                 return null;

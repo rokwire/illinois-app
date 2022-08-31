@@ -16,8 +16,11 @@
 
 package edu.illinois.rokwire.navigation.model;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.illinois.rokwire.Utils;
@@ -33,7 +36,19 @@ public class NavPolyline {
         return points;
     }
 
-    public List<NavCoord> getCoordinates() {
+    public List<NavCoord> getNavCoordinates() {
         return NavCoord.createListFromEncodedString(points);
+    }
+
+    public List<LatLng> getLatLngCoordinates() {
+        List<NavCoord> coordinates = getNavCoordinates();
+        if (coordinates == null) {
+            return null;
+        }
+        List<LatLng> latLngCoordinates = new ArrayList<>();
+        for (NavCoord navCoord : coordinates) {
+            latLngCoordinates.add(navCoord.toLatLng());
+        }
+        return latLngCoordinates;
     }
 }

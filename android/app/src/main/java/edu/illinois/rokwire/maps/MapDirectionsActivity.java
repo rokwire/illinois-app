@@ -39,7 +39,9 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -105,6 +107,9 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
     private int currentLegIndex = 0;
     private int currentStepIndex = -1;
     private boolean buildRouteAfterInitialization;
+    private Polyline segmentPolyline;
+    private Marker segmentStartMarker;
+    private Marker segmentEndMarker;
 
     //Navigation UI
     private static final String TRAVEL_MODE_PREFS_KEY = "directions.travelMode";
@@ -402,12 +407,13 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
             routePolyline.remove();
             routePolyline = null;
         }
+        removeMarker(segmentStartMarker);
+        segmentStartMarker = null;
+        removeMarker(segmentEndMarker);
+        segmentEndMarker = null;
+        removePolyline(segmentPolyline);
+        segmentPolyline = null;
         routeStepCoordCounts = null;
-        //TBD: renderer
-//        if (mpDirectionsRenderer != null) {
-//            mpDirectionsRenderer.clear();
-//            mpDirectionsRenderer = null;
-//        }
         navStatus = NavStatus.UNKNOWN;
         navAutoUpdate = false;
 
@@ -468,8 +474,6 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
                 moveTo(currentLegIndex, currentStepIndex);
             } else {
                 navStatus = NavStatus.START;
-                //TBD: renderrer
-//                mpDirectionsRenderer.clear();
             }
         } else if (navStatus == NavStatus.FINISHED) {
             navStatus = NavStatus.PROGRESS;
@@ -503,8 +507,6 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
                 moveTo(currentLegIndex, currentStepIndex);
             } else {
                 navStatus = NavStatus.FINISHED;
-                //TBD renderer
-//                mpDirectionsRenderer.clear();
                 notifyRouteFinish();
             }
         } else if (navStatus == NavStatus.FINISHED) {/*Do nothing*/}
@@ -585,7 +587,6 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
         }
         destinationLatLng = Utils.Explore.optLatLng(exploreLocation);
         if (destinationLatLng != null) {
-            Integer floor = Utils.Explore.optFloor(exploreLocation);
             return new NavCoord(destinationLatLng.latitude, destinationLatLng.longitude);
         } else {
             return null;
@@ -600,12 +601,13 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
                 routePolyline.remove();
                 routePolyline = null;
             }
+            removeMarker(segmentStartMarker);
+            segmentStartMarker = null;
+            removeMarker(segmentEndMarker);
+            segmentEndMarker = null;
+            removePolyline(segmentPolyline);
+            segmentPolyline = null;
             routeStepCoordCounts = null;
-            //TBD: renderer
-//            if (mpDirectionsRenderer != null) {
-//                mpDirectionsRenderer.clear();
-//                mpDirectionsRenderer = null;
-//            }
             navStatus = NavStatus.UNKNOWN;
             navAutoUpdate = false;
             if (travelModesMap != null) {
@@ -659,9 +661,6 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
         showLoadingFrame(false);
         if (navRoute != null) {
             buildRoutePolyline();
-            //TBD renderer
-//            mpDirectionsRenderer = new MPDirectionsRenderer(this, googleMap, mapControl, this);
-//            mpDirectionsRenderer.setRoute(navRoute);
             cameraPosition = googleMap.getCameraPosition();
             navStatus = NavStatus.START;
         } else {
@@ -671,6 +670,14 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
 
         updateNav();
 
+        LatLngBounds routeBounds = buildRouteBounds();
+        if (routeBounds != null) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(routeBounds, 50));
+        }
+    }
+
+    private LatLngBounds buildRouteBounds() {
+        LatLngBounds routeBounds = null;
         LatLng currentLatLng = (coreLocation != null) ? new LatLng(coreLocation.getLatitude(), coreLocation.getLongitude()) : null;
         if (currentLatLng != null) {
             LatLng exploreLatLng = Utils.Explore.optLatLng(exploreLocation);
@@ -684,8 +691,9 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
                     latLngBuilder.include(routeLatLngBounds.getSouthwest().toLatLng());
                 }
             }
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBuilder.build(), 50));
+            routeBounds = latLngBuilder.build();
         }
+        return routeBounds;
     }
 
     private void buildRoutePolyline() {
@@ -695,30 +703,97 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
             for (NavRouteStep routeStep : routeLeg.getSteps()) {
                 NavPolyline routePolyline = routeStep.getPolyline();
                 if (routePolyline != null) {
-                    List<NavCoord> polylinePoints = routePolyline.getCoordinates();
+                    List<LatLng> polylinePoints = routePolyline.getLatLngCoordinates();
                     if (polylinePoints != null) {
-                        for (NavCoord navCoord : polylinePoints) {
-                            LatLng latLng = navCoord.toLatLng();
-                            routePoints.add(latLng);
-                        }
+                        routePoints.addAll(polylinePoints);
+                        routeStepCoordCounts.add(polylinePoints.size());
                     }
-                    routeStepCoordCounts.add((polylinePoints != null) ? polylinePoints.size() : null);
                 }
             }
         }
         if (googleMap != null) {
-            routePolyline = googleMap.addPolyline(new PolylineOptions()
-                    .addAll(routePoints)
-                    .color(Color.BLUE));
+            routePolyline = googleMap.addPolyline(new PolylineOptions().addAll(routePoints));
         }
     }
 
+    private Polyline placePolylineForStep(Polyline polyline, NavRouteStep step) {
+        List<LatLng> coordinates = ((step != null) && (step.getPolyline() != null)) ? step.getPolyline().getLatLngCoordinates() : null;
+        if (coordinates == null) {
+            removePolyline(polyline);
+            return null;
+        }
+        if (polyline != null) {
+            polyline.setPoints(coordinates);
+            return polyline;
+        } else {
+            return googleMap.addPolyline(new PolylineOptions().addAll(coordinates).color(Color.parseColor("#3474d6")));
+        }
+    }
+
+    private void removePolyline(Polyline polyline) {
+        if (polyline != null) {
+            polyline.remove();
+        }
+    }
+
+    private Marker placeMarkerTo(Marker marker, LatLng latLng) {
+        if (latLng == null) {
+            removeMarker(marker);
+            return null;
+        }
+        if (marker != null) {
+            marker.setPosition(latLng);
+            return marker;
+        } else {
+            return googleMap.addMarker(buildSegmentMarkerOptions(latLng));
+        }
+    }
+
+    private void removeMarker(Marker marker) {
+        if (marker != null) {
+            marker.remove();
+        }
+    }
+
+    private MarkerOptions buildSegmentMarkerOptions(LatLng location) {
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(location);
+        markerOptions.visible(true);
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_segment_directions));
+        markerOptions.anchor(0.5f, 0.5f);
+        return markerOptions;
+    }
+
     private void moveTo(int legIndex, int stepIndex) {
-        //TBD: implement
-//        if (mpDirectionsRenderer != null) {
-//            mpDirectionsRenderer.setRouteLegIndex(legIndex, stepIndex);
-//            mpDirectionsRenderer.animate(0, true);
-//        }
+        NavRouteLeg leg = ((legIndex >= 0) && (legIndex < navRoute.getLegs().size())) ? navRoute.getLegs().get(legIndex) : null;
+        NavRouteStep step = ((stepIndex >= 0) && (leg != null) && (leg.getSteps() != null) && (stepIndex < leg.getSteps().size())) ? leg.getSteps().get(stepIndex) : null;
+
+        CameraUpdate cameraUpdate;
+
+        if (step != null) {
+            LatLng startLocation = step.getStartLocation().toLatLng();
+            LatLng endLocation = step.getEndLocation().toLatLng();
+            segmentStartMarker = placeMarkerTo(segmentStartMarker, startLocation);
+            if (!startLocation.equals(endLocation)) {
+                segmentEndMarker = placeMarkerTo(segmentEndMarker, endLocation);
+                segmentPolyline = placePolylineForStep(segmentPolyline, step);
+                LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
+                latLngBuilder.include(startLocation);
+                latLngBuilder.include(endLocation);
+                cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBuilder.build(), 50);
+            } else {
+                removeMarker(segmentEndMarker);
+                removePolyline(segmentPolyline);
+                cameraUpdate = CameraUpdateFactory.newLatLngZoom(startLocation, googleMap.getCameraPosition().zoom);
+            }
+        } else {
+            removeMarker(segmentStartMarker);
+            removeMarker(segmentEndMarker);
+            removePolyline(segmentPolyline);
+            LatLngBounds routeBounds = buildRouteBounds();
+            cameraUpdate = CameraUpdateFactory.newLatLngBounds(routeBounds, 50);
+        }
+        googleMap.animateCamera(cameraUpdate);
     }
 
     private void updateNav() {
