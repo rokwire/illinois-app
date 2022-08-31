@@ -452,7 +452,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _requestPermissionsStatus(){
-    if (Platform.isIOS && FlexUI().isPersonalizationAvailable) {
+    if (Platform.isIOS && FlexUI().isNotificationsAvailable) {
 
       NotificationPermissions.getNotificationPermissionStatus().then((PermissionStatus status) {
         if ((status == PermissionStatus.unknown) && mounted) {

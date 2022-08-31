@@ -394,7 +394,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   bool? get notificationsPaused {return _getStoredSetting(_pauseNotificationKey,);}
 
   bool get _notifySettingsAvailable  {
-    return FlexUI().isPersonalizationAvailable;
+    return FlexUI().isNotificationsAvailable;
   }
 
   bool? _getNotifySetting(String name) {

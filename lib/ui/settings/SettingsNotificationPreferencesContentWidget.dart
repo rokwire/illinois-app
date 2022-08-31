@@ -333,7 +333,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
 //  }
 
   bool get _notificationsEnabled {
-    return _notificationsAuthorized && FlexUI().isPersonalizationAvailable;
+    return _notificationsAuthorized && FlexUI().isNotificationsAvailable;
   }
 
   bool get _athleticsSubNotificationsEnabled {
