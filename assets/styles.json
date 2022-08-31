@@ -127,7 +127,6 @@
     "widget.group.input_field.field": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
 
     "widget.group.members.title" : {"font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
-    "widget.group.members.card.entry" : {"font_family": "ProximaNovaBold", "size": 12.0, "color": "white"},
     "widget.group.members.search" : {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
     "widget.group.members.selected_entry" : {"font_family": "ProximaNovaBold", "size": 18.0, "decoration": "underline"},
     "widget.group.members.dropdown.item" : {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "white"},
