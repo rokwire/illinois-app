@@ -278,8 +278,8 @@
     "panel.browse.section.laundry.description": "Vea las ubicaciones de lavandería y la disponibilidad de lavadoras/secadoras.",
     "panel.browse.section.my.title": "Mi",
     "panel.browse.section.my.description": "Vistas personalizadas de todo lo que te interesa.",
-    "panel.browse.section.notifications.title": "Notificaciones",
-    "panel.browse.section.notifications.description": "Accesos directos a sus notificaciones en la aplicación de grupos, académicos o eventos deportivos y más.",
+    "panel.browse.section.inbox.title": "Notificaciones",
+    "panel.browse.section.inbox.description": "Accesos directos a sus notificaciones en la aplicación de grupos, académicos o eventos deportivos y más.",
     "panel.browse.section.polls.title": "Centro",
     "panel.browse.section.polls.description": "Cree, participe y vea los resultados de las encuestas que usted y otros crean.",
     "panel.browse.section.recent.title": "Reciente",
@@ -361,8 +361,8 @@
     "panel.browse.entry.my.my_campus_guide.title": "Guía de mi campus",
     "panel.browse.entry.my.wellness_resources.title": "Mis recursos de bienestar",
 
-    "panel.browse.entry.notifications.inbox.title": "Notificaciones recientes",
-    "panel.browse.entry.notifications.my_inbox.title": "Mis Notificaciones",
+    "panel.browse.entry.inbox.recent_inbox.title": "Notificaciones recientes",
+    "panel.browse.entry.inbox.my_inbox.title": "Mis Notificaciones",
 
     "panel.browse.entry.polls.create_poll.title": "Crear una encuesta",
     "panel.browse.entry.polls.recent_polls.title": "Ver encuestas",

@@ -278,8 +278,8 @@
 	"panel.browse.section.laundry.description": "查看洗衣地點和洗衣機/烘乾機的可用性。",
 	"panel.browse.section.my.title": "我的",
 	"panel.browse.section.my.description": "您感興趣的所有內容的個性化視圖。",
-	"panel.browse.section.notifications.title": "通知",
-	"panel.browse.section.notifications.description": "來自團體、學術或體育賽事等的應用內通知的快捷方式。",
+	"panel.browse.section.inbox.title": "通知",
+	"panel.browse.section.inbox.description": "來自團體、學術或體育賽事等的應用內通知的快捷方式。",
 	"panel.browse.section.polls.title": "民意調查",
 	"panel.browse.section.polls.description": "創建、參與和查看您和其他人創建的投票結果。",
 	"panel.browse.section.recent.title": "最近的",
@@ -361,8 +361,8 @@
 	"panel.browse.entry.my.my_campus_guide.title": "我的校園指南",
 	"panel.browse.entry.my.wellness_resources.title": "我的健康資源",
 
-	"panel.browse.entry.notifications.inbox.title": "最近的通知",
-	"panel.browse.entry.notifications.my_inbox.title": "我的通知",
+	"panel.browse.entry.inbox.recent_inbox.title": "最近的通知",
+	"panel.browse.entry.inbox.my_inbox.title": "我的通知",
 
 	"panel.browse.entry.polls.create_poll.title": "創建投票",
 	"panel.browse.entry.polls.recent_polls.title": "查看民意調查",
