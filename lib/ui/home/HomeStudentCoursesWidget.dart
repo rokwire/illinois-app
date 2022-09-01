@@ -101,7 +101,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
       _updateCourses();
     }
     else if (name == StudentCourses.notifyCachedCoursesChanged) {
-      if (StudentCourses().displayTermId == param) {
+      if ((param == null) || (StudentCourses().displayTermId == param)) {
         _updateCourses();
       }
     }
