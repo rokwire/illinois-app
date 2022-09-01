@@ -133,18 +133,31 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
               return GestureDetector(
                   onTap: _onTapPlayPause,
                   child: Stack(children: [
-                    Center(child: SizedBox(
-                      width: playerWidth,
-                      height: playerHeight,
-                      child: Stack(alignment: Alignment.center, children: [
-                        Stack(children: [
-                          Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: VideoPlayer(_controller!))),
-                          ClosedCaption(
-                              text: _currentCaptionText, textStyle: TextStyle(fontSize: 16, color: Styles().colors!.white))
-                        ]),
-                        _buildPlayButton()
-                      ]))),
-                      _buildCcButton()
+                    Center(
+                        child: SizedBox(
+                            width: playerWidth,
+                            height: playerHeight,
+                            child: Stack(alignment: Alignment.center, children: [
+                              Stack(children: [
+                                Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: VideoPlayer(_controller!))),
+                                Visibility(
+                                    visible: StringUtils.isNotEmpty(_currentCaptionText),
+                                    child: Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Padding(
+                                            padding: const EdgeInsets.only(bottom: 24.0),
+                                            child: DecoratedBox(
+                                                decoration:
+                                                    BoxDecoration(color: const Color(0xB8000000), borderRadius: BorderRadius.circular(2.0)),
+                                                child: Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                                                    child: Text(StringUtils.ensureNotEmpty(_currentCaptionText),
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(fontSize: 16, color: Styles().colors!.white)))))))
+                              ]),
+                              _buildPlayButton()
+                            ]))),
+                    _buildCcButton()
                   ]));
             } else {
               return const Center(child: CircularProgressIndicator());
