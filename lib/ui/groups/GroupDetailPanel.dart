@@ -714,20 +714,20 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               GestureDetector(onTap: () => { if (_isMember) {_onTapMembers()} }, child:
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
                   Container(decoration: (_isMember ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
-                    Text(members, style:  Styles().getTextStyle('widget.detail.fat'))
+                    Text(members, style:  Styles().getTextStyle('panel.group.detail.fat'))
                   ),
                 ),
               ),
               
               Visibility(visible: StringUtils.isNotEmpty(pendingMembers), child:
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                  Text(pendingMembers,  style: Styles().getTextStyle('widget.detail.fat') ,)
+                  Text(pendingMembers,  style: Styles().getTextStyle('panel.group.detail.fat') ,)
                 ),
               ),
 
               Visibility(visible: StringUtils.isNotEmpty(attendedMembers), child:
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                  Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().getTextStyle('widget.detail.fat'),)
+                  Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().getTextStyle('panel.group.detail.fat'),)
                 ),
               ),
               
@@ -954,7 +954,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         Padding(padding: EdgeInsets.only(bottom: 4), child:
           Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().getTextStyle('panel.group.detail.fat'), ),),
         ExpandableText(description,
-          textStyle: Styles().getTextStyle('widget.detail.regular'),
+          textStyle: Styles().getTextStyle('panel.group.detail.regular'),
           trimLinesCount: 4,
           readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
       ],),);
@@ -976,7 +976,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         children: <Widget>[
           Padding(padding: EdgeInsets.only(bottom: 4), child:
             Text(title!, style:  Styles().getTextStyle('panel.group.detail.fat'), ),),
-          Text(description!, style: Styles().getTextStyle('widget.detail.regular'), ),
+          Text(description!, style: Styles().getTextStyle('panel.group.detail.regular'), ),
         ],),) :
       Container(width: 0, height: 0);
   }

@@ -77,21 +77,27 @@
     "thin_italic": "ProximaNovaThinIt"
   },
   "text_style": {
-    "usage" : " Styles().getTextStyle('') ",
+    "tbd" : " Many buttons do not use Syles, they pass separate properties to the constructor",
     "header_bar": { "font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "textColorPrimary"},
 
     "widget.heading.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "white"},
     "widget.heading.small": { "font_family": "ProximaNovaBold", "size": 12.0, "color": "white"},
     "widget.message.large": {"font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.message.small": {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.title.large_variant": { "font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.title.large": { "font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.title.regular" : {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.small" : {"font_family": "ProximaNovaBold", "size": 12.0, "color": "fillColorPrimary"},
-    "widget.detail.fat": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "textBackground"},
-    "widget.detail.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
-    "widget.detail.small": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textBackground"},
+    "widget.detail.fat": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.detail.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.detail.small": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "fillColorPrimary"},
     "widget.description.regular": { "font_family": "ProximaNovaMedium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.description.small": { "font_family": "ProximaNovaMedium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.description.small_underline": { "font_family": "ProximaNovaMedium", "size": 14.0, "decoration": "underline"},
     "widget.description.small_variant": { "font_family": "ProximaNovaBold", "size": 14.0, "color": "fillColorPrimary"},
+
+    "widget.tab.selected" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.tab.not_selected" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "fillColorPrimary"},
 
     "widget.dialog.button.close" : {"font_family": "ProximaNovaMedium", "size": 50.0, "color": "white"},
     "widget.dialog.message.medium" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "white"},
@@ -141,8 +147,6 @@
     "widget.group.members.dropdown.item.selected" : {"font_family": "ProximaNovaRegular", "size": 18.0, "overflow": "ellipsis"},
     "widget.group.members.dropdown.header" : {"font_family": "ProximaNovaRegular", "size": 12.0, "color": "fillColorPrimary"},
 
-    "panel.event_schedule.teb.selected" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
-    "panel.event_schedule.teb.not_selected" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "fillColorPrimary"},
     "panel.event_schedule.title" : {"font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary"},
     "panel.event_schedule.category" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
     "panel.event_schedule.map.description" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "blackTransparent038"},
@@ -151,9 +155,16 @@
     "panel.group.title.lage" : {"font_family": "ProximaNovaExtraBold", "size": 32.0, "color": "fillColorPrimary"},
     "panel.group.button.leave.title" : {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "fillColorPrimary",  "decoration": "underline", "decoration_thickness" : 1.5, "decoration_color":  "fillColorSecondary"},
     "panel.group.button.show_older.title" : {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary",  "decoration": "underline"},
-    "panel.group.detail.fat" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "textVariant"},
     "panel.group.detail.tag.heading" : {"font_family": "ProximaNovaBold", "size": 12.0, "color": "textSurface"},
-    "panel.group.detail.tag.title" : {"font_family": "ProximaNovaRegular"}
+    "panel.group.detail.tag.title" : {"font_family": "ProximaNovaRegular"},
+    "panel.group.detail.fat": { "font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "textVariant"},
+    "panel.group.detail.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
+    "panel.group.detail.small": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textBackground"},
+
+    "panel.wellness.todo.content.large_title" :  { "font_family": "ProximaNovaBold", "size": 36.0, "color": "fillColorPrimary"},
+    "panel.wellness.todo.card.title" :  { "font_family": "ProximaNovaBold", "size": 36.0, "color": "fillColorPrimary"},
+    "panel.wellness.todo.dialog.heading" :  { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorSecondary"},
+
   },
   "usage" : " Styles().getTextStyle('') "
 }

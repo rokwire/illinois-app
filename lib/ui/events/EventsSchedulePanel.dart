@@ -1165,7 +1165,7 @@ class _EventTabView extends StatelessWidget{
             ),
             child: Center(
                 child: Text(text!,
-                    style: selected! ? Styles().getTextStyle('panel.event_schedule.teb.selected') : Styles().getTextStyle('panel.event_schedule.teb.not_selected') )),
+                    style: selected! ? Styles().getTextStyle('widget.tab.selected') : Styles().getTextStyle('widget.tab.not_selected') )),
           )),
     );
   }
