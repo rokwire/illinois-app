@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - New tutorial videos [#2334](https://github.com/rokwire/illinois-app/issues/2334).
 - Implemented Student Courses content overriding from Debug [#2336](https://github.com/rokwire/illinois-app/issues/2336).
+### Changed
+- Launch all non-internal URLs from Wellness Resources in external browser [#2333](https://github.com/rokwire/illinois-app/issues/2333).
 
 ## [4.1.23] - 2022-08-31
 ### Changed
