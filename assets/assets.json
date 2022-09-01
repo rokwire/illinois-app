@@ -982,13 +982,23 @@
 				"id": "video.tutorial.4.0",
 				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.mp4",
 				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.srt"
+			},
+			{
+				"id": "find.your.courses.4.1",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_find_your_courses.mp4",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_find_your_courses.srt"
+			},
+			{
+				"id": "groups.overview.4.1",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_groups_overview.mp4",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_groups_overview.srt"
 			}
 		],
 		"onboarding": { "dev": "video.tutorial.4.0", "test": "video.tutorial.4.0", "production": "video.tutorial.4.0" },
 		"strings": {
-			"en": { "video.tutorial.4.0": "Application overview" },
-			"es": { "video.tutorial.4.0": "Descripción general de la aplicación" },
-			"zh": { "video.tutorial.4.0": "應用概述" }
+			"en": { "video.tutorial.4.0": "Application overview", "find.your.courses.4.1": "Find Your Courses", "groups.overview.4.1": "Groups Overview" },
+			"es": { "video.tutorial.4.0": "Descripción general de la aplicación", "find.your.courses.4.1": "Encuentra tus cursos", "groups.overview.4.1": "Resumen de grupos" },
+			"zh": { "video.tutorial.4.0": "應用概述", "find.your.courses.4.1": "查找您的課程", "groups.overview.4.1": "組概述" }
 		}
 	}
 }

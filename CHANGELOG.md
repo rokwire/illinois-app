@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved scheduling of app review prompt [#2321](https://github.com/rokwire/illinois-app/issues/2321).
 - Removed direct privacy level checks from app code, use FlexUI features instead [#2325](https://github.com/rokwire/illinois-app/issues/2325).
 
+## [4.1.24] - 2022-09-01 //TBD: Not released, yet. Remove this comment after we make 4.1.24 build
+### Added
+- New tutorial videos [#2334](https://github.com/rokwire/illinois-app/issues/2334).
+
 ## [4.1.23] - 2022-08-31
 ### Changed
 - Remove IndoorMaps from Map Navigation Directions [#2306](https://github.com/rokwire/illinois-app/issues/2306).
