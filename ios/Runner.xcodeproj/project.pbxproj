@@ -12,8 +12,8 @@
 		2605FF55236C13A6002F71BE /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */; };
 		2626D94B22DC99C800F6BC2F /* NSString+InaJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94922DC99C700F6BC2F /* NSString+InaJson.m */; };
 		2626D94E22DCB80000F6BC2F /* MapMarkerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94D22DCB80000F6BC2F /* MapMarkerView.m */; };
+		264C99E828B3DA150089848F /* maps-icon-marker-origin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */; };
 		266DC99628ACD972007F51EA /* MapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 266DC99528ACD972007F51EA /* MapController.m */; };
-		266FA50323E0388B00F800F5 /* MapPositionProviderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 266FA50223E0388B00F800F5 /* MapPositionProviderController.m */; };
 		268F30F122E5DD7900547FE1 /* travel-mode-walk@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30ED22E5DD7900547FE1 /* travel-mode-walk@2x.png */; };
 		268F30F222E5DD7900547FE1 /* travel-mode-transit@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EE22E5DD7900547FE1 /* travel-mode-transit@2x.png */; };
 		268F30F322E5DD7900547FE1 /* travel-mode-bicycle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EF22E5DD7900547FE1 /* travel-mode-bicycle@2x.png */; };
@@ -50,6 +50,8 @@
 		26C90CF02361D13E0092E07F /* NSDictionary+UIUCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 26C90CEE2361D13E0092E07F /* NSDictionary+UIUCConfig.m */; };
 		26ECB3232487938C00479487 /* CommonCrypto+UIUCUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26ECB3222487938C00479487 /* CommonCrypto+UIUCUtils.m */; };
 		26ECB3262487AD0900479487 /* Security+UIUCUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26ECB3252487AD0900479487 /* Security+UIUCUtils.m */; };
+		26F7952F28AFA9F200AFC37E /* Navigation+Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F7952B28AFA9F200AFC37E /* Navigation+Utils.m */; };
+		26F7953028AFA9F200AFC37E /* Navigation.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F7952E28AFA9F200AFC37E /* Navigation.m */; };
 		26FA06BE22CCA9B5003B78E4 /* NSDictionary+InaTypedValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 26FA06BC22CCA9B5003B78E4 /* NSDictionary+InaTypedValue.m */; };
 		26FAB1C922EB3502008E987C /* NSDictionary+UIUCExplore.m in Sources */ = {isa = PBXBuildFile; fileRef = 26FAB1C822EB3502008E987C /* NSDictionary+UIUCExplore.m */; };
 		26FAB1CC22EB35C7008E987C /* NSDate+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26FAB1CA22EB35C7008E987C /* NSDate+InaUtils.m */; };
@@ -85,11 +87,10 @@
 		2626D94A22DC99C700F6BC2F /* NSString+InaJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+InaJson.h"; sourceTree = "<group>"; };
 		2626D94C22DCB80000F6BC2F /* MapMarkerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapMarkerView.h; sourceTree = "<group>"; };
 		2626D94D22DCB80000F6BC2F /* MapMarkerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapMarkerView.m; sourceTree = "<group>"; };
+		264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-origin@2x.png"; sourceTree = "<group>"; };
 		2668953022E1E074003CAB94 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		266DC99428ACD972007F51EA /* MapController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapController.h; sourceTree = "<group>"; };
 		266DC99528ACD972007F51EA /* MapController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapController.m; sourceTree = "<group>"; };
-		266FA50123E0388B00F800F5 /* MapPositionProviderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapPositionProviderController.h; sourceTree = "<group>"; };
-		266FA50223E0388B00F800F5 /* MapPositionProviderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapPositionProviderController.m; sourceTree = "<group>"; };
 		268F30ED22E5DD7900547FE1 /* travel-mode-walk@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "travel-mode-walk@2x.png"; sourceTree = "<group>"; };
 		268F30EE22E5DD7900547FE1 /* travel-mode-transit@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "travel-mode-transit@2x.png"; sourceTree = "<group>"; };
 		268F30EF22E5DD7900547FE1 /* travel-mode-bicycle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "travel-mode-bicycle@2x.png"; sourceTree = "<group>"; };
@@ -148,6 +149,10 @@
 		26ECB3222487938C00479487 /* CommonCrypto+UIUCUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CommonCrypto+UIUCUtils.m"; sourceTree = "<group>"; };
 		26ECB3242487AD0900479487 /* Security+UIUCUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Security+UIUCUtils.h"; sourceTree = "<group>"; };
 		26ECB3252487AD0900479487 /* Security+UIUCUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Security+UIUCUtils.m"; sourceTree = "<group>"; };
+		26F7952B28AFA9F200AFC37E /* Navigation+Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Navigation+Utils.m"; sourceTree = "<group>"; };
+		26F7952C28AFA9F200AFC37E /* Navigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Navigation.h; sourceTree = "<group>"; };
+		26F7952D28AFA9F200AFC37E /* Navigation+Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Navigation+Utils.h"; sourceTree = "<group>"; };
+		26F7952E28AFA9F200AFC37E /* Navigation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Navigation.m; sourceTree = "<group>"; };
 		26FA06BC22CCA9B5003B78E4 /* NSDictionary+InaTypedValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+InaTypedValue.m"; sourceTree = "<group>"; };
 		26FA06BD22CCA9B5003B78E4 /* NSDictionary+InaTypedValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+InaTypedValue.h"; sourceTree = "<group>"; };
 		26FAB1C722EB3502008E987C /* NSDictionary+UIUCExplore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+UIUCExplore.h"; sourceTree = "<group>"; };
@@ -227,6 +232,7 @@
 				26962B512306E8000026240A /* maps-icon-marker-pin-30@2x.png */,
 				26962B532306E8000026240A /* maps-icon-marker-pin-40@2x.png */,
 				26962B582306EB190026240A /* maps-icon-marker-pin-50@2x.png */,
+				264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */,
 			);
 			path = Images;
 			sourceTree = "<group>";
@@ -236,6 +242,17 @@
 			children = (
 			);
 			path = Assets;
+			sourceTree = "<group>";
+		};
+		26F7952A28AFA9A800AFC37E /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				26F7952C28AFA9F200AFC37E /* Navigation.h */,
+				26F7952E28AFA9F200AFC37E /* Navigation.m */,
+				26F7952D28AFA9F200AFC37E /* Navigation+Utils.h */,
+				26F7952B28AFA9F200AFC37E /* Navigation+Utils.m */,
+			);
+			path = Navigation;
 			sourceTree = "<group>";
 		};
 		26FA06BB22CCA8B5003B78E4 /* Utils */ = {
@@ -330,8 +347,6 @@
 				2696995922C38B4000B3290E /* AppKeys.m */,
 				266DC99428ACD972007F51EA /* MapController.h */,
 				266DC99528ACD972007F51EA /* MapController.m */,
-				266FA50123E0388B00F800F5 /* MapPositionProviderController.h */,
-				266FA50223E0388B00F800F5 /* MapPositionProviderController.m */,
 				269F83FA22D77E5500CC11A4 /* MapDirectionsController.h */,
 				269F83FB22D77E5500CC11A4 /* MapDirectionsController.m */,
 				26B340352331163A0031CF70 /* MapLocationPickerController.h */,
@@ -349,6 +364,7 @@
 				2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */,
 				2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */,
 				2668953022E1E074003CAB94 /* Runner.entitlements */,
+				26F7952A28AFA9A800AFC37E /* Navigation */,
 				26FAB1C622EB34A3008E987C /* UIUC */,
 				26FA06BB22CCA8B5003B78E4 /* Utils */,
 				2696995822C38A7F00B3290E /* Resources */,
@@ -469,6 +485,7 @@
 				268F647F22DF15F700A85AFD /* button-icon-nav-refresh.png in Resources */,
 				268F648122DF200300A85AFD /* button-icon-nav-location.png in Resources */,
 				269F83E622D73E7400CC11A4 /* maps-icon-marker-circle-10@2x.png in Resources */,
+				264C99E828B3DA150089848F /* maps-icon-marker-origin@2x.png in Resources */,
 				269F83E922D73E7400CC11A4 /* maps-icon-marker-circle-40@2x.png in Resources */,
 				26A170EC22DDFB6500299773 /* button-icon-nav-prev.png in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
@@ -573,7 +590,6 @@
 				"${BUILT_PRODUCTS_DIR}/FirebaseMessaging/FirebaseMessaging.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleDataTransport/GoogleDataTransport.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
-				"${PODS_ROOT}/MeridianSDK/Meridian.framework",
 				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
 				"${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework",
 				"${BUILT_PRODUCTS_DIR}/Toast/Toast.framework",
@@ -617,7 +633,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseMessaging.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleDataTransport.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Meridian.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toast.framework",
@@ -664,12 +679,10 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
 				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
-				"${PODS_ROOT}/MapsIndoors/MapsIndoors.framework/Versions/A/Resources/MapsIndoors.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MapsIndoors.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -696,18 +709,19 @@
 				268F647A22DF050400A85AFD /* CLLocationCoordinate2D+InaUtils.m in Sources */,
 				2626D94E22DCB80000F6BC2F /* MapMarkerView.m in Sources */,
 				269F83EE22D73EB400CC11A4 /* NSDate+UIUCUtils.m in Sources */,
+				26F7953028AFA9F200AFC37E /* Navigation.m in Sources */,
 				B681B2B923DEFD9E00093A67 /* NSData+InaHex.m in Sources */,
 				26FA06BE22CCA9B5003B78E4 /* NSDictionary+InaTypedValue.m in Sources */,
 				2626D94B22DC99C800F6BC2F /* NSString+InaJson.m in Sources */,
 				26C90CED2361CF480092E07F /* NSDictionary+InaPathKey.m in Sources */,
 				26ECB3262487AD0900479487 /* Security+UIUCUtils.m in Sources */,
 				26FAB1C922EB3502008E987C /* NSDictionary+UIUCExplore.m in Sources */,
-				266FA50323E0388B00F800F5 /* MapPositionProviderController.m in Sources */,
 				2696996022C38C1D00B3290E /* main.m in Sources */,
 				2696995E22C38B4000B3290E /* AppDelegate.m in Sources */,
 				26B3403A2331195C0031CF70 /* UILabel+InaMeasure.m in Sources */,
 				26FAB1CC22EB35C7008E987C /* NSDate+InaUtils.m in Sources */,
 				2696998022C3A14A00B3290E /* MapView.m in Sources */,
+				26F7952F28AFA9F200AFC37E /* Navigation+Utils.m in Sources */,
 				26B340372331163A0031CF70 /* MapLocationPickerController.m in Sources */,
 				26ECB3232487938C00479487 /* CommonCrypto+UIUCUtils.m in Sources */,
 			);
@@ -809,7 +823,10 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -893,7 +910,10 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -974,7 +994,10 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -1052,7 +1075,10 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -1187,7 +1213,10 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -1217,7 +1246,10 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",

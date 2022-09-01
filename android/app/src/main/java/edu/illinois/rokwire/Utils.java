@@ -36,6 +36,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.ui.IconGenerator;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -303,6 +304,7 @@ public class Utils {
         public static MarkerOptions constructMarkerOptions(Context context, Object markerRawObject, View markerLayoutView, View markerGroupLayoutView, IconGenerator iconGenerator) {
             return constructMarkerOptions(context, markerRawObject, null, markerLayoutView, markerGroupLayoutView, iconGenerator);
         }
+
         public static MarkerOptions constructMarkerOptions(Context context, Object markerRawObject, LatLng location, View markerLayoutView, View markerGroupLayoutView, IconGenerator iconGenerator) {
             if (markerRawObject == null || markerLayoutView == null || markerGroupLayoutView == null || iconGenerator == null) {
                 return null;
@@ -785,6 +787,75 @@ public class Utils {
             } else {
                 return object;
             }
+        }
+    }
+
+    public static class Json {
+
+        public static String getStringValueForKey(JSONObject json, String key) {
+            if ((json != null) && !Str.isEmpty(key)) {
+                try {
+                    return json.getString(key);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        public static Integer getIntValueForKey(JSONObject json, String key) {
+            if ((json != null) && !Str.isEmpty(key)) {
+                try {
+                    return json.getInt(key);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        public static Double getDoubleValueForKey(JSONObject json, String key) {
+            if ((json != null) && !Str.isEmpty(key)) {
+                try {
+                    return json.getDouble(key);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        public static JSONObject getJsonObjectForKey(JSONObject json, String key) {
+            if ((json != null) && !Str.isEmpty(key)) {
+                try {
+                    return json.getJSONObject(key);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        public static JSONArray getJsonArrayForKey(JSONObject json, String key) {
+            if ((json != null) && !Str.isEmpty(key)) {
+                try {
+                    return json.getJSONArray(key);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        public static JSONObject getJsonObjectForIndex(JSONArray jsonArray, int index) {
+            if ((jsonArray != null) && (index >= 0)) {
+                try {
+                    return jsonArray.getJSONObject(index);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
         }
     }
 

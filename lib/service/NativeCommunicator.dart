@@ -72,7 +72,7 @@ class NativeCommunicator with Service {
 
   Future<void> _nativeInit() async {
     try {
-      await _platformChannel.invokeMethod('init', { "keys": Config().secretKeys });
+      await _platformChannel.invokeMethod('init', { "config": Config().content });
     } on PlatformException catch (e) {
       print(e.message);
     }

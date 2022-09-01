@@ -1688,7 +1688,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   void _performSelectLocation() async {
     _setLoading(true);
 
-    String? location = await NativeCommunicator().launchSelectLocation();
+    String? location = await NativeCommunicator().launchSelectLocation(explore: _constructEventFromData());
     _setLoading(false);
     if (location != null) {
       Map<String, dynamic>? locationSelectionResult = jsonDecode(location);
