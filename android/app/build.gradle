@@ -55,7 +55,6 @@ apply plugin: 'com.google.firebase.crashlytics'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 repositories{
-    maven { url 'http://maven.mapsindoors.com/' }
     mavenCentral()
 }
 
@@ -157,22 +156,11 @@ dependencies {
     implementation "androidx.security:security-crypto:1.1.0-alpha03"
     //end Common
 
-    //MapsIndoors
-    implementation 'com.mapspeople.mapsindoors:mapsindoorssdk:3.6.1@aar'
-    implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
+    //Google Maps
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    //end MapsIndoors
-
-    //Google Maps Utils
+    implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.google.maps.android:android-maps-utils:0.5'
     //end Google Maps Utils
-
-    //Meridian
-    implementation files('../lib/meridian-6.6.0.aar')
-    implementation 'com.squareup:otto:1.3.8'
-    implementation 'org.conscrypt:conscrypt-android:2.4.0'
-    //end Meridian
 
     //Zxing
     implementation 'com.google.zxing:core:3.3.0' //Use zxing 3.3.0 because we have minSdk < 24

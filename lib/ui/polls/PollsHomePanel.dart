@@ -545,7 +545,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   bool get _couldCreatePoll {
-    return FlexUI().hasFeature('create_poll');
+    return FlexUI().isSharingAvailable;
   }
 
   bool get _canCreatePoll {
@@ -812,7 +812,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   bool get _canSignIn{
-    return Auth2().privacyMatch(4);
+    return FlexUI().isAuthenticationAvailable;
   }
 }
 

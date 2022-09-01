@@ -160,9 +160,12 @@
 }
 
 - (CLLocationCoordinate2D)uiucExploreLocationCoordinate {
-	NSDictionary *location = self.uiucExploreLocation;
-	NSNumber *latitude = [location inaNumberForKey:@"latitude"];
-	NSNumber *longitude = [location inaNumberForKey:@"longitude"];
+	return self.uiucExploreLocation.uiucLocationCoordinate;
+}
+
+- (CLLocationCoordinate2D)uiucLocationCoordinate {
+	NSNumber *latitude = [self inaNumberForKey:@"latitude"];
+	NSNumber *longitude = [self inaNumberForKey:@"longitude"];
 	return ((latitude != nil) && (longitude != nil) && ((longitude.doubleValue != 0.0) || (longitude.doubleValue != 0.0))) ?
 		CLLocationCoordinate2DMake(latitude.doubleValue, longitude.doubleValue) : kCLLocationCoordinate2DInvalid;
 }

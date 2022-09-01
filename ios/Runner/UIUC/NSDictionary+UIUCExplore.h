@@ -45,6 +45,7 @@ UIUCExploreType UIUCExploreTypeFromString(NSString* value);
 @property (nonatomic, readonly) NSDictionary* uiucExploreLocation;
 @property (nonatomic, readonly) NSDictionary* uiucExploreDestinationLocation;
 @property (nonatomic, readonly) CLLocationCoordinate2D uiucExploreLocationCoordinate;
+@property (nonatomic, readonly) CLLocationCoordinate2D uiucLocationCoordinate;
 @property (nonatomic, readonly) NSArray* uiucExplorePolygon;
 @property (nonatomic, readonly) int uiucExploreLocationFloor;
 

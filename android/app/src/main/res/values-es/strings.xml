@@ -37,7 +37,6 @@
     <string name="locationFailedMsg">No se pudo detectar la ubicación actual.</string>
     <string name="start">COMIENZO</string>
     <string name="finish">TERMINAR</string>
-    <string name="routeDistanceDurationFormat">%1$d m | %2$d seg</string>
     <string name="routeLegStepFormat">Pierna %1$d / Paso %2$d</string>
     <string name="mile">milla</string>
     <string name="miles">millas</string>
@@ -53,4 +52,7 @@
     <string name="select_location_msg">Por favor, seleccione una ubicación</string>
     <string name="location_label">Ubicación: %1$s</string>
     <string name="save">Salvar</string>
+
+    <!-- Navigation -->
+    <string name="invalid_server_response">Respuesta del servidor no válida</string>
 </resources>

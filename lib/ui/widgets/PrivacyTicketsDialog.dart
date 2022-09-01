@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -43,7 +44,7 @@ class PrivacyTicketsDialog extends StatefulWidget {
   }
 
   static bool get shouldConfirm {
-    return !Auth2().privacyMatch(4);
+    return !FlexUI().isPaymentInfornationAvailable;
   }
 }
 

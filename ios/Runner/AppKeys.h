@@ -20,7 +20,6 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
-#import <Meridian/Meridian.h>
 
 extern NSString * const kFlutterMetodChannelName;
 

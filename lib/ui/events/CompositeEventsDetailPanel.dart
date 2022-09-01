@@ -20,10 +20,12 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Explore.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -78,6 +80,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
       LocationServices.notifyStatusChanged,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
     ]);
 
     _addRecentItem();
@@ -96,12 +99,12 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
   }
 
   Future<void> _loadCurrentLocation() async {
-    _locationData = Auth2().privacyMatch(2) ? await LocationServices().location : null;
+    _locationData = FlexUI().isLocationServicesAvailable ? await LocationServices().location : null;
   }
 
   void _updateCurrentLocation() {
     _loadCurrentLocation().then((_){
-      setState(() {});
+      setStateIfMounted(() {});
     });
   }
 
@@ -650,10 +653,15 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
       _updateCurrentLocation();
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
+      setStateIfMounted(() {});
       _updateCurrentLocation();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {});
+      setStateIfMounted(() {});
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
+      _updateCurrentLocation();
     }
   }
 }

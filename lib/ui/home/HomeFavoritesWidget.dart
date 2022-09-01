@@ -16,6 +16,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Dinings.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/Sports.dart';
@@ -125,6 +126,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
+      FlexUI.notifyChanged,
       Guide.notifyChanged,
       Config.notifyConfigChanged,
     ]);
@@ -154,7 +156,8 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   void onNotification(String name, dynamic param) {
     if ((name == Config.notifyConfigChanged) ||
         (name == Connectivity.notifyStatusChanged) ||
-        (name == Auth2.notifyLoginChanged)) {
+        (name == Auth2.notifyLoginChanged) ||
+        (name == FlexUI.notifyChanged)) {
       if (mounted) {
         setState(() {});
       }

@@ -1,12 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -852,6 +853,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
     super.initState();
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
     ]);
     _isFavorite = Auth2().isFavorite(widget.message);
   }
@@ -867,8 +869,12 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {
+      setStateIfMounted(() {
         _isFavorite = Auth2().isFavorite(widget.message);
+      });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {
       });
     }
   }

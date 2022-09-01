@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -91,7 +92,7 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
       Analytics().logSelect(target: 'Building Access', source: widget.runtimeType.toString());
       if (Connectivity().isOffline) {
         AppAlert.showOfflineMessage(context, "");
-      } else if (!Auth2().privacyMatch(4)) {
+      } else if (!FlexUI().isSaferAvailable) {
         _onBuildingAccessPrivacyDoNotMatch();
       } else {
         _onBuildingAccessPrivacyMatch();

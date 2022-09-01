@@ -23,7 +23,7 @@
 
 			"home.twitter.account": ["gies", "", "canvas"],
 			
-			"browse": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_resources", "dinings", "events", "feeds", "laundry", "groups", "my", "notifications", "polls", "recent", "state_farm_center", "wallet", "wellness"],
+			"browse": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_resources", "dinings", "events", "feeds", "laundry", "groups", "my", "inbox", "polls", "recent", "state_farm_center", "wallet", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "campus_reminders", "due_date_catalog"],
 			"browse.app_help": ["faqs", "feedback", "review", "video_tutorials"],
 			"browse.athletics": ["my_game_day", "sport_events", "my_athletics", "sport_news", "my_news"],
@@ -36,7 +36,7 @@
 			"browse.feeds": ["twitter", "daily_illini", "wpgufm_radio"],
 			"browse.groups": ["all_groups", "my_groups"],
 			"browse.my": ["my_athletics", "my_news", "my_campus_guide", "student_courses", "my_dining", "my_events", "my_game_day", "canvas_courses", "my_groups", "my_laundry", "my_inbox", "wellness_resources"],
-			"browse.notifications": ["inbox", "my_inbox"],
+			"browse.inbox": ["recent_inbox", "my_inbox"],
 			"browse.polls": ["create_poll", "recent_polls"],
 			"browse.recent": ["recent_items"],
 			"browse.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
@@ -71,7 +71,8 @@
 	
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 			
-			"features": ["authentication", "create_poll", "parking_lot_directions", "gies", "new_student", "canvas", "safer", "laundry", "mtd_bus_pass"],
+			"features": ["analytics", "location_services", "personalization", "authentication", "notifications", "payment_information", "sharing",
+				"gies", "new_student", "canvas", "safer", "mtd_bus_pass"],
 			
 			"launch":["emergency"]
 			
@@ -117,7 +118,13 @@
 				"onboarding.confirm_phone"        : 3,
 				"onboarding.sport_prefs"          : 3,
 	
-				"authentication"                  : 4
+				"features.analytics"              : 2,
+				"features.location_services"      : 2,
+				"features.personalization"        : 3,
+				"features.notifications"          : 4,
+				"features.payment_information"    : 4,
+				"features.authentication"         : 4,
+				"features.sharing"                : 5
 			},
 			"auth": {
 				"connect"                             : { "loggedIn": false },

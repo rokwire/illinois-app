@@ -16,11 +16,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -49,7 +51,11 @@ class AthleticsGameDetailHeading extends StatefulWidget {
 class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading> implements NotificationsListener {
   @override
   void initState() {
-    NotificationService().subscribe(this, [LiveStats.notifyLiveGamesLoaded, Auth2UserPrefs.notifyFavoritesChanged]);
+    NotificationService().subscribe(this, [
+      LiveStats.notifyLiveGamesLoaded,
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+    ]);
     super.initState();
   }
 
@@ -64,9 +70,11 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   @override
   void onNotification(String name, dynamic param) {
     if (name == LiveStats.notifyLiveGamesLoaded) {
-      setState(() {});
+      setStateIfMounted(() {});
     } else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {});
+      setStateIfMounted(() {});
+    } else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
     }
   }
 

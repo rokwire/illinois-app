@@ -280,8 +280,8 @@
     "panel.browse.section.laundry.description": "View laundry locations and washer/dryer availability",
     "panel.browse.section.my.title": "My",
     "panel.browse.section.my.description": "Personalized views of everything you are interested in.",
-    "panel.browse.section.notifications.title": "Notifications",
-    "panel.browse.section.notifications.description": "Shortcuts to your in-app notifications from groups, academics or athletics events and more.",
+    "panel.browse.section.inbox.title": "Notifications",
+    "panel.browse.section.inbox.description": "Shortcuts to your in-app notifications from groups, academics or athletics events and more.",
     "panel.browse.section.polls.title": "Polls",
     "panel.browse.section.polls.description": "Create, participate and check out results of Polls you and others create.",
     "panel.browse.section.recent.title": "Recent",
@@ -363,8 +363,8 @@
     "panel.browse.entry.my.my_campus_guide.title": "My Campus Guide",
     "panel.browse.entry.my.wellness_resources.title": "My Wellness Resources",
 
-    "panel.browse.entry.notifications.inbox.title": "Recent Notifications",
-    "panel.browse.entry.notifications.my_inbox.title": "My Notifications",
+    "panel.browse.entry.inbox.recent_inbox.title": "Recent Notifications",
+    "panel.browse.entry.inbox.my_inbox.title": "My Notifications",
 
     "panel.browse.entry.polls.create_poll.title": "Create a Poll",
     "panel.browse.entry.polls.recent_polls.title": "View Polls",

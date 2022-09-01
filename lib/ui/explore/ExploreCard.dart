@@ -21,11 +21,13 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -68,7 +70,10 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+    ]);
     super.initState();
   }
 
@@ -574,7 +579,10 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {});
+      setStateIfMounted(() {});
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
     }
   }
 }
