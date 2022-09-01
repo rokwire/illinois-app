@@ -356,7 +356,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                         padding: EdgeInsets.symmetric(horizontal: 40),
                         child: Text(Localization().getStringEx('panel.wellness.todo.welcome.label', 'Welcome to Your To-Do List'),
                             textAlign: TextAlign.center,
-                            style: Styles().getTextStyle("panel.wellness.todo.dialog.heading"))),
+                            style: Styles().getTextStyle("panel.wellness.todo.dialog.heading.regular"))),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
                         child: Text(

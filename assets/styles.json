@@ -86,6 +86,7 @@
     "widget.message.small": {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "fillColorPrimary"},
     "widget.title.large_variant": { "font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.title.large": { "font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.title.medium" : {"font_family": "ProximaNovaBold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.title.regular" : {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.title.small" : {"font_family": "ProximaNovaBold", "size": 12.0, "color": "fillColorPrimary"},
     "widget.detail.fat": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
@@ -163,8 +164,13 @@
 
     "panel.wellness.todo.content.large_title" :  { "font_family": "ProximaNovaBold", "size": 36.0, "color": "fillColorPrimary"},
     "panel.wellness.todo.card.title" :  { "font_family": "ProximaNovaBold", "size": 36.0, "color": "fillColorPrimary"},
-    "panel.wellness.todo.dialog.heading" :  { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorSecondary"},
+    "panel.wellness.todo.dialog.heading.regular" :  { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorSecondary"},
 
+    "widget.wellness.ring.card.heading.large" :  { "font_family": "ProximaNovaBold", "size": 18.0, "color": "fillColorSecondary"},
+    "widget.wellness.ring.card.title.large" :  { "font_family": "ProximaNovaRegular", "size": 32.0, "color": "fillColorPrimary"},
+
+    "widget.wellness.ring.button.title.regular" :  { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "white"},
+    "widget.wellness.ring.button.title.accent" :  { "font_family": "ProximaNovaBold", "size": 14.0, "color": "white"}
   },
   "usage" : " Styles().getTextStyle('') "
 }
