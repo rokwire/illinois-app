@@ -34,6 +34,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
       Connectivity.notifyStatusChanged,
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
+      StudentCourses.notifyCourseContentChanged,
     ]);
 
     if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn) {
@@ -68,6 +69,9 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
       setStateIfMounted(() {});
     }
     else if (name == StudentCourses.notifySelectedTermChanged) {
+      _updateCourses();
+    }
+    else if (name == StudentCourses.notifyCourseContentChanged) {
       _updateCourses();
     }
   }

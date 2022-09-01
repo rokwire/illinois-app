@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/debug/DebugRewardsPanel.dart';
+import 'package:illinois/ui/debug/DebugStudentCoursesPanel.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/geo_fence.dart';
@@ -340,6 +341,16 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
                     Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
                       child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                           child: RoundedButton(
+                              label: "Student Courses",
+                              backgroundColor: Styles().colors!.background,
+                              fontSize: 16.0,
+                              textColor: Styles().colors!.fillColorPrimary,
+                              borderColor: Styles().colors!.fillColorPrimary,
+                              onTap: _onTapStudentCourses)),
+                    ),
+                    Visibility(visible: Config().configEnvironment == rokwire.ConfigEnvironment.dev,
+                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                          child: RoundedButton(
                               label: "Styles",
                               backgroundColor: Styles().colors!.background,
                               fontSize: 16.0,
@@ -633,6 +644,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugGuidePanel()));
   }
 
+  void _onTapStudentCourses() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStudentCoursesPanel()));
+  }
+
   void _onTapStyles() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugStylesPanel()));
   }
@@ -640,7 +655,6 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
   void _onTapRewards() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugRewardsPanel()));
   }
-
 
   //
 

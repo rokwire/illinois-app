@@ -58,6 +58,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
       Connectivity.notifyStatusChanged,
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
+      StudentCourses.notifyCourseContentChanged,
     ]);
 
 
@@ -97,6 +98,9 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
       setStateIfMounted(() {});
     }
     else if (name == StudentCourses.notifySelectedTermChanged) {
+      _updateCourses();
+    }
+    else if (name == StudentCourses.notifyCourseContentChanged) {
       _updateCourses();
     }
   }
