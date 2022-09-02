@@ -122,7 +122,7 @@
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"/>
 
-        <receiver android:name=".geofence.GeofenceBroadcastReceiver"/>
+        <receiver android:name=".rokwire_plugin.GeofenceBroadcastReceiver"/>
 
     </application>
 </manifest>
