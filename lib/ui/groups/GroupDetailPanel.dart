@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -65,8 +66,9 @@ class GroupDetailPanel extends StatefulWidget implements AnalyticsPageAttributes
 
   final Group? group;
   final String? groupIdentifier;
+  final String? groupPostId;
 
-  GroupDetailPanel({this.group, this.groupIdentifier});
+  GroupDetailPanel({this.group, this.groupIdentifier, this.groupPostId});
 
   @override
  _GroupDetailPanelState createState() => _GroupDetailPanelState();
@@ -108,6 +110,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _pollsLoading = false;
 
   bool               _memberAttendLoading = false;
+
+  String?            _postId;
 
   bool get _isMember {
     return _group?.currentMember?.isMember ?? false;
@@ -186,6 +190,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Connectivity.notifyStatusChanged,
     ]);
 
+    _postId = widget.groupPostId;
     _loadGroup(loadEvents: true);
   }
 
@@ -213,6 +218,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (mounted) {
       if (group != null) {
         _group = group;
+        _redirectToPostIfExists();
         _loadGroupAdmins();
         _loadInitialPosts();
         _loadPolls();
@@ -281,6 +287,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             _loadingPostsPage = false;
           });
         }
+      });
+    }
+  }
+
+  ///
+  /// Loads group post by id (if exists) and redirects to Post detail panel
+  ///
+  void _redirectToPostIfExists() {
+    if ((_group?.id != null) && (_postId != null)) {
+      _increaseProgress();
+      Groups().loadGroupPost(groupId: _group!.id, postId: _postId!).then((post) {
+        // Clear _postId in order not to redirect on the next group load.
+        _postId = null;
+        if (post != null) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(group: _group, post: post)));
+        }
+        _decreaseProgress();
       });
     }
   }
