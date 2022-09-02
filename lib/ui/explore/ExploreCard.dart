@@ -38,6 +38,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -135,7 +136,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                       Visibility(visible: ((widget.showSmallImage ?? false) && StringUtils.isNotEmpty(imageUrl)), child:
                         Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 4), child:
                           SizedBox(width: _smallImageSize, height: _smallImageSize, child:
-                            Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),
+                            InkWell(onTap: () => _onTapCardImage(imageUrl), 
+                              child: Image.network(imageUrl, excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders)),
                           ),
                         )
                       ),
@@ -563,6 +565,18 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       }
     } else {
       Navigator.push(context!, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: subEvent, superEventTitle: parentEvent!.title)));
+    }
+  }
+
+  void _onTapCardImage(String? url) {
+    Analytics().logSelect(target: "Explore Image");
+    if (url != null) {
+      Navigator.push(
+          context,
+          PageRouteBuilder(
+              opaque: false,
+              pageBuilder: (context, _, __) =>
+                  ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
     }
   }
 
