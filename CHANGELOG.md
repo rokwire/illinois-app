@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Crash in Android [#2341](https://github.com/rokwire/illinois-app/issues/2341).
+### Added
+- Redirect to GroupPostDetailPanel when group post notification is received [#2344](https://github.com/rokwire/illinois-app/issues/2344).
 
 ## [4.1.24] - 2022-09-01
 ### Added

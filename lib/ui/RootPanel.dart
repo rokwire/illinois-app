@@ -88,6 +88,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyAthleticsGameStarted,
       FirebaseMessaging.notifyAthleticsNewsUpdated,
       FirebaseMessaging.notifyGroupsNotification,
+      FirebaseMessaging.notifyGroupPostNotification,
       FirebaseMessaging.notifyHomeNotification,
       FirebaseMessaging.notifyInboxNotification,
       FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
@@ -186,6 +187,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyGroupsNotification) {
       _onFirebaseGroupsNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyGroupPostNotification) {
+      _onFirebaseGroupPostNotification(param);
     }
     else if (name == FirebaseMessaging.notifyAthleticsNewsUpdated) {
       _onFirebaseAthleticsNewsNotification(param);
@@ -445,7 +449,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   Future<void> _onGroupDetail(Map<String, dynamic>? content) async {
     String? groupId = (content != null) ? JsonUtils.stringValue(content['group_id']) : null;
-    _presentGroupDetailPanel(groupId);
+    _presentGroupDetailPanel(groupId: groupId);
   }
 
   Future<void> _onGuideDetail(Map<String, dynamic>? content) async {
@@ -622,13 +626,21 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   void _onFirebaseGroupsNotification(param) {
     if (param is Map<String, dynamic>) {
       String? groupId = param["entity_id"];
-      _presentGroupDetailPanel(groupId);
+      _presentGroupDetailPanel(groupId: groupId);
     }
   }
 
-  void _presentGroupDetailPanel(String? groupId) {
+  void _onFirebaseGroupPostNotification(param) {
+    if (param is Map<String, dynamic>) {
+      String? groupId = param["entity_id"];
+      String? groupPostId = param["post_id"];
+      _presentGroupDetailPanel(groupId: groupId, groupPostId: groupPostId);
+    }
+  }
+
+  void _presentGroupDetailPanel({String? groupId, String? groupPostId}) {
     if (StringUtils.isNotEmpty(groupId)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupIdentifier: groupId)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupDetailPanel(groupIdentifier: groupId, groupPostId: groupPostId)));
     } else {
       AppAlert.showDialogResult(context, Localization().getStringEx("panel.group_detail.label.error_message", "Failed to load group data."));
     }
