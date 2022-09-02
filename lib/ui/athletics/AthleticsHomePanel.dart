@@ -36,6 +36,7 @@ import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -614,7 +615,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
         Column(children: <Widget>[
           Stack(alignment: showImage ? Alignment.bottomCenter : Alignment.topCenter, children: <Widget>[
             showImage? Positioned(child:
-              Image.network(widget.game.imageUrl!, semanticLabel: "Sports",)
+              InkWell(onTap: () => _onTapCardImage(widget.game.imageUrl!), child: Image.network(widget.game.imageUrl!, semanticLabel: "Sports",))
             ) : Container(),
             showImage ? Container(height: 72, color: Styles().colors!.fillColorSecondaryTransparent05,) : Container(height: 0)
           ],),
@@ -711,6 +712,18 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
       });
     } else {
       _showTicketsPanel();
+    }
+  }
+
+  void _onTapCardImage(String? url) {
+    Analytics().logSelect(target: "Athletics Image");
+    if (url != null) {
+      Navigator.push(
+          context,
+          PageRouteBuilder(
+              opaque: false,
+              pageBuilder: (context, _, __) =>
+                  ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
     }
   }
 

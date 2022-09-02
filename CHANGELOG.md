@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed handling taps on GroupEventCard [#2328](https://github.com/rokwire/illinois-app/issues/2328).
 ### Added
 - Redirect to GroupPostDetailPanel when group post notification is received [#2344](https://github.com/rokwire/illinois-app/issues/2344).
+- Show bigger image in an alert dialog when image is tapped [#2347](https://github.com/rokwire/illinois-app/issues/2347).
 
 ## [4.1.24] - 2022-09-01
 ### Added
