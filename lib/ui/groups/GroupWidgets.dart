@@ -369,6 +369,7 @@ class GroupEventCard extends StatefulWidget {
   @override
   createState()=> _GroupEventCardState();
 }
+
 class _GroupEventCardState extends State<GroupEventCard>{
   @override
   Widget build(BuildContext context) {
@@ -450,7 +451,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     ],)),);
 
     return Stack(children: <Widget>[
-      GestureDetector(onTap: () {
+      InkWell(onTap: () {
           Analytics().logSelect(target: "Group Event");
           Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
         },
@@ -473,7 +474,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                       .getStringEx('widget.card.button.favorite.on.hint', ''),
                   button: true,
                   excludeSemantics: true,
-                  child: GestureDetector(onTap: _onFavoriteTap, child:
+                  child: InkWell(onTap: _onFavoriteTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
                       Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png'),
                     ),
@@ -481,7 +482,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 
               Visibility(visible: _hasEventOptions, child:
                 Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
-                  GestureDetector(onTap: _onEventOptionsTap, child:
+                  InkWell(onTap: _onEventOptionsTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
                       Image.asset('images/icon-groups-options-orange.png'),
                     ),
@@ -644,7 +645,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                     ),
                   ),
                   Spacer(),
-                  GestureDetector(
+                  InkWell(
                     onTap: _onTapCloseImageSelection,
                     child: Padding(
                       padding: EdgeInsets.only(right: 10, top: 10),
