@@ -100,6 +100,9 @@
     "widget.tab.selected" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.tab.not_selected" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "fillColorPrimary"},
 
+    "widget.button.title.regular" :  { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "white"},
+    "widget.button.title.accent" :  { "font_family": "ProximaNovaBold", "size": 14.0, "color": "white"},
+
     "widget.dialog.button.close" : {"font_family": "ProximaNovaMedium", "size": 50.0, "color": "white"},
     "widget.dialog.message.medium" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "white"},
     "widget.dialog.message.regular" : {"font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "white"},
@@ -110,11 +113,13 @@
     "widget.card.title.regular_variant": { "font_family": "ProximaNovaExtraBold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.card.title.small": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.card.detail.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
+    "widget.card.detail.medium": { "font_family": "ProximaNovaMedium", "size": 16.0, "color": "textBackground"},
     "widget.card.detail.small_variant": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textSurface"},
     "widget.card.detail.small_variant2": { "font_family": "ProximaNovaMedium", "size": 14.0, "color": "textBackground"},
     "widget.card.detail.small": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textBackground"},
     "widget.card.detail.tiny": { "font_family": "ProximaNovaRegular", "size": 12.0, "color": "textBackground"},
     "widget.card.detail.tiny_variant": { "font_family": "ProximaNovaBold", "size": 12.0, "color": "textBackground"},
+    "widget.card.detail.tiny_variant2": { "font_family": "ProximaNovaMedium", "size": 12.0, "color": "textBackground"},
 
     "widget.explore.card.detail.small": { "font_family": "ProximaNovaMedium", "size": 12.0, "color": "textBackground"},
     "widget.explore.card.detail.regular": { "font_family": "ProximaNovaMedium", "size": 14.0, "color": "textBackground"},
@@ -122,6 +127,8 @@
     "widget.explore.card.detail.large": { "font_family": "ProximaNovaMedium", "size": 16.0, "color": "textBackground"},
     "widget.explore.card.title.regular":  {"font_family": "ProximaNovaRegular", "size": 18.0, "color": "fillColorPrimary"},
     "widget.explore.card.title.large":  {"font_family": "ProximaNovaRegular", "size": 20.0, "color": "fillColorPrimary"},
+
+    "widget.athletics.card.title.large":  {"font_family": "ProximaNovaRegular", "size": 24.0, "color": "fillColorPrimary",  "weight" :  "w900"},
 
     "widget.group.card.poll.title": { "font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary", "height":  1.2},
     "widget.group.card.poll.option": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground", "height":  1.25,  "weight" :  "w500"},
@@ -166,11 +173,11 @@
     "panel.wellness.todo.card.title" :  { "font_family": "ProximaNovaBold", "size": 36.0, "color": "fillColorPrimary"},
     "panel.wellness.todo.dialog.heading.regular" :  { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorSecondary"},
 
+    "panel.athletics.home.heading.regular":  {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "white",  "weight" :  "w900", "letter_spacing" :  1.0},
+    "panel.athletics.home.button.underline":  {"font_family": "ProximaNovaSemiBold", "size": 16.0, "color": "white", "letter_spacing" :  1.0, "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+
     "widget.wellness.ring.card.heading.large" :  { "font_family": "ProximaNovaBold", "size": 18.0, "color": "fillColorSecondary"},
     "widget.wellness.ring.card.title.large" :  { "font_family": "ProximaNovaRegular", "size": 32.0, "color": "fillColorPrimary"},
-
-    "widget.wellness.ring.button.title.regular" :  { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "white"},
-    "widget.wellness.ring.button.title.accent" :  { "font_family": "ProximaNovaBold", "size": 14.0, "color": "white"}
   },
   "usage" : " Styles().getTextStyle('') "
 }

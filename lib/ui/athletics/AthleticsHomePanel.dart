@@ -185,7 +185,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                       padding: EdgeInsets.only(bottom: 10),
                                       child: Text(
                                         Localization().getStringEx("panel.athletics.label.all_illinois_sports.title",'All Illinois Sports'),
-                                        style: TextStyle(
+                                        style: Styles().getTextStyle('')  TextStyle(
                                             color: Styles().colors!.fillColorPrimary,
                                             fontSize: 20,
                                             fontWeight: FontWeight.w900),
@@ -201,7 +201,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                         children: <Widget>[
                                           Text(
                                             Localization().getStringEx("panel.athletics.label.tap_the.title", "Tap the "),
-                                            style: TextStyle(
+                                            style: Styles().getTextStyle('') TextStyle(
                                                 fontFamily: Styles().fontFamilies!.medium,
                                                 color: Styles().colors!.textBackground,
                                                 fontSize: 16),
@@ -212,7 +212,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                             child:Text(
                                               Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams"),
                                               overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
+                                              style: Styles().getTextStyle('') TextStyle(
                                                   fontFamily: Styles().fontFamilies!.medium,
                                                   color: Styles().colors!.textBackground,
                                                   fontSize: 16),
@@ -273,7 +273,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 Expanded(child:
                                                   Text(
                                                     Localization().getStringEx("panel.athletics.label.explore_athletics.title", 'Explore Athletics'),
-                                                    style: TextStyle(
+                                                    style: Styles().getTextStyle('') TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 20),
                                                   )
@@ -371,14 +371,14 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   Widget _buildHeaderTitle() {
     return Semantics(label: Localization().getStringEx('panel.athletics.header.title', 'Athletics'), excludeSemantics: true, child:
-          Text(Localization().getStringEx('panel.athletics.header.title', 'Athletics'), style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.0),),);
+          Text(Localization().getStringEx('panel.athletics.header.title', 'Athletics'), style: Styles().getTextStyle('panel.athletics.home.heading.regular')),);
   }
 
   Widget _buildHeaderTeamsButton({double horizontalPadding = 16}) {
     return Semantics(label: Localization().getStringEx('headerbar.teams.title', 'Teams'), button: true, excludeSemantics: true, child: 
         InkWell(onTap: _onTapTeams, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 19), child:
-            Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.semiBold, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary, decorationThickness: 1, decorationStyle: TextDecorationStyle.solid))
+            Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: Styles().getTextStyle('panel.athletics.home.button.underline') TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.semiBold, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary, decorationThickness: 1, decorationStyle: TextDecorationStyle.solid))
           ),
         ),
       );
@@ -635,7 +635,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                           Padding(padding: EdgeInsets.only(top:24), child:
                             Container(color: Styles().colors!.fillColorPrimary, child:
                               Padding(padding: EdgeInsets.all(5), child:
-                                Text(sportName.toUpperCase(), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 14, letterSpacing: 1.0, color: Colors.white),),
+                                Text(sportName.toUpperCase(), style: Styles().getTextStyle('widget.button.title.accent'),),
                               ),
                             ),
                           ),
@@ -657,14 +657,14 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                     ],),
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
-                    Text(widget.game.title, style: TextStyle(fontSize: 24, color: Styles().colors!.fillColorPrimary, fontWeight: FontWeight.w900),),
+                    Text(widget.game.title, style: Styles().getTextStyle('widget.athletics.card.title.large')),
                   ),
                   _athleticsDetails(),
                   Visibility(visible: showDescription, child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                       _divider(),
                       Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
-                        Text(description ?? '', style: TextStyle( fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground),),
+                        Text(description ?? '', style:Styles().getTextStyle('widget.card.detail.medium')),
                       )
                     ]),
                   ),
@@ -674,7 +674,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
                         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                           Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style: TextStyle(color: Styles().colors!.textBackground, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),),
-                          Text(StringUtils.ensureNotEmpty(interestsLabelValue), style: TextStyle(color: Styles().colors!.textBackground, fontSize: 12, fontFamily: Styles().fontFamilies!.medium),)
+                          Text(StringUtils.ensureNotEmpty(interestsLabelValue), style: Styles().getTextStyle('widget.card.detail.tiny_variant2'),)
                         ],),
                       )
                     ],),
@@ -753,10 +753,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
               padding: _iconPadding,
             ),
             Text(displayTime,
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.medium,
-                    fontSize: 16,
-                    color: Styles().colors!.textBackground)),
+                style: Styles().getTextStyle('widget.card.detail.medium')),
           ],
         )),
       );
@@ -781,10 +778,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                 child: Text(locationText,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
-                    style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.medium,
-                        fontSize: 16,
-                        color: Styles().colors!.textBackground))),
+                    style: Styles().getTextStyle('widget.card.detail.medium'))),
           ],
         )),
       );

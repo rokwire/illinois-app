@@ -363,10 +363,10 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                 Text(widget.label , semanticsLabel: "",
-                  style: Styles().getTextStyle('widget.wellness.ring.button.title.accent')),
+                  style: Styles().getTextStyle('widget.button.title.accent')),
                 widget.description==null ? Container():
                 Text(widget.description ?? "" , semanticsLabel: "",
-                  style: Styles().getTextStyle('widget.wellness.ring.button.title.regular')),
+                  style: Styles().getTextStyle('widget.button.title.regular')),
                 ],),)),
               Container(
                 child: Row(
@@ -515,8 +515,8 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
                         textAlign: TextAlign.left,
                         text: TextSpan(
                             children:[
-                              TextSpan(text: "${widget.label}  ", style : Styles().getTextStyle('widget.wellness.ring.button.title.regular'), semanticsLabel: ""),
-                              TextSpan(text: widget.description, style : Styles().getTextStyle('widget.wellness.ring.button.title.accent'),),
+                              TextSpan(text: "${widget.label}  ", style : Styles().getTextStyle('widget.button.title.regular'), semanticsLabel: ""),
+                              TextSpan(text: widget.description, style : Styles().getTextStyle('widget.button.title.accent'),),
                             ]
                         )),
                     )),
