@@ -10,9 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved scheduling of app review prompt [#2321](https://github.com/rokwire/illinois-app/issues/2321).
 - Removed direct privacy level checks from app code, use FlexUI features instead [#2325](https://github.com/rokwire/illinois-app/issues/2325).
 
-## [4.1.24] - 2022-09-01 //TBD: Not released, yet. Remove this comment after we make 4.1.24 build
+## [4.1.25] - 2022-09-02
+### Fixed
+- Crash in Android [#2341](https://github.com/rokwire/illinois-app/issues/2341).
+
+## [4.1.24] - 2022-09-01
 ### Added
 - New tutorial videos [#2334](https://github.com/rokwire/illinois-app/issues/2334).
+- Implemented Student Courses content overriding from Debug [#2336](https://github.com/rokwire/illinois-app/issues/2336).
+- Allow group admins to add new members [#2337](https://github.com/rokwire/illinois-app/issues/2337).
+### Changed
+- Launch all non-internal URLs from Wellness Resources in external browser [#2333](https://github.com/rokwire/illinois-app/issues/2333).
 
 ## [4.1.23] - 2022-08-31
 ### Changed

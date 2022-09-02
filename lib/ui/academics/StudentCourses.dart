@@ -72,7 +72,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
       _updateCourses();
     }
     else if (name == StudentCourses.notifyCachedCoursesChanged) {
-      if (StudentCourses().displayTermId == param) {
+      if ((param == null) || (StudentCourses().displayTermId == param)) {
         _updateCourses(forceLoad: false);
       }
     }

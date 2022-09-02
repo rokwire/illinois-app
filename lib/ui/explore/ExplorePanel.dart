@@ -1701,7 +1701,7 @@ class ExplorePanelState extends State<ExplorePanel>
       _loadExplores();
     }
     else if (name == StudentCourses.notifyCachedCoursesChanged) {
-      if (StudentCourses().displayTermId == param) {
+      if ((param == null) || (StudentCourses().displayTermId == param)) {
         _loadExplores();
       }
     }
