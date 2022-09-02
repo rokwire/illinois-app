@@ -41,19 +41,20 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static String get notifyToken                  => rokwire.FirebaseMessaging.notifyToken;
   static String get notifyForegroundMessage      => rokwire.FirebaseMessaging.notifyForegroundMessage;
 
-  static const String notifyPopupMessage          = "edu.illinois.rokwire.firebase.messaging.message.popup";
-  static const String notifyScoreMessage          = "edu.illinois.rokwire.firebase.messaging.message.score";
-  static const String notifyConfigUpdate          = "edu.illinois.rokwire.firebase.messaging.config.update";
-  static const String notifyPollOpen              = "edu.illinois.rokwire.firebase.messaging.poll.create";
-  static const String notifyEventDetail           = "edu.illinois.rokwire.firebase.messaging.event.detail";
-  static const String notifyGameDetail            = "edu.illinois.rokwire.firebase.messaging.game.detail";
-  static const String notifyAthleticsGameStarted  = "edu.illinois.rokwire.firebase.messaging.athletics_game.started";
-  static const String notifyAthleticsNewsUpdated  = "edu.illinois.rokwire.firebase.messaging.athletics.news.updated";
-  static const String notifySettingUpdated        = "edu.illinois.rokwire.firebase.messaging.setting.updated";
-  static const String notifyGroupsNotification    = "edu.illinois.rokwire.firebase.messaging.groups.updated";
-  static const String notifyHomeNotification      = "edu.illinois.rokwire.firebase.messaging.home";
-  static const String notifyInboxNotification     = "edu.illinois.rokwire.firebase.messaging.inbox";
-  static const String notifyCanvasAppDeepLinkNotification = "edu.illinois.rokwire.firebase.messaging.app.canvas.deeplink";
+  static const String notifyPopupMessage                   = "edu.illinois.rokwire.firebase.messaging.message.popup";
+  static const String notifyScoreMessage                   = "edu.illinois.rokwire.firebase.messaging.message.score";
+  static const String notifyConfigUpdate                   = "edu.illinois.rokwire.firebase.messaging.config.update";
+  static const String notifyPollOpen                       = "edu.illinois.rokwire.firebase.messaging.poll.create";
+  static const String notifyEventDetail                    = "edu.illinois.rokwire.firebase.messaging.event.detail";
+  static const String notifyGameDetail                     = "edu.illinois.rokwire.firebase.messaging.game.detail";
+  static const String notifyAthleticsGameStarted           = "edu.illinois.rokwire.firebase.messaging.athletics_game.started";
+  static const String notifyAthleticsNewsUpdated           = "edu.illinois.rokwire.firebase.messaging.athletics.news.updated";
+  static const String notifySettingUpdated                 = "edu.illinois.rokwire.firebase.messaging.setting.updated";
+  static const String notifyGroupsNotification             = "edu.illinois.rokwire.firebase.messaging.groups.updated";
+  static const String notifyGroupPostNotification          = "edu.illinois.rokwire.firebase.messaging.group.posts.updated";
+  static const String notifyHomeNotification               = "edu.illinois.rokwire.firebase.messaging.home";
+  static const String notifyInboxNotification              = "edu.illinois.rokwire.firebase.messaging.inbox";
+  static const String notifyCanvasAppDeepLinkNotification  = "edu.illinois.rokwire.firebase.messaging.app.canvas.deeplink";
 
   // Topic names
   static const List<String> _permanentTopics = [
@@ -273,7 +274,12 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
       NotificationService().notify(notifyAthleticsNewsUpdated, data);
     }
     else if (type == payloadTypeGroup) {
-      NotificationService().notify(notifyGroupsNotification, data);
+      String? groupPostId = JsonUtils.stringValue(data?['post_id']);
+      if (groupPostId != null) {
+        NotificationService().notify(notifyGroupPostNotification, data);
+      } else {
+        NotificationService().notify(notifyGroupsNotification, data);
+      }
     }
     else if (type == payloadTypeHome) {
       NotificationService().notify(notifyHomeNotification, data);

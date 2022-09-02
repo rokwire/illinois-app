@@ -366,6 +366,7 @@ class GroupEventCard extends StatefulWidget {
   @override
   createState()=> _GroupEventCardState();
 }
+
 class _GroupEventCardState extends State<GroupEventCard>{
   @override
   Widget build(BuildContext context) {
@@ -447,7 +448,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     ],)),);
 
     return Stack(children: <Widget>[
-      GestureDetector(onTap: () {
+      InkWell(onTap: () {
           Analytics().logSelect(target: "Group Event");
           Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
         },
@@ -470,7 +471,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                       .getStringEx('widget.card.button.favorite.on.hint', ''),
                   button: true,
                   excludeSemantics: true,
-                  child: GestureDetector(onTap: _onFavoriteTap, child:
+                  child: InkWell(onTap: _onFavoriteTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
                       Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png'),
                     ),
@@ -478,7 +479,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 
               Visibility(visible: _hasEventOptions, child:
                 Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
-                  GestureDetector(onTap: _onEventOptionsTap, child:
+                  InkWell(onTap: _onEventOptionsTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
                       Image.asset('images/icon-groups-options-orange.png'),
                     ),
@@ -638,7 +639,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                     ),
                   ),
                   Spacer(),
-                  GestureDetector(
+                  InkWell(
                     onTap: _onTapCloseImageSelection,
                     child: Padding(
                       padding: EdgeInsets.only(right: 10, top: 10),
@@ -2548,5 +2549,124 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
         _loadImage();
       }
     }
+  }
+}
+
+class GroupsSelectionPopup extends StatefulWidget {
+  final List<Group>? groups;
+
+  GroupsSelectionPopup({this.groups});
+
+  @override
+  _GroupsSelectionPopupState createState() => _GroupsSelectionPopupState();
+}
+
+class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
+  Set<String> _selectedGroupIds = {};
+
+  @override
+  void initState() {
+    super.initState();
+    if (CollectionUtils.isNotEmpty(widget.groups)) {
+      for (Group group in widget.groups!) {
+        if (group.id != null) {
+          _selectedGroupIds.add(group.id!);
+        }
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(contentPadding: EdgeInsets.zero, scrollable: true, content:
+    Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+      Container(
+          decoration: BoxDecoration(
+            color: Styles().colors!.fillColorPrimary,
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
+          ),
+          child: Row(children: <Widget>[
+            Opacity(opacity: 0, child:
+            Padding(padding: EdgeInsets.all(8), child:
+            Image.asset('images/close-white.png', excludeFromSemantics: true,)
+            )
+            ),
+            Expanded(child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+            Text(Localization().getStringEx("widget.groups.selection.heading", "Select Group"), textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 24)
+            )
+            )
+            ),
+            Semantics(button: true, label: Localization().getStringEx("dialog.close.title","Close"), child:
+            InkWell(onTap: _onTapClose, child:
+            Padding(padding: EdgeInsets.only(top: 8, bottom: 8, left: 4, right: 12), child:
+            Image.asset('images/close-white.png', excludeFromSemantics: true,)
+            )
+            )
+            )
+          ])
+      ),
+      Padding(padding: EdgeInsets.all(10), child: _buildGroupsList()),
+      Semantics(container: true, child:
+      Padding(padding: EdgeInsets.all(10), child:
+      RoundedButton(
+          label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select"),
+          borderColor: Styles().colors!.fillColorSecondary,
+          backgroundColor: Styles().colors!.white,
+          textColor: Styles().colors!.fillColorPrimary,
+          onTap: _onTapSelect
+      )
+      )
+      )
+    ]));
+  }
+
+  Widget _buildGroupsList() {
+    if (CollectionUtils.isEmpty(widget.groups)) {
+      return Container();
+    }
+    List<Widget> groupWidgetList = [];
+    for (Group group in widget.groups!) {
+      if (group.id != null) {
+        groupWidgetList.add(ToggleRibbonButton(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+            label: group.title,
+            toggled: _selectedGroupIds.contains(group.id),
+            onTap: () => _onTapGroup(group.id!),
+            textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)
+        ));
+      }
+
+    }
+    return Column(children: groupWidgetList);
+  }
+
+  void _onTapGroup(String groupId) {
+    if (mounted) {
+      setState(() {
+        if (_selectedGroupIds.contains(groupId)) {
+          _selectedGroupIds.remove(groupId);
+        } else {
+          _selectedGroupIds.add(groupId);
+        }
+      });
+    }
+  }
+
+  void _onTapSelect() {
+    List<Group>? selectedGroups = [];
+    if (widget.groups != null) {
+      for (Group group in widget.groups!) {
+        if (_selectedGroupIds.contains(group.id)) {
+          selectedGroups.add(group);
+        }
+      }
+    }
+    Navigator.of(context).pop(selectedGroups);
+  }
+
+  void _onTapClose() {
+    Navigator.of(context).pop(<Group>[]);
   }
 }

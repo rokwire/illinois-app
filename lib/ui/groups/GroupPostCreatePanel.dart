@@ -209,7 +209,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     Navigator.of(context).pop();
   }
 
-  void _onTapSend() {
+  void _onTapSend() async{
     Analytics().logSelect(target: 'Send');
     FocusScope.of(context).unfocus();
 
@@ -228,11 +228,33 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _increaseProgress();
+    List<Group> selectedGroups = [];
+    List<Group>? otherGroupsToSave;
+
+    selectedGroups.add(widget.group);
+    // If the event is part of a group - allow the admin to select other groups that one wants to save the event as well.
+    //If post has membersSelection then do not allow linking to other groups
+    if (CollectionUtils.isEmpty(_selectedMembers)) {
+        List<Group>? otherGroups = await _loadOtherAdminUserGroups();
+        if (CollectionUtils.isNotEmpty(otherGroups)) {
+          otherGroupsToSave = await showDialog(context: context, barrierDismissible: true, builder: (_) => GroupsSelectionPopup(groups: otherGroups,));
+        }
+
+        if(CollectionUtils.isNotEmpty(otherGroupsToSave)){
+          selectedGroups.addAll(otherGroupsToSave!);
+        }
+    }
 
     GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers); // if no parentId then this is a new post for the group.
-    Groups().createPost(widget.group.id, post).then((succeeded) {
-      _onCreateFinished(succeeded);
-    });
+    if(CollectionUtils.isNotEmpty(selectedGroups)) {
+      List<Future<bool>> futures = [];
+      for(Group group in selectedGroups){
+        futures.add(Groups().createPost(group.id, post));
+      }
+      
+      List<bool> results = await Future.wait(futures);
+      _onCreateFinished(!results.contains(false));
+    }
   }
 
   void _onCreateFinished(bool succeeded) {
@@ -261,6 +283,25 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
         _decreaseProgress();
       });
     }
+  }
+
+  //Copy from CreateEventPanel could be moved to Utils
+  ///
+  /// Returns the groups that current user is admin of without the current group
+  ///
+  Future<List<Group>?> _loadOtherAdminUserGroups() async {
+    List<Group>? userGroups = await Groups().loadGroups(contentType: GroupsContentType.my);
+    List<Group>? userAdminGroups;
+    if (CollectionUtils.isNotEmpty(userGroups)) {
+      userAdminGroups = [];
+      String? currentGroupId = widget.group.id;
+      for (Group? group in userGroups!) {
+        if (group!.currentUserIsAdmin && (group.id != currentGroupId)) {
+          userAdminGroups.add(group);
+        }
+      }
+    }
+    return userAdminGroups;
   }
 
   void _increaseProgress() {
