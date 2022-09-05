@@ -15,9 +15,6 @@
 *.iws
 .idea/
 
-# VS Code related
-.vscode/
-
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
@@ -57,4 +54,7 @@ app.*.map.json
 /android/app/src/debug/google-services.json
 /android/app/src/release/google-services.json
 /android/app/src/profile/google-services.json
+/android/app/src/dev/google-services.json
+/android/app/src/prod/google-services.json
+/android/app/src/tst/google-services.json
 

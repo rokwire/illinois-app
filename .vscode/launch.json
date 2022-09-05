@@ -1,0 +1,45 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter",
+      "program": "lib/main.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": ["-v"]
+    },
+    {
+      "name": "Flutter-Dev",
+      "program": "lib/main.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": ["-v",
+        "-t", "lib/mainDev.dart",
+        "--flavor", "dev"
+      ]
+    },
+    {
+      "name": "Flutter-Prod",
+      "program": "lib/main.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": ["-v",
+        "-t", "lib/mainProd.dart",
+        "--flavor", "prod"
+      ]
+    },
+    {
+      "name": "Flutter-Test",
+      "program": "lib/main.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": ["-v",
+        "-t", "lib/mainTest.dart",
+        "--flavor", "test"
+      ]
+    }
+  ]
+}
