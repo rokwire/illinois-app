@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Crash in Android [#2341](https://github.com/rokwire/illinois-app/issues/2341).
 - Fixed handling taps on GroupEventCard [#2328](https://github.com/rokwire/illinois-app/issues/2328).
+- Fixed add Illini Cash when the user is not logged in [#2324](https://github.com/rokwire/illinois-app/issues/2324).
 ### Added
 - Redirect to GroupPostDetailPanel when group post notification is received [#2344](https://github.com/rokwire/illinois-app/issues/2344).
 - Show bigger image in an alert dialog when image is tapped [#2347](https://github.com/rokwire/illinois-app/issues/2347).

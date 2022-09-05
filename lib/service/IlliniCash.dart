@@ -126,9 +126,11 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
 
   // NetworkAuthProvider
 
+  String? get _networkAuthHeaderToken => Auth2().uiucToken?.accessToken;
+
   @override
   Map<String, String>? get networkAuthHeaders {
-    String? accessToken = Auth2().uiucToken?.accessToken;
+    String? accessToken = _networkAuthHeaderToken;
     if ((accessToken != null) && accessToken.isNotEmpty) {
       return { uiucAccessToken : accessToken };
     }
@@ -154,7 +156,8 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
 
   Future<void> updateBalance() async {
     if(_enabled) {
-      bool? eligible = await _isEligible();
+      IlliniStudentSummary? studentSummary = await _loadStudentSummary();
+      bool? eligible = studentSummary?.eligibility?.eligible;
       if (eligible == true) {
         String url = "${Config().illiniCashBaseUrl}/Balances/${Auth2().uin}";
         String analyticsUrl = "${Config().illiniCashBaseUrl}/Balances/$analyticsUin";
@@ -175,12 +178,12 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     }
   }
 
-  Future<bool?> _isEligible({String? uin, String? firstName, String? lastName}) async {
-    uin = StringUtils.isNotEmpty(uin) ? uin : Auth2().uin;
-    firstName =  StringUtils.isNotEmpty(firstName) ? firstName : Auth2().account?.authType?.uiucUser?.firstName;
-    lastName = StringUtils.isNotEmpty(lastName) ? lastName : Auth2().account?.authType?.uiucUser?.lastName;
+  Future<IlliniStudentSummary?> _loadStudentSummary() async {
+    String? uin = Auth2().uin;
+    String? firstName = Auth2().account?.authType?.uiucUser?.firstName;
+    String? lastName = Auth2().account?.authType?.uiucUser?.lastName;
 
-    if ((Config().illiniCashBaseUrl != null) && !StringUtils.isEmpty(uin) && !StringUtils.isEmpty(firstName) && !StringUtils.isEmpty(lastName)) {
+    if ((Config().illiniCashBaseUrl != null) && StringUtils.isNotEmpty(_networkAuthHeaderToken) && StringUtils.isNotEmpty(uin) && StringUtils.isNotEmpty(firstName) && StringUtils.isNotEmpty(lastName)) {
       String url =  "${Config().illiniCashBaseUrl}/StudentSummary/$uin/$firstName/$lastName";
       String analyticsUrl = "${Config().illiniCashBaseUrl}/StudentSummary/$analyticsUin/$analyticsFirstName/$analyticsLastName";
       Response? response;
@@ -193,7 +196,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
         if (summary?.classification != null) {
           _applyStudentClassifiction(summary?.classification);
         }
-        return summary?.eligibility?.eligible;
+        return summary;
       }
       else {
         // request failed, eligible not determined
@@ -202,7 +205,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
     }
     else {
       // eligible not available
-      return false;
+      return null;
     }
   }
 
@@ -405,6 +408,29 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       finally {
         _buyIlliniCashInProgress = false;
       }
+    }
+  }
+
+  Future<bool?> _isEligible({String? uin, String? firstName, String? lastName}) async {
+    if ((Config().illiniCashBaseUrl != null) && !StringUtils.isEmpty(uin) && !StringUtils.isEmpty(firstName) && !StringUtils.isEmpty(lastName)) {
+      String url = "${Config().illiniCashBaseUrl}/ICEligible/$uin/$firstName/$lastName";
+      String analyticsUrl = "${Config().illiniCashBaseUrl}/ICEligible/$analyticsUin/$analyticsFirstName/$analyticsLastName";
+      Response? response;
+      try { response = await Network().get(url, analyticsUrl: analyticsUrl); } on Exception catch(e) { print(e.toString()); }
+      int responseCode = response?.statusCode ?? -1;
+      if ((response != null) && responseCode >= 200 && responseCode <= 301) {
+        String responseString = response.body;
+        Map<String, dynamic>? jsonData = JsonUtils.decode(responseString);
+        return (jsonData != null) ? JsonUtils.boolValue(jsonData['IlliniCashEligible']) : null;
+      }
+      else {
+        // request failed, eligible not determined
+        return null;
+      }
+    }
+    else {
+      // eligible not available
+      return false;
     }
   }
 
