@@ -1,1 +1,2 @@
 ENVIRONMENT=Prod
+FLUTTER_TARGET=lib/mainProd.dart

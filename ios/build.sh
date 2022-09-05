@@ -5,7 +5,13 @@ echo "ENVIRONMENT: ${ENVIRONMENT}"
 echo "CONFIGURATION: ${CONFIGURATION}"
 
 # Copy GoogleService-Info.plist in output bundle
-if [[ "${CONFIGURATION}" == *"Debug"* ]] || [ "${ENVIRONMENT}" = "Dev" ]; then
+if [ "${ENVIRONMENT}" = "Dev" ]; then
+GOOGLE_SERVICE_SRC="${PROJECT_DIR}/Runner/GoogleService-Info-Dev.plist"
+echo "Using GoogleService-Info-Dev.plist"
+elif [ "${ENVIRONMENT}" = "Prod" ] || [ "${ENVIRONMENT}" = "Test" ]; then
+GOOGLE_SERVICE_SRC="${PROJECT_DIR}/Runner/GoogleService-Info-Prod.plist"
+echo "Using GoogleService-Info-Prod.plist"
+elif [ "${CONFIGURATION}" == "Debug" ]; then
 GOOGLE_SERVICE_SRC="${PROJECT_DIR}/Runner/GoogleService-Info-Dev.plist"
 echo "Using GoogleService-Info-Dev.plist"
 else

@@ -19,6 +19,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/wellness/ToDo.dart' as wellness;
 import 'package:illinois/model/wellness/WellnessRing.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -42,7 +43,6 @@ import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Auth2.dart';
 
-import 'package:illinois/main.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/RootPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
