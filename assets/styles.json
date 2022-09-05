@@ -80,6 +80,7 @@
     "tbd" : " Many buttons do not use Syles, they pass separate properties to the constructor",
     "header_bar": { "font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "textColorPrimary"},
 
+    "widget.heading.large": { "font_family": "ProximaNovaRegular", "size": 20.0, "color": "white"},
     "widget.heading.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "white"},
     "widget.heading.small": { "font_family": "ProximaNovaBold", "size": 12.0, "color": "white"},
     "widget.message.large": {"font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
@@ -174,10 +175,12 @@
     "panel.wellness.todo.dialog.heading.regular" :  { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorSecondary"},
 
     "panel.athletics.home.heading.regular":  {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "white",  "weight" :  "w900", "letter_spacing" :  1.0},
+    "panel.athletics.home.title.large":  {"font_family": "ProximaNovaRegular", "size": 20.0, "color": "fillColorPrimary",  "weight" :  "w900"},
+    "panel.athletics.home.detail.medium":  {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "textBackground"},
     "panel.athletics.home.button.underline":  {"font_family": "ProximaNovaSemiBold", "size": 16.0, "color": "white", "letter_spacing" :  1.0, "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
 
     "widget.wellness.ring.card.heading.large" :  { "font_family": "ProximaNovaBold", "size": 18.0, "color": "fillColorSecondary"},
-    "widget.wellness.ring.card.title.large" :  { "font_family": "ProximaNovaRegular", "size": 32.0, "color": "fillColorPrimary"},
+    "widget.wellness.ring.card.title.large" :  { "font_family": "ProximaNovaRegular", "size": 32.0, "color": "fillColorPrimary"}
   },
   "usage" : " Styles().getTextStyle('') "
 }

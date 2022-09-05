@@ -186,10 +186,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                       padding: EdgeInsets.only(bottom: 10),
                                       child: Text(
                                         Localization().getStringEx("panel.athletics.label.all_illinois_sports.title",'All Illinois Sports'),
-                                        style: Styles().getTextStyle('')  TextStyle(
-                                            color: Styles().colors!.fillColorPrimary,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w900),
+                                        style: Styles().getTextStyle('panel.athletics.home.title.large'),
                                       ),
                                     ),
                                     Semantics(
@@ -202,10 +199,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                         children: <Widget>[
                                           Text(
                                             Localization().getStringEx("panel.athletics.label.tap_the.title", "Tap the "),
-                                            style: Styles().getTextStyle('') TextStyle(
-                                                fontFamily: Styles().fontFamilies!.medium,
-                                                color: Styles().colors!.textBackground,
-                                                fontSize: 16),
+                                            style: Styles().getTextStyle('panel.athletics.home.detail.medium') ,
                                           ),
                                           Image.asset(
                                               'images/icon-check-example.png', excludeFromSemantics: true),
@@ -213,10 +207,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                             child:Text(
                                               Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams"),
                                               overflow: TextOverflow.ellipsis,
-                                              style: Styles().getTextStyle('') TextStyle(
-                                                  fontFamily: Styles().fontFamilies!.medium,
-                                                  color: Styles().colors!.textBackground,
-                                                  fontSize: 16),
+                                              style: Styles().getTextStyle('panel.athletics.home.detail.medium'),
                                             )
                                           )
                                         ],
@@ -274,9 +265,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 Expanded(child:
                                                   Text(
                                                     Localization().getStringEx("panel.athletics.label.explore_athletics.title", 'Explore Athletics'),
-                                                    style: Styles().getTextStyle('') TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 20),
+                                                    style: Styles().getTextStyle('widget.heading.large'),
                                                   )
                                                 )
                                               ],
@@ -379,7 +368,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
     return Semantics(label: Localization().getStringEx('headerbar.teams.title', 'Teams'), button: true, excludeSemantics: true, child: 
         InkWell(onTap: _onTapTeams, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 19), child:
-            Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: Styles().getTextStyle('panel.athletics.home.button.underline') TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.semiBold, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary, decorationThickness: 1, decorationStyle: TextDecorationStyle.solid))
+            Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: Styles().getTextStyle('panel.athletics.home.button.underline'))
           ),
         ),
       );
