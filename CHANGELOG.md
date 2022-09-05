@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved scheduling of app review prompt [#2321](https://github.com/rokwire/illinois-app/issues/2321).
 - Removed direct privacy level checks from app code, use FlexUI features instead [#2325](https://github.com/rokwire/illinois-app/issues/2325).
 - TextStyles exposed to Assets/styles.json (in progress) [#2311](https://github.com/rokwire/illinois-app/issues/2311).
+- Android: upgrade compileSdkVersion and targetSdkVersion [#2308](https://github.com/rokwire/illinois-app/issues/2308).
 
 ## [4.1.25] - 2022-09-02
 ### Fixed
