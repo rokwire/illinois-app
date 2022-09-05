@@ -34,9 +34,9 @@ class Config extends rokwire.Config {
   // Singletone Factory
 
   @protected
-  Config.internal() : super.internal();
+  Config.internal({rokwire.ConfigEnvironment? defaultEnvironment}) : super.internal(defaultEnvironment: defaultEnvironment);
 
-  factory Config() => ((rokwire.Config.instance is Config) ? (rokwire.Config.instance as Config) : (rokwire.Config.instance = Config.internal()));
+  factory Config({rokwire.ConfigEnvironment? defaultEnvironment}) => ((rokwire.Config.instance is Config) ? (rokwire.Config.instance as Config) : (rokwire.Config.instance = Config.internal(defaultEnvironment: defaultEnvironment)));
 
   // Getters: compound entries
 
