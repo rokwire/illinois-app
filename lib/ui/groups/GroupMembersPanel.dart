@@ -178,7 +178,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
             child: Text(_getEmptyMembersMessage(), textAlign: TextAlign.center,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
+                style: Styles().getTextStyle('widget.group.members.title'))),
         Container(height: MediaQuery.of(context).size.height / 4)
       ]));
     } else {
@@ -292,10 +292,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                     autofocus: false,
                     cursorColor: Styles().colors!.fillColorSecondary,
                     keyboardType: TextInputType.text,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontFamily: Styles().fontFamilies!.regular,
-                        color: Styles().colors!.textBackground),
+                    style:  Styles().getTextStyle('widget.group.members.search'),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                     ),
@@ -596,11 +593,7 @@ class _PendingMemberCard extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     member?.displayName ?? "",
-                    style: TextStyle(
-                      fontFamily: Styles().fontFamilies!.bold,
-                      fontSize: 20,
-                      color: Styles().colors!.fillColorPrimary
-                    ),
+                    style: Styles().getTextStyle('widget.group.members.title'),
                   ),
                   Container(height: 4,),
                       RoundedButton(
@@ -659,11 +652,7 @@ class _GroupMemberCard extends StatelessWidget {
                       children: <Widget>[
                         Expanded(child:
                           Text(StringUtils.ensureNotEmpty(_memberDisplayName),
-                            style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.bold,
-                                fontSize: 20,
-                                color: Styles().colors!.fillColorPrimary
-                            ),
+                            style: Styles().getTextStyle('widget.group.members.title')
                           )
                         )
                       ],
@@ -679,11 +668,7 @@ class _GroupMemberCard extends StatelessWidget {
                           ),
                           child: Center(
                             child: Text(groupMemberStatusToDisplayString(member!.status)!.toUpperCase(),
-                              style: TextStyle(
-                                  fontFamily: Styles().fontFamilies!.bold,
-                                  fontSize: 12,
-                                  color: Styles().colors!.white
-                              ),
+                              style: Styles().getTextStyle('widget.heading.small')
                             ),
                           ),
                         ),
@@ -697,8 +682,7 @@ class _GroupMemberCard extends StatelessWidget {
                                         color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.all(Radius.circular(2))),
                                     child: Center(
                                         child: Text(Localization().getStringEx('widget.group.member.card.attended.label', 'ATTENDED'),
-                                            style: TextStyle(
-                                                fontFamily: Styles().fontFamilies!.bold, fontSize: 12, color: Styles().colors!.white)))))),
+                                            style: Styles().getTextStyle('widget.heading.small')))))),
                         Expanded(child: Container()),
                       ],
                     )

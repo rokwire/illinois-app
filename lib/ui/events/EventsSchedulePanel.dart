@@ -249,22 +249,12 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   Widget _buildDateTitle(String date){
-    return Text(date,
-      style: TextStyle(
-        fontSize: 20,
-        color: Styles().colors!.fillColorPrimary,
-        fontFamily: Styles().fontFamilies!.extraBold
-      ),
+    return Text(date, style: Styles().getTextStyle('panel.event_schedule.title')
     );
   }
 
   Widget _buildCategoryTitle(String category){
-    return Text(category,
-        style: TextStyle(
-            fontSize: 16,
-            color: Styles().colors!.textBackground,
-            fontFamily: Styles().fontFamilies!.extraBold
-        ));
+    return Text(category, style: Styles().getTextStyle('panel.event_schedule.category'));
   }
 
   Widget _buildEventCart(Event event) {
@@ -380,10 +370,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   autofocus: true,
                   cursorColor: Styles().colors!.fillColorSecondary,
                   keyboardType: TextInputType.text,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies!.regular,
-                      color: Styles().colors!.textBackground),
+                  style: Styles().getTextStyle('panel.event_schedule.search.edit'),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                   ),
@@ -636,16 +623,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                     children: <Widget>[
                       Text((title != null) ? title : "",
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Styles().colors!.fillColorPrimary,
-                              fontFamily: Styles().fontFamilies!.extraBold,
-                              fontSize: 20)),
+                          style: Styles().getTextStyle('panel.event_schedule.title')),
                       Text((description != null) ? description : "",
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.black38,
-                              fontFamily: Styles().fontFamilies!.medium,
-                              fontSize: 16)),
+                          style: Styles().getTextStyle('panel.event_schedule.map.description')),
                       Container(
                         height: 8,
                       ),
@@ -1113,7 +1094,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                           Expanded(
                             child: Text(
                               widget.event!.title!,
-                              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.extraBold),
+                              style: Styles().getTextStyle('widget.title.large'),
                             ),
                           ),
                           Visibility(
@@ -1144,7 +1125,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 4, left: 28),
-                    child: Text(widget.event?.displaySuperTime ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium)),
+                    child: Text(widget.event?.displaySuperTime ?? '', style: Styles().getTextStyle('widget.explore.card.detail.regular')),
                   )
                 ]),
               ),
@@ -1184,7 +1165,7 @@ class _EventTabView extends StatelessWidget{
             ),
             child: Center(
                 child: Text(text!,
-                    style: TextStyle(fontFamily: selected! ? Styles().fontFamilies!.extraBold : Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
+                    style: selected! ? Styles().getTextStyle('widget.tab.selected') : Styles().getTextStyle('widget.tab.not_selected') )),
           )),
     );
   }

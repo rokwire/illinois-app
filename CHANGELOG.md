@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optimized Groups /user/login API call [#2316](https://github.com/rokwire/illinois-app/issues/2316).
 - Improved scheduling of app review prompt [#2321](https://github.com/rokwire/illinois-app/issues/2321).
 - Removed direct privacy level checks from app code, use FlexUI features instead [#2325](https://github.com/rokwire/illinois-app/issues/2325).
+- TextStyles exposed to Assets/styles.json (in progress) [#2311](https://github.com/rokwire/illinois-app/issues/2311).
 
 ## [4.1.25] - 2022-09-02
 ### Fixed
