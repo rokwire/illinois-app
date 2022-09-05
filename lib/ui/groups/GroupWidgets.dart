@@ -2186,7 +2186,6 @@ class _GroupPollCardState extends State<GroupPollCard> {
         String? votes = Localization().getStringEx("panel.polls_home.card.text.votes","votes");
         votesString = '$votesCount $votes';
       }
-      Color? votesColor = Styles().colors!.textBackground;
 
       GlobalKey progressKey = GlobalKey();
       _progressKeys!.add(progressKey);
