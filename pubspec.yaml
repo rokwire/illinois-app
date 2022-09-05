@@ -57,7 +57,6 @@ dependencies:
   dropdown_button2: ^1.2.2
   video_player: ^2.3.0
   just_audio: ^0.9.21
-  flutter_barcode_scanner: ^2.0.0
   confetti: ^0.6.0
   flutter_colorpicker: ^1.0.3
   in_app_review: ^2.0.4

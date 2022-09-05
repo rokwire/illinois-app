@@ -17,7 +17,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
@@ -1419,11 +1418,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       return;
     }
     Analytics().logSelect(target: "Take Attendance", attributes: _group?.analyticsAttributes);
-    FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors!.fillColorSecondary!)!,
-            Localization().getStringEx('panel.group_detail.attendance.scan.cancel.button.title', 'Cancel'), true, ScanMode.QR)
-        .then((scanResult) {
-      _onAttendanceScanFinished(scanResult);
-    });
+    //TBD: DD implement with different plugin
+    // FlutterBarcodeScanner.scanBarcode(UiColors.toHex(Styles().colors!.fillColorSecondary!)!,
+    //         Localization().getStringEx('panel.group_detail.attendance.scan.cancel.button.title', 'Cancel'), true, ScanMode.QR)
+    //     .then((scanResult) {
+    //   _onAttendanceScanFinished(scanResult);
+    // });
   }
 
   void _onAttendanceScanFinished(String? scanResult) {
