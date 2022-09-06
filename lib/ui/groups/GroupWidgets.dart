@@ -1282,6 +1282,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   @override
   Widget build(BuildContext context) {
+    String thumbsUpReaction = 'thumbs-up';
     int visibleRepliesCount = widget.reply?.replies?.length ?? 0;
     bool isRepliesLabelVisible = (visibleRepliesCount > 0) && widget.showRepliesCount;
     String? repliesLabel = (visibleRepliesCount == 1)
@@ -1305,6 +1306,13 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                 Semantics( child:
                   Text(StringUtils.ensureNotEmpty(widget.reply?.member?.displayShortName),
                     style: Styles().getTextStyle("widget.card.title.small")),
+                ),
+                GroupPostReaction(
+                    reaction: thumbsUpReaction,
+                    accountIDs: widget.reply?.reactions[thumbsUpReaction],
+                    selectedIconPath: 'images/icon-thumbs-up-solid.png',
+                    deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                    onTap: () => onTapReaction(widget.group?.id, widget.reply?.id, thumbsUpReaction),
                 ),
                 Visibility(
                     visible: StringUtils.isNotEmpty(widget.iconPath),
@@ -1402,6 +1410,36 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
       setState(() {});
     }
   }
+}
+
+//////////////////////////////////////
+// GroupPostReaction
+
+class GroupPostReaction extends StatelessWidget {
+  final String? reaction;
+  final List<String>? accountIDs;
+  final String selectedIconPath;
+  final String deselectedIconPath;
+  final void Function()? onTap;
+
+  GroupPostReaction({this.reaction, this.accountIDs, required this.selectedIconPath, required this.deselectedIconPath, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    bool selected = accountIDs?.contains(Auth2().accountId) ?? false;
+    return Semantics(button: true, label: reaction,
+        child: InkWell(onTap: onTap, child: Row(
+          children: [
+            Image.asset(selected ? selectedIconPath : deselectedIconPath, width: 18, height: 18, excludeFromSemantics: true),
+            Visibility(visible: accountIDs != null && accountIDs!.length > 0,
+                child: Text(accountIDs!.length.toString(), style: Styles().getTextStyle('widget.description.small')))
+          ],
+        )));
+  }
+}
+
+void onTapReaction(String? groupId, String? postId, String reaction) {
+  Groups().togglePostReaction(groupId, postId, reaction);
 }
 
 typedef void OnBodyChangedListener(String text);
@@ -1506,6 +1544,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                     },
                     maxLines: 15,
                     minLines: 1,
+                    textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
                         hintText: _hint,
                         border: OutlineInputBorder(

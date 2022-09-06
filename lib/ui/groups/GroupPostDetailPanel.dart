@@ -125,6 +125,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildContent(){
+    String thumbsUpReaction = 'thumbs-up';
     return Stack(children: [
       Stack(alignment: Alignment.topCenter, children: [
         SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
@@ -146,6 +147,14 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 24, color: Styles().colors!.fillColorPrimary)
                     )
                   )
+                ),
+
+                GroupPostReaction(
+                  reaction: thumbsUpReaction,
+                  accountIDs: widget.post?.reactions[thumbsUpReaction],
+                  selectedIconPath: 'images/icon-thumbs-up-solid.png',
+                  deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                  onTap: () => onTapReaction(widget.group?.id, widget.post?.id, thumbsUpReaction),
                 ),
 
                 Visibility(visible: _isEditPostVisible && !widget.hidePostOptions, child:

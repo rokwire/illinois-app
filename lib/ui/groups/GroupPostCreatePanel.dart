@@ -89,6 +89,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                       controller: TextEditingController(text: _postData.subject),
                       onChanged: (msg)=> _postData.subject = msg,
                       maxLines: 1,
+                      textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(
                         hintText: Localization().getStringEx('panel.group.detail.post.create.subject.field.hint', 'Write a Subject'),
                         border: OutlineInputBorder(
