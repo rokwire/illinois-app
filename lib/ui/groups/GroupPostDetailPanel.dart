@@ -149,12 +149,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   )
                 ),
 
-                GroupPostReaction(
-                  reaction: thumbsUpReaction,
-                  accountIDs: widget.post?.reactions[thumbsUpReaction],
-                  selectedIconPath: 'images/icon-thumbs-up-solid.png',
-                  deselectedIconPath: 'images/icon-thumbs-up-outline.png',
-                  onTap: () => onTapReaction(widget.group?.id, widget.post?.id, thumbsUpReaction),
+                Padding(
+                  padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
+                  child: GroupPostReaction(
+                    reaction: thumbsUpReaction,
+                    accountIDs: widget.post?.reactions[thumbsUpReaction],
+                    selectedIconPath: 'images/icon-thumbs-up-solid.png',
+                    deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                    onTap: () => onTapReaction(widget.group?.id, widget.post?.id, thumbsUpReaction),
+                  ),
                 ),
 
                 Visibility(visible: _isEditPostVisible && !widget.hidePostOptions, child:

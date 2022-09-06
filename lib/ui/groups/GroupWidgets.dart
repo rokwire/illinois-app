@@ -1302,11 +1302,12 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
         child: Padding(
             padding: EdgeInsets.all(12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Row(children: [
                 Semantics( child:
                   Text(StringUtils.ensureNotEmpty(widget.reply?.member?.displayShortName),
                     style: Styles().getTextStyle("widget.card.title.small")),
                 ),
+                Expanded(child: Container()),
                 GroupPostReaction(
                     reaction: thumbsUpReaction,
                     accountIDs: widget.reply?.reactions[thumbsUpReaction],
@@ -1429,10 +1430,12 @@ class GroupPostReaction extends StatelessWidget {
     bool selected = accountIDs?.contains(Auth2().accountId) ?? false;
     return Semantics(button: true, label: reaction,
         child: InkWell(onTap: onTap, child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(selected ? selectedIconPath : deselectedIconPath, width: 18, height: 18, excludeFromSemantics: true),
+            Image.asset(selected ? selectedIconPath : deselectedIconPath, excludeFromSemantics: true),
             Visibility(visible: accountIDs != null && accountIDs!.length > 0,
-                child: Text(accountIDs!.length.toString(), style: Styles().getTextStyle('widget.description.small')))
+                child: Text(accountIDs?.length.toString() ?? '', style: Styles().getTextStyle('widget.description.small')))
           ],
         )));
   }
