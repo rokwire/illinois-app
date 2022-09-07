@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Wellness overview tutorial video [#2357](https://github.com/rokwire/illinois-app/issues/2357).
+### Removed
+- Allow admins to add members to group [#2359](https://github.com/rokwire/illinois-app/issues/2359).
 
 ## [4.1.25] - 2022-09-02
 ### Fixed
