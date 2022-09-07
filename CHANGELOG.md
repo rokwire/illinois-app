@@ -15,8 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.1.26] - 2022-09-07
 ### Added
 - Wellness overview tutorial video [#2357](https://github.com/rokwire/illinois-app/issues/2357).
+- Allow sharing group qr code value [#2362](https://github.com/rokwire/illinois-app/issues/2362).
 ### Removed
 - Allow admins to add members to group [#2359](https://github.com/rokwire/illinois-app/issues/2359).
+### Changed
+- Improved scheduling of app review prompt [#2321](https://github.com/rokwire/illinois-app/issues/2321).
 
 ## [4.1.25] - 2022-09-02
 ### Fixed
