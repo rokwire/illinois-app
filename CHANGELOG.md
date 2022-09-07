@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TextStyles exposed to Assets/styles.json (in progress) [#2311](https://github.com/rokwire/illinois-app/issues/2311).
 - Android: upgrade compileSdkVersion and targetSdkVersion [#2308](https://github.com/rokwire/illinois-app/issues/2308).
 
+### Added
+- Add reactions to group posts [#2354](https://github.com/rokwire/illinois-app/issues/2354) 
+
 ## [4.1.25] - 2022-09-02
 ### Fixed
 - Crash in Android [#2341](https://github.com/rokwire/illinois-app/issues/2341).

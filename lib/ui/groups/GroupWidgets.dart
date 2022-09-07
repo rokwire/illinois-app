@@ -1258,8 +1258,9 @@ class GroupReplyCard extends StatefulWidget {
   final void Function()? onCardTap;
   final bool showRepliesCount;
   final void Function()? onImageTap;
+  final void Function()? onLongPressReaction;
 
-  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.onImageTap});
+  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.onImageTap, this.onLongPressReaction});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1309,11 +1310,13 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                 ),
                 Expanded(child: Container()),
                 GroupPostReaction(
-                    reaction: thumbsUpReaction,
-                    accountIDs: widget.reply?.reactions[thumbsUpReaction],
-                    selectedIconPath: 'images/icon-thumbs-up-solid.png',
-                    deselectedIconPath: 'images/icon-thumbs-up-outline.png',
-                    onTap: () => onTapReaction(widget.group?.id, widget.reply?.id, thumbsUpReaction),
+                  groupID: widget.group?.id,
+                  postID: widget.reply?.id,
+                  reaction: thumbsUpReaction,
+                  accountIDs: widget.reply?.reactions[thumbsUpReaction],
+                  selectedIconPath: 'images/icon-thumbs-up-solid.png',
+                  deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                  onLongPress: widget.onLongPressReaction,
                 ),
                 Visibility(
                     visible: StringUtils.isNotEmpty(widget.iconPath),
@@ -1417,31 +1420,37 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 // GroupPostReaction
 
 class GroupPostReaction extends StatelessWidget {
-  final String? reaction;
+  final String? groupID;
+  final String? postID;
+  final String reaction;
   final List<String>? accountIDs;
   final String selectedIconPath;
   final String deselectedIconPath;
-  final void Function()? onTap;
+  final double iconSize;
+  final void Function()? onLongPress;
 
-  GroupPostReaction({this.reaction, this.accountIDs, required this.selectedIconPath, required this.deselectedIconPath, this.onTap});
+  GroupPostReaction({required this.groupID, required this.postID, required this.reaction, this.accountIDs, required this.selectedIconPath, required this.deselectedIconPath, this.iconSize = 18, this.onLongPress});
 
   @override
   Widget build(BuildContext context) {
     bool selected = accountIDs?.contains(Auth2().accountId) ?? false;
     return Semantics(button: true, label: reaction,
-        child: InkWell(onTap: onTap, child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(selected ? selectedIconPath : deselectedIconPath, excludeFromSemantics: true),
-            Visibility(visible: accountIDs != null && accountIDs!.length > 0,
-                child: Text(accountIDs?.length.toString() ?? '', style: Styles().getTextStyle('widget.description.small')))
-          ],
-        )));
+        child: InkWell(
+            onTap: () => _onTapReaction(groupID, postID, reaction),
+            onLongPress: onLongPress,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(selected ? selectedIconPath : deselectedIconPath, width: iconSize, height: iconSize, fit: BoxFit.fitWidth, excludeFromSemantics: true),
+                Container(width: 4),
+                Visibility(visible: accountIDs != null && accountIDs!.length > 0,
+                    child: Text(accountIDs?.length.toString() ?? '', style: Styles().getTextStyle('widget.message.small')))
+              ])));
   }
 }
 
-void onTapReaction(String? groupId, String? postId, String reaction) {
+void _onTapReaction(String? groupId, String? postId, String reaction) {
   Groups().togglePostReaction(groupId, postId, reaction);
 }
 
