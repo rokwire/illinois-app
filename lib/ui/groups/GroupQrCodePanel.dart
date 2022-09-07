@@ -30,6 +30,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/image_utils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:share/share.dart';
 
 class GroupQrCodePanel extends StatefulWidget {
   final Group? group;
@@ -55,11 +56,8 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
   }
 
   Future<Uint8List?> _loadQrImageBytes() async {
-    String deepLink = '${Groups().groupDetailUrl}?group_id=${widget.group!.id}';
-    String? redirectUrl = Config().deepLinkRedirectUrl;
-    String? qrCodeValue = StringUtils.isNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
     return await NativeCommunicator().getBarcodeImageData({
-      'content': qrCodeValue,
+      'content': _groupPromotionUrl,
       'format': 'qrCode',
       'width': _imageSize,
       'height': _imageSize,
@@ -157,6 +155,20 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                     onTap: _onTapSave,
                   ),
                 ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 12),
+                  child: RoundedButton(
+                    label: Localization().getStringEx('panel.group_qr_code.button.share.title', 'Share'),
+                    hint: '',
+                    backgroundColor: Styles().colors!.background,
+                    fontSize: 16.0,
+                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: Styles().colors!.fillColorSecondary,
+                    onTap: _onTapShare,
+                    rightIcon: Image.asset('images/share-blue.png'),
+                    rightIconPadding: EdgeInsets.only(right: 95),
+                  ),
+                )
               ],
             ),
           ),
@@ -167,6 +179,18 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
   }
 
   void _onTapSave() {
+    Analytics().logSelect(target: 'Save Group Qr Code');
     _saveQrCode();
+  }
+
+  void _onTapShare() {
+    Analytics().logSelect(target: 'Share Group Qr Code');
+    Share.share(_groupPromotionUrl);
+  }
+
+  String get _groupPromotionUrl {
+    String deepLink = '${Groups().groupDetailUrl}?group_id=${widget.group!.id}';
+    String? redirectUrl = Config().deepLinkRedirectUrl;
+    return StringUtils.isNotEmpty(redirectUrl) ? "$redirectUrl?target=$deepLink" : deepLink;
   }
 }
