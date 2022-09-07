@@ -2062,6 +2062,7 @@
     "panel.group_qr_code.code.hint": "QR code image",
     "panel.group_qr_code.primary.heading.title": "Group promotion Key",
     "panel.group_qr_code.button.save.title": "Save",
+    "panel.group_qr_code.button.share.title": "Share",
 
     "panel.find_event.filter.tags.all": "All Tags",
     "panel.find_event.filter.tags.my": "My Tags",
