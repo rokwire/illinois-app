@@ -9,6 +9,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_notification.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -30,6 +31,7 @@ class AppReview with Service implements NotificationsListener {
     super.createService();
     NotificationService().subscribe(this,[
       AppLivecycle.notifyStateChanged,
+      AppNotification.notify,
       Analytics.notifyEvent,
       Auth2.notifyAccountChanged,
     ]);
@@ -58,6 +60,9 @@ class AppReview with Service implements NotificationsListener {
   void onNotification(String name, dynamic param) {
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
+    }
+    else if (name == AppNotification.notify) {
+      _onAppNotification(param);
     }
     else if (name == Analytics.notifyEvent) {
       _onAnalyticsEvent(param);
@@ -90,9 +95,16 @@ class AppReview with Service implements NotificationsListener {
     }
   }
 
+  void _onAppNotification(Notification notification) {
+    _scheduleReviewRequest();
+  }
+
   void _onAnalyticsEvent(Map<String, dynamic>? event) {
-    String? eventName = (event != null) ? JsonUtils.stringValue(event[Analytics.LogEventName]) : null;
-    if ((eventName == Analytics.LogSelectEventName) && _canRequestReview) {
+    _scheduleReviewRequest();
+  }
+
+  void _scheduleReviewRequest() {
+    if (_canRequestReview) {
       _requestTimer?.cancel();
       _requestTimer = Timer(Duration(seconds: Config().appReviewActivityTimeout), () {
         _requestTimer = null;
