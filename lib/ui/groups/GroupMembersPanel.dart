@@ -18,7 +18,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -64,7 +63,6 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   String? _searchTextValue;
   TextEditingController _searchEditingController = TextEditingController();
-  TextEditingController _addMemberUinEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -207,7 +205,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
               title: (_selectedMemberStatus == GroupMemberStatus.pending)
                   ? Localization().getStringEx("panel.manage_members.label.requests", "Requests")
                   : Localization().getStringEx("panel.manage_members.label.members", "Members"),
-              titleIconAsset: 'images/icon-member.png', rightIcon: _buildAddMemberButton(), rightIconAction: _onTapAddMember)),
+              titleIconAsset: 'images/icon-member.png')),
       _buildMembersSearch(),
       Padding(
           padding: EdgeInsets.only(left: 16, top: 16, right: 16),
@@ -224,46 +222,6 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         _buildStatusValuesContainer()
       ])
     ]);
-  }
-
-  Widget _buildAddMemberButton() {
-    return Visibility(
-        visible: _canAddMember,
-        child: GestureDetector(
-            onTap: _onTapAddMember,
-            child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Text(Localization().getStringEx('panel.manage_members.add.member.button', 'Add Member'),
-                  style: TextStyle(
-                      color: Styles().colors!.white,
-                      fontSize: 14,
-                      fontFamily: Styles().fontFamilies!.bold,
-                      decorationColor: Styles().colors!.fillColorSecondary,
-                      decorationStyle: TextDecorationStyle.solid,
-                      decoration: TextDecoration.underline,
-                      decorationThickness: 2.0)),
-              Padding(padding: EdgeInsets.only(left: 5), child: Image.asset('images/icon-add-14x14.png'))
-            ])));
-  }
-
-  Widget _buildAddMemberDialog() {
-    return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [Padding(
-            padding: EdgeInsets.only(top: 10),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(
-                  padding: EdgeInsets.only(bottom: 5),
-                  child: Text(Localization().getStringEx('panel.manage_members.add_member.uin.label', 'UIN'),
-                      style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 12, fontFamily: Styles().fontFamilies!.bold))),
-              Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  decoration:
-                      BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
-                  child: TextField(
-                      controller: _addMemberUinEditingController,
-                      decoration: InputDecoration(border: InputBorder.none),
-                      style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)))
-            ]))]);
   }
 
   Widget _buildMembersSearch() {
@@ -377,51 +335,6 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       _searchTextValue = "";
       _reloadMembers();
     }
-  }
-
-  void _onTapAddMember() {
-    FocusScope.of(context).unfocus();
-    Analytics().logSelect(target: 'Add Member');
-    if (!_canAddMember) {
-      return;
-    }
-    AppAlert.showCustomDialog(context: context, contentPadding: EdgeInsets.all(16), contentWidget: _buildAddMemberDialog(), actions: [
-      TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-            _addMemberToGroup();
-          },
-          child: Text(Localization().getStringEx('dialog.ok.title', 'OK'))),
-      TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')))
-    ]);
-  }
-
-  void _addMemberToGroup() {
-    String? memberUin = _addMemberUinEditingController.text;
-    if (!StringUtils.isUinValid(memberUin)) {
-      AppAlert.showDialogResult(
-          context, Localization().getStringEx('panel.manage_members.invalid.uin.msg', 'Invalid format. Please, provide valid UIN.'));
-      return;
-    }
-    _increaseProgress();
-    Member member = Member();
-    member.externalId = memberUin;
-    Groups().addMemberTo(group: _group!, member: member).then((success) {
-      _decreaseProgress();
-      late String msg;
-      if (success) {
-        _addMemberUinEditingController.text = '';
-        msg = Localization().getStringEx('panel.manage_members.add.member.succeeded.msg', 'Successfully imported member to group.');
-        _reloadMembers();
-      } else {
-        msg = Localization().getStringEx('panel.manage_members.add.member.failed.msg', 'Failed to import member to group.');
-      }
-      AppAlert.showDialogResult(context, msg);
-    });
   }
 
   void _scrollListener() {
@@ -559,10 +472,6 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   bool get _isAdmin {
     return _group?.currentMember?.isAdmin ?? false;
-  }
-
-  bool get _canAddMember {
-    return _isAdmin && !(_group?.authManEnabled ?? false);
   }
 }
 
