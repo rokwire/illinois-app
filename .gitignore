@@ -51,10 +51,5 @@ app.*.map.json
 /ios/Runner/GoogleService-Info-Prod.plist
 
 /android/keys.properties
-/android/app/src/debug/google-services.json
-/android/app/src/release/google-services.json
-/android/app/src/profile/google-services.json
-/android/app/src/dev/google-services.json
-/android/app/src/prod/google-services.json
-/android/app/src/tst/google-services.json
+google-services.json
 

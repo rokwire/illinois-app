@@ -12,33 +12,33 @@
       "args": ["-v"]
     },
     {
-      "name": "Flutter-Dev",
+      "name": "Illinois-Dev",
       "program": "lib/main.dart",
       "request": "launch",
       "type": "dart",
       "args": ["-v",
         "-t", "lib/mainDev.dart",
-        "--flavor", "dev"
+        "--flavor", "IllinoisDev"
       ]
     },
     {
-      "name": "Flutter-Prod",
+      "name": "Illinois-Prod",
       "program": "lib/main.dart",
       "request": "launch",
       "type": "dart",
       "args": ["-v",
         "-t", "lib/mainProd.dart",
-        "--flavor", "prod"
+        "--flavor", "IllinoisProd"
       ]
     },
     {
-      "name": "Flutter-Test",
+      "name": "Illinois-Test",
       "program": "lib/main.dart",
       "request": "launch",
       "type": "dart",
       "args": ["-v",
         "-t", "lib/mainTest.dart",
-        "--flavor", "test"
+        "--flavor", "IllinoisTst"
       ]
     }
   ]

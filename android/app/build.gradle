@@ -121,7 +121,7 @@ android {
         }
     }
 
-    flavorDimensions "environment"
+    flavorDimensions "product", "environment"
     productFlavors {
         dev {
             dimension "environment"
@@ -131,6 +131,9 @@ android {
         }
         tst {
             dimension "environment"
+        }
+        illinois {
+            dimension "product"
         }
     }
 }
