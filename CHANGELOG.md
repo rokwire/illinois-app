@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Improve manual nudge interaction to include polls [#2365](https://github.com/rokwire/illinois-app/issues/2365).
+### Removed
+- Removed external link icon from Due Date Catalog in Academics panel [#2356](https://github.com/rokwire/illinois-app/issues/2356).
 
 ## [4.1.26] - 2022-09-07
 ### Added
