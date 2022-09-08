@@ -10,6 +10,62 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; settings = {COMPILER_FLAGS = "-w"; }; };
 		2605FF54236C13A6002F71BE /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */; };
 		2605FF55236C13A6002F71BE /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */; };
+		2617849D28C8ED6A009172BB /* UIColor+InaParse.m in Sources */ = {isa = PBXBuildFile; fileRef = 269F83EC22D73EB400CC11A4 /* UIColor+InaParse.m */; };
+		2617849E28C8ED6A009172BB /* NSUserDefaults+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 268F30FF22E5E7BF00547FE1 /* NSUserDefaults+InaUtils.m */; };
+		2617849F28C8ED6A009172BB /* NSDictionary+UIUCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 26C90CEE2361D13E0092E07F /* NSDictionary+UIUCConfig.m */; };
+		261784A028C8ED6A009172BB /* CGGeometry+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 269F83F122D744E200CC11A4 /* CGGeometry+InaUtils.m */; };
+		261784A128C8ED6A009172BB /* Bluetooth+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EA372323A7EF76001D78A5 /* Bluetooth+InaUtils.m */; };
+		261784A228C8ED6A009172BB /* MapDirectionsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 269F83FB22D77E5500CC11A4 /* MapDirectionsController.m */; };
+		261784A328C8ED6A009172BB /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; settings = {COMPILER_FLAGS = "-w"; }; };
+		261784A428C8ED6A009172BB /* MapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 266DC99528ACD972007F51EA /* MapController.m */; };
+		261784A528C8ED6A009172BB /* NSArray+InaTypedValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 268F647B22DF09D900A85AFD /* NSArray+InaTypedValue.m */; };
+		261784A628C8ED6A009172BB /* AppKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 2696995922C38B4000B3290E /* AppKeys.m */; };
+		261784A728C8ED6A009172BB /* CLLocationCoordinate2D+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 268F647922DF050400A85AFD /* CLLocationCoordinate2D+InaUtils.m */; };
+		261784A828C8ED6A009172BB /* MapMarkerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94D22DCB80000F6BC2F /* MapMarkerView.m */; };
+		261784A928C8ED6A009172BB /* NSDate+UIUCUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 269F83EA22D73EB400CC11A4 /* NSDate+UIUCUtils.m */; };
+		261784AA28C8ED6A009172BB /* Navigation.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F7952E28AFA9F200AFC37E /* Navigation.m */; };
+		261784AB28C8ED6A009172BB /* NSData+InaHex.m in Sources */ = {isa = PBXBuildFile; fileRef = B681B2B823DEFD9E00093A67 /* NSData+InaHex.m */; };
+		261784AC28C8ED6A009172BB /* NSDictionary+InaTypedValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 26FA06BC22CCA9B5003B78E4 /* NSDictionary+InaTypedValue.m */; };
+		261784AD28C8ED6A009172BB /* NSString+InaJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94922DC99C700F6BC2F /* NSString+InaJson.m */; };
+		261784AE28C8ED6A009172BB /* NSDictionary+InaPathKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 26C90CEC2361CF480092E07F /* NSDictionary+InaPathKey.m */; };
+		261784AF28C8ED6A009172BB /* Security+UIUCUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26ECB3252487AD0900479487 /* Security+UIUCUtils.m */; };
+		261784B028C8ED6A009172BB /* NSDictionary+UIUCExplore.m in Sources */ = {isa = PBXBuildFile; fileRef = 26FAB1C822EB3502008E987C /* NSDictionary+UIUCExplore.m */; };
+		261784B128C8ED6A009172BB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2696995F22C38C1D00B3290E /* main.m */; };
+		261784B228C8ED6A009172BB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2696995A22C38B4000B3290E /* AppDelegate.m */; };
+		261784B328C8ED6A009172BB /* UILabel+InaMeasure.m in Sources */ = {isa = PBXBuildFile; fileRef = 26B340392331195C0031CF70 /* UILabel+InaMeasure.m */; };
+		261784B428C8ED6A009172BB /* NSDate+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26FAB1CA22EB35C7008E987C /* NSDate+InaUtils.m */; };
+		261784B528C8ED6A009172BB /* MapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2696997F22C3A14A00B3290E /* MapView.m */; };
+		261784B628C8ED6A009172BB /* Navigation+Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F7952B28AFA9F200AFC37E /* Navigation+Utils.m */; };
+		261784B728C8ED6A009172BB /* MapLocationPickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26B340362331163A0031CF70 /* MapLocationPickerController.m */; };
+		261784B828C8ED6A009172BB /* CommonCrypto+UIUCUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26ECB3222487938C00479487 /* CommonCrypto+UIUCUtils.m */; };
+		261784BA28C8ED6A009172BB /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE7B5BCF89DF9B7AC1FD247B /* Pods_Runner.framework */; };
+		261784BC28C8ED6A009172BB /* travel-mode-drive@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30F022E5DD7900547FE1 /* travel-mode-drive@2x.png */; };
+		261784BD28C8ED6A009172BB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		261784BE28C8ED6A009172BB /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */; };
+		261784BF28C8ED6A009172BB /* travel-mode-bicycle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EF22E5DD7900547FE1 /* travel-mode-bicycle@2x.png */; };
+		261784C028C8ED6A009172BB /* maps-icon-marker-pin-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B532306E8000026240A /* maps-icon-marker-pin-40@2x.png */; };
+		261784C128C8ED6A009172BB /* maps-icon-marker-circle-30@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 269F83E322D73E7400CC11A4 /* maps-icon-marker-circle-30@2x.png */; };
+		261784C228C8ED6A009172BB /* travel-mode-walk@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30ED22E5DD7900547FE1 /* travel-mode-walk@2x.png */; };
+		261784C328C8ED6A009172BB /* maps-icon-marker-pin-30@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B512306E8000026240A /* maps-icon-marker-pin-30@2x.png */; };
+		261784C428C8ED6A009172BB /* button-icon-nav-refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F647E22DF15F700A85AFD /* button-icon-nav-refresh.png */; };
+		261784C528C8ED6A009172BB /* button-icon-nav-location.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F648022DF200300A85AFD /* button-icon-nav-location.png */; };
+		261784C628C8ED6A009172BB /* maps-icon-marker-circle-10@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 269F83E222D73E7400CC11A4 /* maps-icon-marker-circle-10@2x.png */; };
+		261784C728C8ED6A009172BB /* maps-icon-marker-origin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */; };
+		261784C828C8ED6A009172BB /* maps-icon-marker-circle-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 269F83E522D73E7400CC11A4 /* maps-icon-marker-circle-40@2x.png */; };
+		261784C928C8ED6A009172BB /* button-icon-nav-prev.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170E922DDFB6500299773 /* button-icon-nav-prev.png */; };
+		261784CA28C8ED6A009172BB /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		261784CB28C8ED6A009172BB /* maps-icon-marker-circle-20@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 269F83E422D73E7400CC11A4 /* maps-icon-marker-circle-20@2x.png */; };
+		261784CC28C8ED6A009172BB /* maps-icon-marker-pin-20@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B502306E8000026240A /* maps-icon-marker-pin-20@2x.png */; };
+		261784CD28C8ED6A009172BB /* maps-icon-marker-pin-50@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B582306EB190026240A /* maps-icon-marker-pin-50@2x.png */; };
+		261784CE28C8ED6A009172BB /* button-icon-nav-clear.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170EA22DDFB6500299773 /* button-icon-nav-clear.png */; };
+		261784CF28C8ED6A009172BB /* travel-mode-transit@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EE22E5DD7900547FE1 /* travel-mode-transit@2x.png */; };
+		261784D028C8ED6A009172BB /* maps-icon-marker-pin-10@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B522306E8000026240A /* maps-icon-marker-pin-10@2x.png */; };
+		261784D128C8ED6A009172BB /* travel-mode-unknown@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30F522E5E47600547FE1 /* travel-mode-unknown@2x.png */; };
+		261784D228C8ED6A009172BB /* button-icon-nav-next.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170E822DDFB6500299773 /* button-icon-nav-next.png */; };
+		261784D328C8ED6A009172BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
+		261784D428C8ED6A009172BB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
+		261784D528C8ED6A009172BB /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */; };
+		261784D628C8ED6A009172BB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6BDCD39242CCF5F002F7364 /* Localizable.strings */; };
 		2626D94B22DC99C800F6BC2F /* NSString+InaJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94922DC99C700F6BC2F /* NSString+InaJson.m */; };
 		2626D94E22DCB80000F6BC2F /* MapMarkerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94D22DCB80000F6BC2F /* MapMarkerView.m */; };
 		264C99E828B3DA150089848F /* maps-icon-marker-origin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */; };
@@ -66,6 +122,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		261784D728C8ED6A009172BB /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9705A1C41CF9048500538489 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -84,6 +150,8 @@
 		235A89B2944C30C43F9E290B /* Pods-Runner.profile-test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-test.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-test.xcconfig"; sourceTree = "<group>"; };
 		2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
 		2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
+		261784E928C8ED6A009172BB /* Illinois.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Illinois.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		261784EA28C8ED6B009172BB /* Illinois-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Illinois-Info.plist"; path = "/Users/misho/Devel/UIUC/Source/rokwire-illinois-app/ios/Illinois-Info.plist"; sourceTree = "<absolute>"; };
 		2626D94922DC99C700F6BC2F /* NSString+InaJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+InaJson.m"; sourceTree = "<group>"; };
 		2626D94A22DC99C700F6BC2F /* NSString+InaJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+InaJson.h"; sourceTree = "<group>"; };
 		2626D94C22DCB80000F6BC2F /* MapMarkerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapMarkerView.h; sourceTree = "<group>"; };
@@ -198,6 +266,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		261784B928C8ED6A009172BB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				261784BA28C8ED6A009172BB /* Pods_Runner.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97C146EB1CF9000F007C117D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -352,6 +428,7 @@
 			isa = PBXGroup;
 			children = (
 				97C146EE1CF9000F007C117D /* Runner.app */,
+				261784E928C8ED6A009172BB /* Illinois.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -379,6 +456,7 @@
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				2696995F22C38C1D00B3290E /* main.m */,
 				97C147021CF9000F007C117D /* Info.plist */,
+				261784EA28C8ED6B009172BB /* Illinois-Info.plist */,
 				2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */,
 				2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */,
 				2668953022E1E074003CAB94 /* Runner.entitlements */,
@@ -428,6 +506,30 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		2617849928C8ED6A009172BB /* Illinois */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 261784DC28C8ED6A009172BB /* Build configuration list for PBXNativeTarget "Illinois" */;
+			buildPhases = (
+				2617849A28C8ED6A009172BB /* [CP] Check Pods Manifest.lock */,
+				2617849B28C8ED6A009172BB /* Run Script */,
+				2617849C28C8ED6A009172BB /* Sources */,
+				261784B928C8ED6A009172BB /* Frameworks */,
+				261784BB28C8ED6A009172BB /* Resources */,
+				261784D728C8ED6A009172BB /* Embed Frameworks */,
+				261784D828C8ED6A009172BB /* Thin Binary */,
+				261784D928C8ED6A009172BB /* [CP] Embed Pods Frameworks */,
+				261784DA28C8ED6A009172BB /* ShellScript */,
+				261784DB28C8ED6A009172BB /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Illinois;
+			productName = Runner;
+			productReference = 261784E928C8ED6A009172BB /* Illinois.app */;
+			productType = "com.apple.product-type.application";
+		};
 		97C146ED1CF9000F007C117D /* Runner */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
@@ -461,6 +563,9 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "The Chromium Authors";
 				TargetAttributes = {
+					2617849928C8ED6A009172BB = {
+						DevelopmentTeam = UPV4CB4H6W;
+					};
 					97C146ED1CF9000F007C117D = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = UPV4CB4H6W;
@@ -489,11 +594,46 @@
 			projectRoot = "";
 			targets = (
 				97C146ED1CF9000F007C117D /* Runner */,
+				2617849928C8ED6A009172BB /* Illinois */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		261784BB28C8ED6A009172BB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				261784BC28C8ED6A009172BB /* travel-mode-drive@2x.png in Resources */,
+				261784BD28C8ED6A009172BB /* LaunchScreen.storyboard in Resources */,
+				261784BE28C8ED6A009172BB /* GoogleService-Info-Prod.plist in Resources */,
+				261784BF28C8ED6A009172BB /* travel-mode-bicycle@2x.png in Resources */,
+				261784C028C8ED6A009172BB /* maps-icon-marker-pin-40@2x.png in Resources */,
+				261784C128C8ED6A009172BB /* maps-icon-marker-circle-30@2x.png in Resources */,
+				261784C228C8ED6A009172BB /* travel-mode-walk@2x.png in Resources */,
+				261784C328C8ED6A009172BB /* maps-icon-marker-pin-30@2x.png in Resources */,
+				261784C428C8ED6A009172BB /* button-icon-nav-refresh.png in Resources */,
+				261784C528C8ED6A009172BB /* button-icon-nav-location.png in Resources */,
+				261784C628C8ED6A009172BB /* maps-icon-marker-circle-10@2x.png in Resources */,
+				261784C728C8ED6A009172BB /* maps-icon-marker-origin@2x.png in Resources */,
+				261784C828C8ED6A009172BB /* maps-icon-marker-circle-40@2x.png in Resources */,
+				261784C928C8ED6A009172BB /* button-icon-nav-prev.png in Resources */,
+				261784CA28C8ED6A009172BB /* AppFrameworkInfo.plist in Resources */,
+				261784CB28C8ED6A009172BB /* maps-icon-marker-circle-20@2x.png in Resources */,
+				261784CC28C8ED6A009172BB /* maps-icon-marker-pin-20@2x.png in Resources */,
+				261784CD28C8ED6A009172BB /* maps-icon-marker-pin-50@2x.png in Resources */,
+				261784CE28C8ED6A009172BB /* button-icon-nav-clear.png in Resources */,
+				261784CF28C8ED6A009172BB /* travel-mode-transit@2x.png in Resources */,
+				261784D028C8ED6A009172BB /* maps-icon-marker-pin-10@2x.png in Resources */,
+				261784D128C8ED6A009172BB /* travel-mode-unknown@2x.png in Resources */,
+				261784D228C8ED6A009172BB /* button-icon-nav-next.png in Resources */,
+				261784D328C8ED6A009172BB /* Assets.xcassets in Resources */,
+				261784D428C8ED6A009172BB /* Main.storyboard in Resources */,
+				261784D528C8ED6A009172BB /* GoogleService-Info-Dev.plist in Resources */,
+				261784D628C8ED6A009172BB /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97C146EC1CF9000F007C117D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -531,6 +671,188 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		2617849A28C8ED6A009172BB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Runner-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		2617849B28C8ED6A009172BB /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
+		};
+		261784D828C8ED6A009172BB /* Thin Binary */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Thin Binary";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin\n";
+		};
+		261784D928C8ED6A009172BB /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseCore/FirebaseCore.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseCoreDiagnostics/FirebaseCoreDiagnostics.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseCrashlytics/FirebaseCrashlytics.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseInstallations/FirebaseInstallations.framework",
+				"${BUILT_PRODUCTS_DIR}/FirebaseMessaging/FirebaseMessaging.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleDataTransport/GoogleDataTransport.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
+				"${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework",
+				"${BUILT_PRODUCTS_DIR}/Toast/Toast.framework",
+				"${BUILT_PRODUCTS_DIR}/ZXingObjC/ZXingObjC.framework",
+				"${BUILT_PRODUCTS_DIR}/app_settings/app_settings.framework",
+				"${BUILT_PRODUCTS_DIR}/audio_session/audio_session.framework",
+				"${BUILT_PRODUCTS_DIR}/connectivity/connectivity.framework",
+				"${BUILT_PRODUCTS_DIR}/device_calendar/device_calendar.framework",
+				"${BUILT_PRODUCTS_DIR}/device_info/device_info.framework",
+				"${BUILT_PRODUCTS_DIR}/flutter_barcode_scanner/flutter_barcode_scanner.framework",
+				"${BUILT_PRODUCTS_DIR}/flutter_exif_rotation/flutter_exif_rotation.framework",
+				"${BUILT_PRODUCTS_DIR}/flutter_local_notifications/flutter_local_notifications.framework",
+				"${BUILT_PRODUCTS_DIR}/flutter_native_timezone/flutter_native_timezone.framework",
+				"${BUILT_PRODUCTS_DIR}/fluttertoast/fluttertoast.framework",
+				"${BUILT_PRODUCTS_DIR}/gallery_saver/gallery_saver.framework",
+				"${BUILT_PRODUCTS_DIR}/geolocator_apple/geolocator_apple.framework",
+				"${BUILT_PRODUCTS_DIR}/image_picker/image_picker.framework",
+				"${BUILT_PRODUCTS_DIR}/in_app_review/in_app_review.framework",
+				"${BUILT_PRODUCTS_DIR}/just_audio/just_audio.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+				"${BUILT_PRODUCTS_DIR}/notification_permissions/notification_permissions.framework",
+				"${BUILT_PRODUCTS_DIR}/package_info/package_info.framework",
+				"${BUILT_PRODUCTS_DIR}/path_provider_ios/path_provider_ios.framework",
+				"${BUILT_PRODUCTS_DIR}/rokwire_plugin/rokwire_plugin.framework",
+				"${BUILT_PRODUCTS_DIR}/share/share.framework",
+				"${BUILT_PRODUCTS_DIR}/shared_preferences_ios/shared_preferences_ios.framework",
+				"${BUILT_PRODUCTS_DIR}/sqflite/sqflite.framework",
+				"${BUILT_PRODUCTS_DIR}/uni_links/uni_links.framework",
+				"${BUILT_PRODUCTS_DIR}/url_launcher_ios/url_launcher_ios.framework",
+				"${BUILT_PRODUCTS_DIR}/video_player_avfoundation/video_player_avfoundation.framework",
+				"${BUILT_PRODUCTS_DIR}/wakelock/wakelock.framework",
+				"${BUILT_PRODUCTS_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCoreDiagnostics.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCrashlytics.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseInstallations.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseMessaging.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleDataTransport.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toast.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZXingObjC.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/app_settings.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/audio_session.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/connectivity.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/device_calendar.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/device_info.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_barcode_scanner.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_exif_rotation.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_local_notifications.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_native_timezone.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/fluttertoast.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/gallery_saver.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/geolocator_apple.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/image_picker.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/in_app_review.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/just_audio.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/notification_permissions.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/package_info.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/path_provider_ios.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/rokwire_plugin.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/share.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/shared_preferences_ios.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/sqflite.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/uni_links.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/url_launcher_ios.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/video_player_avfoundation.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/wakelock.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/webview_flutter_wkwebview.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		261784DA28C8ED6A009172BB /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./build.sh\n";
+		};
+		261784DB28C8ED6A009172BB /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
+				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		263F851F234C9C8B00397B65 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -716,6 +1038,41 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		2617849C28C8ED6A009172BB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2617849D28C8ED6A009172BB /* UIColor+InaParse.m in Sources */,
+				2617849E28C8ED6A009172BB /* NSUserDefaults+InaUtils.m in Sources */,
+				2617849F28C8ED6A009172BB /* NSDictionary+UIUCConfig.m in Sources */,
+				261784A028C8ED6A009172BB /* CGGeometry+InaUtils.m in Sources */,
+				261784A128C8ED6A009172BB /* Bluetooth+InaUtils.m in Sources */,
+				261784A228C8ED6A009172BB /* MapDirectionsController.m in Sources */,
+				261784A328C8ED6A009172BB /* GeneratedPluginRegistrant.m in Sources */,
+				261784A428C8ED6A009172BB /* MapController.m in Sources */,
+				261784A528C8ED6A009172BB /* NSArray+InaTypedValue.m in Sources */,
+				261784A628C8ED6A009172BB /* AppKeys.m in Sources */,
+				261784A728C8ED6A009172BB /* CLLocationCoordinate2D+InaUtils.m in Sources */,
+				261784A828C8ED6A009172BB /* MapMarkerView.m in Sources */,
+				261784A928C8ED6A009172BB /* NSDate+UIUCUtils.m in Sources */,
+				261784AA28C8ED6A009172BB /* Navigation.m in Sources */,
+				261784AB28C8ED6A009172BB /* NSData+InaHex.m in Sources */,
+				261784AC28C8ED6A009172BB /* NSDictionary+InaTypedValue.m in Sources */,
+				261784AD28C8ED6A009172BB /* NSString+InaJson.m in Sources */,
+				261784AE28C8ED6A009172BB /* NSDictionary+InaPathKey.m in Sources */,
+				261784AF28C8ED6A009172BB /* Security+UIUCUtils.m in Sources */,
+				261784B028C8ED6A009172BB /* NSDictionary+UIUCExplore.m in Sources */,
+				261784B128C8ED6A009172BB /* main.m in Sources */,
+				261784B228C8ED6A009172BB /* AppDelegate.m in Sources */,
+				261784B328C8ED6A009172BB /* UILabel+InaMeasure.m in Sources */,
+				261784B428C8ED6A009172BB /* NSDate+InaUtils.m in Sources */,
+				261784B528C8ED6A009172BB /* MapView.m in Sources */,
+				261784B628C8ED6A009172BB /* Navigation+Utils.m in Sources */,
+				261784B728C8ED6A009172BB /* MapLocationPickerController.m in Sources */,
+				261784B828C8ED6A009172BB /* CommonCrypto+UIUCUtils.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97C146EA1CF9000F007C117D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -847,10 +1204,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -862,6 +1216,350 @@
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Profile;
+		};
+		261784DD28C8ED6A009172BB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = UPV4CB4H6W;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = edu.illinois.rokwire.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		261784DE28C8ED6A009172BB /* Debug-Dev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 26E0DD7A2525FB8A002B7B11 /* Debug-Dev.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = UPV4CB4H6W;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = edu.illinois.rokwire.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Debug-Dev";
+		};
+		261784DF28C8ED6A009172BB /* Debug-Prod */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 263C9CB628C635720092B53B /* Debug-Prod.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = UPV4CB4H6W;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = edu.illinois.rokwire.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Debug-Prod";
+		};
+		261784E028C8ED6A009172BB /* Debug-Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 263C9CB428C635720092B53B /* Debug-Test.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = UPV4CB4H6W;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = edu.illinois.rokwire.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Debug-Test";
+		};
+		261784E128C8ED6A009172BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = UPV4CB4H6W;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = edu.illinois.rokwire.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		261784E228C8ED6A009172BB /* Release-Dev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 26E0DD792525FB8A002B7B11 /* Release-Dev.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = UPV4CB4H6W;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = edu.illinois.rokwire.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release-Dev";
+		};
+		261784E328C8ED6A009172BB /* Release-Prod */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 263C9CB828C635720092B53B /* Release-Prod.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = UPV4CB4H6W;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = edu.illinois.rokwire.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release-Prod";
+		};
+		261784E428C8ED6A009172BB /* Release-Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 263C9CB528C635720092B53B /* Release-Test.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = UPV4CB4H6W;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = edu.illinois.rokwire.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release-Test";
+		};
+		261784E528C8ED6A009172BB /* Profile */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = UPV4CB4H6W;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = edu.illinois.rokwire.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 4.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Profile;
+		};
+		261784E628C8ED6A009172BB /* Profile-Dev */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 26E0DD792525FB8A002B7B11 /* Release-Dev.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = UPV4CB4H6W;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = edu.illinois.rokwire.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 4.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Profile-Dev";
+		};
+		261784E728C8ED6A009172BB /* Profile-Prod */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 263C9CB828C635720092B53B /* Release-Prod.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = UPV4CB4H6W;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = edu.illinois.rokwire.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 4.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Profile-Prod";
+		};
+		261784E828C8ED6A009172BB /* Profile-Test */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 263C9CB528C635720092B53B /* Release-Test.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = UPV4CB4H6W;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flutter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = edu.illinois.rokwire.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 4.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Profile-Test";
 		};
 		263C9CBA28C6419C0092B53B /* Debug-Test */ = {
 			isa = XCBuildConfiguration;
@@ -934,10 +1632,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -1023,10 +1718,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -1107,10 +1799,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -1190,10 +1879,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -1271,10 +1957,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -1351,10 +2034,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -1438,10 +2118,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -1522,10 +2199,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -1603,10 +2277,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -1741,10 +2412,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -1774,10 +2442,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -1794,6 +2459,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		261784DC28C8ED6A009172BB /* Build configuration list for PBXNativeTarget "Illinois" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				261784DD28C8ED6A009172BB /* Debug */,
+				261784DE28C8ED6A009172BB /* Debug-Dev */,
+				261784DF28C8ED6A009172BB /* Debug-Prod */,
+				261784E028C8ED6A009172BB /* Debug-Test */,
+				261784E128C8ED6A009172BB /* Release */,
+				261784E228C8ED6A009172BB /* Release-Dev */,
+				261784E328C8ED6A009172BB /* Release-Prod */,
+				261784E428C8ED6A009172BB /* Release-Test */,
+				261784E528C8ED6A009172BB /* Profile */,
+				261784E628C8ED6A009172BB /* Profile-Dev */,
+				261784E728C8ED6A009172BB /* Profile-Prod */,
+				261784E828C8ED6A009172BB /* Profile-Test */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		97C146E91CF9000F007C117D /* Build configuration list for PBXProject "Runner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
