@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -49,12 +49,14 @@ enum _TagFilter { all, my }
 
 class _GroupsHomePanelState extends State<GroupsHomePanel> implements NotificationsListener {
   final String _allCategoriesValue = Localization().getStringEx("panel.groups_home.label.all_categories", "All Categories");
+  final Color _dimmedBackgroundColor = Color(0x99000000);
 
   bool _isFilterLoading = false;
   int _groupsLoadingProgress = 0;
   bool _myGroupsBusy = false;
 
   GroupsContentType? _selectedContentType;
+  bool _contentTypesVisible = false;
 
   List<Group>? _visibleAllGroups;
   List<Group>? _userGroups;
@@ -92,7 +94,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(
+      appBar: RootBackHeaderBar(
         title: Localization().getStringEx("panel.groups_home.label.heading","Groups"),
       ),
       body: _buildContent(),
@@ -280,86 +282,119 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildContent(){
     return
       Column(children: <Widget>[
-        _buildTabs(),
-        _buildFilterButtons(),
-        Expanded(
-          child: _isLoading
-              ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ),)
-              : Stack(
-            alignment: AlignmentDirectional.topCenter,
-            children: <Widget>[
-              Container(color: Styles().colors!.background, child:
-                RefreshIndicator(onRefresh: _onPullToRefresh, child:
-                  SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
-                    Column( children: <Widget>[ _buildGroupsContent(), ],),
-                  ),
-                ),
-              ),
-              Visibility(
-                  visible: _hasActiveFilter,
-                  child: _buildDimmedContainer()
-              ),
-              _hasActiveFilter
-                  ? _buildFilterContent()
-                  : Container()
-            ],
-          ),
-        ),
-      ],);
-  }
-
-  Widget _buildTabs(){
-    return Container(padding: EdgeInsets.symmetric(horizontal: 10), color: Styles().colors!.fillColorPrimary, child:
-      Row(children: [
-        Expanded(child:
-            SingleChildScrollView(scrollDirection: Axis.horizontal, child:
-            ConstrainedBox(constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width - 20 /*padding*/,), child:
-              IntrinsicWidth(child:
-                Row(children: <Widget>[
-                  Padding(padding: EdgeInsets.only(right: 15), child:
-                    _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups'), hint: '', selected: (_selectedContentType == GroupsContentType.all) , onTap: _onTapAllGroups),
-                  ),
-                  Visibility(visible: _showMyGroups, child:
-                    Padding(padding: EdgeInsets.only(right: 15), child:
-                      _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups'), hint: '', selected: (_selectedContentType == GroupsContentType.my), progress: _myGroupsBusy, onTap: _onTapMyGroups),
-                    ),
-                  ),
-                  Flexible(child: Container()),
-                  Visibility(visible: Auth2().isLoggedIn, child:
-                    Padding(padding: EdgeInsets.only(left: 10, bottom: 3), child:
-                      Container(height: 32, width: 32, child:
-                        GroupMemberProfileImage(userId: Auth2().accountId, onTap: _onTapUserProfileImage)
+        _buildGroupsContentSelection(),
+        Expanded(child: Stack(alignment: Alignment.topCenter, children: [
+          Column(children: [
+            _buildFunctionalBar(),
+            Expanded(
+              child: _isLoading
+                ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ),)
+                : Stack(
+                  alignment: AlignmentDirectional.topCenter,
+                  children: <Widget>[
+                    Container(color: Styles().colors!.background, child:
+                      RefreshIndicator(onRefresh: _onPullToRefresh, child:
+                        SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
+                          Column( children: <Widget>[ _buildGroupsContent(), ],),
+                        ),
                       ),
                     ),
-                  ),
-                  Visibility(visible: _canCreateGroup, child:
-                    Padding(padding: EdgeInsets.only(left: 5), child:
-                      _GroupTabButton(title: Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), hint: '', rightIcon: Image.asset('images/icon-plus.png', height: 10, width: 10, excludeFromSemantics: true), selected: false, onTap: _onTapCreate),
+                    Visibility(
+                      visible: _hasActiveFilter, child: _buildDimmedContainer()),
+                    _hasActiveFilter ? _buildFilterContent() : Container()
+                  ],
+                ),
+            )
+          ]),
+          _buildContentTypesContainer()
+        ]))
+      ]);
+  }
+
+  Widget _buildContentTypesContainer() {
+    return Visibility(visible: _contentTypesVisible, child: Stack(children: [
+        GestureDetector(onTap: _changeContentTypesVisibility, child: Container(color: _dimmedBackgroundColor)),
+        _buildTypesValuesWidget()
+    ]));
+  }
+
+  Widget _buildTypesValuesWidget() {
+    List<Widget> typeWidgetList = <Widget>[];
+    typeWidgetList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
+    for (GroupsContentType type in GroupsContentType.values) {
+      if ((_selectedContentType != type)) {
+        typeWidgetList.add(_buildContentItem(type));
+      }
+    }
+    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: typeWidgetList)));
+  }
+
+  Widget _buildContentItem(GroupsContentType contentType) {
+    return RibbonButton(
+        backgroundColor: Styles().colors!.white,
+        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        rightIconAsset: null,
+        label: _getContentLabel(contentType),
+        onTap: () => _onTapContentType(contentType));
+  }
+
+  Widget _buildGroupsContentSelection() {
+    return Padding(
+              padding: EdgeInsets.only(left: 16, top: 16, right: 16),
+              child: RibbonButton(
+                  progress: _myGroupsBusy,
+                  textColor: Styles().colors!.fillColorSecondary,
+                  backgroundColor: Styles().colors!.white,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                  rightIconAsset: (_contentTypesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+                  label: _getContentLabel(_selectedContentType),
+                  onTap: _canTapGroupsContentType ? _changeContentTypesVisibility : null));
+  }
+
+  Widget _buildFunctionalBar() {
+    return Container(
+        child: Padding(
+            padding: const EdgeInsets.only(left: 6),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                _buildFilterButtons(),
+                Expanded(child: Container()),
+                Visibility(visible: _canCreateGroup, child:
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10), child:
+                      InkWell(onTap: _onTapCreate, child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                        Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
+                        Padding(padding: EdgeInsets.only(left: 5), child: Image.asset('images/icon-add-more.png'))
+                      ])),
                     ),
                   ),
-                ],),
-              )
-            )
-          )
-        ),
-      ],)
-    );
+                Semantics(label:Localization().getStringEx("panel.groups_home.button.search.title", "Search"), child:
+                  IconButton(
+                    icon: Image.asset('images/icon-search.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: true, width: 25, height: 25),
+                    onPressed: () {
+                      Analytics().logSelect(target: "Search");
+                      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+      );
   }
 
   Widget _buildFilterButtons() {
     bool hasCategories = CollectionUtils.isNotEmpty(_categories);
     return (_isFilterLoading || (_selectedContentType == GroupsContentType.my))
       ? Container()
-      : Container(
-        width: double.infinity,
-        color: Styles().colors!.white,
-        child: Padding(
-            padding: const EdgeInsets.only(left: 6, right: 16, bottom: 13),
-            child: Row(
+      : Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Visibility(visible: hasCategories, child: FilterSelector(
+                  padding: EdgeInsets.only(left: 4, top: 10, right: 2, bottom: 10),
                   title: _selectedCategory,
                   active: (_activeFilterType == _FilterType.category),
                   onTap: (){
@@ -371,6 +406,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                 )),
                 Visibility(visible: hasCategories, child: Container(width: 8)),
                 FilterSelector(
+                  padding: EdgeInsets.only(left: 2, top: 10, right: 2, bottom: 10),
                   title: StringUtils.ensureNotEmpty(_tagFilterToDisplayString(_selectedTagFilter)),
                   hint: "",
                   active: (_activeFilterType == _FilterType.tags),
@@ -380,21 +416,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                       _activeFilterType = (_activeFilterType != _FilterType.tags) ? _FilterType.tags : _FilterType.none;
                     });
                   }
-                ),
-                Expanded(child: Container()),
-                Semantics(label:Localization().getStringEx("panel.groups_home.button.search.title", "Search"), child:
-                  IconButton(
-                    icon: Image.asset('images/icon-search.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: true, width: 25, height: 25,),
-                    onPressed: () {
-                      Analytics().logSelect(target: "Search");
-                      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
-                    },
-                  ),
                 )
               ],
-            ),
-          ),
-      );
+            );
   }
 
   Widget _buildFilterContent() {
@@ -471,7 +495,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           _activeFilterType = _FilterType.none;
         });
       },
-        child: Container(color: Color(0x99000000)))
+        child: Container(color: _dimmedBackgroundColor))
     );
   }
 
@@ -508,7 +532,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildMyGroupsSection(List<Group> myGroups) {
     List<Widget> widgets = [];
     if(CollectionUtils.isNotEmpty(myGroups)) {
-      widgets.add(Container(height: 8,));
       for (Group? group in myGroups) {
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
@@ -523,7 +546,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildMyPendingGroupsSection(List<Group> myPendingGroups) {
     if(CollectionUtils.isNotEmpty(myPendingGroups)) {
       List<Widget> widgets = [];
-      widgets.add(Container(height: 16,));
+      widgets.add(Container(height: 8));
       widgets.add(Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Text(Localization().getStringEx("panel.groups_home.label.pending", "Pending"), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary),)
         )
@@ -558,7 +581,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     List<Group>? filteredGroups = CollectionUtils.isNotEmpty(_visibleAllGroups) ? _filteredAllGroupsContent : null;
     if(CollectionUtils.isNotEmpty(filteredGroups)){
       List<Widget> widgets = [];
-      widgets.add(Container(height: 8,));
       for(Group? group in filteredGroups!){
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
@@ -584,6 +606,33 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
+  String _getContentLabel(GroupsContentType? contentType) {
+    switch (contentType) {
+      case GroupsContentType.all:
+        return Localization().getStringEx("panel.groups_home.button.all_groups.title", 'All Groups');
+      case GroupsContentType.my:
+        return Localization().getStringEx("panel.groups_home.button.my_groups.title", 'My Groups');
+      default:
+        return '';
+    }
+  }
+  
+  void _changeContentTypesVisibility() {
+    _contentTypesVisible = !_contentTypesVisible;
+    _updateState();
+  }
+
+  void _onTapContentType(GroupsContentType contentType) {
+    Analytics().logSelect(target: _getContentLabel(contentType));
+    if (contentType == GroupsContentType.all) {
+      _onSelectAllGroups();
+    }
+    else if (contentType == GroupsContentType.my) {
+      _onSelectMyGroups();
+    }
+    _changeContentTypesVisibility();
+  }
+
   void _onTapFilterEntry(dynamic entry) {
     String? analyticsTarget;
     switch (_activeFilterType) {
@@ -604,8 +653,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     });
   }
 
-  void _onTapAllGroups(){
-    Analytics().logSelect(target: "All Groups");
+  void _onSelectAllGroups(){
     if(_selectedContentType != GroupsContentType.all){
       setState(() {
         _selectedContentType = GroupsContentType.all;
@@ -613,8 +661,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 
-  void _onTapMyGroups(){
-    Analytics().logSelect(target: "My Groups");
+  void _onSelectMyGroups() {
     if(_selectedContentType != GroupsContentType.my){
       if (Auth2().isOidcLoggedIn) {
         setState(() { _selectedContentType = GroupsContentType.my; });
@@ -653,14 +700,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
     }
   }
-
-  void _onTapUserProfileImage() {
-    Analytics().logSelect(target: "User Profile Image");
-    SettingsProfileContentPanel.present(context);
-  }
   
   bool get _canCreateGroup {
     return Auth2().isOidcLoggedIn && FlexUI().isSharingAvailable;
+  }
+
+  bool get _canTapGroupsContentType {
+    return _showMyGroups && !_myGroupsBusy;
   }
 
   ///////////////////////////////////
@@ -695,78 +741,3 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
   }
 }
-
-class _GroupTabButton extends StatefulWidget{
-  final String? title;
-  final String hint;
-  final Image? rightIcon;
-  final GestureDragCancelCallback onTap;
-  final bool selected;
-  final bool progress;
-
-  _GroupTabButton({required this.title, required this.hint, this.rightIcon, required this.onTap, this.selected = false, this.progress = false});
-
-  @override
-  _GroupTabButtonState createState() => _GroupTabButtonState();
-}
-
-class _GroupTabButtonState extends State<_GroupTabButton> {
-  
-  final GlobalKey _contentKey = GlobalKey();
-  Size? _contentSize;
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _evalContentSize();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(label: widget.title, hint: widget.hint, button: true, selected: widget.selected, excludeSemantics: true, child:
-      GestureDetector(onTap: widget.onTap, child:
-          Row(children: <Widget>[
-            Stack(key: _contentKey, children: <Widget>[
-              Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
-                Text(widget.title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.white,),),
-              ),
-              Positioned(left: 0, right: 0, bottom: 0, child:
-                Visibility(visible: widget.selected, child:
-                  Container(height: 4, color: Styles().colors?.fillColorSecondary,)
-                ),
-              ),
-              Visibility(visible: widget.progress, child:
-                (_contentSize != null) ? SizedBox(width: _contentSize!.width, height: _contentSize!.height, child:
-                  Align(alignment: Alignment.center, child: // TBD: align centered
-                    SizedBox(height: 16, width: 16, child:
-                      CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), )
-                    ),
-                  ),
-                ) : Container(),
-              ),
-            ],),
-            (widget.rightIcon != null) ? Padding(padding: const EdgeInsets.only(left: 5), child: widget.rightIcon,) : Container()
-          ],),
-      ),
-    );
-  }
-
-  void _evalContentSize() {
-    try {
-      final RenderObject? renderBox = _contentKey.currentContext?.findRenderObject();
-      if (renderBox is RenderBox) {
-        if (mounted) {
-          setState(() {
-            _contentSize = renderBox.size;
-          });
-        }
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-  }
-}
-
