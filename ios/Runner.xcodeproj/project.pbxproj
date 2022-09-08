@@ -61,7 +61,6 @@
 		261784D028C8ED6A009172BB /* maps-icon-marker-pin-10@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B522306E8000026240A /* maps-icon-marker-pin-10@2x.png */; };
 		261784D128C8ED6A009172BB /* travel-mode-unknown@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30F522E5E47600547FE1 /* travel-mode-unknown@2x.png */; };
 		261784D228C8ED6A009172BB /* button-icon-nav-next.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170E822DDFB6500299773 /* button-icon-nav-next.png */; };
-		261784D328C8ED6A009172BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		261784D428C8ED6A009172BB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		261784D528C8ED6A009172BB /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */; };
 		261784D628C8ED6A009172BB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6BDCD39242CCF5F002F7364 /* Localizable.strings */; };
@@ -99,6 +98,7 @@
 		26A170EB22DDFB6500299773 /* button-icon-nav-next.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170E822DDFB6500299773 /* button-icon-nav-next.png */; };
 		26A170EC22DDFB6500299773 /* button-icon-nav-prev.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170E922DDFB6500299773 /* button-icon-nav-prev.png */; };
 		26A170ED22DDFB6500299773 /* button-icon-nav-clear.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170EA22DDFB6500299773 /* button-icon-nav-clear.png */; };
+		26AAA20728CA34C200BE694B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26AAA20628CA34BA00BE694B /* Assets.xcassets */; };
 		26B340372331163A0031CF70 /* MapLocationPickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26B340362331163A0031CF70 /* MapLocationPickerController.m */; };
 		26B3403A2331195C0031CF70 /* UILabel+InaMeasure.m in Sources */ = {isa = PBXBuildFile; fileRef = 26B340392331195C0031CF70 /* UILabel+InaMeasure.m */; };
 		26C90CED2361CF480092E07F /* NSDictionary+InaPathKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 26C90CEC2361CF480092E07F /* NSDictionary+InaPathKey.m */; };
@@ -159,7 +159,6 @@
 		2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
 		2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
 		261784E928C8ED6A009172BB /* Illinois.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Illinois.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		261784EA28C8ED6B009172BB /* Illinois-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Illinois-Info.plist"; path = "/Users/misho/Devel/UIUC/Source/rokwire-illinois-app/ios/Illinois-Info.plist"; sourceTree = "<absolute>"; };
 		2626D94922DC99C700F6BC2F /* NSString+InaJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+InaJson.m"; sourceTree = "<group>"; };
 		2626D94A22DC99C700F6BC2F /* NSString+InaJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+InaJson.h"; sourceTree = "<group>"; };
 		2626D94C22DCB80000F6BC2F /* MapMarkerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapMarkerView.h; sourceTree = "<group>"; };
@@ -216,6 +215,9 @@
 		26A170E822DDFB6500299773 /* button-icon-nav-next.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-icon-nav-next.png"; sourceTree = "<group>"; };
 		26A170E922DDFB6500299773 /* button-icon-nav-prev.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-icon-nav-prev.png"; sourceTree = "<group>"; };
 		26A170EA22DDFB6500299773 /* button-icon-nav-clear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-icon-nav-clear.png"; sourceTree = "<group>"; };
+		26AAA20428CA333300BE694B /* Illinois-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Illinois-Info.plist"; sourceTree = "<group>"; };
+		26AAA20528CA33F400BE694B /* Illinois.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Illinois.entitlements; sourceTree = "<group>"; };
+		26AAA20628CA34BA00BE694B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		26B34034233112320031CF70 /* FlutterCompletion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlutterCompletion.h; sourceTree = "<group>"; };
 		26B340352331163A0031CF70 /* MapLocationPickerController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapLocationPickerController.h; sourceTree = "<group>"; };
 		26B340362331163A0031CF70 /* MapLocationPickerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapLocationPickerController.m; sourceTree = "<group>"; };
@@ -268,7 +270,7 @@
 		97C146FB1CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		97C147021CF9000F007C117D /* Runner-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Runner-Info.plist"; sourceTree = "<group>"; };
 		9BD51356257B0E6649796BC6 /* Pods-Runner.release-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-illinoisdev.xcconfig"; sourceTree = "<group>"; };
 		AACADCD4DCD2CEB96CC4EC31 /* Pods-Runner.profile-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-prod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-prod.xcconfig"; sourceTree = "<group>"; };
 		ACB526D062122D3F8BC62A77 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -322,8 +324,6 @@
 			isa = PBXGroup;
 			children = (
 				269F83E122D73DC900CC11A4 /* Images */,
-				26C0B694230584BF005F0A88 /* Assets */,
-				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
 				B6BDCD39242CCF5F002F7364 /* Localizable.strings */,
@@ -358,11 +358,33 @@
 			path = Images;
 			sourceTree = "<group>";
 		};
-		26C0B694230584BF005F0A88 /* Assets */ = {
+		26AAA1FF28CA28AA00BE694B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				26AAA20028CA28B900BE694B /* Runner */,
+				26AAA20128CA2A5300BE694B /* Illinois */,
 			);
-			path = Assets;
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		26AAA20028CA28B900BE694B /* Runner */ = {
+			isa = PBXGroup;
+			children = (
+				97C147021CF9000F007C117D /* Runner-Info.plist */,
+				2668953022E1E074003CAB94 /* Runner.entitlements */,
+				97C146FD1CF9000F007C117D /* Assets.xcassets */,
+			);
+			path = Runner;
+			sourceTree = "<group>";
+		};
+		26AAA20128CA2A5300BE694B /* Illinois */ = {
+			isa = PBXGroup;
+			children = (
+				26AAA20428CA333300BE694B /* Illinois-Info.plist */,
+				26AAA20528CA33F400BE694B /* Illinois.entitlements */,
+				26AAA20628CA34BA00BE694B /* Assets.xcassets */,
+			);
+			path = Illinois;
 			sourceTree = "<group>";
 		};
 		26F7952A28AFA9A800AFC37E /* Navigation */ = {
@@ -450,6 +472,7 @@
 			children = (
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
+				26AAA1FF28CA28AA00BE694B /* Resources */,
 				97C146EF1CF9000F007C117D /* Products */,
 				A4FE37309F85C78E8A871D27 /* Pods */,
 				F8180DF05DB99BBF17C34614 /* Frameworks */,
@@ -488,11 +511,8 @@
 				1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */,
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				2696995F22C38C1D00B3290E /* main.m */,
-				97C147021CF9000F007C117D /* Info.plist */,
-				261784EA28C8ED6B009172BB /* Illinois-Info.plist */,
 				2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */,
 				2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */,
-				2668953022E1E074003CAB94 /* Runner.entitlements */,
 				26F7952A28AFA9A800AFC37E /* Navigation */,
 				26FAB1C622EB34A3008E987C /* UIUC */,
 				26FA06BB22CCA8B5003B78E4 /* Utils */,
@@ -691,9 +711,9 @@
 				261784D028C8ED6A009172BB /* maps-icon-marker-pin-10@2x.png in Resources */,
 				261784D128C8ED6A009172BB /* travel-mode-unknown@2x.png in Resources */,
 				261784D228C8ED6A009172BB /* button-icon-nav-next.png in Resources */,
-				261784D328C8ED6A009172BB /* Assets.xcassets in Resources */,
 				261784D428C8ED6A009172BB /* Main.storyboard in Resources */,
 				261784D528C8ED6A009172BB /* GoogleService-Info-Dev.plist in Resources */,
+				26AAA20728CA34C200BE694B /* Assets.xcassets in Resources */,
 				261784D628C8ED6A009172BB /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1206,7 +1226,6 @@
 /* Begin XCBuildConfiguration section */
 		249021D3217E4FDB00AE95B9 /* Profile */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -1260,7 +1279,7 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1268,7 +1287,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1288,7 +1307,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1296,7 +1315,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1318,7 +1337,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1326,7 +1345,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1348,7 +1367,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1356,7 +1375,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1378,7 +1397,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1386,7 +1405,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1408,7 +1427,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1416,7 +1435,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1437,7 +1456,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1445,7 +1464,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1466,7 +1485,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1474,7 +1493,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1495,7 +1514,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1503,7 +1522,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1523,7 +1542,7 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1531,7 +1550,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1550,7 +1569,7 @@
 			baseConfigurationReference = 26E0DD792525FB8A002B7B11 /* Release-Dev.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1558,7 +1577,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1577,7 +1596,7 @@
 			baseConfigurationReference = 263C9CB828C635720092B53B /* Release-Prod.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1585,7 +1604,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1604,7 +1623,7 @@
 			baseConfigurationReference = 263C9CB528C635720092B53B /* Release-Test.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1612,7 +1631,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1689,7 +1708,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1697,7 +1716,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1776,7 +1795,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1784,7 +1803,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1858,7 +1877,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1866,7 +1885,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1939,7 +1958,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -1947,7 +1966,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2018,7 +2037,7 @@
 			baseConfigurationReference = 263C9CB528C635720092B53B /* Release-Test.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2026,7 +2045,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2096,7 +2115,7 @@
 			baseConfigurationReference = 263C9CB828C635720092B53B /* Release-Prod.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2104,7 +2123,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2181,7 +2200,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2189,7 +2208,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2211,7 +2230,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2219,7 +2238,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2298,7 +2317,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2306,7 +2325,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2328,7 +2347,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2336,7 +2355,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2415,7 +2434,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2423,7 +2442,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2445,7 +2464,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2453,7 +2472,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2527,7 +2546,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2535,7 +2554,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2556,7 +2575,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2564,7 +2583,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2637,7 +2656,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2645,7 +2664,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2666,7 +2685,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2674,7 +2693,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2747,7 +2766,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2755,7 +2774,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2776,7 +2795,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2784,7 +2803,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2855,7 +2874,7 @@
 			baseConfigurationReference = 26E0DD792525FB8A002B7B11 /* Release-Dev.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2863,7 +2882,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2882,7 +2901,7 @@
 			baseConfigurationReference = 26E0DD792525FB8A002B7B11 /* Release-Dev.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2890,7 +2909,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2960,7 +2979,7 @@
 			baseConfigurationReference = 263C9CB828C635720092B53B /* Release-Prod.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2968,7 +2987,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2987,7 +3006,7 @@
 			baseConfigurationReference = 263C9CB828C635720092B53B /* Release-Prod.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -2995,7 +3014,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3065,7 +3084,7 @@
 			baseConfigurationReference = 263C9CB528C635720092B53B /* Release-Test.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -3073,7 +3092,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3092,7 +3111,7 @@
 			baseConfigurationReference = 263C9CB528C635720092B53B /* Release-Test.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Illinois/Illinois.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -3100,7 +3119,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = "Runner/Illinois-Info.plist";
+				INFOPLIST_FILE = "Resources/Illinois/Illinois-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3177,7 +3196,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -3185,7 +3204,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3259,7 +3278,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -3267,7 +3286,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3338,7 +3357,7 @@
 			baseConfigurationReference = 26E0DD792525FB8A002B7B11 /* Release-Dev.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -3346,7 +3365,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3362,7 +3381,6 @@
 		};
 		97C147031CF9000F007C117D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -3419,7 +3437,6 @@
 		};
 		97C147041CF9000F007C117D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -3475,7 +3492,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -3483,7 +3500,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3505,7 +3522,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Resources/Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = UPV4CB4H6W;
 				ENABLE_BITCODE = NO;
@@ -3513,7 +3530,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_FILE = "Resources/Runner/Runner-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
