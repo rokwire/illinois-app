@@ -2327,6 +2327,8 @@
     "panel.group.detail.post.button.report.group_admins.label": "Report to Group Administrator(s)",
     "panel.group.detail.post.create.nudges.custom.label": "Custom",
     "panel.group.detail.post.create.nudges.label": "Nudges",
+    "panel.group.detail.post.create.nudges.create.poll.msg": "Do you want to attach a Poll to the Post?",
+    "panel.group.detail.post.create.nudges.poll.body.msg": "Please participate in the course Poll, #%s",
     "panel.group.detail.post.edit.hint": "Edit the post",
     "panel.group.detail.post.updated.ago.format": "Updated %s ago",
     "panel.group.detail.post.create.button.cancel.title": "Cancel",
