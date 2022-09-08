@@ -1258,9 +1258,8 @@ class GroupReplyCard extends StatefulWidget {
   final void Function()? onCardTap;
   final bool showRepliesCount;
   final void Function()? onImageTap;
-  final void Function()? onLongPressReaction;
 
-  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.onImageTap, this.onLongPressReaction});
+  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.onImageTap});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
