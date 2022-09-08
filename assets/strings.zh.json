@@ -2280,7 +2280,9 @@
 	"panel.group.detail.post.button.report.students_dean.label": "Report to Dean of Students",
 	"panel.group.detail.post.button.report.group_admins.label": "Report to Group Administrator(s)",
 	"panel.group.detail.post.create.nudges.custom.label": "Custom",
-  "panel.group.detail.post.create.nudges.label": "Nudges",
+	"panel.group.detail.post.create.nudges.label": "Nudges",
+	"panel.group.detail.post.create.nudges.create.poll.msg": "Do you want to attach a Poll to the Post?",
+    "panel.group.detail.post.create.nudges.poll.body.msg": "Please participate in the course Poll, #%s",
 
 	"panel.group.detail.post.report_abuse.header.title": "Report",
 	"panel.group.detail.post.report_abuse.students_dean.description.text": "Report violation of Student Code to Dean of Students",
