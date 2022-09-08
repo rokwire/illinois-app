@@ -125,7 +125,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildContent(){
-    String thumbsUpReaction = 'thumbs-up';
     return Stack(children: [
       Stack(alignment: Alignment.topCenter, children: [
         SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:

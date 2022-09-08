@@ -1283,7 +1283,6 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
   @override
   Widget build(BuildContext context) {
-    String thumbsUpReaction = 'thumbs-up';
     int visibleRepliesCount = widget.reply?.replies?.length ?? 0;
     bool isRepliesLabelVisible = (visibleRepliesCount > 0) && widget.showRepliesCount;
     String? repliesLabel = (visibleRepliesCount == 1)
@@ -1417,6 +1416,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
 
 //////////////////////////////////////
 // GroupPostReaction
+
+const String thumbsUpReaction = "thumbs-up";
 
 class GroupPostReaction extends StatelessWidget {
   final String? groupID;
