@@ -90,7 +90,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(
+      appBar: RootBackHeaderBar(
         title: Localization().getStringEx("panel.groups_home.label.heading","Groups"),
       ),
       body: _buildContent(),
