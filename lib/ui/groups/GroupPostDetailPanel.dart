@@ -153,12 +153,11 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
                   child: GroupPostReaction(
                     groupID: widget.group?.id,
-                    postID: widget.post?.id,
+                    postID: _post?.id,
                     reaction: thumbsUpReaction,
-                    accountIDs: widget.post?.reactions[thumbsUpReaction],
+                    accountIDs: _post?.reactions[thumbsUpReaction],
                     selectedIconPath: 'images/icon-thumbs-up-solid.png',
                     deselectedIconPath: 'images/icon-thumbs-up-outline.png',
-                    onLongPress: () => _onLongPressReactions(widget.post),
                   ),
                 ),
 
@@ -456,7 +455,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 onIconTap: optionsFunctionTap,
                 onImageTap: (){_showModalImage(reply.imageUrl);},
                 onCardTap: (){_onTapReplyCard(reply);},
-                onLongPressReaction: () => _onLongPressReactions(reply),
             ))));
       if(reply.id == focusedReplyId) {
         if(CollectionUtils.isNotEmpty(reply.replies)){
@@ -651,58 +649,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           ),
         );
       });
-  }
-
-  void _onLongPressReactions(GroupPost? post) async {
-    List<String>? thumbsUpReacts = post?.reactions['thumbs-up'];
-    if (thumbsUpReacts == null || thumbsUpReacts.isEmpty) {
-      return;
-    }
-    Analytics().logSelect(target: 'Reactions List');
-
-    List<Widget> reactions = [];
-    for (String id in thumbsUpReacts) {
-      List<Member>? members = await Groups().loadMembers(groupId: widget.group?.id, userId: id);
-      if (members != null && members.isNotEmpty) {
-        Member member = members[0];
-        reactions.add(Padding(
-          padding: const EdgeInsets.only(bottom: 24.0, left: 8.0, right: 8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Image.asset('images/icon-thumbs-up-solid.png', width: 24, height: 24, fit: BoxFit.fitWidth, excludeFromSemantics: true),
-              Container(width: 16),
-              Text(member.displayShortName, style: Styles().getTextStyle('widget.title.regular')),
-            ],
-          ),
-        ));
-      }
-    }
-
-    showModalBottomSheet(
-        context: context,
-        backgroundColor: Styles().colors!.white,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
-        builder: (context) {
-          return Container(
-            padding: EdgeInsets.only(left: 16, right: 16, top: 24),
-            height: MediaQuery.of(context).size.height / 2,
-            child: Column(
-              children: [
-                Container(width: 60, height: 8, decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Styles().colors?.disabledTextColor)),
-                Container(height: 16),
-                Expanded(
-                  child: ListView(
-                    children: reactions,
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
   }
 
   void _onTapDeleteReply(GroupPost? reply) {

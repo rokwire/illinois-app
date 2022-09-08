@@ -1316,7 +1316,6 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                   accountIDs: widget.reply?.reactions[thumbsUpReaction],
                   selectedIconPath: 'images/icon-thumbs-up-solid.png',
                   deselectedIconPath: 'images/icon-thumbs-up-outline.png',
-                  onLongPress: widget.onLongPressReaction,
                 ),
                 Visibility(
                     visible: StringUtils.isNotEmpty(widget.iconPath),
@@ -1427,9 +1426,8 @@ class GroupPostReaction extends StatelessWidget {
   final String selectedIconPath;
   final String deselectedIconPath;
   final double iconSize;
-  final void Function()? onLongPress;
 
-  GroupPostReaction({required this.groupID, required this.postID, required this.reaction, this.accountIDs, required this.selectedIconPath, required this.deselectedIconPath, this.iconSize = 18, this.onLongPress});
+  GroupPostReaction({required this.groupID, required this.postID, required this.reaction, this.accountIDs, required this.selectedIconPath, required this.deselectedIconPath, this.iconSize = 18});
 
   @override
   Widget build(BuildContext context) {
@@ -1437,21 +1435,71 @@ class GroupPostReaction extends StatelessWidget {
     return Semantics(button: true, label: reaction,
         child: InkWell(
             onTap: () => _onTapReaction(groupID, postID, reaction),
-            onLongPress: onLongPress,
+            onLongPress: () => _onLongPressReactions(context, accountIDs, groupID),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(selected ? selectedIconPath : deselectedIconPath, width: iconSize, height: iconSize, fit: BoxFit.fitWidth, excludeFromSemantics: true),
-                Container(width: 4),
                 Visibility(visible: accountIDs != null && accountIDs!.length > 0,
-                    child: Text(accountIDs?.length.toString() ?? '', style: Styles().getTextStyle('widget.message.small')))
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 4.0),
+                      child: Text(accountIDs?.length.toString() ?? '', style: Styles().getTextStyle('widget.message.small')),
+                    ))
               ])));
   }
-}
 
-void _onTapReaction(String? groupId, String? postId, String reaction) {
-  Groups().togglePostReaction(groupId, postId, reaction);
+  void _onTapReaction(String? groupId, String? postId, String reaction) {
+    Groups().togglePostReaction(groupId, postId, reaction);
+  }
+
+  void _onLongPressReactions(BuildContext context, List<String>? accountIDs, String? groupID) async {
+    if (accountIDs == null || accountIDs.isEmpty || groupID == null || groupID.isEmpty) {
+      return;
+    }
+    Analytics().logSelect(target: 'Reactions List');
+
+    List<Widget> reactions = [];
+    List<Member>? members = await Groups().loadMembers(groupId: groupID, userIds: accountIDs);
+    for (Member member in members ?? []) {
+      reactions.add(Padding(
+        padding: const EdgeInsets.only(bottom: 24.0, left: 8.0, right: 8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Image.asset('images/icon-thumbs-up-solid.png', width: 24, height: 24, fit: BoxFit.fitWidth, excludeFromSemantics: true),
+            Container(width: 16),
+            Text(member.displayShortName, style: Styles().getTextStyle('widget.title.regular')),
+          ],
+        ),
+      ));
+    }
+
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Styles().colors!.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.only(left: 16, right: 16, top: 24),
+            height: MediaQuery.of(context).size.height / 2,
+            child: Column(
+              children: [
+                Container(width: 60, height: 8, decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Styles().colors?.disabledTextColor)),
+                Container(height: 16),
+                Expanded(
+                  child: ListView(
+                    children: reactions,
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
 }
 
 typedef void OnBodyChangedListener(String text);
