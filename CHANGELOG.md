@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TextStyles exposed to Assets/styles.json (in progress) [#2311](https://github.com/rokwire/illinois-app/issues/2311).
 - Android: upgrade compileSdkVersion and targetSdkVersion [#2308](https://github.com/rokwire/illinois-app/issues/2308).
 
+## [4.1.27] - 2022-09-08
+### Added
+- Improve manual nudge interaction to include polls [#2365](https://github.com/rokwire/illinois-app/issues/2365).
+### Removed
+- Removed external link icon from Due Date Catalog in Academics panel [#2356](https://github.com/rokwire/illinois-app/issues/2356).
+
 ## [4.1.26] - 2022-09-07
 ### Added
 - Wellness overview tutorial video [#2357](https://github.com/rokwire/illinois-app/issues/2357).
