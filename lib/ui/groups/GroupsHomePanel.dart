@@ -279,7 +279,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return
       Column(children: <Widget>[
         _buildTabs(),
-        _buildFilterButtons(),
+        _buildFunctionalBar(),
         Expanded(
           child: _isLoading
               ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ),)
@@ -344,20 +344,51 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     );
   }
 
+  Widget _buildFunctionalBar() {
+    return Container(
+        width: double.infinity,
+        color: Styles().colors!.white,
+        child: Padding(
+            padding: const EdgeInsets.only(left: 6, bottom: 13),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                _buildFilterButtons(),
+                Expanded(child: Container()),
+                Visibility(visible: _canCreateGroup, child:
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10), child:
+                      InkWell(onTap: _onTapCreate, child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                        Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
+                        Padding(padding: EdgeInsets.only(left: 5), child: Image.asset('images/icon-add-more.png'))
+                      ])),
+                    ),
+                  ),
+                Semantics(label:Localization().getStringEx("panel.groups_home.button.search.title", "Search"), child:
+                  IconButton(
+                    icon: Image.asset('images/icon-search.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: true, width: 25, height: 25),
+                    onPressed: () {
+                      Analytics().logSelect(target: "Search");
+                      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
+      );
+  }
+
   Widget _buildFilterButtons() {
     bool hasCategories = CollectionUtils.isNotEmpty(_categories);
     return (_isFilterLoading || (_selectedContentType == GroupsContentType.my))
       ? Container()
-      : Container(
-        width: double.infinity,
-        color: Styles().colors!.white,
-        child: Padding(
-            padding: const EdgeInsets.only(left: 6, right: 16, bottom: 13),
-            child: Row(
+      : Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Visibility(visible: hasCategories, child: FilterSelector(
+                  padding: EdgeInsets.only(left: 4, top: 10, right: 2, bottom: 10),
                   title: _selectedCategory,
                   active: (_activeFilterType == _FilterType.category),
                   onTap: (){
@@ -369,6 +400,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                 )),
                 Visibility(visible: hasCategories, child: Container(width: 8)),
                 FilterSelector(
+                  padding: EdgeInsets.only(left: 2, top: 10, right: 2, bottom: 10),
                   title: StringUtils.ensureNotEmpty(_tagFilterToDisplayString(_selectedTagFilter)),
                   hint: "",
                   active: (_activeFilterType == _FilterType.tags),
@@ -378,21 +410,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                       _activeFilterType = (_activeFilterType != _FilterType.tags) ? _FilterType.tags : _FilterType.none;
                     });
                   }
-                ),
-                Expanded(child: Container()),
-                Semantics(label:Localization().getStringEx("panel.groups_home.button.search.title", "Search"), child:
-                  IconButton(
-                    icon: Image.asset('images/icon-search.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: true, width: 25, height: 25,),
-                    onPressed: () {
-                      Analytics().logSelect(target: "Search");
-                      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
-                    },
-                  ),
                 )
               ],
-            ),
-          ),
-      );
+            );
   }
 
   Widget _buildFilterContent() {
