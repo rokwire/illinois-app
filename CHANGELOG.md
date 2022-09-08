@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.1.26] - 2022-09-07
 ### Added
+- Improve manual nudge interaction to include polls [#2365](https://github.com/rokwire/illinois-app/issues/2365).
+
+## [4.1.26] - 2022-09-07
+### Added
 - Wellness overview tutorial video [#2357](https://github.com/rokwire/illinois-app/issues/2357).
 - Allow sharing group qr code value [#2362](https://github.com/rokwire/illinois-app/issues/2362).
 ### Removed
