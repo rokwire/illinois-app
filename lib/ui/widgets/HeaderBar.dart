@@ -389,3 +389,24 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     }
   }
 }
+
+class RootBackHeaderBar extends RootHeaderBar {
+
+  RootBackHeaderBar({Key? key, String? title}) : super(key: key, title: title);
+
+  @override
+  Widget buildHeaderHomeButton(BuildContext context) {
+    return Semantics(
+        label: Localization().getStringEx('headerbar.back.title', 'Back'),
+        hint: Localization().getStringEx('headerbar.back.hint', ''),
+        button: true,
+        excludeSemantics: true,
+        child: IconButton(
+            icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true), onPressed: () => _onTapBack(context)));
+  }
+
+  void _onTapBack(BuildContext context) {
+    Analytics().logSelect(target: 'Back');
+    Navigator.of(context).pop();
+  }
+}

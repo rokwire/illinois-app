@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -8,6 +11,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 import 'GroupWidgets.dart';
 
@@ -170,11 +174,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   }
 
   void _onMembersSelectionChanged(List<Member>? selectedMembers){
-    if(mounted) {
-      setState(() {
-        _selectedMembers = selectedMembers;
-      });
-    }
+    _selectedMembers = selectedMembers;
+    _updateState();
   }
 
   List<DropdownMenuItem<GroupPostNudge?>> get _nudgesDropDownItems {
@@ -196,12 +197,33 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     if (_selectedNudge != null) {
       subject = _selectedNudge?.subject;
       body = _selectedNudge?.body;
+      _showPollConfirmationDialogIfNeeded();
     }
     _postData.subject = subject;
     _postData.body = body;
-    if (mounted) {
-      setState(() {});
+    _updateState();
+  }
+
+  void _showPollConfirmationDialogIfNeeded() {
+    if (_selectedNudge?.canPoll ?? false) {
+      AppAlert.showConfirmationDialog(
+          buildContext: context,
+          message: Localization()
+              .getStringEx('panel.group.detail.post.create.nudges.create.poll.msg', 'Do you want to attach a Poll to the Post?'),
+          positiveCallback: _onCreatePollConfirmed);
     }
+  }
+
+  void _onCreatePollConfirmed() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel(group: widget.group))).then((poll) {
+      if (poll is Poll) {
+        String pollNudgeBodyMsg = sprintf(
+            Localization().getStringEx('panel.group.detail.post.create.nudges.poll.body.msg', 'Please participate in the course Poll, #%s'),
+            [StringUtils.ensureNotEmpty(poll.pinCode?.toString())]);
+        _postData.body = StringUtils.ensureNotEmpty(_postData.body) + '\n\n $pollNudgeBodyMsg';
+        _updateState();
+      }
+    });
   }
 
   //Tap actions
@@ -307,13 +329,15 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
   void _increaseProgress() {
     _progressLoading++;
-    if (mounted) {
-      setState(() {});
-    }
+    _updateState();
   }
 
   void _decreaseProgress() {
     _progressLoading--;
+    _updateState();
+  }
+
+  void _updateState() {
     if (mounted) {
       setState(() {});
     }
