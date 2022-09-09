@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Set Identity min level to 4 in Privacy -> Wallet [#2331](https://github.com/rokwire/illinois-app/issues/2331).
 - Fixed AppReview processing after onboarding [#2380](https://github.com/rokwire/illinois-app/issues/2380).
+- Reload user groups when service notification is received [#2329](https://github.com/rokwire/illinois-app/issues/2329).
 
 ## [4.1.27] - 2022-09-08
 ### Added
