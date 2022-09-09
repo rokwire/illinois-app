@@ -33,7 +33,6 @@ import 'package:convert/convert.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:xml/xml.dart';
@@ -42,6 +41,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
 
   static const String notifyPaymentSuccess  = "edu.illinois.rokwire.illinicash.payment.success";
   static const String notifyBallanceUpdated  = "edu.illinois.rokwire.illinicash.ballance.updated";
+  static const String notifyEligibilityUpdated  = "edu.illinois.rokwire.illinicash.eligibility.updated";
   static const String notifyStudentClassificationUpdated  = "edu.illinois.rokwire.illinicash.student.classification.updated";
 
   static const String uiucAccessToken      = 'access_token';
@@ -50,6 +50,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   static const String analyticsFirstName   = 'FirstNameXXXXXX';
   static const String analyticsLastName    = 'LastNameXXXXXX';
 
+  IlliniCashEligibility?       _eligibility;
   IlliniCashBallance?          _ballance;
   IlliniStudentClassification? _studentClassification;
 
@@ -83,6 +84,7 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
   @override
   Future<void> initService() async {
     if (_enabled) {
+      _eligibility = IlliniCashEligibility.fromJson(JsonUtils.decodeMap(Storage().illiniCashEligibility));
       _ballance = IlliniCashBallance.fromJson(JsonUtils.decodeMap(Storage().illiniCashBallance));
       _studentClassification = IlliniStudentClassification.fromJson(JsonUtils.decodeMap(Storage().illiniStudentClassification));
       updateBalance();
@@ -150,35 +152,49 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
 
   // Ballances
 
+  IlliniCashEligibility? get eligibility {
+    return _eligibility;
+  }
+
   IlliniCashBallance? get ballance {
     return _ballance;
   }
 
   Future<void> updateBalance() async {
     if(_enabled) {
-      IlliniStudentSummary? studentSummary = await _loadStudentSummary();
-      bool? eligible = studentSummary?.eligibility?.eligible;
-      if (eligible == true) {
-        String url = "${Config().illiniCashBaseUrl}/Balances/${Auth2().uin}";
-        String analyticsUrl = "${Config().illiniCashBaseUrl}/Balances/$analyticsUin";
-        Response? response = await Network().get(url, auth: this, analyticsUrl: analyticsUrl);
-        if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
-          String responseBody = response.body;
-          Map<String, dynamic>? jsonData = JsonUtils.decode(responseBody);
-          IlliniCashBallance? ballance = (jsonData != null) ? IlliniCashBallance.fromJson(jsonData) : null;
-          if (ballance != null) {
-            _applyBallance(ballance);
+      dynamic studentSummary = await _loadStudentSummary();
+      if (studentSummary is IlliniStudentSummary) {
+        _applyEligibility(studentSummary.eligibility);
+        _applyStudentClassifiction(studentSummary.classification);
+        
+        bool? eligible = studentSummary.eligibility?.eligible;
+        if (eligible == true) {
+          String url = "${Config().illiniCashBaseUrl}/Balances/${Auth2().uin}";
+          String analyticsUrl = "${Config().illiniCashBaseUrl}/Balances/$analyticsUin";
+          Response? response = await Network().get(url, auth: this, analyticsUrl: analyticsUrl);
+          if ((response != null) && (response.statusCode >= 200) && (response.statusCode <= 301)) {
+            String responseBody = response.body;
+            Map<String, dynamic>? jsonData = JsonUtils.decode(responseBody);
+            IlliniCashBallance? ballance = (jsonData != null) ? IlliniCashBallance.fromJson(jsonData) : null;
+            if (ballance != null) {
+              _applyBallance(ballance);
+            }
           }
         }
+        else if (eligible == false) {
+          _applyBallance(null);
+          _applyStudentClassifiction(null);
+        }
       }
-      else if (eligible == false) {
+      else if (studentSummary == false) {
+        _applyEligibility(null);
         _applyBallance(null);
         _applyStudentClassifiction(null);
       }
     }
   }
 
-  Future<IlliniStudentSummary?> _loadStudentSummary() async {
+  Future<dynamic> _loadStudentSummary() async {
     String? uin = Auth2().uin;
     String? firstName = Auth2().account?.authType?.uiucUser?.firstName;
     String? lastName = Auth2().account?.authType?.uiucUser?.lastName;
@@ -191,21 +207,22 @@ class IlliniCash with Service, NetworkAuthProvider implements NotificationsListe
       int responseCode = response?.statusCode ?? -1;
       if ((response != null) && responseCode >= 200 && responseCode <= 301) {
         String responseString = response.body;
-        Log.d('GET $url\n$responseCode $responseString');
-        IlliniStudentSummary? summary = IlliniStudentSummary.fromJson(JsonUtils.decodeMap(responseString));
-        if (summary?.classification != null) {
-          _applyStudentClassifiction(summary?.classification);
-        }
-        return summary;
+        return IlliniStudentSummary.fromJson(JsonUtils.decodeMap(responseString)); // request succeeded
       }
       else {
-        // request failed, eligible not determined
-        return null;
+        return null; // request failed, eligible not determined
       }
     }
     else {
-      // eligible not available
-      return null;
+      return false; // eligible not available
+    }
+  }
+
+  void _applyEligibility(IlliniCashEligibility? value) {
+    if (_eligibility != value) {
+      _eligibility = value;
+      Storage().illiniCashEligibility = JsonUtils.encode(value?.toJson());
+      NotificationService().notify(notifyEligibilityUpdated, null);
     }
   }
 

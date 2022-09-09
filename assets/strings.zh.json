@@ -1001,6 +1001,8 @@
 	"panel.settings.illini_cash.label.for_yourself_or":"使用 Illini Cash 購買食品、書籍、印刷和<a href='{{services_url}}'>其他選定的服務</a>{{white_space}}<img src='asset:{{external_link_icon}}' alt =''/> 使用您的伊利諾伊州應用程序或 i-card。",
 	"panel.settings.illini_cash.label.custom_period":"自定义期间",
 	"panel.settings.illini_cash.label.current_balance":"当前Illini现金余额",
+	"panel.settings.illini_cash.label.illegible": "難以辨認",
+	"panel.settings.illini_cash.label.illegible_status": "您沒有資格獲得 Illini Cash",
 	"panel.settings.illini_cash.label.start_date":"开始日期",
 	"panel.settings.illini_cash.label.end_date":"结束日期",
 	"panel.settings.illini_cash.label.date":"日期",
@@ -1078,6 +1080,8 @@
 	"panel.settings.meal_plan.transactions.message.no_transactions.text":"在所选期间内没有交易",
 	"panel.settings.meal_plan.transactions.message.no_transactions.hint":"",
 	"panel.settings.meal_plan.label.meal_plan_unknown.text":"未知",
+	"panel.settings.meal_plan.label.illegible": "難以辨認",
+	"panel.settings.meal_plan.label.illegible_status": "您沒有資格參加膳食計劃",
 	"panel.settings.meal_plan.label.meal_plan_type.text":"膳食计划类型",
 	"panel.settings.meal_plan.label.meals_remaining.text":"剩余餐食",
 	"panel.settings.meal_plan.label.dining_dollars.text":"Dining Dollars",
@@ -2647,11 +2651,15 @@
 
 	"widget.home.wallet.illini_cash.title": "伊利尼現金",
 	"widget.home.wallet.illini_cash.label.current_balance": "當前伊利諾伊州現金餘額",
+	"widget.home.wallet.illini_cash.label.illegible": "難以辨認",
+	"widget.home.wallet.illini_cash.label.illegible_status": "您沒有資格獲得 Illini Cash",
 	"widget.home.wallet.illini_cash.button.add_illini_cash.title": "添加伊利尼現金",
 
 	"widget.home.wallet.meal_plan.title": "進食計劃",
 	"widget.home.wallet.meal_plan.label.meals_remaining.text": "剩餘膳食",
 	"widget.home.wallet.meal_plan.label.dining_dollars.text": "餐飲美元",
+	"widget.home.wallet.meal_plan.label.illegible": "難以辨認",
+	"widget.home.wallet.meal_plan.label.illegible_status": "您沒有資格參加膳食計劃",
 
 	"widget.home.wallet.bus_pass.title": "MTD 巴士通票",
 	"widget.home.wallet.bus_pass.label.card_expires.text": "Expires: %s",

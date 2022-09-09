@@ -106,6 +106,10 @@ class Storage extends rokwire.Storage {
   set lastRunVersion(String? value) => setStringWithName(lastRunVersionKey, value);
 
   // IlliniCash
+  static const String illiniCashEligibilityKey  = '_illinicash_ballance';
+  String? get illiniCashEligibility => getEncryptedStringWithName(illiniCashEligibilityKey);
+  set illiniCashEligibility(String? value) =>  setEncryptedStringWithName(illiniCashEligibilityKey, value);
+
   static const String illiniCashBallanceKey  = '_illinicash_ballance';
   String? get illiniCashBallance => getEncryptedStringWithName(illiniCashBallanceKey);
   set illiniCashBallance(String? value) =>  setEncryptedStringWithName(illiniCashBallanceKey, value);

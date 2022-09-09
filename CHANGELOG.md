@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.1.28] - 2022-09-09
 ### Changed
 - Texts in Promote Group [#2372](https://github.com/rokwire/illinois-app/issues/2372).
+- Display account status in case the user is not eligible for Illini Cash / Meal Plan [#2378](https://github.com/rokwire/illinois-app/issues/2378).
 ### Fixed
 - Set Identity min level to 4 in Privacy -> Wallet [#2331](https://github.com/rokwire/illinois-app/issues/2331).
 
