@@ -309,8 +309,9 @@ class _AppState extends State<App> implements NotificationsListener {
 
   void _finishOnboarding(BuildContext context) {
     Storage().onBoardingPassed = true;
-    Route routeToHome = CupertinoPageRoute(builder: (context) => _rootPanel);
-    Navigator.pushAndRemoveUntil(context, routeToHome, (_) => false);
+    //Route routeToHome = CupertinoPageRoute(builder: (context) => _rootPanel);
+    //Navigator.pushAndRemoveUntil(context, routeToHome, (_) => false);
+    _resetUI();
   }
 
   bool _checkForceOnboarding() {
