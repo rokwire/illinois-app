@@ -80,6 +80,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     NotificationService().subscribe(this, [
       IlliniCash.notifyPaymentSuccess,
       IlliniCash.notifyBallanceUpdated,
+      IlliniCash.notifyEligibilityUpdated,
     ]);
 
     _loadBallance();
@@ -172,53 +173,58 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   }
 
   Widget _buildBalanceSection() {
-    return Container(
-        color: Colors.white,
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Expanded(child: Stack(
-                    children: <Widget>[
-                      VerticalTitleValueSection(
-                        title: Localization().getStringEx(
-                            'panel.settings.illini_cash.label.current_balance',
-                            'Current Illini Cash Balance'),
-                        value: _illiniCashLoading ? "" : (IlliniCash().ballance?.balanceDisplayText ?? "\$0.00"),
-                      ),
-                      _illiniCashLoading ? Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Center(child: CircularProgressIndicator(),),
-                          )
-                        ],
-                      ) : Container(),
-                    ],
-                  )),
-                  ((!Auth2().isOidcLoggedIn) && _canSignIn) ? Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 20, right: 20, bottom: 16),
-                      child: RoundedButton(
-                        label: Localization().getStringEx(
-                            'panel.settings.illini_cash.button.log_in.title',
-                            'Sign in to View'),
-                        hint: Localization().getStringEx(
-                            'panel.settings.illini_cash.button.log_in.hint', ''),
-                        backgroundColor: Styles().colors!.white,
-                        fontSize: 16.0,
-                        textColor: Styles().colors!.fillColorPrimary,
-                        textAlign: TextAlign.center,
-                        borderColor: Styles().colors!.fillColorSecondary,
-                        onTap: _onTapLogIn,
-                      ),
-                    ),
-                  ) : Container(),
-                ],
+    Widget contentWidget;
+    if (_illiniCashLoading) {
+      contentWidget = VerticalTitleValueSection(title: '', value: '',);
+    }
+    else if (IlliniCash().eligibility?.eligible == false) {
+      String title = Localization().getStringEx('panel.settings.illini_cash.label.illegible', 'Illegible');
+      String? status = StringUtils.isNotEmpty(IlliniCash().eligibility?.accountStatus) ? IlliniCash().eligibility?.accountStatus :
+        Localization().getStringEx('panel.settings.illini_cash.label.illegible_status', 'You are not eligibile for Illini Cash');
+      
+      contentWidget = VerticalTitleValueSection(
+        title: title,
+        titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary),
+        value: status,
+        valueTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+      );
+    }
+    else {
+      contentWidget = VerticalTitleValueSection(
+        title: Localization().getStringEx('panel.settings.illini_cash.label.current_balance', 'Current Illini Cash Balance'),
+        value: IlliniCash().ballance?.balanceDisplayText ?? "\$0.00",
+      );
+    }
+
+    return Container(color: Colors.white, child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Row(children: <Widget>[
+          Expanded(child:
+            Stack(children: <Widget>[
+              contentWidget,
+              _illiniCashLoading ? Column(children: <Widget>[
+                  Padding(padding: const EdgeInsets.all(16.0), child:
+                    Center(child: CircularProgressIndicator(),),
+                  )
+              ],) : Container(),
+            ],)
+          ),
+          ((!Auth2().isOidcLoggedIn) && _canSignIn) ? Expanded(child:
+            Padding(padding: EdgeInsets.only(left: 20, right: 20, bottom: 16), child:
+              RoundedButton(
+                label: Localization().getStringEx('panel.settings.illini_cash.button.log_in.title', 'Sign in to View'),
+                hint: Localization().getStringEx('panel.settings.illini_cash.button.log_in.hint', ''),
+                backgroundColor: Styles().colors!.white,
+                fontSize: 16.0,
+                textColor: Styles().colors!.fillColorPrimary,
+                textAlign: TextAlign.center,
+                borderColor: Styles().colors!.fillColorSecondary,
+                onTap: _onTapLogIn,
               ),
-            ],
-        )
+            ),
+          ) : Container(),
+        ],),
+      ],)
     );
   }
 
@@ -703,6 +709,9 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   void onNotification(String name, dynamic param) {
     if (name == IlliniCash.notifyPaymentSuccess) {
       _loadThisMonthHistory();
+    }
+    else if (name == IlliniCash.notifyEligibilityUpdated) {
+      setState(() {});
     }
     else if (name == IlliniCash.notifyBallanceUpdated) {
       setState(() {});
