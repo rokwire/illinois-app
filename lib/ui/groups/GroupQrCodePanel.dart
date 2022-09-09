@@ -113,7 +113,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  Localization().getStringEx('panel.group_qr_code.description.label', 'Save this QRCode to your photo library, so you can share or print it to promote your group.'),
+                  Localization().getStringEx('panel.group_qr_code.description.label', 'Invite others to join this group by sharing a link or the QR code after saving it to your photo library.'),
                   style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
                 ),
                 Padding(
@@ -146,7 +146,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                 Padding(
                   padding: EdgeInsets.only(top: 24, bottom: 12),
                   child: RoundedButton(
-                    label: Localization().getStringEx('panel.group_qr_code.button.save.title', 'Save'),
+                    label: Localization().getStringEx('panel.group_qr_code.button.save.title', 'Save QR Code'),
                     hint: '',
                     backgroundColor: Styles().colors!.background,
                     fontSize: 16.0,
@@ -158,7 +158,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 12),
                   child: RoundedButton(
-                    label: Localization().getStringEx('panel.group_qr_code.button.share.title', 'Share'),
+                    label: Localization().getStringEx('panel.group_qr_code.button.share.title', 'Share Link'),
                     hint: '',
                     backgroundColor: Styles().colors!.background,
                     fontSize: 16.0,
@@ -166,7 +166,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                     borderColor: Styles().colors!.fillColorSecondary,
                     onTap: _onTapShare,
                     rightIcon: Image.asset('images/share-blue.png'),
-                    rightIconPadding: EdgeInsets.only(right: 95),
+                    rightIconPadding: EdgeInsets.only(right: 75),
                   ),
                 )
               ],
