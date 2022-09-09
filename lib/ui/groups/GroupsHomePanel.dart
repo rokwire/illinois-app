@@ -75,6 +75,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
       Groups.notifyGroupDeleted,
+      Groups.notifyUserGroupsUpdated,
       Auth2.notifyLoginSucceeded,
       Auth2.notifyLogout,
       FlexUI.notifyChanged,
@@ -720,6 +721,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       if (mounted) {
         _reloadGroupsContent();
       }
+    }
+    else if (name == Groups.notifyUserGroupsUpdated) {
+      _loadUserGroups();
     }
     else if ((name == Auth2.notifyLoginSucceeded) ||  (name == Auth2.notifyLogout)) {
       // Reload content with some delay, do not unmount immidately GroupsCard that could have updated the login state.
