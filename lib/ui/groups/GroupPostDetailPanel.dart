@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -148,15 +149,18 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                   )
                 ),
 
-                Padding(
-                  padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
-                  child: GroupPostReaction(
-                    groupID: widget.group?.id,
-                    postID: _post?.id,
-                    reaction: thumbsUpReaction,
-                    accountIDs: _post?.reactions[thumbsUpReaction],
-                    selectedIconPath: 'images/icon-thumbs-up-solid.png',
-                    deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                Visibility(
+                  visible: Config().showGroupPostReactions,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
+                    child: GroupPostReaction(
+                      groupID: widget.group?.id,
+                      postID: _post?.id,
+                      reaction: thumbsUpReaction,
+                      accountIDs: _post?.reactions[thumbsUpReaction],
+                      selectedIconPath: 'images/icon-thumbs-up-solid.png',
+                      deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                    ),
                   ),
                 ),
 

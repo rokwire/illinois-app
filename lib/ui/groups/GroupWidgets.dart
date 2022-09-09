@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
@@ -32,7 +33,6 @@ import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -1307,13 +1307,16 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     style: Styles().getTextStyle("widget.card.title.small")),
                 ),
                 Expanded(child: Container()),
-                GroupPostReaction(
-                  groupID: widget.group?.id,
-                  postID: widget.reply?.id,
-                  reaction: thumbsUpReaction,
-                  accountIDs: widget.reply?.reactions[thumbsUpReaction],
-                  selectedIconPath: 'images/icon-thumbs-up-solid.png',
-                  deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                Visibility(
+                  visible: Config().showGroupPostReactions,
+                  child: GroupPostReaction(
+                    groupID: widget.group?.id,
+                    postID: widget.reply?.id,
+                    reaction: thumbsUpReaction,
+                    accountIDs: widget.reply?.reactions[thumbsUpReaction],
+                    selectedIconPath: 'images/icon-thumbs-up-solid.png',
+                    deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                  ),
                 ),
                 Visibility(
                     visible: StringUtils.isNotEmpty(widget.iconPath),
