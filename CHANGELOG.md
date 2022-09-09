@@ -16,8 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Texts in Promote Group [#2372](https://github.com/rokwire/illinois-app/issues/2372).
 - Display account status in case the user is not eligible for Illini Cash / Meal Plan [#2378](https://github.com/rokwire/illinois-app/issues/2378).
+- Improved AppReview session timeout handling [#2380](https://github.com/rokwire/illinois-app/issues/2380).
 ### Fixed
 - Set Identity min level to 4 in Privacy -> Wallet [#2331](https://github.com/rokwire/illinois-app/issues/2331).
+- Fixed AppReview processing after onboarding [#2380](https://github.com/rokwire/illinois-app/issues/2380).
 - Reload user groups when service notification is received [#2329](https://github.com/rokwire/illinois-app/issues/2329).
 
 ## [4.1.27] - 2022-09-08
