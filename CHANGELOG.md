@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Texts in Promote Group [#2372](https://github.com/rokwire/illinois-app/issues/2372).
+### Fixed
+- Set Identity min level to 4 in Privacy -> Wallet [#2331](https://github.com/rokwire/illinois-app/issues/2331).
 
 ## [4.1.27] - 2022-09-08
 ### Added
