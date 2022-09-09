@@ -190,7 +190,7 @@
 						"dataUsage_key" :"privacy.entry.wallet.personalizations.data_usage"
 					},
 					{
-						"min_level": 5,
+						"min_level": 4,
 						"icon_resource": "identiy-blue.png",
 						"off_icon_resource": "identiy-blue-off.png",
 						"title" : "Identity",
