@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.1.28] - 2022-09-09
 ### Changed
 - Texts in Promote Group [#2372](https://github.com/rokwire/illinois-app/issues/2372).
 - Display account status in case the user is not eligible for Illini Cash / Meal Plan [#2378](https://github.com/rokwire/illinois-app/issues/2378).
