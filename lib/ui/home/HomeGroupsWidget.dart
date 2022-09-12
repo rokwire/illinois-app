@@ -62,6 +62,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
       Groups.notifyGroupDeleted,
+      Groups.notifyUserGroupsUpdated,
       Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,]);
 
@@ -198,6 +199,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
     else if ((name == Groups.notifyGroupCreated) ||
       (name == Groups.notifyGroupUpdated) ||
       (name == Groups.notifyGroupDeleted) ||
+      (name == Groups.notifyUserGroupsUpdated) ||
       (name == Groups.notifyUserMembershipUpdated) ||
       (name == Auth2.notifyLoginChanged)) {
         _loadGroups();
