@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TextStyles exposed to Assets/styles.json (in progress) [#2311](https://github.com/rokwire/illinois-app/issues/2311).
 - Android: upgrade compileSdkVersion and targetSdkVersion [#2308](https://github.com/rokwire/illinois-app/issues/2308).
 
+## [4.1.29] - 2022-09-12
+### Fixed
+- Missing my groups in the home widget [#2254](https://github.com/rokwire/illinois-app/issues/2254).
+
 ## [4.1.28] - 2022-09-09
 ### Changed
 - Texts in Promote Group [#2372](https://github.com/rokwire/illinois-app/issues/2372).
