@@ -1312,7 +1312,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                   visible: Config().showGroupPostReactions,
                   child: GroupPostReaction(
                     groupID: widget.group?.id,
-                    postID: widget.reply?.id,
+                    post: widget.reply,
                     reaction: thumbsUpReaction,
                     accountIDs: widget.reply?.reactions[thumbsUpReaction],
                     selectedIconPath: 'images/icon-thumbs-up-solid.png',
@@ -1424,14 +1424,14 @@ const String thumbsUpReaction = "thumbs-up";
 
 class GroupPostReaction extends StatelessWidget {
   final String? groupID;
-  final String? postID;
+  final GroupPost? post;
   final String reaction;
   final List<String>? accountIDs;
   final String selectedIconPath;
   final String deselectedIconPath;
   final double iconSize;
 
-  GroupPostReaction({required this.groupID, required this.postID, required this.reaction,
+  GroupPostReaction({required this.groupID, required this.post, required this.reaction,
     this.accountIDs, required this.selectedIconPath, required this.deselectedIconPath, this.iconSize = 18});
 
   @override
@@ -1439,7 +1439,7 @@ class GroupPostReaction extends StatelessWidget {
     bool selected = accountIDs?.contains(Auth2().accountId) ?? false;
     return Semantics(button: true, label: reaction,
         child: InkWell(
-            onTap: () => _onTapReaction(groupID, postID, reaction),
+            onTap: () => _onTapReaction(groupID, post, reaction),
             onLongPress: () => _onLongPressReactions(context, accountIDs, groupID),
             child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -1459,8 +1459,16 @@ class GroupPostReaction extends StatelessWidget {
                 ])));
   }
 
-  void _onTapReaction(String? groupId, String? postId, String reaction) {
-    Groups().togglePostReaction(groupId, postId, reaction);
+  void _onTapReaction(String? groupId, GroupPost? post, String reaction) async {
+    bool success = await Groups().togglePostReaction(groupId, post?.id, reaction);
+    if (success) {
+      GroupPost? updatedPost = await Groups().loadGroupPost(groupId: groupId, postId: post?.id);
+      if (updatedPost != null) {
+        post?.reactions.clear();
+        post?.reactions.addAll(updatedPost.reactions);
+        NotificationService().notify(Groups.notifyGroupPostReactionsUpdated);
+      }
+    }
   }
 
   void _onLongPressReactions(BuildContext context, List<String>? accountIDs, String? groupID) async {

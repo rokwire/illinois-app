@@ -82,7 +82,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
+    NotificationService().subscribe(this, [Groups.notifyGroupPostsUpdated, notifyGroupPostReactionsUpdated]);
     _loadMembersAllowedToPost();
     _post = widget.post ?? GroupPost(); //If no post then prepare data for post creation
     _focusedReply = widget.focusedReply;
@@ -154,7 +154,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                     padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
                     child: GroupPostReaction(
                       groupID: widget.group?.id,
-                      postID: _post?.id,
+                      post: _post,
                       reaction: thumbsUpReaction,
                       accountIDs: _post?.reactions[thumbsUpReaction],
                       selectedIconPath: 'images/icon-thumbs-up-solid.png',
@@ -778,6 +778,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _reloadPost() {
+    //TODO: Can we optimize this to only load data for the relevant updated post(s)?
     _setLoading(true);
     Groups().loadGroupPosts(widget.group?.id).then((posts) {
       if (CollectionUtils.isNotEmpty(posts)) {
@@ -1026,6 +1027,8 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
   void onNotification(String name, param) {
     if (name == Groups.notifyGroupPostsUpdated) {
       _reloadPost();
+    } else if (name == Groups.notifyGroupPostReactionsUpdated) {
+      setState(() { });
     }
   }
 }
