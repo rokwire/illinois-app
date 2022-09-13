@@ -1292,8 +1292,10 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
       bodyText +=
           ' <span>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
     }
-    return Semantics(container: true,
-      child:Container(
+    return Semantics(container: true, button: true,
+      child:GestureDetector(
+        onTap: widget.onCardTap ?? _onTapCard,
+         child:Container(
         decoration: BoxDecoration(
             color: Styles().colors!.white,
             boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
@@ -1358,8 +1360,9 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                   StringUtils.isEmpty(widget.reply?.imageUrl)? Container() :
                   Expanded(
                       flex: 1,
-                      child:
-                      GestureDetector(
+                      child: Semantics (
+                        button: true, label: "Image",
+                       child: GestureDetector(
                         onTap: (){
                           if(widget.onImageTap!=null){
                             widget.onImageTap!();
@@ -1370,13 +1373,10 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                           child: SizedBox(
                           width: _smallImageSize,
                           height: _smallImageSize,
-                           child: Image.network(widget.reply!.imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,),),))
+                           child: Image.network(widget.reply!.imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,),),)))
                   )
                 ],),
-              Semantics( button: true, child:
-                GestureDetector(
-                  onTap: widget.onCardTap ?? _onTapCard,
-                  child: Container(
+              Container(
                     padding: EdgeInsets.only(top: 12),
                     child: Row(children: [
                       Expanded(
@@ -1392,8 +1392,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                               style: Styles().getTextStyle('widget.description.small_underline')
                         ))),
                       ))
-                ],),)))
-            ]))));
+                ],),)
+            ])))));
   }
 
   void _onLinkTap(String? url) {

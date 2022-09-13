@@ -522,6 +522,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   //Tap Actions
   void _onTapReplyCard(GroupPost? reply){
+    if((reply != null) &&
+        ((reply == _focusedReply) || (widget.replyThread!= null && widget.replyThread!.contains(reply)))){
+      //Already focused reply.
+      // Disabled listener for the focused reply. Prevent duplication. Fix for #2374
+      return;
+    }
     Analytics().logSelect(target: 'Reply Card');
     List<GroupPost> thread = [];
     if(CollectionUtils.isNotEmpty(widget.replyThread)){
