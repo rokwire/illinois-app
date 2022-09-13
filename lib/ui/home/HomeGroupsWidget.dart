@@ -108,6 +108,18 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
     });
   }
 
+  void _applyUserGroups() {
+    if (widget.contentType == GroupsContentType.my) {
+      List<Group>? userGroups = Groups().userGroups;
+      _sortGroups(userGroups);
+      if (mounted) {
+        setState(() {
+          _groups = userGroups;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
@@ -199,10 +211,12 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
     else if ((name == Groups.notifyGroupCreated) ||
       (name == Groups.notifyGroupUpdated) ||
       (name == Groups.notifyGroupDeleted) ||
-      (name == Groups.notifyUserGroupsUpdated) ||
       (name == Groups.notifyUserMembershipUpdated) ||
       (name == Auth2.notifyLoginChanged)) {
         _loadGroups();
+    }
+    else if (name == Groups.notifyUserGroupsUpdated) {
+      _applyUserGroups();
     }
   }
 
