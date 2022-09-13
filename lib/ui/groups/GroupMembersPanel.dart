@@ -84,7 +84,13 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   /// Constructs alphabetically sorted list of GroupMemberStatus values
   ///
   void _buildSortedMemberStatusList() {
-    _sortedMemberStatusList = GroupMemberStatus.values.toList();
+    _sortedMemberStatusList = [GroupMemberStatus.admin];
+    // Do not allow users that are not members to see who is member
+    if (_group?.currentUserIsMember ?? false) {
+      _sortedMemberStatusList?.addAll([GroupMemberStatus.member]);
+    } else if (_group?.currentUserIsAdmin ?? false) {
+      _sortedMemberStatusList?.addAll([GroupMemberStatus.member, GroupMemberStatus.pending, GroupMemberStatus.rejected]);
+    }
     _sortedMemberStatusList?.sort((s1, s2) => s1.toString().compareTo(s2.toString()));
   }
 
@@ -97,6 +103,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     _increaseProgress();
     Groups().loadGroup(widget.groupId).then((Group? group) {
       _group = group;
+      _buildSortedMemberStatusList();
       _decreaseProgress();
     });
   }
