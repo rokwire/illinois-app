@@ -38,13 +38,16 @@ class HomeHandleWidget extends StatefulWidget {
   _HomeHandleWidgetState createState() => _HomeHandleWidgetState();
 }
 
-class _HomeHandleWidgetState extends State<HomeHandleWidget> {
+class _HomeHandleWidgetState extends State<HomeHandleWidget> implements NotificationsListener {
 
   final GlobalKey _contentKey = GlobalKey();
   CrossAxisAlignment? _dropAnchorAlignment;
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+    ]);
     super.initState();
   }
 
@@ -139,6 +142,15 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> {
       setState(() {
         _dropAnchorAlignment = null;
       });
+    }
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 }
