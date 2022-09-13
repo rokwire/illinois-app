@@ -33,7 +33,8 @@ class FavoriteStarIcon extends StatelessWidget {
     else if (style == FavoriteIconStyle.Handle) {
       switch (selected) {
         case true:  imageName = 'images/icon-star-orange.png'; break;
-        default:    imageName = 'images/icon-star-gray-frame-thin.png'; break;
+        case false: imageName = 'images/icon-star-white.png'; break;
+        default:    imageName = 'images/icon-star-gray.png'; break;
       }
     }
     else if (style == FavoriteIconStyle.Button) {
