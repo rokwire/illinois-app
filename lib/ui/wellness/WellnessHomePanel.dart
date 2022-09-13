@@ -63,14 +63,17 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         body: Column(children: <Widget>[
           Padding(
               padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-              child: RibbonButton(
-                  textColor: Styles().colors!.fillColorSecondary,
-                  backgroundColor: Styles().colors!.white,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                  rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-                  label: _getContentLabel(_selectedContent),
-                  onTap: _changeSettingsContentValuesVisibility)),
+              child: Semantics(
+                  hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
+                  container: true,
+                  child:RibbonButton(
+                    textColor: Styles().colors!.fillColorSecondary,
+                    backgroundColor: Styles().colors!.white,
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                    rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+                    label: _getContentLabel(_selectedContent),
+                    onTap: _changeSettingsContentValuesVisibility))),
           Expanded(
               child: Stack(children: [
             Padding(
