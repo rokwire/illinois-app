@@ -87,6 +87,8 @@
 	"toggle_button.status.unchecked":"未选中",
 	"toggle_button.status.checkbox":"复选框",
 
+	"dropdown.hint": "DropDown",
+
 	"payment_type.text.classic_meal":"经典套餐",
 	"payment_type.text.dining_dollars":"Dining Dollars",
 	"payment_type.text.illini_cash":"Illini现金",

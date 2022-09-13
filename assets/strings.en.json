@@ -88,6 +88,8 @@
     "toggle_button.status.unchecked": "unchecked",
     "toggle_button.status.checkbox": "checkbox",
 
+    "dropdown.hint": "DropDown",
+
     "payment_type.text.classic_meal":"Classic Meal",
     "payment_type.text.dining_dollars":"Dining Dollars",
     "payment_type.text.illini_cash":"Illini Cash",

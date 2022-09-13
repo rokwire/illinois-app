@@ -87,6 +87,8 @@
     "toggle_button.status.unchecked": "sin marcar",
     "toggle_button.status.checkbox": "casilla de verificación",
 
+    "dropdown.hint": "DropDown",
+
     "payment_type.text.classic_meal":"Comida Classic",
     "payment_type.text.dining_dollars":"Dining Dollars",
     "payment_type.text.illini_cash":"Illini Cash",
