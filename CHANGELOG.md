@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Compound widget style for favorites [#2373](https://github.com/rokwire/illinois-app/issues/2373).
 - Fix Semantics for Wellness drop down button [#2327](https://github.com/rokwire/illinois-app/issues/2327).
+- Show pending members by default if exist [#2289](https://github.com/rokwire/illinois-app/issues/2289).
 
 ## [4.1.29] - 2022-09-12
 ### Fixed

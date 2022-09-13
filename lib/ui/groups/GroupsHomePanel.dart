@@ -120,6 +120,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     });
   }
 
+  void _applyUserGroups() {
+    _userGroups = Groups().userGroups;
+    _updateState();
+  }
+
   void _loadAllGroups() {
     // Do not load all groups when device is offline
     if (Connectivity().isOffline) {
@@ -724,7 +729,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       }
     }
     else if (name == Groups.notifyUserGroupsUpdated) {
-      _loadUserGroups();
+      _applyUserGroups();
     }
     else if ((name == Auth2.notifyLoginSucceeded) ||  (name == Auth2.notifyLogout)) {
       // Reload content with some delay, do not unmount immidately GroupsCard that could have updated the login state.
