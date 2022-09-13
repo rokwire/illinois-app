@@ -82,7 +82,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Groups.notifyGroupPostsUpdated, notifyGroupPostReactionsUpdated]);
+    NotificationService().subscribe(this, [Groups.notifyGroupPostsUpdated, Groups.notifyGroupPostReactionsUpdated]);
     _loadMembersAllowedToPost();
     _post = widget.post ?? GroupPost(); //If no post then prepare data for post creation
     _focusedReply = widget.focusedReply;
