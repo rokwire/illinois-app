@@ -12,9 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TextStyles exposed to Assets/styles.json (in progress) [#2311](https://github.com/rokwire/illinois-app/issues/2311).
 - Android: upgrade compileSdkVersion and targetSdkVersion [#2308](https://github.com/rokwire/illinois-app/issues/2308).
 
+## [4.1.31] - 2022-09-14
+### Added
+- Display when member had attended if the group is attendance group [#2392](https://github.com/rokwire/illinois-app/issues/2392).
+
 ## [4.1.30] - 2022-09-13
 ### Added
-- Add reactions to group posts [#2354](https://github.com/rokwire/illinois-app/issues/2354)
+- Add reactions to group posts [#2354](https://github.com/rokwire/illinois-app/issues/2354).
 ### Fixed
 - Compound widget style for favorites [#2373](https://github.com/rokwire/illinois-app/issues/2373).
 - Fix Semantics for Wellness drop down button [#2327](https://github.com/rokwire/illinois-app/issues/2327).
