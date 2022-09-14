@@ -139,9 +139,12 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
     );
   }
 
-  Widget _buildHeading(){
-    String? memberDateAdded = (_member?.dateCreatedUtc != null) ? AppDateTime().formatDateTime(_member?.dateCreatedUtc?.toLocal(), format: "MMMM dd") : null;
-    String memberSince = (memberDateAdded != null) ? sprintf(Localization().getStringEx("panel.member_detail.label.member_since", "Member since %s"), [memberDateAdded]) : '';
+  Widget _buildHeading() {
+    bool showAttendance = (_group?.attendanceGroup ?? false) && (_member?.dateAttendedUtc != null);
+    DateTime? dateTimeUtc = showAttendance ? _member?.dateAttendedUtc : _member?.dateCreatedUtc;
+    String? formattedDate = (dateTimeUtc != null) ? AppDateTime().formatDateTime(dateTimeUtc.toLocal(), format: "MMMM dd") : null;
+    String datePrefixLabelFormat = showAttendance ? Localization().getStringEx("panel.member_detail.label.attended_on", "Attended on %s") : Localization().getStringEx("panel.member_detail.label.member_since", "Member since %s");
+    String dateDescriptionMsg = (formattedDate != null) ? sprintf(datePrefixLabelFormat, [formattedDate]) : '';
 
     return Row(
       children: <Widget>[
@@ -162,7 +165,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
                 ),
               ),
               Container(height: 6,),
-              Text(memberSince,
+              Text(dateDescriptionMsg,
                 style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),
               )
             ],
