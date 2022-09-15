@@ -186,7 +186,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
       }
     }
     items.add(DropdownMenuItem(
-        value: null, child: Text(Localization().getStringEx('panel.group.detail.post.create.nudges.custom.label', 'Custom'))));
+        value: null, child: Text(Localization().getStringEx('panel.group.detail.post.create.nudges.none.label', 'None'))));
     return items;
   }
 
