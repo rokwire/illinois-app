@@ -309,6 +309,15 @@ class _AppState extends State<App> implements NotificationsListener {
 
   void _finishOnboarding(BuildContext context) {
     Storage().onBoardingPassed = true;
+    // Start
+    Route routeToHome = CupertinoPageRoute(builder: (context) => _rootPanel);
+    Navigator.pushAndRemoveUntil(context, routeToHome, (_) => false);
+    // End
+    //
+    //DD: Comment this code in order to try and prevent black screen after onboarding. This may be not the reason for the black screen but it is the only related change between versions 4.1.27 and 4.1.28.
+    // If this does not fix the "black screen" problem - revert and bring it back
+    //
+    /* Start
     Route routeToHome = CupertinoPageRoute(builder: (context) => NotificationListener<Notification>(
       onNotification: AppNotification().handleNotification,
       child: RootPanel(),
@@ -319,6 +328,7 @@ class _AppState extends State<App> implements NotificationsListener {
         setState(() {});
       }
     });
+    End */
   }
 
   bool _checkForceOnboarding() {

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - "Custom" group post template to "None" [#2396](https://github.com/rokwire/illinois-app/issues/2396).
+### Fixed
+- Try to prevent black screen after onboarding (Revert improving AppReview after onboarding) [#2395](https://github.com/rokwire/illinois-app/issues/2395).
 
 ## [4.1.31] - 2022-09-14
 ### Added
