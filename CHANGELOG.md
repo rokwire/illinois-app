@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TextStyles exposed to Assets/styles.json (in progress) [#2311](https://github.com/rokwire/illinois-app/issues/2311).
 - Android: upgrade compileSdkVersion and targetSdkVersion [#2308](https://github.com/rokwire/illinois-app/issues/2308).
 
+## [4.1.33] - 2022-09-16
+### Fixed
+- Reload Wellness ToDo items when category is changed or deleted [#2401](https://github.com/rokwire/illinois-app/issues/2401).
+
 ## [4.1.32] - 2022-09-15
 ### Changed
 - "Custom" group post template to "None" [#2396](https://github.com/rokwire/illinois-app/issues/2396).
