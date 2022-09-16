@@ -50,7 +50,13 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Wellness.notifyToDoItemCreated, Wellness.notifyToDoItemUpdated, Wellness.notifyToDoItemsDeleted]);
+    NotificationService().subscribe(this, [
+      Wellness.notifyToDoItemCreated,
+      Wellness.notifyToDoItemUpdated,
+      Wellness.notifyToDoItemsDeleted,
+      Wellness.notifyToDoCategoryChanged,
+      Wellness.notifyToDoCategoryDeleted
+    ]);
     _selectedTab = _ToDoTab.daily;
     _initCalendarDates();
     _loadToDoItems();
@@ -629,11 +635,11 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
 
   @override
   void onNotification(String name, param) {
-    if (name == Wellness.notifyToDoItemCreated) {
-      _loadToDoItems();
-    } else if (name == Wellness.notifyToDoItemUpdated) {
-      _loadToDoItems();
-    } else if (name == Wellness.notifyToDoItemsDeleted) {
+    if ((name == Wellness.notifyToDoItemCreated) ||
+        (name == Wellness.notifyToDoItemUpdated) ||
+        (name == Wellness.notifyToDoItemsDeleted) ||
+        (name == Wellness.notifyToDoCategoryChanged) ||
+        (name == Wellness.notifyToDoCategoryDeleted)) {
       _loadToDoItems();
     }
   }
