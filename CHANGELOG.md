@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.1.33] - 2022-09-16
 ### Fixed
 - Reload Wellness ToDo items when category is changed or deleted [#2401](https://github.com/rokwire/illinois-app/issues/2401).
-- Fix Gies checklist group request [#2403](https://github.com/rokwire/illinois-app/issues/2403)
+- Fix Gies checklist group request [#2403](https://github.com/rokwire/illinois-app/issues/2403).
 
 ## [4.1.32] - 2022-09-15
 ### Changed
