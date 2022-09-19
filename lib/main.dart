@@ -205,7 +205,6 @@ class _AppState extends State<App> implements NotificationsListener {
   ServiceError? _initializeError;
   Future<ServiceError?>? _retryInitialzeFuture;
   DateTime? _pausedDateTime;
-  RootPanel _rootPanel = RootPanel();
 
   @override
   void initState() {
@@ -296,21 +295,20 @@ class _AppState extends State<App> implements NotificationsListener {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
     }
     else {
-      return _rootPanel;
+      return RootPanel();
     }
   }
 
   void _resetUI() async {
     this.setState(() {
       _key = UniqueKey();
-      _rootPanel = RootPanel();
     });
   }
 
   void _finishOnboarding(BuildContext context) {
     Storage().onBoardingPassed = true;
     // Start
-    Route routeToHome = CupertinoPageRoute(builder: (context) => _rootPanel);
+    Route routeToHome = CupertinoPageRoute(builder: (context) => RootPanel());
     Navigator.pushAndRemoveUntil(context, routeToHome, (_) => false);
     // End
     //
