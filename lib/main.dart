@@ -250,28 +250,27 @@ class _AppState extends State<App> implements NotificationsListener {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      key: _key,
-      navigatorKey: widget.navigatorKey,
-      localizationsDelegates: [
-        AppLocalizationsDelegate(),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: Localization().supportedLocales(),
-      navigatorObservers:[AppNavigation()],
-      //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-      title: Localization().getStringEx('app.title', 'Illinois'),
-      theme: ThemeData(
+    return NotificationListener<Notification>(
+      onNotification: AppNotification().handleNotification,
+      child: MaterialApp(
+        key: _key,
+        navigatorKey: widget.navigatorKey,
+        localizationsDelegates: [
+          AppLocalizationsDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: Localization().supportedLocales(),
+        navigatorObservers:[AppNavigation()],
+        //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
+        title: Localization().getStringEx('app.title', 'Illinois'),
+        theme: ThemeData(
           appBarTheme: AppBarTheme(backgroundColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040)),
           primaryColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040),
           fontFamily: Styles().fontFamilies?.extraBold ?? 'ProximaNovaExtraBold'),
-      home: NotificationListener<Notification>(
-        onNotification: AppNotification().handleNotification,
-        child: _homePanel,
+        home: _homePanel,
       ),
-      
     );
   }
 
@@ -307,26 +306,8 @@ class _AppState extends State<App> implements NotificationsListener {
 
   void _finishOnboarding(BuildContext context) {
     Storage().onBoardingPassed = true;
-    // Start
     Route routeToHome = CupertinoPageRoute(builder: (context) => RootPanel());
     Navigator.pushAndRemoveUntil(context, routeToHome, (_) => false);
-    // End
-    //
-    //DD: Comment this code in order to try and prevent black screen after onboarding. This may be not the reason for the black screen but it is the only related change between versions 4.1.27 and 4.1.28.
-    // If this does not fix the "black screen" problem - revert and bring it back
-    //
-    /* Start
-    Route routeToHome = CupertinoPageRoute(builder: (context) => NotificationListener<Notification>(
-      onNotification: AppNotification().handleNotification,
-      child: RootPanel(),
-    ));
-    Navigator.pushAndRemoveUntil(context, routeToHome, (_) => false);
-    Future.delayed(Duration(milliseconds: 100), () {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-    End */
   }
 
   bool _checkForceOnboarding() {
