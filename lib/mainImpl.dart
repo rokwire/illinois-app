@@ -107,7 +107,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
 
     Storage(),
 
-    Config(defaultEnvironment: configEnvironment),
+    Config(),
     NativeCommunicator(),
     HttpProxy(),
 
@@ -205,7 +205,6 @@ class _AppState extends State<App> implements NotificationsListener {
   ServiceError? _initializeError;
   Future<ServiceError?>? _retryInitialzeFuture;
   DateTime? _pausedDateTime;
-  RootPanel _rootPanel = RootPanel();
 
   @override
   void initState() {
@@ -251,28 +250,27 @@ class _AppState extends State<App> implements NotificationsListener {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      key: _key,
-      navigatorKey: widget.navigatorKey,
-      localizationsDelegates: [
-        AppLocalizationsDelegate(),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: Localization().supportedLocales(),
-      navigatorObservers:[AppNavigation()],
-      //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-      title: Localization().getStringEx('app.title', 'Illinois'),
-      theme: ThemeData(
+    return NotificationListener<Notification>(
+      onNotification: AppNotification().handleNotification,
+      child: MaterialApp(
+        key: _key,
+        navigatorKey: widget.navigatorKey,
+        localizationsDelegates: [
+          AppLocalizationsDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: Localization().supportedLocales(),
+        navigatorObservers:[AppNavigation()],
+        //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
+        title: Localization().getStringEx('app.title', 'Illinois'),
+        theme: ThemeData(
           appBarTheme: AppBarTheme(backgroundColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040)),
           primaryColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040),
           fontFamily: Styles().fontFamilies?.extraBold ?? 'ProximaNovaExtraBold'),
-      home: NotificationListener<Notification>(
-        onNotification: AppNotification().handleNotification,
-        child: _homePanel,
+        home: _homePanel,
       ),
-      
     );
   }
 
@@ -296,20 +294,19 @@ class _AppState extends State<App> implements NotificationsListener {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
     }
     else {
-      return _rootPanel;
+      return RootPanel();
     }
   }
 
   void _resetUI() async {
     this.setState(() {
       _key = UniqueKey();
-      _rootPanel = RootPanel();
     });
   }
 
   void _finishOnboarding(BuildContext context) {
     Storage().onBoardingPassed = true;
-    Route routeToHome = CupertinoPageRoute(builder: (context) => _rootPanel);
+    Route routeToHome = CupertinoPageRoute(builder: (context) => RootPanel());
     Navigator.pushAndRemoveUntil(context, routeToHome, (_) => false);
   }
 
@@ -435,4 +432,3 @@ class _AppState extends State<App> implements NotificationsListener {
     }
   }
 }
-
