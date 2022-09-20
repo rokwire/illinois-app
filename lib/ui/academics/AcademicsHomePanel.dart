@@ -244,7 +244,10 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     } else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
       // Please make this use an external browser
       // Ref: https://github.com/rokwire/illinois-app/issues/1110
-      launch(Config().myIlliniUrl!);
+      Uri? myIlliniUri = Uri.tryParse(Config().myIlliniUrl!);
+      if (myIlliniUri != null) {
+        launchUrl(myIlliniUri);
+      }
 
       //
       // Until webview_flutter get fixed for the dropdowns we will continue using it as a webview plugin,
@@ -267,7 +270,10 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   void _onTapDueDateCatalog() {
     Analytics().logSelect(target: "Due Date Catalog");
     if (StringUtils.isNotEmpty(Config().dateCatalogUrl)) {
-      launch(Config().dateCatalogUrl!);
+      Uri? uri = Uri.tryParse(Config().dateCatalogUrl!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 

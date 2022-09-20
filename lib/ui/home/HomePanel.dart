@@ -780,7 +780,10 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
   void _onTapHtmlLink(String? url) {
     if (StringUtils.isNotEmpty(url)) {
-      launch(url!);
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 

@@ -232,7 +232,9 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
       else if (UrlUtils.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
-        launch(url);
+        if (uri != null) {
+          launchUrl(uri);
+        }
       }
     }
   }

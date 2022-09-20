@@ -484,8 +484,11 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }
-      else{
-        launch(url!);
+      else {
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri);
+        }
       }
     }
   }

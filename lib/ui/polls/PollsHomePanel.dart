@@ -823,6 +823,7 @@ class _PollsHomePanelFilterTab extends StatelessWidget {
   final bool selected;
   final GestureTapCallback? onTap;
 
+  // ignore: unused_element
   _PollsHomePanelFilterTab({Key? key, this.text, this.hint = '', this.tabPosition = _PollFilterTabPosition.left, this.selected = false, this.onTap}) : super(key: key);
 
   @override

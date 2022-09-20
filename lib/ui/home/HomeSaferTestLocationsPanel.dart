@@ -177,6 +177,7 @@ class _TestLocation extends StatelessWidget {
   final HealthServiceLocation? testLocation;
   final double? distance;
 
+  // ignore: unused_element
   _TestLocation({this.testLocation, this.distance});
 
   @override

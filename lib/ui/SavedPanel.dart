@@ -526,9 +526,8 @@ class _SavedItemsList extends StatefulWidget {
   final String slantImageResource;
   final Color? slantColor;
 
-  _SavedItemsList(
-      {this.items, this.limit = 3, this.headingTitle, this.headingIconResource, this.slantImageResource = 'images/slant-down-right-blue.png',
-        this.slantColor,});
+  // ignore: unused_element
+  _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconResource, this.slantImageResource = 'images/slant-down-right-blue.png', this.slantColor});
 
   _SavedItemsListState createState() => _SavedItemsListState();
 }

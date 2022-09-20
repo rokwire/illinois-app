@@ -1382,7 +1382,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Analytics().logSelect(target: 'Group url', attributes: _group?.analyticsAttributes);
     String? url = _group?.webURL;
     if (StringUtils.isNotEmpty(url)) {
-      launch(url!);
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 
