@@ -106,7 +106,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
       Polls.notifyVoteChanged,
       Polls.notifyStatusChanged,
     ]);
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalProgressWidths();
     });
     _poll = Polls().getPoll(pollId: widget.pollId);

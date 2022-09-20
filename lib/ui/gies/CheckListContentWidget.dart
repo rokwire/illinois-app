@@ -603,7 +603,7 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
   @override
   void initState() {
     _focusNode = FocusNode();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_focusKey.currentContext != null) {
         Scrollable.ensureVisible(_focusKey.currentContext!, duration: Duration(milliseconds: 300)).then((_) {
           _focusNode.requestFocus();

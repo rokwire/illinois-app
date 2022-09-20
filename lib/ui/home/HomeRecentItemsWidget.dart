@@ -121,7 +121,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   void onNotification(String name, dynamic param) {
     if (name == RecentItems.notifyChanged) {
       if (mounted) {
-        SchedulerBinding.instance?.addPostFrameCallback((_) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
           if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
             setState(() {
               _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);

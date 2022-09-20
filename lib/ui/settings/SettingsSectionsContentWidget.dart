@@ -773,6 +773,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       });
       return completer.future;
     }
+    else {
+      return null;
+    }
   }
 
   void _onTapAlternateEmail(Auth2Type linked) {

@@ -813,7 +813,7 @@ class _GroupCardState extends State<GroupCard> {
   void initState() {
     super.initState();
     _loadGroupStats();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalContentSize();
     });
   }
@@ -2171,7 +2171,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
   @override
   void initState() {
     _loadGroupStats();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalProgressWidths();
     });
     super.initState();

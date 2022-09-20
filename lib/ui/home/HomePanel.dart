@@ -955,7 +955,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
   void _ensureVisibleHandle(String favoriteId) {
     BuildContext? handleContext = _handleKeys[favoriteId]?.currentContext;
     if (handleContext != null) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         Scrollable.ensureVisible(handleContext, duration: Duration(milliseconds: 300)).then((_) {
         });
       });

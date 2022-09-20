@@ -151,6 +151,7 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
       Response? response = await Network().get("${Config().gatewayUrl}/termsessions/listcurrent", auth: Auth2(), headers: { ExternalAuthorizationHeader: Auth2().uiucToken?.accessToken });
       return (response?.statusCode == 200) ? response?.body : null;
     }
+    return null;
   }
 
   Future<void> _updateTerms() async {

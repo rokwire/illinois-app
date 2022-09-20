@@ -92,7 +92,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     _recentLocalPolls = Polls().localRecentPolls();
     _selectPollType(_couldCreatePoll ? _PollType.values[Storage().selectedPollType ?? 0] : _PollType.recentPolls);
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalBleDescriptionHeight();
     });
 
@@ -882,7 +882,7 @@ class _PollCardState extends State<PollCard> {
   @override
   void initState() {
     _loadGroupStats();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalProgressWidths();
     });
     super.initState();

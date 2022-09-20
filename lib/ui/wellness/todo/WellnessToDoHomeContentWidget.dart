@@ -62,7 +62,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     _loadToDoItems();
     if (Wellness().isToDoListAccessed != true) {
       Wellness().toDoListAccessed(true);
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         _showWelcomePopup();
       });
     }
