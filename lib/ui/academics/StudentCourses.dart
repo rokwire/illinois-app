@@ -34,6 +34,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
       Connectivity.notifyStatusChanged,
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
+      StudentCourses.notifyCourseContentChanged,
     ]);
 
     if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn) {
@@ -70,6 +71,9 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
     else if (name == StudentCourses.notifySelectedTermChanged) {
       _updateCourses();
     }
+    else if (name == StudentCourses.notifyCourseContentChanged) {
+      _updateCourses();
+    }
   }
 
   @override
@@ -85,7 +89,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
       return _buildMessageContent(Localization().getStringEx('panel.student_courses.load.offline.error.msg', 'My Courses not available while offline.'));
     }
     else if (!Auth2().isOidcLoggedIn) {
-      return _buildMessageContent(Localization().getStringEx('panel.student_courses.load.logged_out.error.msg', 'You need to be logged in to access My Courses.'));
+      return _buildMessageContent(Localization().getStringEx('panel.student_courses.load.logged_out.error.msg', 'You need to be logged in with your NetID to access My Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
     }
     else if (_courses == null) {
       return _buildMessageContent(Localization().getStringEx('panel.student_courses.load.failed.error.msg', 'It appears you have no courses registered for the selected term.'));

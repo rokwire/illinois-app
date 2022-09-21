@@ -165,6 +165,7 @@ class ExplorePanelState extends State<ExplorePanel>
       Styles.notifyChanged,
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
+      StudentCourses.notifyCourseContentChanged,
     ]);
 
 
@@ -1670,6 +1671,9 @@ class ExplorePanelState extends State<ExplorePanel>
       _refresh(() {
         _updateSelectedTermId();
       });
+      _loadExplores();
+    }
+    else if (name == StudentCourses.notifyCourseContentChanged) {
       _loadExplores();
     }
   }

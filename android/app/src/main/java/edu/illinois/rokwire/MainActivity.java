@@ -30,13 +30,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.arubanetworks.meridian.Meridian;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-import com.mapsindoors.mapssdk.MapsIndoors;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -65,7 +63,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
 
     private static MethodChannel.Result pickLocationResult;
 
-    private HashMap keys;
+    private HashMap config;
 
     private int preferredScreenOrientation;
     private Set<Integer> supportedScreenOrientations;
@@ -105,8 +103,12 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    public HashMap getKeys() {
-        return keys;
+    public HashMap getSecretKeys() {
+        return Utils.Map.getMapValueForKey(config, "secretKeys");
+    }
+
+    public HashMap getThirdPartyServices() {
+        return Utils.Map.getMapValueForKey(config, "thirdPartyServices");
     }
 
     @Override
@@ -161,48 +163,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         return (Settings.System.getInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0) == 1);
     }
 
-    private void initWithParams(Object keys) {
-        HashMap keysMap = null;
-        if (keys instanceof HashMap) {
-            keysMap = (HashMap) keys;
-        }
-        if (keysMap == null) {
-            return;
-        }
-        this.keys = keysMap;
-
-        // Google Maps cannot be initialized dynamically. Its api key has to be in AndroidManifest.xml file.
-        // Read it from config for MapsIndoors.
-        String googleMapsApiKey = Utils.Map.getValueFromPath(keysMap, "google.maps.api_key", null);
-
-        // MapsIndoors
-        String mapsIndoorsApiKey = Utils.Map.getValueFromPath(keysMap, "mapsindoors.api_key", null);
-        if (!Utils.Str.isEmpty(mapsIndoorsApiKey)) {
-            MapsIndoors.initialize(
-                    getApplicationContext(),
-                    mapsIndoorsApiKey
-            );
-        }
-        if (!Utils.Str.isEmpty(googleMapsApiKey)) {
-            MapsIndoors.setGoogleAPIKey(googleMapsApiKey);
-        }
-
-        // Meridian
-        try {
-            String meridianEditorToken = Utils.Map.getValueFromPath(keysMap, "meridian.app_token", null);
-            Meridian.DomainRegion[] domainRegions = Meridian.DomainRegion.values();
-            int domainRegionIndex = Utils.Map.getValueFromPath(keysMap, "meridian.domain_region", 0);
-            Meridian.DomainRegion domainRegion = (domainRegionIndex < domainRegions.length) ? domainRegions[domainRegionIndex] : Meridian.DomainRegion.DomainRegionDefault;
-            Meridian.configure(this, meridianEditorToken);
-            Meridian.getShared().setDomainRegion(domainRegion);
-            //if (!Utils.Str.isEmpty(meridianEditorToken)) {
-            //    Meridian.getShared().setEditorToken(meridianEditorToken);
-            //}
-        }
-        catch (Exception e)
-        {
-            Log.d(TAG, "Failed to generate uuid");
-        }
+    private void initWithParams(Object configObj) {
+        this.config = (configObj instanceof HashMap) ? ((HashMap)configObj) : null;
     }
 
     private void launchMapsDirections(Object explore, Object options) {
@@ -452,8 +414,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         try {
             switch (method) {
                 case Constants.APP_INIT_KEY:
-                    Object keysObject = methodCall.argument("keys");
-                    initWithParams(keysObject);
+                    Object configObject = methodCall.argument("config");
+                    initWithParams(configObject);
                     result.success(true);
                     break;
                 case Constants.MAP_DIRECTIONS_KEY:
@@ -480,9 +442,6 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                 case Constants.APP_SET_LAUNCH_SCREEN_STATUS_KEY:
                     handleSetLaunchScreenStatus(methodCall.arguments);
                     result.success(true);
-                    break;
-                case Constants.APP_ADD_CARD_TO_WALLET_KEY:
-                    result.success(false);
                     break;
                 case Constants.APP_ENABLED_ORIENTATIONS_KEY:
                     Object orientations = methodCall.argument("orientations");

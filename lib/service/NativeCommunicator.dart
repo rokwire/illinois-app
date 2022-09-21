@@ -72,7 +72,7 @@ class NativeCommunicator with Service {
 
   Future<void> _nativeInit() async {
     try {
-      await _platformChannel.invokeMethod('init', { "keys": Config().secretKeys });
+      await _platformChannel.invokeMethod('init', { "config": Config().content });
     } on PlatformException catch (e) {
       print(e.message);
     }
@@ -155,7 +155,6 @@ class NativeCommunicator with Service {
         'target': target,
         'options': {
           'showDebugLocation': Storage().debugMapLocationProvider,
-          'enableLevels': Storage().debugMapShowLevels ,
         },
         'markers': markers,
       });
@@ -181,15 +180,6 @@ class NativeCommunicator with Service {
       await _platformChannel.invokeMethod('setLaunchScreenStatus', {
         'status': status
       });
-    } on PlatformException catch (e) {
-      print(e.message);
-    }
-  }
-
-  Future<void> addCardToWallet(List<int> cardData) async {
-    try {
-      String cardBase64Data = base64Encode(cardData);
-      await _platformChannel.invokeMethod('addToWallet', { "cardBase64Data" : cardBase64Data });
     } on PlatformException catch (e) {
       print(e.message);
     }

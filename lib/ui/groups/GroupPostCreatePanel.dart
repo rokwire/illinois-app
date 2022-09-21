@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -8,6 +11,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 import 'GroupWidgets.dart';
 
@@ -89,6 +93,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                       controller: TextEditingController(text: _postData.subject),
                       onChanged: (msg)=> _postData.subject = msg,
                       maxLines: 1,
+                      textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(
                         hintText: Localization().getStringEx('panel.group.detail.post.create.subject.field.hint', 'Write a Subject'),
                         border: OutlineInputBorder(
@@ -169,11 +174,8 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   }
 
   void _onMembersSelectionChanged(List<Member>? selectedMembers){
-    if(mounted) {
-      setState(() {
-        _selectedMembers = selectedMembers;
-      });
-    }
+    _selectedMembers = selectedMembers;
+    _updateState();
   }
 
   List<DropdownMenuItem<GroupPostNudge?>> get _nudgesDropDownItems {
@@ -184,7 +186,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
       }
     }
     items.add(DropdownMenuItem(
-        value: null, child: Text(Localization().getStringEx('panel.group.detail.post.create.nudges.custom.label', 'Custom'))));
+        value: null, child: Text(Localization().getStringEx('panel.group.detail.post.create.nudges.none.label', 'None'))));
     return items;
   }
 
@@ -195,12 +197,33 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     if (_selectedNudge != null) {
       subject = _selectedNudge?.subject;
       body = _selectedNudge?.body;
+      _showPollConfirmationDialogIfNeeded();
     }
     _postData.subject = subject;
     _postData.body = body;
-    if (mounted) {
-      setState(() {});
+    _updateState();
+  }
+
+  void _showPollConfirmationDialogIfNeeded() {
+    if (_selectedNudge?.canPoll ?? false) {
+      AppAlert.showConfirmationDialog(
+          buildContext: context,
+          message: Localization()
+              .getStringEx('panel.group.detail.post.create.nudges.create.poll.msg', 'Do you want to attach a Poll to the Post?'),
+          positiveCallback: _onCreatePollConfirmed);
     }
+  }
+
+  void _onCreatePollConfirmed() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel(group: widget.group))).then((poll) {
+      if (poll is Poll) {
+        String pollNudgeBodyMsg = sprintf(
+            Localization().getStringEx('panel.group.detail.post.create.nudges.poll.body.msg', 'Please participate in the course Poll, #%s'),
+            [StringUtils.ensureNotEmpty(poll.pinCode?.toString())]);
+        _postData.body = StringUtils.ensureNotEmpty(_postData.body) + '\n\n $pollNudgeBodyMsg';
+        _updateState();
+      }
+    });
   }
 
   //Tap actions
@@ -209,7 +232,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     Navigator.of(context).pop();
   }
 
-  void _onTapSend() {
+  void _onTapSend() async{
     Analytics().logSelect(target: 'Send');
     FocusScope.of(context).unfocus();
 
@@ -228,11 +251,33 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _increaseProgress();
+    List<Group> selectedGroups = [];
+    List<Group>? otherGroupsToSave;
+
+    selectedGroups.add(widget.group);
+    // If the event is part of a group - allow the admin to select other groups that one wants to save the event as well.
+    //If post has membersSelection then do not allow linking to other groups
+    if (CollectionUtils.isEmpty(_selectedMembers)) {
+        List<Group>? otherGroups = await _loadOtherAdminUserGroups();
+        if (CollectionUtils.isNotEmpty(otherGroups)) {
+          otherGroupsToSave = await showDialog(context: context, barrierDismissible: true, builder: (_) => GroupsSelectionPopup(groups: otherGroups,));
+        }
+
+        if(CollectionUtils.isNotEmpty(otherGroupsToSave)){
+          selectedGroups.addAll(otherGroupsToSave!);
+        }
+    }
 
     GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers); // if no parentId then this is a new post for the group.
-    Groups().createPost(widget.group.id, post).then((succeeded) {
-      _onCreateFinished(succeeded);
-    });
+    if(CollectionUtils.isNotEmpty(selectedGroups)) {
+      List<Future<bool>> futures = [];
+      for(Group group in selectedGroups){
+        futures.add(Groups().createPost(group.id, post));
+      }
+      
+      List<bool> results = await Future.wait(futures);
+      _onCreateFinished(!results.contains(false));
+    }
   }
 
   void _onCreateFinished(bool succeeded) {
@@ -263,15 +308,36 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     }
   }
 
+  //Copy from CreateEventPanel could be moved to Utils
+  ///
+  /// Returns the groups that current user is admin of without the current group
+  ///
+  Future<List<Group>?> _loadOtherAdminUserGroups() async {
+    List<Group>? userGroups = await Groups().loadGroups(contentType: GroupsContentType.my);
+    List<Group>? userAdminGroups;
+    if (CollectionUtils.isNotEmpty(userGroups)) {
+      userAdminGroups = [];
+      String? currentGroupId = widget.group.id;
+      for (Group? group in userGroups!) {
+        if (group!.currentUserIsAdmin && (group.id != currentGroupId)) {
+          userAdminGroups.add(group);
+        }
+      }
+    }
+    return userAdminGroups;
+  }
+
   void _increaseProgress() {
     _progressLoading++;
-    if (mounted) {
-      setState(() {});
-    }
+    _updateState();
   }
 
   void _decreaseProgress() {
     _progressLoading--;
+    _updateState();
+  }
+
+  void _updateState() {
     if (mounted) {
       setState(() {});
     }

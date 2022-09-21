@@ -21,6 +21,6 @@
 #import <UIKit/UIKit.h>
 #import "MapController.h"
 
-@interface MapDirectionsController : MapController
+@interface MapDirectionsController : MapController<CLLocationManagerDelegate>
 - (instancetype)initWithParameters:(NSDictionary*)parameters completionHandler:(FlutterCompletion)completionHandler;
 @end

@@ -47,7 +47,7 @@ class SettingsMealPlanPanel extends StatefulWidget {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.meal_plan', 'University Housing Meal Plan is not available while offline.'));
     }
     else if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.illini_cash', 'You need to be logged in to access University Housing Meal Plan.'));
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.meal_plan', 'You need to be logged in with your NetID to access University Housing Meal Plan. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
     }
     else {
       Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(name: SettingsIlliniCashPanel.routeName), builder: (context) => SettingsMealPlanPanel()));
@@ -74,6 +74,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
     NotificationService().subscribe(this, [
       IlliniCash.notifyPaymentSuccess,
       IlliniCash.notifyBallanceUpdated,
+      IlliniCash.notifyEligibilityUpdated,
     ]);
     
     _loadBallance();
@@ -228,58 +229,68 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
   }
 
   Widget _buildMealPlanSection() {
-    bool isSignedIn = Auth2().isLoggedIn;
     List<Widget> widgets = [];
     widgets.add(Padding(padding: EdgeInsets.only(top: 16)));
-    if (!isSignedIn) {
-      if(_canSignIn) {
-        widgets.add(Padding(
-          padding: EdgeInsets.only(left: 20, right: 20, bottom: 16),
-          child: RoundedButton(
-            label: Localization().getStringEx(
-                "panel.settings.meal_plan.button.login_to_view_meal_plan.text",
-                "Sign in to View Your Meal Plan"),
-            hint: Localization().getStringEx(
-                'panel.settings.meal_plan.button.login_to_view_meal_plan.hint',
-                ''),
-            backgroundColor: Styles().colors!.white,
-            fontSize: 16.0,
-            textColor: Styles().colors!.fillColorPrimary,
-            borderColor: Styles().colors!.fillColorSecondary,
-            onTap: _onTapLogIn,
-          ),
-        ));
-      } else {
-        widgets.add(_buildPrivacyAlertMessage());
+    
+    if (Auth2().isLoggedIn) {
+      if (_illiniCashLoading) {
+        widgets.add(VerticalTitleValueSection(title: '', value: '',));
       }
-    }
-    if (isSignedIn) {
-      widgets.add(VerticalTitleValueSection(
-        title: Localization().getStringEx(
-            "panel.settings.meal_plan.label.meal_plan_type.text", "Meal Plan Type"),
-        value: StringUtils.isNotEmpty(IlliniCash().ballance?.mealPlanName) ? IlliniCash().ballance?.mealPlanName : Localization().getStringEx(
-            "panel.settings.meal_plan.label.meal_plan_unknown.text", "Unknown"),
-      ));
-      widgets.add(
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: VerticalTitleValueSection(
-                title: Localization().getStringEx(
-                    "panel.settings.meal_plan.label.meals_remaining.text", "Meals Remaining"),
-                value: IlliniCash().ballance?.mealBalanceDisplayText ?? "0",
-              ),
+      else if (IlliniCash().eligibility?.eligible == false) {
+        String title = Localization().getStringEx('panel.settings.meal_plan.label.illegible', 'Illegible');
+        String? status = StringUtils.isNotEmpty(IlliniCash().eligibility?.accountStatus) ? IlliniCash().eligibility?.accountStatus :
+          Localization().getStringEx('panel.settings.meal_plan.label.illegible_status', 'You are not eligibile for Meal Plan');
+        
+        widgets.add(VerticalTitleValueSection(
+          title: title,
+          titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary),
+          value: status,
+          valueTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+        ));
+      }
+      else {
+        widgets.add(VerticalTitleValueSection(
+          title: Localization().getStringEx("panel.settings.meal_plan.label.meal_plan_type.text", "Meal Plan Type"),
+          value: StringUtils.isNotEmpty(IlliniCash().ballance?.mealPlanName) ? IlliniCash().ballance?.mealPlanName : Localization().getStringEx("panel.settings.meal_plan.label.meal_plan_unknown.text", "Unknown"),
+        ));
+        
+        widgets.add(Row(children: <Widget>[
+          Expanded(child:
+            VerticalTitleValueSection(
+              title: Localization().getStringEx("panel.settings.meal_plan.label.meals_remaining.text", "Meals Remaining"),
+              value: IlliniCash().ballance?.mealBalanceDisplayText ?? "0",
             ),
-            Expanded(
-              child: VerticalTitleValueSection(
-                title: Localization().getStringEx(
-                    "panel.settings.meal_plan.label.dining_dollars.text", "Dining Dollars"),
-                value: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0",
-              ),
-            )
-          ],
-        )
-      );
+          ),
+          Expanded(child:
+            VerticalTitleValueSection(
+              title: Localization().getStringEx("panel.settings.meal_plan.label.dining_dollars.text", "Dining Dollars"),
+              value: IlliniCash().ballance?.cafeCreditBalanceDisplayText ?? "0",
+            ),
+          )
+        ],),);
+      }
+
+    }
+    else if (_canSignIn) {
+      widgets.add(Padding(
+        padding: EdgeInsets.only(left: 20, right: 20, bottom: 16),
+        child: RoundedButton(
+          label: Localization().getStringEx(
+              "panel.settings.meal_plan.button.login_to_view_meal_plan.text",
+              "Sign in to View Your Meal Plan"),
+          hint: Localization().getStringEx(
+              'panel.settings.meal_plan.button.login_to_view_meal_plan.hint',
+              ''),
+          backgroundColor: Styles().colors!.white,
+          fontSize: 16.0,
+          textColor: Styles().colors!.fillColorPrimary,
+          borderColor: Styles().colors!.fillColorSecondary,
+          onTap: _onTapLogIn,
+        ),
+      ));
+    }
+    else {
+      widgets.add(_buildPrivacyAlertMessage());
     }
 
     return Stack(
@@ -707,6 +718,11 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       setState(() {});
       _loadCafeCreditTransactions();
       _loadMealPlanTransactions();
+    }
+    else if (name == IlliniCash.notifyEligibilityUpdated) {
+      setState(() {
+
+      });
     }
     else if (name == IlliniCash.notifyPaymentSuccess) {
       _loadCafeCreditTransactions();

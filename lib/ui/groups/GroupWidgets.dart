@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Event.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
@@ -31,7 +32,6 @@ import 'package:illinois/ext/Group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -367,6 +367,7 @@ class GroupEventCard extends StatefulWidget {
   @override
   createState()=> _GroupEventCardState();
 }
+
 class _GroupEventCardState extends State<GroupEventCard>{
   @override
   Widget build(BuildContext context) {
@@ -442,7 +443,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     ],)),);
 
     return Stack(children: <Widget>[
-      GestureDetector(onTap: () {
+      InkWell(onTap: () {
           Analytics().logSelect(target: "Group Event");
           Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupEventDetailPanel(event: widget.event, group: widget.group, previewMode: widget.isAdmin,)));
         },
@@ -465,7 +466,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                       .getStringEx('widget.card.button.favorite.on.hint', ''),
                   button: true,
                   excludeSemantics: true,
-                  child: GestureDetector(onTap: _onFavoriteTap, child:
+                  child: InkWell(onTap: _onFavoriteTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
                       Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png'),
                     ),
@@ -473,7 +474,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
 
               Visibility(visible: _hasEventOptions, child:
                 Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
-                  GestureDetector(onTap: _onEventOptionsTap, child:
+                  InkWell(onTap: _onEventOptionsTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
                       Image.asset('images/icon-groups-options-orange.png'),
                     ),
@@ -636,7 +637,7 @@ class _GroupAddImageWidgetState extends State<GroupAddImageWidget> {
                     ),
                   ),
                   Spacer(),
-                  GestureDetector(
+                  InkWell(
                     onTap: _onTapCloseImageSelection,
                     child: Padding(
                       padding: EdgeInsets.only(right: 10, top: 10),
@@ -1292,8 +1293,10 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
       bodyText +=
           ' <span>(${Localization().getStringEx('widget.group.card.reply.edited.reply.label', 'edited')})</span>';
     }
-    return Semantics(container: true,
-      child:Container(
+    return Semantics(container: true, button: true,
+      child:GestureDetector(
+        onTap: widget.onCardTap ?? _onTapCard,
+         child:Container(
         decoration: BoxDecoration(
             color: Styles().colors!.white,
             boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
@@ -1301,10 +1304,22 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
         child: Padding(
             padding: EdgeInsets.all(12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Row(children: [
                 Semantics( child:
                   Text(StringUtils.ensureNotEmpty(widget.reply?.member?.displayShortName),
                     style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
+                ),
+                Expanded(child: Container()),
+                Visibility(
+                  visible: Config().showGroupPostReactions,
+                  child: GroupPostReaction(
+                    groupID: widget.group?.id,
+                    post: widget.reply,
+                    reaction: thumbsUpReaction,
+                    accountIDs: widget.reply?.reactions[thumbsUpReaction],
+                    selectedIconPath: 'images/icon-thumbs-up-solid.png',
+                    deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                  ),
                 ),
                 Visibility(
                     visible: StringUtils.isNotEmpty(widget.iconPath),
@@ -1346,8 +1361,9 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                   StringUtils.isEmpty(widget.reply?.imageUrl)? Container() :
                   Expanded(
                       flex: 1,
-                      child:
-                      GestureDetector(
+                      child: Semantics (
+                        button: true, label: "Image",
+                       child: GestureDetector(
                         onTap: (){
                           if(widget.onImageTap!=null){
                             widget.onImageTap!();
@@ -1358,13 +1374,10 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                           child: SizedBox(
                           width: _smallImageSize,
                           height: _smallImageSize,
-                           child: Image.network(widget.reply!.imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,),),))
+                           child: Image.network(widget.reply!.imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,),),)))
                   )
                 ],),
-              Semantics( button: true, child:
-                GestureDetector(
-                  onTap: widget.onCardTap ?? _onTapCard,
-                  child: Container(
+              Container(
                     padding: EdgeInsets.only(top: 12),
                     child: Row(children: [
                       Expanded(
@@ -1380,8 +1393,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                               style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, decoration: TextDecoration.underline,)
                         ))),
                       ))
-                ],),)))
-            ]))));
+                ],),)
+            ])))));
   }
 
   void _onLinkTap(String? url) {
@@ -1401,6 +1414,113 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
     if (name == Groups.notifyGroupPostsUpdated) {
       setState(() {});
     }
+  }
+}
+
+//////////////////////////////////////
+// GroupPostReaction
+
+const String thumbsUpReaction = "thumbs-up";
+
+class GroupPostReaction extends StatelessWidget {
+  final String? groupID;
+  final GroupPost? post;
+  final String reaction;
+  final List<String>? accountIDs;
+  final String selectedIconPath;
+  final String deselectedIconPath;
+  final double iconSize;
+
+  GroupPostReaction({required this.groupID, required this.post, required this.reaction,
+    this.accountIDs, required this.selectedIconPath, required this.deselectedIconPath, this.iconSize = 18});
+
+  @override
+  Widget build(BuildContext context) {
+    bool selected = accountIDs?.contains(Auth2().accountId) ?? false;
+    return Semantics(button: true, label: reaction,
+        child: InkWell(
+            onTap: () => _onTapReaction(groupID, post, reaction),
+            onLongPress: () => _onLongPressReactions(context, accountIDs, groupID),
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(selected ? selectedIconPath : deselectedIconPath,
+                      width: iconSize, height: iconSize, fit: BoxFit.fitWidth, excludeFromSemantics: true),
+                  Visibility(visible: accountIDs != null && accountIDs!.length > 0,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: Text(accountIDs?.length.toString() ?? '',
+                            style: TextStyle(
+                                fontFamily: Styles().fontFamilies!.regular,
+                                fontSize: 14,
+                                color: Styles().colors!.fillColorPrimary)),
+                      ))
+                ])));
+  }
+
+  void _onTapReaction(String? groupId, GroupPost? post, String reaction) async {
+    bool success = await Groups().togglePostReaction(groupId, post?.id, reaction);
+    if (success) {
+      GroupPost? updatedPost = await Groups().loadGroupPost(groupId: groupId, postId: post?.id);
+      if (updatedPost != null) {
+        post?.reactions.clear();
+        post?.reactions.addAll(updatedPost.reactions);
+        NotificationService().notify(Groups.notifyGroupPostReactionsUpdated);
+      }
+    }
+  }
+
+  void _onLongPressReactions(BuildContext context, List<String>? accountIDs, String? groupID) async {
+    if (accountIDs == null || accountIDs.isEmpty || groupID == null || groupID.isEmpty) {
+      return;
+    }
+    Analytics().logSelect(target: 'Reactions List');
+
+    List<Widget> reactions = [];
+    List<Member>? members = await Groups().loadMembers(groupId: groupID, userIds: accountIDs);
+    for (Member member in members ?? []) {
+      reactions.add(Padding(
+        padding: const EdgeInsets.only(bottom: 24.0, left: 8.0, right: 8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Image.asset('images/icon-thumbs-up-solid.png', width: 24, height: 24,
+                fit: BoxFit.fitWidth, excludeFromSemantics: true),
+            Container(width: 16),
+            Text(member.displayShortName, style: TextStyle(
+                fontFamily: Styles().fontFamilies!.bold,
+                fontSize: 16,
+                color: Styles().colors!.fillColorPrimary)),
+          ],
+        ),
+      ));
+    }
+
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Styles().colors!.white,
+        isScrollControlled: true,
+        isDismissible: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.only(left: 16, right: 16, top: 24),
+            height: MediaQuery.of(context).size.height / 2,
+            child: Column(
+              children: [
+                Container(width: 60, height: 8, decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Styles().colors?.disabledTextColor)),
+                Container(height: 16),
+                Expanded(
+                  child: ListView(
+                    children: reactions,
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
   }
 }
 
@@ -1510,6 +1630,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                     },
                     maxLines: 15,
                     minLines: 1,
+                    textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
                         hintText: _hint,
                         border: OutlineInputBorder(
@@ -2579,5 +2700,124 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
         _loadImage();
       }
     }
+  }
+}
+
+class GroupsSelectionPopup extends StatefulWidget {
+  final List<Group>? groups;
+
+  GroupsSelectionPopup({this.groups});
+
+  @override
+  _GroupsSelectionPopupState createState() => _GroupsSelectionPopupState();
+}
+
+class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
+  Set<String> _selectedGroupIds = {};
+
+  @override
+  void initState() {
+    super.initState();
+    if (CollectionUtils.isNotEmpty(widget.groups)) {
+      for (Group group in widget.groups!) {
+        if (group.id != null) {
+          _selectedGroupIds.add(group.id!);
+        }
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(contentPadding: EdgeInsets.zero, scrollable: true, content:
+    Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+      Container(
+          decoration: BoxDecoration(
+            color: Styles().colors!.fillColorPrimary,
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
+          ),
+          child: Row(children: <Widget>[
+            Opacity(opacity: 0, child:
+            Padding(padding: EdgeInsets.all(8), child:
+            Image.asset('images/close-white.png', excludeFromSemantics: true,)
+            )
+            ),
+            Expanded(child:
+            Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+            Text(Localization().getStringEx("widget.groups.selection.heading", "Select Group"), textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 24)
+            )
+            )
+            ),
+            Semantics(button: true, label: Localization().getStringEx("dialog.close.title","Close"), child:
+            InkWell(onTap: _onTapClose, child:
+            Padding(padding: EdgeInsets.only(top: 8, bottom: 8, left: 4, right: 12), child:
+            Image.asset('images/close-white.png', excludeFromSemantics: true,)
+            )
+            )
+            )
+          ])
+      ),
+      Padding(padding: EdgeInsets.all(10), child: _buildGroupsList()),
+      Semantics(container: true, child:
+      Padding(padding: EdgeInsets.all(10), child:
+      RoundedButton(
+          label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select"),
+          borderColor: Styles().colors!.fillColorSecondary,
+          backgroundColor: Styles().colors!.white,
+          textColor: Styles().colors!.fillColorPrimary,
+          onTap: _onTapSelect
+      )
+      )
+      )
+    ]));
+  }
+
+  Widget _buildGroupsList() {
+    if (CollectionUtils.isEmpty(widget.groups)) {
+      return Container();
+    }
+    List<Widget> groupWidgetList = [];
+    for (Group group in widget.groups!) {
+      if (group.id != null) {
+        groupWidgetList.add(ToggleRibbonButton(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+            label: group.title,
+            toggled: _selectedGroupIds.contains(group.id),
+            onTap: () => _onTapGroup(group.id!),
+            textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)
+        ));
+      }
+
+    }
+    return Column(children: groupWidgetList);
+  }
+
+  void _onTapGroup(String groupId) {
+    if (mounted) {
+      setState(() {
+        if (_selectedGroupIds.contains(groupId)) {
+          _selectedGroupIds.remove(groupId);
+        } else {
+          _selectedGroupIds.add(groupId);
+        }
+      });
+    }
+  }
+
+  void _onTapSelect() {
+    List<Group>? selectedGroups = [];
+    if (widget.groups != null) {
+      for (Group group in widget.groups!) {
+        if (_selectedGroupIds.contains(group.id)) {
+          selectedGroups.add(group);
+        }
+      }
+    }
+    Navigator.of(context).pop(selectedGroups);
+  }
+
+  void _onTapClose() {
+    Navigator.of(context).pop(<Group>[]);
   }
 }

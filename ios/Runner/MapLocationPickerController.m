@@ -27,15 +27,13 @@
 
 #import <Foundation/Foundation.h>
 #import <GoogleMaps/GoogleMaps.h>
-#import <MapsIndoors/MapsIndoors.h>
 
 
-@interface MapLocationPickerController () <GMSMapViewDelegate, MPMapControlDelegate>
+@interface MapLocationPickerController () <GMSMapViewDelegate>
 
 @property (nonatomic, strong) NSDictionary*         explore;
 
 @property (nonatomic, strong) GMSMapView*           gmsMapView;
-@property (nonatomic, strong) MPMapControl*         mpMapControl;
 
 @property (nonatomic, strong) UILabel*              locationLabel;
 
@@ -43,11 +41,6 @@
 @property (nonatomic, strong) GMSMarker*            selectedMarker;
 
 @end
-
-@interface MPLocation(InaUtils)
-@property (nonatomic, readonly) NSString* displayDescriptin;
-@end
-
 
 @implementation MapLocationPickerController
 
@@ -76,14 +69,15 @@
 - (void)loadView {
 
 	NSDictionary *initalLocation = [_explore inaDictForKey:@"location"];
-	CLLocationCoordinate2D cameraPos = (initalLocation != nil) ? CLLocationCoordinate2DMake([initalLocation inaDoubleForKey:@"latitude"], [initalLocation inaDoubleForKey:@"longitude"]) : kInitialCameraLocation;
-	float cameraZoom = (initalLocation != nil) ? 20 : kInitialCameraZoom;
+	NSNumber *locationLatitude = [initalLocation inaNumberForKey:@"latitude"];
+	NSNumber *locationLongitute = [initalLocation inaNumberForKey:@"longitude"];
+	bool hasInitialLocation = ((locationLatitude != nil) && (locationLongitute != nil));
+	CLLocationCoordinate2D cameraPos = hasInitialLocation ?
+		CLLocationCoordinate2DMake(locationLatitude.doubleValue, locationLongitute.doubleValue) : kInitialCameraLocation;
+	float cameraZoom = hasInitialLocation ? 20 : kInitialCameraZoom;
 	GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:cameraPos.latitude longitude:cameraPos.longitude zoom:cameraZoom];
 	_gmsMapView = [GMSMapView mapWithFrame:CGRectZero camera:camera];
 	_gmsMapView.delegate = self;
-
-	_mpMapControl = [[MPMapControl alloc] initWithMap:_gmsMapView];
-	_mpMapControl.delegate = self;
 
 	_locationLabel = [[UILabel alloc] initWithFrame:CGRectZero];
 	_locationLabel.font = [UIFont systemFontOfSize:16];
@@ -115,24 +109,16 @@
 }
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
+	[super viewDidLoad];
 	
 	NSDictionary *initalLocation = [_explore inaDictForKey:@"location"];
-
-	if (initalLocation != nil) {
-		NSString *locationId = [initalLocation inaStringForKey:@"location_id"];
-		MPLocation *location = (locationId != nil) ? [_mpMapControl getLocationById:locationId] : nil;
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-		GMSMarker *marker = (location != nil) ? location.marker : nil;
-#pragma clang diagnostic pop
-		if (marker == nil) {
-			marker = [self createCustomLocationMarkerFromExploreData:_explore];
-		}
-		_mpMapControl.currentFloor = [initalLocation inaNumberForKey:@"floor"];
-		_gmsMapView.selectedMarker = _selectedMarker = marker;
+	NSNumber *locationLatitude = [initalLocation inaNumberForKey:@"latitude"];
+	NSNumber *locationLongitute = [initalLocation inaNumberForKey:@"longitude"];
+	if ((locationLatitude != nil) && (locationLongitute != nil)) {
+		_gmsMapView.selectedMarker = _selectedMarker = [self createCustomLocationMarkerFromExploreData:_explore];
 	}
 	
-    [self updateLocationLabelFromMarker:_selectedMarker];
+	[self updateLocationLabelFromMarker:_selectedMarker];
 }
 
 #pragma mark Location Handling
@@ -150,8 +136,7 @@
 
 - (void)updateLocationLabelFromMarker:(GMSMarker*)marker {
 	if (marker != nil) {
-	    MPLocation *location = [_mpMapControl getLocation:marker];
-		NSString *locationName = (location != nil) ? location.name : marker.title;
+		NSString *locationName = marker.title;
 		
 		NSString *html = [NSString stringWithFormat:@"<html>\
 			<head><style>body{ font-family: Helvetica; font-weight: regular; font-size: 18px; color:#000000 } </style></head>\
@@ -177,12 +162,8 @@
 
 	NSMutableDictionary *explore = [NSMutableDictionary dictionaryWithDictionary:_explore];
 	explore[@"location"] = @{
-		@"location_id" : @"",
-		@"name" : @"",
-		@"description" : @"",
 		@"latitude" : @(coordinate.latitude),
 		@"longitude" : @(coordinate.longitude),
-		@"floor" : _mpMapControl.currentFloor ?: @(0)
 	};
 
 	return [self createCustomLocationMarkerFromExploreData:explore];
@@ -190,20 +171,26 @@
 
 - (GMSMarker*)createCustomLocationMarkerFromExploreData:(NSDictionary*)explore {
 
+	NSDictionary *location = [explore inaDictForKey:@"location"];
+	NSNumber *locationLatitude = [location inaNumberForKey:@"latitude"];
+	NSNumber *locationLongitute = [location inaNumberForKey:@"longitude"];
+	if ((locationLatitude == nil) || (locationLongitute == nil)) {
+		return nil;
+	}
+
 	[self clearCustomLocationMarker];
 	
-	NSDictionary *location = [explore inaDictForKey:@"location"];
 	NSString *title = [location inaStringForKey:@"name"];
 	
 	if (title.length == 0)
 		title = [explore inaStringForKey:@"name"];
 	if (title.length == 0)
-		title = [NSString stringWithFormat:@"%.06f, %.06f",[location inaDoubleForKey:@"latitude"],[location inaDoubleForKey:@"longitude"]];
+		title = [NSString stringWithFormat:@"%.06f, %.06f", locationLatitude.doubleValue, locationLongitute.doubleValue];
 
 	NSString *description = [location inaStringForKey:@"description"];
 	
 	_customLocationMarker = [[GMSMarker alloc] init];
-	_customLocationMarker.position = CLLocationCoordinate2DMake([location inaDoubleForKey:@"latitude"], [location inaDoubleForKey:@"longitude"]);
+	_customLocationMarker.position = CLLocationCoordinate2DMake(locationLatitude.doubleValue, locationLongitute.doubleValue);
 	_customLocationMarker.icon = [UIImage imageNamed:@"maps-icon-location-target"];
 	_customLocationMarker.title = title;
 	_customLocationMarker.snippet = description;
@@ -228,55 +215,8 @@
 	}
 }
 
-- (void)updateCustomLocationMarker {
-	if (_customLocationMarker != nil) {
-		NSNumber *markerFloor = nil;
-		if ([_customLocationMarker.userData isKindOfClass:[NSDictionary class]]) {
-			NSDictionary *eventLocation = [_customLocationMarker.userData inaDictForKey:@"location"];
-			markerFloor = [eventLocation inaNumberForKey:@"floor"];
-		}
-		else if ([_customLocationMarker.userData isKindOfClass:[MPLocation class]]) {
-			markerFloor = [(MPLocation*)(_customLocationMarker.userData) floor];
-		}
-		
-		bool markerVisible = (markerFloor == nil) || (markerFloor.intValue == _mpMapControl.currentFloor.intValue);
-		if (markerVisible && (_customLocationMarker.map == nil)) {
-			_customLocationMarker.map = _gmsMapView;
-		}
-		else if (!markerVisible && (_customLocationMarker.map != nil)) {
-			_customLocationMarker.map = nil;
-		}
-	}
-}
-
-- (void)updateSelectedMarker {
-	if (_selectedMarker != nil) {
-		NSNumber *markerFloor = nil;
-		if (_selectedMarker == _customLocationMarker) {
-			NSDictionary *eventLocation = [_customLocationMarker.userData inaDictForKey:@"location"];
-			markerFloor = [eventLocation inaNumberForKey:@"floor"];
-		}
-		else {
-		    MPLocation *location = [_mpMapControl getLocation:_selectedMarker];
-		    if (location != nil) {
-		    	markerFloor = location.floor;
-			}
-			else {
-				markerFloor = @(0);
-			}
-		}
-
-		if (markerFloor.intValue == _mpMapControl.currentFloor.intValue) {
-			_gmsMapView.selectedMarker = _selectedMarker;
-		}
-		else {
-			_gmsMapView.selectedMarker = nil;
-		}
-	}
-}
-
 - (void)didSave {
-	if (_selectedMarker == nil) {
+	if ((_selectedMarker == nil) || (_selectedMarker.map != _gmsMapView))  {
 		NSString *title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
 		if (title.length == 0) {
 			title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"];
@@ -291,14 +231,9 @@
 			locationData = _selectedMarker.userData;
 		}
 		else {
-			MPLocation *location = [_mpMapControl getLocation:_selectedMarker];
 			locationData = @{ @"location" : @{
-				@"location_id" : location.locationId ?: @"",
-				@"name" : location.name ?: @"",
-				@"description" : location.displayDescriptin ?: @"",
 				@"latitude" : @(_selectedMarker.position.latitude),
 				@"longitude" : @(_selectedMarker.position.longitude),
-				@"floor" : location.floor ?: @(0)
 			}};
 		}
 		
@@ -333,42 +268,38 @@
 	}
 }
 
-#pragma mark MPDirectionsRendererDelegate
-
-- (void)floorDidChange: (nonnull NSNumber*)floor {
-	[self updateCustomLocationMarker];
-	[self updateSelectedMarker];
-}
-
-
 @end
 
-@implementation MPLocation(InaUtils)
+@implementation GMSIndoorLevel(InaUtils)
 
-- (NSString*)displayDescriptin {
-	if (0 < self.descr.length) {
-		return self.descr;
-	}
-	else {
-		NSMutableString *customDescr = [[NSMutableString alloc] init];
-		if (0 < self.type.length) {
-			[customDescr appendString:self.type];
-		}
-		if (0 < self.building.length) {
-			if (0 < customDescr.length) {
-				[customDescr appendString:@", "];
-			}
-			[customDescr appendString:self.building];
-		}
-		if ((0 < self.venue.length) && ![self.venue isEqualToString:self.building]) {
-			if (0 < customDescr.length) {
-				[customDescr appendString:@", "];
-			}
-			[customDescr appendString:self.venue];
-		}
-		return customDescr;
-	}
+- (NSNumber*)floor {
+	return (0 < self.shortName.length) ? [NSNumber numberWithInteger:self.shortName.integerValue] : nil;
+}
 
+- (bool)isEqualToLevel:(GMSIndoorLevel*)level {
+	return [self.name isEqualToString:level.name] && [self.shortName isEqualToString:level.shortName];
 }
 
 @end
+
+@implementation GMSIndoorBuilding(InaUtils)
+
+- (GMSIndoorLevel*)levelFromFloor:(NSNumber*)floor {
+	if (floor != nil) {
+		if (0 < floor.integerValue) {
+			NSString *floorName = floor.stringValue;
+			for (GMSIndoorLevel *level in self.levels) {
+				if ([level.shortName isEqualToString:floorName]) {
+					return level;
+				}
+			}
+		}
+		else if ((0 <= self.defaultLevelIndex) && (self.defaultLevelIndex <= self.levels.count)) {
+			return [self.levels objectAtIndex:self.defaultLevelIndex];
+		}
+	}
+	return nil;
+}
+
+@end
+

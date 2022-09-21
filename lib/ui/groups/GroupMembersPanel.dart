@@ -61,15 +61,26 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   bool _statusValuesVisible = false;
   int _loadingProgress = 0;
 
+  bool _switchToAllIfNoPendingMembers = false;
+
   String? _searchTextValue;
   TextEditingController _searchEditingController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [Groups.notifyUserMembershipUpdated, Groups.notifyGroupUpdated]);
+    NotificationService().subscribe(this, [
+      Groups.notifyGroupMembershipApproved, 
+      Groups.notifyGroupMembershipRejected,
+      Groups.notifyGroupMembershipRemoved
+    ]);
     _scrollController = ScrollController();
     _scrollController!.addListener(_scrollListener);
+    // First try to load pending members if the user is admin.
+    if (widget.group?.currentUserIsAdmin ?? false) {
+      _selectedMemberStatus = GroupMemberStatus.pending;
+      _switchToAllIfNoPendingMembers = true;
+    }
     _buildSortedMemberStatusList();
     _reloadGroupContent();
   }
@@ -84,7 +95,13 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   /// Constructs alphabetically sorted list of GroupMemberStatus values
   ///
   void _buildSortedMemberStatusList() {
-    _sortedMemberStatusList = GroupMemberStatus.values.toList();
+    _sortedMemberStatusList = [GroupMemberStatus.admin];
+    // Do not allow users that are not members to see who is member
+    if (_group?.currentUserIsMember ?? false) {
+      _sortedMemberStatusList?.addAll([GroupMemberStatus.member]);
+    } else if (_group?.currentUserIsAdmin ?? false) {
+      _sortedMemberStatusList?.addAll([GroupMemberStatus.member, GroupMemberStatus.pending, GroupMemberStatus.rejected]);
+    }
     _sortedMemberStatusList?.sort((s1, s2) => s1.toString().compareTo(s2.toString()));
   }
 
@@ -97,6 +114,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     _increaseProgress();
     Groups().loadGroup(widget.groupId).then((Group? group) {
       _group = group;
+      _buildSortedMemberStatusList();
       _decreaseProgress();
     });
   }
@@ -112,6 +130,19 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       }
       Groups().loadMembers(groupId: widget.groupId, name: _searchTextValue, statuses: memberStatuses, offset: _membersOffset, limit: _membersLimit).then((members) {
         int resultsCount = members?.length ?? 0;
+        // If there are no pending members and the user is admin - select 'All' value
+        if ((resultsCount == 0) && _switchToAllIfNoPendingMembers && (widget.group?.currentUserIsAdmin ?? false)) {
+          _switchToAllIfNoPendingMembers = false; // Do not switch after this
+          _selectedMemberStatus = null; // All group statuses
+          if (showLoadingIndicator) {
+            _decreaseProgress();
+          }
+          _loadMembers(showLoadingIndicator: showLoadingIndicator);
+          return;
+        } else if (_switchToAllIfNoPendingMembers) {
+          _switchToAllIfNoPendingMembers = false;
+        }
+
         if (resultsCount > 0) {
           if (_visibleMembers == null) {
             _visibleMembers = <Member>[];
@@ -136,13 +167,14 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   @override
   void onNotification(String name, param) {
-    if (name == Groups.notifyUserMembershipUpdated) {
-      if (mounted) {
-        setState(() {});
+    if ((name == Groups.notifyGroupMembershipApproved) ||
+        (name == Groups.notifyGroupMembershipRejected) ||
+        (name == Groups.notifyGroupMembershipRemoved)) {
+      // Switch to all members if there are no more pending users
+      if (_selectedMemberStatus == GroupMemberStatus.pending) {
+        _switchToAllIfNoPendingMembers = true;
       }
-    }
-    else if ((param == _group!.id) && (name == Groups.notifyGroupUpdated)){
-      _reloadGroupContent();
+      _reloadMembers();
     }
   }
 
@@ -175,7 +207,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         Container(height: MediaQuery.of(context).size.height / 5),
         Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
-            child: Text(Localization().getStringEx('panel.manage_members.load.failed.msg', 'Failed to load members.'),
+            child: Text(_getEmptyMembersMessage(), textAlign: TextAlign.center,
                 style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary))),
         Container(height: MediaQuery.of(context).size.height / 4)
       ]));
@@ -436,6 +468,21 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   void _updateState() {
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  String _getEmptyMembersMessage() {
+    switch (_selectedMemberStatus) {
+      case GroupMemberStatus.admin:
+        return Localization().getStringEx('panel.manage_members.status.admin.empty.message', 'There are no admins.');
+      case GroupMemberStatus.member:
+        return Localization().getStringEx('panel.manage_members.status.member.empty.message', 'There are no members.');
+      case GroupMemberStatus.pending:
+        return Localization().getStringEx('panel.manage_members.status.pending.empty.message', 'There are no pending members.');
+      case GroupMemberStatus.rejected:
+        return Localization().getStringEx('panel.manage_members.status.rejected.empty.message', 'There are no rejected members.');
+      default: // All
+        return Localization().getStringEx('panel.manage_members.status.all.empty.message', 'There are no members.');
     }
   }
 

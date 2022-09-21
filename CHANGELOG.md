@@ -6,6 +6,100 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.1.34] - 2022-09-19
+### Fixed
+- Fixed Notifications handling for AppReview service [#2380](https://github.com/rokwire/illinois-app/issues/2380).
+
+## [4.1.33] - 2022-09-16
+### Fixed
+- Reload Wellness ToDo items when category is changed or deleted [#2401](https://github.com/rokwire/illinois-app/issues/2401).
+- Fix Gies checklist group request [#2403](https://github.com/rokwire/illinois-app/issues/2403).
+
+## [4.1.32] - 2022-09-15
+### Changed
+- "Custom" group post template to "None" [#2396](https://github.com/rokwire/illinois-app/issues/2396).
+### Fixed
+- Try to prevent black screen after onboarding (Revert improving AppReview after onboarding) [#2395](https://github.com/rokwire/illinois-app/issues/2395).
+
+## [4.1.31] - 2022-09-14
+### Added
+- Display when member had attended if the group is attendance group [#2392](https://github.com/rokwire/illinois-app/issues/2392).
+
+## [4.1.30] - 2022-09-13
+### Added
+- Add reactions to group posts [#2354](https://github.com/rokwire/illinois-app/issues/2354).
+### Fixed
+- Compound widget style for favorites [#2373](https://github.com/rokwire/illinois-app/issues/2373).
+- Fix Semantics for Wellness drop down button [#2327](https://github.com/rokwire/illinois-app/issues/2327).
+- Show pending members by default if exist [#2289](https://github.com/rokwire/illinois-app/issues/2289).
+- Fix Group Reply Card issues [#2374](https://github.com/rokwire/illinois-app/issues/2374).
+
+## [4.1.29] - 2022-09-12
+### Fixed
+- Missing my groups in the home widget [#2254](https://github.com/rokwire/illinois-app/issues/2254).
+
+## [4.1.28] - 2022-09-09
+### Changed
+- Texts in Promote Group [#2372](https://github.com/rokwire/illinois-app/issues/2372).
+- Display account status in case the user is not eligible for Illini Cash / Meal Plan [#2378](https://github.com/rokwire/illinois-app/issues/2378).
+- Improved AppReview session timeout handling [#2380](https://github.com/rokwire/illinois-app/issues/2380).
+### Fixed
+- Set Identity min level to 4 in Privacy -> Wallet [#2331](https://github.com/rokwire/illinois-app/issues/2331).
+- Fixed AppReview processing after onboarding [#2380](https://github.com/rokwire/illinois-app/issues/2380).
+- Reload user groups when service notification is received [#2329](https://github.com/rokwire/illinois-app/issues/2329).
+
+## [4.1.27] - 2022-09-08
+### Added
+- Improve manual nudge interaction to include polls [#2365](https://github.com/rokwire/illinois-app/issues/2365).
+### Removed
+- Removed external link icon from Due Date Catalog in Academics panel [#2356](https://github.com/rokwire/illinois-app/issues/2356).
+### Changed
+- Groups panel navigation [#2368](https://github.com/rokwire/illinois-app/issues/2368).
+
+## [4.1.26] - 2022-09-07
+### Added
+- Wellness overview tutorial video [#2357](https://github.com/rokwire/illinois-app/issues/2357).
+- Allow sharing group qr code value [#2362](https://github.com/rokwire/illinois-app/issues/2362).
+### Removed
+- Allow admins to add members to group [#2359](https://github.com/rokwire/illinois-app/issues/2359).
+### Changed
+- Improved scheduling of app review prompt [#2321](https://github.com/rokwire/illinois-app/issues/2321).
+
+## [4.1.25] - 2022-09-02
+### Fixed
+- Crash in Android [#2341](https://github.com/rokwire/illinois-app/issues/2341).
+- Fixed handling taps on GroupEventCard [#2328](https://github.com/rokwire/illinois-app/issues/2328).
+- Fixed add Illini Cash when the user is not logged in [#2324](https://github.com/rokwire/illinois-app/issues/2324).
+### Added
+- Redirect to GroupPostDetailPanel when group post notification is received [#2344](https://github.com/rokwire/illinois-app/issues/2344).
+- Show bigger image in an alert dialog when image is tapped [#2347](https://github.com/rokwire/illinois-app/issues/2347).
+- Group post send to multiple groups  [#2343](https://github.com/rokwire/illinois-app/issues/2343).
+
+## [4.1.24] - 2022-09-01
+### Added
+- New tutorial videos [#2334](https://github.com/rokwire/illinois-app/issues/2334).
+- Implemented Student Courses content overriding from Debug [#2336](https://github.com/rokwire/illinois-app/issues/2336).
+- Allow group admins to add new members [#2337](https://github.com/rokwire/illinois-app/issues/2337).
+### Changed
+- Launch all non-internal URLs from Wellness Resources in external browser [#2333](https://github.com/rokwire/illinois-app/issues/2333).
+
+## [4.1.23] - 2022-08-31
+### Changed
+- Remove IndoorMaps from Map Navigation Directions [#2306](https://github.com/rokwire/illinois-app/issues/2306).
+
+## [4.1.22] - 2022-08-25
+### Changed
+- Removed any references to PassKit.framework [#1851](https://github.com/rokwire/illinois-app/issues/1851).
+### Fixed
+- Fixed am/pm indicator evaluation in StudentCourseSecrtion [#2310](https://github.com/rokwire/illinois-app/issues/2310).
+- Fixed opening tel and mail protocol links from Student Guide pages [#2315](https://github.com/rokwire/illinois-app/issues/2315).
+
+## [4.1.21] - 2022-08-17
+### Changed
+- The text for logged out messages [#2290](https://github.com/rokwire/illinois-app/issues/2290).
+- Messages when there are no group members [#2299](https://github.com/rokwire/illinois-app/issues/2299).
+- Removed MapsIndoors from Map Widget and launchMap native handler [#2298](https://github.com/rokwire/illinois-app/issues/2298).
+
 ## [4.1.20] - 2022-08-15
 ### Changed
 - Version number for resubmission [#2295](https://github.com/rokwire/illinois-app/issues/2295).

@@ -106,6 +106,10 @@ class Storage extends rokwire.Storage {
   set lastRunVersion(String? value) => setStringWithName(lastRunVersionKey, value);
 
   // IlliniCash
+  static const String illiniCashEligibilityKey  = '_illinicash_ballance';
+  String? get illiniCashEligibility => getEncryptedStringWithName(illiniCashEligibilityKey);
+  set illiniCashEligibility(String? value) =>  setEncryptedStringWithName(illiniCashEligibilityKey, value);
+
   static const String illiniCashBallanceKey  = '_illinicash_ballance';
   String? get illiniCashBallance => getEncryptedStringWithName(illiniCashBallanceKey);
   set illiniCashBallance(String? value) =>  setEncryptedStringWithName(illiniCashBallanceKey, value);
@@ -166,6 +170,10 @@ class Storage extends rokwire.Storage {
   static const String debugLastInboxMessageKey  = 'debug_last_inbox_message';
   String? get debugLastInboxMessage => getStringWithName(debugLastInboxMessageKey);
   set debugLastInboxMessage(String? value) => setStringWithName(debugLastInboxMessageKey, value);
+
+  static const String debugUseStudentCoursesContentKey  = 'debug_use_student_courses_content';
+  bool? get debugUseStudentCoursesContent => getBoolWithName(debugUseStudentCoursesContentKey);
+  set debugUseStudentCoursesContent(bool? value) => setBoolWithName(debugUseStudentCoursesContentKey, value);
 
   // Firebase
 // static const String firebaseMessagingSubscriptionTopisKey  = 'firebase_subscription_topis';

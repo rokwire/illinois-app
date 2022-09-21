@@ -67,6 +67,7 @@ import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/app_notification.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/log.dart';
@@ -204,7 +205,6 @@ class _AppState extends State<App> implements NotificationsListener {
   ServiceError? _initializeError;
   Future<ServiceError?>? _retryInitialzeFuture;
   DateTime? _pausedDateTime;
-  RootPanel? rootPanel;
 
   @override
   void initState() {
@@ -221,7 +221,6 @@ class _AppState extends State<App> implements NotificationsListener {
       AppLivecycle.notifyStateChanged,
     ]);
 
-    rootPanel = RootPanel();
     _initializeError = widget.initializeError;
 
     _lastRunVersion = Storage().lastRunVersion;
@@ -251,28 +250,31 @@ class _AppState extends State<App> implements NotificationsListener {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      key: _key,
-      navigatorKey: widget.navigatorKey,
-      localizationsDelegates: [
-        AppLocalizationsDelegate(),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: Localization().supportedLocales(),
-      navigatorObservers:[AppNavigation()],
-      //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-      title: Localization().getStringEx('app.title', 'Illinois'),
-      theme: ThemeData(
+    return NotificationListener<Notification>(
+      onNotification: AppNotification().handleNotification,
+      child: MaterialApp(
+        key: _key,
+        navigatorKey: widget.navigatorKey,
+        localizationsDelegates: [
+          AppLocalizationsDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: Localization().supportedLocales(),
+        navigatorObservers:[AppNavigation()],
+        //onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
+        title: Localization().getStringEx('app.title', 'Illinois'),
+        theme: ThemeData(
           appBarTheme: AppBarTheme(backgroundColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040)),
           primaryColor: Styles().colors?.fillColorPrimaryVariant ?? Color(0xFF0F2040),
           fontFamily: Styles().fontFamilies?.extraBold ?? 'ProximaNovaExtraBold'),
-      home: _homePanel,
+        home: _homePanel,
+      ),
     );
   }
 
-  Widget? get _homePanel {
+  Widget get _homePanel {
     if (_initializeError != null) {
       return OnboardingErrorPanel(error: _initializeError, retryHandler: _retryInitialze);
     }
@@ -292,20 +294,19 @@ class _AppState extends State<App> implements NotificationsListener {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
     }
     else {
-      return rootPanel;
+      return RootPanel();
     }
   }
 
   void _resetUI() async {
     this.setState(() {
-      rootPanel = RootPanel();
       _key = UniqueKey();
     });
   }
 
   void _finishOnboarding(BuildContext context) {
     Storage().onBoardingPassed = true;
-    Route routeToHome = CupertinoPageRoute(builder: (context) => rootPanel!);
+    Route routeToHome = CupertinoPageRoute(builder: (context) => RootPanel());
     Navigator.pushAndRemoveUntil(context, routeToHome, (_) => false);
   }
 

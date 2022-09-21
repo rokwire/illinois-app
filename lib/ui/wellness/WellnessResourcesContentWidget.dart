@@ -16,12 +16,10 @@
 
 import 'dart:collection';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -214,16 +212,11 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
       target: _getString(JsonUtils.stringValue(command['id']), languageCode: Localization().defaultLocale?.languageCode),
       source: widget.runtimeType.toString()
     );
-    _launchUrl(JsonUtils.stringValue(command['url']));
-  }
 
-  void _launchUrl(String? url) {
+    String? url = JsonUtils.stringValue(command['url']);
     if (StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
-      }
-      else if (UrlUtils.launchInternal(url)){
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       }
       else{
         launch(url!);

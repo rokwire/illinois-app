@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/DeepLink.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -472,8 +473,14 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
   }
 
   void _onTapLink(String? url) {
-      if (UrlUtils.isWebScheme(url)) {
+    Analytics().logSelect(target: 'Link: $url');
+    if (StringUtils.isNotEmpty(url)) {
+      if (DeepLink().isAppUrl(url)) {
+        DeepLink().launchUrl(url);
+      }
+      else{
         launch(url!);
+      }
     }
   }
 

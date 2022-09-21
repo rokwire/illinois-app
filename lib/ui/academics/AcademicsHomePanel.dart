@@ -151,8 +151,6 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
           Image.asset('images/icon-login-grey.png'),
           Padding(padding: EdgeInsets.only(left: 6), child: Image.asset('images/icon-external-link-grey.png'))
         ]);
-      case AcademicsContent.due_date_catalog:
-        return Padding(padding: EdgeInsets.only(left: 6), child: Image.asset('images/icon-external-link-grey.png'));
       default:
         return null;
     }

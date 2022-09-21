@@ -62,6 +62,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
       Groups.notifyGroupCreated,
       Groups.notifyGroupUpdated,
       Groups.notifyGroupDeleted,
+      Groups.notifyUserGroupsUpdated,
       Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,]);
 
@@ -105,6 +106,18 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
         });
       }
     });
+  }
+
+  void _applyUserGroups() {
+    if (widget.contentType == GroupsContentType.my) {
+      List<Group>? userGroups = Groups().userGroups;
+      _sortGroups(userGroups);
+      if (mounted) {
+        setState(() {
+          _groups = userGroups;
+        });
+      }
+    }
   }
 
   @override
@@ -201,6 +214,9 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
       (name == Groups.notifyUserMembershipUpdated) ||
       (name == Auth2.notifyLoginChanged)) {
         _loadGroups();
+    }
+    else if (name == Groups.notifyUserGroupsUpdated) {
+      _applyUserGroups();
     }
   }
 

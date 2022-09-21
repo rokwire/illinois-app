@@ -24,15 +24,19 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
 
   static const String notifyTermsChanged = 'edu.illinois.rokwire.courses.terms.changed';
   static const String notifySelectedTermChanged = 'edu.illinois.rokwire.courses.selected.term.changed';
+  static const String notifyCourseContentChanged = 'edu.illinois.rokwire.courses.content.changed';
 
   static const String ExternalAuthorizationHeader = "External-Authorization";
   
   static const String _courseTermsName = "course.terms.json";
+  static const String _courseDebugContentName = "course.debug.content.json.json";
   static const String _requireAdaSetting = 'edu.illinois.rokwire.settings.student_course.require_ada';
+
 
   late Directory _appDocDir;
   
   List<StudentCourseTerm>? _terms;
+  List<StudentCourse>? _debugCourses;
   int _lastTermsCheckTime = 0;
   String? _selectedTermId;
 
@@ -76,12 +80,15 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
       }
     }
 
+    // Init debug courses
+    _debugCourses = useDebugCoursesContent ? StudentCourse.listFromJson(JsonUtils.decodeList(await getDebugCoursesRawContent())) : null;
+
     await super.initService();
   }
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config()]);
+    return Set.from([Storage(), Config()]);
   }
 
   // NotificationsListener
@@ -185,7 +192,10 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
   // StudentCourses
 
   Future<List<StudentCourse>?> loadCourses({required String termId}) async {
-    if (StringUtils.isNotEmpty(Config().gatewayUrl) && StringUtils.isNotEmpty(termId) && StringUtils.isNotEmpty(Auth2().uin)) {
+    if (_debugCourses != null) {
+      return _debugCourses;
+    }
+    else if (StringUtils.isNotEmpty(Config().gatewayUrl) && StringUtils.isNotEmpty(termId) && StringUtils.isNotEmpty(Auth2().uin)) {
       String url = "${Config().gatewayUrl}/courses/studentcourses?id=${Auth2().uin}&termid=$termId";
       Position? position = await _userLocation;
       if (position != null) {
@@ -205,6 +215,48 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
         {"coursetitle":"Digi-Mat Prof Dev. Seminar","courseshortname":"ME 590","coursenumber":"32259","instructionmethod":"LEC","coursesection":{"days":"F","meeting_dates_or_range":"08/22/2022 - 12/07/2022","room":"208","buildingname":"Seitz Materials Research Lab","buildingid":"0066","instructiontype":"LEC","instructor":"Trinkle, Dallas","start_time":"1500","endtime":"1500","building":{"ID":"621521ed-6162-490a-8068-5111f988121c","Name":"Frederick Seitz Materials Research Laboratory","Number":"","FullAddress":"104 S Goodwin Ave  Urbana, IL 61801","Address1":"104 S Goodwin Ave","Address2":"","City":"Urbana","State":"IL","ZipCode":"61801","ImageURL":"https://images.ccf.virtual.illinois.edu/DefaultBuildingImage.png","MailCode":"","Entrances":[{"ID":"2149dd06-b870-45af-a872-a4d1b31a1ef6","Name":"","ADACompliant":false,"Available":true,"ImageURL":"https://images.ccf.virtual.illinois.edu/DefaultEntranceImage.jpg","Latitude":40.111664,"Longitude":-88.2234},{"ID":"a0a95c63-f3f8-42ce-80d6-17886b98d011","Name":"","ADACompliant":false,"Available":true,"ImageURL":"https://images.ccf.virtual.illinois.edu/DefaultEntranceImage.jpg","Latitude":40.111828,"Longitude":-88.223404},{"ID":"b6e4747d-8c08-4648-ae4f-a84c6359c068","Name":"","ADACompliant":false,"Available":true,"ImageURL":"https://images.ccf.virtual.illinois.edu/DefaultEntranceImage.jpg","Latitude":40.11146,"Longitude":-88.223175},{"ID":"e08032ac-de42-4dd8-a618-1e1239920dd0","Name":"","ADACompliant":false,"Available":true,"ImageURL":"https://images.ccf.virtual.illinois.edu/DefaultEntranceImage.jpg","Latitude":40.11153,"Longitude":-88.22274},{"ID":"45ef53a5-36af-442d-928d-232b7c51d7a2","Name":"","ADACompliant":false,"Available":true,"ImageURL":"https://images.ccf.virtual.illinois.edu/DefaultEntranceImage.jpg","Latitude":40.11179,"Longitude":-88.22275},{"ID":"7e6bfb00-be71-4d2d-ad2e-7a9283f9e803","Name":"","ADACompliant":false,"Available":true,"ImageURL":"https://images.ccf.virtual.illinois.edu/DefaultEntranceImage.jpg","Latitude":40.11186,"Longitude":-88.22294}],"Latitude":40.111607,"Longitude":-88.22307}}}
       ]''';*/
       return StudentCourse.listFromJson(JsonUtils.decodeList(responseString));
+    }
+  }
+  
+  Future<String?> getDebugCoursesRawContent() async {
+    File rawContentFile = File(join(_appDocDir.path, _courseDebugContentName));
+    return await rawContentFile.exists() ? await rawContentFile.readAsString() : null;
+  }
+
+  Future<void> setDebugCoursesRawContent(String? value) async{
+    File rawContentFile = File(join(_appDocDir.path, _courseDebugContentName));
+    if ((value != null) && value.isNotEmpty) {
+      await rawContentFile.writeAsString(value, flush: true);
+    }
+    else {
+      await rawContentFile.delete();
+    }
+    if (useDebugCoursesContent) {
+      _applyDebugCourseRawContent(value);
+    }
+  }
+
+  bool get useDebugCoursesContent => (Storage().debugUseStudentCoursesContent == true);
+
+  set useDebugCoursesContent(bool value) {
+    if (value != useDebugCoursesContent) {
+      Storage().debugUseStudentCoursesContent = value;
+      if (value) {
+        getDebugCoursesRawContent().then((String? value) {
+          _applyDebugCourseRawContent(value);
+        });
+      }
+      else {
+        _applyDebugCourseRawContent(null);
+      }
+    }
+  }
+
+  void _applyDebugCourseRawContent(String? rawContent) {
+    List<StudentCourse>? debugCourses = ((rawContent != null) && rawContent.isNotEmpty) ? StudentCourse.listFromJson(JsonUtils.decodeList(rawContent)) : null;
+    if (!DeepCollectionEquality().equals(_debugCourses, debugCourses)) {
+        _debugCourses = debugCourses;
+        NotificationService().notify(notifyCourseContentChanged);
     }
   }
 

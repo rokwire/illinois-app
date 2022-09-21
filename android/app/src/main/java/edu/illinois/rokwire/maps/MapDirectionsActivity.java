@@ -16,12 +16,15 @@
 
 package edu.illinois.rokwire.maps;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Log;
@@ -30,10 +33,15 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -43,19 +51,6 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.ui.IconGenerator;
-import com.mapsindoors.mapssdk.MPDirectionsRenderer;
-import com.mapsindoors.mapssdk.MPPositionResult;
-import com.mapsindoors.mapssdk.MPRoutingProvider;
-import com.mapsindoors.mapssdk.OnLegSelectedListener;
-import com.mapsindoors.mapssdk.OnRouteResultListener;
-import com.mapsindoors.mapssdk.Point;
-import com.mapsindoors.mapssdk.Route;
-import com.mapsindoors.mapssdk.RouteCoordinate;
-import com.mapsindoors.mapssdk.RouteLeg;
-import com.mapsindoors.mapssdk.RoutePolyline;
-import com.mapsindoors.mapssdk.RouteStep;
-import com.mapsindoors.mapssdk.TravelMode;
-import com.mapsindoors.mapssdk.errors.MIError;
 
 import org.json.JSONObject;
 
@@ -66,14 +61,30 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import androidx.core.app.ActivityCompat;
 import edu.illinois.rokwire.Constants;
 import edu.illinois.rokwire.MainActivity;
 import edu.illinois.rokwire.R;
 import edu.illinois.rokwire.Utils;
+import edu.illinois.rokwire.navigation.model.NavBounds;
+import edu.illinois.rokwire.navigation.model.NavCoord;
+import edu.illinois.rokwire.navigation.model.NavPolyline;
+import edu.illinois.rokwire.navigation.model.NavRoute;
+import edu.illinois.rokwire.navigation.Navigation;
+import edu.illinois.rokwire.navigation.model.NavRouteLeg;
+import edu.illinois.rokwire.navigation.model.NavRouteStep;
 
-public class MapDirectionsActivity extends MapActivity implements OnRouteResultListener, OnLegSelectedListener {
+public class MapDirectionsActivity extends MapActivity implements Navigation.NavigationListener {
 
     //region Class fields
+
+    private static final String TAG = MapDirectionsActivity.class.getSimpleName();
+
+    //Android Location
+    private FusedLocationProviderClient fusedLocationClient;
+    protected Location coreLocation;
+    private com.google.android.gms.location.LocationRequest coreLocationRequest;
+    private LocationCallback coreLocationCallback;
 
     //Explores - could be Event, Dining, Laundry or ParkingLotInventory
     private Object explore;
@@ -85,23 +96,25 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
     private float cameraZoom;
 
     //Navigation
-    private Route mpRoute;
+    private Navigation navigation;
+    private NavRoute navRoute;
+    private String navRouteError;
     private CameraPosition cameraPosition;
-    private MPDirectionsRenderer mpDirectionsRenderer;
-    private MPRoutingProvider mpRoutingProvider;
-    private MIError mpRouteError;
-    private List<Integer> mpRouteStepCoordCounts;
+    private List<Integer> routeStepCoordCounts;
     private Polyline routePolyline;
     private NavStatus navStatus = NavStatus.UNKNOWN;
     private boolean navAutoUpdate;
     private int currentLegIndex = 0;
     private int currentStepIndex = -1;
     private boolean buildRouteAfterInitialization;
+    private Polyline segmentPolyline;
+    private Marker segmentStartMarker;
+    private Marker segmentEndMarker;
 
     //Navigation UI
     private static final String TRAVEL_MODE_PREFS_KEY = "directions.travelMode";
-    private static final String[] TRAVEL_MODES = {TravelMode.WALKING, TravelMode.BICYCLING,
-            TravelMode.DRIVING, TravelMode.TRANSIT};
+    private static final String[] TRAVEL_MODES = {Navigation.TRAVEL_MODE_WALKING, Navigation.TRAVEL_MODE_BICYCLING,
+            Navigation.TRAVEL_MODE_DRIVING, Navigation.TRAVEL_MODE_TRANSIT};
     private String selectedTravelMode;
     private Map<String, View> travelModesMap;
     private View navRefreshButton;
@@ -112,6 +125,11 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
     private TextView navStepLabel;
     private View routeLoadingFrame;
 
+    private boolean firstLocationUpdatePassed;
+    private HashMap options;
+    private TextView debugStatusView;
+    private boolean showDebugLocation;
+
     //endregion
 
     //region Activity methods
@@ -119,8 +137,52 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initUiViews();
+        initCoreLocation();
         initExplore();
+        initNavigation();
         buildTravelModes();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startMonitor();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopMonitor();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (navigation != null) {
+            navigation.dismiss();
+        }
+    }
+
+    //endregion
+
+    //region Common initialization
+
+    @Override
+    protected void initParameters() {
+        super.initParameters();
+        Serializable optionsSerializable = getIntent().getSerializableExtra("options");
+        if (optionsSerializable instanceof HashMap) {
+            this.options = (HashMap) optionsSerializable;
+        }
+    }
+
+    protected void initDebugView() {
+        showDebugLocation = Utils.Map.getValueFromPath(options, "showDebugLocation", false);
+        if (showDebugLocation) {
+            debugStatusView = findViewById(R.id.debugStatusTextView);
+            debugStatusView.setVisibility(View.VISIBLE);
+        }
     }
 
     //endregion
@@ -128,107 +190,99 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
     //region Map views initialization
 
     @Override
-    protected void afterMapControlInitialized() {
-        super.afterMapControlInitialized();
+    protected void afterMapInitialized() {
+        super.afterMapInitialized();
         buildExploreMarker();
         buildPolygon();
         if (buildRouteAfterInitialization) {
             buildRouteAfterInitialization = false;
             buildRoute();
         }
+        initGoogleMap();
     }
 
-    //endregion
+    private void initGoogleMap() {
+        googleMap.setOnMarkerClickListener(this::onMarkerClicked);
+        googleMap.setOnCameraIdleListener(this::onCameraIdle);
 
-    //region Meridian
-
-    @Override
-    protected void initMeridian() {
-        super.initMeridian();
-        updateNav();
-        showLoadingFrame(true);
+        // This check is done in the flutter part but still check for permissions to prevent warnings.
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        googleMap.setMyLocationEnabled(true); // Allow the blue dot that shows my location
+        googleMap.getUiSettings().setMyLocationButtonEnabled(false); // Disallow the button in the upper right corner which relocates the camera position
     }
 
-    //endregion
-
-    //region MapsIndoors
-
-    @Override
-    protected boolean onMarkerClicked(Marker marker) {
+    private boolean onMarkerClicked(Marker marker) {
         Object exploreMarkerRawData = Utils.Explore.optExploreMarkerRawData(marker);
         return (exploreMarkerRawData != null);
     }
 
-    @Override
-    protected void onFloorChanged(int floor) {
-        super.onFloorChanged(floor);
-        updateExploreMarkerVisibility();
-    }
-
-    @Override
-    protected void onCameraIdle() {
-        super.onCameraIdle();
+    private void onCameraIdle() {
         updateExploreMarkerAppearance();
-    }
-
-    /**
-     * OnRouteResultListener
-     */
-
-    @Override
-    public void onRouteResult(@Nullable Route route, @Nullable MIError miError) {
-        // Workaround for multiple calling 'onRouteResult' from MapsIndoors sdk
-        if (mpRoutingProvider == null) {
-            return;
-        }
-        mpRoutingProvider.setOnRouteResultListener(null);
-        mpRoutingProvider = null;
-        mpRoute = route;
-        mpRouteError = miError;
-        runOnUiThread(this::didBuildRoute);
-    }
-
-    /**
-     * OnLegSelectedListener
-     */
-
-    @Override
-    public void onLegSelected(int i) {
-        Log.d(getLogTag(), "OnLegSelectedListener.onLegSelected");
     }
 
     //endregion
 
-    //region Common Location
+    //region Core Location
 
-    @Override
-    protected void notifyLocationUpdate(MPPositionResult positionResult, MPPositionProviderSource source, long timestamp) {
-        super.notifyLocationUpdate(positionResult, source, timestamp);
-        if (positionResult != null) {
+    private void initCoreLocation() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        createCoreLocationRequest();
+        createCoreLocationCallback();
+    }
+
+    private void createCoreLocationRequest() {
+        coreLocationRequest = com.google.android.gms.location.LocationRequest.create();
+        coreLocationRequest.setInterval(60000); //in millis
+        coreLocationRequest.setFastestInterval(30000); //in millis
+        coreLocationRequest.setPriority(com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    private void createCoreLocationCallback() {
+        coreLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                coreLocation = (locationResult != null) ? locationResult.getLastLocation() : null;
+                onCoreLocationUpdate();
+            }
+        };
+    }
+
+    private void onCoreLocationUpdate() {
+        if (coreLocation != null) {
+            if (!firstLocationUpdatePassed) {
+                firstLocationUpdatePassed = true;
+                handleFirstLocationUpdate();
+            }
+
             if ((navStatus == NavStatus.PROGRESS) && navAutoUpdate) {
                 updateNavByCurrentLocation();
+            } else {
+                updateNav();
+            }
+
+            if ((debugStatusView != null) && showDebugLocation) {
+                debugStatusView.setText(String.format(Locale.getDefault(), "[%.6f, %.6f]", coreLocation.getLatitude(), coreLocation.getLongitude()));
             }
         }
     }
 
-    @Override
-    protected void notifyLocationFail() {
-        super.notifyLocationFail();
-        if (mpPositionResult == null) {
-            handleFirstLocationUpdate();
+    private void startMonitor() {
+        if (fusedLocationClient != null) {
+            // This check is done in the flutter part but still check for permissions to prevent warnings.
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            fusedLocationClient.requestLocationUpdates(coreLocationRequest, coreLocationCallback, Looper.getMainLooper());
         }
     }
 
-    @Override
-    protected void onLocationTimerTimeout() {
-        super.onLocationTimerTimeout();
-        if (mrLocation == null && coreLocation == null) {
-            runOnUiThread(() -> {
-                enableView(navPrevButton, false);
-                enableView(navNextButton, false);
-                showLoadingFrame(false);
-                showAlert(getString(R.string.locationFailedMsg));
-            });
+    private void stopMonitor() {
+        if (fusedLocationClient != null) {
+            fusedLocationClient.removeLocationUpdates(coreLocationCallback);
         }
     }
 
@@ -237,17 +291,17 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
     //region Explores
 
     private void initExplore() {
-        Serializable exploreSeriazible = getIntent().getSerializableExtra("explore");
-        if (exploreSeriazible == null) {
+        Serializable exploreSerializable = getIntent().getSerializableExtra("explore");
+        if (exploreSerializable == null) {
             return;
         }
-        if (exploreSeriazible instanceof HashMap) {
+        if (exploreSerializable instanceof HashMap) {
             HashMap singleExplore;
-            singleExplore = (HashMap) exploreSeriazible;
+            singleExplore = (HashMap) exploreSerializable;
             this.explore = singleExplore;
             initExploreLocation(singleExplore);
-        } else if (exploreSeriazible instanceof ArrayList) {
-            ArrayList explores = (ArrayList) exploreSeriazible;
+        } else if (exploreSerializable instanceof ArrayList) {
+            ArrayList explores = (ArrayList) exploreSerializable;
             this.explore = explores;
             Object firstExplore = (explores.size() > 0) ? explores.get(0) : null;
             if (firstExplore instanceof HashMap) {
@@ -256,9 +310,12 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
         }
     }
 
-    @Override
     protected void initUiViews() {
-        super.initUiViews();
+        TextView titleTextView = findViewById(R.id.toolbarTitleView);
+        if (titleTextView != null) {
+            titleTextView.setText(getString(R.string.directionsTitle));
+        }
+        initDebugView();
         showDirectionsUiViews();
         iconGenerator = new IconGenerator(this);
         iconGenerator.setBackground(getDrawable(R.color.transparent));
@@ -310,16 +367,6 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
         cameraZoom = currentCameraZoom;
     }
 
-    private void updateExploreMarkerVisibility() {
-        if (exploreMarker == null) {
-            return;
-        }
-        int currentFloorIndex = (mapControl != null) ? mapControl.getCurrentFloorIndex() : 0;
-        Integer markerFloor = Utils.Explore.optMarkerLocationFloor(exploreMarker);
-        boolean markerVisible = (markerFloor == null) || (currentFloorIndex == markerFloor);
-        exploreMarker.setVisible(markerVisible);
-    }
-
     private void initExploreLocation(HashMap singleExplore) {
         Utils.ExploreType exploreType = Utils.Explore.getExploreType(singleExplore);
         if (exploreType == Utils.ExploreType.PARKING) {
@@ -354,17 +401,19 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
     //region Navigation
 
     public void onRefreshNavClicked(View view) {
-        mpRoute = null;
-        mpRouteError = null;
+        navRoute = null;
+        navRouteError = null;
         if (routePolyline != null) {
             routePolyline.remove();
             routePolyline = null;
         }
-        mpRouteStepCoordCounts = null;
-        if (mpDirectionsRenderer != null) {
-            mpDirectionsRenderer.clear();
-            mpDirectionsRenderer = null;
-        }
+        removeMarker(segmentStartMarker);
+        segmentStartMarker = null;
+        removeMarker(segmentEndMarker);
+        segmentEndMarker = null;
+        removePolyline(segmentPolyline);
+        segmentPolyline = null;
+        routeStepCoordCounts = null;
         navStatus = NavStatus.UNKNOWN;
         navAutoUpdate = false;
 
@@ -379,7 +428,7 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
 
     public void onAutoUpdateNavClicked(View view) {
         if (navStatus == NavStatus.PROGRESS) {
-            MPRouteSegmentPath segmentPath = findNearestRouteSegmentByCurrentLocation();
+            NavRouteSegmentPath segmentPath = findNearestRouteSegmentByCurrentLocation();
             if (isValidSegmentPath(segmentPath)) {
                 currentLegIndex = segmentPath.legIndex;
                 currentStepIndex = segmentPath.stepIndex;
@@ -391,41 +440,40 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
     }
 
     public void onWalkTravelModeClicked(View view) {
-        changeSelectedTravelMode(TravelMode.WALKING);
+        changeSelectedTravelMode(Navigation.TRAVEL_MODE_WALKING);
     }
 
     public void onBikeTravelModeClicked(View view) {
-        changeSelectedTravelMode(TravelMode.BICYCLING);
+        changeSelectedTravelMode(Navigation.TRAVEL_MODE_BICYCLING);
     }
 
     public void onDriveTravelModeClicked(View view) {
-        changeSelectedTravelMode(TravelMode.DRIVING);
+        changeSelectedTravelMode(Navigation.TRAVEL_MODE_DRIVING);
     }
 
     public void onTransitTravelModeClicked(View view) {
-        changeSelectedTravelMode(TravelMode.TRANSIT);
+        changeSelectedTravelMode(Navigation.TRAVEL_MODE_TRANSIT);
     }
 
     public void onPrevNavClicked(View view) {
         if (navStatus == NavStatus.START) {
             //Do nothing
         } else if (navStatus == NavStatus.PROGRESS) {
-            if (mpRoute == null) {
+            if (navRoute == null) {
                 return;
             }
             if (currentStepIndex > 0) {
                 moveTo(currentLegIndex, --currentStepIndex);
             } else if (currentLegIndex > 0) {
                 currentLegIndex--;
-                List<RouteLeg> routeLegs = mpRoute.getLegs();
-                RouteLeg currentLeg = routeLegs.get(currentLegIndex);
-                List<RouteStep> routeSteps = currentLeg.getSteps();
+                List<NavRouteLeg> routeLegs = navRoute.getLegs();
+                NavRouteLeg currentLeg = routeLegs.get(currentLegIndex);
+                List<NavRouteStep> routeSteps = currentLeg.getSteps();
                 int stepsSize = routeSteps.size();
                 currentStepIndex = stepsSize - 1;
                 moveTo(currentLegIndex, currentStepIndex);
             } else {
                 navStatus = NavStatus.START;
-                mpDirectionsRenderer.clear();
             }
         } else if (navStatus == NavStatus.FINISHED) {
             navStatus = NavStatus.PROGRESS;
@@ -443,13 +491,13 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
             moveTo(currentLegIndex, currentStepIndex);
             notifyRouteStart();
         } else if (navStatus == NavStatus.PROGRESS) {
-            if (mpRoute == null) {
+            if (navRoute == null) {
                 return;
             }
-            List<RouteLeg> routeLegs = mpRoute.getLegs();
+            List<NavRouteLeg> routeLegs = navRoute.getLegs();
             int legsSize = routeLegs.size();
-            RouteLeg currentLeg = routeLegs.get(currentLegIndex);
-            List<RouteStep> routeSteps = currentLeg.getSteps();
+            NavRouteLeg currentLeg = routeLegs.get(currentLegIndex);
+            List<NavRouteStep> routeSteps = currentLeg.getSteps();
             int stepsSize = routeSteps.size();
             if ((currentStepIndex + 1) < stepsSize) {
                 moveTo(currentLegIndex, ++currentStepIndex);
@@ -459,7 +507,6 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
                 moveTo(currentLegIndex, currentStepIndex);
             } else {
                 navStatus = NavStatus.FINISHED;
-                mpDirectionsRenderer.clear();
                 notifyRouteFinish();
             }
         } else if (navStatus == NavStatus.FINISHED) {/*Do nothing*/}
@@ -469,37 +516,39 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
 
     private void buildTravelModes() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String selectedTravelMode = preferences.getString(TRAVEL_MODE_PREFS_KEY, TravelMode.WALKING);
+        String selectedTravelMode = preferences.getString(TRAVEL_MODE_PREFS_KEY, Navigation.TRAVEL_MODE_WALKING);
         travelModesMap = new HashMap<>();
         for (String currentTravelMode : TRAVEL_MODES) {
             View travelModeView = null;
             switch (currentTravelMode) {
-                case TravelMode.WALKING:
+                case Navigation.TRAVEL_MODE_WALKING:
                     travelModeView = findViewById(R.id.walkTravelModeButton);
                     break;
-                case TravelMode.BICYCLING:
+                case Navigation.TRAVEL_MODE_BICYCLING:
                     travelModeView = findViewById(R.id.bikeTravelModeButton);
                     break;
-                case TravelMode.DRIVING:
+                case Navigation.TRAVEL_MODE_DRIVING:
                     travelModeView = findViewById(R.id.driveTravelModeButton);
                     break;
-                case TravelMode.TRANSIT:
+                case Navigation.TRAVEL_MODE_TRANSIT:
                     travelModeView = findViewById(R.id.transitTravelModeButton);
                     break;
                 default:
                     break;
             }
-            travelModesMap.put(currentTravelMode, travelModeView);
-            if (currentTravelMode.equals(selectedTravelMode)) {
-                this.selectedTravelMode = selectedTravelMode;
-                travelModeView.setBackgroundResource(R.color.grey40);
+            if (travelModeView != null) {
+                travelModesMap.put(currentTravelMode, travelModeView);
+                if (currentTravelMode.equals(selectedTravelMode)) {
+                    this.selectedTravelMode = selectedTravelMode;
+                    travelModeView.setBackgroundResource(R.color.grey40);
+                }
             }
         }
     }
 
     private void buildRoute() {
         if (selectedTravelMode == null) {
-            selectedTravelMode = TravelMode.WALKING;
+            selectedTravelMode = Navigation.TRAVEL_MODE_WALKING;
         }
         buildRoute(selectedTravelMode);
     }
@@ -507,28 +556,25 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
     private void buildRoute(String travelModeValue) {
         showLoadingFrame(true);
         if (travelModeValue == null || travelModeValue.isEmpty()) {
-            travelModeValue = TravelMode.WALKING;
+            travelModeValue = Navigation.TRAVEL_MODE_WALKING;
         }
-        Point originPoint = (mpPositionResult != null) ? mpPositionResult.getPoint() : null;
-        Point destinationPoint = getRouteDestinationPoint();
-        if (originPoint == null || destinationPoint == null) {
+        NavCoord originCoord = (coreLocation != null) ? new NavCoord(coreLocation.getLatitude(), coreLocation.getLongitude()) : null;
+        NavCoord destinationCoord = getRouteDestinationCoord();
+        if (originCoord == null || destinationCoord == null) {
             showLoadingFrame(false);
-            Log.e(getLogTag(), "buildRoute() -> origin or destination point is null!");
+            Log.e(TAG, "buildRoute() -> origin or destination coordinate is null!");
             String routeFailedMsg = getString(R.string.routeFailedMsg);
             showAlert(routeFailedMsg);
             return;
         }
-        mpRoutingProvider = new MPRoutingProvider();
-        mpRoutingProvider.setOnRouteResultListener(this);
-        mpRoutingProvider.setTravelMode(travelModeValue);
-        mpRoutingProvider.query(originPoint, destinationPoint);
+        navigation.findRoutesFromOrigin(originCoord, destinationCoord, travelModeValue);
     }
 
     /***
-     * Calculates route destination point based on explore type.
+     * Calculates route destination {@link NavCoord} based on explore type.
      * @return parking entrance if explore is Parking, explore location - otherwise
      */
-    private Point getRouteDestinationPoint() {
+    private NavCoord getRouteDestinationCoord() {
         Utils.ExploreType exploreType = Utils.Explore.getExploreType(explore);
         LatLng destinationLatLng = null;
 
@@ -536,13 +582,12 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
             HashMap exploreMap = (HashMap) explore;
             destinationLatLng = Utils.Explore.optLocationLatLng(exploreMap);
             if (destinationLatLng != null) {
-                return new Point(destinationLatLng.latitude, destinationLatLng.longitude, 0);
+                return new NavCoord(destinationLatLng.latitude, destinationLatLng.longitude);
             }
         }
         destinationLatLng = Utils.Explore.optLatLng(exploreLocation);
         if (destinationLatLng != null) {
-            Integer floor = Utils.Explore.optFloor(exploreLocation);
-            return new Point(destinationLatLng.latitude, destinationLatLng.longitude, (floor != null ? floor : 0));
+            return new NavCoord(destinationLatLng.latitude, destinationLatLng.longitude);
         } else {
             return null;
         }
@@ -550,18 +595,19 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
 
     private void changeSelectedTravelMode(String newTravelMode) {
         if (newTravelMode != null) {
-            mpRoute = null;
-            mpRouteError = null;
+            navRoute = null;
+            navRouteError = null;
             if (routePolyline != null) {
                 routePolyline.remove();
                 routePolyline = null;
             }
-            mpRoutingProvider = null;
-            mpRouteStepCoordCounts = null;
-            if (mpDirectionsRenderer != null) {
-                mpDirectionsRenderer.clear();
-                mpDirectionsRenderer = null;
-            }
+            removeMarker(segmentStartMarker);
+            segmentStartMarker = null;
+            removeMarker(segmentEndMarker);
+            segmentEndMarker = null;
+            removePolyline(segmentPolyline);
+            segmentPolyline = null;
+            routeStepCoordCounts = null;
             navStatus = NavStatus.UNKNOWN;
             navAutoUpdate = false;
             if (travelModesMap != null) {
@@ -584,19 +630,15 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
         }
     }
 
-    @Override
-    protected void handleFirstLocationUpdate() {
+    private void handleFirstLocationUpdate() {
         if (exploreLocation == null) {
-            if (mpPositionResult != null) {
-                Location location = mpPositionResult.getAndroidLocation();
-                if (location != null) {
-                    LatLng cameraPosition = new LatLng(location.getLatitude(), location.getLongitude());
-                    if (googleMap != null) {
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(cameraPosition));
-                    }
+            if (coreLocation != null) {
+                LatLng cameraPosition = new LatLng(coreLocation.getLatitude(), coreLocation.getLongitude());
+                if (googleMap != null) {
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(cameraPosition));
                 }
             }
-        } else if (mpPositionResult == null) {
+        } else if (coreLocation == null) {
             showLoadingFrame(false);
             LatLng cameraPosition = Utils.Explore.optLatLng(exploreLocation);
             if ((googleMap != null) && (cameraPosition != null)) {
@@ -605,8 +647,8 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
             String errorMessage = getString(R.string.locationFailedMsg);
             showAlert(errorMessage);
         } else {
-            if ((mpRoutingProvider == null) && (mpRoute == null) && (mpRouteError == null)) {
-                if ((mapControl != null) && mapControl.isReady()) {
+            if (!isNavRouteLoading() && (navRoute == null) && (navRouteError == null)) {
+                if (googleMap != null) {
                     buildRoute();
                 } else {
                     buildRouteAfterInitialization = true;
@@ -617,75 +659,150 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
 
     private void didBuildRoute() {
         showLoadingFrame(false);
-        if (mpRoute != null) {
+        if (navRoute != null) {
             buildRoutePolyline();
-            mpDirectionsRenderer = new MPDirectionsRenderer(this, googleMap, mapControl, this);
-            mpDirectionsRenderer.setRoute(mpRoute);
             cameraPosition = googleMap.getCameraPosition();
             navStatus = NavStatus.START;
         } else {
-            String routeFailedMsg = getString(R.string.routeFailedMsg);
+            String routeFailedMsg = (navRouteError != null) ? navRouteError : getString(R.string.routeFailedMsg);
             showAlert(routeFailedMsg);
         }
 
         updateNav();
 
-        Point point = mpPositionResult.getPoint();
-        if (point != null) {
-            LatLng currentLatLng = point.getLatLng();
+        LatLngBounds routeBounds = buildRouteBounds();
+        if (routeBounds != null) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(routeBounds, 50));
+        }
+    }
+
+    private LatLngBounds buildRouteBounds() {
+        LatLngBounds routeBounds = null;
+        LatLng currentLatLng = (coreLocation != null) ? new LatLng(coreLocation.getLatitude(), coreLocation.getLongitude()) : null;
+        if (currentLatLng != null) {
             LatLng exploreLatLng = Utils.Explore.optLatLng(exploreLocation);
             LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
             latLngBuilder.include(currentLatLng);
             latLngBuilder.include(exploreLatLng);
-            if (mpRoute != null && mpRoute.getBounds() != null) {
-                Object routeBoundsObject = mpRoute.getBounds();
-                if (routeBoundsObject instanceof LatLngBounds) {
-                    LatLngBounds routeLatLngBounds = (LatLngBounds) routeBoundsObject;
-                    latLngBuilder.include(routeLatLngBounds.northeast);
-                    latLngBuilder.include(routeLatLngBounds.southwest);
+            if (navRoute != null && navRoute.getBounds() != null) {
+                NavBounds routeLatLngBounds = navRoute.getBounds();
+                if (routeLatLngBounds != null) {
+                    latLngBuilder.include(routeLatLngBounds.getNortheast().toLatLng());
+                    latLngBuilder.include(routeLatLngBounds.getSouthwest().toLatLng());
                 }
             }
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBuilder.build(), 50));
+            routeBounds = latLngBuilder.build();
         }
+        return routeBounds;
     }
 
     private void buildRoutePolyline() {
-        mpRouteStepCoordCounts = new ArrayList<>();
+        routeStepCoordCounts = new ArrayList<>();
         List<LatLng> routePoints = new ArrayList<>();
-        for (RouteLeg routeLeg : mpRoute.getLegs()) {
-            for (RouteStep routeStep : routeLeg.getSteps()) {
-                RoutePolyline routePolyline = routeStep.getPolyline();
+        for (NavRouteLeg routeLeg : navRoute.getLegs()) {
+            for (NavRouteStep routeStep : routeLeg.getSteps()) {
+                NavPolyline routePolyline = routeStep.getPolyline();
                 if (routePolyline != null) {
-                    Point[] polylinePoints = routePolyline.getPoints();
-                    for (Point point : polylinePoints) {
-                        LatLng latLng = point.getLatLng();
-                        routePoints.add(latLng);
+                    List<LatLng> polylinePoints = routePolyline.getLatLngCoordinates();
+                    if (polylinePoints != null) {
+                        routePoints.addAll(polylinePoints);
+                        routeStepCoordCounts.add(polylinePoints.size());
                     }
-                    mpRouteStepCoordCounts.add(polylinePoints.length);
                 }
             }
         }
         if (googleMap != null) {
-            routePolyline = googleMap.addPolyline(new PolylineOptions()
-                    .addAll(routePoints)
-                    .color(Color.BLUE));
+            routePolyline = googleMap.addPolyline(new PolylineOptions().addAll(routePoints));
         }
     }
 
-    private void moveTo(int legIndex, int stepIndex) {
-        if (mpDirectionsRenderer != null) {
-            mpDirectionsRenderer.setRouteLegIndex(legIndex, stepIndex);
-            mpDirectionsRenderer.animate(0, true);
+    private Polyline placePolylineForStep(Polyline polyline, NavRouteStep step) {
+        List<LatLng> coordinates = ((step != null) && (step.getPolyline() != null)) ? step.getPolyline().getLatLngCoordinates() : null;
+        if (coordinates == null) {
+            removePolyline(polyline);
+            return null;
         }
+        if (polyline != null) {
+            polyline.setPoints(coordinates);
+            return polyline;
+        } else {
+            return googleMap.addPolyline(new PolylineOptions().addAll(coordinates).color(Color.parseColor("#3474d6")));
+        }
+    }
+
+    private void removePolyline(Polyline polyline) {
+        if (polyline != null) {
+            polyline.remove();
+        }
+    }
+
+    private Marker placeMarkerTo(Marker marker, LatLng latLng) {
+        if (latLng == null) {
+            removeMarker(marker);
+            return null;
+        }
+        if (marker != null) {
+            marker.setPosition(latLng);
+            return marker;
+        } else {
+            return googleMap.addMarker(buildSegmentMarkerOptions(latLng));
+        }
+    }
+
+    private void removeMarker(Marker marker) {
+        if (marker != null) {
+            marker.remove();
+        }
+    }
+
+    private MarkerOptions buildSegmentMarkerOptions(LatLng location) {
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(location);
+        markerOptions.visible(true);
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_segment_directions));
+        markerOptions.anchor(0.5f, 0.5f);
+        return markerOptions;
+    }
+
+    private void moveTo(int legIndex, int stepIndex) {
+        NavRouteLeg leg = ((legIndex >= 0) && (legIndex < navRoute.getLegs().size())) ? navRoute.getLegs().get(legIndex) : null;
+        NavRouteStep step = ((stepIndex >= 0) && (leg != null) && (leg.getSteps() != null) && (stepIndex < leg.getSteps().size())) ? leg.getSteps().get(stepIndex) : null;
+
+        CameraUpdate cameraUpdate;
+
+        if (step != null) {
+            LatLng startLocation = step.getStartLocation().toLatLng();
+            LatLng endLocation = step.getEndLocation().toLatLng();
+            segmentStartMarker = placeMarkerTo(segmentStartMarker, startLocation);
+            if (!startLocation.equals(endLocation)) {
+                segmentEndMarker = placeMarkerTo(segmentEndMarker, endLocation);
+                segmentPolyline = placePolylineForStep(segmentPolyline, step);
+                LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
+                latLngBuilder.include(startLocation);
+                latLngBuilder.include(endLocation);
+                cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBuilder.build(), 50);
+            } else {
+                removeMarker(segmentEndMarker);
+                removePolyline(segmentPolyline);
+                cameraUpdate = CameraUpdateFactory.newLatLngZoom(startLocation, googleMap.getCameraPosition().zoom);
+            }
+        } else {
+            removeMarker(segmentStartMarker);
+            removeMarker(segmentEndMarker);
+            removePolyline(segmentPolyline);
+            LatLngBounds routeBounds = buildRouteBounds();
+            cameraUpdate = CameraUpdateFactory.newLatLngBounds(routeBounds, 50);
+        }
+        googleMap.animateCamera(cameraUpdate);
     }
 
     private void updateNav() {
         navRefreshButton.setVisibility(View.VISIBLE);
-        enableView(navRefreshButton, (mpRoutingProvider == null));
+        enableView(navRefreshButton, true);
 
         int travelModesVisibility = ((navStatus != NavStatus.UNKNOWN) && (navStatus != NavStatus.START)) ? View.GONE : View.VISIBLE;
         navTravelModesContainer.setVisibility(travelModesVisibility);
-        enableView(navTravelModesContainer, (mpRoutingProvider == null));
+        enableView(navTravelModesContainer, true);
 
         int autoUpdateVisibility = ((navStatus != NavStatus.PROGRESS) || navAutoUpdate) ? View.GONE : View.VISIBLE;
         navAutoUpdateButton.setVisibility(autoUpdateVisibility);
@@ -703,20 +820,18 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
             enableView(navPrevButton, false);
             enableView(navNextButton, true);
         } else if (navStatus == NavStatus.PROGRESS) {
-            List<RouteLeg> routeLegs = mpRoute.getLegs();
-            RouteLeg leg = (currentLegIndex >= 0 && currentLegIndex < routeLegs.size()) ? routeLegs.get(currentLegIndex) : null;
-            List<RouteStep> routeSteps = (leg != null) ? leg.getSteps() : null;
-            RouteStep step = ((routeSteps != null) && (currentStepIndex >= 0) && (currentStepIndex < routeSteps.size())) ?
+            List<NavRouteLeg> routeLegs = navRoute.getLegs();
+            NavRouteLeg leg = (currentLegIndex >= 0 && currentLegIndex < routeLegs.size()) ? routeLegs.get(currentLegIndex) : null;
+            List<NavRouteStep> routeSteps = (leg != null) ? leg.getSteps() : null;
+            NavRouteStep step = ((routeSteps != null) && (currentStepIndex >= 0) && (currentStepIndex < routeSteps.size())) ?
                     routeSteps.get(currentStepIndex) : null;
             if (step != null) {
                 if (step.getHtmlInstructions() != null) {
                     setStepHtml(step.getHtmlInstructions());
-                } else if (step.getManeuver() != null || !step.getHighway().isEmpty() || !step.getAbutters().isEmpty()) {
-                    String maneuver = (step.getManeuver() != null) ? step.getManeuver() : "";
-                    String plainStepText = String.format("%s | %s | %s", maneuver, step.getHighway(), step.getAbutters());
-                    navStepLabel.setText(plainStepText);
-                } else if (step.getDistance() > 0.0f || step.getDuration() > 0.0f) {
-                    String plainStepText = String.format(getString(R.string.routeDistanceDurationFormat), step.getDistance(), step.getDuration());
+                } else if (step.getManeuver() != null) {
+                    navStepLabel.setText(step.getManeuver());
+                } else if (!Utils.Str.isEmpty(step.getDistance().getText()) || !Utils.Str.isEmpty(step.getDuration().getText())) {
+                    String plainStepText = String.format("%s / %s", step.getDistance().getText(), step.getDuration().getText());
                     navStepLabel.setText(plainStepText);
                 }
             } else {
@@ -726,9 +841,6 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
 
             enableView(navPrevButton, true);
             enableView(navNextButton, true);
-            if (step != null) {
-                updateCurrentFloor(step.getStartPoint().getZIndex());
-            }
 
         } else if (navStatus == NavStatus.FINISHED) {
             String htmlContent = String.format("<b>%s</b>", getString(R.string.finish));
@@ -738,15 +850,8 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
         }
     }
 
-    private void updateCurrentFloor(int floor) {
-        if (floor != mapControl.getCurrentFloorIndex()) {
-            mapControl.selectFloor(floor);
-            onFloorChanged(floor);
-        }
-    }
-
     private void updateNavAutoUpdate() {
-        MPRouteSegmentPath segmentPath = findNearestRouteSegmentByCurrentLocation();
+        NavRouteSegmentPath segmentPath = findNearestRouteSegmentByCurrentLocation();
         navAutoUpdate = (isValidSegmentPath(segmentPath) &&
                 (currentLegIndex == segmentPath.legIndex) &&
                 (currentStepIndex == segmentPath.stepIndex));
@@ -754,15 +859,15 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
 
     private void updateNavByCurrentLocation() {
         if ((navStatus == NavStatus.PROGRESS) && navAutoUpdate &&
-                (mpPositionResult != null) && (mpRoute != null) && (mpDirectionsRenderer != null)) {
-            MPRouteSegmentPath segmentPath = findNearestRouteSegmentByCurrentLocation();
+                (coreLocation != null) && (navRoute != null)) {
+            NavRouteSegmentPath segmentPath = findNearestRouteSegmentByCurrentLocation();
             if (isValidSegmentPath(segmentPath)) {
                 updateNavFromSegmentPath(segmentPath);
             }
         }
     }
 
-    private void updateNavFromSegmentPath(MPRouteSegmentPath segmentPath) {
+    private void updateNavFromSegmentPath(NavRouteSegmentPath segmentPath) {
         boolean modified = false;
         if (currentLegIndex != segmentPath.legIndex) {
             currentLegIndex = segmentPath.legIndex;
@@ -779,52 +884,47 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
     }
 
     @NonNull
-    private MPRouteSegmentPath findNearestRouteSegmentByCurrentLocation() {
-        MPRouteSegmentPath minRouteSegmentPath = new MPRouteSegmentPath(-1, -1);
-        if (mpPositionResult != null && mpRoute != null) {
+    private NavRouteSegmentPath findNearestRouteSegmentByCurrentLocation() {
+        NavRouteSegmentPath minRouteSegmentPath = new NavRouteSegmentPath(-1, -1);
+        if ((coreLocation != null) && (navRoute != null)) {
             double minLegDistance = -1;
-            Point mpPoint = mpPositionResult.getPoint();
-            if (mpPoint != null) {
-                LatLng locationLatLng = mpPoint.getLatLng();
-                int globalStepIndex = 0;
-                int locationIndex = 0;
-                List<LatLng> routePolylinePoints = routePolyline.getPoints();
-                List<RouteLeg> routeLegs = mpRoute.getLegs();
-                for (int legIndex = 0; legIndex < routeLegs.size(); legIndex++) {
-                    RouteLeg routeLeg = routeLegs.get(legIndex);
-                    List<RouteStep> legSteps = routeLeg.getSteps();
-                    for (int stepIndex = 0; stepIndex < legSteps.size(); stepIndex++) {
-                        int increasedIndex = (globalStepIndex < mpRouteStepCoordCounts.size()) ? mpRouteStepCoordCounts.get(globalStepIndex) : 0;
-                        int lastLocationIndex = locationIndex + increasedIndex;
-                        while (locationIndex < lastLocationIndex) {
-                            LatLng latLng = routePolylinePoints.get(locationIndex);
-                            Double coordDistance = Utils.Location.getDistanceBetween(locationLatLng, latLng);
-                            if (coordDistance != null && (minLegDistance < 0.0d || coordDistance < minLegDistance)) {
-                                minLegDistance = coordDistance;
-                                minRouteSegmentPath = new MPRouteSegmentPath(legIndex, stepIndex);
-                                locationIndex = lastLocationIndex;
-                                break;
-                            }
-                            locationIndex++;
+            LatLng locationLatLng = new LatLng(coreLocation.getLatitude(), coreLocation.getLongitude());
+            int globalStepIndex = 0;
+            int locationIndex = 0;
+            List<LatLng> routePolylinePoints = routePolyline.getPoints();
+            List<NavRouteLeg> routeLegs = navRoute.getLegs();
+            for (int legIndex = 0; legIndex < routeLegs.size(); legIndex++) {
+                NavRouteLeg routeLeg = routeLegs.get(legIndex);
+                List<NavRouteStep> legSteps = routeLeg.getSteps();
+                for (int stepIndex = 0; stepIndex < legSteps.size(); stepIndex++) {
+                    int increasedIndex = (globalStepIndex < routeStepCoordCounts.size()) ? routeStepCoordCounts.get(globalStepIndex) : 0;
+                    int lastLocationIndex = locationIndex + increasedIndex;
+                    while (locationIndex < lastLocationIndex) {
+                        LatLng latLng = routePolylinePoints.get(locationIndex);
+                        Double coordDistance = Utils.Location.getDistanceBetween(locationLatLng, latLng);
+                        if (coordDistance != null && (minLegDistance < 0.0d || coordDistance < minLegDistance)) {
+                            minLegDistance = coordDistance;
+                            minRouteSegmentPath = new NavRouteSegmentPath(legIndex, stepIndex);
+                            locationIndex = lastLocationIndex;
+                            break;
                         }
-                        globalStepIndex++;
+                        locationIndex++;
                     }
+                    globalStepIndex++;
                 }
             }
         }
         return minRouteSegmentPath;
     }
 
-    private boolean isValidSegmentPath(MPRouteSegmentPath segmentPath) {
-        if (mpRoute == null || segmentPath == null) {
+    private boolean isValidSegmentPath(NavRouteSegmentPath segmentPath) {
+        if (navRoute == null || segmentPath == null) {
             return false;
         }
-        List<RouteLeg> routeLegs = mpRoute.getLegs();
+        List<NavRouteLeg> routeLegs = navRoute.getLegs();
         if ((segmentPath.legIndex >= 0) && (segmentPath.legIndex < routeLegs.size())) {
-            RouteLeg leg = routeLegs.get(segmentPath.legIndex);
-            if ((segmentPath.stepIndex >= 0) && segmentPath.stepIndex < leg.getSteps().size()) {
-                return true;
-            }
+            NavRouteLeg leg = routeLegs.get(segmentPath.legIndex);
+            return (segmentPath.stepIndex >= 0) && (segmentPath.stepIndex < leg.getSteps().size());
         }
         return false;
     }
@@ -839,31 +939,40 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
     }
 
     private String buildRouteDisplayDescription() {
-        if (mpRoute == null) {
+        if (navRoute == null) {
             return null;
         }
         StringBuilder descriptionBuilder = new StringBuilder();
 
-        if (mpRoute.getDistance() > 0) {
+        // Distance
+        String displayDistance = null;
+        if (navRoute.getLegs().size() == 1) {
+            displayDistance = navRoute.getLegs().get(0).getDistance().getText();
+        } else if ((navRoute.getDistance() != null) && (navRoute.getDistance() > 0)) {
             // 1 foot = 0.3048 meters
             // 1 mile = 1609.34 meters
 
-            long totalMeters = Math.abs(mpRoute.getDistance());
+            long totalMeters = Math.abs(navRoute.getDistance());
             double totalMiles = (totalMeters / 1609.34d);
             if (descriptionBuilder.length() > 0) {
                 descriptionBuilder.append(", ");
             }
-            descriptionBuilder.append(String.format(Locale.getDefault(), "%.1f %s", totalMiles, getString((totalMiles != 1.0) ? R.string.miles : R.string.mile)));
+            displayDistance = String.format(Locale.getDefault(), "%.1f %s", totalMiles, getString((totalMiles != 1.0) ? R.string.miles : R.string.mile));
         }
-        if (mpRoute.getDuration() > 0) {
-            long totalSeconds = Math.abs(mpRoute.getDuration());
+        if (!Utils.Str.isEmpty(displayDistance)) {
+            descriptionBuilder.append(displayDistance);
+        }
+
+        // Duration
+        String displayDuration = null;
+        if (navRoute.getLegs().size() == 1) {
+            displayDuration = navRoute.getLegs().get(0).getDuration().getText();
+        } else if ((navRoute.getDuration() != null) && (navRoute.getDuration() > 0)) {
+            long totalSeconds = Math.abs(navRoute.getDuration());
             long totalMinutes = totalSeconds / 60;
             long totalHours = totalMinutes / 60;
             long minutes = totalMinutes % 60;
 
-            if (descriptionBuilder.length() > 0) {
-                descriptionBuilder.append(", ");
-            }
             String formattedTime;
             if (totalHours < 1) {
                 formattedTime = String.format(Locale.getDefault(), "%d %s", minutes, getString(R.string.minute));
@@ -872,11 +981,18 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
             } else {
                 formattedTime = String.format(Locale.getDefault(), "%d h", totalHours);
             }
-            descriptionBuilder.append(formattedTime);
+            displayDuration = formattedTime;
         }
 
-        String routeSummary = mpRoute.getSummary();
-        if (routeSummary != null && !routeSummary.isEmpty()) {
+        if (!Utils.Str.isEmpty(displayDuration)) {
+            if (descriptionBuilder.length() > 0) {
+                descriptionBuilder.append(", ");
+            }
+            descriptionBuilder.append(displayDuration);
+        }
+
+        String routeSummary = navRoute.getSummary();
+        if ((descriptionBuilder.length() == 0) && !Utils.Str.isEmpty(routeSummary)) {
             descriptionBuilder.append(routeSummary);
         }
         return descriptionBuilder.toString();
@@ -894,22 +1010,16 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
         String originString = null;
         String destinationString = null;
         String locationString = null;
-        List<RouteLeg> routeLegs = (mpRoute != null) ? mpRoute.getLegs() : null;
+        List<NavRouteLeg> routeLegs = (navRoute != null) ? navRoute.getLegs() : null;
         int legsCount = (routeLegs != null && routeLegs.size() > 0) ? routeLegs.size() : 0;
         if (legsCount > 0) {
-            RouteCoordinate origin = routeLegs.get(0).getStartLocation();
-            RouteCoordinate destination = routeLegs.get(legsCount - 1).getEndLocation();
-            int originFloor = (int) origin.getZIndex();
-            int destinationFloor = (int) destination.getZIndex();
-            originString = String.format(Locale.getDefault(), Constants.ANALYTICS_ROUTE_LOCATION_FORMAT, origin.getLat(), origin.getLng(), originFloor);
-            destinationString = String.format(Locale.getDefault(), Constants.ANALYTICS_ROUTE_LOCATION_FORMAT, destination.getLat(), destination.getLng(), destinationFloor);
+            NavCoord origin = routeLegs.get(0).getStartLocation();
+            NavCoord destination = routeLegs.get(legsCount - 1).getEndLocation();
+            originString = String.format(Locale.getDefault(), Constants.ANALYTICS_ROUTE_LOCATION_FORMAT, origin.getLat(), origin.getLng());
+            destinationString = String.format(Locale.getDefault(), Constants.ANALYTICS_ROUTE_LOCATION_FORMAT, destination.getLat(), destination.getLng());
         }
-        if (mpPositionResult != null) {
-            Point locationPoint = mpPositionResult.getPoint();
-            int locationFloor = mpPositionResult.getFloor();
-            if (locationPoint != null) {
-                locationString = String.format(Locale.getDefault(), Constants.ANALYTICS_USER_LOCATION_FORMAT, locationPoint.getLat(), locationPoint.getLng(), locationFloor, locationTimestamp);
-            }
+        if (coreLocation != null) {
+            locationString = String.format(Locale.getDefault(), Constants.ANALYTICS_USER_LOCATION_FORMAT, coreLocation.getLatitude(), coreLocation.getLongitude(), coreLocation.getTime());
         }
         String analyticsParam = String.format(Locale.getDefault(), "{\"origin\":%s,\"destination\":%s,\"location\":%s}", originString, destinationString, locationString);
         MainActivity.invokeFlutterMethod(event, analyticsParam);
@@ -917,17 +1027,31 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
 
     //endregion
 
-    //region Utilities
+    //region Route Navigation
+
+    private void initNavigation() {
+        this.navigation = new Navigation(this, this);
+    }
 
     @Override
-    protected String getLogTag() {
-        return MapDirectionsActivity.class.getSimpleName();
+    public void onNavigationResponse(List<NavRoute> routes, String errorResponse) {
+        navRoute = (routes != null) ? routes.get(0) : null;
+        navRouteError = errorResponse;
+        didBuildRoute();
     }
+
+    //endregion
+
+    //region Utilities
 
     private void showLoadingFrame(boolean show) {
         if (routeLoadingFrame != null) {
             routeLoadingFrame.setVisibility(show ? View.VISIBLE : View.GONE);
         }
+    }
+
+    private boolean isNavRouteLoading() {
+        return (routeLoadingFrame != null) && (routeLoadingFrame.getVisibility() == View.VISIBLE);
     }
 
     private void showAlert(String message) {
@@ -956,13 +1080,13 @@ public class MapDirectionsActivity extends MapActivity implements OnRouteResultL
 
     //endregion
 
-    //region MPRouteSegmentPath
+    //region NavRouteSegmentPath
 
-    private static class MPRouteSegmentPath {
-        private int legIndex;
-        private int stepIndex;
+    private static class NavRouteSegmentPath {
+        private final int legIndex;
+        private final int stepIndex;
 
-        private MPRouteSegmentPath(int legIndex, int stepIndex) {
+        private NavRouteSegmentPath(int legIndex, int stepIndex) {
             this.legIndex = legIndex;
             this.stepIndex = stepIndex;
         }

@@ -58,6 +58,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
       Connectivity.notifyStatusChanged,
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
+      StudentCourses.notifyCourseContentChanged,
     ]);
 
 
@@ -97,6 +98,9 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
       setStateIfMounted(() {});
     }
     else if (name == StudentCourses.notifySelectedTermChanged) {
+      _updateCourses();
+    }
+    else if (name == StudentCourses.notifyCourseContentChanged) {
       _updateCourses();
     }
   }
@@ -223,7 +227,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
       return HomeMessageCard(message: Localization().getStringEx('widget.home.student_courses.text.offline.description', 'My Courses not available while offline.'),);
     }
     else if (!Auth2().isOidcLoggedIn) {
-      return HomeMessageCard(message: Localization().getStringEx('widget.home.student_courses.text.logged_out.description', 'You need to be logged in to access My Courses.'),);
+      return HomeMessageCard(message: Localization().getStringEx('widget.home.student_courses.text.logged_out.description', 'You need to be logged in with your NetID to access My Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'),);
     }
     else if (_courses == null) {
       return HomeMessageCard(message: Localization().getStringEx('widget.home.student_courses.text.failed.description', 'It appears you have no courses registered for the selected term.'),);

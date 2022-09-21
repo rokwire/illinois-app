@@ -38,7 +38,7 @@ class IDCardPanel extends StatefulWidget {
 
   static void present(BuildContext context) {
     if (!Auth2().isOidcLoggedIn) {
-      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.illini_id', 'You need to be logged in to access Illini ID.'));
+      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.illini_id', 'You need to be logged in with your NetID to access Illini ID. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
     }
     else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
       AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.no_card.illini_id', 'You need a valid Illini Identity card to access Illini ID.'));

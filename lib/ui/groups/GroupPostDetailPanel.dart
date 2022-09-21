@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/groups/GroupPostReportAbuse.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -81,7 +82,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, Groups.notifyGroupPostsUpdated);
+    NotificationService().subscribe(this, [Groups.notifyGroupPostsUpdated, Groups.notifyGroupPostReactionsUpdated]);
     _loadMembersAllowedToPost();
     _post = widget.post ?? GroupPost(); //If no post then prepare data for post creation
     _focusedReply = widget.focusedReply;
@@ -145,6 +146,21 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 24, color: Styles().colors!.fillColorPrimary)
                     )
                   )
+                ),
+
+                Visibility(
+                  visible: Config().showGroupPostReactions,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
+                    child: GroupPostReaction(
+                      groupID: widget.group?.id,
+                      post: _post,
+                      reaction: thumbsUpReaction,
+                      accountIDs: _post?.reactions[thumbsUpReaction],
+                      selectedIconPath: 'images/icon-thumbs-up-solid.png',
+                      deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                    ),
+                  ),
                 ),
 
                 Visibility(visible: _isEditPostVisible && !widget.hidePostOptions, child:
@@ -505,6 +521,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   //Tap Actions
   void _onTapReplyCard(GroupPost? reply){
+    if((reply != null) &&
+        ((reply == _focusedReply) || (widget.replyThread!= null && widget.replyThread!.contains(reply)))){
+      //Already focused reply.
+      // Disabled listener for the focused reply. Prevent duplication. Fix for #2374
+      return;
+    }
     Analytics().logSelect(target: 'Reply Card');
     List<GroupPost> thread = [];
     if(CollectionUtils.isNotEmpty(widget.replyThread)){
@@ -762,6 +784,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _reloadPost() {
+    //TODO: Can we optimize this to only load data for the relevant updated post(s)?
     _setLoading(true);
     Groups().loadGroupPosts(widget.group?.id).then((posts) {
       if (CollectionUtils.isNotEmpty(posts)) {
@@ -1010,6 +1033,8 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
   void onNotification(String name, param) {
     if (name == Groups.notifyGroupPostsUpdated) {
       _reloadPost();
+    } else if (name == Groups.notifyGroupPostReactionsUpdated) {
+      setState(() { });
     }
   }
 }
