@@ -107,7 +107,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
 
     Storage(),
 
-    Config(),
+    Config(defaultEnvironment: configEnvironment),
     NativeCommunicator(),
     HttpProxy(),
 
