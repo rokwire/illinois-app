@@ -134,6 +134,7 @@ android {
         }
         illinois {
             dimension "product"
+            applicationId "edu.illinois.rokwire"
         }
     }
 }

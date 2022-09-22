@@ -17,5 +17,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="edu.illinois.rokwire">
-    <application android:networkSecurityConfig="@xml/network_security_config" />
+
+    <queries>
+        <package android:name="edu.illinois.covid" />
+    </queries>
+
+    <application>
+    </application>
 </manifest>
