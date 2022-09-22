@@ -13,31 +13,28 @@
     },
     {
       "name": "Illinois-Dev",
-      "program": "lib/main.dart",
+      "program": "lib/mainDev.dart",
       "request": "launch",
       "type": "dart",
       "args": ["-v",
-        "-t", "lib/mainDev.dart",
         "--flavor", "IllinoisDev"
       ]
     },
     {
       "name": "Illinois-Prod",
-      "program": "lib/main.dart",
+      "program": "lib/mainProd.dart",
       "request": "launch",
       "type": "dart",
       "args": ["-v",
-        "-t", "lib/mainProd.dart",
         "--flavor", "IllinoisProd"
       ]
     },
     {
       "name": "Illinois-Test",
-      "program": "lib/main.dart",
+      "program": "lib/mainTest.dart",
       "request": "launch",
       "type": "dart",
       "args": ["-v",
-        "-t", "lib/mainTest.dart",
         "--flavor", "IllinoisTst"
       ]
     }
