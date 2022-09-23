@@ -30,10 +30,11 @@ enum _DetailTab { Name, Uin, Email}
 
 class GroupMembersSelectionPanel extends StatefulWidget {
   final String? groupId;
+  final GroupPrivacy? groupPrivacy;
   final List<Member>? selectedMembers;
   final List<Member>? allMembers;
 
-  GroupMembersSelectionPanel({this.selectedMembers, this.allMembers, this.groupId});
+  GroupMembersSelectionPanel({this.selectedMembers, this.allMembers, this.groupId, this.groupPrivacy});
 
   @override
   _GroupMembersSelectionState createState() => _GroupMembersSelectionState();
@@ -177,7 +178,9 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
 
   Widget _buildTabs() {
     List<Widget> tabs = [];
-    for (_DetailTab tab in _DetailTab.values) {
+    // Show uin and email for private groups. Show only name if the group is public
+    List<_DetailTab> visibleTabs = (widget.groupPrivacy == GroupPrivacy.private) ? _DetailTab.values : [_DetailTab.Name];
+    for (_DetailTab tab in visibleTabs) {
       String title;
       switch (tab) {
         case _DetailTab.Name:
