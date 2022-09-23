@@ -218,8 +218,11 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }
-      else{
-        launch(url!);
+      else {
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri);
+        }
       }
     }
   }

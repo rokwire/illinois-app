@@ -162,6 +162,9 @@ class RoleGridButton extends TileToggleButton {
         onTap: onTap,
       );
     }
+    else {
+      return null;
+    }
   }
 
   static Widget gridFromFlexUI({ Set<UserRole>? selectedRoles, double gridSpacing = 5, void Function(RoleGridButton)? onTap }) {

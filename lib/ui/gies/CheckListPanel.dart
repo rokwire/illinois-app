@@ -46,6 +46,8 @@ class CheckListPanel extends StatelessWidget {
       return Localization().getStringEx('widget.checklist.gies.offline', 'iDegrees New Student Checklist not available while offline.');
     } else if (contentKey == CheckList.uiucOnboarding) {
       return Localization().getStringEx('widget.checklist.uiuc.offline', 'New Student Checklist not available while offline.');
+    } else {
+      return null;
     }
   }
 
@@ -54,6 +56,8 @@ class CheckListPanel extends StatelessWidget {
       return Localization().getStringEx('widget.checklist.gies.logged_out', 'You need to be logged in with your NetID to access iDegrees New Student Checklist. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.');
     } else if (contentKey == CheckList.uiucOnboarding) {
       return Localization().getStringEx('widget.checklist.uiuc.logged_out', 'You need to be logged in with your NetID to access New Student Checklist. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.');
+    } else {
+      return null;
     }
   }
 

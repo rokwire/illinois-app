@@ -737,7 +737,10 @@ class _TweetWidget extends StatelessWidget {
 
   void _launchUrl(String? url, {BuildContext? context}) {
     if (StringUtils.isNotEmpty(url)) {
-      launch(url!);
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 }

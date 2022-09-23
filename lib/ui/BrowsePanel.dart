@@ -595,7 +595,10 @@ class _BrowseEntry extends StatelessWidget {
 
       // Please make this use an external browser
       // Ref: https://github.com/rokwire/illinois-app/issues/1110
-      launch(Config().myIlliniUrl!);
+      Uri? myIlliniUri = Uri.tryParse(Config().myIlliniUrl!);
+      if (myIlliniUri != null) {
+        launchUrl(myIlliniUri);
+      }
 
       //
       // Until webview_flutter get fixed for the dropdowns we will continue using it as a webview plugin,
@@ -714,8 +717,11 @@ class _BrowseEntry extends StatelessWidget {
           url: url, title: Localization().getStringEx('panel.settings.faqs.label.title', 'FAQs'),
         )));
       }
-      else{
-        launch(url);
+      else {
+        Uri? uri = Uri.tryParse(url);
+        if (uri != null) {
+          launchUrl(uri);
+        }
       }
     }
   }
@@ -744,8 +750,12 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapMyMcKinley(BuildContext context) {
     Analytics().logSelect(target: 'MyMcKinley');
-    if (StringUtils.isNotEmpty(Config().saferMcKinley['url'])) {
-      launch(Config().saferMcKinley['url']);
+    String? saferMcKinleyUrl = Config().saferMcKinley['url'];
+    if (StringUtils.isNotEmpty(saferMcKinleyUrl)) {
+      Uri? saferMcKinleyUri = Uri.tryParse(saferMcKinleyUrl!);
+      if (saferMcKinleyUri != null) {
+        launchUrl(saferMcKinleyUri);
+      }
     }
   }
 
@@ -771,7 +781,13 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: "Due Date Catalog");
     
     if (_canDueDateCatalog) {
-      launch(Config().dateCatalogUrl!);
+      String? dateCatalogUrl = Config().dateCatalogUrl;
+      if (StringUtils.isNotEmpty(dateCatalogUrl)) {
+        Uri? dateCatalogUri = Uri.tryParse(dateCatalogUrl!);
+        if (dateCatalogUri != null) {
+          launchUrl(dateCatalogUri);
+        }
+      }
     }
   }
 
@@ -824,7 +840,10 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: "Crisis Help");
     String? url = Config().crisisHelpUrl;
     if (StringUtils.isNotEmpty(url)) {
-      launch(url!);
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     } else {
       debugPrint("Missing Config().crisisHelpUrl");
     }

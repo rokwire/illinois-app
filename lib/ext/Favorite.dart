@@ -83,6 +83,7 @@ extension FavoriteExt on Favorite {
         default: return null;
       }
     }
+    return null;
   }
   
   Image? get favoriteDetailIcon {

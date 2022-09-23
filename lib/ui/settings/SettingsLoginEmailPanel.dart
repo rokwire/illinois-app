@@ -540,7 +540,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
     });
 
     if (StringUtils.isNotEmpty(msg)) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_validationErrorKey.currentContext != null) {
           Scrollable.ensureVisible(_validationErrorKey.currentContext!, duration: Duration(milliseconds: 300)).then((_) {
           });

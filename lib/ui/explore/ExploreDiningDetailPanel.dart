@@ -48,7 +48,6 @@ import 'package:rokwire_plugin/ui/widgets/rounded_tab.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
-import 'package:url_launcher/url_launcher.dart';
 
 class ExploreDiningDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Dining? dining;
@@ -600,7 +599,10 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
     bool? appLaunched = await RokwirePlugin.launchApp({"deep_link": deepLink});
     if (appLaunched != true) {
       String storeUrl = orderOnlineDetails!['store_url'];
-      url_launcher.launch(storeUrl);
+      Uri? storeUri = Uri.tryParse(storeUrl);
+      if (storeUri != null) {
+        url_launcher.launchUrl(storeUri);
+      }
     }
   }
 
@@ -609,7 +611,10 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
       if (UrlUtils.launchInternal(url)) {
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
-        launch(url!);
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          url_launcher.launchUrl(uri);
+        }
       }
     }
   }

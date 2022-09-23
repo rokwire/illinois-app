@@ -154,8 +154,11 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
           url: url, title: Localization().getStringEx('widget.home.app_help.faqs.panel.title', 'FAQs'),
         )));
       }
-      else{
-        launch(url);
+      else {
+        Uri? uri = Uri.tryParse(url);
+        if (uri != null) {
+          launchUrl(uri);
+        }
       }
     }
   }

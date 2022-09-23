@@ -90,7 +90,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
       if (_focusedReply != null) {
         _scrollToPostEdit();

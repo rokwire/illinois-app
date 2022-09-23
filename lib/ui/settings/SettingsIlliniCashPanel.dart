@@ -593,7 +593,10 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   void _onTapLink(BuildContext context, String? url) {
     Analytics().logAlert(text: "Info", selection: "Other Select Services");
     if (StringUtils.isNotEmpty(url)) {
-      launch(url!);
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 

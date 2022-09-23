@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Upgrade project to build with flutter 3.3.2 [#2410](https://github.com/rokwire/illinois-app/issues/2410).
 
 ## [4.2.0] - 2022-09-23
 ### Changed
@@ -13,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed direct privacy level checks from app code, use FlexUI features instead [#2325](https://github.com/rokwire/illinois-app/issues/2325).
 - TextStyles exposed to Assets/styles.json (in progress) [#2311](https://github.com/rokwire/illinois-app/issues/2311).
 - Android: upgrade compileSdkVersion and targetSdkVersion [#2308](https://github.com/rokwire/illinois-app/issues/2308).
-### Addded
+### Added
 - Do not show Uin and Email in the members list if the group is public [#2414](https://github.com/rokwire/illinois-app/issues/2414).
 
 ## [4.1.34] - 2022-09-19

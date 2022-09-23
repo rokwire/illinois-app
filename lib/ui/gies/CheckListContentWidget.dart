@@ -232,7 +232,9 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
       else if (UrlUtils.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
-        launch(url);
+        if (uri != null) {
+          launchUrl(uri);
+        }
       }
     }
   }
@@ -603,7 +605,7 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
   @override
   void initState() {
     _focusNode = FocusNode();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_focusKey.currentContext != null) {
         Scrollable.ensureVisible(_focusKey.currentContext!, duration: Duration(milliseconds: 300)).then((_) {
           _focusNode.requestFocus();

@@ -116,6 +116,7 @@ class _InfoToggleButton extends StatefulWidget {
 
   final void Function()? onTap;
 
+  // ignore: unused_element
   const _InfoToggleButton({Key? key, this.title, this.iconRes, this.additionalInfo, this.onTap, this.enabled = true , this.toggled = false, this.height = 110, this.iconResDisabled="",}) : super(key: key);
 
   @override
