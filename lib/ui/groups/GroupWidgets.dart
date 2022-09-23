@@ -1766,12 +1766,13 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
 
 class GroupMembersSelectionWidget extends StatefulWidget{
   final String? groupId;
+  final GroupPrivacy? groupPrivacy;
   final List<Member>? allMembers;
   final List<Member>? selectedMembers;
   final void Function(List<Member>?)? onSelectionChanged;
   final bool enabled;
 
-  const GroupMembersSelectionWidget({Key? key, this.selectedMembers, this.allMembers,this.onSelectionChanged, this.groupId, this.enabled = true}) : super(key: key);
+  const GroupMembersSelectionWidget({Key? key, this.selectedMembers, this.allMembers,this.onSelectionChanged, this.groupId, this.groupPrivacy, this.enabled = true}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _GroupMembersSelectionState();
@@ -1946,7 +1947,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionWidget>{
 
   void _onTapEdit(){
     Analytics().logSelect(target: "Edit Members");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersSelectionPanel(allMembers: _allMembersAllowedToPost, selectedMembers: widget.selectedMembers, groupId: widget.groupId,))).then((result) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersSelectionPanel(allMembers: _allMembersAllowedToPost, selectedMembers: widget.selectedMembers, groupId: widget.groupId, groupPrivacy: widget.groupPrivacy))).then((result) {
       _onSelectionChanged(result);
     });
   }
