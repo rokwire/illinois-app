@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.2.0] - 2022-09-23
 ### Changed
 - Optimized Groups /user/login API call [#2316](https://github.com/rokwire/illinois-app/issues/2316).
 - Improved scheduling of app review prompt [#2321](https://github.com/rokwire/illinois-app/issues/2321).
