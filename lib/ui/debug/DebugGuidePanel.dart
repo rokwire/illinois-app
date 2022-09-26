@@ -6,7 +6,6 @@ import 'package:illinois/ui/guide/CampusGuidePanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class DebugGuidePanel extends StatefulWidget {
   DebugGuidePanel();
@@ -122,8 +121,8 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
       Row(children: <Widget>[
         Expanded(child: RoundedButton(
           label: "Init From Assets",
-          textColor: Styles().colors!.fillColorPrimary, // Styles().colors!.surfaceAccent,
-          borderColor: Styles().colors!.fillColorSecondary, // Styles().colors!.surfaceAccent,
+          textColor: Styles().colors!.surfaceAccent,
+          borderColor: Styles().colors!.surfaceAccent,
           backgroundColor: Styles().colors!.white,
           fontFamily: Styles().fontFamilies!.bold,
           fontSize: 16,
@@ -179,7 +178,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
   }
 
   void _onInitFromAssets() {
-    try { 
+    /*try { 
       setState(() {
         _processingContent = true;
       });
@@ -215,7 +214,7 @@ class _DebugGuidePanelState extends State<DebugGuidePanel> {
         }
       });
     }
-    catch (e) { print(e.toString()); }
+    catch (e) { print(e.toString()); }*/
   }
 
   void _onInitFromNet() {
