@@ -54,7 +54,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if(_imageBytes == null){
         showImagePickerDialog();
       }

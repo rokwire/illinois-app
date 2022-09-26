@@ -455,7 +455,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   Future<void> _onGuideDetail(Map<String, dynamic>? content) async {
     String? guideId = (content != null) ? JsonUtils.stringValue(content['guide_id']) : null;
     if (StringUtils.isNotEmpty(guideId)){
-      WidgetsBinding.instance!.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
+      WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
         Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
           GuideDetailPanel(guideEntryId: guideId,)));
       });
@@ -471,7 +471,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       String? section = JsonUtils.stringValue(content['section']);
       String? category = JsonUtils.stringValue(content['category']);
       if ((guide != null) || (section != null) || (category != null)){
-        WidgetsBinding.instance!.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
+        WidgetsBinding.instance.addPostFrameCallback((_) { // Fix navigator.dart failed assertion line 5307
           Navigator.of(context).push(CupertinoPageRoute(builder: (context) =>
             GuideListPanel(guide: guide, category: category, section: GuideSection(name: section),)));
         });

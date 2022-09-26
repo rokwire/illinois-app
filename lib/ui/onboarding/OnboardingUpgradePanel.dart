@@ -19,6 +19,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
@@ -173,8 +174,9 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
 
   void _onUpgradeClicked(BuildContext context) async {
     String? upgradeUrl = Config().upgradeUrl;
-    if ((upgradeUrl != null) && await url_launcher.canLaunch(upgradeUrl)) {
-      await url_launcher.launch(upgradeUrl, forceSafariVC: false);
+    Uri? uri = StringUtils.isNotEmpty(upgradeUrl) ? Uri.tryParse(upgradeUrl!) : null;
+    if ((uri != null) && await url_launcher.canLaunchUrl(uri)) {
+      await url_launcher.launchUrl(uri);
     }
   }
 

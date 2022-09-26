@@ -65,7 +65,7 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
     double headingHeight = _headingHeight ?? 0;
     double lockSize = headingHeight * 0.5;
     if (headingHeight == 0) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         _evalHeadingSize();
       });
     }

@@ -409,7 +409,10 @@ class _DailyIlliniItemWidget extends StatelessWidget {
   void _onTap() {
     String? url = illiniItem!.link;
     if (StringUtils.isNotEmpty(url)) {
-      launch(url!);
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 }

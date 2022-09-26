@@ -773,6 +773,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       });
       return completer.future;
     }
+    else {
+      return null;
+    }
   }
 
   void _onTapAlternateEmail(Auth2Type linked) {
@@ -877,7 +880,10 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   void _onTapHtmlLink(String? url) {
     if (StringUtils.isNotEmpty(url)) {
-      launch(url!);
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 
@@ -963,6 +969,7 @@ class _OptionsSection extends StatelessWidget {
       {Key? key,
       this.widgets,
       this.title,
+      // ignore: unused_element
       this.description,
       this.showBox,
       this.titlePadding = const EdgeInsets.symmetric(horizontal: 8, vertical: 12)})

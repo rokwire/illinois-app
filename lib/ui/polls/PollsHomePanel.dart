@@ -92,7 +92,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     _recentLocalPolls = Polls().localRecentPolls();
     _selectPollType(_couldCreatePoll ? _PollType.values[Storage().selectedPollType ?? 0] : _PollType.recentPolls);
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalBleDescriptionHeight();
     });
 
@@ -823,6 +823,7 @@ class _PollsHomePanelFilterTab extends StatelessWidget {
   final bool selected;
   final GestureTapCallback? onTap;
 
+  // ignore: unused_element
   _PollsHomePanelFilterTab({Key? key, this.text, this.hint = '', this.tabPosition = _PollFilterTabPosition.left, this.selected = false, this.onTap}) : super(key: key);
 
   @override
@@ -882,7 +883,7 @@ class _PollCardState extends State<PollCard> {
   @override
   void initState() {
     _loadGroupStats();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalProgressWidths();
     });
     super.initState();

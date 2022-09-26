@@ -353,7 +353,10 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
 
       // Please make this use an external browser
       // Ref: https://github.com/rokwire/illinois-app/issues/1110
-      launch(Config().myIlliniUrl!);
+      Uri? uri = Uri.tryParse(Config().myIlliniUrl!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
 
       //
       // Until webview_flutter get fixed for the dropdowns we will continue using it as a webview plugin,
@@ -384,7 +387,10 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
     Analytics().logSelect(target: "Crisis Help", source: runtimeType.toString());
     String? url = Config().crisisHelpUrl;
     if (StringUtils.isNotEmpty(url)) {
-      launch(url!);
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     } else {
       Log.e("Missing Config().crisisHelpUrl");
     }

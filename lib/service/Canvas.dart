@@ -207,8 +207,9 @@ class Canvas with Service implements NotificationsListener {
     bool? appLaunched = await RokwirePlugin.launchApp({"deep_link": deepLink});
     if (appLaunched != true) {
       String? canvasStoreUrl = Config().canvasStoreUrl;
-      if ((canvasStoreUrl != null) && await url_launcher.canLaunch(canvasStoreUrl)) {
-        await url_launcher.launch(canvasStoreUrl, forceSafariVC: false);
+      Uri? storeUri = StringUtils.isNotEmpty(canvasStoreUrl) ? Uri.tryParse(canvasStoreUrl!) : null;
+      if ((storeUri != null) && await url_launcher.canLaunchUrl(storeUri)) {
+        await url_launcher.launchUrl(storeUri);
       }
     }
   }

@@ -15,8 +15,6 @@
  */
 
 
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart' as rokwire;
 import 'package:illinois/service/Storage.dart';

@@ -233,7 +233,7 @@ class _AppState extends State<App> implements NotificationsListener {
       Storage().lastRunVersion = Config().appVersion;
     }
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       NativeCommunicator().dismissLaunchScreen().then((_) {
         _presentLaunchPopup();
       });
