@@ -580,6 +580,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   child: GroupMembersSelectionWidget(
                                     selectedMembers: _groupMembersSelection,
                                     groupId: widget.group?.id,
+                                    groupPrivacy: widget.group?.privacy,
                                     onSelectionChanged: (members){
                                       setState(() {
                                         _groupMembersSelection = members;

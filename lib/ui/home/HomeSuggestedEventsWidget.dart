@@ -408,6 +408,7 @@ class _EventsRibbonHeader extends StatelessWidget {
     this.title,
     this.subTitle,
 
+    // ignore: unused_element
     this.rightIconLabel,
     this.rightIconAsset,
     this.rightIconAction,

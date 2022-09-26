@@ -191,11 +191,6 @@ abstract class CheckList with Service implements NotificationsListener{
     }
   }
 
-  // ignore: unused_element
-  Future<List<dynamic>?> _loadFromAssets() async{
-    return JsonUtils.decodeList(await AppBundle.loadString('assets/gies.json'));
-  }
-
   Future<dynamic> loadUserInfo() async {
     if(_contentName != giesOnboarding){
       return null;

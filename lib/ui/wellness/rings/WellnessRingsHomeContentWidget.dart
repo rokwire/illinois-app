@@ -55,7 +55,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
     });
     if (Wellness().isRingsAccessed != true) {
       Wellness().ringsAccessed(true);
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         _showWelcomePopup();
       });
     }

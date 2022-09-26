@@ -277,7 +277,10 @@ class _InfoDialog extends StatelessWidget {
     Analytics().logAlert(text: "Info", selection: "Student Self Service");
     if (StringUtils.isNotEmpty(url)) {
       Navigator.pop(context);
-      launch(url!);
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 

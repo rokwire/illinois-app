@@ -73,7 +73,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
   @override
   void initState() {
     selectedOptions = widget.initialOptionsSelection ?? [];
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalConfirmSize();
     });
     super.initState();

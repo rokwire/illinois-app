@@ -103,7 +103,10 @@ class _AthleticsCoachDetailPanelState extends State<AthleticsCoachDetailPanel>{
       if (UrlUtils.launchInternal(url)) {
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
-        launch(url!);
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri);
+        }
       }
     }
   }

@@ -136,7 +136,10 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
     Analytics().logSelect(target: 'No', source: widget.runtimeType.toString());
     Navigator.of(context).pop();
     if (StringUtils.isNotEmpty(Config().iCardBoardingPassUrl)) {
-      launch(Config().iCardBoardingPassUrl!);
+      Uri? uri = Uri.tryParse(Config().iCardBoardingPassUrl!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 
@@ -195,7 +198,10 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
   void _onMyMcKinley() {
     Analytics().logSelect(target: 'MyMcKinley', source: widget.runtimeType.toString());
     if (StringUtils.isNotEmpty(Config().saferMcKinley['url'])) {
-      launch(Config().saferMcKinley['url']);
+      Uri? uri = Uri.tryParse(Config().saferMcKinley['url']);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 

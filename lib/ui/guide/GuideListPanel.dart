@@ -384,7 +384,10 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.my_illini', 'My Illini not available while offline.'));
     }
     else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
-      launch(Config().myIlliniUrl!);
+      Uri? uri = Uri.tryParse(Config().myIlliniUrl!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 

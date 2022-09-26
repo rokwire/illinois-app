@@ -90,7 +90,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
       if (_focusedReply != null) {
         _scrollToPostEdit();
@@ -306,6 +306,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         allMembers: _allMembersAllowedToPost,
                         enabled: _isEditMainPost,
                         groupId: widget.group?.id,
+                        groupPrivacy: widget.group?.privacy,
                         onSelectionChanged: (members){
                           setState(() {
                             _mainPostUpdateData?.members = members;

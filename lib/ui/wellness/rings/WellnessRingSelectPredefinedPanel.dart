@@ -167,6 +167,7 @@ class _WellnessRingButton extends StatefulWidget{
   final void Function(BuildContext context) onTapWidget;
   final void Function(BuildContext context)? onTapRightWidget;
 
+  // ignore: unused_element
   const _WellnessRingButton({Key? key, required this.label, this.description, required this.onTapWidget, this.onTapRightWidget, required this.toggled}) : super(key: key);
 
   @override

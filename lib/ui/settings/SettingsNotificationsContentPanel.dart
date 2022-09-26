@@ -95,7 +95,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
     NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
     
     _initInitialContent();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalContentWidgetHeight();
     });
     super.initState();

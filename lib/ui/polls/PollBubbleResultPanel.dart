@@ -46,7 +46,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
       Polls.notifyResultsChanged,
       Polls.notifyStatusChanged,
     ]);
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalProgressWidths();
     });
     super.initState();

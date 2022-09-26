@@ -109,7 +109,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
     super.initState();
     
     if (_hasImage) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         _evalImageHeight();
       });
     }
