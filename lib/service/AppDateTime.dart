@@ -45,7 +45,7 @@ class AppDateTime extends rokwire.AppDateTime {
 
   @protected
   Future<Uint8List?> get timezoneDatabase async {
-    ByteData? byteData = await AppBundle.loadBytes('assets/timezone2019a.tzf');
+    ByteData? byteData = await AppBundle.loadBytes('assets/timezone.tzf');
     return byteData?.buffer.asUint8List();
   }
 
