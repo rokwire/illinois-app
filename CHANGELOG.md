@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fixed "illegible" spell error [#2378](https://github.com/rokwire/illinois-app/issues/2378).
 
 ## [4.1.34] - 2022-09-19
 ### Fixed

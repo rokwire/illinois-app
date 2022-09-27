@@ -112,9 +112,9 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
       );
     }
     else if (IlliniCash().eligibility?.eligible == false) {
-      String title = Localization().getStringEx('widget.home.wallet.illini_cash.label.illegible', 'Illegible');
+      String title = Localization().getStringEx('widget.home.wallet.illini_cash.label.ineligible', 'Ineligible');
       String? status = StringUtils.isNotEmpty(IlliniCash().eligibility?.accountStatus) ? IlliniCash().eligibility?.accountStatus :
-        Localization().getStringEx('widget.home.wallet.illini_cash.label.illegible_status', 'You are not eligibile for Illini Cash');
+        Localization().getStringEx('widget.home.wallet.illini_cash.label.ineligible_status', 'You are not eligibile for Illini Cash');
       
       contentWidget = VerticalTitleValueSection(
         title: title,
@@ -224,9 +224,9 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
     String? cafeCreditBalance = IlliniCash().ballance?.cafeCreditBalanceDisplayText;
 
     if (IlliniCash().eligibility?.eligible == false) {
-      String title = Localization().getStringEx('widget.home.wallet.meal_plan.label.illegible', 'Illegible');
+      String title = Localization().getStringEx('widget.home.wallet.meal_plan.label.ineligible', 'Ineligible');
       String? status = StringUtils.isNotEmpty(IlliniCash().eligibility?.accountStatus) ? IlliniCash().eligibility?.accountStatus :
-        Localization().getStringEx('widget.home.wallet.meal_plan.label.illegible_status', 'You are not eligibile for Meal Plan');
+        Localization().getStringEx('widget.home.wallet.meal_plan.label.ineligible_status', 'You are not eligibile for Meal Plan');
       
       contentWidget = Row(children: <Widget>[
         Expanded(child:
