@@ -18,7 +18,8 @@
       "type": "dart",
       "args": ["-v",
         "--flavor", "IllinoisDev"
-      ]
+      ],
+      "preLaunchTask": "prebuildIllinois"
     },
     {
       "name": "Illinois-Prod",
@@ -27,7 +28,8 @@
       "type": "dart",
       "args": ["-v",
         "--flavor", "IllinoisProd"
-      ]
+      ],
+      "preLaunchTask": "prebuildIllinois"
     },
     {
       "name": "Illinois-Test",
@@ -36,7 +38,8 @@
       "type": "dart",
       "args": ["-v",
         "--flavor", "IllinoisTst"
-      ]
+      ],
+      "preLaunchTask": "prebuildIllinois"
     }
   ]
 }

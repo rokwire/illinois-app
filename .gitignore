@@ -53,3 +53,6 @@ app.*.map.json
 /android/keys.properties
 google-services.json
 
+# App Branding
+/app/assets/
+/app/images/

@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "prebuildIllinois",
+			"type": "shell",
+			"command": "./scripts/prebuild_illinois.sh",
+			"group": "build",
+			"presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+		}
+	]
+}
