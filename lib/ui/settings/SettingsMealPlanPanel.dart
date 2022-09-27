@@ -238,9 +238,9 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
         widgets.add(VerticalTitleValueSection(title: '', value: '',));
       }
       else if (IlliniCash().eligibility?.eligible == false) {
-        String title = Localization().getStringEx('panel.settings.meal_plan.label.illegible', 'Illegible');
+        String title = Localization().getStringEx('panel.settings.meal_plan.label.ineligible', 'Ineligible');
         String? status = StringUtils.isNotEmpty(IlliniCash().eligibility?.accountStatus) ? IlliniCash().eligibility?.accountStatus :
-          Localization().getStringEx('panel.settings.meal_plan.label.illegible_status', 'You are not eligibile for Meal Plan');
+          Localization().getStringEx('panel.settings.meal_plan.label.ineligible_status', 'You are not eligibile for Meal Plan');
         
         widgets.add(VerticalTitleValueSection(
           title: title,
