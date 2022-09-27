@@ -100,7 +100,6 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     FirebaseCore(),
     FirebaseCrashlytics(),
     AppLivecycle(),
-    AppDateTime(),
     Connectivity(),
     LocationServices(),
     DeepLink(),
@@ -108,6 +107,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     Storage(),
 
     Config(defaultEnvironment: configEnvironment),
+    AppDateTime(),
     NativeCommunicator(),
     HttpProxy(),
 

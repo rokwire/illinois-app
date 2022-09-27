@@ -172,15 +172,17 @@ class Config extends rokwire.Config {
   int  get homeRecentItemsCount      => JsonUtils.intValue(settings['homeRecentItemsCount']) ?? 3;
   int  get homeUpcomingEventsCount   => JsonUtils.intValue(settings['homeUpcomingEventsCount']) ?? 5;
   int  get homeWellnessResourcesCount=> JsonUtils.intValue(settings['homeWellnessResourcesCount']) ?? 5;
-  int  get recentItemsCount          => JsonUtils.intValue(settings['recentItemsCount']) ?? 32;
   int  get homeRecentNotificationsCount => JsonUtils.intValue(settings['homeRecentNotificationsCount']) ?? 5;
   int  get homeRecentPollsCount      => JsonUtils.intValue(settings['homeRecentPollsCount']) ?? 3;
+  int  get recentItemsCount          => JsonUtils.intValue(settings['recentItemsCount']) ?? 32;
   
   int  get appReviewSessionsCount    => JsonUtils.intValue(settings['appReviewSessionsCount']) ?? 24;
   int  get appReviewSessionDuration  => JsonUtils.intValue(settings['appReviewSessionDuration']) ?? 120;
   int  get appReviewActivityTimeout  => JsonUtils.intValue(settings['appReviewActivityTimeout']) ?? 3;
   int  get appReviewRequestTimeout   => JsonUtils.intValue(settings['appReviewRequestTimeout']) ?? 21;
   
+  String? get timezoneLocation       => JsonUtils.stringValue(settings['timezoneLocation']);
+
   String get appPrivacyVersion       => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');
   bool get allowGroupsAuthmanSync    => JsonUtils.boolValue(settings['allowGroupsAuthmanSync']) ?? false;
   bool get showGroupPostReactions    => JsonUtils.boolValue(settings['showGroupPostReactions']) ?? false;
