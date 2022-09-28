@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed "illegible" spell error [#2378](https://github.com/rokwire/illinois-app/issues/2378).
 ### Changed
 - Do not show UIN and Email in group members list when the group is public [#2421](https://github.com/rokwire/illinois-app/issues/2421).
+- Show hidden groups only for admins - hide for all others [#2423](https://github.com/rokwire/illinois-app/issues/2423).
 
 ## [4.1.34] - 2022-09-19
 ### Fixed
