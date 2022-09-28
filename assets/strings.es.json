@@ -1,7 +1,6 @@
 {
     "app.title":"Illinois",
     "app.team_name":"Illinois",
-    "app.offline.message.title":"Parece que estás desconectado",
 
     "generic.minutes": "minutes",
     "generic.hours": "hours",
@@ -3053,17 +3052,19 @@
     "logic.general.response_error": "Error de respuesta",
     "logic.general.login_failed": "Incapaz de iniciar sesión. Por favor, inténtelo de nuevo más tarde.",
 
-    "app.exit_dialog.message":"¿Está seguro de que desea salir?",
+    "common.heading.hint":"Encabezado",
+    "common.heading.one.hint":"Encabezado 1",
+    "common.heading.two.hint":"Encabezado 2",
+    "common.heading.three.hint":"Encabezado 3",
 
-    "app.common.heading.hint":"Encabezado",
-    "app.common.heading.one.hint":"Encabezado 1",
-    "app.common.heading.two.hint":"Encabezado 2",
-    "app.common.heading.three.hint":"Encabezado 3",
+    "common.label.cancelled":"Cancelado",
+    "common.label.other": "Otro",
+    "common.label.county": "Condado",
+    "common.label.read_more": "Leer mas",
 
-    "app.common.label.cancelled":"Cancelado",
-    "app.common.label.other": "Otro",
-    "app.common.label.county": "Condado",
-    "app.common.label.read_more": "Leer mas",
+    "common.message.offline":"Parece que estás desconectado",
+    "common.message.logged_out":"You are not logged in",
+    "common.message.exit_app":"¿Está seguro de que desea salir?",
 
     "com.illinois.features2.entry.disable_location_awareness":"Deshabilitar reconocimiento de ubicación.",
     "com.illinois.features2.entry.dont_store_location":"No almacenar tu ubicación.",

@@ -174,7 +174,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
+        Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
         Container(height:8),
         Text(Localization().getStringEx("panel.saved.message.offline", "Saved Items are not available while offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
         Expanded(child: Container(), flex: 3),

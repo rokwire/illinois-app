@@ -87,7 +87,7 @@ class _AcademicsEventsContentWidgetState extends State<AcademicsEventsContentWid
     String message =
         Localization().getStringEx('panel.academics.section.events.offline.msg', 'No academic events available while offline.');
     return _buildCenterWidget(Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontSize: 16)),
+      Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: TextStyle(fontSize: 16)),
       Container(height: 8),
       Text(message)
     ]));

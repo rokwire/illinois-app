@@ -139,7 +139,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                               Container(height: 18,),
                               Semantics(
                                   label: _privacyDescription,
-                                  hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
+                                  hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
                                   header: true,
                                   excludeSemantics: true,
                                   child: Padding(

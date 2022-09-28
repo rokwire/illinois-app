@@ -1,8 +1,6 @@
 {
     "app.title":"Illinois",
     "app.team_name":"Illinois",
-    "app.offline.message.title":"You appear to be offline",
-    "app.logged_out.message.title":"You are not logged in",
 
     "generic.minutes": "minutes",
     "generic.hours": "hours",
@@ -3058,17 +3056,19 @@
     "logic.general.response_error": "Server Response Error",
     "logic.general.login_failed": "Unable to login. Please try again later.",
 
-    "app.exit_dialog.message":"Are you sure you want to exit?",
+    "common.heading.hint":"Header ",
+    "common.heading.one.hint":"Header 1",
+    "common.heading.two.hint":"Header 2",
+    "common.heading.three.hint":"Header 3",
 
-    "app.common.heading.hint":"Header ",
-    "app.common.heading.one.hint":"Header 1",
-    "app.common.heading.two.hint":"Header 2",
-    "app.common.heading.three.hint":"Header 3",
+    "common.label.cancelled":"Cancelled",
+    "common.label.other": "Other",
+    "common.label.county": "County",
+    "common.label.read_more": "Read more",
 
-    "app.common.label.cancelled":"Cancelled",
-    "app.common.label.other": "Other",
-    "app.common.label.county": "County",
-    "app.common.label.read_more": "Read more",
+    "common.message.offline":"You appear to be offline",
+    "common.message.logged_out":"You are not logged in",
+    "common.message.exit_app":"Are you sure you want to exit?",
 
     "com.illinois.features2.entry.disable_location_awareness":"Disable location awareness.",
     "com.illinois.features2.entry.dont_store_location":"Not store your location.",

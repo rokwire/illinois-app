@@ -92,7 +92,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                           ],),
                           Semantics(
                               label: _title,
-                              hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
+                              hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
                               header: true,
                               excludeSemantics: true,
                               child: Padding(

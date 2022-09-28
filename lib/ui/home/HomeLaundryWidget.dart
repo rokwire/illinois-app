@@ -133,7 +133,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
   Widget _buildContent() {
     if (Connectivity().isOffline) {
       return HomeMessageCard(
-        title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"),
+        title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
         message: Localization().getStringEx("widget.home.laundry.text.offline", "Laundries are not available while offline."),
       );
     }

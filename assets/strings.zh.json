@@ -1,7 +1,6 @@
 {
 	"app.title":"伊利诺伊",
 	"app.team_name":"伊利诺伊",
-	"app.offline.message.title":"你还没联网",
 
 	"generic.minutes": "minutes",
 	"generic.hours": "hours",
@@ -3053,17 +3052,19 @@
 	"logic.general.response_error": "响应错误",
 	"logic.general.login_failed": "無法登入。 請稍後再試。",
 
-	"app.exit_dialog.message":"确定要退出吗?",
+	"common.heading.hint":"标题",
+	"common.heading.one.hint":"标题1",
+	"common.heading.two.hint":"标题2",
+	"common.heading.three.hint":"标题3",
 
-	"app.common.heading.hint":"标题",
-	"app.common.heading.one.hint":"标题1",
-	"app.common.heading.two.hint":"标题2",
-	"app.common.heading.three.hint":"标题3",
+	"common.label.cancelled":"取消",
+	"common.label.other": "其他",
+	"common.label.county": "County",
+	"common.label.read_more": "Read more",
 
-	"app.common.label.cancelled":"取消",
-	"app.common.label.other": "其他",
-	"app.common.label.county": "County",
-	"app.common.label.read_more": "Read more",
+	"common.message.offline":"你还没联网",
+	"common.message.logged_out":"You are not logged in",
+	"common.message.exit_app":"确定要退出吗?",
 
 	"com.illinois.features2.entry.disable_location_awareness":"禁用地点感知.",
 	"com.illinois.features2.entry.dont_store_location":"不存儲您的位置.",
