@@ -1,2 +1,2 @@
 #!/bin/bash
-cp -R ../rokwire-apps/Illinois/. ./app/
+cp -R ./brands/Illinois/. ./app/
