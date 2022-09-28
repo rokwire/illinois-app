@@ -125,7 +125,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
             ),
           ),
           Container(height: 4,),
-          Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Sign in with your NetID or Telephone number to get the full Illinois experience."),
+          Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Sign in with your NetID or Telephone number to get the full  {{app_title}} experience.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
             style: TextStyle(
                 fontFamily: Styles().fontFamilies!.regular,
                 fontSize: 16,

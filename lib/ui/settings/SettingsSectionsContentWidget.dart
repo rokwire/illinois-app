@@ -145,7 +145,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     contentList.add(Padding(
         padding: EdgeInsets.only(bottom: 2),
         child: Text(
-          Localization().getStringEx("panel.settings.home.connect.not_logged_in.title", "Sign in to Illinois"),
+          Localization().getStringEx("panel.settings.home.connect.not_logged_in.title", "Sign in to {{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
           style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
         ),
       ),
@@ -170,7 +170,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_5",
-                          "? Sign in with your NetID to see Illinois information specific to you, like your Illini Cash and meal plan."))
+                          "? Sign in with your NetID to see {{app_title}} information specific to you, like your Illini Cash and meal plan.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')))
                 ],
               ),
             )),);
@@ -421,7 +421,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx("panel.settings.home.logout.title", "Illinois"),
+              Localization().getStringEx("panel.settings.home.logout.title", "{{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             Padding(
@@ -677,7 +677,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         if (result == true) {
           Auth2().authenticateWithOidc(link: true).then((Auth2OidcAuthenticateResult? result) {
             if (result == Auth2OidcAuthenticateResult.failed) {
-              AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to add Illinois NetID."));
+              AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to add {{app_title}} NetID.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
             } else if (result == Auth2OidcAuthenticateResult.failedAccountExist) {
               _showNetIDAccountExistsDialog();
             }
@@ -805,8 +805,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
           Container(height: 5),
           Text(Localization().getStringEx("panel.settings.home.feedback.description",
-            "Enjoying the app? Missing something? The Illinois app team needs your ideas and input. Thank you!"),
-              style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground, fontSize: 16))
+            "Enjoying the app? Missing something? The {{app_title}} app team needs your ideas and input. Thank you!").
+              replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+                style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground, fontSize: 16))
         ])
       ),
       Padding(padding: EdgeInsets.only(top: 12), child:
@@ -906,7 +907,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   // Version Info
   Widget _buildVersionInfo() {
-    String versionLabel = Localization().getStringEx('panel.settings.home.version.info.label', 'Illinois App Version:') + _versionName;
+    String versionLabel = Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) + _versionName;
     return Container(
         alignment: Alignment.center,
         child: Text(versionLabel,

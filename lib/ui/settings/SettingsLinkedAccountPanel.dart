@@ -109,9 +109,9 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
   String get _description{
     switch (widget.mode){
       case LinkAccountMode.phone: return Localization().getStringEx("panel.settings.linked.phone.label.description",
-          "You may sign in using your phone number as an alternate way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.");
+          "You may sign in using your phone number as an alternate way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
       case LinkAccountMode.email: return Localization().getStringEx("panel.settings.linked.email.label.description",
-          "You may sign in using your email as an alternate way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.");
+          "You may sign in using your email as an alternate way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
     }
   }
 

@@ -809,7 +809,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
   Widget build(BuildContext context) {
     PrivacyEntry2 data = widget.data!;
     String title = Localization().getString(data.titleKey, defaults: data.title)!;
-    String? description = Localization().getString(data.descriptionKey, defaults: data.description);
+    String? description = Localization().getString(data.descriptionKey, defaults: data.description)?.replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
     String? dataUsageInfo = Localization().getString(data.dataUsageKey, defaults: data.dataUsage);
     String iconRes = "images/" + data.iconRes!;
     String iconResOff = "images/" + data.offIconRes!;

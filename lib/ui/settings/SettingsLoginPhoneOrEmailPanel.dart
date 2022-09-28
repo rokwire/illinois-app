@@ -55,7 +55,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
     if (widget.link == true) {
       if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {
         title = Localization().getStringEx('panel.settings.link.phone.label.title', 'Add Mobile');
-        description = Localization().getStringEx('panel.settings.link.phone.label.description', 'You may sign in using your mobile phone number as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
+        description = Localization().getStringEx('panel.settings.link.phone.label.description', 'You may sign in using your mobile phone number as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
         headingTitle = Localization().getStringEx('panel.settings.link.phone.label.heading', 'ADD MY MOBILE PHONE NUMBER');
         headingHint = Localization().getStringEx('panel.settings.link.phone.label.heading.hint', '');
         buttonProceedTitle =  Localization().getStringEx('panel.settings.link.phone.button.proceed.title', 'Add Mobile');
@@ -64,7 +64,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
       }
       else if (widget.mode == SettingsLoginPhoneOrEmailMode.email){
         title = Localization().getStringEx('panel.settings.link.email.label.title', 'Add Email');
-        description = Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
+        description = Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
         headingTitle = Localization().getStringEx('panel.settings.link.email.label.heading', 'ADD MY EMAIL ADDRESS');
         headingHint =  Localization().getStringEx('panel.settings.link.email.label.heading.hint', '');
         buttonProceedTitle = Localization().getStringEx('panel.settings.link.email.button.proceed.title', 'Add Email');
@@ -73,7 +73,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
       }
       else {
         title = Localization().getStringEx('panel.settings.link.both.label.title', 'Add Mobile or Email');
-        description = Localization().getStringEx('panel.settings.link.both.label.description', 'You may sign in using your email or mobile phone number as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
+        description = Localization().getStringEx('panel.settings.link.both.label.description', 'You may sign in using your email or mobile phone number as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
         headingTitle = Localization().getStringEx('panel.settings.link.both.label.heading', 'ADD MY MOBILE PHONE NUMBER OR EMAIL ADDRESS');
         headingHint =  Localization().getStringEx('panel.settings.link.both.label.heading.hint', '');
         buttonProceedTitle = Localization().getStringEx('panel.settings.link.both.button.proceed.title', 'Add Mobile or Email');

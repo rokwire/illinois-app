@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -46,7 +47,9 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16), child:
-                Text(Localization().getStringEx("widget.home.welcome.text.title", 'Welcome to Illinois 4'),
+                Text(Localization().getStringEx("widget.home.welcome.text.title", 'Welcome to {{app_title}} {{app_version}}').
+                  replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')).
+                  replaceAll('{{app_version}}', Config().appMasterVersion ?? ''),
                   style: TextStyle(color: Styles().colors!.textColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, ),),
               ),
             ),
@@ -59,7 +62,8 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
             ),
           ],),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child: 
-            Text(Localization().getStringEx('widget.home.welcome.text.description', "New in this version: personalize the Illinois app content you want front and center in Favorites. Change or reorder your favorites by tapping on Customize, or add or remove content by tapping \u2606."), style: TextStyle(color: Styles().colors!.textColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 16)),
+            Text(Localization().getStringEx('widget.home.welcome.text.description', "New in this version: personalize the {{app_title}} app content you want front and center in Favorites. Change or reorder your favorites by tapping on Customize, or add or remove content by tapping \u2606.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+              style: TextStyle(color: Styles().colors!.textColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 16)),
           ),
           Container(height: 1, color: Styles().colors?.disabledTextColor),
         ],),

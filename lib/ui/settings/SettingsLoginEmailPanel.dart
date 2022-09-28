@@ -77,7 +77,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
 
     String? headingTitle; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.onboarding2.email.link.title.text', 'Add Your Email Address') : null;
 
-    String? heading; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.') : null;
+    String? heading; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) : null;
 
     String description = (_state == Auth2EmailAccountState.nonExistent) ?
       (widget.link == true) ? Localization().getStringEx('panel.onboarding2.email.link.description.text', 'Please enter a password to add your email address.') :

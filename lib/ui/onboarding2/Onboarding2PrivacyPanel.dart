@@ -523,7 +523,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
       case 2 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.2.title', "Based on your answers, your location is used to explore campus and find things nearby. Your data will not be stored or shared.");
       case 3 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.3.title', "Based on your answers, your data will be securely stored for you to access.");
       case 4 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.4.title', "Based on your answers, your data will be securely stored for you to access.");
-      case 5 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.5.title', "Based on your answers, your data will be securely stored and shared to enable the full smarts of the Illinois app.");
+      case 5 : return Localization().getStringEx('panel.onboarding2.privacy.description_long.5.title', "Based on your answers, your data will be securely stored and shared to enable the full smarts of the {{app_title}} app.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
     }
     return description;
   }
