@@ -125,10 +125,6 @@
 
     "panel.home.header.title": "Favorites",
     "panel.home.header.editing.title": "Customize",
-    "panel.home.label.welcome.logged_in":"Welcome, %s!",
-    "panel.home.label.welcome.logged_off":"Welcome to Illinois",
-    "panel.home.label.near_you":"Near You",
-    "panel.home.label.near_you.sub_title":"Discover what’s around you now.",
     "panel.home.connect.not_logged_in.netid.description.part_1": "Are you a ",
     "panel.home.connect.not_logged_in.netid.description.part_2": "university student",
     "panel.home.connect.not_logged_in.netid.description.part_3": " or ",
