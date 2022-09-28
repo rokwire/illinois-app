@@ -185,7 +185,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                       child: Text(
-                                        Localization().getStringEx("panel.athletics.label.all_illinois_sports.title",'All {{app_title}} Sports').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+                                        Localization().getStringEx("panel.athletics.label.all_sports.title",'All {{app_title}} Sports').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
                                         style: Styles().getTextStyle('panel.athletics.home.title.large'),
                                       ),
                                     ),

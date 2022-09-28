@@ -415,7 +415,7 @@
     "panel.athletics.label.upcoming_events.hint": "",
     "panel.athletics.label.tap_to_follow_team.title": "Tap the checkmark to follow your favorite teams",
     "panel.athletics.label.tap_to_follow_team.hint": "",
-    "panel.athletics.label.all_illinois_sports.title": "All {{app_title}} Sports",
+    "panel.athletics.label.all_sports.title": "All {{app_title}} Sports",
     "panel.athletics.label.tap_the.title": "Tap the ",
     "panel.athletics.label.follow_team.title": " to follow your favorite teams",
     "panel.athletics.label.mens_sports.hint": "",
