@@ -305,6 +305,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         allMembers: _allMembersAllowedToPost,
                         enabled: _isEditMainPost,
                         groupId: widget.group?.id,
+                        groupPrivacy: widget.group?.privacy,
                         onSelectionChanged: (members){
                           setState(() {
                             _mainPostUpdateData?.members = members;
