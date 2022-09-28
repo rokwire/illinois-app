@@ -8,8 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Upgrade project to build with flutter 3.3.2 [#2410](https://github.com/rokwire/illinois-app/issues/2410).
 - Move unused assets in "extra" subfolder, do not embed them in application bundle [#2353](https://github.com/rokwire/illinois-app/issues/2353).
-### Fixed
-- Fixed "illegible" spell error [#2378](https://github.com/rokwire/illinois-app/issues/2378).
 
 ## [4.2.0] - 2022-09-23
 ### Changed
@@ -20,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Android: upgrade compileSdkVersion and targetSdkVersion [#2308](https://github.com/rokwire/illinois-app/issues/2308).
 ### Added
 - Do not show Uin and Email in the members list if the group is public [#2414](https://github.com/rokwire/illinois-app/issues/2414).
+
+## [4.1.35] - 2022-09-28
+### Fixed
+- Fixed "illegible" spell error [#2378](https://github.com/rokwire/illinois-app/issues/2378).
+### Changed
+- Do not show UIN and Email in group members list when the group is public [#2421](https://github.com/rokwire/illinois-app/issues/2421).
+- Show hidden groups only for admins - hide for all others [#2423](https://github.com/rokwire/illinois-app/issues/2423).
 
 ## [4.1.34] - 2022-09-19
 ### Fixed

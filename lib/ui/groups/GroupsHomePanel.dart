@@ -538,11 +538,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   Widget _buildMyGroupsSection(List<Group> myGroups) {
     List<Widget> widgets = [];
     if(CollectionUtils.isNotEmpty(myGroups)) {
-      for (Group? group in myGroups) {
-        widgets.add(Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup, onImageTap: (){ onTapImage(group);} ,),
-        ));
+      for (Group group in myGroups) {
+        if (group.isVisible) {
+          widgets.add(Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup, onImageTap: (){ onTapImage(group);} ,),
+          ));
+        }
       }
       widgets.add(Container(height: 8,));
     }
@@ -559,10 +561,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       );
       widgets.add(Container(height: 8,));
       for (Group group in myPendingGroups) {
-        widgets.add(Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup,),
-        ));
+        if (group.isVisible) {
+          widgets.add(Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup,),
+          ));
+        }
       }
       return
         Stack(children: [
@@ -587,11 +591,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     List<Group>? filteredGroups = CollectionUtils.isNotEmpty(_visibleAllGroups) ? _filteredAllGroupsContent : null;
     if(CollectionUtils.isNotEmpty(filteredGroups)){
       List<Widget> widgets = [];
-      for(Group? group in filteredGroups!){
-        widgets.add(Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: GroupCard(group: group),
-        ));
+      for(Group group in filteredGroups!) {
+        if (group.isVisible) {
+          widgets.add(Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: GroupCard(group: group),
+          ));
+        }
       }
       return Column(children: widgets,);
     }
