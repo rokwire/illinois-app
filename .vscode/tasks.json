@@ -7,8 +7,7 @@
 			"command": "./scripts/prebuild_illinois.sh",
 			"group": "build",
 			"presentation": {
-        "reveal": "always",
-        "panel": "new"
+        "reveal": "never"
       }
 		}
 	]
