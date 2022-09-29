@@ -77,7 +77,7 @@ echo "Building version: ${VERSION}"
 
 if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "android" ]; then
   echo "Building APK..."
-  flutter build apk
+  flutter build apk --no-tree-shake-icons
 
   if [ -f "$APK_BUILD_PATH" ]; then
       cp $APK_BUILD_PATH $APK_OUT_PATH
@@ -99,7 +99,7 @@ if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "ios" ]; then
   sed -i '' "s/$TEMPLATE_ENV/$ENV/g" $PLIST_BUILD_PATH
   sed -i '' "s/$TEMPLATE_BUNDLE_ID/$BUNDLE_ID/g" $PLIST_BUILD_PATH
 
-  flutter build ios
+  flutter build ios --no-tree-shake-icons
 
   cd ios
   xcodebuild -workspace Runner.xcworkspace -scheme Runner  -archivePath ../build/_output/tmp/Runner.xcarchive archive
