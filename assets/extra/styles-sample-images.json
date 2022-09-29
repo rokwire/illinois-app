@@ -73,16 +73,18 @@
       "fit":"fitWidth"
     },
     "circle-xmark-28-primary":{
-      "type":"fa.regular",
+      "type":"fa.icon",
+      "weight":"regular",
       "src":"0xf057",
-      "width":28.0,
+      "size":28.0,
       "color":"fillColorPrimary",
       "text_direction":"ltr"
     },
     "circle-xmark-24-surface":{
-      "type":"fa.regular",
+      "type":"fa.icon",
+      "weight":"regular",
       "src":"0xf057",
-      "width":24.0,
+      "size":24.0,
       "color":"surface",
       "text_direction":"ltr"
     }
