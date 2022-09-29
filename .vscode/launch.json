@@ -9,7 +9,8 @@
       "program": "lib/main.dart",
       "request": "launch",
       "type": "dart",
-      "args": ["-v"]
+      "args": ["-v"],
+      "preLaunchTask": "cleanupAppResources"
     },
     {
       "name": "Illinois-Dev",
