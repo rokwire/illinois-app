@@ -241,7 +241,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
         if (mounted) {
           setState(() {
             if (groups != null) {
-              _groups = groups;
+              _groups = _buildVisibleGroups(groups);
               _resultsCount = _groups?.length ?? 0;
               _resultsCountLabelVisible = true;
               _searchLabel = Localization().getStringEx('panel.groups_search.label.results_for', 'Results for ') + _searchController.text;
@@ -267,7 +267,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
     }
     _setLoading(true);
     Groups().searchGroups(searchValue).then((groups) {
-      _groups = groups;
+      _groups = _buildVisibleGroups(groups);
       _searchValue = searchValue;
       _resultsCount = _groups?.length ?? 0;
       _resultsCountLabelVisible = true;
@@ -304,5 +304,18 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
         _loading = loading;
       });
     }
+  }
+
+  List<Group>? _buildVisibleGroups(List<Group>? allGroups) {
+    List<Group>? visibleGroups;
+    if (allGroups != null) {
+      visibleGroups = <Group>[];
+      for (Group group in allGroups) {
+        if (group.isVisible) {
+          ListUtils.add(visibleGroups, group);
+        }
+      }
+    }
+    return visibleGroups;
   }
 }

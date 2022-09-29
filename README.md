@@ -94,9 +94,11 @@ The Firebase configuration file for Android generated from Google Firebase conso
 ### Build the project
 
 ```
-$ flutter build apk
-$ flutter build ios
+$ flutter build apk --no-tree-shake-icons
+$ flutter build ios --no-tree-shake-icons
 ```
+NB: For versions prior to 4.2 you may omit the `no-tree-shake-icons` build parameter.
+
 NB: You may need to update singing & capabilities content for Runner project by opening `ios/Runner.xcworkspace` from xCode
 
 ## Documentation

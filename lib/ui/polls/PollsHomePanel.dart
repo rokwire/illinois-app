@@ -659,7 +659,8 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Future<void> _reloadMyGroups() async {
-    _myGroups = await Groups().loadGroups(contentType: GroupsContentType.my);
+    List<Group>? allMyGroups = await Groups().loadGroups(contentType: GroupsContentType.my);
+    _myGroups = _buildVisibleGroups(allMyGroups);
   }
 
   Set<String>? get _myGroupIds {
@@ -682,6 +683,19 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       }
     }
     return null;
+  }
+
+  List<Group>? _buildVisibleGroups(List<Group>? allGroups) {
+    List<Group>? visibleGroups;
+    if (allGroups != null) {
+      visibleGroups = <Group>[];
+      for (Group group in allGroups) {
+        if (group.isVisible) {
+          ListUtils.add(visibleGroups, group);
+        }
+      }
+    }
+    return visibleGroups;
   }
 
   void _setGroupPollsLoading(bool loading) {

@@ -135,7 +135,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
     List<Widget> pages = <Widget>[];
     if(_groups?.isNotEmpty ?? false) {
       for (Group? group in _groups!) {
-        if (group != null) {
+        if ((group != null) && group.isVisible) {
           pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
             Semantics(
               // excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),
