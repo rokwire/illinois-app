@@ -65,7 +65,7 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>Save favorite events</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow Illinois to access Camera.</string>
+	<string>Your camera will be used for scanning QR codes or taking pictures for profile images, group or event touts and posts.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Allow Illinois to access Contacts.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -81,9 +81,9 @@
 	<key>NSMotionUsageDescription</key>
 	<string>Allow Illinois to access Accelerometer.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Allow Illinois to access Photo Library.</string>
+	<string>Your photo library will be used for storing pictures for profile images, group or event touts and posts.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow Illinois to access Photo Library.</string>
+	<string>Your photo library will be used for providing pictures for profile images, group or event touts and posts.</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>Your calendar will be used to let you set reminders for important events.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
