@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Do not show Uin and Email in the members list if the group is public [#2414](https://github.com/rokwire/illinois-app/issues/2414).
 
+## [4.1.36] - 2022-09-30
+### Added
+- Allow only managed group admin to create and update managed groups [#2429](https://github.com/rokwire/illinois-app/issues/2429).
+
 ## [4.1.35] - 2022-09-28
 ### Fixed
 - Fixed "illegible" spell error [#2378](https://github.com/rokwire/illinois-app/issues/2378).
