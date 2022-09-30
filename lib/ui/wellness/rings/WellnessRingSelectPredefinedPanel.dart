@@ -71,7 +71,7 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
                       Container(height: 16,),
                       Container(
                         child: Text(Localization().getStringEx('panel.wellness.ring.select.description', 'Select a ring type or create your own custom ring.'),
-                          style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)
+                          style: Styles().getTextStyle('panel.wellness.ring.select_predefined.message.regular')
                       )),
                       Container(height: 12,),
                       _buildPredefinedButtons(),
@@ -194,23 +194,15 @@ class _WellnessRingButtonState extends State<_WellnessRingButton>{
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.label , style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies!.bold, fontSize: 18), textAlign: TextAlign.start,),
+                Text(widget.label , style: Styles().getTextStyle('anel.wellness.ring.select_predefined.button.label.regular'), textAlign: TextAlign.start,),
                 Container(height: 12,),
-                Text(widget.description ?? "" , style: TextStyle(color: Colors.black, fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.start),
+                Text(widget.description ?? "" , style: Styles().getTextStyle('panel.wellness.ring.select_predefined.button.description.regular'), textAlign: TextAlign.start),
           ])),
           Container(width: 7,),
           Container(
             child: _buildRadioButton(color: Styles().colors!.fillColorPrimary!),
           )
         ],),
-        // Container(height: 12,),
-        // Row(
-        //   children: [
-        //     Expanded(
-        //       child: Text(widget.description ?? "" , style: TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 14), textAlign: TextAlign.start),
-        //     ),
-        //   ],
-        // )
       ),
       )
       ),

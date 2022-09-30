@@ -82,6 +82,7 @@
 
     "widget.heading.large": { "font_family": "ProximaNovaRegular", "size": 20.0, "color": "white"},
     "widget.heading.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "white"},
+    "widget.heading.medium": { "font_family": "ProximaNovaBold", "size": 14.0, "color": "white"},
     "widget.heading.small": { "font_family": "ProximaNovaBold", "size": 12.0, "color": "white"},
     "widget.message.large": {"font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.message.small": {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "fillColorPrimary"},
@@ -109,11 +110,13 @@
     "widget.dialog.message.regular" : {"font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "white"},
     "widget.dialog.message.large": { "font_family": "ProximaNovaMedium", "size": 24.0, "color": "white"},
 
+    "widget.card.title.large": { "font_family": "ProximaNovaExtraBold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.card.detail.regular_variant": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackgroundVariant"},
     "widget.card.title.regular": { "font_family": "ProximaNovaBold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.card.title.regular_variant": { "font_family": "ProximaNovaExtraBold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.card.title.small": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.card.detail.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
+    "widget.card.detail.regular.fat": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "textBackground"},
     "widget.card.detail.medium": { "font_family": "ProximaNovaMedium", "size": 16.0, "color": "textBackground"},
     "widget.card.detail.small_variant": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textSurface"},
     "widget.card.detail.small_variant2": { "font_family": "ProximaNovaMedium", "size": 14.0, "color": "textBackground"},
@@ -129,7 +132,8 @@
     "widget.explore.card.title.regular":  {"font_family": "ProximaNovaRegular", "size": 18.0, "color": "fillColorPrimary"},
     "widget.explore.card.title.large":  {"font_family": "ProximaNovaRegular", "size": 20.0, "color": "fillColorPrimary"},
 
-    "widget.athletics.card.title.large":  {"font_family": "ProximaNovaRegular", "size": 24.0, "color": "fillColorPrimary",  "weight" :  "w900"},
+    "widget.athletics.card.title.large.fat":  {"font_family": "ProximaNovaRegular", "size": 24.0, "color": "fillColorPrimary",  "weight" :  "w900"},
+    "widget.athletics.card.title.large":  {"font_family": "ProximaNovaRegular", "size": 24.0, "color": "fillColorPrimary"},
 
     "widget.group.card.poll.title": { "font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary", "height":  1.2},
     "widget.group.card.poll.option": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground", "height":  1.25,  "weight" :  "w500"},
@@ -156,6 +160,12 @@
     "widget.group.members.dropdown.item.selected" : {"font_family": "ProximaNovaRegular", "size": 18.0, "overflow": "ellipsis"},
     "widget.group.members.dropdown.header" : {"font_family": "ProximaNovaRegular", "size": 12.0, "color": "fillColorPrimary"},
 
+    "widget.wellness.ring.card.heading.large" :  { "font_family": "ProximaNovaBold", "size": 18.0, "color": "fillColorSecondary"},
+    "widget.wellness.ring.card.title.large" :  { "font_family": "ProximaNovaRegular", "size": 32.0, "color": "fillColorPrimary"},
+
+    "widget.canvas.card.title.regular" :  { "font_family": "ProximaNovaExtraBold", "size": 18.0, "color": "black"},
+    "widget.canvas.card.grade.score" :  { "font_family": "ProximaNovaBold", "size": 16.0, "color": "$courseColor"},
+
     "panel.event_schedule.title" : {"font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary"},
     "panel.event_schedule.category" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
     "panel.event_schedule.map.description" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "blackTransparent038"},
@@ -170,6 +180,17 @@
     "panel.group.detail.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
     "panel.group.detail.small": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textBackground"},
 
+    "panel.wellness.ring.select_predefined.message.regular" :  { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textSurface"},
+    "panel.wellness.ring.select_predefined.button.label.regular" :  { "font_family": "ProximaNovaBold", "size": 18.0, "color": "black"},
+    "panel.wellness.ring.select_predefined.button.description.regular" :  { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "black"},
+
+    "panel.wellness.ring.home.detail.message" : { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textSurface"},
+    "panel.wellness.ring.home.popup.heading" : { "font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorSecondary"},
+    "panel.wellness.ring.home.button.create_ring.title.enabled" : { "font_family": "ProximaNovaBold", "size": 14.0, "color": "black"},
+    "panel.wellness.ring.home.button.create_ring.title.disabled" : { "font_family": "ProximaNovaBold", "size": 14.0, "color": "#5c5c5c"},
+    "panel.wellness.ring.home.button.create_ring.description.enabled" : { "font_family": "ProximaNovaBold", "size": 14.0, "color": "black"},
+    "panel.wellness.ring.home.button.create_ring.description.disabled" : { "font_family": "ProximaNovaRegular", "size": 12.0, "color": "#5c5c5c"},
+
     "panel.wellness.todo.content.large_title" :  { "font_family": "ProximaNovaBold", "size": 36.0, "color": "fillColorPrimary"},
     "panel.wellness.todo.card.title" :  { "font_family": "ProximaNovaBold", "size": 36.0, "color": "fillColorPrimary"},
     "panel.wellness.todo.dialog.heading.regular" :  { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorSecondary"},
@@ -178,9 +199,6 @@
     "panel.athletics.home.title.large":  {"font_family": "ProximaNovaRegular", "size": 20.0, "color": "fillColorPrimary",  "weight" :  "w900"},
     "panel.athletics.home.detail.medium":  {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "textBackground"},
     "panel.athletics.home.button.underline":  {"font_family": "ProximaNovaSemiBold", "size": 16.0, "color": "white", "letter_spacing" :  1.0, "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
-
-    "widget.wellness.ring.card.heading.large" :  { "font_family": "ProximaNovaBold", "size": 18.0, "color": "fillColorSecondary"},
-    "widget.wellness.ring.card.title.large" :  { "font_family": "ProximaNovaRegular", "size": 32.0, "color": "fillColorPrimary"}
   },
   "usage" : " Styles().getTextStyle('') "
 }

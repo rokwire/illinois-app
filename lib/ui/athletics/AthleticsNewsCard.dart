@@ -115,10 +115,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
                      Text(
                       (category != null) ? category.toUpperCase() : "",
                       softWrap: true,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.bold,
-                          fontSize: 14,
-                          color: Colors.white),
+                      style: Styles().getTextStyle('widget.heading.medium'),
                     )
                  ),
               ),
@@ -161,9 +158,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
       padding: EdgeInsets.only(left: 24, right: 24, top: 12),
       child: Text(
         (widget.news!.title != null) ? widget.news!.title! : "",
-        style:
-        TextStyle(fontSize: 24,
-            color: Styles().colors!.fillColorPrimary),
+        style: Styles().getTextStyle('widget.athletics.card.title.large'),
       ),
     );
   }
@@ -199,11 +194,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
               padding: _iconPadding,
             ),
             Text(displayTime,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Styles().colors!.textBackground,
-                    fontFamily: Styles().fontFamilies!.medium
-                     )),
+                style: Styles().getTextStyle('widget.card.detail.medium'),),
           ],
         ),
       );
