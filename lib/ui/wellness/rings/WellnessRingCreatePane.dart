@@ -101,7 +101,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
           Padding(
               padding: EdgeInsets.only(top: 5),
               child: Text(widget.examplesText ?? "",
-                  style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
+                  style: Styles().getTextStyle('widget.message.small')))
         ]));
   }
 
@@ -112,14 +112,14 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
           Padding(
               padding: EdgeInsets.only(bottom: 5),
               child: Text(Localization().getStringEx('panel.wellness.ring.create.name.field.label', 'RING NAME'),
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold))),
+                  style: Styles().getTextStyle('widget.description.small_variant'))),
           Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
               child: TextField(
                   controller: _nameController,
                   decoration: InputDecoration(border: InputBorder.none),
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)))
+                  style: Styles().getTextStyle('widget.title.medium')))
         ]));
   }
 
@@ -215,14 +215,14 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                   Padding(
                       padding: EdgeInsets.only(bottom: 6, left: 7),
                       child: Text(Localization().getStringEx('panel.wellness.ring.create.field.quantity.label', 'QUANTITY'),
-                          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold))),
+                          style: Styles().getTextStyle('widget.description.small_variant'))),
                   Container(
                       padding: EdgeInsets.symmetric(horizontal: 8),
                       decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
                       child: TextField(
                           controller: _quantityController,
                           decoration: InputDecoration(border: InputBorder.none),
-                          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)))
+                          style: Styles().getTextStyle('widget.title.medium')))
                 ])),
           Container(width: 16,),
           Expanded(flex: 17,
@@ -231,14 +231,14 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                     Padding(
                         padding: EdgeInsets.only(bottom: 6, left: 7),
                         child: Text(Localization().getStringEx('panel.wellness.ring.create.field.unit.label', 'UNIT'),
-                            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold))),
+                            style: Styles().getTextStyle('widget.description.small_variant'))),
                     Container(
                         padding: EdgeInsets.symmetric(horizontal: 8),
                         decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
                         child: TextField(
                             controller: _unitController,
                             decoration: InputDecoration(border: InputBorder.none),
-                            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)))
+                            style: Styles().getTextStyle('widget.title.medium')))
                   ]))
         ],),
         );
