@@ -185,8 +185,8 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                       child: Text(
-                                        Localization().getStringEx("panel.athletics.label.all_illinois_sports.title",'All Illinois Sports'),
-                                        style: Styles().getTextStyle('panel.athletics.home.title.large'),
+                                        Localization().getStringEx("panel.athletics.label.all_sports.title",'All {{app_title}} Sports').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+                                        style: Styles().textStyles?.getTextStyle('panel.athletics.home.title.large'),
                                       ),
                                     ),
                                     Semantics(
@@ -199,7 +199,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                         children: <Widget>[
                                           Text(
                                             Localization().getStringEx("panel.athletics.label.tap_the.title", "Tap the "),
-                                            style: Styles().getTextStyle('panel.athletics.home.detail.medium') ,
+                                            style: Styles().textStyles?.getTextStyle('panel.athletics.home.detail.medium') ,
                                           ),
                                           Image.asset(
                                               'images/icon-check-example.png', excludeFromSemantics: true),
@@ -207,7 +207,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                             child:Text(
                                               Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams"),
                                               overflow: TextOverflow.ellipsis,
-                                              style: Styles().getTextStyle('panel.athletics.home.detail.medium'),
+                                              style: Styles().textStyles?.getTextStyle('panel.athletics.home.detail.medium'),
                                             )
                                           )
                                         ],
@@ -265,7 +265,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 Expanded(child:
                                                   Text(
                                                     Localization().getStringEx("panel.athletics.label.explore_athletics.title", 'Explore Athletics'),
-                                                    style: Styles().getTextStyle('widget.heading.large'),
+                                                    style: Styles().textStyles?.getTextStyle('widget.heading.large'),
                                                   )
                                                 )
                                               ],
@@ -361,14 +361,14 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   Widget _buildHeaderTitle() {
     return Semantics(label: Localization().getStringEx('panel.athletics.header.title', 'Athletics'), excludeSemantics: true, child:
-          Text(Localization().getStringEx('panel.athletics.header.title', 'Athletics'), style: Styles().getTextStyle('panel.athletics.home.heading.regular')),);
+          Text(Localization().getStringEx('panel.athletics.header.title', 'Athletics'), style: Styles().textStyles?.getTextStyle('panel.athletics.home.heading.regular')),);
   }
 
   Widget _buildHeaderTeamsButton({double horizontalPadding = 16}) {
     return Semantics(label: Localization().getStringEx('headerbar.teams.title', 'Teams'), button: true, excludeSemantics: true, child: 
         InkWell(onTap: _onTapTeams, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 19), child:
-            Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: Styles().getTextStyle('panel.athletics.home.button.underline'))
+            Text(Localization().getStringEx('headerbar.teams.title', 'Teams'), style: Styles().textStyles?.getTextStyle('panel.athletics.home.button.underline'))
           ),
         ),
       );
@@ -625,7 +625,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                           Padding(padding: EdgeInsets.only(top:24), child:
                             Container(color: Styles().colors!.fillColorPrimary, child:
                               Padding(padding: EdgeInsets.all(5), child:
-                                Text(sportName.toUpperCase(), style: Styles().getTextStyle('widget.button.title.accent'),),
+                                Text(sportName.toUpperCase(), style: Styles().textStyles?.getTextStyle('widget.button.title.accent'),),
                               ),
                             ),
                           ),
@@ -647,14 +647,14 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                     ],),
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
-                    Text(widget.game.title, style: Styles().getTextStyle('widget.athletics.card.title.large.fat')),
+                    Text(widget.game.title, style: Styles().textStyles?.getTextStyle('widget.athletics.card.title.large.fat')),
                   ),
                   _athleticsDetails(),
                   Visibility(visible: showDescription, child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                       _divider(),
                       Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
-                        Text(description ?? '', style:Styles().getTextStyle('widget.card.detail.medium')),
+                        Text(description ?? '', style:Styles().textStyles?.getTextStyle('widget.card.detail.medium')),
                       )
                     ]),
                   ),
@@ -663,8 +663,8 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                       Container(height: 1,color: Styles().colors!.surfaceAccent,),
                       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
                         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                          Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style: Styles().getTextStyle('widget.card.detail.tiny_variant')),
-                          Text(StringUtils.ensureNotEmpty(interestsLabelValue), style: Styles().getTextStyle('widget.card.detail.tiny_variant2'),)
+                          Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny_variant')),
+                          Text(StringUtils.ensureNotEmpty(interestsLabelValue), style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny_variant2'),)
                         ],),
                       )
                     ],),
@@ -755,7 +755,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
               padding: _iconPadding,
             ),
             Text(displayTime,
-                style: Styles().getTextStyle('widget.card.detail.medium')),
+                style: Styles().textStyles?.getTextStyle('widget.card.detail.medium')),
           ],
         )),
       );
@@ -780,7 +780,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                 child: Text(locationText,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
-                    style: Styles().getTextStyle('widget.card.detail.medium'))),
+                    style: Styles().textStyles?.getTextStyle('widget.card.detail.medium'))),
           ],
         )),
       );

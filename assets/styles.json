@@ -21,7 +21,7 @@
     "textSurface"                           :"#404040",
     "textSurfaceTransparent15"              :"#26404040",
     "textSurfaceAccent"                     :"#404040",
-    "textVariant"                                 : "#ff494949",
+    "textVariant"                           :"#ff494949",
     "textBackground"                        :"#404040",
     "textbackgroundVariant"                 :"#404040",
 
@@ -39,7 +39,7 @@
     "white"                                 :"#FFFFFF",
     "whiteTransparent01"                    :"#1AFFFFFF",
     "whiteTransparent06"                    :"#99ffffff",
-    "black"                                           : "#000000",
+    "black"                                 :"#000000",
     "blackTransparent06"                    :"#99000000",
     "blackTransparent018"                   :"#30000000",
     "blackTransparent038"                   :"#61000000",
@@ -199,6 +199,5 @@
     "panel.athletics.home.title.large":  {"font_family": "ProximaNovaRegular", "size": 20.0, "color": "fillColorPrimary",  "weight" :  "w900"},
     "panel.athletics.home.detail.medium":  {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "textBackground"},
     "panel.athletics.home.button.underline":  {"font_family": "ProximaNovaSemiBold", "size": 16.0, "color": "white", "letter_spacing" :  1.0, "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"}
-  },
-  "usage" : " Styles().getTextStyle('') "
+  }
 }

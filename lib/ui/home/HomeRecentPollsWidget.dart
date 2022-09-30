@@ -136,7 +136,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
   Widget _buildContent() {
     if (Connectivity().isOffline) {
       return HomeMessageCard(
-        title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"),
+        title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
         message: Localization().getStringEx("widget.home.recent_polls.text.offline", "Recent Polls are not available while offline"),);
     }
     else if (_loadingPolls) {

@@ -1,0 +1,9 @@
+{
+    "app.title":"_Illinois_",
+    "app.team_name":"_Illinois_",
+    "app.univerity_name":"University of _Illinois_",
+
+    "panel.settings.illini_cash.label.for_yourself_or": "Use Illini Cash to purchase food, books, printing, and <a href='{{services_url}}'>other selected services</a>{{white_space}}<img src='asset:{{external_link_icon}}' alt=''/> with your _Illinois_ app or i-card.",
+    "panel.settings.home.feedback.app.description.format": "The _Illinois_ app is the official campus app of the University of _Illinois_ Urbana-Champaign. The app is built on the <a href='{{rokwire_platform_url}}'>Rokwire</a> open source software platform. The Rokwire project and the _Illinois_ app are efforts of the <a href='{{shci_url}}'>Smart, Healthy Communities Initiative</a> in the office of the Provost at the University of _Illinois_.",
+    "panel.settings.home.copyright.text": "Copyright © 2022 University of _Illinois_ Board of Trustees"
+}

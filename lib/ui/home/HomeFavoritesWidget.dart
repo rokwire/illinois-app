@@ -179,10 +179,10 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   Widget _buildContent() {
     if (Connectivity().isOffline) {
-      return HomeMessageCard(title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"), message: _offlineMessage,);
+      return HomeMessageCard(title: Localization().getStringEx("common.message.offline", "You appear to be offline"), message: _offlineMessage,);
     }
     else if ((widget.favoriteKey == InboxMessage.favoriteKeyName) && !Auth2().isOidcLoggedIn) {
-      return HomeMessageCard(title: Localization().getStringEx("app.logged_out.message.title", "You are not logged in"), message: _loggedOutMessage,);
+      return HomeMessageCard(title: Localization().getStringEx("common.message.logged_out", "You are not logged in"), message: _loggedOutMessage,);
     }
     else if (_loadingFavorites) {
       return HomeProgressWidget();

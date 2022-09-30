@@ -32,12 +32,13 @@ class OnboardingGetStartedPanel extends StatelessWidget with OnboardingPanel {
 
     String? strWelcome = Localization().getStringEx(
         'panel.onboarding.get_started.image.welcome.title',
-        'Welcome to Illinois');
+        'Welcome to {{app_title}}').
+          replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
     String strPersonalizedRecommendations = Localization().getStringEx(
         'panel.onboarding.get_started.label.personalized_recommendations',
         'Get personalized recommendations for the');
     String strUniversityofIllinois = Localization().getStringEx(
-        'panel.onboarding.get_started.label.university_of_illinois',
+        'app.univerity_name',
         'University of Illinois');
 
     return Scaffold(body: SwipeDetector(

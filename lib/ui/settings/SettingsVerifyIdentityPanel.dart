@@ -62,7 +62,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
           Container(height: 41),
           Container(padding: EdgeInsets.symmetric(horizontal: 24),
             child: Text(
-              Localization().getStringEx("panel.settings.verify_identity.label.description", "Connect to Illinois"),
+              Localization().getStringEx("panel.settings.verify_identity.label.description", "Connect to {{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
               style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 24, fontFamily: Styles().fontFamilies!.extraBold),
             ),
           ),
@@ -78,7 +78,7 @@ class _SettingsVerifyIdentityPanelState extends State<SettingsVerifyIdentityPane
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription3", " or ")),
                     TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription4", "employee"),
                         style: TextStyle(color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
-                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription5", "? Log in with your NetID to see Illinois information specific to you, like your Illini Cash and meal plan.")),
+                    TextSpan(text: Localization().getStringEx("panel.settings.verify_identity.label.connect_id.desription5", "? Log in with your NetID to see {{app_title}} information specific to you, like your Illini Cash and meal plan.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'))),
                   ],
                 ),
               )

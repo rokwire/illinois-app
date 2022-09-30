@@ -257,10 +257,10 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
                   onSubmitted: (_) => _onTapSearch(),
                   cursorColor: Styles().colors!.fillColorSecondary,
                   keyboardType: TextInputType.text,
-                  style: Styles().getTextStyle('widget.heading.regular'),
+                  style: Styles().textStyles?.getTextStyle('widget.heading.regular'),
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintStyle: Styles().getTextStyle('widget.heading.regular'),
+                    hintStyle: Styles().textStyles?.getTextStyle('widget.heading.regular'),
                     hintText: Localization().getStringEx("panel.find_event.label.search_event_by_title", "Search event by title"),
                   ),
                 ),
@@ -578,7 +578,7 @@ class _EventCardState extends State<_EventCard>{
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(StringUtils.isNotEmpty(widget.event.exploreTitle) ? widget.event.exploreTitle! : "",
-                            style: Styles().getTextStyle('widget.title.large')
+                            style: Styles().textStyles?.getTextStyle('widget.title.large')
                           ),
                           Container(height: 4,),
                           _exploreTimeDetail()
@@ -606,7 +606,7 @@ class _EventCardState extends State<_EventCard>{
         Container(width: 7,),
         Flexible(child: Text(displayTime!, overflow: TextOverflow.ellipsis,
             maxLines: 1,
-            style: Styles().getTextStyle('widget.card.detail.small_variant2')
+            style: Styles().textStyles?.getTextStyle('widget.card.detail.small_variant2')
     ),)
       ],
     ));

@@ -130,7 +130,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
   Widget _buildContent() {
     if (Connectivity().isOffline) {
       return HomeMessageCard(
-        title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"),
+        title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
         message: Localization().getStringEx("widget.home.athletics_events.text.offline", "Athletics Events are not available while offline"),
       );
     }

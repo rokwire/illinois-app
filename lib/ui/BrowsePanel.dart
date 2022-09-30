@@ -325,8 +325,9 @@ class _BrowseSection extends StatelessWidget {
       ) : Container();
   }
 
+  String get _appTitle => Localization().getStringEx('app.title', 'Illinois');
   String get _title => Localization().getStringEx('panel.browse.section.$sectionId.title', StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
-  String get _description => Localization().getStringEx('panel.browse.section.$sectionId.description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit est et ante maximus.');
+  String get _description => Localization().getStringEx('panel.browse.section.$sectionId.description', '').replaceAll('{{app_title}}', _appTitle);
 
   void _onTapExpand() {
     if (_hasBrowseContent && (onExpand != null)) {

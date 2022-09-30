@@ -416,37 +416,37 @@
 		],
 		"features2": [
 			{
-				"key":"com.illinois.features2.entry.disable_location_awareness",
+				"key":"privacy.features2.entry.disable_location_awareness",
 				"text":"Disable location awareness.",
 				"max_level":1
 			},
 			{
-				"key":"com.illinois.features2.entry.dont_store_location",
+				"key":"privacy.features2.entry.dont_store_location",
 				"text":"Not store your location.",
 				"max_level":2
 			},
 			{
-				"key":"com.illinois.features2.entry.remove_preferences",
+				"key":"privacy.features2.entry.remove_preferences",
 				"text":"Remove your preferences.",
 				"max_level":2
 			},
 			{
-				"key":"com.illinois.features2.entry.log_out",
+				"key":"privacy.features2.entry.log_out",
 				"text":"Log you off system.",
 				"max_level":3
 			},
 			{
-				"key":"com.illinois.features2.entry.disable_notifications",
+				"key":"privacy.features2.entry.disable_notifications",
 				"text":"Turn off notifications.",
 				"max_level":3
 			},
 			{
-				"key":"com.illinois.features2.entry.remove_credit_card",
+				"key":"privacy.features2.entry.remove_credit_card",
 				"text":"Remove your credit card info.",
 				"max_level":3
 			},
 			{
-				"key":"com.illinois.features2.entry.dont_share_location",
+				"key":"privacy.features2.entry.dont_share_location",
 				"text":"Not share your data with others.",
 				"max_level":4
 			}

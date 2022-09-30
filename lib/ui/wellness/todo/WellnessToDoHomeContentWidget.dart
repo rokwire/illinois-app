@@ -168,14 +168,14 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     if (_selectedTab != _ToDoTab.weekly) {
       return Container();
     }
-    TextStyle? smallStyle = Styles().getTextStyle("widget.detail.small");
+    TextStyle? smallStyle = Styles().textStyles?.getTextStyle("widget.detail.small");
     return Padding(
         padding: EdgeInsets.only(top: 13),
         child: Column(children: [
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
               Text(StringUtils.ensureNotEmpty(_formattedCalendarMonthLabel),
-                  style: Styles().getTextStyle("widget.title.regular")),
+                  style: Styles().textStyles?.getTextStyle("widget.title.regular")),
               GestureDetector(
                   onTap: _onTapCalendarInfo,
                   child: Padding(padding: EdgeInsets.only(left: 5), child: Image.asset('images/icon-more-info.png')))
@@ -247,7 +247,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     while (currentDate.isBefore(_calendarEndDate)) {
       String dateFormatted = AppDateTime().formatDateTime(currentDate, format: 'dd', ignoreTimeZone: true)!;
       Text dateWidget = Text(dateFormatted,
-          style: Styles().getTextStyle("widget.title.regular"));
+          style: Styles().textStyles?.getTextStyle("widget.title.regular"));
       dateWidgetList.add(dateWidget);
       currentDate = currentDate.add(Duration(days: 1));
     }
@@ -329,7 +329,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
       Padding(
           padding: EdgeInsets.symmetric(vertical: 30, horizontal: 16),
           child: Text(Localization().getStringEx('panel.wellness.todo.items.add.empty.msg', 'You currently have no to-do list items.'),
-              style: Styles().getTextStyle("widget.message.small")))
+              style: Styles().textStyles?.getTextStyle("widget.message.small")))
     ]);
   }
 
@@ -343,7 +343,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
               child: Text(sectionKey,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
-                  style: Styles().getTextStyle("widget.title.large_variant")))
+                  style: Styles().textStyles?.getTextStyle("widget.title.large_variant")))
         ]));
   }
 
@@ -362,14 +362,14 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                         padding: EdgeInsets.symmetric(horizontal: 40),
                         child: Text(Localization().getStringEx('panel.wellness.todo.welcome.label', 'Welcome to Your To-Do List'),
                             textAlign: TextAlign.center,
-                            style: Styles().getTextStyle("panel.wellness.todo.dialog.heading.regular"))),
+                            style: Styles().textStyles?.getTextStyle("panel.wellness.todo.dialog.heading.regular"))),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
                         child: Text(
                             Localization().getStringEx('panel.wellness.todo.welcome.description.label',
                                 'Free up space in your mind by recording your to-do items here.'),
                             textAlign: TextAlign.center,
-                            style:  Styles().getTextStyle("widget.detail.small")))
+                            style:  Styles().textStyles?.getTextStyle("widget.detail.small")))
                   ])),
               Align(
                   alignment: Alignment.topRight,
@@ -668,7 +668,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
                 Expanded(
                     child: Text(StringUtils.ensureNotEmpty(widget.item.name),
                         overflow: TextOverflow.ellipsis,
-                        style: Styles().getTextStyle("panel.wellness.todo.card.title"))),
+                        style: Styles().textStyles?.getTextStyle("panel.wellness.todo.card.title"))),
             ])),
             Semantics(label: "Edit", button: true, child: GestureDetector(onTap: () => _onTapEdit(widget.item), child: Image.asset('images/edit-white.png', excludeFromSemantics: true,)))
           ])),
@@ -750,7 +750,7 @@ class _TabButton extends StatelessWidget {
                     child: Text(label!,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
-                        style: selected! ? Styles().getTextStyle("widget.tab.selected") : Styles().getTextStyle("widget.tab.not_selected"))))));
+                        style: selected! ? Styles().textStyles?.getTextStyle("widget.tab.selected") : Styles().textStyles?.getTextStyle("widget.tab.not_selected"))))));
   }
 
   BorderRadiusGeometry? get _borderRadius {
@@ -819,7 +819,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
                         overflow: TextOverflow.ellipsis,
                         maxLines: 4,
                         textAlign: TextAlign.center,
-                        style:Styles().getTextStyle("widget.title.regular")))
+                        style:Styles().textStyles?.getTextStyle("widget.title.regular")))
               ]),
               GestureDetector(
                   onTap: _onTapPickReminderDate,
@@ -828,7 +828,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
                       child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Text(StringUtils.ensureNotEmpty(_formattedDate),
-                              style: Styles().getTextStyle("widget.detail.small"))))),
+                              style: Styles().textStyles?.getTextStyle("widget.detail.small"))))),
               GestureDetector(
                   onTap: _onTapPickReminderTime,
                   child: Container(
@@ -836,7 +836,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
                       child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 10),
                           child: Text(StringUtils.ensureNotEmpty(_formattedTime),
-                              style: Styles().getTextStyle("panel.wellness.todo.content.large_title"))))),
+                              style: Styles().textStyles?.getTextStyle("panel.wellness.todo.content.large_title"))))),
               Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: RoundedButton(

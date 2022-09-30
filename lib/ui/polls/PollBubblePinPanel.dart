@@ -314,7 +314,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
     if(_validate()) {
 
       if (!Connectivity().isNotOffline) {
-        AppAlert.showDialogResult(context, Localization().getStringEx('app.offline.message.title', 'You appear to be offline'));
+        AppAlert.showDialogResult(context, Localization().getStringEx('common.message.offline', 'You appear to be offline'));
       }
       else {
         setState(() {

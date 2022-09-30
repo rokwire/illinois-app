@@ -55,6 +55,6 @@ class ExpandableText extends rokwire.ExpandableText {
   String get trimSuffix => '...';
 
   @override
-  String get readMoreText => Localization().getStringEx('app.common.label.read_more', 'Read more');
+  String get readMoreText => Localization().getStringEx('common.label.read_more', 'Read more');
 }
 

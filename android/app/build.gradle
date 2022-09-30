@@ -121,6 +121,23 @@ android {
             }
         }
     }
+
+    flavorDimensions "product", "environment"
+    productFlavors {
+        dev {
+            dimension "environment"
+        }
+        prod {
+            dimension "environment"
+        }
+        tst {
+            dimension "environment"
+        }
+        illinois {
+            dimension "product"
+            applicationId "edu.illinois.rokwire"
+        }
+    }
 }
 
 play {

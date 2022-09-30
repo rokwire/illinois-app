@@ -1,1 +1,2 @@
 ENVIRONMENT=Dev
+FLUTTER_TARGET=lib/mainDev.dart

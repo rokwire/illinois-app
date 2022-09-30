@@ -15,9 +15,6 @@
 *.iws
 .idea/
 
-# VS Code related
-.vscode/
-
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
@@ -54,7 +51,8 @@ app.*.map.json
 /ios/Runner/GoogleService-Info-Prod.plist
 
 /android/keys.properties
-/android/app/src/debug/google-services.json
-/android/app/src/release/google-services.json
-/android/app/src/profile/google-services.json
 google-services.json
+
+# App Branding
+/app/assets/
+/app/images/

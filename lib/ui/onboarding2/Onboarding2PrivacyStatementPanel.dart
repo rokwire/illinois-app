@@ -76,7 +76,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                       Image.asset("images/lock_illustration.png", excludeFromSemantics: true, width: 130, fit: BoxFit.fitWidth, ),
                       Semantics(
                         label: titleText + titleText2,
-                        hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
+                        hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
                         header: true,
                         excludeSemantics: true,
                         child: Padding(

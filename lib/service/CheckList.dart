@@ -394,7 +394,7 @@ abstract class CheckList with Service implements NotificationsListener{
       return;
     }
     
-    Groups().searchGroups(groupName, includeHidden: true).then((foundGroups){
+    Groups().searchGroups(groupName, includeHidden: true ).then((foundGroups){
       if(CollectionUtils.isEmpty(foundGroups)){
         Log.d("Unable to Join approval group: Unable to find group with name $groupName");
       }

@@ -127,8 +127,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 24),
             child: Text(
-              Localization().getStringEx("panel.create_poll.description",
-                  "People can vote through the Illinois app by asking you for the 4 Digit Poll #."),
+              Localization().getStringEx("panel.create_poll.description","People can vote through the {{app_title}} app by asking you for the 4 Digit Poll #.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
               style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
             )));
   }

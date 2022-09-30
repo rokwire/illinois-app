@@ -188,9 +188,6 @@ class Storage extends rokwire.Storage {
   // Polls
   @override String get activePollsKey  => 'active_polls';
 
-  // Styles
-  @override String get stylesContentModeKey => 'styles_content_mode';
-
   // Voter
   static const String _voterHiddenForPeriodKey = 'voter_hidden_for_period';
   bool? get voterHiddenForPeriod => getBoolWithName(_voterHiddenForPeriodKey, defaultValue: false);

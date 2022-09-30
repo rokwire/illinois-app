@@ -40,7 +40,6 @@
 
     <queries>
         <package android:name="com.touchnet.orderahead" />
-        <package android:name="edu.illinois.covid" />
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="http" />

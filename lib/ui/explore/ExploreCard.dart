@@ -157,8 +157,8 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                             Flexible(flex: 8, child:
                               Container(width: double.infinity, child:
                                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                                  Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style:Styles().getTextStyle('widget.card.detail.tiny_variant')),
-                                  Text(StringUtils.ensureNotEmpty(interestsLabelValue), style:Styles().getTextStyle("widget.explore.card.detail.small"))
+                                  Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style:Styles().textStyles?.getTextStyle('widget.card.detail.tiny_variant')),
+                                  Text(StringUtils.ensureNotEmpty(interestsLabelValue), style:Styles().textStyles?.getTextStyle("widget.explore.card.detail.small"))
                                 ],),
                               ),
                             ),
@@ -242,10 +242,10 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       if (StringUtils.isNotEmpty(sportName)) {
         leftLabel += ' - $sportName';
       }
-      leftLabelStyle = Styles().getTextStyle('widget.description.small_variant') ;
+      leftLabelStyle = Styles().textStyles?.getTextStyle('widget.description.small_variant') ;
     } else {
       leftLabel = widget.explore!.exploreTitle ?? "";
-      leftLabelStyle = Styles().getTextStyle('widget.explore.card.title.regular') ;
+      leftLabelStyle = Styles().textStyles?.getTextStyle('widget.explore.card.title.regular') ;
     }
 
     return Row(
@@ -292,7 +292,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     return Padding(
         padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
         child: Text(StringUtils.ensureNotEmpty(widget.explore?.exploreTitle),
-            style:  Styles().getTextStyle('widget.explore.card.title.large')));
+            style:  Styles().textStyles?.getTextStyle('widget.explore.card.title.large')));
   }
 
   Widget _exploreDetails() {
@@ -343,7 +343,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
           ),
           Flexible(child: Text(displayTime!, overflow: TextOverflow.ellipsis,
               maxLines: 1,
-              style: Styles().getTextStyle('widget.explore.card.detail.regular') )
+              style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular') )
             ,)
         ],
       ),
@@ -376,7 +376,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                 Image.asset('images/icon-location.png', excludeFromSemantics: true,)
               ),
               Expanded(child:
-                Text(locationText, style: (onLocationTap != null) ? Styles().getTextStyle('widget.explore.card.detail.regular.underline') : Styles().getTextStyle('widget.explore.card.detail.regular')
+                Text(locationText, style: (onLocationTap != null) ? Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular.underline') : Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular')
                 )
               ),
             ],
@@ -401,7 +401,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                 padding: _iconPadding,
               ),
               Expanded(child: Text(Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event") ,
-                  style: Styles().getTextStyle('widget.explore.card.detail.regular'))),
+                  style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular'))),
             ],
           ),
         ));
@@ -425,7 +425,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
             ),
             Expanded(
               child: Text(displayTime,
-                  style: Styles().getTextStyle('widget.explore.card.detail.regular')),
+                  style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular')),
             ),
           ],
         ),
@@ -646,7 +646,7 @@ class _EventSmallCard extends StatelessWidget {
                   children: <Widget>[
                     Expanded(child: Text(_title!, overflow: TextOverflow.ellipsis,
                       maxLines: 2,
-                      style: Styles().getTextStyle('widget.title.large') ,),),
+                      style: Styles().textStyles?.getTextStyle('widget.title.large') ,),),
                     Visibility(
                       visible: starVisible, child: GestureDetector(
                         behavior: HitTestBehavior.opaque,
@@ -671,7 +671,7 @@ class _EventSmallCard extends StatelessWidget {
                 Visibility(visible: !isMoreCardType, child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
                   Padding(padding: EdgeInsets.only(right: 10),
                     child: Image.asset('images/icon-time.png', excludeFromSemantics: true),),
-                  Expanded(child: Text(_subTitle ?? '', overflow: TextOverflow.ellipsis, maxLines: 1, style: Styles().getTextStyle('widget.explore.card.detail.large') ,),)
+                  Expanded(child: Text(_subTitle ?? '', overflow: TextOverflow.ellipsis, maxLines: 1, style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.large') ,),)
                 ],),)
               ],),),),
           ],),)),);

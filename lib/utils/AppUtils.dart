@@ -59,7 +59,7 @@ class AppAlert {
     return showDialog(context: context, builder: (context) {
       return AlertDialog(
         content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontSize: 18),),
+          Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: TextStyle(fontSize: 18),),
           Container(height:16),
           Text(message!, textAlign: TextAlign.center,),
         ],),

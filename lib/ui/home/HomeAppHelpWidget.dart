@@ -70,7 +70,7 @@ class _HomeAppHelpWidgetState extends HomeCompoundWidgetState<HomeAppHelpWidget>
     else if ((code == 'feedback') && _canFeedback) {
       return HomeCommandButton(
         title: Localization().getStringEx('widget.home.app_help.feedback.button.title', 'Provide Feedback'),
-        description: Localization().getStringEx('widget.home.app_help.feedback.button.description', 'Enjoying the app? Missing something? The University of Illinois Smart, Healthy Communities Initiative needs your ideas and input. Thank you!'),
+        description: Localization().getStringEx('widget.home.app_help.feedback.button.description', 'Enjoying the app? Missing something? The {{app_university}} Smart, Healthy Communities Initiative needs your ideas and input. Thank you!').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
         favorite: HomeFavorite(code, category: widget.favoriteId),
         onTap: _onFeedback,
       );

@@ -1,0 +1,2 @@
+ENVIRONMENT=Test
+FLUTTER_TARGET=lib/mainTest.dart

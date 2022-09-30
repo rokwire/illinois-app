@@ -432,7 +432,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx("panel.profile_info.logout.title", "Illinois"),
+              Localization().getStringEx("panel.profile_info.logout.title", "{{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
             Padding(
