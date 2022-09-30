@@ -92,7 +92,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
                               child: Text(StringUtils.ensureNotEmpty(widget.course.name),
                                   maxLines: (widget.isSmall ? 5 : 3),
                                   overflow: TextOverflow.ellipsis,
-                                  style: Styles().getTextStyle('widget.canvas.card.title.regular')))
+                                  style: Styles().textStyles?.getTextStyle('widget.canvas.card.title.regular')))
                         ]))))
           ]))
         ]));
@@ -106,7 +106,7 @@ class _CanvasCourseCardState extends State<CanvasCourseCard> {
           height: indicatorSize,
           child: Padding(padding: EdgeInsets.all(5), child: CircularProgressIndicator(strokeWidth: 1, color: courseColor)));
     } else {
-      return Text(_formattedGradeScore, style: Styles().getTextStyle('widget.canvas.card.grade.score', data: {"courseColor": courseColor}));
+      return Text(_formattedGradeScore, style: Styles().textStyles?.getTextStyle('widget.canvas.card.grade.score', data: {"courseColor": courseColor}));
     }
   }
 

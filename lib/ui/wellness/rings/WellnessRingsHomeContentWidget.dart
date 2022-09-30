@@ -115,7 +115,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
           Container(
             padding: EdgeInsets.symmetric(horizontal: 6),
             child: Text(Localization().getStringEx('panel.wellness.rings.description.label', "See your recent progress in one place by checking your log for the last 14 days."),
-              style : Styles().getTextStyle('panel.wellness.ring.home.detail.message'),
+              style : Styles().textStyles?.getTextStyle('panel.wellness.ring.home.detail.message'),
           )),
           Container(height: 15,),
           _buildHistoryList(),
@@ -262,13 +262,13 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
                       flex: 5,
                       child: Container(
                         child: Text(label ,
-                          style: enabled? Styles().getTextStyle('panel.wellness.ring.home.button.create_ring.title.enabled') : Styles().getTextStyle('panel.wellness.ring.home.button.create_ring.title.disabled'),
+                          style: enabled? Styles().textStyles?.getTextStyle('panel.wellness.ring.home.button.create_ring.title.enabled') : Styles().textStyles?.getTextStyle('panel.wellness.ring.home.button.create_ring.title.disabled'),
                           textAlign: TextAlign.start,),)),
                   Expanded(
                       flex: 5,
                       child: Container(
                         child: Text(description ,
-                          style: enabled? Styles().getTextStyle('panel.wellness.ring.home.button.create_ring.description.enabled') :  Styles().getTextStyle('panel.wellness.ring.home.button.create_ring.description.disabled'),
+                          style: enabled? Styles().textStyles?.getTextStyle('panel.wellness.ring.home.button.create_ring.description.enabled') :  Styles().textStyles?.getTextStyle('panel.wellness.ring.home.button.create_ring.description.disabled'),
                           textAlign: TextAlign.end,),)),
                 ],),
               ),
@@ -294,14 +294,14 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
                         padding: EdgeInsets.symmetric(horizontal: 15),
                         child: Text(Localization().getStringEx('panel.wellness.rings.welcome.label', 'Welcome to Your Daily Wellness Rings!'),
                             textAlign: TextAlign.center,
-                            style: Styles().getTextStyle('panel.wellness.ring.home.popup.heading'))),
+                            style: Styles().textStyles?.getTextStyle('panel.wellness.ring.home.popup.heading'))),
                     Padding(
                         padding: EdgeInsets.only(top: 8),
                         child: Text(
                             Localization().getStringEx('panel.wellness.rings.welcome.description.label',
                                 'Use this tool to motivate you to start healthy habits, even if they are small!\n\nProgress is more important than perfection. For example: your “best” one day could be a full workout at the gym or it could be a five-minute walk—both count as an accomplishment!'),
                             textAlign: TextAlign.center,
-                            style: Styles().getTextStyle('widget.message.small')))
+                            style: Styles().textStyles?.getTextStyle('widget.message.small')))
                   ])),
               Align(
                   alignment: Alignment.topRight,
@@ -370,7 +370,7 @@ class _TabButton extends StatelessWidget {
                     child: Text(label!,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
-                        style: selected! ? Styles().getTextStyle('widget.tab.selected') : Styles().getTextStyle('widget.tab.not_selected') )))));
+                        style: selected! ? Styles().textStyles?.getTextStyle('widget.tab.selected') : Styles().textStyles?.getTextStyle('widget.tab.not_selected') )))));
   }
 
   BorderRadiusGeometry? get _borderRadius {

@@ -363,10 +363,10 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                 Text(widget.label , semanticsLabel: "",
-                  style: Styles().getTextStyle('widget.button.title.accent')),
+                  style: Styles().textStyles?.getTextStyle('widget.button.title.accent')),
                 widget.description==null ? Container():
                 Text(widget.description ?? "" , semanticsLabel: "",
-                  style: Styles().getTextStyle('widget.button.title.regular')),
+                  style: Styles().textStyles?.getTextStyle('widget.button.title.regular')),
                 ],),)),
               Container(
                 child: Row(
@@ -515,8 +515,8 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
                         textAlign: TextAlign.left,
                         text: TextSpan(
                             children:[
-                              TextSpan(text: "${widget.label}  ", style : Styles().getTextStyle('widget.button.title.regular'), semanticsLabel: ""),
-                              TextSpan(text: widget.description, style : Styles().getTextStyle('widget.button.title.accent'),),
+                              TextSpan(text: "${widget.label}  ", style : Styles().textStyles?.getTextStyle('widget.button.title.regular'), semanticsLabel: ""),
+                              TextSpan(text: widget.description, style : Styles().textStyles?.getTextStyle('widget.button.title.accent'),),
                             ]
                         )),
                     )),
@@ -596,7 +596,7 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
       accomplishmentsTextContent.add(
           Container( //Accomplished ring within Card
               child: Text("${accomplishedRingData.ringData.name?? "N/A"} Ring - ${_trimDecimal(accomplishedRingData.achievedValue)}/${_trimDecimal(accomplishedRingData.ringData.goal)} ${accomplishedRingData.ringData.unit}${accomplishedRingData.ringData.goal>1?"s":""}",
-                  style: Styles().getTextStyle('widget.detail.small')
+                  style: Styles().textStyles?.getTextStyle('widget.detail.small')
               )
           ));
       accomplishmentsTextContent.add(Container(height: 4,));
@@ -631,15 +631,15 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(weekday,
-                      style: Styles().getTextStyle('widget.wellness.ring.card.heading.large')
+                      style: Styles().textStyles?.getTextStyle('widget.wellness.ring.card.heading.large')
                     ),
                     // Container(height: 4,),
                     Text(day,
-                      style: Styles().getTextStyle('widget.wellness.ring.card.title.large')
+                      style: Styles().textStyles?.getTextStyle('widget.wellness.ring.card.title.large')
                     ),
                     // Container(height: 4,),
                     Text(month,
-                      style: Styles().getTextStyle('widget.card.title.regular')
+                      style: Styles().textStyles?.getTextStyle('widget.card.title.regular')
                     ),
                   ],
                 )
@@ -652,7 +652,7 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("${widget.accomplishments?.length} Rings Completed!",
-                    style: Styles().getTextStyle('widget.description.small_variant')
+                    style: Styles().textStyles?.getTextStyle('widget.description.small_variant')
                   ),
                   Container(height: 6,),
                   Column(
@@ -707,7 +707,7 @@ class WellnessWidgetHelper{
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Text(Localization().getStringEx('panel.wellness.ring.create.header.label', 'My Daily Wellness Rings'),
           overflow: TextOverflow.ellipsis,
-          style: Styles().getTextStyle('widget.title.medium')),
+          style: Styles().textStyles?.getTextStyle('widget.title.medium')),
       // FavoriteStarIcon(style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
     ]);
   }

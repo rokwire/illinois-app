@@ -249,12 +249,12 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   Widget _buildDateTitle(String date){
-    return Text(date, style: Styles().getTextStyle('panel.event_schedule.title')
+    return Text(date, style: Styles().textStyles?.getTextStyle('panel.event_schedule.title')
     );
   }
 
   Widget _buildCategoryTitle(String category){
-    return Text(category, style: Styles().getTextStyle('panel.event_schedule.category'));
+    return Text(category, style: Styles().textStyles?.getTextStyle('panel.event_schedule.category'));
   }
 
   Widget _buildEventCart(Event event) {
@@ -370,7 +370,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   autofocus: true,
                   cursorColor: Styles().colors!.fillColorSecondary,
                   keyboardType: TextInputType.text,
-                  style: Styles().getTextStyle('panel.event_schedule.search.edit'),
+                  style: Styles().textStyles?.getTextStyle('panel.event_schedule.search.edit'),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                   ),
@@ -623,10 +623,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                     children: <Widget>[
                       Text((title != null) ? title : "",
                           overflow: TextOverflow.ellipsis,
-                          style: Styles().getTextStyle('panel.event_schedule.title')),
+                          style: Styles().textStyles?.getTextStyle('panel.event_schedule.title')),
                       Text((description != null) ? description : "",
                           overflow: TextOverflow.ellipsis,
-                          style: Styles().getTextStyle('panel.event_schedule.map.description')),
+                          style: Styles().textStyles?.getTextStyle('panel.event_schedule.map.description')),
                       Container(
                         height: 8,
                       ),
@@ -1094,7 +1094,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                           Expanded(
                             child: Text(
                               widget.event!.title!,
-                              style: Styles().getTextStyle('widget.title.large'),
+                              style: Styles().textStyles?.getTextStyle('widget.title.large'),
                             ),
                           ),
                           Visibility(
@@ -1125,7 +1125,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 4, left: 28),
-                    child: Text(widget.event?.displaySuperTime ?? '', style: Styles().getTextStyle('widget.explore.card.detail.regular')),
+                    child: Text(widget.event?.displaySuperTime ?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular')),
                   )
                 ]),
               ),
@@ -1165,7 +1165,7 @@ class _EventTabView extends StatelessWidget{
             ),
             child: Center(
                 child: Text(text!,
-                    style: selected! ? Styles().getTextStyle('widget.tab.selected') : Styles().getTextStyle('widget.tab.not_selected') )),
+                    style: selected! ? Styles().textStyles?.getTextStyle('widget.tab.selected') : Styles().textStyles?.getTextStyle('widget.tab.not_selected') )),
           )),
     );
   }

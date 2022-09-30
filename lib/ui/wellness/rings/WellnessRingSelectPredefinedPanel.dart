@@ -71,7 +71,7 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
                       Container(height: 16,),
                       Container(
                         child: Text(Localization().getStringEx('panel.wellness.ring.select.description', 'Select a ring type or create your own custom ring.'),
-                          style: Styles().getTextStyle('panel.wellness.ring.select_predefined.message.regular')
+                          style: Styles().textStyles?.getTextStyle('panel.wellness.ring.select_predefined.message.regular')
                       )),
                       Container(height: 12,),
                       _buildPredefinedButtons(),
@@ -194,9 +194,9 @@ class _WellnessRingButtonState extends State<_WellnessRingButton>{
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.label , style: Styles().getTextStyle('anel.wellness.ring.select_predefined.button.label.regular'), textAlign: TextAlign.start,),
+                Text(widget.label , style: Styles().textStyles?.getTextStyle('anel.wellness.ring.select_predefined.button.label.regular'), textAlign: TextAlign.start,),
                 Container(height: 12,),
-                Text(widget.description ?? "" , style: Styles().getTextStyle('panel.wellness.ring.select_predefined.button.description.regular'), textAlign: TextAlign.start),
+                Text(widget.description ?? "" , style: Styles().textStyles?.getTextStyle('panel.wellness.ring.select_predefined.button.description.regular'), textAlign: TextAlign.start),
           ])),
           Container(width: 7,),
           Container(

@@ -554,7 +554,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         Expanded(
           child: Center(
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 32),
-              child: Text(Localization().getStringEx("panel.group_detail.label.error_message", 'Failed to load group data.'),  style:  Styles().getTextStyle('widget.message.large'),)
+              child: Text(Localization().getStringEx("panel.group_detail.label.error_message", 'Failed to load group data.'),  style:  Styles().textStyles?.getTextStyle('widget.message.large'),)
             ),
           ),
         ),
@@ -731,26 +731,26 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               ),
 
               Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                Text(_group?.title ?? '',  style:  Styles().getTextStyle('panel.group.title.lage'),),
+                Text(_group?.title ?? '',  style:  Styles().textStyles?.getTextStyle('panel.group.title.lage'),),
               ),
               
               GestureDetector(onTap: () => { if (_isMember) {_onTapMembers()} }, child:
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
                   Container(decoration: (_isMember ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
-                    Text(members, style:  Styles().getTextStyle('panel.group.detail.fat'))
+                    Text(members, style:  Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
                   ),
                 ),
               ),
               
               Visibility(visible: StringUtils.isNotEmpty(pendingMembers), child:
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                  Text(pendingMembers,  style: Styles().getTextStyle('panel.group.detail.fat') ,)
+                  Text(pendingMembers,  style: Styles().textStyles?.getTextStyle('panel.group.detail.fat') ,)
                 ),
               ),
 
               Visibility(visible: StringUtils.isNotEmpty(attendedMembers), child:
                 Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                  Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().getTextStyle('panel.group.detail.fat'),)
+                  Text(StringUtils.ensureNotEmpty(attendedMembers), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'),)
                 ),
               ),
               
@@ -809,7 +809,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         child: Padding(
             padding: EdgeInsets.only(left: 24, top: 10, bottom: 10),
             child: Text(Localization().getStringEx("panel.group_detail.button.leave.title", 'Leave'),
-                style: Styles().getTextStyle('panel.group.button.leave.title')
+                style: Styles().textStyles?.getTextStyle('panel.group.button.leave.title')
             )));
 
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -904,7 +904,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 child: Align(alignment: Alignment.topCenter,
                   child: (_loadingPostsPage == true) ?
                   SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )) :
-                  Text(title, style: Styles().getTextStyle('panel.group.button.show_older.title'),),
+                  Text(title, style: Styles().textStyles?.getTextStyle('panel.group.button.show_older.title'),),
                 ),
               )
           )
@@ -975,9 +975,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 4), child:
-          Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().getTextStyle('panel.group.detail.fat'), ),),
+          Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'), ),),
         ExpandableText(description,
-          textStyle: Styles().getTextStyle('panel.group.detail.regular'),
+          textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
           trimLinesCount: 4,
           readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
       ],),);
@@ -998,8 +998,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(padding: EdgeInsets.only(bottom: 4), child:
-            Text(title!, style:  Styles().getTextStyle('panel.group.detail.fat'), ),),
-          Text(description!, style: Styles().getTextStyle('panel.group.detail.regular'), ),
+            Text(title!, style:  Styles().textStyles?.getTextStyle('panel.group.detail.fat'), ),),
+          Text(description!, style: Styles().textStyles?.getTextStyle('panel.group.detail.regular'), ),
         ],),) :
       Container(width: 0, height: 0);
   }
@@ -1019,9 +1019,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Row(children: [
         Expanded(child:
           RichText(text:
-            TextSpan(style: Styles().getTextStyle('panel.group.detail.tag.heading'), children: <TextSpan>[
+            TextSpan(style: Styles().textStyles?.getTextStyle('panel.group.detail.tag.heading'), children: <TextSpan>[
               TextSpan(text: Localization().getStringEx("panel.group_detail.label.tags", "Group Tags: ")),
-              TextSpan(text: tags ?? '', style: Styles().getTextStyle('anel.group.detail.tag.title')),
+              TextSpan(text: tags ?? '', style: Styles().textStyles?.getTextStyle('anel.group.detail.tag.title')),
             ],),
           )
         )
@@ -1035,7 +1035,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
           Center(child:
             Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
-              Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().getTextStyle('widget.heading.small'),)
+              Text(_group!.currentUserStatusText!.toUpperCase(), style:  Styles().textStyles?.getTextStyle('widget.heading.small'),)
             ),
           ),
         ),
@@ -1045,7 +1045,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     
       Row(children: <Widget>[
         Expanded(child:
-          Text(_group?.category?.toUpperCase() ?? '', style:  Styles().getTextStyle('widget.title.small'),),
+          Text(_group?.category?.toUpperCase() ?? '', style:  Styles().textStyles?.getTextStyle('widget.title.small'),),
         ),
         _buildPolicyButton(),
       ],);
@@ -1090,7 +1090,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             Padding(
                 padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
                 child: Text(Localization().getStringEx("panel.group_detail.label.admins", 'Admins'),
-                    style:   Styles().getTextStyle('widget.title.large'))),
+                    style:   Styles().textStyles?.getTextStyle('widget.title.large'))),
             SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: content))
           ]))
     ]);
@@ -1161,7 +1161,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Padding(
                     padding: EdgeInsets.symmetric(vertical: 26),
                     child: Text(confirmationTextMsg!,
-                        textAlign: TextAlign.left, style:  Styles().getTextStyle('widget.dialog.message.medium'))),
+                        textAlign: TextAlign.left, style:  Styles().textStyles?.getTextStyle('widget.dialog.message.medium'))),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
                   Expanded(flex: leftAreaFlex, child: Container()),
                   Expanded(flex: negativeButtonFlex, child: RoundedButton(
@@ -1397,7 +1397,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       border: Border.all(color: Styles().colors!.textSurface!, width: 1),
       alignment: Alignment.center,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
-      infoTextStyle: Styles().getTextStyle('widget.description.regular"'),
+      infoTextStyle: Styles().textStyles?.getTextStyle('widget.description.regular"'),
       closeIcon: Image.asset('images/close-orange-small.png'),
     ),);
   }
@@ -1732,8 +1732,8 @@ class _OfficerCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: groupMember?.userId)),
         Padding(padding: EdgeInsets.only(top: 4),
-          child: Text(groupMember?.name ?? "", style: Styles().getTextStyle('widget.card.title.small'),),),
-        Text(groupMember?.officerTitle ?? "", style:  Styles().getTextStyle('widget.card.detail.regular')),
+          child: Text(groupMember?.name ?? "", style: Styles().textStyles?.getTextStyle('widget.card.title.small'),),),
+        Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles?.getTextStyle('widget.card.detail.regular')),
       ],),
     );
   }
