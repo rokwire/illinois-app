@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -109,7 +110,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             Container(height: 12, color: Styles().colors!.background),
                             _buildPrivacyDropDown(),
                             _buildHiddenForSearch(),
-                            _buildAuthManLayout(),
+                            Visibility(visible: _canViewManagedSettings, child: _buildAuthManLayout()),
                             Visibility(
                               visible: !_isAuthManGroup,
                               child: _buildMembershipLayout()),
@@ -117,8 +118,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             _buildPollsLayout(),
                             Container(height: 16, color: Styles().colors!.background),
                             _buildAttendanceLayout(),
-                            Container(height: 16, color: Styles().colors!.background),
-                            _buildCanAutoJoinLayout(),
+                            Visibility(visible: _canViewManagedSettings, child: Column(children: [
+                              Container(height: 16, color: Styles().colors!.background),
+                              _buildCanAutoJoinLayout()
+                            ])),
                             Container(height: 24,  color: Styles().colors!.background,),
                           ],),)
                       ]),
@@ -194,7 +197,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   button: true, excludeSemantics: true, child:
                   RoundedButton(
                     label: StringUtils.isNotEmpty(_group?.imageURL) ? Localization().getStringEx("panel.groups_settings.modify_image","Modify cover image") : Localization().getStringEx("panel.groups_settings.add_image","Add Cover Image"),
-                    textColor: Styles().colors!.fillColorPrimary,
+                    borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                    textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                     contentWeight: 0.8,
                     onTap: _onTapAddImage,)
               ),
@@ -206,6 +210,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onTapAddImage() async {
+    if (!_canUpdate) {
+      return;
+    }
     Analytics().logSelect(target: "Add Image");
     String? _imageUrl = await showDialog(
         context: context,
@@ -245,6 +252,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   excludeSemantics: true,
                   child: TextField(
                     controller: _eventTitleController,
+                    enabled: _canUpdate,
+                    readOnly: !_canUpdate,
                     onChanged: onNameChanged,
                     maxLines: 1,
                     decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
@@ -311,6 +320,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   controller: _eventDescriptionController,
                   onChanged: (description){ _group!.description = description;},
                   maxLines: 8,
+                  enabled: _canUpdate,
+                  readOnly: !_canUpdate,
                   decoration: InputDecoration(
                     hintText: fieldHint,
                     border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
@@ -356,6 +367,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               width: 1)),
                       child: TextField(
                         controller: _linkController,
+                        enabled: _canUpdate,
+                        readOnly: !_canUpdate,
                         decoration: InputDecoration(
                             hintText:  Localization().getStringEx("panel.groups_settings.link.hint", "Add URL"),
                             border: InputBorder.none,
@@ -413,6 +426,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             Semantics(
             explicitChildNodes: true,
             child: GroupDropDownButton(
+                enabled: _canUpdate,
                 emptySelectionText: Localization().getStringEx("panel.groups_settings.category.default_text", "Select a category.."),
                 buttonHint: Localization().getStringEx("panel.groups_settings.category.hint", "Double tap to show categories options"),
                 initialSelectedValue: _group?.category,
@@ -449,8 +463,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       label: Localization().getStringEx("panel.groups_settings.button.tags.title", "Tags"),
                       hint: Localization().getStringEx("panel.groups_settings.button.tags.hint", ""),
                       backgroundColor: Styles().colors!.white,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      borderColor: Styles().colors!.fillColorSecondary,
+                      borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                      textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       onTap: _onTapTags,
                     )
@@ -530,7 +544,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       ));
   }
 
-  void onTagTap(String tag){
+  void onTagTap(String tag) {
+    if (!_canUpdate) {
+      return;
+    }
     Analytics().logSelect(target: "Group tag: $tag");
     if(_group!=null) {
       if (_group!.tags == null) {
@@ -546,7 +563,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     setState(() {});
   }
 
-  void _onTapTags(){
+  void _onTapTags() {
+    if (!_canUpdate) {
+      return;
+    }
     Analytics().logSelect(target: "Tags");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupTagsPanel(selectedTags: _group!.tags))).then((tags) {
       // (tags == null) means that the user hit the back button
@@ -579,6 +599,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   emptySelectionText: Localization().getStringEx("panel.groups_settings.privacy.hint.default","Select privacy setting.."),
                   buttonHint: Localization().getStringEx("panel.groups_settings.privacy.hint", "Double tap to show privacy oprions"),
                   items: _groupPrivacyOptions,
+                  enabled: _canUpdate,
                   initialSelectedValue: _group?.privacy ?? (_groupPrivacyOptions!=null?_groupPrivacyOptions![0] : null),
                   constructTitle:
                       (dynamic item) => item == GroupPrivacy.private?
@@ -603,6 +624,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onPrivacyChanged(dynamic value) {
+    if (!_canUpdate) {
+      return;
+    }
     _group?.privacy = value;
     if (_isPublicGroup) {
       // Do not hide group from search if it is public
@@ -624,6 +648,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   child: _buildSwitch(
                       title: Localization().getStringEx("panel.groups.common.private.search.hidden.label", "Make Group Hidden"),
                       value: _group?.hiddenForSearch,
+                      enabled: _canUpdate,
                       onTap: _onTapHiddenForSearch)),
               Semantics(
                   container: true,
@@ -641,6 +666,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onTapHiddenForSearch() {
+    if (!_canUpdate) {
+      return;
+    }
     _group!.hiddenForSearch = !(_group!.hiddenForSearch ?? false);
     if (mounted) {
       setState(() {});
@@ -717,7 +745,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     );
   }
 
-  void _onTapMembershipQuestion(){
+  void _onTapMembershipQuestion() {
+    if (!_canUpdate) {
+      return;
+    }
     Analytics().logSelect(target: "Membership Question");
     if (_group!.questions == null) {
       _group!.questions = [];
@@ -753,7 +784,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                         Expanded( child:
                         Text(Localization().getStringEx("panel.groups_settings.authman.enabled.label", "Is this a managed membership group?"),
-                            style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
+                            style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: (_canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent)))),
                         GestureDetector(
                             onTap: _onTapAuthMan,
                             child: Padding(
@@ -771,6 +802,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                           decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white!),
                           child: TextField(
                             onChanged: _onAuthManGroupNameChanged,
+                            enabled: _canUpdate,
+                            readOnly: !_canUpdate,
                             controller: _authManGroupNameController,
                             maxLines: 5,
                             decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
@@ -782,6 +815,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onTapAuthMan() {
+    if (!_canUpdate) {
+      return;
+    }
     Analytics().logSelect(target: "AuthMan Group");
     if (_group != null) {
       _group!.authManEnabled = (_group!.authManEnabled != true);
@@ -792,6 +828,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onAuthManGroupNameChanged(String name) {
+    if (!_canUpdate) {
+      return;
+    }
     if (_group != null) {
       _group!.authManGroupName = name;
     }
@@ -810,9 +849,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           RoundedButton(
             label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
             backgroundColor: Colors.white,
-            borderColor: Styles().colors!.fillColorSecondary,
-            textColor: Styles().colors!.fillColorPrimary,
+            borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+            textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
             progress: _loading,
+            enabled: _canUpdate,
             onTap: _onUpdateTap,
           ),
         ],),
@@ -820,7 +860,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       ,),);
   }
 
-  void _onUpdateTap(){
+  void _onUpdateTap() {
+    if (!_canUpdate) {
+      return;
+    }
     Analytics().logSelect(target: 'Update Settings');
     setState(() {
       _loading = true;
@@ -859,13 +902,17 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       color: Styles().colors!.background,
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.only_admins_create_polls.enabled.label", "Only admins can create Polls"), //TBD localization
+          enabled: _canUpdate,
           value: _group?.onlyAdminsCanCreatePolls,
           onTap: _onTapOnlyAdminCreatePolls
       ),
     );
   }
 
-  void _onTapOnlyAdminCreatePolls(){
+  void _onTapOnlyAdminCreatePolls() {
+    if (!_canUpdate) {
+      return;
+    }
     if(_group?.onlyAdminsCanCreatePolls != null) {
       if(mounted){
         setState(() {
@@ -882,11 +929,15 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: _buildSwitch(
             title: Localization().getStringEx("panel.groups_settings.attendance_group.label", "Enable attendance checking"),
+            enabled: _canUpdate,
             value: _group?.attendanceGroup,
             onTap: _onTapAttendanceGroup));
   }
 
   void _onTapAttendanceGroup() {
+    if (!_canUpdate) {
+      return;
+    }
     if (_group != null) {
       _group!.attendanceGroup = !(_group!.attendanceGroup ?? false);
       if (mounted) {
@@ -901,8 +952,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     return Container( color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.auto_join.enabled.label", "Group can be joined automatically?"),//TBD localize
+          enabled: _canUpdate,
           value: _group?.canJoinAutomatically,
           onTap: () {
+            if (!_canUpdate) {
+              return;
+            }
             if (_group?.canJoinAutomatically != null) {
               _group!.canJoinAutomatically = !(_group!.canJoinAutomatically!);
             } else {
@@ -978,7 +1033,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     );
   }
 
-  Widget _buildSwitch({String? title, bool? value, void Function()? onTap}){
+  Widget _buildSwitch({String? title, bool? value, bool enabled = true, void Function()? onTap}) {
     return Container(
       child: Container(
           decoration: BoxDecoration(
@@ -990,16 +1045,19 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Expanded(
                   child: Text(title ?? "",
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
+                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: enabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent))),
               GestureDetector(
-                  onTap: onTap ?? (){},
+                  onTap: (enabled && (onTap != null)) ? onTap : (){},
                   child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset((value ?? false) ? 'images/switch-on.png' : 'images/switch-off.png')))
             ])
           ])),
     );
   }
 
-  void onNameChanged(String name){
+  void onNameChanged(String name) {
+    if (!_canUpdate) {
+      return;
+    }
     _group!.title = name.trim();
     validateName(name);
   }
@@ -1010,6 +1068,25 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     setState(() {
       _nameIsValid = !takenNames.contains(name);
     });
+  }
+
+  bool get _canUpdate {
+    if (!(_group?.currentUserIsAdmin ?? false)) {
+      return false;
+    }
+    if (_isAuthManGroup) {
+      return _isUserManagedGroupAdmin;
+    } else {
+      return true;
+    }
+  }
+
+  bool get _canViewManagedSettings {
+    return _isAuthManGroup || _isUserManagedGroupAdmin;
+  }
+
+  bool get _isUserManagedGroupAdmin {
+    return Auth2().account?.isManagedGroupAdmin ?? false;
   }
 
   bool get _isAuthManGroup{

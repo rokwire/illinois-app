@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated NSCameraUsageDescription, NSPhotoLibraryUsageDescription and NSPhotoLibraryAddUsageDescription in Info.plist file [#2427](https://github.com/rokwire/illinois-app/issues/2427).
+### Added
+- Allow only managed group admin to create and update managed groups [#2429](https://github.com/rokwire/illinois-app/issues/2429).
 
 ## [4.1.35] - 2022-09-28
 ### Fixed
