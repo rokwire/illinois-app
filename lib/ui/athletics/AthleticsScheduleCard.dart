@@ -135,7 +135,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                 padding: EdgeInsets.only(top: 16, right: 24),
                 child: Text(
                   widget._game!.title,
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24, color: Styles().colors!.fillColorPrimary),
+                  style: Styles().getTextStyle('widget.card.title.large')
                 )),
           ),
           Visibility(
@@ -158,7 +158,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                 Expanded(
                     child: Text(
                   widget._game!.shortDescription!,
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground),
+                  style: Styles().getTextStyle('widget.card.detail.regular.fat')
                 ))
               ],
             ),
@@ -177,7 +177,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
             Padding(
               padding: EdgeInsets.only(right: 5),
             ),
-            Text(displayTime, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+            Text(displayTime, style: Styles().getTextStyle('widget.card.detail.medium')),
           ],
         ),
       );
@@ -219,7 +219,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                           padding: EdgeInsets.symmetric(horizontal: 24),
                           child: Row(children: <Widget>[
                             Text(_getTicketsInformationText(sport)!,
-                                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
+                                style: Styles().getTextStyle('widget.card.title.small')),
                             Padding(
                               padding: EdgeInsets.only(left: 8),
                             ),
@@ -267,11 +267,11 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Row(children: <Widget>[
                     Text(Localization().getStringEx("widget.schedule_card.final_score", "Final Score"),
-                        style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
+                        style: Styles().getTextStyle('widget.card.title.small')),
                     Expanded(
                       child: Container(),
                     ),
-                    Text(formattedResult, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+                    Text(formattedResult, style: Styles().getTextStyle('widget.card.detail.medium')),
                   ])))
         ],
       ),

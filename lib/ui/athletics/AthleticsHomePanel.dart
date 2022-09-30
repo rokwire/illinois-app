@@ -647,7 +647,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                     ],),
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
-                    Text(widget.game.title, style: Styles().getTextStyle('widget.athletics.card.title.large')),
+                    Text(widget.game.title, style: Styles().getTextStyle('widget.athletics.card.title.large.fat')),
                   ),
                   _athleticsDetails(),
                   Visibility(visible: showDescription, child:
@@ -663,7 +663,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                       Container(height: 1,color: Styles().colors!.surfaceAccent,),
                       Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
                         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                          Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style: TextStyle(color: Styles().colors!.textBackground, fontSize: 12, fontFamily: Styles().fontFamilies!.bold),),
+                          Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style: Styles().getTextStyle('widget.card.detail.tiny_variant')),
                           Text(StringUtils.ensureNotEmpty(interestsLabelValue), style: Styles().getTextStyle('widget.card.detail.tiny_variant2'),)
                         ],),
                       )
