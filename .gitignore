@@ -56,3 +56,4 @@ google-services.json
 # App Branding
 /app/assets/
 /app/images/
+/android/app/src/illinois/keys.properties
