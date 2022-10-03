@@ -79,11 +79,10 @@ Alternatively, you can use AESCrypt.encode from /lib/utils/Crypt.dart to generat
 
 The Firebase configuration file for iOS generated from Google Firebase console.
 
-#### • android/keys.properties
-Contains a GoogleMaps and Android Backup API keys.
+#### • android/app/src/illinois/keys.properties
+Contains GoogleMaps API key for the Illinois flavor.
 ```
 googleMapsApiKey=XXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
-androidBackupApiKey=XXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
 #### • android/app/src/debug/google-services.json
