@@ -2,6 +2,8 @@
   <configuration default="false" name="Illinois-Dev" type="FlutterRunConfigurationType" factoryName="Flutter">
     <option name="buildFlavor" value="IllinoisDev" />
     <option name="filePath" value="$PROJECT_DIR$/lib/mainDev.dart" />
-    <method v="2" />
+    <method v="2">
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="prebuild_illinois" run_configuration_type="ShConfigurationType" />
+    </method>
   </configuration>
 </component>
