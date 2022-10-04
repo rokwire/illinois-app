@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upgrade project to build with flutter 3.3.2 [#2410](https://github.com/rokwire/illinois-app/issues/2410).
 - Move unused assets in "extra" subfolder, do not embed them in application bundle [#2353](https://github.com/rokwire/illinois-app/issues/2353).
 - Updated NSCameraUsageDescription, NSPhotoLibraryUsageDescription and NSPhotoLibraryAddUsageDescription in Info.plist file [#2427](https://github.com/rokwire/illinois-app/issues/2427).
-- Applied intermediate work on multiple brands support [#2353](https://github.com/rokwire/illinois-app/issues/2353).
+- Applied preliminary work on multiple brands support [#2353](https://github.com/rokwire/illinois-app/issues/2353).
 
 
 ## [4.2.0] - 2022-09-23
