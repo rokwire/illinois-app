@@ -164,7 +164,7 @@
     "widget.wellness.ring.card.title.large" :  { "font_family": "ProximaNovaRegular", "size": 32.0, "color": "fillColorPrimary"},
 
     "widget.canvas.card.title.regular" :  { "font_family": "ProximaNovaExtraBold", "size": 18.0, "color": "black"},
-    "widget.canvas.card.grade.score" :  { "font_family": "ProximaNovaBold", "size": 16.0, "color": "$courseColor"},
+    "widget.canvas.card.grade.score" :  { "font_family": "ProximaNovaBold", "size": 16.0},
 
     "panel.event_schedule.title" : {"font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary"},
     "panel.event_schedule.category" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
