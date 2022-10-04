@@ -54,7 +54,8 @@
 			}
 		}
 	},
-	"privacy":{
+
+	"privacy": {
 		"description":[
 			{"level":1, "key": "privacy.category.description.1", "text": "You may not be able to use all features, but you are anonymous, and we don't ask you for any identifying information or store any data. Anonymous data will be collected and used to optimize app performance."},
 			{"level":2, "key": "privacy.category.description.2", "text": "See what's happening around you. We use Wi-Fi and Bluetooth location services to improve your experience, but we never store that data."},

@@ -351,7 +351,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   Widget _buildHeaderHomeButton() {
     return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-          IconButton(icon: Image.asset('images/block-i-orange.png', excludeFromSemantics: true), onPressed: _onTapHome,),);
+          IconButton(icon: Styles().images?.getImage('block-i-orange.png', excludeFromSemantics: true) ?? Container(), onPressed: _onTapHome,),);
   }
 
   Widget _buildHeaderBackButton() {

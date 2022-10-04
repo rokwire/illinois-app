@@ -50,9 +50,9 @@ app.*.map.json
 /ios/Runner/GoogleService-Info-Dev.plist
 /ios/Runner/GoogleService-Info-Prod.plist
 
-/android/keys.properties
 google-services.json
 
 # App Branding
 /app/assets/
 /app/images/
+/android/app/src/illinois/keys.properties

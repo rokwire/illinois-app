@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Illinois-Prod" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="buildFlavor" value="IllinoisProd" />
+    <option name="filePath" value="$PROJECT_DIR$/lib/mainProd.dart" />
+    <method v="2" />
+  </configuration>
+</component>

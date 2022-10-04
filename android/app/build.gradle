@@ -42,14 +42,6 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-def keysProperties = new Properties()
-def keysPropertiesFile = rootProject.file('keys.properties')
-if (keysPropertiesFile.exists()) {
-    keysPropertiesFile.withReader('UTF-8') { reader ->
-        keysProperties.load(reader)
-    }
-}
-
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'kotlin-android'
@@ -78,8 +70,6 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        manifestPlaceholders = [mapsApiKey: "${keysProperties.getProperty('googleMapsApiKey')}"]
     }
 
     def isRunningOnTravis = System.getenv("CI") == "true"
@@ -136,6 +126,15 @@ android {
         illinois {
             dimension "product"
             applicationId "edu.illinois.rokwire"
+
+            def illinoisKeysProperties = new Properties()
+            def illinoisKeysPropertiesFile = rootProject.file('app/src/illinois/keys.properties')
+            if (illinoisKeysPropertiesFile.exists()) {
+                illinoisKeysPropertiesFile.withReader('UTF-8') { reader ->
+                    illinoisKeysProperties.load(reader)
+                }
+            }
+            manifestPlaceholders = [mapsApiKey: "${illinoisKeysProperties.getProperty('googleMapsApiKey')}"]
         }
     }
 }
