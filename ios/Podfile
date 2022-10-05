@@ -47,6 +47,16 @@ target 'Illinois' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
+target 'Wisconsin' do
+  use_frameworks!
+  use_modular_headers!
+
+    pod 'GoogleMaps', '3.10.0'
+    pod 'ZXingObjC', '3.6.4'
+
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
+
 post_install do |installer|
 
   installer.pods_project.targets.each do |target|

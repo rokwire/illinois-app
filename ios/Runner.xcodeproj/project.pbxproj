@@ -131,8 +131,7 @@
 		26E582C128ED972B00EFE29A /* Navigation+Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F7952B28AFA9F200AFC37E /* Navigation+Utils.m */; };
 		26E582C228ED972B00EFE29A /* MapLocationPickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 26B340362331163A0031CF70 /* MapLocationPickerController.m */; };
 		26E582C328ED972B00EFE29A /* CommonCrypto+UIUCUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26ECB3222487938C00479487 /* CommonCrypto+UIUCUtils.m */; };
-		26E582C528ED972B00EFE29A /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		26E582C628ED972B00EFE29A /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACB526D062122D3F8BC62A77 /* Pods_Runner.framework */; };
+		26E582C528ED972B00EFE29A /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		26E582C828ED972B00EFE29A /* travel-mode-drive@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30F022E5DD7900547FE1 /* travel-mode-drive@2x.png */; };
 		26E582C928ED972B00EFE29A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		26E582CA28ED972B00EFE29A /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */; };
@@ -168,6 +167,7 @@
 		26FAB1C922EB3502008E987C /* NSDictionary+UIUCExplore.m in Sources */ = {isa = PBXBuildFile; fileRef = 26FAB1C822EB3502008E987C /* NSDictionary+UIUCExplore.m */; };
 		26FAB1CC22EB35C7008E987C /* NSDate+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26FAB1CA22EB35C7008E987C /* NSDate+InaUtils.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		7BF689A574104E6C723827EA /* Pods_Wisconsin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78776667AEB03C27841F312B /* Pods_Wisconsin.framework */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
@@ -175,7 +175,7 @@
 		B681B2B923DEFD9E00093A67 /* NSData+InaHex.m in Sources */ = {isa = PBXBuildFile; fileRef = B681B2B823DEFD9E00093A67 /* NSData+InaHex.m */; };
 		B6BDCD37242CCF5F002F7364 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6BDCD39242CCF5F002F7364 /* Localizable.strings */; };
 		B6EA372423A7EF76001D78A5 /* Bluetooth+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EA372323A7EF76001D78A5 /* Bluetooth+InaUtils.m */; };
-		BB7BF12F5D3356D25889D23A /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		BB7BF12F5D3356D25889D23A /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		D604F124B491DE058CE3A2B6 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACB526D062122D3F8BC62A77 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -215,10 +215,14 @@
 /* Begin PBXFileReference section */
 		00062ACEF240D9A50A316D36 /* Pods-Illinois.debug-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-illinoisprod.xcconfig"; sourceTree = "<group>"; };
 		069388F8EFA876FC6053913F /* Pods-Illinois.profile-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-illinoisdev.xcconfig"; sourceTree = "<group>"; };
+		0C603266F6C8A0C8F51F5661 /* Pods-Illinois.release-wisconsindev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release-wisconsindev.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release-wisconsindev.xcconfig"; sourceTree = "<group>"; };
+		0F7E8A74ED3C7B2DC535BC27 /* Pods-Runner.debug-wisconsindev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-wisconsindev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-wisconsindev.xcconfig"; sourceTree = "<group>"; };
 		141EF64818F18EB19F34DA32 /* Pods-Illinois.release-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release-illinoisprod.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		1511A7CFA630CB08475EC4BC /* Pods-Illinois.profile-illinoistest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-illinoistest.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-illinoistest.xcconfig"; sourceTree = "<group>"; };
+		168A19B8885941A3CFCFB778 /* Pods-Wisconsin.debug-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.debug-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.debug-illinoisdev.xcconfig"; sourceTree = "<group>"; };
+		1A3B86E3C9150A6FDF365FF2 /* Pods-Wisconsin.release-wisconsinprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.release-wisconsinprod.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.release-wisconsinprod.xcconfig"; sourceTree = "<group>"; };
 		1C1A28983F72426658CDB5B8 /* Pods-Runner.release-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-illinoisprod.xcconfig"; sourceTree = "<group>"; };
 		1F19BAAE07DC5781823C4D75 /* Pods-Runner.profile-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-illinoisprod.xcconfig"; sourceTree = "<group>"; };
 		235A89B2944C30C43F9E290B /* Pods-Runner.profile-test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-test.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-test.xcconfig"; sourceTree = "<group>"; };
@@ -317,22 +321,45 @@
 		26FAB1CA22EB35C7008E987C /* NSDate+InaUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+InaUtils.m"; sourceTree = "<group>"; };
 		26FAB1CB22EB35C7008E987C /* NSDate+InaUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+InaUtils.h"; sourceTree = "<group>"; };
 		27D62877E29DB9D266B90C0F /* Pods-Illinois.debug-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-prod.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-prod.xcconfig"; sourceTree = "<group>"; };
+		2B89CEEA397E1BFD5A8D8767 /* Pods-Runner.release-wisconsintest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-wisconsintest.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-wisconsintest.xcconfig"; sourceTree = "<group>"; };
+		2EFFAB157A67F7E119B35375 /* Pods-Illinois.release-wisconsinprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release-wisconsinprod.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release-wisconsinprod.xcconfig"; sourceTree = "<group>"; };
+		2F70D44386C3C38180E733B0 /* Pods-Wisconsin.debug-wisconsinprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.debug-wisconsinprod.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.debug-wisconsinprod.xcconfig"; sourceTree = "<group>"; };
+		3537202BC0843C40E0BFD86F /* Pods-Wisconsin.profile-wisconsintest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-wisconsintest.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-wisconsintest.xcconfig"; sourceTree = "<group>"; };
+		376C231CDBBC59BC4DF14AB7 /* Pods-Runner.release-wisconsinprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-wisconsinprod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-wisconsinprod.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		3BD3161E0D394341880F6CC2 /* Pods-Wisconsin.debug-wisconsindev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.debug-wisconsindev.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.debug-wisconsindev.xcconfig"; sourceTree = "<group>"; };
+		3C62C644B619DC99828A2E66 /* Pods-Runner.debug-wisconsinprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-wisconsinprod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-wisconsinprod.xcconfig"; sourceTree = "<group>"; };
 		3D2AB4F5F263309CA99BB14B /* Pods-Runner.profile-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-dev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-dev.xcconfig"; sourceTree = "<group>"; };
 		3E481FD0585EF3CD2DAC55ED /* Pods-Illinois.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile.xcconfig"; sourceTree = "<group>"; };
 		3FDA7830637F8819126AFB72 /* Pods-Runner.release-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-prod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-prod.xcconfig"; sourceTree = "<group>"; };
+		4664171EE04EFF48A37F9E30 /* Pods-Illinois.profile-wisconsindev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-wisconsindev.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-wisconsindev.xcconfig"; sourceTree = "<group>"; };
 		470DF58B694058A07DE8230D /* Pods-Runner.debug-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-dev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-dev.xcconfig"; sourceTree = "<group>"; };
 		4FA95F7515BEE0D8496BE1DB /* Pods-Illinois.release-test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release-test.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release-test.xcconfig"; sourceTree = "<group>"; };
+		5496748A80C2705BB86A0E2A /* Pods-Runner.profile-wisconsindev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-wisconsindev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-wisconsindev.xcconfig"; sourceTree = "<group>"; };
+		56ECB8DAF2BE00C117F4B3E5 /* Pods-Runner.profile-wisconsinprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-wisconsinprod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-wisconsinprod.xcconfig"; sourceTree = "<group>"; };
+		57C4835C4C143919081A93E1 /* Pods-Wisconsin.profile-test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-test.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-test.xcconfig"; sourceTree = "<group>"; };
 		5AA5107F0317A612CF73A174 /* Pods-Illinois.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release.xcconfig"; sourceTree = "<group>"; };
+		5D03BA448681A635C85A607E /* Pods-Wisconsin.profile-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-illinoisdev.xcconfig"; sourceTree = "<group>"; };
+		5DDF2188571D73D16FEC7986 /* Pods-Wisconsin.release-illinoistest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.release-illinoistest.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.release-illinoistest.xcconfig"; sourceTree = "<group>"; };
 		621A4767AD8BB1E27BB694D3 /* Pods-Illinois.debug-test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-test.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-test.xcconfig"; sourceTree = "<group>"; };
 		62316DF64EAC13E7FE9C4882 /* Pods-Runner.debug-illinoistest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-illinoistest.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-illinoistest.xcconfig"; sourceTree = "<group>"; };
+		65366B5161465FD6E9B97981 /* Pods-Wisconsin.release-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.release-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.release-illinoisprod.xcconfig"; sourceTree = "<group>"; };
+		67A5235A0396BB6D9D8F40C4 /* Pods-Illinois.profile-wisconsintest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-wisconsintest.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-wisconsintest.xcconfig"; sourceTree = "<group>"; };
+		6D9CD7EADAC6A7EE7D1960B6 /* Pods-Wisconsin.release-test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.release-test.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.release-test.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		77084484F870D8437AAA61F0 /* Pods-Runner.release-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-dev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-dev.xcconfig"; sourceTree = "<group>"; };
+		78776667AEB03C27841F312B /* Pods_Wisconsin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wisconsin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
+		7EC15A0316EC473699BDCBA3 /* Pods-Illinois.release-wisconsintest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release-wisconsintest.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release-wisconsintest.xcconfig"; sourceTree = "<group>"; };
+		80AB6DF85C8B3E81F3BC232E /* Pods-Runner.release-wisconsindev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-wisconsindev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-wisconsindev.xcconfig"; sourceTree = "<group>"; };
 		819274ECAE180D73781EE669 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
+		885E05057DC179FF4B48142E /* Pods-Wisconsin.release-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.release-dev.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.release-dev.xcconfig"; sourceTree = "<group>"; };
 		8C6888D39D85D326A9A1BE5C /* Pods-Illinois.release-illinoistest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release-illinoistest.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release-illinoistest.xcconfig"; sourceTree = "<group>"; };
 		8DA6994A3C65832FF14D20D4 /* Pods-Illinois.release-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release-dev.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release-dev.xcconfig"; sourceTree = "<group>"; };
+		8E55649CFC2EB1634347AF50 /* Pods-Runner.profile-wisconsintest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-wisconsintest.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-wisconsintest.xcconfig"; sourceTree = "<group>"; };
 		8F818C8F55E49810E15FA7E6 /* Pods-Runner.profile-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-illinoisdev.xcconfig"; sourceTree = "<group>"; };
+		92C9D8C26B7BD8F60B359220 /* Pods-Wisconsin.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.release.xcconfig"; sourceTree = "<group>"; };
+		93072EFA22F7B4875144C7D1 /* Pods-Wisconsin.debug-test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.debug-test.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.debug-test.xcconfig"; sourceTree = "<group>"; };
 		94436A95A61C4310F7CBC53E /* Pods-Illinois.release-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release-prod.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release-prod.xcconfig"; sourceTree = "<group>"; };
 		960BA2C700BE59B24C535AC2 /* Pods-Illinois.release-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release-illinoisdev.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
@@ -342,10 +369,15 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Runner-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Runner-Info.plist"; sourceTree = "<group>"; };
+		9A563F9ABE6599D65B6B8635 /* Pods-Wisconsin.debug-wisconsintest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.debug-wisconsintest.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.debug-wisconsintest.xcconfig"; sourceTree = "<group>"; };
+		9B2E38D20742E56EF49BB997 /* Pods-Wisconsin.profile-wisconsinprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-wisconsinprod.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-wisconsinprod.xcconfig"; sourceTree = "<group>"; };
 		9BD51356257B0E6649796BC6 /* Pods-Runner.release-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-illinoisdev.xcconfig"; sourceTree = "<group>"; };
+		9DE540203DBDE25309CCA1E1 /* Pods-Wisconsin.release-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.release-prod.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.release-prod.xcconfig"; sourceTree = "<group>"; };
+		9F258BBE59ADE95B29DD0E66 /* Pods-Wisconsin.profile-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-illinoisprod.xcconfig"; sourceTree = "<group>"; };
+		A689B627D43BAEE2215AF3E0 /* Pods-Illinois.debug-wisconsindev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-wisconsindev.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-wisconsindev.xcconfig"; sourceTree = "<group>"; };
 		AACADCD4DCD2CEB96CC4EC31 /* Pods-Runner.profile-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-prod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-prod.xcconfig"; sourceTree = "<group>"; };
-		ACB526D062122D3F8BC62A77 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ACDFF4AE090B1F29CB3CD571 /* Pods-Runner.profile-illinoistest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-illinoistest.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-illinoistest.xcconfig"; sourceTree = "<group>"; };
+		AD7816446A92C952FE3743E1 /* Pods-Runner.debug-wisconsintest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-wisconsintest.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-wisconsintest.xcconfig"; sourceTree = "<group>"; };
 		AF2509313F75A25D855964F6 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		AFDF9397E6555CE10C1987F7 /* Pods-Illinois.profile-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-illinoisprod.xcconfig"; sourceTree = "<group>"; };
 		B5C5F1789A863DCF4831BCC6 /* Pods-Runner.debug-test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-test.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-test.xcconfig"; sourceTree = "<group>"; };
@@ -356,17 +388,33 @@
 		B6BDCD40242CDCA6002F7364 /* zh */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh; path = zh.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B6EA372223A7EF76001D78A5 /* Bluetooth+InaUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bluetooth+InaUtils.h"; sourceTree = "<group>"; };
 		B6EA372323A7EF76001D78A5 /* Bluetooth+InaUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "Bluetooth+InaUtils.m"; sourceTree = "<group>"; };
+		B91CCFBEFF93541B79F80FD0 /* Pods-Illinois.debug-wisconsintest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-wisconsintest.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-wisconsintest.xcconfig"; sourceTree = "<group>"; };
 		BA5AA7BB9F6EAE77AC564E7D /* Pods-Illinois.profile-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-prod.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-prod.xcconfig"; sourceTree = "<group>"; };
+		BEDDE35E0EC79C4B46A67742 /* Pods-Wisconsin.debug-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.debug-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.debug-illinoisprod.xcconfig"; sourceTree = "<group>"; };
 		CA336FA314DC94639D778A9E /* Pods-Runner.release-test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-test.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-test.xcconfig"; sourceTree = "<group>"; };
+		CEEF0AB5357D0EE914D47AC6 /* Pods-Wisconsin.debug-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.debug-dev.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.debug-dev.xcconfig"; sourceTree = "<group>"; };
 		D3E33E998214088069F7144C /* Pods-Illinois.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug.xcconfig"; sourceTree = "<group>"; };
 		D54CFA36C4B6AC1238125DC3 /* Pods-Runner.release-illinoistest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-illinoistest.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-illinoistest.xcconfig"; sourceTree = "<group>"; };
+		D664C696FB2D607405E9C189 /* Pods-Illinois.profile-wisconsinprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-wisconsinprod.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-wisconsinprod.xcconfig"; sourceTree = "<group>"; };
 		D9132BA7FAF1F42A720DCCBE /* Pods-Illinois.profile-test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-test.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-test.xcconfig"; sourceTree = "<group>"; };
 		DA423A53DDD25ED8B43F42FC /* Pods-Illinois.debug-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-illinoisdev.xcconfig"; sourceTree = "<group>"; };
+		DBEC9B52BB61725CA0FE42BA /* Pods-Wisconsin.debug-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.debug-prod.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.debug-prod.xcconfig"; sourceTree = "<group>"; };
+		DED5C9F0B4003BA5F8D90E95 /* Pods-Wisconsin.profile-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-prod.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-prod.xcconfig"; sourceTree = "<group>"; };
+		E199C3A79B06A7A92DA7FEAE /* Pods-Wisconsin.release-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.release-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.release-illinoisdev.xcconfig"; sourceTree = "<group>"; };
+		E2C118367A7277596A1D853C /* Pods-Wisconsin.release-wisconsindev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.release-wisconsindev.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.release-wisconsindev.xcconfig"; sourceTree = "<group>"; };
+		E4F7697D0896BFA0E83AC278 /* Pods-Wisconsin.debug-illinoistest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.debug-illinoistest.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.debug-illinoistest.xcconfig"; sourceTree = "<group>"; };
 		E55078BBD480376018D29877 /* Pods-Illinois.profile-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-dev.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-dev.xcconfig"; sourceTree = "<group>"; };
+		E754FE3425CC0836954660AA /* Pods-Wisconsin.profile-wisconsindev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-wisconsindev.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-wisconsindev.xcconfig"; sourceTree = "<group>"; };
 		EBA3000FA94D4892DC3E0208 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		EC392C7C839D7D41F4DC404B /* Pods-Wisconsin.release-wisconsintest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.release-wisconsintest.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.release-wisconsintest.xcconfig"; sourceTree = "<group>"; };
 		EF09DFB518BCB702E99855B7 /* Pods_Illinois.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Illinois.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EF924AEB1C0E64D2E3324901 /* Pods-Wisconsin.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile.xcconfig"; sourceTree = "<group>"; };
+		EF9C67DC6F301C3473363F39 /* Pods-Illinois.debug-wisconsinprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-wisconsinprod.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-wisconsinprod.xcconfig"; sourceTree = "<group>"; };
 		EFEC217272B536EA8DB11952 /* Pods-Illinois.debug-illinoistest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-illinoistest.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-illinoistest.xcconfig"; sourceTree = "<group>"; };
+		F21473F2C3F947E5DCE46089 /* Pods-Wisconsin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.debug.xcconfig"; sourceTree = "<group>"; };
+		F4189E6515DC2C5FAF1318C1 /* Pods-Wisconsin.profile-illinoistest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-illinoistest.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-illinoistest.xcconfig"; sourceTree = "<group>"; };
 		F6F212C9FE249D8C7352F71F /* Pods-Runner.debug-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-prod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-prod.xcconfig"; sourceTree = "<group>"; };
+		FFA633908D457E40304CC2E3 /* Pods-Wisconsin.profile-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-dev.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-dev.xcconfig"; sourceTree = "<group>"; };
 		FFB68EDA32DAB6475F6AA4AE /* Pods-Runner.debug-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-illinoisprod.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -383,8 +431,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				26E582C528ED972B00EFE29A /* (null) in Frameworks */,
-				26E582C628ED972B00EFE29A /* Pods_Runner.framework in Frameworks */,
+				7BF689A574104E6C723827EA /* Pods_Wisconsin.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,7 +439,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB7BF12F5D3356D25889D23A /* (null) in Frameworks */,
+				BB7BF12F5D3356D25889D23A /* BuildFile in Frameworks */,
 				D604F124B491DE058CE3A2B6 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -666,6 +713,54 @@
 				8F818C8F55E49810E15FA7E6 /* Pods-Runner.profile-illinoisdev.xcconfig */,
 				1F19BAAE07DC5781823C4D75 /* Pods-Runner.profile-illinoisprod.xcconfig */,
 				ACDFF4AE090B1F29CB3CD571 /* Pods-Runner.profile-illinoistest.xcconfig */,
+				A689B627D43BAEE2215AF3E0 /* Pods-Illinois.debug-wisconsindev.xcconfig */,
+				EF9C67DC6F301C3473363F39 /* Pods-Illinois.debug-wisconsinprod.xcconfig */,
+				B91CCFBEFF93541B79F80FD0 /* Pods-Illinois.debug-wisconsintest.xcconfig */,
+				0C603266F6C8A0C8F51F5661 /* Pods-Illinois.release-wisconsindev.xcconfig */,
+				2EFFAB157A67F7E119B35375 /* Pods-Illinois.release-wisconsinprod.xcconfig */,
+				7EC15A0316EC473699BDCBA3 /* Pods-Illinois.release-wisconsintest.xcconfig */,
+				4664171EE04EFF48A37F9E30 /* Pods-Illinois.profile-wisconsindev.xcconfig */,
+				D664C696FB2D607405E9C189 /* Pods-Illinois.profile-wisconsinprod.xcconfig */,
+				67A5235A0396BB6D9D8F40C4 /* Pods-Illinois.profile-wisconsintest.xcconfig */,
+				0F7E8A74ED3C7B2DC535BC27 /* Pods-Runner.debug-wisconsindev.xcconfig */,
+				3C62C644B619DC99828A2E66 /* Pods-Runner.debug-wisconsinprod.xcconfig */,
+				AD7816446A92C952FE3743E1 /* Pods-Runner.debug-wisconsintest.xcconfig */,
+				80AB6DF85C8B3E81F3BC232E /* Pods-Runner.release-wisconsindev.xcconfig */,
+				376C231CDBBC59BC4DF14AB7 /* Pods-Runner.release-wisconsinprod.xcconfig */,
+				2B89CEEA397E1BFD5A8D8767 /* Pods-Runner.release-wisconsintest.xcconfig */,
+				5496748A80C2705BB86A0E2A /* Pods-Runner.profile-wisconsindev.xcconfig */,
+				56ECB8DAF2BE00C117F4B3E5 /* Pods-Runner.profile-wisconsinprod.xcconfig */,
+				8E55649CFC2EB1634347AF50 /* Pods-Runner.profile-wisconsintest.xcconfig */,
+				F21473F2C3F947E5DCE46089 /* Pods-Wisconsin.debug.xcconfig */,
+				CEEF0AB5357D0EE914D47AC6 /* Pods-Wisconsin.debug-dev.xcconfig */,
+				168A19B8885941A3CFCFB778 /* Pods-Wisconsin.debug-illinoisdev.xcconfig */,
+				3BD3161E0D394341880F6CC2 /* Pods-Wisconsin.debug-wisconsindev.xcconfig */,
+				DBEC9B52BB61725CA0FE42BA /* Pods-Wisconsin.debug-prod.xcconfig */,
+				BEDDE35E0EC79C4B46A67742 /* Pods-Wisconsin.debug-illinoisprod.xcconfig */,
+				2F70D44386C3C38180E733B0 /* Pods-Wisconsin.debug-wisconsinprod.xcconfig */,
+				93072EFA22F7B4875144C7D1 /* Pods-Wisconsin.debug-test.xcconfig */,
+				E4F7697D0896BFA0E83AC278 /* Pods-Wisconsin.debug-illinoistest.xcconfig */,
+				9A563F9ABE6599D65B6B8635 /* Pods-Wisconsin.debug-wisconsintest.xcconfig */,
+				92C9D8C26B7BD8F60B359220 /* Pods-Wisconsin.release.xcconfig */,
+				885E05057DC179FF4B48142E /* Pods-Wisconsin.release-dev.xcconfig */,
+				E199C3A79B06A7A92DA7FEAE /* Pods-Wisconsin.release-illinoisdev.xcconfig */,
+				E2C118367A7277596A1D853C /* Pods-Wisconsin.release-wisconsindev.xcconfig */,
+				9DE540203DBDE25309CCA1E1 /* Pods-Wisconsin.release-prod.xcconfig */,
+				65366B5161465FD6E9B97981 /* Pods-Wisconsin.release-illinoisprod.xcconfig */,
+				1A3B86E3C9150A6FDF365FF2 /* Pods-Wisconsin.release-wisconsinprod.xcconfig */,
+				6D9CD7EADAC6A7EE7D1960B6 /* Pods-Wisconsin.release-test.xcconfig */,
+				5DDF2188571D73D16FEC7986 /* Pods-Wisconsin.release-illinoistest.xcconfig */,
+				EC392C7C839D7D41F4DC404B /* Pods-Wisconsin.release-wisconsintest.xcconfig */,
+				EF924AEB1C0E64D2E3324901 /* Pods-Wisconsin.profile.xcconfig */,
+				FFA633908D457E40304CC2E3 /* Pods-Wisconsin.profile-dev.xcconfig */,
+				5D03BA448681A635C85A607E /* Pods-Wisconsin.profile-illinoisdev.xcconfig */,
+				E754FE3425CC0836954660AA /* Pods-Wisconsin.profile-wisconsindev.xcconfig */,
+				DED5C9F0B4003BA5F8D90E95 /* Pods-Wisconsin.profile-prod.xcconfig */,
+				9F258BBE59ADE95B29DD0E66 /* Pods-Wisconsin.profile-illinoisprod.xcconfig */,
+				9B2E38D20742E56EF49BB997 /* Pods-Wisconsin.profile-wisconsinprod.xcconfig */,
+				57C4835C4C143919081A93E1 /* Pods-Wisconsin.profile-test.xcconfig */,
+				F4189E6515DC2C5FAF1318C1 /* Pods-Wisconsin.profile-illinoistest.xcconfig */,
+				3537202BC0843C40E0BFD86F /* Pods-Wisconsin.profile-wisconsintest.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -674,7 +769,7 @@
 			isa = PBXGroup;
 			children = (
 				EF09DFB518BCB702E99855B7 /* Pods_Illinois.framework */,
-				ACB526D062122D3F8BC62A77 /* Pods_Runner.framework */,
+				78776667AEB03C27841F312B /* Pods_Wisconsin.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -961,93 +1056,12 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Illinois/Pods-Illinois-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseCore/FirebaseCore.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseCoreDiagnostics/FirebaseCoreDiagnostics.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseCoreInternal/FirebaseCoreInternal.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseCrashlytics/FirebaseCrashlytics.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseInstallations/FirebaseInstallations.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseMessaging/FirebaseMessaging.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleDataTransport/GoogleDataTransport.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
-				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
-				"${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework",
-				"${BUILT_PRODUCTS_DIR}/Toast/Toast.framework",
-				"${BUILT_PRODUCTS_DIR}/ZXingObjC/ZXingObjC.framework",
-				"${BUILT_PRODUCTS_DIR}/app_settings/app_settings.framework",
-				"${BUILT_PRODUCTS_DIR}/audio_session/audio_session.framework",
-				"${BUILT_PRODUCTS_DIR}/connectivity/connectivity.framework",
-				"${BUILT_PRODUCTS_DIR}/device_calendar/device_calendar.framework",
-				"${BUILT_PRODUCTS_DIR}/device_info/device_info.framework",
-				"${BUILT_PRODUCTS_DIR}/flutter_barcode_scanner/flutter_barcode_scanner.framework",
-				"${BUILT_PRODUCTS_DIR}/flutter_exif_rotation/flutter_exif_rotation.framework",
-				"${BUILT_PRODUCTS_DIR}/flutter_local_notifications/flutter_local_notifications.framework",
-				"${BUILT_PRODUCTS_DIR}/flutter_native_timezone/flutter_native_timezone.framework",
-				"${BUILT_PRODUCTS_DIR}/fluttertoast/fluttertoast.framework",
-				"${BUILT_PRODUCTS_DIR}/gallery_saver/gallery_saver.framework",
-				"${BUILT_PRODUCTS_DIR}/geolocator_apple/geolocator_apple.framework",
-				"${BUILT_PRODUCTS_DIR}/image_picker_ios/image_picker_ios.framework",
-				"${BUILT_PRODUCTS_DIR}/in_app_review/in_app_review.framework",
-				"${BUILT_PRODUCTS_DIR}/just_audio/just_audio.framework",
-				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
-				"${BUILT_PRODUCTS_DIR}/notification_permissions/notification_permissions.framework",
-				"${BUILT_PRODUCTS_DIR}/package_info/package_info.framework",
-				"${BUILT_PRODUCTS_DIR}/path_provider_ios/path_provider_ios.framework",
-				"${BUILT_PRODUCTS_DIR}/rokwire_plugin/rokwire_plugin.framework",
-				"${BUILT_PRODUCTS_DIR}/share/share.framework",
-				"${BUILT_PRODUCTS_DIR}/shared_preferences_ios/shared_preferences_ios.framework",
-				"${BUILT_PRODUCTS_DIR}/sqflite/sqflite.framework",
-				"${BUILT_PRODUCTS_DIR}/uni_links/uni_links.framework",
-				"${BUILT_PRODUCTS_DIR}/url_launcher_ios/url_launcher_ios.framework",
-				"${BUILT_PRODUCTS_DIR}/video_player_avfoundation/video_player_avfoundation.framework",
-				"${BUILT_PRODUCTS_DIR}/wakelock/wakelock.framework",
-				"${BUILT_PRODUCTS_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Illinois/Pods-Illinois-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCoreDiagnostics.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCoreInternal.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCrashlytics.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseInstallations.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseMessaging.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleDataTransport.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toast.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZXingObjC.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/app_settings.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/audio_session.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/connectivity.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/device_calendar.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/device_info.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_barcode_scanner.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_exif_rotation.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_local_notifications.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_native_timezone.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/fluttertoast.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/gallery_saver.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/geolocator_apple.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/image_picker_ios.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/in_app_review.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/just_audio.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/notification_permissions.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/package_info.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/path_provider_ios.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/rokwire_plugin.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/share.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/shared_preferences_ios.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/sqflite.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/uni_links.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/url_launcher_ios.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/video_player_avfoundation.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/wakelock.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/webview_flutter_wkwebview.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Illinois/Pods-Illinois-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1077,13 +1091,12 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Illinois/Pods-Illinois-resources.sh",
-				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Illinois/Pods-Illinois-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Illinois/Pods-Illinois-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1123,7 +1136,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Runner-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Wisconsin-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1163,97 +1176,16 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseCore/FirebaseCore.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseCoreDiagnostics/FirebaseCoreDiagnostics.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseCoreInternal/FirebaseCoreInternal.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseCrashlytics/FirebaseCrashlytics.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseInstallations/FirebaseInstallations.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseMessaging/FirebaseMessaging.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleDataTransport/GoogleDataTransport.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
-				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
-				"${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework",
-				"${BUILT_PRODUCTS_DIR}/Toast/Toast.framework",
-				"${BUILT_PRODUCTS_DIR}/ZXingObjC/ZXingObjC.framework",
-				"${BUILT_PRODUCTS_DIR}/app_settings/app_settings.framework",
-				"${BUILT_PRODUCTS_DIR}/audio_session/audio_session.framework",
-				"${BUILT_PRODUCTS_DIR}/connectivity/connectivity.framework",
-				"${BUILT_PRODUCTS_DIR}/device_calendar/device_calendar.framework",
-				"${BUILT_PRODUCTS_DIR}/device_info/device_info.framework",
-				"${BUILT_PRODUCTS_DIR}/flutter_barcode_scanner/flutter_barcode_scanner.framework",
-				"${BUILT_PRODUCTS_DIR}/flutter_exif_rotation/flutter_exif_rotation.framework",
-				"${BUILT_PRODUCTS_DIR}/flutter_local_notifications/flutter_local_notifications.framework",
-				"${BUILT_PRODUCTS_DIR}/flutter_native_timezone/flutter_native_timezone.framework",
-				"${BUILT_PRODUCTS_DIR}/fluttertoast/fluttertoast.framework",
-				"${BUILT_PRODUCTS_DIR}/gallery_saver/gallery_saver.framework",
-				"${BUILT_PRODUCTS_DIR}/geolocator_apple/geolocator_apple.framework",
-				"${BUILT_PRODUCTS_DIR}/image_picker_ios/image_picker_ios.framework",
-				"${BUILT_PRODUCTS_DIR}/in_app_review/in_app_review.framework",
-				"${BUILT_PRODUCTS_DIR}/just_audio/just_audio.framework",
-				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
-				"${BUILT_PRODUCTS_DIR}/notification_permissions/notification_permissions.framework",
-				"${BUILT_PRODUCTS_DIR}/package_info/package_info.framework",
-				"${BUILT_PRODUCTS_DIR}/path_provider_ios/path_provider_ios.framework",
-				"${BUILT_PRODUCTS_DIR}/rokwire_plugin/rokwire_plugin.framework",
-				"${BUILT_PRODUCTS_DIR}/share/share.framework",
-				"${BUILT_PRODUCTS_DIR}/shared_preferences_ios/shared_preferences_ios.framework",
-				"${BUILT_PRODUCTS_DIR}/sqflite/sqflite.framework",
-				"${BUILT_PRODUCTS_DIR}/uni_links/uni_links.framework",
-				"${BUILT_PRODUCTS_DIR}/url_launcher_ios/url_launcher_ios.framework",
-				"${BUILT_PRODUCTS_DIR}/video_player_avfoundation/video_player_avfoundation.framework",
-				"${BUILT_PRODUCTS_DIR}/wakelock/wakelock.framework",
-				"${BUILT_PRODUCTS_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Wisconsin/Pods-Wisconsin-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCoreDiagnostics.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCoreInternal.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCrashlytics.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseInstallations.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseMessaging.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleDataTransport.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toast.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZXingObjC.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/app_settings.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/audio_session.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/connectivity.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/device_calendar.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/device_info.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_barcode_scanner.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_exif_rotation.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_local_notifications.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_native_timezone.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/fluttertoast.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/gallery_saver.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/geolocator_apple.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/image_picker_ios.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/in_app_review.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/just_audio.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/notification_permissions.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/package_info.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/path_provider_ios.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/rokwire_plugin.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/share.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/shared_preferences_ios.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/sqflite.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/uni_links.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/url_launcher_ios.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/video_player_avfoundation.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/wakelock.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/webview_flutter_wkwebview.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Wisconsin/Pods-Wisconsin-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Wisconsin/Pods-Wisconsin-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		26E582E628ED972B00EFE29A /* ShellScript */ = {
@@ -1279,17 +1211,16 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
-				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Wisconsin/Pods-Wisconsin-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Wisconsin/Pods-Wisconsin-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Wisconsin/Pods-Wisconsin-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		3B06AD1E1E4923F5004D2608 /* Thin Binary */ = {
@@ -1347,93 +1278,12 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseCore/FirebaseCore.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseCoreDiagnostics/FirebaseCoreDiagnostics.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseCoreInternal/FirebaseCoreInternal.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseCrashlytics/FirebaseCrashlytics.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseInstallations/FirebaseInstallations.framework",
-				"${BUILT_PRODUCTS_DIR}/FirebaseMessaging/FirebaseMessaging.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleDataTransport/GoogleDataTransport.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
-				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
-				"${BUILT_PRODUCTS_DIR}/Reachability/Reachability.framework",
-				"${BUILT_PRODUCTS_DIR}/Toast/Toast.framework",
-				"${BUILT_PRODUCTS_DIR}/ZXingObjC/ZXingObjC.framework",
-				"${BUILT_PRODUCTS_DIR}/app_settings/app_settings.framework",
-				"${BUILT_PRODUCTS_DIR}/audio_session/audio_session.framework",
-				"${BUILT_PRODUCTS_DIR}/connectivity/connectivity.framework",
-				"${BUILT_PRODUCTS_DIR}/device_calendar/device_calendar.framework",
-				"${BUILT_PRODUCTS_DIR}/device_info/device_info.framework",
-				"${BUILT_PRODUCTS_DIR}/flutter_barcode_scanner/flutter_barcode_scanner.framework",
-				"${BUILT_PRODUCTS_DIR}/flutter_exif_rotation/flutter_exif_rotation.framework",
-				"${BUILT_PRODUCTS_DIR}/flutter_local_notifications/flutter_local_notifications.framework",
-				"${BUILT_PRODUCTS_DIR}/flutter_native_timezone/flutter_native_timezone.framework",
-				"${BUILT_PRODUCTS_DIR}/fluttertoast/fluttertoast.framework",
-				"${BUILT_PRODUCTS_DIR}/gallery_saver/gallery_saver.framework",
-				"${BUILT_PRODUCTS_DIR}/geolocator_apple/geolocator_apple.framework",
-				"${BUILT_PRODUCTS_DIR}/image_picker_ios/image_picker_ios.framework",
-				"${BUILT_PRODUCTS_DIR}/in_app_review/in_app_review.framework",
-				"${BUILT_PRODUCTS_DIR}/just_audio/just_audio.framework",
-				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
-				"${BUILT_PRODUCTS_DIR}/notification_permissions/notification_permissions.framework",
-				"${BUILT_PRODUCTS_DIR}/package_info/package_info.framework",
-				"${BUILT_PRODUCTS_DIR}/path_provider_ios/path_provider_ios.framework",
-				"${BUILT_PRODUCTS_DIR}/rokwire_plugin/rokwire_plugin.framework",
-				"${BUILT_PRODUCTS_DIR}/share/share.framework",
-				"${BUILT_PRODUCTS_DIR}/shared_preferences_ios/shared_preferences_ios.framework",
-				"${BUILT_PRODUCTS_DIR}/sqflite/sqflite.framework",
-				"${BUILT_PRODUCTS_DIR}/uni_links/uni_links.framework",
-				"${BUILT_PRODUCTS_DIR}/url_launcher_ios/url_launcher_ios.framework",
-				"${BUILT_PRODUCTS_DIR}/video_player_avfoundation/video_player_avfoundation.framework",
-				"${BUILT_PRODUCTS_DIR}/wakelock/wakelock.framework",
-				"${BUILT_PRODUCTS_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCore.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCoreDiagnostics.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCoreInternal.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseCrashlytics.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseInstallations.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FirebaseMessaging.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleDataTransport.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toast.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZXingObjC.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/app_settings.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/audio_session.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/connectivity.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/device_calendar.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/device_info.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_barcode_scanner.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_exif_rotation.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_local_notifications.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_native_timezone.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/fluttertoast.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/gallery_saver.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/geolocator_apple.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/image_picker_ios.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/in_app_review.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/just_audio.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/notification_permissions.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/package_info.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/path_provider_ios.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/rokwire_plugin.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/share.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/shared_preferences_ios.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/sqflite.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/uni_links.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/url_launcher_ios.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/video_player_avfoundation.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/wakelock.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/webview_flutter_wkwebview.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1445,13 +1295,12 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
-				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
