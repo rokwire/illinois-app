@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -142,8 +143,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             Container(height: 8),
                             _buildPrivacyDropDown(),
                             _buildHiddenForSearch(),
-                            _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "images/icon-member.png"),
-                            _buildAuthManLayout(),
+                            Visibility(visible: _isManagedGroupAdmin, child: Column(children: [
+                              _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "images/icon-member.png"),
+                              _buildAuthManLayout(),
+                            ])),
                             Visibility(
                               visible: !_isAuthManGroup,
                               child: Column(children: [
@@ -585,7 +588,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
   //Autojoin
   Widget _buildCanAutojoinLayout(){
-    return Container(
+    return Visibility(visible: _isManagedGroupAdmin, child: Container(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.auto_join.enabled.label", "Group can be joined automatically?"),//TBD localize
         value: _group?.canJoinAutomatically,
@@ -597,7 +600,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           }
         }
       ),
-    );
+    ));
   }
 
   // AuthMan Group
@@ -842,6 +845,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void onNameChanged(String name){
     _group!.title = name.trim();
+  }
+
+  bool get _isManagedGroupAdmin {
+    return Auth2().account?.isManagedGroupAdmin ?? false;
   }
 
   bool get _isAuthManGroup{

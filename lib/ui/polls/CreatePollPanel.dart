@@ -293,6 +293,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         selectedMembers: _groupMembersSelection,
         allMembers: _membersAllowedToPost,
         groupId: widget.group?.id,
+        groupPrivacy: widget.group?.privacy,
         onSelectionChanged: (members){
           setState(() {
             _groupMembersSelection = members;

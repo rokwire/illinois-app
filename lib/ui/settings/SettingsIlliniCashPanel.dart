@@ -178,9 +178,9 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
       contentWidget = VerticalTitleValueSection(title: '', value: '',);
     }
     else if (IlliniCash().eligibility?.eligible == false) {
-      String title = Localization().getStringEx('panel.settings.illini_cash.label.illegible', 'Illegible');
+      String title = Localization().getStringEx('panel.settings.illini_cash.label.ineligible', 'Ineligible');
       String? status = StringUtils.isNotEmpty(IlliniCash().eligibility?.accountStatus) ? IlliniCash().eligibility?.accountStatus :
-        Localization().getStringEx('panel.settings.illini_cash.label.illegible_status', 'You are not eligibile for Illini Cash');
+        Localization().getStringEx('panel.settings.illini_cash.label.ineligible_status', 'You are not eligibile for Illini Cash');
       
       contentWidget = VerticalTitleValueSection(
         title: title,

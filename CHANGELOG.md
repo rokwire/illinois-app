@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.1.36] - 2022-09-30
+### Changed
+- Updated NSCameraUsageDescription, NSPhotoLibraryUsageDescription and NSPhotoLibraryAddUsageDescription in Info.plist file [#2427](https://github.com/rokwire/illinois-app/issues/2427).
+### Added
+- Allow only managed group admin to create and update managed groups [#2429](https://github.com/rokwire/illinois-app/issues/2429).
+
+## [4.1.35] - 2022-09-28
+### Fixed
+- Fixed "illegible" spell error [#2378](https://github.com/rokwire/illinois-app/issues/2378).
+### Changed
+- Do not show UIN and Email in group members list when the group is public [#2421](https://github.com/rokwire/illinois-app/issues/2421).
+- Show hidden groups only for admins - hide for all others [#2423](https://github.com/rokwire/illinois-app/issues/2423).
+
 ## [4.1.34] - 2022-09-19
 ### Fixed
 - Fixed Notifications handling for AppReview service [#2380](https://github.com/rokwire/illinois-app/issues/2380).
