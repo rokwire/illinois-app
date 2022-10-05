@@ -136,6 +136,19 @@ android {
             }
             manifestPlaceholders = [mapsApiKey: "${illinoisKeysProperties.getProperty('googleMapsApiKey')}"]
         }
+        wisconsin {
+            dimension "product"
+            applicationId "edu.illinois.rokwire"
+
+            def keysProperties = new Properties()
+            def keysPropertiesFile = rootProject.file('app/src/wisconsin/keys.properties')
+            if (keysPropertiesFile.exists()) {
+                keysPropertiesFile.withReader('UTF-8') { reader ->
+                    keysProperties.load(reader)
+                }
+            }
+            manifestPlaceholders = [mapsApiKey: "${keysProperties.getProperty('googleMapsApiKey')}"]
+        }
     }
 }
 
