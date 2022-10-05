@@ -1,0 +1,10 @@
+{
+  "color": {
+    "fillColorPrimary"                      :"#800000",
+    "fillColorPrimaryTransparent03"         :"#4D800000",
+    "fillColorPrimaryTransparent05"         :"#80800000",
+    "fillColorPrimaryTransparent09"         :"#E6800000",
+    "fillColorPrimaryTransparent015"        :"#26800000",
+    "fillColorPrimaryVariant"               :"#740000"
+  }
+}

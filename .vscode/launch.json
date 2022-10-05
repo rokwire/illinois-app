@@ -43,6 +43,36 @@
         "--flavor", "IllinoisTst"
       ],
       "preLaunchTask": "prebuildIllinois"
+    },
+    {
+      "name": "Wisconsin-Dev",
+      "program": "lib/mainDev.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": ["-v",
+        "--flavor", "WisconsinDev"
+      ],
+      "preLaunchTask": "prebuildWisconsin"
+    },
+    {
+      "name": "Wisconsin-Prod",
+      "program": "lib/mainProd.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": ["-v",
+        "--flavor", "WisconsinProd"
+      ],
+      "preLaunchTask": "prebuildWisconsin"
+    },
+    {
+      "name": "Wisconsin-Test",
+      "program": "lib/mainTest.dart",
+      "request": "launch",
+      "type": "dart",
+      "args": ["-v",
+        "--flavor", "WisconsinTst"
+      ],
+      "preLaunchTask": "prebuildWisconsin"
     }
-  ]
+   ]
 }

@@ -11,6 +11,15 @@
       }
 		},
 		{
+			"label": "prebuildWisconsin",
+			"type": "shell",
+			"command": "./scripts/prebuild_wisconsin.sh",
+			"group": "build",
+			"presentation": {
+        "reveal": "never"
+      }
+		},
+		{
 			"label": "cleanupAppResources",
 			"type": "shell",
 			"command": "./scripts/cleanup_app_resources.sh",
