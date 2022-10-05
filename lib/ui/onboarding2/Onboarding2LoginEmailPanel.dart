@@ -114,7 +114,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
     return Scaffold(backgroundColor: Styles().colors!.background, body:
       Stack(children: <Widget>[
-        Image.asset("images/login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
+        Styles().images?.getImage("login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ) ?? Container(),
         SafeArea(child:
           Column(children:[
             Expanded(child:

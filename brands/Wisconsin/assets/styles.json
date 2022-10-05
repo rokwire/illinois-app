@@ -5,6 +5,8 @@
     "fillColorPrimaryTransparent05"         :"#80800000",
     "fillColorPrimaryTransparent09"         :"#E6800000",
     "fillColorPrimaryTransparent015"        :"#26800000",
-    "fillColorPrimaryVariant"               :"#740000"
+    "fillColorPrimaryVariant"               :"#740000",
+    "fillColorSecondary"                    :"#CA3F27",
+    "fillColorSecondaryTransparent05"       :"#80CA3F27"
   }
 }

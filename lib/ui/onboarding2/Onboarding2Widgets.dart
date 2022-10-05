@@ -26,7 +26,7 @@ class Onboarding2TitleWidget extends StatelessWidget{
           SafeArea(child:
             Column(children: [
               Container(height: 31,),
-              Image.asset("images/illinois-blockI-blue.png", excludeFromSemantics: true, width: 24, fit: BoxFit.fitWidth,),
+              Styles().images?.getImage("illinois-blockI-blue.png", excludeFromSemantics: true, fit: BoxFit.fitWidth,) ?? Container(),
               Container(height: 17,),
               Row(children: <Widget>[
                 Container(width: 32,),

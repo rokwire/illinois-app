@@ -60,12 +60,12 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
                 children: <Widget>[
                   Stack(
                     children: <Widget>[
-                      Image.asset(
-                        "images/login-header.png",
+                      Styles().images?.getImage(
+                        "login-header.png",
                         fit: BoxFit.fitWidth,
                         width: MediaQuery.of(context).size.width,
                         excludeFromSemantics: true,
-                      ),
+                      ) ?? Container(),
                       OnboardingBackButton(
                           padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                           onTap: () {
