@@ -32,6 +32,8 @@
 
     "iconColor"                             :"#E84A27",
 
+    "transparentWalletColor"        : "#ff0f2040",
+
     "eventColor"                            :"#E54B30",
     "diningColor"                           :"#F09842",
     "placeColor"                            :"#62A7A3",
@@ -211,6 +213,21 @@
     "panel.athletics.home.heading.regular":  {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "white",  "weight" :  "w900", "letter_spacing" :  1.0},
     "panel.athletics.home.title.large":  {"font_family": "ProximaNovaRegular", "size": 20.0, "color": "fillColorPrimary",  "weight" :  "w900"},
     "panel.athletics.home.detail.medium":  {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "textBackground"},
-    "panel.athletics.home.button.underline":  {"font_family": "ProximaNovaSemiBold", "size": 16.0, "color": "white", "letter_spacing" :  1.0, "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"}
+    "panel.athletics.home.button.underline":  {"font_family": "ProximaNovaSemiBold", "size": 16.0, "color": "white", "letter_spacing" :  1.0, "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
+
+    "panel.mtd_bus.heading.title":  {"font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "transparentWalletColor"},
+    "panel.mtd_bus.buss_number.label":  {"font_family": "ProximaNovaBold", "size": 36.0, "color": "white"},
+    "panel.mtd_bus.description.label":  {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "white"},
+    "panel.mtd_bus.role":  {"font_family": "ProximaNovaMedium", "size": 36.0, "color": "white"},
+    "panel.mtd_bus.clock.time":  {"font_family": "ProximaNovaMedium", "size": 48.0, "color": "white"},
+
+    "panel.id_card.close_button": {"font_family": "ProximaNovaLight", "size": 48.0, "color": "fillColorPrimary"},
+    "panel.id_card.heading.title": {"font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "white"},
+    "panel.id_card.detail.title.extra_large": {"font_family": "ProximaNovaExtraBold", "size": 28.0, "color": "fillColorPrimary"},
+    "panel.id_card.detail.title.large": {"font_family": "ProximaNovaExtraBold", "size": 24.0, "color": "fillColorPrimary"},
+    "panel.id_card.detail.title.regular": {"font_family": "ProximaNovaRegular", "size": 20.0, "color": "fillColorPrimary"},
+    "panel.id_card.detail.title.medium": {"font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
+    "panel.id_card.detail.title.small": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimary"},
+    "panel.id_card.detail.title.tiny": {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "fillColorPrimary"}
   }
 }
