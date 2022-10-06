@@ -99,7 +99,7 @@ $ sh ./scripts/prebuild_illinois.sh
 $ flutter build apk --no-tree-shake-icons --flavor IllinoisProd -t lib/mainProd.dart
 $ flutter build ios --no-tree-shake-icons --flavor IllinoisProd -t lib/mainProd.dart
 ```
-NB: Build environments: Prod/Dev/Test
+NB: Product environments: Prod/Dev/Test
 ```
 --flavor IllinoisProd -t lib/mainProd.dart
 --flavor IllinoisDev -t lib/mainDev.dart
