@@ -129,7 +129,6 @@
 		26E582C328ED972B00EFE29A /* CommonCrypto+UIUCUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26ECB3222487938C00479487 /* CommonCrypto+UIUCUtils.m */; };
 		26E582C828ED972B00EFE29A /* travel-mode-drive@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30F022E5DD7900547FE1 /* travel-mode-drive@2x.png */; };
 		26E582C928ED972B00EFE29A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		26E582CA28ED972B00EFE29A /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */; };
 		26E582CB28ED972B00EFE29A /* travel-mode-bicycle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EF22E5DD7900547FE1 /* travel-mode-bicycle@2x.png */; };
 		26E582CC28ED972B00EFE29A /* maps-icon-marker-pin-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B532306E8000026240A /* maps-icon-marker-pin-40@2x.png */; };
 		26E582CD28ED972B00EFE29A /* maps-icon-marker-circle-30@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 269F83E322D73E7400CC11A4 /* maps-icon-marker-circle-30@2x.png */; };
@@ -151,7 +150,6 @@
 		26E582DD28ED972B00EFE29A /* travel-mode-unknown@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30F522E5E47600547FE1 /* travel-mode-unknown@2x.png */; };
 		26E582DE28ED972B00EFE29A /* button-icon-nav-next.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170E822DDFB6500299773 /* button-icon-nav-next.png */; };
 		26E582E028ED972B00EFE29A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
-		26E582E128ED972B00EFE29A /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */; };
 		26E582E228ED972B00EFE29A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6BDCD39242CCF5F002F7364 /* Localizable.strings */; };
 		26E5830028ED975300EFE29A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 26E582A228ED971500EFE29A /* Assets.xcassets */; };
 		26ECB3232487938C00479487 /* CommonCrypto+UIUCUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26ECB3222487938C00479487 /* CommonCrypto+UIUCUtils.m */; };
@@ -296,6 +294,8 @@
 		26C90CEF2361D13E0092E07F /* NSDictionary+UIUCConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+UIUCConfig.h"; sourceTree = "<group>"; };
 		26D32C4728EEFD760037E12C /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
 		26D32C4828EEFD760037E12C /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
+		26D32C4928EF09F90037E12C /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
+		26D32C4A28EF09F90037E12C /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
 		26E0DD782525FB8A002B7B11 /* Dev.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Dev.xcconfig; path = Flutter/Dev.xcconfig; sourceTree = "<group>"; };
 		26E0DD792525FB8A002B7B11 /* Release-Dev.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Release-Dev.xcconfig"; path = "Flutter/Release-Dev.xcconfig"; sourceTree = "<group>"; };
 		26E0DD7A2525FB8A002B7B11 /* Debug-Dev.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Debug-Dev.xcconfig"; path = "Flutter/Debug-Dev.xcconfig"; sourceTree = "<group>"; };
@@ -525,6 +525,8 @@
 				26E582A328ED971500EFE29A /* Wisconsin-Info.plist */,
 				26E582A128ED971500EFE29A /* Wisconsin.entitlements */,
 				26E582A228ED971500EFE29A /* Assets.xcassets */,
+				26D32C4A28EF09F90037E12C /* GoogleService-Info-Dev.plist */,
+				26D32C4928EF09F90037E12C /* GoogleService-Info-Prod.plist */,
 			);
 			path = Wisconsin;
 			sourceTree = "<group>";
@@ -937,7 +939,6 @@
 			files = (
 				26E582C828ED972B00EFE29A /* travel-mode-drive@2x.png in Resources */,
 				26E582C928ED972B00EFE29A /* LaunchScreen.storyboard in Resources */,
-				26E582CA28ED972B00EFE29A /* GoogleService-Info-Prod.plist in Resources */,
 				26E582CB28ED972B00EFE29A /* travel-mode-bicycle@2x.png in Resources */,
 				26E582CC28ED972B00EFE29A /* maps-icon-marker-pin-40@2x.png in Resources */,
 				26E582CD28ED972B00EFE29A /* maps-icon-marker-circle-30@2x.png in Resources */,
@@ -960,7 +961,6 @@
 				26E582DD28ED972B00EFE29A /* travel-mode-unknown@2x.png in Resources */,
 				26E582DE28ED972B00EFE29A /* button-icon-nav-next.png in Resources */,
 				26E582E028ED972B00EFE29A /* Main.storyboard in Resources */,
-				26E582E128ED972B00EFE29A /* GoogleService-Info-Dev.plist in Resources */,
 				26E582E228ED972B00EFE29A /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
