@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; settings = {COMPILER_FLAGS = "-w"; }; };
-		2605FF54236C13A6002F71BE /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */; };
-		2605FF55236C13A6002F71BE /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */; };
 		2617849D28C8ED6A009172BB /* UIColor+InaParse.m in Sources */ = {isa = PBXBuildFile; fileRef = 269F83EC22D73EB400CC11A4 /* UIColor+InaParse.m */; };
 		2617849E28C8ED6A009172BB /* NSUserDefaults+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 268F30FF22E5E7BF00547FE1 /* NSUserDefaults+InaUtils.m */; };
 		2617849F28C8ED6A009172BB /* NSDictionary+UIUCConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 26C90CEE2361D13E0092E07F /* NSDictionary+UIUCConfig.m */; };
@@ -40,7 +38,6 @@
 		261784B828C8ED6A009172BB /* CommonCrypto+UIUCUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 26ECB3222487938C00479487 /* CommonCrypto+UIUCUtils.m */; };
 		261784BC28C8ED6A009172BB /* travel-mode-drive@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30F022E5DD7900547FE1 /* travel-mode-drive@2x.png */; };
 		261784BD28C8ED6A009172BB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		261784BE28C8ED6A009172BB /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */; };
 		261784BF28C8ED6A009172BB /* travel-mode-bicycle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EF22E5DD7900547FE1 /* travel-mode-bicycle@2x.png */; };
 		261784C028C8ED6A009172BB /* maps-icon-marker-pin-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B532306E8000026240A /* maps-icon-marker-pin-40@2x.png */; };
 		261784C128C8ED6A009172BB /* maps-icon-marker-circle-30@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 269F83E322D73E7400CC11A4 /* maps-icon-marker-circle-30@2x.png */; };
@@ -62,7 +59,6 @@
 		261784D128C8ED6A009172BB /* travel-mode-unknown@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30F522E5E47600547FE1 /* travel-mode-unknown@2x.png */; };
 		261784D228C8ED6A009172BB /* button-icon-nav-next.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170E822DDFB6500299773 /* button-icon-nav-next.png */; };
 		261784D428C8ED6A009172BB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
-		261784D528C8ED6A009172BB /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */; };
 		261784D628C8ED6A009172BB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6BDCD39242CCF5F002F7364 /* Localizable.strings */; };
 		2626D94B22DC99C800F6BC2F /* NSString+InaJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94922DC99C700F6BC2F /* NSString+InaJson.m */; };
 		2626D94E22DCB80000F6BC2F /* MapMarkerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94D22DCB80000F6BC2F /* MapMarkerView.m */; };
@@ -298,6 +294,8 @@
 		26C90CEC2361CF480092E07F /* NSDictionary+InaPathKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+InaPathKey.m"; sourceTree = "<group>"; };
 		26C90CEE2361D13E0092E07F /* NSDictionary+UIUCConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+UIUCConfig.m"; sourceTree = "<group>"; };
 		26C90CEF2361D13E0092E07F /* NSDictionary+UIUCConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+UIUCConfig.h"; sourceTree = "<group>"; };
+		26D32C4728EEFD760037E12C /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
+		26D32C4828EEFD760037E12C /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
 		26E0DD782525FB8A002B7B11 /* Dev.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Dev.xcconfig; path = Flutter/Dev.xcconfig; sourceTree = "<group>"; };
 		26E0DD792525FB8A002B7B11 /* Release-Dev.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Release-Dev.xcconfig"; path = "Flutter/Release-Dev.xcconfig"; sourceTree = "<group>"; };
 		26E0DD7A2525FB8A002B7B11 /* Debug-Dev.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Debug-Dev.xcconfig"; path = "Flutter/Debug-Dev.xcconfig"; sourceTree = "<group>"; };
@@ -503,6 +501,8 @@
 				97C147021CF9000F007C117D /* Runner-Info.plist */,
 				2668953022E1E074003CAB94 /* Runner.entitlements */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
+				2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */,
+				2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -513,6 +513,8 @@
 				26AAA20428CA333300BE694B /* Illinois-Info.plist */,
 				26AAA20528CA33F400BE694B /* Illinois.entitlements */,
 				26AAA20628CA34BA00BE694B /* Assets.xcassets */,
+				26D32C4728EEFD760037E12C /* GoogleService-Info-Dev.plist */,
+				26D32C4828EEFD760037E12C /* GoogleService-Info-Prod.plist */,
 			);
 			path = Illinois;
 			sourceTree = "<group>";
@@ -652,8 +654,6 @@
 				1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */,
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				2696995F22C38C1D00B3290E /* main.m */,
-				2605FF52236C13A6002F71BE /* GoogleService-Info-Dev.plist */,
-				2605FF53236C13A6002F71BE /* GoogleService-Info-Prod.plist */,
 				26F7952A28AFA9A800AFC37E /* Navigation */,
 				26FAB1C622EB34A3008E987C /* UIUC */,
 				26FA06BB22CCA8B5003B78E4 /* Utils */,
@@ -905,7 +905,6 @@
 			files = (
 				261784BC28C8ED6A009172BB /* travel-mode-drive@2x.png in Resources */,
 				261784BD28C8ED6A009172BB /* LaunchScreen.storyboard in Resources */,
-				261784BE28C8ED6A009172BB /* GoogleService-Info-Prod.plist in Resources */,
 				261784BF28C8ED6A009172BB /* travel-mode-bicycle@2x.png in Resources */,
 				261784C028C8ED6A009172BB /* maps-icon-marker-pin-40@2x.png in Resources */,
 				261784C128C8ED6A009172BB /* maps-icon-marker-circle-30@2x.png in Resources */,
@@ -927,7 +926,6 @@
 				261784D128C8ED6A009172BB /* travel-mode-unknown@2x.png in Resources */,
 				261784D228C8ED6A009172BB /* button-icon-nav-next.png in Resources */,
 				261784D428C8ED6A009172BB /* Main.storyboard in Resources */,
-				261784D528C8ED6A009172BB /* GoogleService-Info-Dev.plist in Resources */,
 				26AAA20728CA34C200BE694B /* Assets.xcassets in Resources */,
 				261784D628C8ED6A009172BB /* Localizable.strings in Resources */,
 			);
@@ -973,7 +971,6 @@
 			files = (
 				268F30F422E5DD7900547FE1 /* travel-mode-drive@2x.png in Resources */,
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
-				2605FF55236C13A6002F71BE /* GoogleService-Info-Prod.plist in Resources */,
 				268F30F322E5DD7900547FE1 /* travel-mode-bicycle@2x.png in Resources */,
 				26962B572306E8000026240A /* maps-icon-marker-pin-40@2x.png in Resources */,
 				269F83E722D73E7400CC11A4 /* maps-icon-marker-circle-30@2x.png in Resources */,
@@ -996,7 +993,6 @@
 				26A170EB22DDFB6500299773 /* button-icon-nav-next.png in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
-				2605FF54236C13A6002F71BE /* GoogleService-Info-Dev.plist in Resources */,
 				B6BDCD37242CCF5F002F7364 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
