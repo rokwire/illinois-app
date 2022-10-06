@@ -82,13 +82,13 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   Widget _buildCreateCategoryHeader() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(Localization().getStringEx('panel.wellness.categories.create.header.label', 'Create a Category'),
-          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)),
+          style: Styles().textStyles?.getTextStyle("widget.title.medium")),
       Padding(
           padding: EdgeInsets.only(top: 5),
           child: Text(
               Localization().getStringEx('panel.wellness.categories.create.header.description',
                   'Examples: an RSO or club, a specific class, or a miscellaneous task category.'),
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
+              style: Styles().textStyles?.getTextStyle("widget.detail.small")))
     ]);
   }
 
@@ -99,14 +99,14 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
           Padding(
               padding: EdgeInsets.only(bottom: 5),
               child: Text(Localization().getStringEx('panel.wellness.categories.name.field.label', 'NAME'),
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold))),
+                  style: Styles().textStyles?.getTextStyle("widget.description.small_variant"))),
           Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
               child: TextField(
                   controller: _nameController,
                   decoration: InputDecoration(border: InputBorder.none),
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold)))
+                  style: Styles().textStyles?.getTextStyle("widget.title.medium")))
         ]));
   }
 
@@ -169,7 +169,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
                 Expanded(
                     child: Text(Localization().getStringEx('panel.wellness.categories.manage.existing.label', 'Manage Existing Categories'),
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary)))
+                        style: Styles().textStyles?.getTextStyle("widget.title.regular")))
               ])),
           Padding(
               padding: EdgeInsets.only(top: 8),
@@ -188,7 +188,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
     } else {
       widgetList.add(Row(children: [
         Expanded(child: Text(Localization().getStringEx('panel.wellness.categories.manage.empty.label', 'No current categories'),
-          style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))
+          style: Styles().textStyles?.getTextStyle("panel.wellness.todo.category.empty.msg")))
       ]));
     }
     return widgetList;
@@ -203,7 +203,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
               Padding(
                   padding: EdgeInsets.only(left: 20, top: 10, bottom: 10),
                   child: Text(StringUtils.ensureNotEmpty(category.name),
-                      style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 14))),
+                      style: Styles().textStyles?.getTextStyle("panel.wellness.todo.category.card.title.regular"))),
               Expanded(child: Container()),
               Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: Image.asset('images/edit-white.png'))
             ])));
