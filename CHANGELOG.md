@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated NSCameraUsageDescription, NSPhotoLibraryUsageDescription and NSPhotoLibraryAddUsageDescription in Info.plist file [#2427](https://github.com/rokwire/illinois-app/issues/2427).
 - Applied preliminary work on multiple brands support [#2353](https://github.com/rokwire/illinois-app/issues/2353).
 - Android: update dependencies to their latest possible versions [#2437](https://github.com/rokwire/illinois-app/issues/2437).
+### Fixed
+- Fixed GoogleServices.json ifor iOS targets [#2353](https://github.com/rokwire/illinois-app/issues/2353).
 
 ## [4.2.0] - 2022-09-23
 ### Changed
