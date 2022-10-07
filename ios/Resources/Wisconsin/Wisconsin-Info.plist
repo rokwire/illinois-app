@@ -33,7 +33,7 @@
 			<string>edu.illinois.rokwire.auth</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>edu.illinois.rokwire</string>
+				<string>edu.illinois.rokwire.wisconsin</string>
 			</array>
 		</dict>
 	</array>

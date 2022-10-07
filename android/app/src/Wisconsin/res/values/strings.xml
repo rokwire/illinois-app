@@ -17,4 +17,5 @@
 
 <resources>
     <string name="app_name">Wisconsin</string>
+    <string name="app_scheme" translatable="false">edu.illinois.rokwire.wisconsin</string>
 </resources>
