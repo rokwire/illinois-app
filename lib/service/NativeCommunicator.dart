@@ -19,7 +19,6 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -63,7 +62,7 @@ class NativeCommunicator with Service {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), DeepLink()]);
+    return Set.from([Config()]);
   }
 
   // NotificationsListener
@@ -201,6 +200,17 @@ class NativeCommunicator with Service {
     try {
       String? base64String = await _platformChannel.invokeMethod('barcode', params);
       result = (base64String != null) ? base64Decode(base64String) : null;
+    }
+    catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
+  Future<String?> getDeepLinkScheme() async {
+    String? result;
+    try {
+      result = await _platformChannel.invokeMethod('deepLinkScheme');
     }
     catch (e) {
       print(e.toString());

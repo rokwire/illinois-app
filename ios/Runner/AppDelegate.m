@@ -239,6 +239,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	else if ([call.method isEqualToString:@"barcode"]) {
 		[self handleBarcodeWithParameters:parameters result:result];
 	}
+	else if ([call.method isEqualToString:@"deepLinkScheme"]) {
+		[self handleDeepLinkSchemeWithParameters:parameters result:result];
+	}
 	else if ([call.method isEqualToString:@"test"]) {
 		[self handleTestWithParameters:parameters result:result];
 	}
@@ -418,6 +421,25 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	result(base64ImageData);
 }
 */
+
+#pragma mark DeepLink Scheme
+
+- (void)handleDeepLinkSchemeWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+	NSString *deepLinkScheme = nil;
+	NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleURLTypes"];
+	if ([urlTypes isKindOfClass:[NSArray class]]) {
+		for (NSUInteger index = 0; index < urlTypes.count; index++) {
+			NSDictionary *urlType = [urlTypes inaDictAtIndex: index];
+			NSString *urlName = [urlType inaStringForKey:@"CFBundleURLName"];
+			if ([urlName isEqualToString:@"edu.illinois.rokwire.auth"]) {
+				NSArray *urlSchemes = [urlType inaArrayForKey:@"CFBundleURLSchemes"];
+				deepLinkScheme = urlSchemes.firstObject;
+				break;
+			}
+		}
+	}
+	result(deepLinkScheme);
+}
 
 #pragma mark Orientations
 
