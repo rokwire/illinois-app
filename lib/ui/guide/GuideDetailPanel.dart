@@ -202,8 +202,14 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
           Map<String, dynamic>? locationGps = (location != null) ? JsonUtils.mapValue(location['location']) : null;
           bool hasLocation = (locationGps != null) && (locationGps['latitude'] != null) && (locationGps['longitude'] != null);
 
-          if ((text != null) && (hasUri || hasLocation)) {
-
+          if (text != null) {
+            TextDecoration? linkTextDecoration;
+            Color? linkTextDecorationColor;
+            if (hasUri || hasLocation) {
+              linkTextDecoration = TextDecoration.underline;
+              linkTextDecorationColor = Styles().colors!.fillColorSecondary;
+            }
+            
             contentList.add(Semantics(button: true, child:
               GestureDetector(onTap: () => hasLocation ? _onTapLocation(location) : (hasUri ? _onTapLink(url) : _nop()), child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
@@ -211,7 +217,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                     (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: Image.network(icon, width: 20, height: 20, excludeFromSemantics: true,),) : Container(width: 24, height: 24),
                     Expanded(child:
                       Padding(padding: EdgeInsets.only(left: 8), child:
-                        Text(text, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.regular, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary))
+                        Text(text, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.regular, decoration: linkTextDecoration, decorationColor: linkTextDecorationColor))
                       ),
                     ),
                   ],)
