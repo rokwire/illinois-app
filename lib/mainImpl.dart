@@ -102,13 +102,13 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     AppLivecycle(),
     Connectivity(),
     LocationServices(),
-    DeepLink(),
 
     Storage(),
 
     Config(defaultEnvironment: configEnvironment),
     AppDateTime(),
     NativeCommunicator(),
+    DeepLink(),
     HttpProxy(),
 
     Auth2(),

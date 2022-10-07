@@ -28,6 +28,7 @@ public class Constants {
     static final String APP_DISMISS_LAUNCH_SCREEN_KEY = "dismissLaunchScreen";
     static final String APP_SET_LAUNCH_SCREEN_STATUS_KEY = "setLaunchScreenStatus";
     static final String APP_ENABLED_ORIENTATIONS_KEY = "enabledOrientations";
+    static final String DEEPLINK_SCHEME_KEY = "deepLinkScheme";
     static final String BARCODE_KEY = "barcode";
     static final String TEST_KEY = "test";
 

@@ -290,6 +290,11 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         }
     }
 
+    
+    private String handleDeepLinkScheme(Object params) {
+        return getString(R.string.app_scheme);
+    }
+
     private String handleBarcode(Object params) {
         String barcodeImageData = null;
         String content = Utils.Map.getValueFromPath(params, "content", null);
@@ -467,6 +472,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     Object orientations = methodCall.argument("orientations");
                     List<String> orientationsList = handleEnabledOrientations(orientations);
                     result.success(orientationsList);
+                    break;
+                case Constants.DEEPLINK_SCHEME_KEY:
+                    String deepLinkScheme = handleDeepLinkScheme(methodCall.arguments);
+                    result.success(deepLinkScheme);
                     break;
                 case Constants.BARCODE_KEY:
                     String barcodeImageData = handleBarcode(methodCall.arguments);
