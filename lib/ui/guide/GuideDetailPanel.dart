@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -195,6 +197,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
           String? text = JsonUtils.stringValue(link['text']);
           String? icon = JsonUtils.stringValue(link['icon']);
           String? url = JsonUtils.stringValue(link['url']);
+          bool? useInternalBrowser = JsonUtils.boolValue(link['use_internal_browser']);
           Uri? uri = (url != null) ? Uri.tryParse(url) : null;
           bool hasUri = StringUtils.isNotEmpty(uri?.scheme);
 
@@ -211,7 +214,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
             }
             
             contentList.add(Semantics(button: true, child:
-              GestureDetector(onTap: () => hasLocation ? _onTapLocation(location) : (hasUri ? _onTapLink(url) : _nop()), child:
+              GestureDetector(onTap: () => hasLocation ? _onTapLocation(location) : (hasUri ? _onTapLink(url, useInternalBrowser: useInternalBrowser) : _nop()), child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: Image.network(icon, width: 20, height: 20, excludeFromSemantics: true,),) : Container(width: 24, height: 24),
@@ -484,16 +487,20 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     Auth2().prefs?.toggleFavorite(GuideFavorite(id: Guide().entryId(_guideEntry)));
   }
 
-  void _onTapLink(String? url) {
+  void _onTapLink(String? url, {bool? useInternalBrowser}) {
     Analytics().logSelect(target: 'Link: $url');
     if (StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }
       else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
+        if (useInternalBrowser == true) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+        } else {
+          Uri? uri = Uri.tryParse(url!);
+          if (uri != null) {
+            launchUrl(uri);
+          }
         }
       }
     }
