@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed hardcoded deep link URL schemes [#2353](https://github.com/rokwire/illinois-app/issues/2353).
 ### Fixed
 - Fixed GoogleServices.json ifor iOS targets [#2353](https://github.com/rokwire/illinois-app/issues/2353).
+### Added
+- Handle notifications permission for Android 13 (API level 33) [#2446](https://github.com/rokwire/illinois-app/issues/2446).
 
 ## [4.2.0] - 2022-09-23
 ### Changed
