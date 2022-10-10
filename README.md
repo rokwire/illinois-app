@@ -74,8 +74,10 @@ Alternatively, you can use AESCrypt.encode from /lib/utils/Crypt.dart to generat
    - AES encrypt the JSON string, CBC mode, PKCS7 padding, using the key and IV from `assets/config.keys.json`.
    - Get a base64 encoded string of the encryption result and save it as `assets/configs.json.enc`.
 
-#### • ios/Runner/GoogleService-Info-Debug.plist
-#### • ios/Runner/GoogleService-Info-Release.plist
+#### • ios/Resources/Runner/GoogleService-Info-Debug.plist
+#### • ios/Resources/Runner/GoogleService-Info-Release.plist
+#### • ios/Resources/Illinois/GoogleService-Info-Debug.plist
+#### • ios/Resources/Illinois/GoogleService-Info-Release.plist
 
 The Firebase configuration file for iOS generated from Google Firebase console.
 
@@ -85,17 +87,25 @@ Contains GoogleMaps API key for the Illinois flavor.
 googleMapsApiKey=XXXXXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
 ```
 
-#### • android/app/src/debug/google-services.json
-#### • android/app/src/release/google-services.json
-#### • android/app/src/profile/google-services.json
+#### • android/app/src/illinois/dev/google-services.json
+#### • android/app/src/illinois/prod/google-services.json
+#### • android/app/src/illinois/tst/google-services.json
 The Firebase configuration file for Android generated from Google Firebase console.
 
 ### Build the project
 
 ```
-$ flutter build apk --no-tree-shake-icons
-$ flutter build ios --no-tree-shake-icons
+$ sh ./scripts/prebuild_illinois.sh
+$ flutter build apk --no-tree-shake-icons --flavor IllinoisProd -t lib/mainProd.dart
+$ flutter build ios --no-tree-shake-icons --flavor IllinoisProd -t lib/mainProd.dart
 ```
+NB: Product environments: Prod/Dev/Test
+```
+--flavor IllinoisProd -t lib/mainProd.dart
+--flavor IllinoisDev -t lib/mainDev.dart
+--flavor IllinoisTst -t lib/mainTest.dart
+```
+
 NB: For versions prior to 4.2 you may omit the `no-tree-shake-icons` build parameter.
 
 NB: You may need to update singing & capabilities content for Runner project by opening `ios/Runner.xcworkspace` from xCode
