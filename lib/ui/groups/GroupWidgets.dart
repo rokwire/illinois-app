@@ -1742,7 +1742,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Styles().colors!.mediumGray!, width: 0.0))),
-                  style: Styles().textStyles?.getTextStyle('widget.group.input_field.field'))),
+                  style: Styles().textStyles?.getTextStyle('widget.input_field.text.regular'))),
           Padding(
               padding: EdgeInsets.only(top: 16),
               child: Text(
@@ -1759,7 +1759,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Styles().colors!.mediumGray!, width: 0.0))),
-                  style: Styles().textStyles?.getTextStyle('widget.group.input_field.field')))
+                  style: Styles().textStyles?.getTextStyle('widget.input_field.text.regular')))
         ]);
   }
 }

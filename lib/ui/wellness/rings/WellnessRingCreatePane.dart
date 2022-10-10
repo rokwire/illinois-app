@@ -119,7 +119,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
               child: TextField(
                   controller: _nameController,
                   decoration: InputDecoration(border: InputBorder.none),
-                  style: Styles().textStyles?.getTextStyle('widget.title.medium')))
+                  style: Styles().textStyles?.getTextStyle('widget.title.medium.fat')))
         ]));
   }
 
@@ -222,7 +222,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                       child: TextField(
                           controller: _quantityController,
                           decoration: InputDecoration(border: InputBorder.none),
-                          style: Styles().textStyles?.getTextStyle('widget.title.medium')))
+                          style: Styles().textStyles?.getTextStyle('widget.title.medium.fat')))
                 ])),
           Container(width: 16,),
           Expanded(flex: 17,
@@ -238,7 +238,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                         child: TextField(
                             controller: _unitController,
                             decoration: InputDecoration(border: InputBorder.none),
-                            style: Styles().textStyles?.getTextStyle('widget.title.medium')))
+                            style: Styles().textStyles?.getTextStyle('widget.title.medium.fat')))
                   ]))
         ],),
         );

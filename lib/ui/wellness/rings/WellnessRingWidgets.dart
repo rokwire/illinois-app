@@ -707,7 +707,7 @@ class WellnessWidgetHelper{
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Text(Localization().getStringEx('panel.wellness.ring.create.header.label', 'My Daily Wellness Rings'),
           overflow: TextOverflow.ellipsis,
-          style: Styles().textStyles?.getTextStyle('widget.title.medium')),
+          style: Styles().textStyles?.getTextStyle('widget.title.medium.fat')),
       // FavoriteStarIcon(style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 16))
     ]);
   }

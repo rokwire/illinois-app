@@ -82,7 +82,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
   Widget _buildCreateCategoryHeader() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(Localization().getStringEx('panel.wellness.categories.create.header.label', 'Create a Category'),
-          style: Styles().textStyles?.getTextStyle("widget.title.medium")),
+          style: Styles().textStyles?.getTextStyle("widget.title.medium.fat")),
       Padding(
           padding: EdgeInsets.only(top: 5),
           child: Text(
@@ -106,7 +106,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
               child: TextField(
                   controller: _nameController,
                   decoration: InputDecoration(border: InputBorder.none),
-                  style: Styles().textStyles?.getTextStyle("widget.title.medium")))
+                  style: Styles().textStyles?.getTextStyle("widget.title.medium.fat")))
         ]));
   }
 
