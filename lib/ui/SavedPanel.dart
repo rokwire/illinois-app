@@ -55,7 +55,7 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:notification_permissions/notification_permissions.dart';
+import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 
 class SavedPanel extends StatefulWidget {
 
@@ -258,12 +258,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     ) : Container();
   }
 
-  Widget _buildNotificationPermissionPrompt(BuildContext context, PermissionStatus permissionStatus) {
+  Widget _buildNotificationPermissionPrompt(BuildContext context, firebase.AuthorizationStatus permissionStatus) {
     String? message;
-    if (permissionStatus == PermissionStatus.granted) {
+    if (permissionStatus == firebase.AuthorizationStatus.authorized) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_granted', 'You already have granted access to this app.');
     }
-    else if (permissionStatus == PermissionStatus.denied) {
+    else if (permissionStatus == firebase.AuthorizationStatus.denied) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_denied', 'You already have denied access to this app.');
     }
     return Dialog(child:
@@ -451,17 +451,18 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return (favoritesCount == 0);
   }
 
-  void _requestPermissionsStatus(){
-    if (Platform.isIOS && FlexUI().isNotificationsAvailable) {
-
-      NotificationPermissions.getNotificationPermissionStatus().then((PermissionStatus status) {
-        if ((status == PermissionStatus.unknown) && mounted) {
-          setState(() {
+  void _requestPermissionsStatus() {
+    if (FlexUI().isNotificationsAvailable) {
+      firebase.FirebaseMessaging.instance.getNotificationSettings().then((settings) {
+        firebase.AuthorizationStatus status = settings.authorizationStatus;
+        // There is not "notDetermined" status for android. Threat "denied" in Android like "notDetermined" in iOS
+        if ((Platform.isAndroid && (status == firebase.AuthorizationStatus.denied)) ||
+            (Platform.isIOS && (status == firebase.AuthorizationStatus.notDetermined))) {
+          setStateIfMounted(() {
             _showNotificationPermissionPrompt = true;
           });
         }
       });
-
     }
   }
   // Handlers
@@ -495,16 +496,20 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _requestAuthorization() async {
-    PermissionStatus permissionStatus = await NotificationPermissions.getNotificationPermissionStatus();
-    if (permissionStatus != PermissionStatus.unknown) {
-      showDialog(context: context, builder: (context) => _buildNotificationPermissionPrompt(context, permissionStatus));
-    }
-    else {
-      permissionStatus = await NotificationPermissions.requestNotificationPermissions();
-      if (permissionStatus == PermissionStatus.granted) {
+    firebase.FirebaseMessaging messagingInstance = firebase.FirebaseMessaging.instance;
+    firebase.NotificationSettings settings = await messagingInstance.getNotificationSettings();
+    firebase.AuthorizationStatus authorizationStatus = settings.authorizationStatus;
+    // There is not "notDetermined" status for android. Threat "denied" in Android like "notDetermined" in iOS
+    if ((Platform.isAndroid && (authorizationStatus != firebase.AuthorizationStatus.denied)) ||
+        (Platform.isIOS && (authorizationStatus != firebase.AuthorizationStatus.notDetermined))) {
+      showDialog(context: context, builder: (context) => _buildNotificationPermissionPrompt(context, authorizationStatus));
+    } else {
+      firebase.NotificationSettings requestSettings = await messagingInstance.requestPermission(
+          alert: true, announcement: false, badge: true, carPlay: false, criticalAlert: false, provisional: false, sound: true);
+      if (requestSettings.authorizationStatus == firebase.AuthorizationStatus.authorized) {
         Analytics().updateNotificationServices();
       }
-      setState(() {
+      setStateIfMounted(() {
         _showNotificationPermissionPrompt = false;
       });
     }

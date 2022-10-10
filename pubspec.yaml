@@ -43,7 +43,6 @@ dependencies:
   flutter_html: ^2.2.0
   qr_flutter: ^4.0.0
   webview_flutter: ^2.0.13
-  notification_permissions: ^0.6.1
   app_settings: ^4.1.1
   currency_text_input_formatter: ^2.1.5
   flutter_multi_formatter: ^2.4.1

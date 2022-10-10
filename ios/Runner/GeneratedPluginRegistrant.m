@@ -114,12 +114,6 @@
 @import just_audio;
 #endif
 
-#if __has_include(<notification_permissions/NotificationPermissionsPlugin.h>)
-#import <notification_permissions/NotificationPermissionsPlugin.h>
-#else
-@import notification_permissions;
-#endif
-
 #if __has_include(<package_info/FLTPackageInfoPlugin.h>)
 #import <package_info/FLTPackageInfoPlugin.h>
 #else
@@ -207,7 +201,6 @@
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
   [InAppReviewPlugin registerWithRegistrar:[registry registrarForPlugin:@"InAppReviewPlugin"]];
   [JustAudioPlugin registerWithRegistrar:[registry registrarForPlugin:@"JustAudioPlugin"]];
-  [NotificationPermissionsPlugin registerWithRegistrar:[registry registrarForPlugin:@"NotificationPermissionsPlugin"]];
   [FLTPackageInfoPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPackageInfoPlugin"]];
   [FLTPathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPathProviderPlugin"]];
   [RokwirePlugin registerWithRegistrar:[registry registrarForPlugin:@"RokwirePlugin"]];
