@@ -112,7 +112,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
           Padding(
               padding: EdgeInsets.only(bottom: 5),
               child: Text(Localization().getStringEx('panel.wellness.ring.create.name.field.label', 'RING NAME'),
-                  style: Styles().textStyles?.getTextStyle('widget.description.small_variant'))),
+                  style: Styles().textStyles?.getTextStyle('widget.description.small.fat'))),
           Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
@@ -215,7 +215,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                   Padding(
                       padding: EdgeInsets.only(bottom: 6, left: 7),
                       child: Text(Localization().getStringEx('panel.wellness.ring.create.field.quantity.label', 'QUANTITY'),
-                          style: Styles().textStyles?.getTextStyle('widget.description.small_variant'))),
+                          style: Styles().textStyles?.getTextStyle('widget.description.small.fat'))),
                   Container(
                       padding: EdgeInsets.symmetric(horizontal: 8),
                       decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
@@ -231,7 +231,7 @@ class _WellnessRingCreatePanelState extends State<WellnessRingCreatePanel> imple
                     Padding(
                         padding: EdgeInsets.only(bottom: 6, left: 7),
                         child: Text(Localization().getStringEx('panel.wellness.ring.create.field.unit.label', 'UNIT'),
-                            style: Styles().textStyles?.getTextStyle('widget.description.small_variant'))),
+                            style: Styles().textStyles?.getTextStyle('widget.description.small.fat'))),
                     Container(
                         padding: EdgeInsets.symmetric(horizontal: 8),
                         decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),

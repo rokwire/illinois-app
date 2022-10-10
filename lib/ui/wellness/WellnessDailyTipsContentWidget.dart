@@ -120,14 +120,14 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
                 children: [
                   TextSpan(
                       text: Localization().getStringEx('panel.wellness.sections.description.footer.wellness.text', 'Wellness '),
-                      style: Styles().textStyles?.getTextStyle("widget.detail.fat")),
+                      style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
                   TextSpan(
                       text: Localization().getStringEx('panel.wellness.sections.description.footer.description.text',
                           'is a state of optimal well-being that is oriented toward maximizing an individual\'s potential. This is a life-long process of moving towards enhancing your ')),
                   TextSpan(
                       text: Localization().getStringEx('panel.wellness.sections.description.footer.dimensions.text',
                           'physical, mental, environmental, financial, spiritual, vocational, emotional, and social wellness.'),
-                      style: Styles().textStyles?.getTextStyle("widget.detail.fat"))
+                      style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat"))
                 ])));
   }
 

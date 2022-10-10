@@ -1098,7 +1098,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             Padding(
                 padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
                 child: Text(Localization().getStringEx("panel.group_detail.label.admins", 'Admins'),
-                    style:   Styles().textStyles?.getTextStyle('widget.title.large'))),
+                    style:   Styles().textStyles?.getTextStyle('widget.title.large_variant'))),
             SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: content))
           ]))
     ]);
@@ -1740,7 +1740,7 @@ class _OfficerCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: groupMember?.userId)),
         Padding(padding: EdgeInsets.only(top: 4),
-          child: Text(groupMember?.name ?? "", style: Styles().textStyles?.getTextStyle('widget.card.title.small'),),),
+          child: Text(groupMember?.name ?? "", style: Styles().textStyles?.getTextStyle('widget.card.title.small.fat'),),),
         Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles?.getTextStyle('widget.card.detail.regular')),
       ],),
     );

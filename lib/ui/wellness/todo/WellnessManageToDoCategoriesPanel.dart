@@ -99,7 +99,7 @@ class _WellnessManageToDoCategoriesPanelState extends State<WellnessManageToDoCa
           Padding(
               padding: EdgeInsets.only(bottom: 5),
               child: Text(Localization().getStringEx('panel.wellness.categories.name.field.label', 'NAME'),
-                  style: Styles().textStyles?.getTextStyle("widget.description.small_variant"))),
+                  style: Styles().textStyles?.getTextStyle("widget.description.small.fat"))),
           Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),

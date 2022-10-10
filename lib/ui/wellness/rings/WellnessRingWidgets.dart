@@ -363,10 +363,10 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                 Text(widget.label , semanticsLabel: "",
-                  style: Styles().textStyles?.getTextStyle('widget.button.title.accent')),
+                  style: Styles().textStyles?.getTextStyle('widget.colourful_button.title.title.accent')),
                 widget.description==null ? Container():
                 Text(widget.description ?? "" , semanticsLabel: "",
-                  style: Styles().textStyles?.getTextStyle('widget.button.title.regular')),
+                  style: Styles().textStyles?.getTextStyle('widget.colourful_button.title.title.regular')),
                 ],),)),
               Container(
                 child: Row(
@@ -515,8 +515,8 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
                         textAlign: TextAlign.left,
                         text: TextSpan(
                             children:[
-                              TextSpan(text: "${widget.label}  ", style : Styles().textStyles?.getTextStyle('widget.button.title.regular'), semanticsLabel: ""),
-                              TextSpan(text: widget.description, style : Styles().textStyles?.getTextStyle('widget.button.title.accent'),),
+                              TextSpan(text: "${widget.label}  ", style : Styles().textStyles?.getTextStyle('widget.colourful_button.title.title.regular'), semanticsLabel: ""),
+                              TextSpan(text: widget.description, style : Styles().textStyles?.getTextStyle('widget.colourful_button.title.title.accent'),),
                             ]
                         )),
                     )),
@@ -639,7 +639,7 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
                     ),
                     // Container(height: 4,),
                     Text(month,
-                      style: Styles().textStyles?.getTextStyle('widget.card.title.regular')
+                      style: Styles().textStyles?.getTextStyle('widget.card.title.regular.fat')
                     ),
                   ],
                 )
@@ -652,7 +652,7 @@ class _AccomplishmentCardState extends State<AccomplishmentCard>{
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("${widget.accomplishments?.length} Rings Completed!",
-                    style: Styles().textStyles?.getTextStyle('widget.description.small_variant')
+                    style: Styles().textStyles?.getTextStyle('widget.description.small.fat')
                   ),
                   Container(height: 6,),
                   Column(
