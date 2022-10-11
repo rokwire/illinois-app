@@ -23,8 +23,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/swipe_detector.dart';
 import 'dart:io' show Platform;
-
-import 'package:notification_permissions/notification_permissions.dart';
+import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 
 class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPanel {
   final Map<String, dynamic>? onboardingContext;
@@ -32,7 +31,14 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
 
   @override
   Future<bool> get onboardingCanDisplayAsync async {
-    return (await NotificationPermissions.getNotificationPermissionStatus() == PermissionStatus.unknown);
+    firebase.NotificationSettings settings = await firebase.FirebaseMessaging.instance.getNotificationSettings();
+    firebase.AuthorizationStatus authorizationStatus = settings.authorizationStatus;
+    // There is not "notDetermined" status for android. Threat "denied" in Android like "notDetermined" in iOS
+    if (Platform.isAndroid) {
+      return (authorizationStatus == firebase.AuthorizationStatus.denied);
+    } else {
+      return (authorizationStatus == firebase.AuthorizationStatus.notDetermined);
+    }
   }
 
   @override
@@ -148,33 +154,33 @@ class OnboardingAuthNotificationsPanel extends StatelessWidget with OnboardingPa
   void _onReceiveNotifications(BuildContext context) {
     Analytics().logSelect(target: 'Receive Notifications') ;
 
-    //Android does not need for permission for user notifications
-    if (Platform.isAndroid) {
-      _goNext(context);
-    } else if (Platform.isIOS) {
-      _requestAuthorization(context);
-    }
+    _requestAuthorization(context);
   }
 
 void _requestAuthorization(BuildContext context) async {
-    PermissionStatus permissionStatus = await NotificationPermissions.getNotificationPermissionStatus();
-    if (permissionStatus != PermissionStatus.unknown) {
-      showDialog(context: context, builder: (context) => _buildDialogWidget(context, permissionStatus));
+    firebase.FirebaseMessaging messagingInstance = firebase.FirebaseMessaging.instance;
+    firebase.NotificationSettings settings = await messagingInstance.getNotificationSettings();
+    firebase.AuthorizationStatus authorizationStatus = settings.authorizationStatus;
+    // There is not "notDetermined" status for android. Threat "denied" in Android like "notDetermined" in iOS
+    if ((Platform.isAndroid && (authorizationStatus != firebase.AuthorizationStatus.denied)) ||
+        (Platform.isIOS && (authorizationStatus != firebase.AuthorizationStatus.notDetermined))) {
+      showDialog(context: context, builder: (context) => _buildDialogWidget(context, authorizationStatus));
     } else {
-      permissionStatus = await NotificationPermissions.requestNotificationPermissions();
-      if (permissionStatus == PermissionStatus.granted) {
+      firebase.NotificationSettings requestSettings = await messagingInstance.requestPermission(
+          alert: true, announcement: false, badge: true, carPlay: false, criticalAlert: false, provisional: false, sound: true);
+      if (requestSettings.authorizationStatus == firebase.AuthorizationStatus.authorized) {
         Analytics().updateNotificationServices();
       }
       _goNext(context);
     }
   }
 
-  Widget _buildDialogWidget(BuildContext context, PermissionStatus permissionStatus) {
+  Widget _buildDialogWidget(BuildContext context, firebase.AuthorizationStatus authorizationStatus) {
     String? message;
-    if (permissionStatus == PermissionStatus.granted) {
+    if (authorizationStatus == firebase.AuthorizationStatus.authorized) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_granted', 'You already have granted access to this app.');
     }
-    else if (permissionStatus == PermissionStatus.denied) {
+    else if (authorizationStatus == firebase.AuthorizationStatus.denied) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_denied', 'You already have denied access to this app.');
     }
     return Dialog(
@@ -205,7 +211,7 @@ void _requestAuthorization(BuildContext context) async {
                     onPressed: () {
                       Analytics().logAlert(text:"Already have access", selection: "Ok");
                       Navigator.of(context).pop();
-                      if (permissionStatus == PermissionStatus.granted) {
+                      if (authorizationStatus == firebase.AuthorizationStatus.authorized) {
                         _goNext(context);
                       }
                     },

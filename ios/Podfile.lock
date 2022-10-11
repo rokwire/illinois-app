@@ -25,7 +25,7 @@ PODS:
     - Firebase/Crashlytics (= 9.5.0)
     - firebase_core
     - Flutter
-  - firebase_messaging (11.4.4):
+  - firebase_messaging (13.1.0):
     - Firebase/Messaging (= 9.5.0)
     - firebase_core
     - Flutter
@@ -118,8 +118,6 @@ PODS:
     - nanopb/encode (= 2.30909.0)
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
-  - notification_permissions (0.4.4):
-    - Flutter
   - package_info (0.0.1):
     - Flutter
   - path_provider_ios (0.0.1):
@@ -171,7 +169,6 @@ DEPENDENCIES:
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
-  - notification_permissions (from `.symlinks/plugins/notification_permissions/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - rokwire_plugin (from `.symlinks/plugins/rokwire_plugin/ios`)
@@ -243,8 +240,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/in_app_review/ios"
   just_audio:
     :path: ".symlinks/plugins/just_audio/ios"
-  notification_permissions:
-    :path: ".symlinks/plugins/notification_permissions/ios"
   package_info:
     :path: ".symlinks/plugins/package_info/ios"
   path_provider_ios:
@@ -277,7 +272,7 @@ SPEC CHECKSUMS:
   Firebase: 800f16f07af493d98d017446a315c27af0552f41
   firebase_core: 31872a49ffe0bf6f834e7044c7334e433536735a
   firebase_crashlytics: 1d9af2a9b4c0a3d4ed3ee61c7b4d053484d1a476
-  firebase_messaging: 5180a2b828b1997ea70b7e7d14c0bcefa14938b7
+  firebase_messaging: 2ef2d501d7d8c42c29f66afce3a6dddbdf4df4e9
   FirebaseCore: 25c0400b670fd1e2f2104349cd3b5dcce8d9418f
   FirebaseCoreDiagnostics: 99a495094b10a57eeb3ae8efa1665700ad0bdaa6
   FirebaseCoreInternal: bca76517fe1ed381e989f5e7d8abb0da8d85bed3
@@ -300,7 +295,6 @@ SPEC CHECKSUMS:
   in_app_review: 4a97249f7a2f539a0f294c2d9196b7fe35e49541
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
-  notification_permissions: 825ea1bf2a52ab585c53fd7b5e8e96876d735d4b
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb

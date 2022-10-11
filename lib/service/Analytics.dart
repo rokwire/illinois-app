@@ -48,7 +48,7 @@ import 'package:illinois/ui/RootPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 import 'package:uuid/uuid.dart';
-import 'package:notification_permissions/notification_permissions.dart' as Notifications;
+import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 
@@ -591,8 +591,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   }
 
   void _updateNotificationServices() {
-    Notifications.NotificationPermissions.getNotificationPermissionStatus().then((Notifications.PermissionStatus status) {
-      _notificationServices = (status == Notifications.PermissionStatus.granted) ? 'enabled' : "not_enabled";
+    firebase.FirebaseMessaging.instance.getNotificationSettings().then((settings) {
+      firebase.AuthorizationStatus status = settings.authorizationStatus;
+      _notificationServices = (status == firebase.AuthorizationStatus.authorized) ? 'enabled' : "not_enabled";
     });
   }
 

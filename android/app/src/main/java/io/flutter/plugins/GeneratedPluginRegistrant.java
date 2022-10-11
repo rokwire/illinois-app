@@ -111,11 +111,6 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin just_audio, com.ryanheise.just_audio.JustAudioPlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new com.vanethos.notification_permissions.NotificationPermissionsPlugin());
-    } catch(Exception e) {
-      Log.e(TAG, "Error registering plugin notification_permissions, com.vanethos.notification_permissions.NotificationPermissionsPlugin", e);
-    }
-    try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.packageinfo.PackageInfoPlugin());
     } catch(Exception e) {
       Log.e(TAG, "Error registering plugin package_info, io.flutter.plugins.packageinfo.PackageInfoPlugin", e);
