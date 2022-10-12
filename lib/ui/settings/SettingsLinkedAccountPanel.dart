@@ -33,13 +33,13 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
                   child: Column(children:[
                     Row(children: [ Expanded(child:
                       Text(_description,
-                        style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 18, color: Styles().colors!.fillColorPrimary),
+                        style: Styles().textStyles?.getTextStyle("widget.description.large"),
                       )
                     )],),
                     Container(height: 48),
                     LinkAccountContentWidget(linkedAccount: _linkedAccount, onTapDisconnect: _onTapDisconnect, mode: widget.mode, isLoading: _isLoading,),
                     Container(height: 36),
-                    Text(StringUtils.ensureNotEmpty(_errorMsg), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+                    Text(StringUtils.ensureNotEmpty(_errorMsg), style: Styles().textStyles?.getTextStyle("panel.settings.error.text")),
           ]))))]),);
   }
 
@@ -156,12 +156,12 @@ class LinkAccountContentWidget extends StatelessWidget{
                 Container(height: 12,),
                 Row(
                   children: [
-                    Expanded(child: Text(_accountTypeText, style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular,)))
+                    Expanded(child: Text(_accountTypeText, style: Styles().textStyles?.getTextStyle("panel.settings.link_account.type.title")))
                   ],
                 ),
                 Row(
                   children: [
-                    Expanded(child: Text(_identifier, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold,)))
+                    Expanded(child: Text(_identifier, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat") ))
                   ],
                 ),
                 Container(height: 12,),

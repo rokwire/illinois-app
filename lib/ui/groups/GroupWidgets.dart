@@ -311,7 +311,7 @@ class GroupsConfirmationDialog extends StatelessWidget{
                     child: Text(
                       message!,
                       textAlign: TextAlign.left,
-                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular"),
+                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular.extra_fat"),
                     ),
                   ),
                   Row(
@@ -437,7 +437,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     List<Widget> content = [
       Padding(padding: EdgeInsets.only(bottom: 8, right: 8), child:
         Container(constraints: BoxConstraints(minHeight: 64), child:
-          Text(widget.event?.title ?? '',  style:Styles().textStyles?.getTextStyle("widget.title.large")),
+          Text(widget.event?.title ?? '',  style:Styles().textStyles?.getTextStyle("widget.title.large_variant")),
       )),
     ];
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
@@ -837,14 +837,14 @@ class _GroupCardState extends State<GroupCard> {
                         Text(groupCategory,
                           overflow: TextOverflow.ellipsis,
                           maxLines: (widget.displayType == GroupCardDisplayType.homeGroups) ? 2 : 10,
-                          style: Styles().textStyles?.getTextStyle("widget.card.title.small")
+                          style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat")
                         )
                       ),
                     ]),
                     Row(children: [
                       Expanded(child:
                         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style:  Styles().textStyles?.getTextStyle("widget.title.large"))
+                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style:  Styles().textStyles?.getTextStyle("widget.title.large_variant"))
                         )
                       )
                     ]),
@@ -1048,7 +1048,7 @@ class _GroupCardState extends State<GroupCard> {
     String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
     String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
 
-    return RichText(text: TextSpan(style: Styles().textStyles?.getTextStyle('"widget.description.small_variant'), children: [
+    return RichText(text: TextSpan(style: Styles().textStyles?.getTextStyle('"widget.description.small.fat'), children: [
       TextSpan(text: privacyMsgStart),
       WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget()),
       TextSpan(text: privacyMsgEnd)
@@ -1059,7 +1059,7 @@ class _GroupCardState extends State<GroupCard> {
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
     return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
       Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-        Text(privacyLevel, style: Styles().textStyles?.getTextStyle('widget.card.title.regular_variant'))
+        Text(privacyLevel, style: Styles().textStyles?.getTextStyle('widget.card.title.regular.extra_fat'))
       ),
     );
   }
@@ -1139,7 +1139,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                           child: Text(StringUtils.ensureNotEmpty(widget.post!.subject),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
-                              style: Styles().textStyles?.getTextStyle('widget.card.title.regular') )),
+                              style: Styles().textStyles?.getTextStyle('widget.card.title.regular.fat') )),
                       Visibility(
                           visible: isRepliesLabelVisible,
                           child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
@@ -1306,7 +1306,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
               Row(children: [
                 Semantics( child:
                   Text(StringUtils.ensureNotEmpty(widget.reply?.member?.displayShortName),
-                    style: Styles().textStyles?.getTextStyle("widget.card.title.small")),
+                    style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat")),
                 ),
                 Expanded(child: Container()),
                 Visibility(
@@ -1742,7 +1742,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Styles().colors!.mediumGray!, width: 0.0))),
-                  style: Styles().textStyles?.getTextStyle('widget.group.input_field.field'))),
+                  style: Styles().textStyles?.getTextStyle('widget.input_field.text.regular'))),
           Padding(
               padding: EdgeInsets.only(top: 16),
               child: Text(
@@ -1759,7 +1759,7 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                       border: OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Styles().colors!.mediumGray!, width: 0.0))),
-                  style: Styles().textStyles?.getTextStyle('widget.group.input_field.field')))
+                  style: Styles().textStyles?.getTextStyle('widget.input_field.text.regular')))
         ]);
   }
 }

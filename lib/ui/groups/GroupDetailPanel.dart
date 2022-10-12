@@ -1053,7 +1053,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     
       Row(children: <Widget>[
         Expanded(child:
-          Text(_group?.category?.toUpperCase() ?? '', style:  Styles().textStyles?.getTextStyle('widget.title.small'),),
+          Text(_group?.category?.toUpperCase() ?? '', style:  Styles().textStyles?.getTextStyle('widget.title.tiny'),),
         ),
         _buildPolicyButton(),
       ],);
@@ -1098,7 +1098,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             Padding(
                 padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
                 child: Text(Localization().getStringEx("panel.group_detail.label.admins", 'Admins'),
-                    style:   Styles().textStyles?.getTextStyle('widget.title.large'))),
+                    style:   Styles().textStyles?.getTextStyle('widget.title.large_variant'))),
             SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: content))
           ]))
     ]);
@@ -1405,7 +1405,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       border: Border.all(color: Styles().colors!.textSurface!, width: 1),
       alignment: Alignment.center,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
-      infoTextStyle: Styles().textStyles?.getTextStyle('widget.description.regular"'),
+      infoTextStyle: Styles().textStyles?.getTextStyle('widget.description.medium"'),
       closeIcon: Image.asset('images/close-orange-small.png'),
     ),);
   }
@@ -1740,7 +1740,7 @@ class _OfficerCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(height: 144, width: 128, child: GroupMemberProfileImage(userId: groupMember?.userId)),
         Padding(padding: EdgeInsets.only(top: 4),
-          child: Text(groupMember?.name ?? "", style: Styles().textStyles?.getTextStyle('widget.card.title.small'),),),
+          child: Text(groupMember?.name ?? "", style: Styles().textStyles?.getTextStyle('widget.card.title.small.fat'),),),
         Text(groupMember?.officerTitle ?? "", style:  Styles().textStyles?.getTextStyle('widget.card.detail.regular')),
       ],),
     );

@@ -185,9 +185,9 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
       
       contentWidget = VerticalTitleValueSection(
         title: title,
-        titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary),
+        titleTextStyle: Styles().textStyles?.getTextStyle("widget.title.large_variant"),
         value: status,
-        valueTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+        valueTextStyle: Styles().textStyles?.getTextStyle("widget.detail.medium"),
       );
     }
     else {
@@ -310,7 +310,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                   padding: EdgeInsets.only(left: 12),
                   child: Text(
                     StringUtils.ensureNotEmpty(title),
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: Styles().textStyles?.getTextStyle("widget.heading.large"),
                   ),
                 )
               ],
@@ -334,11 +334,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
               Localization().getStringEx("panel.settings.illini_cash.label.custom_period", "Custom Period"),
-              style: TextStyle(
-                  color: Styles().colors!.fillColorPrimary,
-                  fontSize: 16,
-                  fontFamily: Styles().fontFamilies!.regular
-              )
+              style: Styles().textStyles?.getTextStyle("widget.detail.regular")
             ),
           ),
           Padding(
@@ -396,9 +392,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
           ''), excludeSemantics: true, child: Center(child: Padding(
         padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 20),
         child: Text(text,
-          style: TextStyle(color: Styles().colors!.fillColorPrimary,
-              fontSize: 16,
-              fontFamily: Styles().fontFamilies!.bold),),),),);
+          style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat"),),),),);
     }
     if (_transactions == null || _transactions!.isEmpty) {
       String text = Localization().getStringEx(
@@ -410,9 +404,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
         padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 20),
         child: Text(text,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Styles().colors!.fillColorPrimary,
-              fontSize: 14,
-              fontFamily: Styles().fontFamilies!.regular),),),),);
+          style: Styles().textStyles?.getTextStyle("widget.detail.small"),),),),);
     }
     String dateHeader = Localization().getStringEx('panel.settings.illini_cash.label.date', 'Date');
     String locationHeader = Localization().getStringEx('panel.settings.illini_cash.label.location', 'Location');
@@ -495,11 +487,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
   Widget _buildBalanceTableHeaderItem(String text){
       return _buildBalanceTableItem(text: text, backColor: Styles().colors!.fillColorPrimaryVariant,
           showBorder: false,
-          textStyle: TextStyle(
-              fontFamily: Styles().fontFamilies!.regular,
-              color: Styles().colors!.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 14));
+          textStyle: Styles().textStyles?.getTextStyle("widget.heading.medium"));
   }
 
   Widget _buildBalanceTableItem({required String text, bool showBorder = true, Color? backColor, TextStyle? textStyle}) {
@@ -523,21 +511,14 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
                   Text(text,
                     maxLines: 1,
                     style: textStyle!=null? textStyle:
-                    TextStyle(
-                        fontFamily: Styles().fontFamilies!.regular,
-                        color: Styles().colors!.textBackground,
-                        fontSize: 14),),
-
+                    Styles().textStyles?.getTextStyle("panel.settings.detail.title.small"),),
               )
     );
   }
 
   Widget _buildAmountView(String balance){
     return _buildBalanceTableItem(text: balance, backColor: Styles().colors!.background,
-        textStyle: TextStyle(
-            fontFamily: Styles().fontFamilies!.bold,
-            color: Styles().colors!.textBackground,
-            fontSize: 14));
+        textStyle: Styles().textStyles?.getTextStyle("panel.settings.detail.title.small.fat"));
   }
 
   Widget _buildPrivacyAlertSection() {
@@ -555,11 +536,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
       color: Colors.white,
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: RichText(text: TextSpan(
-        style: TextStyle(
-          color: Styles().colors!.fillColorPrimary,
-          fontFamily: Styles().fontFamilies!.semiBold,
-          fontSize: 24,
-        ),
+        style: Styles().textStyles?.getTextStyle("panel.settings.heading.title.large"),
         children: [
           TextSpan(text: privacyMsgStart),
           WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelIcon()),
@@ -571,7 +548,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
     return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
       Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-        Text(privacyLevel, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 18, color: Styles().colors!.fillColorPrimary))
+        Text(privacyLevel, style:  Styles().textStyles?.getTextStyle("widget.title.medium_variant"))
       ),
     );
   }
@@ -734,9 +711,7 @@ class _DateLabel extends StatelessWidget {
     return Container(width: 70,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(label!, style: TextStyle(color: Styles().colors!.textBackground,
-            fontSize: 16,
-            fontFamily: Styles().fontFamilies!.regular),),
+        Text(label!, style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.regular"),),
         Container(height: 2, color: Styles().colors!.surfaceAccent,)
       ],),);
   }
@@ -756,10 +731,7 @@ class _DateValue extends StatelessWidget {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(title!, style: TextStyle(
-              color: Styles().colors!.fillColorPrimary,
-              fontSize: 16,
-              fontFamily: Styles().fontFamilies!.bold),),
+          Text(title!, style: Styles().textStyles?.getTextStyle("widget.title.regular"),),
           Image.asset('images/icon-down.png')
         ],), Container(height: 2, color: Styles().colors!.fillColorSecondary,)
     ],),),);

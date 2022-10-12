@@ -116,7 +116,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
                       child: RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                              style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.white, fontSize: 16),
+                              style: Styles().textStyles?.getTextStyle("widget.heading.regular"),
                               children: [
                             TextSpan(text: headerMsgStart),
                             WidgetSpan(alignment: PlaceholderAlignment.middle, child: Image.asset('images/example.png')),
@@ -247,7 +247,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
                   autofocus: true,
                   cursorColor: Styles().colors!.fillColorSecondary,
                   keyboardType: TextInputType.text,
-                  style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
+                  style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                   ),
@@ -458,10 +458,7 @@ class _SelectionItemWidget extends StatelessWidget {
                       child: Text(
                         label!,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.bold,
-                            color: Styles().colors!.fillColorPrimary,
-                            fontSize: 16),
+                        style: Styles().textStyles?.getTextStyle("widget.title.regular")
                       )),
                   Image.asset(selected!
                       ? 'images/deselected-dark.png'

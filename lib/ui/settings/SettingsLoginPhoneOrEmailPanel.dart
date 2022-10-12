@@ -121,11 +121,11 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
             Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: Column(children:[
                 Row(children: [ Expanded(child:
-                  Text(description, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 18, color: Styles().colors!.fillColorPrimary),)
+                  Text(description, style:  Styles().textStyles?.getTextStyle("widget.description.large"),)
                 )],),
                 Container(height: 48),
                 Row(children: [ Expanded(child:
-                  Text(headingTitle, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors!.fillColorPrimary),)
+                  Text(headingTitle, style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"),)
                 )],),
                 Container(height: 6),
                 Semantics(label: headingTitle, hint: headingHint, textField: true, excludeSemantics: true,
@@ -140,7 +140,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                       onSubmitted: (_) => _clearErrorMsg,
                       cursorColor: Styles().colors?.textBackground,
                       keyboardType: keyboardType,
-                      style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies?.regular, color: Styles().colors?.textBackground),
+                      style: Styles().textStyles?.getTextStyle("widget.input_field.text.medium"),
                       decoration: InputDecoration(
                         disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
                         enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
@@ -152,11 +152,11 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                 Visibility(visible: StringUtils.isNotEmpty(_validationErrorMsg), child:
                   Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(vertical: 12), child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+                      Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: Styles().textStyles?.getTextStyle("panel.settings.error.text")),
                       Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
+                          child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: Styles().textStyles?.getTextStyle("widget.detail.small")),
                         ),
                       ),
                     ],),
