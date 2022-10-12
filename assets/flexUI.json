@@ -58,7 +58,7 @@
 			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "due_date_catalog", "my_illini"],
 			
 			"explore.list": ["events", "dining"],
-			"explore.map":  ["events", "dining", "laundry", "student_courses", "wayfinding"],
+			"explore.map":  ["events", "dining", "laundry", "student_courses", "state_farm_wayfinding"],
 	
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 	
@@ -178,6 +178,7 @@
 				"library_card"                  : false,
 				"emergency"                     : false,
 				"wayfinding"                    : false,
+				"state_farm_wayfinding"         : false,
 				"create_stadium_poll"           : false,
 				"safer"                         : false,
 				"student_courses"               : "${config.settings.studentCoursesEnabled}"

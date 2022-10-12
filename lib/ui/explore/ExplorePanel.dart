@@ -272,7 +272,7 @@ class ExplorePanelState extends State<ExplorePanel>
         else if (code == 'student_courses') {
           exploreItems.add(ExploreItem.StudentCourse);
         }
-        else if (code == 'wayfinding') {
+        else if (code == 'state_farm_wayfinding') {
           exploreItems.add(ExploreItem.StateFarmWayfinding);
         }
       }
@@ -1540,7 +1540,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Events:              return Localization().getStringEx('panel.explore.button.events.hint', '');
       case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.hint', '');
       case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.hint', '');
-      case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.student_course.hint', '');
+      case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.hint', '');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
       default:                              return null;
     }
