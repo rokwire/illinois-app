@@ -219,7 +219,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                           padding: EdgeInsets.symmetric(horizontal: 24),
                           child: Row(children: <Widget>[
                             Text(_getTicketsInformationText(sport)!,
-                                style: Styles().textStyles?.getTextStyle('widget.card.title.small')),
+                                style: Styles().textStyles?.getTextStyle('widget.card.title.small.fat')),
                             Padding(
                               padding: EdgeInsets.only(left: 8),
                             ),
@@ -267,7 +267,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Row(children: <Widget>[
                     Text(Localization().getStringEx("widget.schedule_card.final_score", "Final Score"),
-                        style: Styles().textStyles?.getTextStyle('widget.card.title.small')),
+                        style: Styles().textStyles?.getTextStyle('widget.card.title.small.fat')),
                     Expanded(
                       child: Container(),
                     ),
