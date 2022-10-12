@@ -11,6 +11,7 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -28,8 +29,6 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
   static const String notifySelectedTermChanged = 'edu.illinois.rokwire.student_courses.selected.term.changed';
   static const String notifyCachedCoursesChanged = 'edu.illinois.rokwire.student_courses.cache.changed';
 
-  static const String ExternalAuthorizationHeader = "External-Authorization";
-  
   static const String _courseTermsName = "course.terms.json";
   static const String _courseDebugContentName = "course.debug.content.json.json";
   static const String _requireAdaSetting = 'edu.illinois.rokwire.settings.student_course.require_ada';
@@ -148,7 +147,7 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
 
   Future<String?> _loadTermsStringFromNet() async {
     if (StringUtils.isNotEmpty(Config().gatewayUrl)) {
-      Response? response = await Network().get("${Config().gatewayUrl}/termsessions/listcurrent", auth: Auth2(), headers: { ExternalAuthorizationHeader: Auth2().uiucToken?.accessToken });
+      Response? response = await Network().get("${Config().gatewayUrl}/termsessions/listcurrent", auth: Auth2(), headers: Gateway().externalAuthorizationHeader);
       return (response?.statusCode == 200) ? response?.body : null;
     }
     return null;
@@ -232,7 +231,7 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
               url += "&adaOnly=true";
             }
           }
-          Response? response = await Network().get(url, auth: Auth2(), headers: { ExternalAuthorizationHeader: Auth2().uiucToken?.accessToken });
+          Response? response = await Network().get(url, auth: Auth2(), headers: Gateway().externalAuthorizationHeader);
           String? responseString = (response?.statusCode == 200) ? response?.body : null;
           /* TMP String? responseString = '''[
             {"coursetitle":"Thesis Research","courseshortname":"TAM 599","coursenumber":"25667","instructionmethod":"IND","coursesection":{"days":"","meeting_dates_or_range":"08/22/2022 - 12/07/2022","room":"","buildingname":"","buildingid":"","instructiontype":"IND","instructor":"Johnson, Harley","start_time":"","endtime":"","building":{"ID":"","Name":"","Number":"","FullAddress":"","Address1":"","Address2":"","City":"","State":"","ZipCode":"","ImageURL":"","MailCode":"","Entrances":null,"Latitude":0,"Longitude":0}}},
