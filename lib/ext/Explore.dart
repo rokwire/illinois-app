@@ -116,6 +116,10 @@ extension ExploreExt on Explore {
     }
   }
 
+  int get mapThresholdDistance {
+    return 200; // Default distance
+  }
+
   String? get typeDisplayString {
     if (this is Event) {
       return (this as Event).typeDisplayString;

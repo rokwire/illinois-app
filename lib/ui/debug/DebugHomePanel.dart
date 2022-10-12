@@ -75,9 +75,10 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
 
     _offsetDate = Storage().offsetDate;
     
+    int? mapThresholdDistance = Storage().debugMapThresholdDistance;
     int? geoFenceRegionRadius = Storage().debugGeoFenceRegionRadius;
 
-    _mapThresholdDistanceController.text = '${Storage().debugMapThresholdDistance}';
+    _mapThresholdDistanceController.text = (mapThresholdDistance != null) ? '$mapThresholdDistance' : '';
     _geoFenceRegionRadiusController.text = (geoFenceRegionRadius != null) ? '$geoFenceRegionRadius' : '';
 
     _selectedEnv = Config().configEnvironment;
@@ -94,8 +95,12 @@ class _DebugHomePanelState extends State<DebugHomePanel> implements Notification
     _stopRangingRegions();
 
     // Map Threshold Distance
+    int? storageMapThresholdDistance = Storage().debugMapThresholdDistance;
     int? mapThresholdDistance = int.tryParse(_mapThresholdDistanceController.text);
-    if (mapThresholdDistance != null) {
+    if (((storageMapThresholdDistance == null) && (mapThresholdDistance != null)) ||
+        ((storageMapThresholdDistance != null) && (mapThresholdDistance == null)) ||
+        ((storageMapThresholdDistance != null) && (mapThresholdDistance != null) && (storageMapThresholdDistance != mapThresholdDistance)))
+    {
       Storage().debugMapThresholdDistance = mapThresholdDistance;
     }
     _mapThresholdDistanceController.dispose();
