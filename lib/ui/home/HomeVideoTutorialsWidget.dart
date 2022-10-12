@@ -1,0 +1,264 @@
+/*
+ * Copyright 2022 Board of Trustees of the University of Illinois.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import 'dart:async';
+
+import 'package:expandable_page_view/expandable_page_view.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
+import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
+import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
+import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/assets.dart';
+import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+
+class HomeVideoTutorialsWidget extends StatefulWidget {
+
+  final String? favoriteId;
+  final StreamController<String>? updateController;
+
+  HomeVideoTutorialsWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: title,
+    );
+
+  static String get title => Localization().getStringEx('widget.home.video_tutorials.button.title', 'Video Tutorials');
+
+  State<HomeVideoTutorialsWidget> createState() => _HomeVideoTutorialsWidgetState();
+}
+
+class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> implements NotificationsListener {
+  List<dynamic>? _videos;
+  DateTime? _pausedDateTime;
+
+  PageController? _pageController;
+  Key _pageViewKey = UniqueKey();
+  Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
+  final double _pageSpacing = 16;
+
+  @override
+  void initState() {
+
+    NotificationService().subscribe(this, [
+      Assets.notifyChanged,
+      AppLivecycle.notifyStateChanged,
+    ]);
+
+    if (widget.updateController != null) {
+      widget.updateController!.stream.listen((String command) {
+        if (command == HomePanel.notifyRefresh) {
+          _refresh();
+        }
+      });
+    }
+    _load();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    _pageController?.dispose();
+    super.dispose();
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Assets.notifyChanged) {
+      _refresh();
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _refresh();
+        }
+      }
+    }
+  }
+
+  void _load() {
+    Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
+    if (videoTutorials != null) {
+      List<dynamic>? videos = JsonUtils.listValue(videoTutorials['videos']);
+      if (CollectionUtils.isNotEmpty(videos)) {
+        Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials['strings']);
+        for (dynamic video in videos!) {
+          String? videoId = video['id'];
+          String? videoTitle = Localization().getContentString(strings, videoId);
+          video['title'] = videoTitle;
+        }
+        _videos = videos;
+      }
+    }
+  }
+
+  void _refresh() {
+    _load();
+    setStateIfMounted(() {
+      _pageViewKey = UniqueKey();
+      _contentKeys.clear();
+      _pageController = null;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
+      title: HomeVideoTutorialsWidget.title,
+      titleIcon: Image.asset('images/campus-tools.png'),
+      child: _buildContent(),
+    );
+  }
+
+  Widget _buildContent() {
+    if (CollectionUtils.isEmpty(_videos)) {
+      return HomeMessageCard(
+        message: Localization().getStringEx("widget.home.video_tutorials.text.empty.description", "There are no video tutorials, yet."));
+    }
+    else {
+      return _buildVideosContent();
+    }
+  }
+
+  Widget _buildVideosContent() {
+    Widget contentWidget;
+    List<Widget> pages = <Widget>[];
+
+    if (_videosCount > 1) {
+      for (int index = 0; index < _videosCount; index++) {
+        Map<String, dynamic>? video = JsonUtils.mapValue(_videos![index]);
+        if (video != null) {
+          pages.add(Padding(
+              key: _contentKeys[JsonUtils.stringValue(video['id']) ?? ''] ??= GlobalKey(),
+              padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 2),
+              child: _buildVideoEntry(video)));
+        }
+      }
+
+      if (_pageController == null) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double pageViewport = (screenWidth - 2 * _pageSpacing) / screenWidth;
+        _pageController = PageController(viewportFraction: pageViewport);
+      }
+
+      contentWidget = Container(constraints: BoxConstraints(minHeight: _pageHeight), child:
+        ExpandablePageView(
+          key: _pageViewKey,
+          controller: _pageController,
+          estimatedPageSize: _pageHeight,
+          allowImplicitScrolling: true,
+          children: pages,
+        ),
+      );
+    }
+    else {
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16), child:
+        _buildVideoEntry(_videos!.first)
+      );
+    }
+
+    return Column(children: <Widget>[
+      contentWidget,
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      LinkButton(
+        title: Localization().getStringEx('widget.home.video_tutorials.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.video_tutorials.button.all.hint', 'Tap to view all video tutorials'),
+        onTap: _onTapViewAll,
+      ),
+    ]);
+  }
+
+  Widget _buildVideoEntry(Map<String, dynamic> video) {
+    String? videoTitle = JsonUtils.stringValue(video['title']);
+    return Container(
+        decoration: BoxDecoration(
+            color: Styles().colors?.white,
+            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
+        child: Stack(children: [
+          GestureDetector(
+              onTap: () => _onTapVideo(video),
+              child: Semantics(
+                  button: true,
+                  child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 26),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Padding(
+                            padding: EdgeInsets.only(right: 17),
+                            child: Text(StringUtils.ensureNotEmpty(videoTitle),
+                                style: TextStyle(
+                                    fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary))),
+                        Container(height: 8)
+                      ])))),
+          Container(color: Styles().colors?.accentColor3, height: 4)
+        ]));
+  }
+
+  double get _pageHeight {
+    double? minContentHeight;
+    for (GlobalKey contentKey in _contentKeys.values) {
+      final RenderObject? renderBox = contentKey.currentContext?.findRenderObject();
+      if ((renderBox is RenderBox) && ((minContentHeight == null) || (renderBox.size.height < minContentHeight))) {
+        minContentHeight = renderBox.size.height;
+      }
+    }
+    return minContentHeight ?? 0;
+  }
+
+  void _onTapVideo(Map<String, dynamic> video) {
+    Analytics().logSelect(target: 'Video Tutorial');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: video)));
+  }
+
+  void _onTapViewAll() {
+    Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
+    if (_canViewVideos) {
+      Navigator.push(context, CupertinoPageRoute(settings: RouteSettings(), builder: (context) => SettingsVideoTutorialListPanel(videoTutorials: _videos)));
+    }
+  }
+
+  bool get _canViewVideos {
+    return _videosCount > 0;
+  }
+
+  int get _videosCount {
+    return _videos?.length ?? 0;
+  }
+}
