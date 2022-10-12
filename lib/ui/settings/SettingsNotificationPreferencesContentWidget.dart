@@ -26,7 +26,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:notification_permissions/notification_permissions.dart';
+import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 
 import 'SettingsWidgets.dart';
 
@@ -57,10 +57,11 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     super.dispose();
   }
 
-  void _checkNotificationsEnabled(){
-    NotificationPermissions.getNotificationPermissionStatus().then((PermissionStatus status){
+  void _checkNotificationsEnabled() {
+    firebase.FirebaseMessaging.instance.getNotificationSettings().then((settings) {
+      firebase.AuthorizationStatus status = settings.authorizationStatus;
       setState(() {
-        _notificationsAuthorized = PermissionStatus.granted == status;
+        _notificationsAuthorized = firebase.AuthorizationStatus.authorized == status;
       });
     });
   }
@@ -220,22 +221,21 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
 
   void _onOpenNotifications(BuildContext context) {
     Analytics().logSelect(target: 'Receive Notifications') ;
-
-    //Android does not need for permission for user notifications
-    if (Platform.isAndroid) {
-      _onOpenSystemSettings();
-    } else if (Platform.isIOS) {
-      _requestAuthorization(context);
-    }
+    _requestAuthorization(context);
   }
 
   void _requestAuthorization(BuildContext context) async {
-    PermissionStatus permissionStatus = await NotificationPermissions.getNotificationPermissionStatus();
-    if (permissionStatus != PermissionStatus.unknown) {
+    firebase.FirebaseMessaging messagingInstance = firebase.FirebaseMessaging.instance;
+    firebase.NotificationSettings settings = await messagingInstance.getNotificationSettings();
+    firebase.AuthorizationStatus authorizationStatus = settings.authorizationStatus;
+    // There is not "notDetermined" status for android. Threat "denied" in Android like "notDetermined" in iOS
+    if ((Platform.isAndroid && (authorizationStatus != firebase.AuthorizationStatus.denied)) ||
+        (Platform.isIOS && (authorizationStatus != firebase.AuthorizationStatus.notDetermined))) {
       _onOpenSystemSettings();
     } else {
-      permissionStatus = await NotificationPermissions.requestNotificationPermissions();
-      if (permissionStatus == PermissionStatus.granted) {
+      firebase.NotificationSettings requestSettings = await messagingInstance.requestPermission(
+          alert: true, announcement: false, badge: true, carPlay: false, criticalAlert: false, provisional: false, sound: true);
+      if (requestSettings.authorizationStatus == firebase.AuthorizationStatus.authorized) {
         Analytics().updateNotificationServices();
       }
       _onOpenSystemSettings();
