@@ -23,7 +23,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class StudentCourses with Service implements NotificationsListener, ExploreJsonHandler {
+class StudentCourses with Service implements NotificationsListener {
 
   static const String notifyTermsChanged = 'edu.illinois.rokwire.student_courses.terms.changed';
   static const String notifySelectedTermChanged = 'edu.illinois.rokwire.student_courses.selected.term.changed';
@@ -32,7 +32,6 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
   static const String _courseTermsName = "course.terms.json";
   static const String _courseDebugContentName = "course.debug.content.json.json";
   static const String _requireAdaSetting = 'edu.illinois.rokwire.settings.student_course.require_ada';
-
 
   late Directory _appDocDir;
   
@@ -45,6 +44,9 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
   Set<Completer<List<StudentCourse>?>>? _loadCoursesCompleters;
   DateTime? _pausedDateTime;
 
+  ExploreJsonHandler _studentCourseExploreJsonHandler = StudentCourseExploreJsonHandler();
+  ExploreJsonHandler _buildingExploreJsonHandler = BuildingExploreJsonHandler();
+
   // Singleton Factory
 
   static final StudentCourses _instance = StudentCourses._internal();
@@ -54,7 +56,8 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
   // Service
 
   void createService() {
-    Explore.addJsonHandler(this);
+    Explore.addJsonHandler(_studentCourseExploreJsonHandler);
+    Explore.addJsonHandler(_buildingExploreJsonHandler);
     NotificationService().subscribe(this,[
       Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,
@@ -64,6 +67,8 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
 
   @override
   void destroyService() {
+    Explore.removeJsonHandler(_studentCourseExploreJsonHandler);
+    Explore.removeJsonHandler(_buildingExploreJsonHandler);
     NotificationService().unsubscribe(this);
     super.destroyService();
   }
@@ -317,10 +322,4 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
 
   Future<bool> get _userLocationEnabled async => FlexUI().isLocationServicesAvailable && (await LocationServices().status == LocationServicesStatus.permissionAllowed);
   Future<Position?> get _userLocation async => await _userLocationEnabled ? await LocationServices().location : null;
-    
-  // ExploreJsonHandler
-
-  @override bool exploreCanJson(Map<String, dynamic>? json) => StudentCourse.canJson(json);
-  @override Explore? exploreFromJson(Map<String, dynamic>? json) => StudentCourse.fromJson(json);
-
 }
