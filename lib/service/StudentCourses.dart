@@ -11,6 +11,7 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -22,18 +23,15 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class StudentCourses with Service implements NotificationsListener, ExploreJsonHandler {
+class StudentCourses with Service implements NotificationsListener {
 
   static const String notifyTermsChanged = 'edu.illinois.rokwire.student_courses.terms.changed';
   static const String notifySelectedTermChanged = 'edu.illinois.rokwire.student_courses.selected.term.changed';
   static const String notifyCachedCoursesChanged = 'edu.illinois.rokwire.student_courses.cache.changed';
 
-  static const String ExternalAuthorizationHeader = "External-Authorization";
-  
   static const String _courseTermsName = "course.terms.json";
   static const String _courseDebugContentName = "course.debug.content.json.json";
   static const String _requireAdaSetting = 'edu.illinois.rokwire.settings.student_course.require_ada';
-
 
   late Directory _appDocDir;
   
@@ -46,6 +44,9 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
   Set<Completer<List<StudentCourse>?>>? _loadCoursesCompleters;
   DateTime? _pausedDateTime;
 
+  ExploreJsonHandler _studentCourseExploreJsonHandler = StudentCourseExploreJsonHandler();
+  ExploreJsonHandler _buildingExploreJsonHandler = BuildingExploreJsonHandler();
+
   // Singleton Factory
 
   static final StudentCourses _instance = StudentCourses._internal();
@@ -55,7 +56,8 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
   // Service
 
   void createService() {
-    Explore.addJsonHandler(this);
+    Explore.addJsonHandler(_studentCourseExploreJsonHandler);
+    Explore.addJsonHandler(_buildingExploreJsonHandler);
     NotificationService().subscribe(this,[
       Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,
@@ -65,6 +67,8 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
 
   @override
   void destroyService() {
+    Explore.removeJsonHandler(_studentCourseExploreJsonHandler);
+    Explore.removeJsonHandler(_buildingExploreJsonHandler);
     NotificationService().unsubscribe(this);
     super.destroyService();
   }
@@ -148,7 +152,7 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
 
   Future<String?> _loadTermsStringFromNet() async {
     if (StringUtils.isNotEmpty(Config().gatewayUrl)) {
-      Response? response = await Network().get("${Config().gatewayUrl}/termsessions/listcurrent", auth: Auth2(), headers: { ExternalAuthorizationHeader: Auth2().uiucToken?.accessToken });
+      Response? response = await Network().get("${Config().gatewayUrl}/termsessions/listcurrent", auth: Auth2(), headers: Gateway().externalAuthorizationHeader);
       return (response?.statusCode == 200) ? response?.body : null;
     }
     return null;
@@ -232,7 +236,7 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
               url += "&adaOnly=true";
             }
           }
-          Response? response = await Network().get(url, auth: Auth2(), headers: { ExternalAuthorizationHeader: Auth2().uiucToken?.accessToken });
+          Response? response = await Network().get(url, auth: Auth2(), headers: Gateway().externalAuthorizationHeader);
           String? responseString = (response?.statusCode == 200) ? response?.body : null;
           /* TMP String? responseString = '''[
             {"coursetitle":"Thesis Research","courseshortname":"TAM 599","coursenumber":"25667","instructionmethod":"IND","coursesection":{"days":"","meeting_dates_or_range":"08/22/2022 - 12/07/2022","room":"","buildingname":"","buildingid":"","instructiontype":"IND","instructor":"Johnson, Harley","start_time":"","endtime":"","building":{"ID":"","Name":"","Number":"","FullAddress":"","Address1":"","Address2":"","City":"","State":"","ZipCode":"","ImageURL":"","MailCode":"","Entrances":null,"Latitude":0,"Longitude":0}}},
@@ -318,10 +322,4 @@ class StudentCourses with Service implements NotificationsListener, ExploreJsonH
 
   Future<bool> get _userLocationEnabled async => FlexUI().isLocationServicesAvailable && (await LocationServices().status == LocationServicesStatus.permissionAllowed);
   Future<Position?> get _userLocation async => await _userLocationEnabled ? await LocationServices().location : null;
-    
-  // ExploreJsonHandler
-
-  @override bool exploreCanJson(Map<String, dynamic>? json) => StudentCourse.canJson(json);
-  @override Explore? exploreFromJson(Map<String, dynamic>? json) => StudentCourse.fromJson(json);
-
 }

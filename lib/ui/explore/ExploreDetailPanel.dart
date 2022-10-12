@@ -21,6 +21,7 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
+import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -56,6 +57,9 @@ class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttribu
     }
     else if (explore is LaundryRoom) {
       return LaundryRoomDetailPanel(room: explore);
+    }
+    else if (explore is Building) {
+      return ExploreBuildingDetailPanel(building: explore);
     }
     else if (explore is StudentCourse) {
       return StudentCourseDetailPanel(course: explore,);

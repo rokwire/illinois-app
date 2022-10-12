@@ -362,6 +362,10 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
         locationText = explore.getShortDisplayLocation(widget.locationData);
       }
     }
+    else if (explore is Building) {
+      locationText = explore.fullAddress;
+      onLocationTap = _onTapExploreLocation;
+    }
     else if (explore is StudentCourse) {
       locationText = explore.section?.displayLocation;
       onLocationTap = _onTapExploreLocation;
