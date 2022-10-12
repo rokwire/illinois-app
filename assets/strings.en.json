@@ -2809,10 +2809,6 @@
 
     "widget.home.app_help.header.title": "App Help",
     "widget.home.app_help.text.empty.description": "Tap the \u2606 on items in App Help so you can quickly find them here.",
-    "widget.home.app_help.video_tutorial.button.title": "Video Tutorial",
-    "widget.home.app_help.video_tutorials.button.title": "Video Tutorials",
-    "widget.home.app_help.video_tutorial.button.description": "Watch video tutorials to learn about app features.",
-    "widget.home.app_help.video_tutorial.label.offline": "Video Tutorial not available while offline.",
     "widget.home.app_help.feedback.button.title": "Provide Feedback",
     "widget.home.app_help.feedback.button.description": "Enjoying the app? Missing something? The {{app_university}} Smart, Healthy Communities Initiative needs your ideas and input. Thank you!",
     "widget.home.app_help.feedback.label.offline": "Providing a Feedback is not available while offline.",
@@ -2822,6 +2818,11 @@
     "widget.home.app_help.faqs.button.title": "FAQs",
     "widget.home.app_help.faqs.button.description": "Check your question in frequently asked questions.",
     "widget.home.app_help.faqs.panel.title": "FAQs",
+    
+    "widget.home.video_tutorials.button.title": "Video Tutorials",
+    "widget.home.video_tutorials.text.empty.description": "There are no video tutorials, yet.",
+    "widget.home.video_tutorials.button.all.title": "View All",
+    "widget.home.video_tutorials.button.all.hint": "Tap to view all video tutorials",
 
     "widget.home.state_farm_center.header.title": "State Farm Center",
     "widget.home.state_farm_center.text.empty.description": "Tap the \u2606 on items in State Farm Center so you can quickly find them here.",
