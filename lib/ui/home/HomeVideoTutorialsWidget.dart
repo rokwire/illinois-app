@@ -207,6 +207,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
 
   Widget _buildVideoEntry(Map<String, dynamic> video) {
     String? videoTitle = JsonUtils.stringValue(video['title']);
+    String? imageUrl = JsonUtils.stringValue(video['image_url']);
     return Container(
         decoration: BoxDecoration(
             color: Styles().colors?.white,
@@ -218,14 +219,16 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
               child: Semantics(
                   button: true,
                   child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 26),
+                      padding: EdgeInsets.all(16),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Padding(
-                            padding: EdgeInsets.only(right: 17),
+                            padding: EdgeInsets.only(bottom: 16),
                             child: Text(StringUtils.ensureNotEmpty(videoTitle),
                                 style: TextStyle(
                                     fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary))),
-                        Container(height: 8)
+                        StringUtils.isNotEmpty(imageUrl)
+                            ? ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.network(imageUrl!))
+                            : Container(height: 8)
                       ])))),
           Container(color: Styles().colors?.accentColor3, height: 4)
         ]));
