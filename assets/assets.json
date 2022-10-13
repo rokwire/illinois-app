@@ -982,21 +982,25 @@
 			{
 				"id": "video.tutorial.4.0",
 				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.webp",
 				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.srt"
 			},
 			{
 				"id": "find.your.courses.4.1",
 				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_find_your_courses.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_find_your_courses.webp",
 				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_find_your_courses.srt"
 			},
 			{
 				"id": "groups.overview.4.1",
 				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_groups_overview.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_groups_overview.webp",
 				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_groups_overview.srt"
 			},
 			{
 				"id": "wellness.rings.overview.4.1",
 				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.webp",
 				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.srt"
 			}
 		],
