@@ -192,7 +192,7 @@ class _IDCardPanelState extends State<IDCardPanel>
                       Align(alignment: Alignment.center, child:
                         Padding(padding: EdgeInsets.only(top: 2), child:
                           Semantics(excludeSemantics: true, child:
-                          Text('\u00D7', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.light, fontSize: 48),), )),
+                          Text('\u00D7', style: Styles().textStyles?.getTextStyle("panel.id_card.close_button"),), )),
                         ),
                     ),
                   ),
@@ -203,7 +203,7 @@ class _IDCardPanelState extends State<IDCardPanel>
           SafeArea(child: Stack(children: <Widget>[
             Padding(padding: EdgeInsets.all(16), child:
                 Semantics(header:true, child:
-                  Text(Localization().getStringEx('widget.id_card.header.title', 'Illini ID'), style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),),)),
+                  Text(Localization().getStringEx('widget.id_card.header.title', 'Illini ID'), style: Styles().textStyles?.getTextStyle("panel.id_card.heading.title")),)),
             Align(alignment: Alignment.topRight, child:
                 Semantics(button: true, label: Localization().getStringEx('widget.id_card.header.button.close.title', "close"), child:
                   InkWell(
@@ -301,15 +301,15 @@ class _IDCardPanelState extends State<IDCardPanel>
       ),
       Container(height: 10,),
       
-      Text(Auth2().authCard?.fullName?.trim() ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24)),
-      Text(roleDisplayString, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 20)),
+      Text(Auth2().authCard?.fullName?.trim() ?? '', style:Styles().textStyles?.getTextStyle("panel.id_card.detail.title.large")),
+      Text(roleDisplayString, style:  Styles().textStyles?.getTextStyle("panel.id_card.detail.title.regular")),
       
       Container(height: 15,),
 
       Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
         
         Visibility(visible: hasQrCode, child: Column(children: [
-          Text(Auth2().authCard!.cardNumber ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
+          Text(Auth2().authCard!.cardNumber ?? '', style: Styles().textStyles?.getTextStyle("panel.id_card.detail.title.small")),
           Container(height: 8),
           QrImage(data: _userQRCodeContent ?? "", size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ),
         ],),),
@@ -319,23 +319,23 @@ class _IDCardPanelState extends State<IDCardPanel>
         ),
 
         Visibility(visible: hasBuildingAccess, child: Column(children: [
-          Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en')!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)),
+          Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en')!, style: Styles().textStyles?.getTextStyle("panel.id_card.detail.title.small")),
           Container(height: 8),
           buildingAccessIcon,
-          Text(buildingAccessStatus ?? '', textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: buildingAccessStatusHeight),),
+          Text(buildingAccessStatus ?? '', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.id_card.detail.title.large")),
         ],),),
 
       ],),
       Container(height: 15),
-      Text(buildingAccessTime ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20)),
+      Text(buildingAccessTime ?? '', style: Styles().textStyles?.getTextStyle("panel.id_card.detail.title.medium")),
       Container(height: 15),
       Semantics( container: true,
         child: Column(children: <Widget>[
           // Text((0 < (Auth2().authCard?.uin?.length ?? 0)) ? Localization().getStringEx('widget.card.label.uin.title', 'UIN') : '', style: TextStyle(color: Color(0xffcf3c1b), fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
-          Text(Auth2().authCard?.uin ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 28)),
+          Text(Auth2().authCard?.uin ?? '', style: Styles().textStyles?.getTextStyle("panel.id_card.detail.title.extra_large")),
         ],),
       ),
-      Text(cardExpiresText, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
+      Text(cardExpiresText, style:  Styles().textStyles?.getTextStyle("panel.id_card.detail.title.tiny")),
       Container(height: 30,),
 
     ],)    );

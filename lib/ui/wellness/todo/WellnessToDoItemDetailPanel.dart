@@ -142,7 +142,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
     return Padding(
         padding: EdgeInsets.only(top: 16),
         child: Text(Localization().getStringEx('panel.wellness.todo.item.add.label', 'Add an Item'),
-            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)));
+            style: Styles().textStyles?.getTextStyle("widget.title.regular")));
   }
 
   Widget _buildItemName() {
@@ -169,8 +169,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                       padding: EdgeInsets.only(top: 4),
                       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                         Text(Localization().getStringEx('panel.wellness.todo.item.optional_fields.label', 'Optional Fields'),
-                            style:
-                                TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.bold)),
+                            style: Styles().textStyles?.getTextStyle("widget.title.small")),
                         Padding(
                             padding: EdgeInsets.only(left: 8),
                             child: Image.asset(_optionalFieldsVisible ? 'images/icon-up.png' : 'images/icon-down.png',
@@ -197,7 +196,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                         StringUtils.ensureNotEmpty(_category?.name,
                             defaultValue: Localization().getStringEx('panel.wellness.todo.item.category.none.label', 'None')),
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)),
+                        style:Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.title")),
                     Expanded(child: Container()),
                     Padding(
                         padding: EdgeInsets.only(left: 10),
@@ -238,7 +237,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
             decoration: BoxDecoration(color: Colors.white, border: Border(left: borderSide, right: borderSide, bottom: borderSide)),
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text(StringUtils.ensureNotEmpty(categoryName),
-                  style: TextStyle(fontSize: 16, color: Styles().colors!.textSurfaceAccent, fontFamily: Styles().fontFamilies!.regular)),
+                  style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.item")),
               Image.asset(isSelected ? 'images/icon-favorite-selected.png' : 'images/icon-favorite-deselected.png')
             ])));
   }
@@ -258,7 +257,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                       BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Text(StringUtils.ensureNotEmpty(_formattedDueDate),
-                        style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)),
+                        style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.title")),
                     Expanded(child: Container()),
                     Image.asset('images/icon-calendar-grey.png')
                   ])))
@@ -282,8 +281,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                           BoxDecoration(color: Styles().colors!.white, border: Border.all(color: Styles().colors!.mediumGray!, width: 1)),
                       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                         Text(StringUtils.ensureNotEmpty(_formattedDueTime),
-                            style:
-                                TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)),
+                            style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.title")),
                         Expanded(child: Container())
                       ])))
             ])));
@@ -306,7 +304,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                     Text(StringUtils.ensureNotEmpty(selectedTypeLabel),
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)),
+                        style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.title")),
                     Expanded(child: Container()),
                     Padding(
                         padding: EdgeInsets.only(left: 10),
@@ -354,7 +352,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
             decoration: BoxDecoration(color: Colors.white, border: Border(left: borderSide, right: borderSide, bottom: borderSide)),
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text(StringUtils.ensureNotEmpty(_getReminderTypeLabel(type)),
-                  style: TextStyle(fontSize: 16, color: Styles().colors!.textSurfaceAccent, fontFamily: Styles().fontFamilies!.regular)),
+                  style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.item")),
               Image.asset(isSelected ? 'images/icon-favorite-selected.png' : 'images/icon-favorite-deselected.png')
             ])));
   }
@@ -400,7 +398,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
               Padding(
                   padding: EdgeInsets.only(left: 10),
                   child: Text(StringUtils.ensureNotEmpty(AppDateTime().formatDateTime(date, format: 'EEEE, MM/dd', ignoreTimeZone: true)),
-                      style: TextStyle(fontSize: 11, color: Colors.black, fontFamily: Styles().fontFamilies!.regular))),
+                      style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.work_date"))),
               GestureDetector(
                   onTap: () => _onTapRemoveWorkDay(date),
                   child: Container(
@@ -435,7 +433,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
   }
 
   Widget _buildFieldLabel({required String label}) {
-    return Text(label, style: TextStyle(color: Styles().colors!.textSurfaceAccent, fontSize: 12, fontFamily: Styles().fontFamilies!.bold));
+    return Text(label, style: Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.empty"));
   }
 
   Widget _buildInputField({required TextEditingController controller}) {
@@ -445,7 +443,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
         child: TextField(
             controller: controller,
             decoration: InputDecoration(border: InputBorder.none),
-            style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface)));
+            style:  Styles().textStyles?.getTextStyle("panel.wellness.todo.item_detail.title")));
   }
 
   Widget _buildSaveButton() {

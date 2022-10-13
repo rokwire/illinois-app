@@ -161,7 +161,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   Widget _buildListHeading({String? text}) {
     return Container(color: Styles().colors!.fillColorPrimary, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
         Semantics(header: true, child:
-          Text(text ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16, color: Styles().colors!.white),)
+          Text(text ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.regular.extra_fat"),)
         )
     );
   }
@@ -220,18 +220,11 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
                 Text(
                   "Notifications Paused",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Styles().colors?.fillColorPrimary,
-                    fontFamily: Styles().fontFamilies?.regular,
-                    fontSize: 16
-                  ),
+                  style: Styles().textStyles?.getTextStyle("widget.detail.regular")
                 ),
               ),
               Text(">",
-                style: TextStyle(
-                    color: Styles().colors?.fillColorPrimary,
-                    fontSize: 16,
-                ),
+                style: Styles().textStyles?.getTextStyle("widget.detail.regular")
               ),
 
           ],)
@@ -407,28 +400,28 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   Widget _buildEditButton() {
     return Semantics(label: Localization().getStringEx('headerbar.edit.title', 'Edit'), hint: Localization().getStringEx('headerbar.edit.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onEdit, child:
-        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style:  Styles().textStyles?.getTextStyle("widget.button.title.medium"),)
       ));
   }
 
   Widget _buildDoneButton() {
     return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDone, child:
-        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style:  Styles().textStyles?.getTextStyle("widget.button.title.medium"),)
       ));
   }
 
   Widget _buildSelectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.select.all.title', 'Select All'), hint: Localization().getStringEx('headerbar.select.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onSelectAll, child:
-        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style:  Styles().textStyles?.getTextStyle("widget.button.title.medium"),)
       ));
   }
 
   Widget _buildDeselectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), hint: Localization().getStringEx('headerbar.deselect.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDeselectAll, child:
-        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style:  Styles().textStyles?.getTextStyle("widget.button.title.medium"),)
       ));
   }
 
@@ -441,7 +434,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
       Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 16), child:
           Row(children:<Widget>[Expanded(child:
-            Text(headingText, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+            Text(headingText, style: Styles().textStyles?.getTextStyle("widget.title.regular"),)
           )]),
         ),
 
@@ -454,7 +447,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
                 Image.asset('images/icon-delete-group.png')
               ),
               Expanded(child:
-                Text("Delete", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold),)
+                Text("Delete", style: Styles().textStyles?.getTextStyle("widget.button.title.regular"),)
               ),
             ]),
           )
@@ -469,7 +462,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
                 Image.asset('images/close-orange.png', width: 18, height: 18)
               ),
               Expanded(child:
-                Text("Cancel", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold),)
+                Text("Cancel", style: Styles().textStyles?.getTextStyle("widget.button.title.regular"),)
               ),
             ]),
           )
@@ -491,13 +484,13 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
                   Padding(padding: EdgeInsets.all(16), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Text(title!, style: TextStyle(fontSize: 20, color: Colors.white, fontFamily: Styles().fontFamilies!.bold),),
+                        Text(title!, style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular.fat"),),
                       ),
                       Semantics(label: "Close", button: true,  child:
                         GestureDetector(onTap: () => Navigator.pop(context), child:
                           Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors!.white!, width: 2), ), child:
                             Center(child:
-                              Text('\u00D7', style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies!.bold), semanticsLabel: "",),
+                              Text('\u00D7', style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.fat"), semanticsLabel: "",),
                             ),
                           )
                         ),
@@ -511,7 +504,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
             Padding(padding: const EdgeInsets.all(16), child:
               Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Container(height: 16),
-                Text(message!, textAlign: TextAlign.left, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 18, color: Styles().colors!.fillColorPrimary),),
+                Text(message!, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.message.medium"),),
                 Container(height: 32),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                   Expanded(child:
@@ -908,26 +901,26 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                       Padding(padding: EdgeInsets.only(bottom: 3, right: 12), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.category ?? '', semanticsLabel: "Category: ${widget.message?.category ?? ''}, ",style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))
+                            Text(widget.message?.category ?? '', semanticsLabel: "Category: ${widget.message?.category ?? ''}, ",style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"))
                       )])) : Container(),
                     
                     StringUtils.isNotEmpty(widget.message?.subject) ?
                       Padding(padding: EdgeInsets.only(bottom: 4, right: 12), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.subject ?? '', semanticsLabel: "Subject: ${widget.message?.subject ?? ''}, ", style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
+                            Text(widget.message?.subject ?? '', semanticsLabel: "Subject: ${widget.message?.subject ?? ''}, ", style: Styles().textStyles?.getTextStyle("widget.card.title.medium.extra_fat"))
                       )])) : Container(),
 
                     StringUtils.isNotEmpty(widget.message?.body) ?
                       Padding(padding: EdgeInsets.only(bottom: 6), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.body ?? '', semanticsLabel: "Body: ${widget.message?.body ?? ''}, ", style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground))
+                            Text(widget.message?.body ?? '', semanticsLabel: "Body: ${widget.message?.body ?? ''}, ", style: Styles().textStyles?.getTextStyle("widget.card.detail.regular"))
                       )])) : Container(),
 
                     Row(children: [
                       Expanded(child:
-                        Text(widget.message?.displayInfo ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface))
+                        Text(widget.message?.displayInfo ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small_variant"))
                     )]),
                   ])
                 ),

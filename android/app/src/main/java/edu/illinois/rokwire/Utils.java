@@ -172,6 +172,11 @@ public class Utils {
                 }
             }
 
+            Object entrancesObj = explore.get("entrances");
+            if (entrancesObj instanceof List) {
+                return explore;
+            }
+
             return null;
         }
 
@@ -520,6 +525,8 @@ public class Utils {
                 return ExploreType.LAUNDRY;
             } else if (singleExplore.get("lot_id") != null) {
                 return ExploreType.PARKING;
+            } else if (singleExplore.get("entrances") != null) {
+                return ExploreType.BUILDING;
             } else if (singleExplore.get("coursetitle") != null) {
                 return ExploreType.STUDENT_COURSE;
             } else {
@@ -574,7 +581,9 @@ public class Utils {
                     // Json Example:
                     // {"lot_id":"647b7211-9cdf-412b-a682-1fdb68897f86","lot_name":"SFC - E-14 Lot - Illinois","lot_address1":"1800 S. First Street, Champaign, IL 61820","total_spots":"1710","entrance":{"latitude":40.096691,"longitude":-88.238179},"polygon":[{"latitude":40.097938,"longitude":-88.241409},{"latitude":40.09793,"longitude":-88.238657},{"latitude":40.094742,"longitude":-88.238651},{"latitude":40.094733,"longitude":-88.240223},{"latitude":40.095148,"longitude":-88.240245},{"latitude":40.095181,"longitude":-88.24113},{"latitude":40.095636,"longitude":-88.241135},{"latitude":40.095636,"longitude":-88.241393}],"spots_sold":0,"spots_pre_sold":0}
                     markerTitle = (String) singleExploreMap.get("lot_name");
-                } if (exporeType == ExploreType.STUDENT_COURSE) {
+                } else if (exporeType == ExploreType.BUILDING) {
+                    markerTitle = (String) singleExploreMap.get("name");
+                } else if (exporeType == ExploreType.STUDENT_COURSE) {
                     markerTitle = (String) singleExploreMap.get("coursetitle");
                 } else {
                     markerTitle = (String) singleExploreMap.get("title");
@@ -600,6 +609,9 @@ public class Utils {
             }
             else if (exporeType == ExploreType.LAUNDRY) {
                 return (String) exploreMap.get("status");
+            }
+            else if (exporeType == ExploreType.BUILDING) {
+                return (String) exploreMap.get("address1");
             }
             else if (exporeType == ExploreType.STUDENT_COURSE) {
                 String result = "";
@@ -660,6 +672,9 @@ public class Utils {
                         break;
                     case PARKING:
                         typeSuffix = context.getString(R.string.parkings);
+                        break;
+                    case BUILDING:
+                        typeSuffix = context.getString(R.string.buildings);
                         break;
                     case STUDENT_COURSE:
                         typeSuffix = context.getString(R.string.student_courses);
@@ -1000,6 +1015,6 @@ public class Utils {
     }
 
     public enum ExploreType {
-        EVENT, DINING, LAUNDRY, PARKING, STUDENT_COURSE, UNKNOWN
+        EVENT, DINING, LAUNDRY, PARKING, BUILDING, STUDENT_COURSE, UNKNOWN
     }
 }
