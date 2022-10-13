@@ -28,11 +28,11 @@
 #import <GoogleMaps/GoogleMaps.h>
 
 @interface MapExploreMarkerView : MapMarkerView
-- (instancetype)initWithExplore:(NSDictionary*)explore;
+- (instancetype)initWithExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode;
 @end
 
 @interface MapExploresMarkerView : MapMarkerView
-- (instancetype)initWithExplore:(NSDictionary*)explore;
+- (instancetype)initWithExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode;
 @end
 
 /////////////////////////////////
@@ -51,9 +51,13 @@
 }
 
 + (instancetype)createFromExplore:(NSDictionary*)explore {
+	return [self createFromExplore:explore displayMode: MapMarkerDisplayMode_Plain];
+}
+
++ (instancetype)createFromExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode {
 	return (1 < explore.uiucExplores.count) ?
-		[[MapExploresMarkerView alloc] initWithExplore:explore] :
-		[[MapExploreMarkerView alloc] initWithExplore:explore];
+		[[MapExploresMarkerView alloc] initWithExplore:explore displayMode:displayMode] :
+		[[MapExploreMarkerView alloc] initWithExplore:explore displayMode:displayMode];
 }
 
 - (void)setDisplayMode:(MapMarkerDisplayMode)displayMode {
@@ -151,9 +155,10 @@ CGSize  const kExploreMarkerViewSize = { 180, kExploreMarkerIconSize2 + kExplore
 	return self;
 }
 
-- (instancetype)initWithExplore:(NSDictionary*)explore {
+- (instancetype)initWithExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode {
 	if (self = [self initWithFrame:CGRectMake(0, 0, kExploreMarkerViewSize.width, kExploreMarkerViewSize.height)]) {
 		self.explore = explore;
+		self.displayMode = displayMode;
 		iconView.image = [self.class markerImageWithHexColor:explore.uiucExploreMarkerHexColor];
 		titleLabel.text = explore.uiucExploreTitle;
 		descrLabel.text = explore.uiucExploreDescription;
@@ -275,9 +280,10 @@ CGSize  const kExploresMarkerViewSize = { 180, kExploresMarkerIconSize2 + kExplo
 	return self;
 }
 
-- (instancetype)initWithExplore:(NSDictionary*)explore {
+- (instancetype)initWithExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode {
 	if (self = [self initWithFrame:CGRectMake(0, 0, kExploresMarkerViewSize.width, kExploresMarkerViewSize.height)]) {
 		self.explore = explore;
+		self.displayMode = displayMode;
 
 		circleView.backgroundColor = [UIColor inaColorWithHex:explore.uiucExploreMarkerHexColor];
 		circleView.layer.borderColor = [[UIColor blackColor] CGColor];

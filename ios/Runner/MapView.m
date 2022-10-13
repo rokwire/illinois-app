@@ -38,9 +38,12 @@
 @interface MapView()<GMSMapViewDelegate> {
 	int64_t       _mapId;
 	NSArray*      _explores;
+	NSDictionary* _exploreOptions;
+	NSArray*      _displayExplores;
 	NSDictionary* _poi;
 	NSMutableSet* _markers;
 	float         _currentZoom;
+	float         _currentDisplayExploresZoom;
 	bool          _didFirstLayout;
 	bool          _enabled;
 }
@@ -80,22 +83,38 @@
 	if (!_didFirstLayout) {
 		_didFirstLayout = true;
 		[self acknowledgePOI];
-		[self applyMarkers];
+
+		GMSCoordinateBounds* bounds = [self buildDisplayExplores];
+		GMSCameraUpdate *cameraUpdate = [self cameraUpdateFromBounds:bounds];
+		[_mapView moveCamera:cameraUpdate];
+
 		[self applyEnabled];
 	}
 }
 
 - (void)applyExplores:(NSArray*)explores options:(NSDictionary*)options {
-	[self buildExplores:explores options:(NSDictionary*)options];
+	_explores = explores;
+	_exploreOptions = options;
 	if (_didFirstLayout) {
-		[self applyMarkers];
+		GMSCoordinateBounds* bounds = [self buildDisplayExplores];
+		GMSCameraUpdate *cameraUpdate = [self cameraUpdateFromBounds:bounds];
+		[_mapView moveCamera:cameraUpdate];
 	}
 }
 
-- (void)buildExplores:(NSArray*)rawExplores options:(NSDictionary*)options {
-	NSMutableArray *mappedExploreGroups = [[NSMutableArray alloc] init];
+- (GMSCoordinateBounds*)buildDisplayExplores {
+	if (_didFirstLayout) {
+		NSNumber *debugThresoldDistance = [_exploreOptions inaNumberForKey:@"LocationThresoldDistance"];
+		double thresoldDistance = (debugThresoldDistance != nil) ? debugThresoldDistance.doubleValue : self.automaticThresoldDistance;
+		_displayExplores = [self buildExplores:_explores thresoldDistance:thresoldDistance];
+		return [self buildMarkers];
+	}
+	return nil;
+}
+
+- (NSArray*)buildExplores:(NSArray*)rawExplores thresoldDistance:(double)thresoldDistance {
 	
-	double exploreLocationThresoldDistance = (options != nil) ? [options inaDoubleForKey:@"LocationThresoldDistance" defaults:kExploreLocationThresoldDistance] : kExploreLocationThresoldDistance;
+	NSMutableArray *mappedExploreGroups = [[NSMutableArray alloc] init];
 	
 	for (NSDictionary *explore in rawExplores) {
 		if ([explore isKindOfClass:[NSDictionary class]]) {
@@ -108,7 +127,7 @@
 					for (NSDictionary *mappedExplore in mappedExpoloreGroup) {
 						
 						double distance = CLLocationCoordinate2DInaDistance(exploreCoord, mappedExplore.uiucExploreLocationCoordinate);
-						if ((distance < exploreLocationThresoldDistance) && (exploreFloor == mappedExplore.uiucExploreLocationFloor)) {
+						if ((distance <= thresoldDistance) && (exploreFloor == mappedExplore.uiucExploreLocationFloor)) {
 							[mappedExpoloreGroup addObject:explore];
 							exploreMapped = true;
 							break;
@@ -138,7 +157,28 @@
 		}
 	}
 
-	_explores = resultExplores;
+	return resultExplores;
+}
+
+- (double)automaticThresoldDistance {
+	if (kThresoldOrigin1Zoom <= _mapView.camera.zoom) {
+		return kThresoldOrigin1Distance;
+	}
+	else {
+		return kThresoldOrigin1Distance + (kThresoldOrigin1Zoom - _mapView.camera.zoom) / (kThresoldOrigin1Zoom - kThresoldOrigin2Zoom) * (kThresoldOrigin2Distance - kThresoldOrigin1Distance);
+	}
+}
+
+- (GMSCameraUpdate*)cameraUpdateFromBounds:(GMSCoordinateBounds*)bounds {
+		if ((bounds == nil) || !bounds.isValid) {
+			return nil;
+		}
+		else if (CLLocationCoordinate2DIsEqual(bounds.northEast, bounds.southWest)) {
+			return [GMSCameraUpdate setTarget:bounds.northEast zoom: kInitialCameraZoom];
+		}
+		else {
+			return [GMSCameraUpdate fitBounds:bounds withPadding:50.0f];
+		}
 }
 
 - (void)enable:(bool)enable {
@@ -198,7 +238,7 @@
 
 #pragma mark Display
 
-- (void)applyMarkers {
+- (GMSCoordinateBounds*)buildMarkers {
 
 	for (GMSMarker *marker in _markers) {
 		marker.map = nil;
@@ -206,28 +246,10 @@
 	[_markers removeAllObjects];
 
 	GMSCoordinateBounds *bounds = nil;
-
-	for (NSDictionary *explore in _explores) {
+	for (NSDictionary *explore in _displayExplores) {
 		if ([explore isKindOfClass:[NSDictionary class]]) {
-			CLLocationCoordinate2D exploreCoordinate = explore.uiucExploreLocationCoordinate;
-			if (CLLocationCoordinate2DIsValid(exploreCoordinate)) {
-
-				GMSMarker *marker = [[GMSMarker alloc] init];
-				marker.position = CLLocationCoordinate2DMake(exploreCoordinate.latitude, exploreCoordinate.longitude);
-
-				MapMarkerView *iconView = [MapMarkerView createFromExplore:explore];
-				marker.iconView = iconView;
-				marker.title = iconView.title;
-				marker.snippet = iconView.descr;
-				marker.groundAnchor = iconView.anchor;
-
-//				marker.icon = [UIImage imageNamed:(1 < explore.uiucExplores.count) ? @"maps-icon-marker-circle-20" : @"maps-icon-marker-pin-30" ];
-//				marker.title = explore.uiucExploreTitle;
-//				marker.snippet = explore.uiucExploreDescription;
-//				marker.groundAnchor = CGPointMake(0.5, 1);
-
-				marker.zIndex = 1;
-				marker.userData = @{ @"explore" : explore };
+			GMSMarker *marker = [self markerFromExplore: explore];
+			if (marker != nil) {
 				marker.map = _mapView;
 				[_markers addObject:marker];
 				
@@ -240,43 +262,52 @@
 			}
 		}
 	}
+	return bounds;
+}
 
-	if (_didFirstLayout) {
-		_currentZoom = 0;
+- (GMSMarker*)markerFromExplore:(NSDictionary*)explore {
+	CLLocationCoordinate2D exploreCoordinate = explore.uiucExploreLocationCoordinate;
+	if (CLLocationCoordinate2DIsValid(exploreCoordinate)) {
 
-		GMSCameraUpdate *cameraUpdate = nil;
-		if ((bounds == nil) || !bounds.isValid) {
-			cameraUpdate = [GMSCameraUpdate setTarget:kInitialCameraLocation zoom: kInitialCameraZoom];
-		}
-		else if (CLLocationCoordinate2DIsEqual(bounds.northEast, bounds.southWest)) {
-			cameraUpdate = [GMSCameraUpdate setTarget:bounds.northEast zoom: kInitialCameraZoom];
+		GMSMarker *marker = [[GMSMarker alloc] init];
+		marker.position = CLLocationCoordinate2DMake(exploreCoordinate.latitude, exploreCoordinate.longitude);
+		
+		if (1 < explore.uiucExplores.count) {
+			MapMarkerView *iconView = [MapMarkerView createFromExplore:explore displayMode:self.markerDisplayMode];
+			marker.iconView = iconView;
+			marker.title = iconView.title;
+			marker.snippet = iconView.descr;
+			marker.groundAnchor = iconView.anchor;
 		}
 		else {
-			cameraUpdate = [GMSCameraUpdate fitBounds:bounds withPadding:50.0f];
+			marker.icon = [MapMarkerView markerImageWithHexColor:explore.uiucExploreMarkerHexColor];
+			marker.title = explore.uiucExploreTitle;
+			marker.snippet = explore.uiucExploreDescription;
+			marker.groundAnchor = CGPointMake(0.5, 1);
 		}
 
-		[_mapView moveCamera:cameraUpdate];
-		// idleAtCameraPosition -> updateMarkers
+
+
+		marker.zIndex = 1;
+		marker.userData = @{ @"explore" : explore };
+		return marker;
 	}
-	else {
-		[self updateMarkers];
+	return nil;
+}
+
+
+- (void)updateMarkersDisplayMode {
+
+	for (GMSMarker *marker in _markers) {
+		MapMarkerView *iconView = [marker.iconView isKindOfClass:[MapMarkerView class]] ? ((MapMarkerView*)marker.iconView) : nil;
+		if (iconView != nil) {
+			iconView.displayMode = self.markerDisplayMode;
+		}
 	}
 }
 
-- (void)updateMarkers {
-
-	for (GMSMarker *marker in _markers) {
-		NSDictionary *explore = nil, *exploreLocation = nil;
-		if ([marker.userData isKindOfClass:[NSDictionary class]]) {
-			explore = [marker.userData inaDictForKey:@"explore"];
-			exploreLocation = explore.uiucExploreLocation;
-		}
-
-		MapMarkerView *iconView = [marker.iconView isKindOfClass:[MapMarkerView class]] ? ((MapMarkerView*)marker.iconView) : nil;
-		if ((iconView != nil) && (exploreLocation != nil)) {
-			iconView.displayMode =  (_mapView.camera.zoom < kMarkerThresold1Zoom) ? MapMarkerDisplayMode_Plain : ((_mapView.camera.zoom < kMarkerThresold2Zoom) ? MapMarkerDisplayMode_Title : MapMarkerDisplayMode_Extended);
-		}
-	}
+- (MapMarkerDisplayMode)markerDisplayMode {
+	return (_mapView.camera.zoom < kMarkerThresold1Zoom) ? MapMarkerDisplayMode_Plain : ((_mapView.camera.zoom < kMarkerThresold2Zoom) ? MapMarkerDisplayMode_Title : MapMarkerDisplayMode_Extended);
 }
 
 #pragma mark GMSMapViewDelegate
@@ -307,7 +338,13 @@
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
 	if (_currentZoom != position.zoom) {
 		_currentZoom = position.zoom;
-		[self updateMarkers];
+		if (kThresoldZoomUpdateStep < fabs(_currentZoom - _currentDisplayExploresZoom)) {
+			_currentDisplayExploresZoom = _currentZoom;
+			[self buildDisplayExplores];
+		}
+		else {
+			[self updateMarkersDisplayMode];
+		}
 	}
 }
 

@@ -34,6 +34,7 @@ typedef NS_ENUM(NSInteger, MapMarkerDisplayMode) {
 
 @interface MapMarkerView : UIView
 + (instancetype)createFromExplore:(NSDictionary*)explore;
++ (instancetype)createFromExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode;
 
 @property (nonatomic) MapMarkerDisplayMode displayMode;
 @property (nonatomic) bool blurred;

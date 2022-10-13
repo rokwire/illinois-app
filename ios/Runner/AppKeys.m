@@ -35,4 +35,8 @@ float const kMarkerThresold2Zoom = 16.89f;
 
 // --------------------------------------------
 
-double const kExploreLocationThresoldDistance = 200.0; // in meters
+float const kThresoldZoomUpdateStep = 0.3f;
+float const kThresoldOrigin1Zoom = 16.0f;
+double const kThresoldOrigin1Distance = 0.0; // in meters
+float const kThresoldOrigin2Zoom = 13.0f;
+double const kThresoldOrigin2Distance = 200.0; // in meters
