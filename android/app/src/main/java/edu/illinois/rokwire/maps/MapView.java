@@ -139,6 +139,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         enableMyLocation(enableLocationValue);
         googleMap.setOnMarkerClickListener(this::onMarkerClicked);
         googleMap.setOnMapClickListener(this::onMapClick);
+        googleMap.setOnCameraIdleListener(this::updateMarkers);
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(Constants.DEFAULT_INITIAL_CAMERA_POSITION, Constants.DEFAULT_CAMERA_ZOOM)));
         showExploresOnMap();
         relocateMyLocationButton();
