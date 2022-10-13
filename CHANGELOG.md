@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Android: improper marker view [#2453](https://github.com/rokwire/illinois-app/issues/2453).
+### Added
+- Show thumbnail in favourite widget for video tutorials [#2455](https://github.com/rokwire/illinois-app/issues/2455).
 
 ## [4.2.1] - 2022-10-12
 ### Changed
