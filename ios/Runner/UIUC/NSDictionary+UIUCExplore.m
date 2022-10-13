@@ -183,9 +183,11 @@
 }
 
 + (NSDictionary*)uiucExploreFromGroup:(NSArray*)explores {
-	if (explores != nil) {
+	if ((explores != nil) && (1 < explores.count)) {
 		
 		UIUCExploreType exploresType = UIUCExploreType_Unknown;
+    double x = 0, y = 0, z = 0;
+
 		for (NSDictionary *explore in explores) {
 			UIUCExploreType exploreType = explore.uiucExploreType;
 			if (exploresType == UIUCExploreType_Unknown) {
@@ -193,10 +195,27 @@
 			}
 			else if (exploresType != exploreType) {
 				exploresType = UIUCExploreType_Unknown;
-				break;
 			}
+			
+	    // https://stackoverflow.com/a/60163851/3759472
+			CLLocationCoordinate2D exploreCoord = explore.uiucExploreLocationCoordinate;
+      double latitude = exploreCoord.latitude * M_PI / 180;
+      double longitude = exploreCoord.longitude * M_PI / 180;
+      double c1 = cos(latitude);
+      x = x + c1 * cos(longitude);
+      y = y + c1 * sin(longitude);
+      z = z + sin(latitude);
 		}
 		
+    x = x / explores.count;
+    y = y / explores.count;
+    z = z / explores.count;
+
+    double centralLongitude = atan2(y, x);
+    double centralSquareRoot = sqrt(x * x + y * y);
+    double centralLatitude = atan2(z, centralSquareRoot);
+    CLLocationCoordinate2D exploresCoord = CLLocationCoordinate2DMake(centralLatitude * 180 / M_PI, centralLongitude * 180 / M_PI);
+
 		NSString *exploresName = nil;
 		switch (exploresType) {
 			case UIUCExploreType_Event:         exploresName = @"Events"; break;
@@ -210,13 +229,14 @@
 		
 		NSString *exploresColor = (exploresType != UIUCExploreType_Unknown) ? [self.class uiucExploreMarkerHexColorFromType:exploresType] : @"#13294b";
 		
-		NSDictionary* firstExplore = explores.firstObject;
-
 		return @{
 			@"type" : @"explores",
 			@"title" : [NSString stringWithFormat:@"%d %@", (int)explores.count, exploresName],
-			@"location" : firstExplore.uiucExploreLocation ?: [NSNull null],
-			@"address": firstExplore.uiucExploreAddress ?: [NSNull null],
+			@"location" : @{
+				@"latitude": @(exploresCoord.latitude),
+				@"longitude" : @(exploresCoord.longitude)
+			},
+			@"address": [NSNull null],
 			@"color": exploresColor,
 			@"exploresContentType": @(exploresType),
 			@"explores" : explores,
