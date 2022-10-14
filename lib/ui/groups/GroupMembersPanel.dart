@@ -60,6 +60,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   List<GroupMemberStatus>? _sortedMemberStatusList;
   bool _statusValuesVisible = false;
   int _loadingProgress = 0;
+  bool _isLoadingMembers = false;
 
   bool _switchToAllIfNoPendingMembers = false;
 
@@ -120,7 +121,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 
   void _loadMembers({bool showLoadingIndicator = true}) {
-    if ((_visibleMembers == null) || ((_membersLimit != null) && (_membersOffset != null) && !_isLoading)) {
+    if (!_isLoadingMembers && ((_visibleMembers == null) || ((_membersLimit != null) && (_membersOffset != null)))) {
+      _isLoadingMembers = true;
       if (showLoadingIndicator) {
         _increaseProgress();
       }
@@ -129,6 +131,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         memberStatuses = [_selectedMemberStatus!];
       }
       Groups().loadMembers(groupId: widget.groupId, name: _searchTextValue, statuses: memberStatuses, offset: _membersOffset, limit: _membersLimit).then((members) {
+        _isLoadingMembers = false;
         int resultsCount = members?.length ?? 0;
         // If there are no pending members and the user is admin - select 'All' value
         if ((resultsCount == 0) && _switchToAllIfNoPendingMembers && (widget.group?.currentUserIsAdmin ?? false)) {
@@ -148,8 +151,14 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
             _visibleMembers = <Member>[];
           }
           _visibleMembers!.addAll(members!);
+          _membersOffset = (_membersOffset ?? 0) + resultsCount;
+          _membersLimit = 10;
         }
-        _setMembersPagingParams(resultsCount: resultsCount);
+        else {
+          _membersOffset = null;
+          _membersLimit = null;
+        }
+
         if (showLoadingIndicator) {
           _decreaseProgress();
         } else {
@@ -160,7 +169,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   }
 
   void _reloadMembers() {
-    _initMembersPagingParamsToDefaults();
+    _membersOffset = 0;
+    _membersLimit = _defaultMembersLimit;
     _visibleMembers = null;
     _loadMembers();
   }
@@ -372,21 +382,6 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   void _scrollListener() {
     if ((_scrollController!.offset >= _scrollController!.position.maxScrollExtent)) {
       _loadMembers(showLoadingIndicator: false);
-    }
-  }
-
-   void _initMembersPagingParamsToDefaults() {
-    _membersOffset = 0;
-    _membersLimit = _defaultMembersLimit;
-  }
-
-  void _setMembersPagingParams({required int resultsCount}) {
-    if (resultsCount > 0) {
-      _membersOffset = (_membersOffset ?? 0) + resultsCount;
-      _membersLimit = 10;
-    } else {
-      _membersOffset = null;
-      _membersLimit = null;
     }
   }
 

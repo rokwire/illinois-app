@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Show play button in video tutorials favourite widget [#2458](https://github.com/rokwire/illinois-app/issues/2458).
+### Fixed
+- Fixed member entry duplication in GroupMembersPanel [#2413](https://github.com/rokwire/illinois-app/issues/2413).
 
 ## [4.2.2] - 2022-10-13
 ### Fixed
