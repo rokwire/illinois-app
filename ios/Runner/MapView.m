@@ -272,19 +272,17 @@
 		GMSMarker *marker = [[GMSMarker alloc] init];
 		marker.position = CLLocationCoordinate2DMake(exploreCoordinate.latitude, exploreCoordinate.longitude);
 		
-		if (1 < explore.uiucExplores.count) {
-			MapMarkerView *iconView = [MapMarkerView createFromExplore:explore displayMode:self.markerDisplayMode];
-			marker.iconView = iconView;
-			marker.title = iconView.title;
-			marker.snippet = iconView.descr;
-			marker.groundAnchor = iconView.anchor;
+		NSInteger exploresCount = explore.uiucExplores.count;
+		if (1 < exploresCount) {
+			marker.icon = [MapMarkerView groupMarkerImageWithHexColor:explore.uiucExploreMarkerHexColor count:exploresCount];
+			marker.groundAnchor = CGPointMake(0.5, 0.5);
 		}
 		else {
 			marker.icon = [MapMarkerView markerImageWithHexColor:explore.uiucExploreMarkerHexColor];
-			marker.title = explore.uiucExploreTitle;
-			marker.snippet = explore.uiucExploreDescription;
 			marker.groundAnchor = CGPointMake(0.5, 1);
 		}
+			marker.title = explore.uiucExploreTitle;
+			marker.snippet = explore.uiucExploreDescription;
 
 
 

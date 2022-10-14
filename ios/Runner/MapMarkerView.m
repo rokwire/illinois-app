@@ -23,9 +23,35 @@
 #import "NSDictionary+InaTypedValue.h"
 #import "UIColor+InaParse.h"
 #import "NSDictionary+UIUCExplore.h"
+#import "CGGeometry+InaUtils.h"
 #import "InaSymbols.h"
 
 #import <GoogleMaps/GoogleMaps.h>
+
+CGFloat const kExploreMarkerIconSize0 = 20;
+CGFloat const kExploreMarkerIconSize1 = 30;
+CGFloat const kExploreMarkerIconSize2 = 40;
+CGFloat const kExploreMarkerIconSize[3] = { kExploreMarkerIconSize0, kExploreMarkerIconSize1, kExploreMarkerIconSize2 };
+
+CGFloat const kExploreMarkerIconGutter = 3;
+CGFloat const kExploreMarkerTitleFontSize = 12;
+CGFloat const kExploreMarkerDescrFontSize = 12;
+CGSize  const kExploreMarkerViewSize = { 180, kExploreMarkerIconSize2 + kExploreMarkerIconGutter + kExploreMarkerTitleFontSize + kExploreMarkerDescrFontSize };
+
+CGFloat const kExploresMarkerIconSize0 = 16;
+CGFloat const kExploresMarkerIconSize1 = 20;
+CGFloat const kExploresMarkerIconSize2 = 24;
+CGFloat const kExploresMarkerIconSize[3] = { kExploresMarkerIconSize0, kExploresMarkerIconSize1, kExploresMarkerIconSize2 };
+
+CGFloat const kExploresMarkerCountFontSize0 = 10;
+CGFloat const kExploresMarkerCountFontSize1 = 12.5;
+CGFloat const kExploresMarkerCountFontSize2 = 15;
+CGFloat const kExploresMarkerCountFontSize[3] = { kExploresMarkerCountFontSize0, kExploresMarkerCountFontSize1, kExploresMarkerCountFontSize2 };
+
+CGFloat const kExploresMarkerIconGutter = 3;
+CGFloat const kExploresMarkerTitleFontSize = 12;
+CGFloat const kExploresMarkerDescrFontSize = 12;
+CGSize  const kExploresMarkerViewSize = { 180, kExploresMarkerIconSize2 + kExploresMarkerIconGutter + kExploresMarkerTitleFontSize + kExploresMarkerDescrFontSize };
 
 @interface MapExploreMarkerView : MapMarkerView
 - (instancetype)initWithExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode;
@@ -90,12 +116,100 @@
 	UIImage *image = [gMarkerImageMap objectForKey:hexColor];
 	if (image == nil) {
 		UIColor *color = [UIColor inaColorWithHex:hexColor];
-		image = [GMSMarker markerImageWithColor:color];
+		UIImage *imageSource = [GMSMarker markerImageWithColor:color];
+		if (imageSource != nil) {
+		
+			//CGFloat markerSize = kExploreMarkerIconSize1;
+			//CGSize imageSize = InaSizeScaleToFit(imageSource.size, CGSizeMake(markerSize, markerSize));
+			CGFloat markerWidth = kExploresMarkerIconSize2 * 0.8;
+			CGSize imageSize = CGSizeMake(markerWidth, markerWidth * imageSource.size.height / imageSource.size.width);
+			UIGraphicsBeginImageContextWithOptions(imageSize, NO, 0.0);
+			[imageSource drawInRect:CGRectMake(0, 0, imageSize.width, imageSize.height)];
+			image = UIGraphicsGetImageFromCurrentImageContext();
+			UIGraphicsEndImageContext();
+			
+			if (image != nil) {
+				[gMarkerImageMap setObject:image forKey:hexColor];
+			}
+		}
+		
+	}
+	return image;
+}
+
++ (UIImage*)groupMarkerImageWithHexColor:(NSString*)hexColor count:(NSInteger)count {
+
+	static NSMutableDictionary *gGroupMarkerImageMap = nil;
+	if (gGroupMarkerImageMap == nil) {
+		gGroupMarkerImageMap = [[NSMutableDictionary alloc] init];
+	}
+	
+	NSString *imageKey = [NSString stringWithFormat:@"%@%@", @(count), hexColor];
+	UIImage *image = [gGroupMarkerImageMap objectForKey:imageKey];
+	if (image == nil) {
+		UIColor *color = [UIColor inaColorWithHex:hexColor];
+		image = [self createGroupMarkerImageWithColor:color count:count];
 		if (image != nil) {
-			[gMarkerImageMap setObject:image forKey:hexColor];
+			[gGroupMarkerImageMap setObject:image forKey:imageKey];
 		}
 	}
 	return image;
+}
+
++ (UIImage*)createGroupMarkerImageWithColor:(UIColor*)color count:(NSInteger)count {
+	UIImage* result = nil;
+	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+	if (colorSpace != NULL) {
+		CGFloat markerSize = kExploresMarkerIconSize2;
+		CGContextRef context = CGBitmapContextCreate(nil, markerSize, markerSize, 8, kExploresMarkerIconSize2 * sizeof(uint32_t), colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedLast);
+		if (context != NULL) {
+			CGRect markerRect = CGRectMake(1, 1, markerSize - 2, markerSize - 2);
+			
+			CGContextSetFillColorWithColor(context, color.CGColor);
+			CGContextFillEllipseInRect(context, markerRect);
+			
+			CGContextSetStrokeColorWithColor(context, UIColor.blackColor.CGColor);
+			CGContextSetLineWidth(context, 0.5);
+			CGContextStrokeEllipseInRect(context, markerRect);
+			
+			NSString *text = [[NSNumber numberWithInteger:count] stringValue];
+			UIGraphicsPushContext(context);
+
+			CGContextSaveGState(context);
+			CGContextTranslateCTM(context, 0.0f, markerSize);
+			CGContextScaleCTM(context, 1.0f, -1.0f);
+
+			NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+			paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+			paragraphStyle.alignment = NSTextAlignmentCenter;
+			
+			NSDictionary *attributes = @{
+				NSFontAttributeName: [UIFont boldSystemFontOfSize:15],
+				NSForegroundColorAttributeName: UIColor.whiteColor,
+				NSParagraphStyleAttributeName: paragraphStyle,
+			};
+			
+			NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading;
+
+			CGSize textSize = [text boundingRectWithSize:markerRect.size options:options attributes:attributes context:nil].size;
+			CGRect textRect = CGRectMake(
+				markerRect.origin.x + (markerRect.size.width - textSize.width) / 2,
+				markerRect.origin.y + (markerRect.size.height - textSize.height) / 2,
+				textSize.width, textSize.height);
+			[text drawWithRect:textRect options:options attributes:attributes context: NULL];
+
+			CGContextRestoreGState(context);
+			UIGraphicsPopContext();
+
+			CGImageRef resultImageRef = CGBitmapContextCreateImage(context);;
+			if (resultImageRef != nil) {
+				result = [[UIImage alloc] initWithCGImage:resultImageRef];
+			}
+			CGContextRelease(context);
+		}
+		CGColorSpaceRelease( colorSpace );
+	}
+	return result;
 }
 
 @end
@@ -103,16 +217,6 @@
 
 /////////////////////////////////
 // MapExploreMarkerView
-
-CGFloat const kExploreMarkerIconSize0 = 20;
-CGFloat const kExploreMarkerIconSize1 = 30;
-CGFloat const kExploreMarkerIconSize2 = 40;
-CGFloat const kExploreMarkerIconSize[3] = { kExploreMarkerIconSize0, kExploreMarkerIconSize1, kExploreMarkerIconSize2 };
-
-CGFloat const kExploreMarkerIconGutter = 3;
-CGFloat const kExploreMarkerTitleFontSize = 12;
-CGFloat const kExploreMarkerDescrFontSize = 12;
-CGSize  const kExploreMarkerViewSize = { 180, kExploreMarkerIconSize2 + kExploreMarkerIconGutter + kExploreMarkerTitleFontSize + kExploreMarkerDescrFontSize };
 
 @interface MapExploreMarkerView() {
 	UIImageView *iconView;
@@ -219,21 +323,6 @@ CGSize  const kExploreMarkerViewSize = { 180, kExploreMarkerIconSize2 + kExplore
 
 /////////////////////////////////
 // MapExploresMarkerView
-
-CGFloat const kExploresMarkerIconSize0 = 16;
-CGFloat const kExploresMarkerIconSize1 = 20;
-CGFloat const kExploresMarkerIconSize2 = 24;
-CGFloat const kExploresMarkerIconSize[3] = { kExploresMarkerIconSize0, kExploresMarkerIconSize1, kExploresMarkerIconSize2 };
-
-CGFloat const kExploresMarkerCountFontSize0 = 10;
-CGFloat const kExploresMarkerCountFontSize1 = 12.5;
-CGFloat const kExploresMarkerCountFontSize2 = 15;
-CGFloat const kExploresMarkerCountFontSize[3] = { kExploresMarkerCountFontSize0, kExploresMarkerCountFontSize1, kExploresMarkerCountFontSize2 };
-
-CGFloat const kExploresMarkerIconGutter = 3;
-CGFloat const kExploresMarkerTitleFontSize = 12;
-CGFloat const kExploresMarkerDescrFontSize = 12;
-CGSize  const kExploresMarkerViewSize = { 180, kExploresMarkerIconSize2 + kExploresMarkerIconGutter + kExploresMarkerTitleFontSize + kExploresMarkerDescrFontSize };
 
 @interface MapExploresMarkerView() {
 	UIView		*circleView;

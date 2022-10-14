@@ -43,6 +43,7 @@ typedef NS_ENUM(NSInteger, MapMarkerDisplayMode) {
 @property (nonatomic, readonly) CGPoint anchor;
 
 + (UIImage*)markerImageWithHexColor:(NSString*)hexColor;
++ (UIImage*)groupMarkerImageWithHexColor:(NSString*)hexColor count:(NSInteger)count;
 @end
 
 
