@@ -21,10 +21,10 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 
@@ -155,7 +155,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
                                                         textAlign: TextAlign.center,
                                                         style: TextStyle(fontSize: 16, color: Styles().colors!.white)))))))
                               ]),
-                              _buildPlayButton()
+                              Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton())
                             ]))),
                     _buildCcButton()
                   ]));
@@ -168,37 +168,6 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
           child: Text(Localization().getStringEx('panel.settings.video_tutorial.video.missing.msg', 'Missing video'),
               style: TextStyle(color: Styles().colors!.white, fontSize: 20, fontFamily: Styles().fontFamilies!.bold)));
     }
-  }
-
-  Widget _buildPlayButton() {
-    final double buttonWidth = 80;
-    final double buttonHeight = 50;
-    bool buttonVisible = _isPlayerInitialized && !_isPlaying;
-    return Visibility(
-        visible: buttonVisible,
-        child: Container(
-            decoration: BoxDecoration(color: Styles().colors!.iconColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-            width: buttonWidth,
-            height: buttonHeight,
-            child: Center(
-                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Container(
-                  width: (buttonHeight / 2),
-                  child: CustomPaint(
-                      painter: TrianglePainter(
-                          painterColor: Styles().colors!.white,
-                          horzDir: TriangleHorzDirection.rightToLeft,
-                          vertDir: TriangleVertDirection.topToBottom),
-                      child: Container(height: (buttonHeight / 4)))),
-              Container(
-                  width: (buttonHeight / 2),
-                  child: CustomPaint(
-                      painter: TrianglePainter(
-                          painterColor: Styles().colors!.white,
-                          horzDir: TriangleHorzDirection.rightToLeft,
-                          vertDir: TriangleVertDirection.bottomToTop),
-                      child: Container(height: (buttonHeight / 4))))
-            ]))));
   }
 
   Widget _buildCcButton() {
