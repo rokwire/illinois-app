@@ -26,6 +26,7 @@ import 'package:illinois/ui/settings/SettingsVideoTutorialListPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
+import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
@@ -208,6 +209,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
   Widget _buildVideoEntry(Map<String, dynamic> video) {
     String? videoTitle = JsonUtils.stringValue(video['title']);
     String? imageUrl = JsonUtils.stringValue(video['image_url']);
+    final Widget emptyImagePlaceholder = Container(height: 102);
     return Container(
         decoration: BoxDecoration(
             color: Styles().colors?.white,
@@ -226,9 +228,17 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
                             child: Text(StringUtils.ensureNotEmpty(videoTitle),
                                 style: TextStyle(
                                     fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary))),
-                        StringUtils.isNotEmpty(imageUrl)
-                            ? ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.network(imageUrl!))
-                            : Container(height: 8)
+                        Stack(alignment: Alignment.center, children: [
+                          StringUtils.isNotEmpty(imageUrl)
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: Image.network(imageUrl!,
+                                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                    return (loadingProgress == null) ? child : emptyImagePlaceholder;
+                                  }))
+                              : emptyImagePlaceholder,
+                          VideoPlayButton()
+                        ])
                       ])))),
           Container(color: Styles().colors?.accentColor3, height: 4)
         ]));
