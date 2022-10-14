@@ -117,16 +117,13 @@ class WPGUFMRadio with Service implements NotificationsListener {
 
       try {
         player.playbackEventStream.listen((PlaybackEvent event) {
-          print('PlaybackEvent: ${event.processingState.toString()}');
           _onPlaybackEvent(event);
         },
         onError: (Object e, StackTrace stackTrace) {
-          print('A stream error occurred: $e');
           _onPlaybackError(e);
         });
 
         player.playerStateStream.listen((PlayerState state) {
-          print('PlayerState: ${state.playing}');
           _onPlayerState(state);
         });
 
