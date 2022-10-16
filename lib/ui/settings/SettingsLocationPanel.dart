@@ -167,8 +167,8 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
                             child: Text(
                               widget.title!,
                               style: widget.enabled?
-                                Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.regular.enabled") :
-                                Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.regular.disabled")
+                                Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") :
+                                Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
                             )),
                         _buildAdditionalInfo(),
                       ],

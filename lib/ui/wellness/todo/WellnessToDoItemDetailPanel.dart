@@ -169,7 +169,7 @@ class _WellnessToDoItemDetailPanelState extends State<WellnessToDoItemDetailPane
                       padding: EdgeInsets.only(top: 4),
                       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                         Text(Localization().getStringEx('panel.wellness.todo.item.optional_fields.label', 'Optional Fields'),
-                            style: Styles().textStyles?.getTextStyle("widget.title.small")),
+                            style: Styles().textStyles?.getTextStyle("widget.title.small.fat")),
                         Padding(
                             padding: EdgeInsets.only(left: 8),
                             child: Image.asset(_optionalFieldsVisible ? 'images/icon-up.png' : 'images/icon-down.png',

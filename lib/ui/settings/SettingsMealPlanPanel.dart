@@ -244,7 +244,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
         
         widgets.add(VerticalTitleValueSection(
           title: title,
-          titleTextStyle: Styles().textStyles?.getTextStyle("widget.title.large_variant"),
+          titleTextStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),
           value: status,
           valueTextStyle: Styles().textStyles?.getTextStyle("widget.detail.medium"),
         ));
@@ -512,7 +512,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
                   child: Text(text,
                     maxLines: 1,
                     textAlign: textAlign,
-                    style: textStyle!=null? textStyle: Styles().textStyles?.getTextStyle("widget.item.small"),),
+                    style: textStyle!=null? textStyle: Styles().textStyles?.getTextStyle("widget.item.small.thin"),),
                 ),
               ],
             ),
