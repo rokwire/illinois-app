@@ -86,27 +86,40 @@
 
     "widget.heading.large": { "font_family": "ProximaNovaRegular", "size": 20.0, "color": "white"},
     "widget.heading.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "white"},
+    "widget.heading.regular.fat": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "white"},
     "widget.heading.regular.extra_fat": { "font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "white"},
     "widget.heading.medium": { "font_family": "ProximaNovaBold", "size": 14.0, "color": "white"},
     "widget.heading.small": { "font_family": "ProximaNovaBold", "size": 12.0, "color": "white"},
+
+    "widget.message.dark.extra_large": {"font_family": "ProximaNovaRegular", "size": 24.0, "color": "black"},
+    "widget.message.dark.medium": {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "black"},
+
     "widget.message.large": {"font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.message.medium": {"font_family": "ProximaNovaBold", "size": 18.0, "color": "fillColorPrimary"},
+    "widget.message.regular": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.message.regular.fat": {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.message.regular.extra_fat": {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.message.regular.fat.accent": {"font_family": "ProximaNovaBold", "size": 16.0, "color": "surfaceAccent"},
     "widget.message.small": {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "fillColorPrimary"},
-    "widget.title.large": { "font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
-    "widget.title.large_variant": { "font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary"},
+
+    "widget.title.extra_large": { "font_family": "ProximaNovaExtraBold", "size": 24.0, "color": "fillColorPrimary"},
+    "widget.title.large": { "font_family": "ProximaNovaRegular", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.title.large.fat": { "font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.title.large.extra_fat": { "font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.title.medium" : {"font_family": "ProximaNovaRegular", "size": 18.0, "color": "fillColorPrimary"},
     "widget.title.medium.fat" : {"font_family": "ProximaNovaBold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.title.medium_variant" : {"font_family": "ProximaNovaExtraBold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.title.regular" : {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
-    "widget.title.small" : {"font_family": "ProximaNovaBold", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.title.small.fat" : {"font_family": "ProximaNovaBold", "size": 14.0, "color": "fillColorPrimary"},
     "widget.title.tiny" : {"font_family": "ProximaNovaBold", "size": 12.0, "color": "fillColorPrimary"},
-    "widget.detail.large": { "font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"}, "comment": "used for values",
+
+    "widget.detail.large": { "font_family": "ProximaNovaRegular", "size": 20.0, "color": "fillColorPrimary"},
+    "widget.detail.large.fat": { "font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
     "widget.detail.regular.fat": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.detail.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimary"},
     "widget.detail.medium": { "font_family": "ProximaNovaMedium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.detail.small": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "fillColorPrimary"},
+
     "widget.description.large": { "font_family": "ProximaNovaRegular", "size": 18.0, "color": "fillColorPrimary"},
     "widget.description.medium": { "font_family": "ProximaNovaMedium", "size": 16.0, "color": "fillColorPrimary"},
     "widget.description.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimary"},
@@ -114,16 +127,25 @@
     "widget.description.small": { "font_family": "ProximaNovaMedium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.description.small_underline": { "font_family": "ProximaNovaMedium", "size": 14.0, "decoration": "underline"},
     "widget.description.small.fat": { "font_family": "ProximaNovaBold", "size": 14.0, "color": "fillColorPrimary"},
-    "widget.item.regular.fat": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "textBackground"},  "comment": "used for values",
+
+    "widget.item.regular.fat": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "textBackground"},
     "widget.item.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
     "widget.item.small.fat": { "font_family": "ProximaNovaBold", "size": 14.0, "color": "textBackground"},
-    "widget.item.small": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textBackground"},
+    "widget.item.small": { "font_family": "ProximaNovaMedium", "size": 14.0, "color": "textBackground"},
+    "widget.item.small.thin": { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textBackground"},
+
+    "widget.info.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "textSurface"},
+    "widget.info.regular.fat": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "textSurface"},
 
     "widget.tab.selected" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.tab.not_selected" : {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "fillColorPrimary"},
 
     "widget.button.title.regular" :  { "font_family": "ProximaNovaBold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.button.title.medium" :  { "font_family": "ProximaNovaMedium", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.button.title.enabled": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
+    "widget.button.title.disabled": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "surfaceAccent"},
+    "widget.button.description.small" :  { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "textSurface"},
+    "widget.button.description.tiny" :  { "font_family": "ProximaNovaRegular", "size": 12.0, "color": "textSurface"},
 
     "widget.colourful_button.title.title.regular" :  { "font_family": "ProximaNovaRegular", "size": 14.0, "color": "white"},
     "widget.colourful_button.title.title.accent" :  { "font_family": "ProximaNovaBold", "size": 14.0, "color": "white"},
@@ -137,6 +159,10 @@
     "widget.dialog.message.regular.extra_fat" : {"font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "white"},
     "widget.dialog.message.large": { "font_family": "ProximaNovaMedium", "size": 24.0, "color": "white"},
     "widget.dialog.message.large.fat": { "font_family": "ProximaNovaBold", "size": 24.0, "color": "white"},
+
+    "widget.dialog.message.dark.large.fat": { "font_family": "ProximaNovaBold", "size": 24.0, "color": "black"},
+    "widget.dialog.message.dark.large": { "font_family": "ProximaNovaRegular", "size": 24.0, "color": "black"},
+    "widget.dialog.message.dark.medium": { "font_family": "ProximaNovaMedium", "size": 16.0, "color": "black"},
 
     "widget.card.title.large": { "font_family": "ProximaNovaExtraBold", "size": 24.0, "color": "fillColorPrimary"},
     "widget.card.title.medium": { "font_family": "ProximaNovaRegular", "size": 20.0, "color": "fillColorPrimary"},
@@ -176,9 +202,6 @@
     "widget.group.dropdown_button.item.selected": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
     "widget.group.dropdown_button.item.not_selected": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimary"},
 
-    "widget.group.add_membership_button.title.enabled": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
-    "widget.group.add_membership_button.title.disabled": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "surfaceAccent"},
-
     "widget.group.dialog.add_image.message" : {"font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "white"},
     "widget.group.input_field.link": { "font_family": "ProximaNovaMedium", "size": 20.0, "color": "black"},
     "widget.group.input_field.detail": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimary"},
@@ -195,6 +218,9 @@
 
     "widget.canvas.card.title.regular" :  { "font_family": "ProximaNovaExtraBold", "size": 18.0, "color": "black"},
     "widget.canvas.card.grade.score" :  { "font_family": "ProximaNovaBold", "size": 16.0},
+
+    "widget.settings.dialog.button.title.enabled" :  { "font_family": "ProximaNovaBold", "size": 16.0, "color": "white"},
+    "widget.settings.dialog.button.title.disabled" :  { "font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
 
     "panel.event_schedule.title" : {"font_family": "ProximaNovaExtraBold", "size": 20.0, "color": "fillColorPrimary"},
     "panel.event_schedule.category" : {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
@@ -264,12 +290,15 @@
     "panel.settings.detail.title.small.fat": {"font_family": "ProximaNovaBold", "size": 14.0, "color": "textBackground"},
     "panel.settings.error.text": {"font_family": "ProximaNovaBold", "size": 16.0, "color": "redTransparent01"},
     "panel.settings.error.text.small": {"font_family": "ProximaNovaMedium", "size": 14.0, "color": "redTransparent01"},
-    "panel.settings.toggle_button.title.regular.enabled": {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
-    "panel.settings.toggle_button.title.regular.disabled": {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimaryTransparent015"},
+    "panel.settings.toggle_button.title.fat.enabled": {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
+    "panel.settings.toggle_button.title.fat.disabled": {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimaryTransparent015"},
+    "panel.settings.toggle_button.title.regular.enabled": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimary"},
+    "panel.settings.toggle_button.title.regular.disabled": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimaryTransparent015"},
     "panel.settings.toggle_button.title.small.enabled": {"font_family": "ProximaNovaBold", "size": 14.0, "color": "fillColorPrimary"},
     "panel.settings.toggle_button.title.small.disabled": {"font_family": "ProximaNovaBold", "size": 14.0, "color": "fillColorPrimaryTransparent015"},
     "panel.settings.toggle_button.title.small.variant.enabled": {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "textSurface"},
     "panel.settings.toggle_button.title.small.variant.disabled": {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "fillColorPrimaryTransparent015"},
+    "panel.settings.button.title.medium": {"font_family": "ProximaNovaMedium", "size": 16.0, "color": "fillColorPrimaryTransparent015"},
 
     "panel.settings.food_filter.title": {"font_family": "ProximaNovaBold", "size": 14.0, "color": "white", "letter_spacing" :  1.0},
     "panel.settings.link_account.type.title": {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "textSurface"},
@@ -278,6 +307,25 @@
 
     "panel.settings.login.validation.text": {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorSecondary"},
     "panel.settings.login.reset.text": {"font_family": "ProximaNovaBold", "size": 16.0, "color": "blueShade900", "decoration": "underline"},
-    "panel.settings.login.title.large": {"font_family": "ProximaNovaBold", "size": 36.0, "color": "fillColorPrimary"}
+    "panel.settings.login.title.large": {"font_family": "ProximaNovaBold", "size": 36.0, "color": "fillColorPrimary"},
+
+    "panel.settings.privacy_center.title.medium.fat": {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "textSurface"},
+    "panel.settings.privacy_center.title.regular": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "textSurface"},
+    "panel.settings.privacy_center.button.underline": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
+    "panel.settings.privacy_center.message.tiny": {"font_family": "ProximaNovaRegular", "size": 12.0, "color": "textSurface"},
+
+    "panel.settings.privacy_panel.update.message": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimaryVariant"},
+    "panel.settings.privacy_panel.update.message.fat": {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimaryVariant"},
+    "panel.settings.privacy_panel.privacy.label.medium": {"font_family": "ProximaNovaBold", "size": 18.0, "color": "textSurface"},
+    "panel.settings.privacy_panel.privacy.label.regular": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "textSurface"},
+    "panel.settings.privacy_panel.privacy.description.large": {"font_family": "ProximaNovaBold", "size": 20.0, "color": "fillColorPrimary"},
+    "panel.settings.privacy_panel.privacy.entry.title.enabled": {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimary"},
+    "panel.settings.privacy_panel.privacy.entry.title.disabled": {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "fillColorPrimaryTransparent015"},
+    "panel.settings.privacy_panel.privacy.entry.info.enabled": {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "fillColorPrimary"},
+    "panel.settings.privacy_panel.privacy.entry.info.disabled": {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "fillColorPrimaryTransparent015"},
+
+    "panel.settings.video_tutorial.caption.detail": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "white"},
+    "panel.settings.video_tutorial.msg": {"font_family": "ProximaNovaBold", "size": 20.0, "color": "white"},
+    "panel.settings.video_tutorial.button": {"font_family": "ProximaNovaBold", "size": 18.0, "color": "white"}
   }
 }

@@ -185,7 +185,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
       
       contentWidget = VerticalTitleValueSection(
         title: title,
-        titleTextStyle: Styles().textStyles?.getTextStyle("widget.title.large_variant"),
+        titleTextStyle: Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"),
         value: status,
         valueTextStyle: Styles().textStyles?.getTextStyle("widget.detail.medium"),
       );

@@ -153,7 +153,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
                                                     padding: const EdgeInsets.symmetric(horizontal: 2.0),
                                                     child: Text(StringUtils.ensureNotEmpty(_currentCaptionText),
                                                         textAlign: TextAlign.center,
-                                                        style: TextStyle(fontSize: 16, color: Styles().colors!.white)))))))
+                                                        style:  Styles().textStyles?.getTextStyle("panel.settings.video_tutorial.caption.detail")))))))
                               ]),
                               Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton())
                             ]))),
@@ -166,7 +166,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
     } else {
       return Center(
           child: Text(Localization().getStringEx('panel.settings.video_tutorial.video.missing.msg', 'Missing video'),
-              style: TextStyle(color: Styles().colors!.white, fontSize: 20, fontFamily: Styles().fontFamilies!.bold)));
+              style: Styles().textStyles?.getTextStyle("panel.settings.video_tutorial.msg")));
     }
   }
 
@@ -188,10 +188,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
                             borderRadius: BorderRadius.all(Radius.circular(6))),
                         child: Center(
                             child: Text('CC',
-                                style: TextStyle(
-                                    color: (_ccEnabled ? Styles().colors!.white! : Styles().colors!.disabledTextColorTwo!),
-                                    fontSize: 18,
-                                    fontFamily: Styles().fontFamilies!.bold))))))));
+                                style: Styles().textStyles?.getTextStyle("panel.settings.video_tutorial.button"))))))));
   }
 
   void _onTapPlayPause() {

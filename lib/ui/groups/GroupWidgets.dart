@@ -261,7 +261,7 @@ class GroupMembershipAddButton extends StatelessWidget {
         child: Padding(padding: EdgeInsets.only(left:16, right: 8, ),
           child: Center(
             child: Row(children: <Widget>[
-              Text(title!, style:  enabled ? Styles().textStyles?.getTextStyle("widget.group.add_membership_button.title.enabled") : Styles().textStyles?.getTextStyle("widget.group.add_membership_button.title.disabled") ),
+              Text(title!, style:  enabled ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled") ),
             ],)
           )
         ),
@@ -437,7 +437,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     List<Widget> content = [
       Padding(padding: EdgeInsets.only(bottom: 8, right: 8), child:
         Container(constraints: BoxConstraints(minHeight: 64), child:
-          Text(widget.event?.title ?? '',  style:Styles().textStyles?.getTextStyle("widget.title.large_variant")),
+          Text(widget.event?.title ?? '',  style:Styles().textStyles?.getTextStyle("widget.title.large.extra_fat")),
       )),
     ];
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
@@ -844,7 +844,7 @@ class _GroupCardState extends State<GroupCard> {
                     Row(children: [
                       Expanded(child:
                         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style:  Styles().textStyles?.getTextStyle("widget.title.large_variant"))
+                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style:  Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"))
                         )
                       )
                     ]),
