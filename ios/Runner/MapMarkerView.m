@@ -531,19 +531,34 @@ CGFloat const kMarkerView2Width = 180;
 			CGContextTranslateCTM(context, 0.0f, markerSize);
 			CGContextScaleCTM(context, 1.0f, -1.0f);
 
+			NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading;
+			
+			CGSize textSize;
+			CGFloat fontSize = 15;
+			while (8 < fontSize) {
+				NSDictionary *attributes = @{
+					NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize],
+				};
+				CGSize rawTextSize = [text sizeWithAttributes:attributes];
+				textSize = CGSizeMake(ceil(rawTextSize.width), ceil(rawTextSize.height));
+				if (textSize.width <= markerRect.size.width) {
+					break;
+				}
+				else {
+					fontSize--;
+				}
+			}
+			
 			NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
 			paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 			paragraphStyle.alignment = NSTextAlignmentCenter;
 			
 			NSDictionary *attributes = @{
-				NSFontAttributeName: [UIFont boldSystemFontOfSize:15],
+				NSFontAttributeName: [UIFont boldSystemFontOfSize:fontSize],
 				NSForegroundColorAttributeName: UIColor.whiteColor,
 				NSParagraphStyleAttributeName: paragraphStyle,
 			};
 			
-			NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading;
-
-			CGSize textSize = [text boundingRectWithSize:markerRect.size options:options attributes:attributes context:nil].size;
 			CGRect textRect = CGRectMake(
 				markerRect.origin.x + (markerRect.size.width - textSize.width) / 2,
 				markerRect.origin.y + (markerRect.size.height - textSize.height) / 2,
