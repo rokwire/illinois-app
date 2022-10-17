@@ -98,7 +98,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
                 widget.title??"",
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: Styles().fontFamilies!.bold,),
+                style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.fat"),
               )),
               Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), button: true,
               child:GestureDetector(
@@ -119,7 +119,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
               Container(height: 16,),
               RichText(
                 text: TextSpan(
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                  style:  Styles().textStyles?.getTextStyle("widget.message.regular"),
                   children: widget.message??[],
                 ),
               ),
@@ -176,7 +176,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
                 Container(width: 10,),
                 Expanded(child:
                   Text(
-                    option, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
+                    option, style:  Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.regular.enabled")),
                   )
               ],)
           ),
@@ -211,9 +211,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
           child:
           Row(children: <Widget>[
             Expanded(child:
-              Text(
-
-                Localization().getStringEx("widget.settings.dialog.button.cancel.title","Cancel"), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
+              Text(Localization().getStringEx("widget.settings.dialog.button.cancel.title","Cancel"), textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.button.title.enabled"),),
             )
           ],)
         )));
@@ -238,7 +236,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(children: <Widget>[
                   Expanded(child:
-                      Text(widget.continueButtonTitle??"", textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: _getIsContinueEnabled?Styles().colors!.white: Styles().colors!.fillColorPrimary),),
+                      Text(widget.continueButtonTitle??"", textAlign: TextAlign.center, style: _getIsContinueEnabled? Styles().textStyles?.getTextStyle("widget.settings.dialog.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.settings.dialog.button.title.disabled")),
                   )
                 ],)
               )),
@@ -304,9 +302,9 @@ class InfoButton extends StatelessWidget {
               children: <Widget>[
                 Container(
                     padding: EdgeInsets.only(right: 14),
-                    child:Text(title!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),)),
+                    child:Text(title!, style: Styles().textStyles?.getTextStyle("widget.button.title.enabled"))),
                 Padding(padding: EdgeInsets.only(top: 5), child:
-                Text(description!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface),),
+                Text(description!, style: Styles().textStyles?.getTextStyle("widget.button.description.small"),),
                 ),
                 _buildAdditionalInfo(),
               ],
@@ -330,7 +328,7 @@ class InfoButton extends StatelessWidget {
             Container(height: 12,),
             Container(height: 1, color: Styles().colors!.surfaceAccent,),
             Container(height: 12),
-            Text(additionalInfo!, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: Styles().colors!.textSurface),),
+            Text(additionalInfo!, style: Styles().textStyles?.getTextStyle("widget.button.description.tiny"),),
           ],
         );
   }

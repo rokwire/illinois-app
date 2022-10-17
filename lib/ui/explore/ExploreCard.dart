@@ -650,7 +650,7 @@ class _EventSmallCard extends StatelessWidget {
                   children: <Widget>[
                     Expanded(child: Text(_title!, overflow: TextOverflow.ellipsis,
                       maxLines: 2,
-                      style: Styles().textStyles?.getTextStyle('widget.title.large_variant') ,),),
+                      style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat') ,),),
                     Visibility(
                       visible: starVisible, child: GestureDetector(
                         behavior: HitTestBehavior.opaque,

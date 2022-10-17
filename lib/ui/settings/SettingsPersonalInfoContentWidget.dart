@@ -163,7 +163,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
               onChanged: (text) { setState(() {});},
               decoration: InputDecoration(border: InputBorder.none),
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              style: TextStyle(color: Styles().colors!.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+              style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular")
             ),
           )
           ),
@@ -190,7 +190,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
                   onChanged: (text) { setState(() {});},
                   decoration: InputDecoration(border: InputBorder.none),
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  style: TextStyle(color: Styles().colors!.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                  style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular")
                 ),
               )
           ),
@@ -222,7 +222,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
               onChanged: (text) { setState(() {});},
               decoration: InputDecoration(border: InputBorder.none),
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              style: TextStyle(color: Styles().colors!.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+              style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular")
             ),
           )
           ),
@@ -248,7 +248,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
                   onChanged: (text) { setState(() {});},
                   decoration: InputDecoration(border: InputBorder.none),
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  style: TextStyle(color: Styles().colors!.textSurface, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                  style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular")
                 ),
               )
           ),
@@ -265,7 +265,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         Row(children: [
           Expanded(child:
             Text(Localization().getStringEx('panel.settings.home.calendar.ada.title', 'Accessibility Needs'), style:
-              TextStyle(fontSize: 20, fontFamily: Styles().fontFamilies?.bold, color: Styles().colors!.fillColorPrimary)
+            Styles().textStyles?.getTextStyle("widget.title.large.fat")
             ),
           ),
         ]),
@@ -299,7 +299,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         Row(children: [
           Expanded(child:
             Text(Localization().getStringEx('panel.settings.home.calendar.on_campus.title', 'On Campus'), style:
-              TextStyle(fontSize: 20, fontFamily: Styles().fontFamilies?.bold, color: Styles().colors!.fillColorPrimary)
+              Styles().textStyles?.getTextStyle("widget.title.large.fat")
             ),
           ),
         ]),
@@ -332,8 +332,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             borderRadius: BorderRadius.all(Radius.circular(4))),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Expanded(child:
-              Text(label, style:
-                TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.bold, color: (enabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent))
+              Text(label, style: enabled ? Styles().textStyles?.getTextStyle("widget.button.title.enabled") : Styles().textStyles?.getTextStyle("widget.button.title.disabled")
               )
             ),
             Padding(padding: EdgeInsets.only(left: 5), child:
@@ -433,14 +432,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           children: <Widget>[
             Text(
               Localization().getStringEx("panel.profile_info.logout.title", "{{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-              style: TextStyle(fontSize: 24, color: Colors.black),
+              style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.large"),
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
                 Localization().getStringEx("panel.profile_info.logout.message", "Are you sure you want to sign out?"),
                 textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
+                style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.medium")
               ),
             ),
             Row(
@@ -528,7 +527,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             padding: EdgeInsets.only(bottom: 2),
             child: Text(title,
                 semanticsLabel: "",
-                style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))));
+                style: Styles().textStyles?.getTextStyle("panel.settings.button.title.medium")))));
   }
 
   void _loadUserProfilePicture() {
@@ -781,8 +780,8 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     return (_profileImageBytes != null);
   }
 
-  TextStyle get _formFieldLabelTextStyle {
-    return TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.textBackground);
+  TextStyle? get _formFieldLabelTextStyle {
+    return  Styles().textStyles?.getTextStyle("widget.item.small");
   }
 }
 
@@ -799,13 +798,10 @@ class _PersonalInfoEntry extends StatelessWidget {
       Row(children: [
         Expanded(child:
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Text(title ?? '', style:
-                TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 14, color: Styles().colors!.textBackground),
+              Text(title ?? '', style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.medium")
               ),
               Container(height: 5,),
-              Text(value ?? '', style:
-                TextStyle(fontSize: 20, color: Styles().colors!.fillColorPrimary),
-              )
+              Text(value ?? '', style: Styles().textStyles?.getTextStyle("widget.detail.large"))
             ],),
         )
       ],),

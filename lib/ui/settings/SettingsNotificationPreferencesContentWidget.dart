@@ -105,7 +105,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           label: Localization().getStringEx("panel.settings.notifications.reminders", "Event Reminders"),
           toggled: FirebaseMessaging().notifyEventReminders,
           onTap: _toggleButtonEnabled?_onEventRemindersToggled : (){},
-          textStyle: _toggleButtonEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.regular.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.regular.disabled")
+          textStyle: _toggleButtonEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
     widgets.add(Container(color:Styles().colors!.surfaceAccent,height: 1,));
     widgets.add(_CustomToggleButton(
@@ -114,7 +114,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           label: Localization().getStringEx("panel.settings.notifications.athletics_updates", "Athletics Updates"),
           toggled: FirebaseMessaging().notifyAthleticsUpdates,
           onTap: _toggleButtonEnabled? _onAthleticsUpdatesToggled : (){},
-          textStyle: _toggleButtonEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.regular.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.regular.disabled")
+          textStyle: _toggleButtonEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
     widgets.add(Row(children: [
       Expanded(
@@ -159,7 +159,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
         label: Localization().getStringEx("panel.settings.notifications.group_updates", "Group Updates"),
         toggled: FirebaseMessaging().notifyGroupUpdates,
         onTap: _toggleButtonEnabled? _onGroupsUpdatesToggled : (){},
-        textStyle: _toggleButtonEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.regular.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.regular.disabled")
+        textStyle: _toggleButtonEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
     widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _CustomToggleButton(
@@ -202,7 +202,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
         label: Localization().getStringEx("panel.settings.notifications.pause_notifications", "Pause all notifications"),
         toggled: FirebaseMessaging().notificationsPaused,
         onTap: _notificationsEnabled? _onPauseNotificationsToggled : (){},
-        textStyle: _notificationsEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.regular.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.regular.disabled")
+        textStyle: _notificationsEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
       ));
 //    widgets.add(_CustomToggleButton(
 //          enabled: _notificationsEnabled,
