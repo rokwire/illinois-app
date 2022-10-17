@@ -43,7 +43,6 @@
 	NSDictionary* _poi;
 	NSMutableSet* _markers;
 	float         _currentZoom;
-	float         _currentDisplayExploresZoom;
 	bool          _didFirstLayout;
 	bool          _enabled;
 }
@@ -244,7 +243,7 @@
 		marker.map = nil;
 	}
 	[_markers removeAllObjects];
-
+	
 	GMSCoordinateBounds *bounds = nil;
 	for (NSDictionary *explore in _displayExplores) {
 		if ([explore isKindOfClass:[NSDictionary class]]) {
@@ -272,17 +271,31 @@
 		GMSMarker *marker = [[GMSMarker alloc] init];
 		marker.position = CLLocationCoordinate2DMake(exploreCoordinate.latitude, exploreCoordinate.longitude);
 		
+		UIImage *markerIcon;
+		CGPoint markerAnchor;
 		NSInteger exploresCount = explore.uiucExplores.count;
 		if (1 < exploresCount) {
-			marker.icon = [MapMarkerView2 groupMarkerImageWithHexColor:explore.uiucExploreMarkerHexColor count:exploresCount];
-			marker.groundAnchor = CGPointMake(0.5, 0.5);
+			markerIcon = [MapMarkerView2 groupMarkerImageWithHexColor:explore.uiucExploreMarkerHexColor count:exploresCount];
+			markerAnchor = CGPointMake(0.5, 0.5);
 		}
 		else {
-			marker.icon = [MapMarkerView2 markerImageWithHexColor:explore.uiucExploreMarkerHexColor];
-			marker.groundAnchor = CGPointMake(0.5, 1);
+			markerIcon = [MapMarkerView2 markerImageWithHexColor:explore.uiucExploreMarkerHexColor];
+			markerAnchor = CGPointMake(0.5, 1);
 		}
-		marker.title = explore.uiucExploreTitle;
-		marker.snippet = explore.uiucExploreDescription;
+		NSString *markerTitle = explore.uiucExploreTitle;
+		NSString *markerSnippet = explore.uiucExploreDescription;
+		
+		marker.icon = markerIcon;
+		marker.groundAnchor = markerAnchor;
+		marker.title = markerTitle;
+		marker.snippet = markerSnippet;
+
+		MapMarkerDisplayMode displayMode = self.markerDisplayMode;
+		if ((MapMarkerDisplayMode_Plain < displayMode) && [_mapView.projection containsCoordinate:exploreCoordinate]) {
+			MapMarkerView2 *markerView = [[MapMarkerView2 alloc] initWithIcon:markerIcon iconAnchor:markerAnchor title:markerTitle descr:markerSnippet displayMode:displayMode];
+			marker.iconView = markerView;
+			marker.groundAnchor = markerView.anchor;
+		}
 
 		marker.zIndex = 1;
 		marker.userData = @{ @"explore" : explore };
@@ -294,10 +307,22 @@
 
 - (void)updateMarkersDisplayMode {
 
+	MapMarkerDisplayMode displayMode = self.markerDisplayMode;
 	for (GMSMarker *marker in _markers) {
-		MapMarkerView *iconView = [marker.iconView isKindOfClass:[MapMarkerView class]] ? ((MapMarkerView*)marker.iconView) : nil;
-		if (iconView != nil) {
-			iconView.displayMode = self.markerDisplayMode;
+		//NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
+		BOOL markerVisible = [_mapView.projection containsCoordinate:marker.position];
+		MapMarkerView2 *markerView = [marker.iconView isKindOfClass:[MapMarkerView2 class]] ? ((MapMarkerView2*)marker.iconView) : nil;
+		if ((MapMarkerDisplayMode_Plain < displayMode) && markerVisible && (markerView == nil)) {
+			markerView = [[MapMarkerView2 alloc] initWithIcon:marker.icon iconAnchor:marker.groundAnchor title:marker.title descr:marker.snippet displayMode:displayMode];
+			marker.iconView = markerView;
+			marker.groundAnchor = markerView.anchor;
+		}
+		else if (((displayMode == MapMarkerDisplayMode_Plain) || !markerVisible) && (markerView != nil)) {
+			marker.groundAnchor = markerView.iconAnchor;
+			marker.icon = nil;
+		}
+		else if (markerView != nil) {
+			markerView.displayMode = displayMode;
 		}
 	}
 }
@@ -332,15 +357,14 @@
 }
 
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
-	if (_currentZoom != position.zoom) {
+	NSLog(@"GMSMapViewZoom: %@", @(position.zoom));
+	
+	if (kThresoldZoomUpdateStep < fabs(_currentZoom - position.zoom)) {
 		_currentZoom = position.zoom;
-		if (kThresoldZoomUpdateStep < fabs(_currentZoom - _currentDisplayExploresZoom)) {
-			_currentDisplayExploresZoom = _currentZoom;
-			[self buildDisplayExplores];
-		}
-		else {
-			[self updateMarkersDisplayMode];
-		}
+		[self buildDisplayExplores];
+	}
+	else {
+		[self updateMarkersDisplayMode];
 	}
 }
 

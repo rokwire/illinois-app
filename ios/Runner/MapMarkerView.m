@@ -357,13 +357,112 @@ CGSize  const kExploresMarkerViewSize = { 180, kExploresMarkerIconSize2 + kExplo
 /////////////////////////////////
 // MapMarkerView2
 
-@interface MapMarkerView2() {}
+@interface MapMarkerView2() {
+	UIImageView *iconView;
+	UILabel     *titleLabel;
+	UILabel     *descrLabel;
+}
+
+@property (nonatomic, readwrite) CGPoint iconAnchor;
+@property (nonatomic, readonly) CGFloat contentHeight;
 @end
 
 @implementation MapMarkerView2
 
 CGFloat const kMarkerIconSize = 20;
 CGFloat const kGroupMarkerIconSize = 24;
+CGFloat const kMarkerView2IconGutter = 3;
+CGFloat const kMarkerView2TitleFontSize = 12;
+CGFloat const kMarkerView2DescrFontSize = 12;
+CGFloat const kMarkerView2Width = 180;
+
+- (id)initWithFrame:(CGRect)frame {
+	if (self = [super initWithFrame:frame]) {
+	
+		// self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.1];
+	
+		iconView = [[UIImageView alloc] initWithFrame:CGRectZero];
+		[self addSubview:iconView];
+
+		titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+		titleLabel.font = [UIFont boldSystemFontOfSize:kExploreMarkerTitleFontSize];
+		titleLabel.textAlignment = NSTextAlignmentCenter;
+		titleLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
+		titleLabel.textColor = [UIColor inaColorWithHex:@"13294b"]; // darkSlateBlueTwo
+		titleLabel.shadowColor = [UIColor colorWithWhite:1.0 alpha:0.5];
+		titleLabel.shadowOffset = CGSizeMake(1, 1);
+		[self addSubview:titleLabel];
+
+		descrLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+		descrLabel.font = [UIFont boldSystemFontOfSize:kExploreMarkerDescrFontSize];
+		descrLabel.textAlignment = NSTextAlignmentCenter;
+		descrLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
+		descrLabel.textColor = [UIColor inaColorWithHex:@"244372"]; // darkSlateBlue
+		descrLabel.shadowColor = [UIColor colorWithWhite:1.0 alpha:0.5];
+		descrLabel.shadowOffset = CGSizeMake(1, 1);
+		[self addSubview:descrLabel];
+	}
+	return self;
+}
+
+- (id)initWithIcon:(UIImage*)icon iconAnchor:(CGPoint)iconAnchor title:(NSString*)title descr:(NSString*)descr displayMode:(MapMarkerDisplayMode)displayMode {
+	CGFloat contentHeight = [self.class contentHeightForIconHeight:icon.size.height];
+	if (self = [self initWithFrame:CGRectMake(0, 0, kMarkerView2Width, contentHeight)]) {
+		iconView.image = icon;
+		titleLabel.text = title;
+		descrLabel.text = descr;
+		_displayMode = displayMode;
+		_iconAnchor = iconAnchor;
+	}
+	return self;
+}
+
+- (void)layoutSubviews {
+	CGSize contentSize = self.frame.size;
+
+	CGFloat y = 0;
+	
+	CGSize iconSize = iconView.image.size;
+	iconView.frame = CGRectMake((contentSize.width - iconSize.width) / 2, 0, iconSize.width, iconSize.height);
+	y += iconSize.height + kMarkerView2IconGutter;
+
+	CGFloat titleH = titleLabel.font.pointSize;
+	titleLabel.frame = CGRectMake(0, y, contentSize.width, titleH);
+	y += titleH;
+
+	CGFloat descrH = descrLabel.font.pointSize;
+	descrLabel.frame = CGRectMake(0, y, contentSize.width, descrH);
+	y += descrH;
+}
+
+- (void)setDisplayMode:(MapMarkerDisplayMode)displayMode {
+	if (_displayMode != displayMode) {
+		_displayMode = displayMode;
+		[self updateDisplayMode];
+	}
+}
+
+- (void)updateDisplayMode {
+	titleLabel.hidden = (self.displayMode < MapMarkerDisplayMode_Title);
+	descrLabel.hidden = (self.displayMode < MapMarkerDisplayMode_Extended);
+	[self setNeedsLayout];
+}
+
+- (CGFloat)iconHeight {
+	return iconView.image.size.height;
+}
+
+- (CGFloat)contentHeight {
+	return [self.class contentHeightForIconHeight:self.iconHeight];
+}
+
++ (CGFloat)contentHeightForIconHeight:(CGFloat)iconHeight {
+	return iconHeight + kMarkerView2IconGutter + kMarkerView2TitleFontSize + kMarkerView2DescrFontSize;
+}
+
+- (CGPoint)anchor {
+	return CGPointMake(_iconAnchor.x, (_iconAnchor.y * self.iconHeight) / self.contentHeight);
+}
 
 + (UIImage*)markerImageWithHexColor:(NSString*)hexColor {
 
