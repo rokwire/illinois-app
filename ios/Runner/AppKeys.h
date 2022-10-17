@@ -29,7 +29,3 @@ extern float const kMarkerThresold1Zoom;
 extern float const kMarkerThresold2Zoom;
 
 extern float const kThresoldZoomUpdateStep;
-extern float const kThresoldOrigin1Zoom;
-extern double const kThresoldOrigin1Distance;
-extern float const kThresoldOrigin2Zoom;
-extern double const kThresoldOrigin2Distance;

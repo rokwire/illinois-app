@@ -29,6 +29,7 @@
 #import "NSString+InaJson.h"
 #import "NSDate+UIUCUtils.h"
 #import "NSDictionary+UIUCExplore.h"
+#import "InaSymbols.h"
 
 #import <GoogleMaps/GoogleMaps.h>
 
@@ -160,12 +161,20 @@
 }
 
 - (double)automaticThresoldDistance {
-	if (kThresoldOrigin1Zoom <= _mapView.camera.zoom) {
-		return kThresoldOrigin1Distance;
+	static double const kThresoldDistanceByZoom[] = {
+		1000000, 800000, 600000, 200000, 100000, // zoom 0 - 4
+		 100000,  80000,  60000,  20000,  10000, // zoom 5 - 9
+		   5000,   1000,    500,    200,    100, // zoom 10 - 14
+		     50,      0,                         // zoom 15 - 16
+		
+	};
+	NSInteger zoomIndex = floor(_mapView.camera.zoom);
+	if ((0 <= zoomIndex) && (zoomIndex < _countof(kThresoldDistanceByZoom))) {
+		double zoomDistance = kThresoldDistanceByZoom[zoomIndex];
+		double nextZoomDistance = ((zoomIndex + 1) < _countof(kThresoldDistanceByZoom)) ? kThresoldDistanceByZoom[zoomIndex + 1] : 0;
+		return nextZoomDistance + (_mapView.camera.zoom - zoomIndex) * (zoomDistance - nextZoomDistance);
 	}
-	else {
-		return kThresoldOrigin1Distance + (kThresoldOrigin1Zoom - _mapView.camera.zoom) / (kThresoldOrigin1Zoom - kThresoldOrigin2Zoom) * (kThresoldOrigin2Distance - kThresoldOrigin1Distance);
-	}
+	return 0;
 }
 
 - (GMSCameraUpdate*)cameraUpdateFromBounds:(GMSCoordinateBounds*)bounds {
