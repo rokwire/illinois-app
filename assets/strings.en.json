@@ -1707,6 +1707,7 @@
     "panel.wellness.section.daily_tips.label": "Today's Wellness Tip",
     "panel.wellness.section.rings.label": "Daily Wellness Rings",
     "panel.wellness.section.todo.label": "To-Do List",
+    "panel.wellness.section.appointments.label": "MyMcKinley Appointments",
     "panel.wellness.section.resources.label": "Wellness Resources",
     "panel.wellness.section.podcast.label": "Healthy Illini Podcast",
     "panel.wellness.section.struggling.label": "I'm Struggling",
@@ -1728,6 +1729,9 @@
     "panel.wellness.todo.welcome.label": "Welcome to Your To-Do List",
     "panel.wellness.todo.welcome.description.label": "Free up space in your mind by recording your to-do items here.",
     "panel.wellness.todo.categories.manage.button": "Manage Categories",
+
+    "panel.wellness.appointments.home.reschedule_appointment.label": "Need to cancel or reschedule?",
+    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
 
     "panel.wellness.categories.manage.title": "Manage Categories",
     "panel.wellness.categories.create.header.label": "Create a Category",

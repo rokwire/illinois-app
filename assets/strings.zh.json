@@ -1707,6 +1707,7 @@
 	"panel.wellness.section.daily_tips.label": "今天的健康小貼士",
 	"panel.wellness.section.rings.label": "每日健康戒指",
 	"panel.wellness.section.todo.label": "待辦事項清單",
+    "panel.wellness.section.appointments.label": "MyMcKinley 約會",
 	"panel.wellness.section.resources.label": "健康資源",
 	"panel.wellness.section.podcast.label": "健康伊利尼播客",
 	"panel.wellness.section.struggling.label": "我正在掙扎",
@@ -1728,6 +1729,9 @@
 	"panel.wellness.todo.welcome.label": "歡迎來到你的待辦事項清單",
 	"panel.wellness.todo.welcome.description.label": "通過在此處記錄您的待辦事項來釋放您的大腦空間.",
 	"panel.wellness.todo.categories.manage.button": "管理類別",
+
+    "panel.wellness.appointments.home.reschedule_appointment.label": "需要取消或重新安排？",
+    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
 
 	"panel.wellness.categories.manage.title": "管理類別",
 	"panel.wellness.categories.create.header.label": "創建類別",

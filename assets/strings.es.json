@@ -1706,6 +1706,7 @@
     "panel.wellness.section.daily_tips.label": "Consejo de bienestar de hoy",
     "panel.wellness.section.rings.label": "Anillos de bienestar diarios",
     "panel.wellness.section.todo.label": "Lista de quehaceres",
+    "panel.wellness.section.appointments.label": "Citas MyMcKinley",
     "panel.wellness.section.resources.label": "Recursos de bienestar",
     "panel.wellness.section.podcast.label": "Podcast saludable de Illini",
     "panel.wellness.section.struggling.label": "Estoy luchando",
@@ -1727,6 +1728,9 @@
     "panel.wellness.todo.welcome.label": "Bienvenido a tu lista de tareas pendientes",
     "panel.wellness.todo.welcome.description.label": "Libere espacio en su mente registrando sus tareas pendientes aquí.",
     "panel.wellness.todo.categories.manage.button": "Gestionar categorías",
+
+    "panel.wellness.appointments.home.reschedule_appointment.label": "¿Necesitas cancelar o reprogramar?",
+    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
 
     "panel.wellness.categories.manage.title": "Gestionar categorías",
     "panel.wellness.categories.create.header.label": "Crear una categoría",
