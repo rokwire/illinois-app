@@ -413,6 +413,7 @@ CGFloat const kMarkerView2Width = 180;
 		descrLabel.text = descr;
 		_displayMode = displayMode;
 		_iconAnchor = iconAnchor;
+		[self updateDisplayMode];
 	}
 	return self;
 }
