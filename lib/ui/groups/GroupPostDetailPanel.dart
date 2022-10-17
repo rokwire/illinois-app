@@ -971,7 +971,7 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
     if(CollectionUtils.isNotEmpty(replies)) {
       try {
         replies!.sort((post1, post2) =>
-            post1.dateCreatedUtc!.compareTo(post2.dateCreatedUtc!));
+            post2.dateCreatedUtc!.compareTo(post1.dateCreatedUtc!));
       } catch (e) {}
     }
   }
