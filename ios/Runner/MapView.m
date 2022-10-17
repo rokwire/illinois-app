@@ -274,17 +274,15 @@
 		
 		NSInteger exploresCount = explore.uiucExplores.count;
 		if (1 < exploresCount) {
-			marker.icon = [MapMarkerView groupMarkerImageWithHexColor:explore.uiucExploreMarkerHexColor count:exploresCount];
+			marker.icon = [MapMarkerView2 groupMarkerImageWithHexColor:explore.uiucExploreMarkerHexColor count:exploresCount];
 			marker.groundAnchor = CGPointMake(0.5, 0.5);
 		}
 		else {
-			marker.icon = [MapMarkerView markerImageWithHexColor:explore.uiucExploreMarkerHexColor];
+			marker.icon = [MapMarkerView2 markerImageWithHexColor:explore.uiucExploreMarkerHexColor];
 			marker.groundAnchor = CGPointMake(0.5, 1);
 		}
-			marker.title = explore.uiucExploreTitle;
-			marker.snippet = explore.uiucExploreDescription;
-
-
+		marker.title = explore.uiucExploreTitle;
+		marker.snippet = explore.uiucExploreDescription;
 
 		marker.zIndex = 1;
 		marker.userData = @{ @"explore" : explore };
