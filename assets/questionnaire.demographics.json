@@ -187,5 +187,19 @@
   		  {"id":"a04", "title":"Check this box if you do not want to answer this question"}
 			]
   	}]
+	},
+	"strings":{
+		"en":{
+			"Yes":"Yes",
+			"No":"No"
+		},
+		"es":{
+			"Yes":"Sí",
+			"No":"No"
+		},
+		"zh": {
+			"Yes":"是的",
+			"No":"不"
+		}
 	}
 }
