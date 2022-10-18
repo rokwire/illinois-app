@@ -1730,9 +1730,6 @@
     "panel.wellness.todo.welcome.description.label": "Free up space in your mind by recording your to-do items here.",
     "panel.wellness.todo.categories.manage.button": "Manage Categories",
 
-    "panel.wellness.appointments.home.reschedule_appointment.label": "Need to cancel or reschedule?",
-    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
-
     "panel.wellness.categories.manage.title": "Manage Categories",
     "panel.wellness.categories.create.header.label": "Create a Category",
     "panel.wellness.categories.create.header.description": "Examples: an RSO or club, a specific class, or a miscellaneous task category.",
@@ -1785,6 +1782,12 @@
 
     "panel.wellness.resources.button.all.title": "View All",
     "panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
+
+    "panel.wellness.appointments.home.reschedule_appointment.label": "Need to cancel or reschedule?",
+    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
+    "panel.wellness.appointments.home.upcoming.list.empty.msg": "You currently have no upcoming appointments linked within the Illinois app.",
+    "panel.wellness.appointments.home.past.list.empty.msg": "You don't have recent past appointments linked within the Illinois app.",
+    "panel.wellness.appointments.home.past_appointments.header.label": "Recent Past Appointments",
 
     "panel.wellness.home.header.title": "Wellness",
     "panel.wellness.home.eight_dimensions.header.title": "8 Dimensions of Wellness",
@@ -2897,6 +2900,11 @@
     "model.wellness.todo.category.reminder.type.morning_of.label": "Morning Of (8:00 AM)",
     "model.wellness.todo.category.reminder.type.night_before.label": "Night Before (9:00 PM)",
     "model.wellness.todo.category.reminder.type.specific_time.label": "Specific Time",
+
+    "model.wellness.appointment.type.in_person.label": "In Person",
+    "model.wellness.appointment.type.online.label": "Telehealth",
+    "model.wellness.appointment.category.label": "MYMCKINLEY APPOINTMENTS",
+    "model.wellness.appointment.title.label": "MyMcKinley Appointment",
 
     "logic.date_time.greeting.morning": "Good morning",
     "logic.date_time.greeting.afternoon": "Good afternoon",

@@ -15,10 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessAppointmentsHomeContentWidget extends StatefulWidget {
   WellnessAppointmentsHomeContentWidget();
@@ -28,9 +30,13 @@ class WellnessAppointmentsHomeContentWidget extends StatefulWidget {
 }
 
 class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointmentsHomeContentWidget> {
+  List<Appointment>? _upcomingAppointments;
+  List<Appointment>? _pastAppointments;
+
   @override
   void initState() {
     super.initState();
+    _loadAppointments();
   }
 
   @override
@@ -69,14 +75,81 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildUpcomingAppointments() {
-    return Column(children: [_buildAppointmentCard(), _buildAppointmentCard()]);
+    if (CollectionUtils.isEmpty(_upcomingAppointments)) {
+      return _buildEmptyUpcomingAppointments();
+    } else {
+      return Column(children: _buildAppointmentsWidgetList(_upcomingAppointments));
+    }
+  }
+
+  Widget _buildEmptyUpcomingAppointments() {
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Text(
+            Localization().getStringEx('panel.wellness.appointments.home.upcoming.list.empty.msg',
+                'You currently have no upcoming appointments linked within the Illinois app.'),
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular)));
   }
 
   Widget _buildPastAppointments() {
-    return Column(children: [_buildAppointmentCard(), _buildAppointmentCard()]);
+    if (CollectionUtils.isEmpty(_pastAppointments)) {
+      return _buildEmptyPastAppointments();
+    } else {
+      List<Widget> pastAppointmentsWidgetList = <Widget>[];
+      pastAppointmentsWidgetList.add(Padding(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: Text(
+              Localization().getStringEx('panel.wellness.appointments.home.past_appointments.header.label', 'Recent Past Appointments'),
+              textAlign: TextAlign.left,
+              style: TextStyle(color: Styles().colors!.textSurface, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold))));
+      pastAppointmentsWidgetList.addAll(_buildAppointmentsWidgetList(_pastAppointments));
+      pastAppointmentsWidgetList.add(_buildPastAppointmentsDescription());
+      return Column(children: pastAppointmentsWidgetList);
+    }
   }
 
-  Widget _buildAppointmentCard() {
+  Widget _buildEmptyPastAppointments() {
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Text(
+            Localization().getStringEx('panel.wellness.appointments.home.past.list.empty.msg',
+                "You don't have recent past appointments linked within the Illinois app."),
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular)));
+  }
+
+  Widget _buildPastAppointmentsDescription() {
+    //TBD: appointments - make it clickable and take url from config or external resource
+    return Padding(
+        padding: EdgeInsets.only(left: 20, right: 20, top: 16),
+        child: Text(
+            Localization().getStringEx('panel.wellness.appointments.home.past_appointments.description',
+                'Visit MyMcKinley to view a full history of past appointments.'),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 16,
+                color: Styles().colors!.fillColorPrimary,
+                fontFamily: Styles().fontFamilies!.regular,
+                decoration: TextDecoration.underline,
+                decorationColor: Styles().colors!.fillColorPrimary,
+                decorationThickness: 1)));
+  }
+
+  List<Widget> _buildAppointmentsWidgetList(List<Appointment>? appointments) {
+    List<Widget> widgets = <Widget>[];
+    if (CollectionUtils.isNotEmpty(appointments)) {
+      for (int i = 0; i < appointments!.length; i++) {
+        Appointment appointment = appointments[i];
+        widgets.add(Padding(padding: EdgeInsets.only(top: (i == 0 ? 0 : 16)), child: _buildAppointmentCard(appointment)));
+      }
+    }
+    return widgets;
+  }
+
+  Widget _buildAppointmentCard(Appointment appointment) {
+    DateTime now = DateTime.now();
+    bool isUpcoming = (appointment.dateTimeUtc != null) && appointment.dateTimeUtc!.isAfter(now.toUtc());
     return InkWell(
         onTap: _onTapAppointmentCard,
         child: ClipRRect(
@@ -92,22 +165,16 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Row(children: [
                           Expanded(
-                              child:
-                                  //TBD: Appointment - fill with real data
-                                  Text('MyMcKinley Appointments'.toUpperCase(),
-                                      style: TextStyle(
-                                              color: Styles().colors?.textBackground,
-                                              fontFamily: Styles().fontFamilies?.semiBold,
-                                              fontSize: 14)))
+                              child: Text(StringUtils.ensureNotEmpty(appointment.category),
+                                  style: TextStyle(
+                                      color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.semiBold, fontSize: 14)))
                         ]),
                         Padding(
                             padding: EdgeInsets.only(top: 6),
                             child: Row(children: [
                               Expanded(
-                                  child:
-                                      //TBD: Appointment - fill with real data
-                                      Text('MyMcKinley Appointment',
-                                          style: TextStyle(
+                                  child: Text(StringUtils.ensureNotEmpty(appointment.title),
+                                      style: TextStyle(
                                           color: Styles().colors?.fillColorPrimary,
                                           fontFamily: Styles().fontFamilies?.extraBold,
                                           fontSize: 20)))
@@ -117,34 +184,28 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
                             child: Row(children: [
                               Padding(padding: EdgeInsets.only(right: 6), child: Image.asset('images/icon-calendar.png')),
                               Expanded(
-                                  child:
-                                      //TBD: Appointment - fill with real data
-                                      Text('Sep 2, 10:00 AM',
-                                          style: TextStyle(
-                                              color: Styles().colors?.textBackground,
-                                              fontFamily: Styles().fontFamilies?.medium,
-                                              fontSize: 16)))
+                                  child: Text(StringUtils.ensureNotEmpty(appointment.displayDate),
+                                      style: TextStyle(
+                                          color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)))
                             ])),
                         Padding(
                             padding: EdgeInsets.only(top: 12),
                             child: Row(children: [
-                              Padding(padding: EdgeInsets.only(right: 6), child: Image.asset('images/icon-location.png')),
+                              Padding(
+                                  padding: EdgeInsets.only(right: 6),
+                                  child: Image.asset((appointment.type == AppointmentType.online)
+                                      ? 'images/icon-telehealth.png'
+                                      : 'images/icon-location.png')),
                               Expanded(
-                                  child:
-                                      //TBD: Appointment - fill with real data - telehealth vs in person
-                                      Text('In person',
-                                          style: TextStyle(
-                                              color: Styles().colors?.textBackground,
-                                              fontFamily: Styles().fontFamilies?.medium,
-                                              fontSize: 16)))
+                                  child: Text(StringUtils.ensureNotEmpty(Appointment.typeToDisplayString(appointment.type)),
+                                      style: TextStyle(
+                                          color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)))
                             ]))
                       ]))),
-              //TBD: Appointment - fill with real data - define upcoming vs past and respective color
-              Container(color: Styles().colors?.fillColorSecondary, height: 4)
+              Container(color: (isUpcoming ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary), height: 4)
             ])));
   }
 
-  //TBD: DD draw popup
   void _showRescheduleAppointmentPopup() {
     AppAlert.showCustomDialog(
         context: context,
@@ -181,5 +242,13 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
 
   void _onTapAppointmentCard() {
     //TBD: Appointment - implement
+  }
+
+  void _loadAppointments() {
+    //TBD: Appointments - load with real data
+    _upcomingAppointments = Appointment.listFromJson(JsonUtils.decodeList(
+        '[{"id":"08c122e3-2174-438b-94d4-f231198c26ba","uin":"2222","date_time":"2022-12-01T07:30:444Z","type":"InPerson","location":{"id":"555555","title":"McKinley Health Center, East wing, 3rd floor","latitude":0,"longitude":0,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}},{"id":"08c122e3-2174-438b-f231198c26ba","uin":"3333","date_time":"2022-12-02T08:22:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"asdasd","meeting_passcode":"passs"},"location":{"id":"6666","title":"McKinley Health Center 2, West wing, 1st floor","latitude":0,"longitude":0,"phone":"555-666-777"},"cancelled":false,"instructions":"Some instructions 2 ...","host":{"first_name":"JoAnn","last_name":"Doe"}}]'));
+    _pastAppointments = Appointment.listFromJson(JsonUtils.decodeList(
+        '[{"id":"2174-438b-94d4-f231198c26ba","uin":"4444","date_time":"2022-10-01T10:30:444Z","type":"InPerson","location":{"id":"777","title":"McKinley Health Center 8, South wing, 2nd floor","latitude":0,"longitude":0,"phone":"555-444-777"},"cancelled":false,"instructions":"Some instructions 3 ...","host":{"first_name":"Bill","last_name":""}},{"id":"08c122e3","uin":"88888","date_time":"2022-10-05T11:34:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"location":{"id":"9999","title":"McKinley Health Center 9, North wing, 4th floor","latitude":0,"longitude":0,"phone":"555-5555-777"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}]'));
   }
 }

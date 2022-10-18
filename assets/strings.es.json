@@ -1729,9 +1729,6 @@
     "panel.wellness.todo.welcome.description.label": "Libere espacio en su mente registrando sus tareas pendientes aquí.",
     "panel.wellness.todo.categories.manage.button": "Gestionar categorías",
 
-    "panel.wellness.appointments.home.reschedule_appointment.label": "¿Necesitas cancelar o reprogramar?",
-    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
-
     "panel.wellness.categories.manage.title": "Gestionar categorías",
     "panel.wellness.categories.create.header.label": "Crear una categoría",
     "panel.wellness.categories.create.header.description": "Ejemplos: una RSO o club, una clase específica o una categoría de tarea miscelánea.",
@@ -1784,6 +1781,12 @@
 
     "panel.wellness.resources.button.all.title": "Ver todo",
     "panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
+
+    "panel.wellness.appointments.home.reschedule_appointment.label": "¿Necesitas cancelar o reprogramar?",
+    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
+    "panel.wellness.appointments.home.upcoming.list.empty.msg": "Actualmente no tiene citas próximas vinculadas dentro de la aplicación de Illinois.",
+    "panel.wellness.appointments.home.past.list.empty.msg": "No tiene citas pasadas recientes vinculadas dentro de la aplicación de Illinois.",
+    "panel.wellness.appointments.home.past_appointments.header.label": "Citas pasadas recientes",
 
     "panel.wellness.home.header.title": "Bienestar",
     "panel.wellness.home.eight_dimensions.header.title": "8 dimensiones de bienestar",
@@ -2894,6 +2897,11 @@
     "model.wellness.todo.category.reminder.type.morning_of.label": "Mañana de (8:00 AM)",
     "model.wellness.todo.category.reminder.type.night_before.label": "Noche anterior (9:00 PM)",
     "model.wellness.todo.category.reminder.type.specific_time.label": "Tiempo específico",
+
+    "model.wellness.appointment.type.in_person.label": "En persona",
+    "model.wellness.appointment.type.online.label": "Telesalud",
+    "model.wellness.appointment.category.label": "CITAS MYMCKINLEY",
+    "model.wellness.appointment.title.label": "Cita de MyMcKinley",
 
     "logic.date_time.greeting.morning": "Buenos días",
     "logic.date_time.greeting.afternoon": "Buenas tardes",

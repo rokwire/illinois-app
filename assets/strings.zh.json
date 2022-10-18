@@ -1730,9 +1730,6 @@
 	"panel.wellness.todo.welcome.description.label": "通過在此處記錄您的待辦事項來釋放您的大腦空間.",
 	"panel.wellness.todo.categories.manage.button": "管理類別",
 
-    "panel.wellness.appointments.home.reschedule_appointment.label": "需要取消或重新安排？",
-    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
-
 	"panel.wellness.categories.manage.title": "管理類別",
 	"panel.wellness.categories.create.header.label": "創建類別",
 	"panel.wellness.categories.create.header.description": "示例：RSO 或俱樂部、特定班級或雜項任務類別.",
@@ -1785,6 +1782,12 @@
 
 	"panel.wellness.resources.button.all.title": "查看全部",
 	"panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
+
+    "panel.wellness.appointments.home.reschedule_appointment.label": "需要取消或重新安排？",
+    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
+    "panel.wellness.appointments.home.upcoming.list.empty.msg": "您目前沒有在伊利諾伊州應用程序中鏈接的即將到來的約會。",
+    "panel.wellness.appointments.home.past.list.empty.msg": "您沒有在伊利諾伊應用程序中鏈接最近的過去約會。",
+    "panel.wellness.appointments.home.past_appointments.header.label": "最近過去的約會",
 
 	"panel.wellness.home.header.title": "養生",
 	"panel.wellness.home.eight_dimensions.header.title": "8健康維度",
@@ -2893,6 +2896,11 @@
 	"model.wellness.todo.category.reminder.type.morning_of.label": "上午 (上午 8:00)",
 	"model.wellness.todo.category.reminder.type.night_before.label": "前一天晚上 (晚上 9:00)",
 	"model.wellness.todo.category.reminder.type.specific_time.label": "特定的時間",
+
+    "model.wellness.appointment.type.in_person.label": "親自",
+    "model.wellness.appointment.type.online.label": "遠程醫療",
+    "model.wellness.appointment.category.label": "MYMCKINLEY 任命",
+    "model.wellness.appointment.title.label": "MyMcKinley 預約",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",
