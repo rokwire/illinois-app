@@ -123,7 +123,7 @@ class Appointment with Explore, Favorite {
   // Explore
   @override String? get exploreId => id;
   @override String? get exploreImageURL => imageUrl;
-  @override ExploreLocation? get exploreLocation => throw UnimplementedError();
+  @override ExploreLocation? get exploreLocation => ExploreLocation(locationId: location?.id, latitude: location?.latitude, longitude: location?.longitude);
   @override String? get exploreLongDescription => null;
   @override String? get explorePlaceId => null;
   @override String? get exploreShortDescription => null;
