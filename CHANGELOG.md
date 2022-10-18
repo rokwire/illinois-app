@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.2.4] - 2022-10-17
+### Changed
+- Sort group post replies descending by date [#2462](https://github.com/rokwire/illinois-app/issues/2462).
+
+## [4.2.3] - 2022-10-14
+### Added
+- Show play button in video tutorials favourite widget [#2458](https://github.com/rokwire/illinois-app/issues/2458).
+### Fixed
+- Fixed member entry duplication in GroupMembersPanel [#2413](https://github.com/rokwire/illinois-app/issues/2413).
+
 ## [4.2.2] - 2022-10-13
 ### Fixed
 - Android: improper marker view [#2453](https://github.com/rokwire/illinois-app/issues/2453).

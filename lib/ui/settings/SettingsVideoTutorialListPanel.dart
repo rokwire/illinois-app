@@ -48,7 +48,7 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 32),
               child: Text(Localization().getStringEx("panel.settings.video_tutorials.empty.msg", "There are no video tutorials."),
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary))));
+                  style: Styles().textStyles?.getTextStyle("widget.message.large"))));
     }
     List<Widget> contentList = <Widget>[];
     for (dynamic video in widget.videoTutorials!) {
@@ -74,8 +74,7 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
                       child: Padding(
                           padding: EdgeInsets.all(16),
                           child: Text(videoTitle,
-                              style: TextStyle(
-                                  color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)))),
+                              style: Styles().textStyles?.getTextStyle("widget.button.title.enabled")))),
                   Padding(padding: EdgeInsets.only(right: 16, top: 18, bottom: 18), child: Image.asset('images/chevron-right.png'))
                 ]))));
   }

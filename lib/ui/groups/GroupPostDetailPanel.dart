@@ -308,7 +308,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         groupId: widget.group?.id,
                         groupPrivacy: widget.group?.privacy,
                         onSelectionChanged: (members){
-                          setState(() {
+                          setStateIfMounted(() {
                             _mainPostUpdateData?.members = members;
                           });
                         },)
@@ -710,11 +710,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void _onTapPostReply({GroupPost? reply}) {
     Analytics().logSelect(target: 'Post Reply');
     //Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true,)));
-    if (mounted) {
-      setState(() {
-        _selectedReplyId = reply?.id;
-      });
-    }
+    setStateIfMounted(() {
+      _selectedReplyId = reply?.id;
+    });
     _clearBodyControllerContent();
     _scrollToPostEdit();
   }
@@ -737,10 +735,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _onTapEditMainPost(){
     _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl, members: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:_post?.members, upToDateMembers: _allMembersAllowedToPost));
-    if(mounted){
-      setState(() {
-      });
-    }
+    setStateIfMounted(() { });
   }
 
   void _onTapUpdateMainPost(){
@@ -800,12 +795,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         _sortReplies(_post?.replies);
         GroupPost? updatedReply = deepFindPost(posts, _focusedReply?.id);
         if(updatedReply!=null){
-          setState(() {
+          setStateIfMounted(() {
             _focusedReply = updatedReply;
             _sortReplies(_focusedReply?.replies);
           });
         } else {
-          setState(() {}); // Refresh MainPost
+          setStateIfMounted(() {}); // Refresh MainPost
         }
       } else {
         _post = null;
@@ -815,17 +810,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _setLoading(bool loading) {
-    if (mounted) {
-      setState(() {
-        _loading = loading;
-      });
-    }
+    setStateIfMounted(() {
+      _loading = loading;
+    });
   }
 
   void _onTapCancel() {
     Analytics().logSelect(target: 'Cancel');
     if (_editingReply != null) {
-      setState(() {
+      setStateIfMounted(() {
         _editingReply = null;
         _replyEditData?.imageUrl = null;
         _replyEditData?.body = '';
@@ -927,7 +920,7 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
       print(e.toString());
     }
 
-    setState(() {
+    setStateIfMounted(() {
       _sliverHeaderHeight = sliverHeaderHeight;
     });
   }
@@ -978,7 +971,7 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
     if(CollectionUtils.isNotEmpty(replies)) {
       try {
         replies!.sort((post1, post2) =>
-            post1.dateCreatedUtc!.compareTo(post2.dateCreatedUtc!));
+            post2.dateCreatedUtc!.compareTo(post1.dateCreatedUtc!));
       } catch (e) {}
     }
   }
@@ -1036,7 +1029,7 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
     if (name == Groups.notifyGroupPostsUpdated) {
       _reloadPost();
     } else if (name == Groups.notifyGroupPostReactionsUpdated) {
-      setState(() { });
+      setStateIfMounted(() { });
     }
   }
 }

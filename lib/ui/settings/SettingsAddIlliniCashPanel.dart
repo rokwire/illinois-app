@@ -184,7 +184,7 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
-                                              style:  Styles().textStyles?.getTextStyle("widget.detail.large")
+                                              style:  Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                           ])),
                                   Container(
@@ -231,7 +231,7 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
-                                              style:  Styles().textStyles?.getTextStyle("widget.detail.large")
+                                              style:  Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                           ])),
                                   Container(
@@ -278,7 +278,7 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
-                                              style: Styles().textStyles?.getTextStyle("widget.detail.large")
+                                              style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                           ])),
                                   Container(
@@ -324,7 +324,7 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
-                                              style: Styles().textStyles?.getTextStyle("widget.detail.large")
+                                              style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                           ])),
                                   Container(
@@ -370,7 +370,7 @@ class _SettingsAddIlliniCashPanelState
                                               ),
                                               inputFormatters: [CreditCardNumberInputFormatter()],
                                               onFieldSubmitted: (_){ FocusScope.of(context).requestFocus(_expiryFocusNode); },
-                                              style: Styles().textStyles?.getTextStyle("widget.detail.large")
+                                              style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                           ])),
                                   Container(
@@ -416,7 +416,7 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
-                                              style: Styles().textStyles?.getTextStyle("widget.detail.large")
+                                              style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                           ])),
                                   Container(
@@ -462,7 +462,7 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
-                                              style: Styles().textStyles?.getTextStyle("widget.detail.large")
+                                              style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                           ])),
                                   Container(
@@ -505,7 +505,7 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
-                                              style: Styles().textStyles?.getTextStyle("widget.detail.large")
+                                              style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                             Text(
                                               Localization().getStringEx(

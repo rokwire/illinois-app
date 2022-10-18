@@ -343,7 +343,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
               child: Text(sectionKey,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
-                  style: Styles().textStyles?.getTextStyle("widget.title.large")))
+                  style: Styles().textStyles?.getTextStyle("widget.title.large.fat")))
         ]));
   }
 
