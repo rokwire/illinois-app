@@ -15,10 +15,13 @@
  */
 
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Appointment {
+class Appointment with Explore, Favorite {
   static final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 
   final String? id;
@@ -70,6 +73,15 @@ class Appointment {
     return Localization().getStringEx('model.wellness.appointment.title.label', 'MyMcKinley Appointment');
   }
 
+  String? get imageUrl {
+    return _randomImageUrl;
+  }
+
+  String? get _randomImageUrl {
+    //TBD: Appointment - check how to retrieve the image
+    return Assets().randomStringFromListWithKey('images.random.events.Other');
+  }
+
   static List<Appointment>? listFromJson(List<dynamic>? jsonList) {
     List<Appointment>? items;
     if (jsonList != null) {
@@ -101,6 +113,26 @@ class Appointment {
       default:
         return null;
     }
+  }
+
+  // Favorite
+  static const String favoriteKeyName = "appointmentIds";
+  @override String get favoriteKey => favoriteKeyName;
+  @override String? get favoriteId => id;
+  
+  // Explore
+  @override String? get exploreId => id;
+  @override String? get exploreImageURL => imageUrl;
+  @override ExploreLocation? get exploreLocation => throw UnimplementedError();
+  @override String? get exploreLongDescription => null;
+  @override String? get explorePlaceId => null;
+  @override String? get exploreShortDescription => null;
+  @override DateTime? get exploreStartDateUtc => dateTimeUtc;
+  @override String? get exploreSubTitle => null;
+  @override String? get exploreTitle => title;
+  @override Map<String, dynamic> toJson() {
+    //TBD: Appointment - implement
+    throw UnimplementedError();
   }
 }
 

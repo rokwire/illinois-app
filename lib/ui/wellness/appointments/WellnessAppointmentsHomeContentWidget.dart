@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -99,10 +100,14 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
       List<Widget> pastAppointmentsWidgetList = <Widget>[];
       pastAppointmentsWidgetList.add(Padding(
           padding: EdgeInsets.symmetric(vertical: 16),
-          child: Text(
-              Localization().getStringEx('panel.wellness.appointments.home.past_appointments.header.label', 'Recent Past Appointments'),
-              textAlign: TextAlign.left,
-              style: TextStyle(color: Styles().colors!.textSurface, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold))));
+          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Expanded(
+                child: Text(
+                    Localization()
+                        .getStringEx('panel.wellness.appointments.home.past_appointments.header.label', 'Recent Past Appointments'),
+                    textAlign: TextAlign.left,
+                    style: TextStyle(color: Styles().colors!.blackTransparent06, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)))
+          ])));
       pastAppointmentsWidgetList.addAll(_buildAppointmentsWidgetList(_pastAppointments));
       pastAppointmentsWidgetList.add(_buildPastAppointmentsDescription());
       return Column(children: pastAppointmentsWidgetList);
@@ -141,69 +146,10 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     if (CollectionUtils.isNotEmpty(appointments)) {
       for (int i = 0; i < appointments!.length; i++) {
         Appointment appointment = appointments[i];
-        widgets.add(Padding(padding: EdgeInsets.only(top: (i == 0 ? 0 : 16)), child: _buildAppointmentCard(appointment)));
+        widgets.add(Padding(padding: EdgeInsets.only(top: (i == 0 ? 0 : 16)), child: AppointmentCard(appointment: appointment)));
       }
     }
     return widgets;
-  }
-
-  Widget _buildAppointmentCard(Appointment appointment) {
-    DateTime now = DateTime.now();
-    bool isUpcoming = (appointment.dateTimeUtc != null) && appointment.dateTimeUtc!.isAfter(now.toUtc());
-    return InkWell(
-        onTap: _onTapAppointmentCard,
-        child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(4)),
-            child: Stack(children: [
-              Container(
-                  decoration: BoxDecoration(
-                      color: Styles().colors!.surface,
-                      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                      borderRadius: BorderRadius.all(Radius.circular(4))),
-                  child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Row(children: [
-                          Expanded(
-                              child: Text(StringUtils.ensureNotEmpty(appointment.category),
-                                  style: TextStyle(
-                                      color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.semiBold, fontSize: 14)))
-                        ]),
-                        Padding(
-                            padding: EdgeInsets.only(top: 6),
-                            child: Row(children: [
-                              Expanded(
-                                  child: Text(StringUtils.ensureNotEmpty(appointment.title),
-                                      style: TextStyle(
-                                          color: Styles().colors?.fillColorPrimary,
-                                          fontFamily: Styles().fontFamilies?.extraBold,
-                                          fontSize: 20)))
-                            ])),
-                        Padding(
-                            padding: EdgeInsets.only(top: 12),
-                            child: Row(children: [
-                              Padding(padding: EdgeInsets.only(right: 6), child: Image.asset('images/icon-calendar.png')),
-                              Expanded(
-                                  child: Text(StringUtils.ensureNotEmpty(appointment.displayDate),
-                                      style: TextStyle(
-                                          color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)))
-                            ])),
-                        Padding(
-                            padding: EdgeInsets.only(top: 12),
-                            child: Row(children: [
-                              Padding(
-                                  padding: EdgeInsets.only(right: 6),
-                                  child: Image.asset((appointment.type == AppointmentType.online)
-                                      ? 'images/icon-telehealth.png'
-                                      : 'images/icon-location.png')),
-                              Expanded(
-                                  child: Text(StringUtils.ensureNotEmpty(Appointment.typeToDisplayString(appointment.type)),
-                                      style: TextStyle(
-                                          color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)))
-                            ]))
-                      ]))),
-              Container(color: (isUpcoming ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary), height: 4)
-            ])));
   }
 
   void _showRescheduleAppointmentPopup() {
@@ -238,10 +184,6 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   void _onTapCloseReschedulePopup() {
     Analytics().logSelect(target: 'Close reschedule appointment popup');
     Navigator.of(context).pop();
-  }
-
-  void _onTapAppointmentCard() {
-    //TBD: Appointment - implement
   }
 
   void _loadAppointments() {
