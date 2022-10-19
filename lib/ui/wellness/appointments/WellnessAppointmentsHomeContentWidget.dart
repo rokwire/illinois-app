@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -33,6 +34,7 @@ class WellnessAppointmentsHomeContentWidget extends StatefulWidget {
 class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointmentsHomeContentWidget> {
   List<Appointment>? _upcomingAppointments;
   List<Appointment>? _pastAppointments;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -51,11 +53,24 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildContent() {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [_buildRescheduleDescription(), _buildUpcomingAppointments(), _buildPastAppointments()]));
+    if (_loading) {
+      return _buildLoadingContent();
+    } else {
+      return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [_buildRescheduleDescription(), _buildUpcomingAppointments(), _buildPastAppointments()]));
+    }
+  }
+
+  Widget _buildLoadingContent() {
+    return Center(
+        child: Column(children: <Widget>[
+      Container(height: MediaQuery.of(context).size.height / 5),
+      CircularProgressIndicator(),
+      Container(height: MediaQuery.of(context).size.height / 5 * 3)
+    ]));
   }
 
   Widget _buildRescheduleDescription() {
@@ -106,7 +121,8 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
                     Localization()
                         .getStringEx('panel.wellness.appointments.home.past_appointments.header.label', 'Recent Past Appointments'),
                     textAlign: TextAlign.left,
-                    style: TextStyle(color: Styles().colors!.blackTransparent06, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)))
+                    style:
+                        TextStyle(color: Styles().colors!.blackTransparent06, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)))
           ])));
       pastAppointmentsWidgetList.addAll(_buildAppointmentsWidgetList(_pastAppointments));
       pastAppointmentsWidgetList.add(_buildPastAppointmentsDescription());
@@ -187,10 +203,28 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   void _loadAppointments() {
-    //TBD: Appointments - load with real data
-    _upcomingAppointments = Appointment.listFromJson(JsonUtils.decodeList(
-        '[{"id":"08c122e3-2174-438b-94d4-f231198c26ba","uin":"2222","date_time":"2022-12-01T07:30:444Z","type":"InPerson","location":{"id":"555555","title":"McKinley Health Center, East wing, 3rd floor","latitude":0,"longitude":0,"phone":"555-333-777"},"cancelled":false,"instructions":"Some instructions 1 ...","host":{"first_name":"John","last_name":"Doe"}},{"id":"08c122e3-2174-438b-f231198c26ba","uin":"3333","date_time":"2022-12-02T08:22:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"asdasd","meeting_passcode":"passs"},"location":{"id":"6666","title":"McKinley Health Center 2, West wing, 1st floor","latitude":0,"longitude":0,"phone":"555-666-777"},"cancelled":false,"instructions":"Some instructions 2 ...","host":{"first_name":"JoAnn","last_name":"Doe"}}]'));
-    _pastAppointments = Appointment.listFromJson(JsonUtils.decodeList(
-        '[{"id":"2174-438b-94d4-f231198c26ba","uin":"4444","date_time":"2022-10-01T10:30:444Z","type":"InPerson","location":{"id":"777","title":"McKinley Health Center 8, South wing, 2nd floor","latitude":0,"longitude":0,"phone":"555-444-777"},"cancelled":false,"instructions":"Some instructions 3 ...","host":{"first_name":"Bill","last_name":""}},{"id":"08c122e3","uin":"88888","date_time":"2022-10-05T11:34:444Z","type":"Online","online_details":{"url":"https://mymckinley.illinois.edu","meeting_id":"09jj","meeting_passcode":"dfkj3940"},"location":{"id":"9999","title":"McKinley Health Center 9, North wing, 4th floor","latitude":0,"longitude":0,"phone":"555-5555-777"},"cancelled":false,"instructions":"Some instructions 4 ...","host":{"first_name":"Peter","last_name":"Grow"}}]'));
+    _setLoading(true);
+    Appointments().loadAppointments().then((appointments) {
+      if (CollectionUtils.isNotEmpty(appointments)) {
+        _upcomingAppointments = <Appointment>[];
+        _pastAppointments = <Appointment>[];
+        for (Appointment appointment in appointments!) {
+          if (appointment.isUpcoming) {
+            _upcomingAppointments!.add(appointment);
+          } else {
+            _pastAppointments!.add(appointment);
+          }
+        }
+      } else {
+        _upcomingAppointments = _pastAppointments = null;
+      }
+      _setLoading(false);
+    });
+  }
+
+  void _setLoading(bool loading) {
+    setState(() {
+      _loading = loading;
+    });
   }
 }
