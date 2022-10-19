@@ -5,13 +5,13 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class Onboarding2DemographicsQuestionnairePanel extends StatefulWidget {
 
@@ -52,11 +52,16 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
   @override
   void initState() {
     _loading = true;
+
     Questionnaires().loadDemographic().then((Questionnaire? questionnaire) {
       if (mounted) {
         setState(() {
           _loading = false;
           _questionnaire = questionnaire;
+          Map<String, LinkedHashSet<String>>? answers = Auth2().prefs?.getQuestionnaireAnswers(questionnaire?.id);
+          if (answers != null) {
+            _selection.addAll(answers);
+          }
         });
       }
     });
@@ -279,7 +284,15 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
         );
       }
       else {
-        //TBD: Store answers
+        Auth2().prefs?.setQuestionnaireAnswers(_questionnaire?.id, _selection);
+
+        Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
+        if (onContinue != null) {
+          onContinue();
+        }
+        else {
+          Navigator.of(context).pop();
+        }
       }
     }
   }
