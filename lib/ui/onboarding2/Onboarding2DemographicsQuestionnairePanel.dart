@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Questionnaire.dart';
@@ -9,6 +10,8 @@ import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class Onboarding2DemographicsQuestionnairePanel extends StatefulWidget {
 
@@ -42,6 +45,9 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
 
   bool _loading = false;
   Questionnaire? _questionnaire;
+  Map<String, LinkedHashSet<String>> _selection = <String, LinkedHashSet<String>>{};
+
+  final double _hPadding = 24;
 
   @override
   void initState() {
@@ -86,22 +92,221 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
       return _buildError();
     }
     else {
-      return _buildQuestionnaire();
+      return _buildQuestionnaire(_questionnaire!);
     }
   }
     
-  Widget _buildQuestionnaire() {
-    return Column(children: [
-      Padding(padding: EdgeInsets.only(left: 45, right: 45, top: 20), child:
-        Semantics(label: 'Demographics Questionnaire', hint: '', excludeSemantics: true, child:
+  Widget _buildQuestionnaire(Questionnaire questionnaire) {
+
+    List<Widget> contentList = <Widget>[];
+    String title = questionnaire.stringValue(questionnaire.title)  ?? '';
+    String description = questionnaire.stringValue(questionnaire.description) ?? '';
+    bool submitEnabled = (_failSubmitQuestion < 0);
+
+    if (description.isNotEmpty) {
+      contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, bottom: 20), child:
+        Semantics(label: description, hint: '', excludeSemantics: true, child:
           Row(children: [
             Expanded(child:
-              Text('Demographics Questionnaire', style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 24, color: Styles().colors?.fillColorPrimary), textAlign: TextAlign.center,),
+              Text(description, style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground), textAlign: TextAlign.left,),
             )
           ],)
         ),
-      )
-    ],);
+      ),);
+    }
+
+    List<Widget> questions = _buildQuestions(questionnaire.questions);
+    if (questions.isNotEmpty) {
+      contentList.addAll(questions);
+    }
+
+    return Padding(padding: EdgeInsets.only(top: 20), child:
+      Column(children: <Widget>[
+        Padding(padding: EdgeInsets.only(left: 48, right: 48, bottom: 12), child:
+          Semantics(label: title, hint: '', excludeSemantics: true, child:
+            Row(children: [
+              Expanded(child:
+                Text(title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 24, color: Styles().colors?.fillColorPrimary), textAlign: TextAlign.center,),
+              )
+            ],)
+          ),
+        ),
+        Expanded(child:
+          SingleChildScrollView(child:
+            Column(children: contentList,),
+          ),
+        ),
+        Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 12, bottom: 12,), child:
+          RoundedButton(label: 'Submit', hint: '',
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            borderColor: submitEnabled ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent,
+            backgroundColor: Styles().colors!.white,
+            textColor: submitEnabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+            fontSize: 16,
+            onTap: () => _onSubmit(),
+          ),
+        ),
+      ])
+    );
+  }
+
+  List<Widget> _buildQuestions(List<Question>? questions) {
+    List<Widget> questionsList = <Widget>[];
+    if (questions != null) {
+      for (int index = 0; index < questions.length; index++) {
+        questionsList.add(_buildQuestion(questions[index], index: index + 1));
+      }
+    }
+    return questionsList;
+  }
+
+  Widget _buildQuestion(Question question, { int? index }) {
+    List<Widget> contentList = <Widget>[];
+
+    String title = _displayQuestionTitle(question, index: index);
+    if (title.isNotEmpty) {
+      contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
+        Row(children: [
+          Expanded(child:
+            Text(title, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), textAlign: TextAlign.left,),
+          )
+        ])      
+      ));
+    }
+
+    String descriptionPrefix = _questionnaireString(question.descriptionPrefix);
+    if (descriptionPrefix.isNotEmpty) {
+      contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 2), child:
+        Row(children: [
+          Expanded(child:
+            Text(descriptionPrefix, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground), textAlign: TextAlign.left,),
+          )
+        ])
+      ));
+    }
+
+    List<Widget> answers = _buildAnswers(question);
+    if (answers.isNotEmpty) {
+      contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
+        Column(children: answers,),
+      ));
+    }
+
+    String descriptionSuffix = _questionnaireString(question.descriptionSuffix);
+    if (descriptionSuffix.isNotEmpty) {
+      contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, bottom: 16), child:
+        Row(children: [
+          Expanded(child:
+            Text(descriptionSuffix, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground), textAlign: TextAlign.left,),
+          )
+        ])
+      ));
+    }
+    else {
+      contentList.add(Padding(padding: EdgeInsets.only(bottom: 16), child:
+        Container()
+      ));
+    }
+
+    return Column(children: contentList,);
+  }
+
+  List<Widget> _buildAnswers(Question question) {
+    List<Widget> answersList = <Widget>[];
+    List<Answer>? answers = question.answers;
+    if (answers != null) {
+      for (Answer answer in answers) {
+        answersList.add(_buildAnswer(answer, question: question));
+      }
+    }
+    return answersList;
+  }
+
+  Widget _buildAnswer(Answer answer, { required Question question }) {
+    LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+    bool selected = selectedAnswers?.contains(answer.id) ?? false;
+    String title = _questionnaireString(answer.title);
+    return Padding(padding: EdgeInsets.only(left: _hPadding - 12, right: _hPadding), child:
+      Row(children: [
+        InkWell(onTap: () => _onAnswer(answer, question: question), child:
+          Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 8, ), child:
+            Image.asset(selected ? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
+          ),
+        ),
+        Expanded(child:
+          Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
+            Text(title, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary), textAlign: TextAlign.left,)
+          ),
+        ),
+      ]),
+    );
+  }
+
+  void _onAnswer(Answer answer, { required Question question }) {
+    String? answerId = answer.id;
+    String? questionId = question.id;
+    if ((questionId != null) && (answerId != null)) {
+      LinkedHashSet<String> selectedAnswers = _selection[questionId] ?? (_selection[questionId] = LinkedHashSet<String>());
+      setState(() {
+        if (selectedAnswers.contains(answerId)) {
+          selectedAnswers.remove(answerId);
+        }
+        else {
+          selectedAnswers.add(answerId);
+        }
+
+        if (question.maxAnswers != null) {
+          while (question.maxAnswers! < selectedAnswers.length) {
+            selectedAnswers.remove(selectedAnswers.first);
+          }
+        }
+      });
+    }
+  }
+
+  void _onSubmit() {
+
+    List<Question>? questions = _questionnaire?.questions;
+    if (questions != null) {
+      int index = this._failSubmitQuestion;
+      Question? failQuestion = ((0 <= index) && (index < questions.length)) ? questions[index] : null;
+      if (failQuestion != null) {
+        int minQuestionAnswers = failQuestion.minAnswers ?? 0;
+        String questionTitle = _displayQuestionTitle(failQuestion, index: index + 1);
+        AppAlert.showDialogResult(context, (1 < minQuestionAnswers) ?
+          'Please choose at least $minQuestionAnswers aswers of "$questionTitle".' :
+          'Please choose at least $minQuestionAnswers aswer of "$questionTitle".'
+        );
+      }
+      else {
+        //TBD: Store answers
+      }
+    }
+  }
+
+  int get _failSubmitQuestion {
+    List<Question>? questions = _questionnaire?.questions;
+    if (questions != null) {
+      for (int index = 0; index < questions.length; index++) {
+        Question question = questions[index];
+        int? minQuestionAnswers = question.minAnswers;
+        if (minQuestionAnswers != null) {
+          LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+          int selectedAnswersCount = selectedAnswers?.length ?? 0;
+          if (selectedAnswersCount < minQuestionAnswers) {
+            return index;
+          }
+        }
+      }
+    }
+    return -1;
+  }
+
+  String _questionnaireString(String? key) => _questionnaire?.stringValue(key) ?? key ?? '';
+
+  String _displayQuestionTitle(Question question, { int? index }) {
+    String title = _questionnaireString(question.title);
+    return ((index != null) && title.isNotEmpty) ? "$index. $title" : title;
   }
 
   Widget _buildLoading() {
