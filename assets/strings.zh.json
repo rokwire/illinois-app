@@ -1310,6 +1310,8 @@
 	"panel.settings.home.calendar.on_campus.radio_button.off.title": "總是讓我離開校園",
 	"panel.settings.home.calendar.on_campus.title": "在校園",
 	"panel.settings.home.calendar.ada.title": "可訪問性需求",
+	"panel.settings.home.calendar.questionnaires.title": "問卷調查",
+	"panel.settings.home.calendar.questionnaire.demographics.title": "人口統計問卷",
 
 	"panel.settings.privacy_center.label.title":"隐私中心",
 	"panel.settings.privacy_center.label.description":"个性化您的隐私和数据偏好.",

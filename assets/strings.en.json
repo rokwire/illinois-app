@@ -1311,6 +1311,8 @@
     "panel.settings.home.calendar.on_campus.radio_button.off.title": "Always make me off campus",
     "panel.settings.home.calendar.on_campus.title": "On Campus",
     "panel.settings.home.calendar.ada.title": "Accessibility Needs",
+    "panel.settings.home.calendar.questionnaires.title": "Questionnaires",
+    "panel.settings.home.calendar.questionnaire.demographics.title": "Demographics Questionnaire",
 
     "panel.settings.privacy_center.label.title":"Privacy Center",
     "panel.settings.privacy_center.label.description":"Personalize your privacy and data preferences.",
