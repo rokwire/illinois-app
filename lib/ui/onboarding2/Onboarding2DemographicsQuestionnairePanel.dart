@@ -2,13 +2,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class Onboarding2DemographicsQuestionnairePanel extends StatefulWidget {
 
@@ -41,12 +41,12 @@ class Onboarding2DemographicsQuestionnairePanel extends StatefulWidget {
 class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2DemographicsQuestionnairePanel> {
 
   bool _loading = false;
-  Map<String, dynamic>? _questionnaire;
+  Questionnaire? _questionnaire;
 
   @override
   void initState() {
     _loading = true;
-    _loadQuestionnaire().then((Map<String, dynamic>? questionnaire) {
+    Questionnaires().loadDemographic().then((Questionnaire? questionnaire) {
       if (mounted) {
         setState(() {
           _loading = false;
@@ -136,10 +136,4 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
     ]);
   }
 
-  Future<Map<String, dynamic>?> _loadQuestionnaire() async {
-    try { return JsonUtils.decodeMap(await rootBundle.loadString('assets/questionnaire.demographics.json')); }
-    catch(e) { debugPrint(e.toString()); }
-    return null;
-  }
-  
 }
