@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2DemographicsQuestionnairePanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
@@ -60,20 +61,49 @@ class Onboarding2 with Service{
     if (codes.contains('login_netid')) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginNetIdPanel(onboardingContext: {
         "onContinueAction": () {
-          finish(context);
+          _didProceedToLogin(context);
         }
       })));
     }
     else if (codes.contains('login_phone')) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginPhoneOrEmailStatementPanel(onboardingContext: {
         "onContinueAction": () {
-          finish(context);
+          _didProceedToLogin(context);
         }
       })));
     }
     else {
-      finish(context);
+      _didProceedToLogin(context);
     }
+  }
+
+  void _didProceedToLogin(BuildContext context) {
+      _proceedToDemographicsQuestionnaireIfNeeded(context);
+  }
+
+  void _proceedToDemographicsQuestionnaireIfNeeded(BuildContext context) {
+    Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
+    if (codes.contains('demographics_questionnaire')) {
+      Onboarding2DemographicsQuestionnairePanel.prompt(context).then((bool? result) {
+        if (result == true) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2DemographicsQuestionnairePanel(onboardingContext: {
+            'onContinueAction':  () {
+              _didProceedToDemographicsQuestionnaire(context);
+            }
+          },)));
+        }
+        else {
+          _didProceedToDemographicsQuestionnaire(context);
+        }
+      });
+    }
+    else {
+      _didProceedToDemographicsQuestionnaire(context);
+    }
+  }
+
+  void _didProceedToDemographicsQuestionnaire(BuildContext context) {
+    finish(context);
   }
 
   void finish(BuildContext context) {

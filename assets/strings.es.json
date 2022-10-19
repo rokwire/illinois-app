@@ -858,6 +858,13 @@
     "panel.onboarding2.email.button.link.cancel.hint": "",
     "panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
 
+    "panel.onboarding2.questionnaire.demographics.prompt": "Do you want to participate in Demographics Questionnaire?",
+    "panel.onboarding2.questionnaire.demographics.acknowledgement": "Thank you for participating in the {{QuestionnaireName}}.",
+    "panel.onboarding2.questionnaire.demographics.button.submit.title": "Submit",
+    "panel.onboarding2.questionnaire.demographics.button.submit.hint": "",
+    "panel.onboarding2.questionnaire.demographics.error.select.single": "Please choose at least {{MinQuestionAnswers}} aswer of \"{{QuestionTitle}}\".",
+    "panel.onboarding2.questionnaire.demographics.error.select.multi": "Please choose at least {{MinQuestionAnswers}} aswers of \"{{QuestionTitle}}\".",
+
     "panel.explore.header.events.title":"Eventos",
     "panel.explore.header.dining.title":"Comedor de la residencia",
     "panel.explore.header.laundry.title":"Ropa sucia",
@@ -1310,6 +1317,8 @@
     "panel.settings.home.calendar.on_campus.radio_button.off.title": "Siempre hazme fuera del campus",
     "panel.settings.home.calendar.on_campus.title": "En el campus",
     "panel.settings.home.calendar.ada.title": "Necesidades de accesibilidad",
+    "panel.settings.home.calendar.questionnaires.title": "Cuestionarios",
+    "panel.settings.home.calendar.questionnaire.demographics.title": "Cuestionario Demográfico",
 
     "panel.settings.privacy_center.label.title":"Centro de privacidad",
     "panel.settings.privacy_center.label.description":"Personalice sus preferencias de privacidad y datos.",

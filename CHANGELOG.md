@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.2.5] - 2022-10-19
+### Added
+- Added Demographics Questionnaire to Onboarding and Profile [#2465](https://github.com/rokwire/illinois-app/issues/2465).
+
 ## [4.2.4] - 2022-10-17
 ### Changed
 - Sort group post replies descending by date [#2462](https://github.com/rokwire/illinois-app/issues/2462).
