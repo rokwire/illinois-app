@@ -1,0 +1,204 @@
+{
+	"id":"demographics-questionnaire",
+	"title":"Demographics Questionnaire",
+	"description": "Тhis questionnaire will help determine the demographic groups you belong to.",
+	"questions": [{
+		"id":"q01",
+		"title":"How old are you?",
+		"description_prefix":null,
+		"description_suffix":null,
+		"min_answers":1,
+		"max_answers":1,
+		"answers": [
+			{"id":"a01", "title":"Under 18, Will Not be 18 years old by September 30, 2022"},
+			{"id":"a02", "title":"Under 18, but will be 18 years old on or before September 30, 2022"},
+			{"id":"a03", "title":"18"},
+			{"id":"a04", "title":"19"},
+			{"id":"a05", "title":"20"},
+			{"id":"a06", "title":"21"},
+			{"id":"a07", "title":"22-25"},
+			{"id":"a08", "title":"26-30"},
+			{"id":"a09", "title":"31-35"},
+			{"id":"a10", "title":"31-35"},
+			{"id":"a11", "title":"36-40"},
+			{"id":"a12", "title":"Older than 40"},
+			{"id":"a13", "title":"Check this box if you do not want to answer this question"}
+		]
+	},{
+		"id":"q02",
+		"title":"Are you currently located within the United States?",
+		"description_prefix":null,
+		"description_suffix":null,
+		"min_answers":1,
+		"max_answers":1,
+		"answers": [
+			{"id":"a01", "title":"Yes"},
+			{"id":"a02", "title":"No"},
+			{"id":"a03", "title":"Check this box if you do not want to answer this question "}
+		]
+	},{
+		"id":"q03",
+		"title":"What is your gender?",
+		"description_prefix":null,
+		"description_suffix":null,
+		"min_answers":1,
+		"max_answers":1,
+		"answers": [
+			{"id":"a01", "title":"Female"},
+			{"id":"a02", "title":"Male"},
+			{"id":"a03", "title":"Transgender female (MTF)"},
+			{"id":"a04", "title":"Transgender male (FTM)"},
+			{"id":"a05", "title":"Other"},
+			{"id":"a06", "title":"Check this box if you do not want to answer this question"}
+		]
+	},{
+		"id":"q04",
+		"title":"What is your sexual orientation?",
+		"description_prefix":null,
+		"description_suffix":null,
+		"min_answers":1,
+		"max_answers":1,
+		"answers": [
+			{"id":"a01", "title":"Heterosexual"},
+			{"id":"a02", "title":"Homosexual"},
+			{"id":"a03", "title":"Bisexual"},
+			{"id":"a04", "title":"Pansexual"},
+			{"id":"a05", "title":"Asexual"},
+			{"id":"a06", "title":"Other"},
+			{"id":"a07", "title":"Check this box if you do not want to answer this question"}
+		]
+	},{
+		"id":"q05",
+		"title":"What is your year in college?",
+		"description_prefix":null,
+		"description_suffix":null,
+		"min_answers":1,
+		"max_answers":1,
+		"answers": [
+			{"id":"a01", "title":"Freshman or first-year student"},
+			{"id":"a02", "title":"Sophomore"},
+			{"id":"a03", "title":"Junior"},
+			{"id":"a04", "title":"Senior"},
+			{"id":"a05", "title":"Graduate student"},
+			{"id":"a06", "title":"Other (e.g. non-degree student)"},
+			{"id":"a07", "title":"I am not a student"},
+			{"id":"a08", "title":"Check this box if you do not want to answer this question"}
+		]
+	},{
+		"id":"q06",
+		"title":"What is your ethnic background?",
+		"description_prefix":null,
+		"description_suffix":null,
+		"min_answers":1,
+		"max_answers":1,
+		"answers": [
+			{"id":"a01", "title":"Hispanic or Latino"},
+			{"id":"a02", "title":"Not Hispanic or Latino"},
+			{"id":"a03", "title":"Unknown"},
+			{"id":"a04", "title":"Check this box if you do not want to answer this question"}
+		]
+	},{
+		"id":"q07",
+		"title":"What is your racial background?",
+		"description_prefix":null,
+		"description_suffix":null,
+		"min_answers":1,
+		"max_answers":1,
+		"answers": [
+			{"id":"a01", "title":"American Indian"},
+			{"id":"a02", "title":"Alaska Native"},
+			{"id":"a03", "title":"Asian"},
+			{"id":"a04", "title":"Black or African American"},
+			{"id":"a05", "title":"Native Hawaiian or Other Pacific Islander"},
+			{"id":"a06", "title":"White"},
+			{"id":"a07", "title":"Other or multiracial"},
+			{"id":"a08", "title":"Unknown"},
+			{"id":"a09", "title":"Check this box if you do not want to answer this question"}
+		]
+	},{
+		"id":"q08",
+		"title":"Which of the following best describes your racial or ethnic ancestry?",
+		"description_prefix":null,
+		"description_suffix":null,
+		"min_answers":1,
+		"max_answers":1,
+		"answers": [
+			{"id":"a01", "title":"Asian Indian"},
+			{"id":"a02", "title":"Cambodian"},
+			{"id":"a03", "title":"Chinese"},
+			{"id":"a04", "title":"Filipino/a"},
+			{"id":"a05", "title":"Indonesian"},
+			{"id":"a06", "title":"Japanese"},
+			{"id":"a07", "title":"Korean"},
+			{"id":"a08", "title":"Lao"},
+			{"id":"a09", "title":"Pakistani"},
+			{"id":"a10", "title":"Taiwanese"},
+			{"id":"a11", "title":"Vietnamese"},
+			{"id":"a12", "title":"Other Asian"},
+			{"id":"a13", "title":"Cuban"},
+			{"id":"a14", "title":"Mexican"},
+			{"id":"a15", "title":"Puerto Rican"},
+			{"id":"a16", "title":"Central American"},
+			{"id":"a17", "title":"South American"},
+			{"id":"a18", "title":"Arab"},
+			{"id":"a19", "title":"Persian / Iranian"},
+			{"id":"a20", "title":"Turkish"},
+			{"id":"a21", "title":"Irish"},
+			{"id":"a22", "title":"German"},
+			{"id":"a23", "title":"English"},
+			{"id":"a24", "title":"Italian"},
+			{"id":"a25", "title":"French"},
+			{"id":"a26", "title":"Polish"},
+			{"id":"a27", "title":"None of the above"},
+			{"id":"a28", "title":"Check this box if you do not want to answer this question"}
+		]
+	},{
+		"id":"q09",
+		"title":"How long have you lived in the U.S?",
+		"description_prefix":null,
+		"description_suffix":null,
+		"min_answers":1,
+		"max_answers":1,
+		"answers": [
+			{"id":"a01", "title":"Less than a year"},
+			{"id":"a02", "title":"More than 1 year but less than 2 years"},
+			{"id":"a03", "title":"More than 2 years but less than 3 years"},
+			{"id":"a04", "title":"More than 3 years but less than 4 years"},
+			{"id":"a05", "title":"More than 4 years but less than 5 years"},
+			{"id":"a06", "title":"More than 5 years but less than 7 years"},
+			{"id":"a07", "title":"More than 7 years but less than 9 years"},
+			{"id":"a08", "title":"More than 9 years but less than 12 years"},
+			{"id":"a09", "title":"More than 12 years but less than 15 years"},
+			{"id":"a10", "title":"More than 15 years but less than 20 years"},
+			{"id":"a11", "title":"More than 20 years"},
+			{"id":"a12", "title":"Check this box if you do not want to answer this question"}
+		]
+	},{
+		"id":"q10",
+		"title":"Are you an international student or an exchange student from a country outside the US?",
+		"description_prefix":null,
+		"description_suffix":null,
+		"min_answers":1,
+		"max_answers":1,
+		"answers": [
+			{"id":"a01", "title":"Yes"},
+			{"id":"a02", "title":"No"},
+			{"id":"a03", "title":"I am not a student"},
+			{"id":"a04", "title":"Check this box if you do not want to answer this question"}
+		]
+	}],
+	"strings":{
+		"en":{
+			"Yes":"Yes",
+			"No":"No"
+		},
+		"es":{
+			"Yes":"Sí",
+			"No":"No"
+		},
+		"zh": {
+			"Yes":"是的",
+			"No":"不"
+		}
+	}
+}
