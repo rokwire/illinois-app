@@ -21,6 +21,7 @@ import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2DemographicsQuestionnairePanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -99,6 +100,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       _buildInfoContent(),
       _buildOnCampusSettings(),
       _buildAdaSettings(),
+      _buildQuestionnaireOptions(),
       _buildAccountManagementOptions(),
       _buildDeleteMyAccount()
     ]);
@@ -279,6 +281,28 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     );
   }
 
+  Widget _buildQuestionnaireOptions() {
+    return Padding(padding: EdgeInsets.only(top: 25), child:
+      Column(children:<Widget>[
+        Row(children: [
+          Expanded(child:
+            Text(Localization().getStringEx('panel.settings.home.calendar.questionnaires.title', 'Questionnaires'), style:
+            Styles().textStyles?.getTextStyle("widget.title.large.fat")
+            ),
+          ),
+        ]),
+        Container(height: 4),
+        RibbonButton(
+          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+          //borderRadius: BorderRadius.all(Radius.circular(5)),
+          label: Localization().getStringEx("panel.settings.home.calendar.questionnaire.demographics.title", "Demographics Questionnaire"),
+          onTap: _onDemographicQuestionnaireClicked
+        )
+      ]),
+    );
+  }
+  
+
   //OnCampus Settings
 
   Widget _buildOnCampusSettings() {
@@ -349,6 +373,11 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     setStateIfMounted(() {
       StudentCourses().requireAda = !StudentCourses().requireAda;
     });
+  }
+
+  void _onDemographicQuestionnaireClicked() {
+    Analytics().logSelect(target: 'Demographic Questionnaire');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2DemographicsQuestionnairePanel(onboardingContext: {},)));
   }
 
   void _onTapOnCampusAuto() {

@@ -858,7 +858,14 @@
 	"panel.onboarding2.email.button.link.cancel.hint": "",
 	"panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
 
-  "panel.explore.header.events.title":"活动",
+	"panel.onboarding2.questionnaire.demographics.prompt": "Do you want to participate in Demographics Questionnaire?",
+	"panel.onboarding2.questionnaire.demographics.acknowledgement": "Thank you for participating in the {{QuestionnaireName}}.",
+	"panel.onboarding2.questionnaire.demographics.button.submit.title": "Submit",
+	"panel.onboarding2.questionnaire.demographics.button.submit.hint": "",
+	"panel.onboarding2.questionnaire.demographics.error.select.single": "Please choose at least {{MinQuestionAnswers}} aswer of \"{{QuestionTitle}}\".",
+	"panel.onboarding2.questionnaire.demographics.error.select.multi": "Please choose at least {{MinQuestionAnswers}} aswers of \"{{QuestionTitle}}\".",
+
+	"panel.explore.header.events.title":"活动",
   "panel.explore.header.dining.title":"宿舍餐廳",
 	"panel.explore.header.laundry.title":"洗衣店",
 	"panel.explore.header.buildings.title":"校園建築",
@@ -1310,6 +1317,8 @@
 	"panel.settings.home.calendar.on_campus.radio_button.off.title": "總是讓我離開校園",
 	"panel.settings.home.calendar.on_campus.title": "在校園",
 	"panel.settings.home.calendar.ada.title": "可訪問性需求",
+	"panel.settings.home.calendar.questionnaires.title": "問卷調查",
+	"panel.settings.home.calendar.questionnaire.demographics.title": "人口統計問卷",
 
 	"panel.settings.privacy_center.label.title":"隐私中心",
 	"panel.settings.privacy_center.label.description":"个性化您的隐私和数据偏好.",
