@@ -23,19 +23,20 @@ class Onboarding2DemographicsQuestionnairePanel extends StatefulWidget {
     _Onboarding2DemographicsQuestionnairePanelState();
 
   static Future<bool?> prompt(BuildContext context) async {
+    String promptEn = 'Do you want to participate in Demographics Questionnaire?';
     return await AppAlert.showCustomDialog(context: context,
       contentWidget:
-        Text('Do you want to participate in Demographics Questionnaire?',
+        Text(Localization().getStringEx('panel.onboarding2.questionnaire.demographics.prompt', promptEn),
           style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary,),
         ),
       actions: [
         TextButton(
           child: Text(Localization().getStringEx('dialog.yex.title', 'Yes')),
-          onPressed: () => Navigator.of(context).pop(true)
+          onPressed: () { Analytics().logAlert(text: promptEn, selection: 'Yes'); Navigator.of(context).pop(true); }
         ),
         TextButton(
           child: Text(Localization().getStringEx('dialog.no.title', 'No')),
-          onPressed: () => Navigator.of(context).pop(false)
+          onPressed: () { Analytics().logAlert(text: promptEn, selection: 'No'); Navigator.of(context).pop(false); }
         )
       ]);
   }
@@ -142,7 +143,9 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
           ),
         ),
         Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 12, bottom: 12,), child:
-          RoundedButton(label: 'Submit', hint: '',
+          RoundedButton(
+            label: Localization().getStringEx('panel.onboarding2.questionnaire.demographics.button.submit.title', 'Submit'),
+            hint: Localization().getStringEx('panel.onboarding2.questionnaire.demographics.button.submit.hint', ''),
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             borderColor: submitEnabled ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent,
             backgroundColor: Styles().colors!.white,
@@ -248,6 +251,11 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
   }
 
   void _onAnswer(Answer answer, { required Question question }) {
+
+    String answerTitle = _questionnaireString(answer.title, languageCode: 'en');
+    String? questionTitle = _questionnaireString(question.title, languageCode: 'en');;
+    Analytics().logSelect(target: '$questionTitle => $answerTitle');
+
     String? answerId = answer.id;
     String? questionId = question.id;
     if ((questionId != null) && (answerId != null)) {
@@ -271,6 +279,8 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
 
   void _onSubmit() {
 
+    Analytics().logSelect(target: 'Submit');
+
     List<Question>? questions = _questionnaire?.questions;
     if (questions != null) {
       int index = this._failSubmitQuestion;
@@ -278,21 +288,30 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
       if (failQuestion != null) {
         int minQuestionAnswers = failQuestion.minAnswers ?? 0;
         String questionTitle = _displayQuestionTitle(failQuestion, index: index + 1);
-        AppAlert.showDialogResult(context, (1 < minQuestionAnswers) ?
-          'Please choose at least $minQuestionAnswers aswers of "$questionTitle".' :
-          'Please choose at least $minQuestionAnswers aswer of "$questionTitle".'
-        );
+        String promptFormat = (1 < minQuestionAnswers) ?
+          Localization().getStringEx('panel.onboarding2.questionnaire.demographics.error.select.multi', 'Please choose at least {{MinQuestionAnswers}} aswers of "{{QuestionTitle}}".') :
+          Localization().getStringEx('panel.onboarding2.questionnaire.demographics.error.select.single', 'Please choose at least {{MinQuestionAnswers}} aswer of "{{QuestionTitle}}".');
+        String displayPrompt = promptFormat.
+          replaceAll('{{MinQuestionAnswers}}', '$minQuestionAnswers').
+          replaceAll('{{QuestionTitle}}', '$questionTitle');
+
+        AppAlert.showDialogResult(context, displayPrompt);
       }
       else {
         Auth2().prefs?.setQuestionnaireAnswers(_questionnaire?.id, _selection);
 
-        Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
-        if (onContinue != null) {
-          onContinue();
-        }
-        else {
-          Navigator.of(context).pop();
-        }
+        String questionaireTitle = _questionnaireString(_questionnaire?.title);
+        String promptFormat = Localization().getStringEx('panel.onboarding2.questionnaire.demographics.acknowledgement', 'Thank you for participating in the {{QuestionnaireName}}.');
+        String displayPrompt = promptFormat.replaceAll('{{QuestionnaireName}}', questionaireTitle);
+        AppAlert.showDialogResult(context, displayPrompt).then((_) {
+          Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
+          if (onContinue != null) {
+            onContinue();
+          }
+          else {
+            Navigator.of(context).pop();
+          }
+        });
       }
     }
   }
@@ -315,10 +334,10 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
     return -1;
   }
 
-  String _questionnaireString(String? key) => _questionnaire?.stringValue(key) ?? key ?? '';
+  String _questionnaireString(String? key, { String? languageCode }) => _questionnaire?.stringValue(key, languageCode: languageCode) ?? key ?? '';
 
-  String _displayQuestionTitle(Question question, { int? index }) {
-    String title = _questionnaireString(question.title);
+  String _displayQuestionTitle(Question question, { int? index, String? languageCode }) {
+    String title = _questionnaireString(question.title, languageCode: languageCode);
     return ((index != null) && title.isNotEmpty) ? "$index. $title" : title;
   }
 

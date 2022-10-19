@@ -858,7 +858,14 @@
 	"panel.onboarding2.email.button.link.cancel.hint": "",
 	"panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
 
-  "panel.explore.header.events.title":"活动",
+	"panel.onboarding2.questionnaire.demographics.prompt": "Do you want to participate in Demographics Questionnaire?",
+	"panel.onboarding2.questionnaire.demographics.acknowledgement": "Thank you for participating in the {{QuestionnaireName}}.",
+	"panel.onboarding2.questionnaire.demographics.button.submit.title": "Submit",
+	"panel.onboarding2.questionnaire.demographics.button.submit.hint": "",
+	"panel.onboarding2.questionnaire.demographics.error.select.single": "Please choose at least {{MinQuestionAnswers}} aswer of \"{{QuestionTitle}}\".",
+	"panel.onboarding2.questionnaire.demographics.error.select.multi": "Please choose at least {{MinQuestionAnswers}} aswers of \"{{QuestionTitle}}\".",
+
+	"panel.explore.header.events.title":"活动",
   "panel.explore.header.dining.title":"宿舍餐廳",
 	"panel.explore.header.laundry.title":"洗衣店",
 	"panel.explore.header.buildings.title":"校園建築",
