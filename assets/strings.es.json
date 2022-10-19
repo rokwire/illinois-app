@@ -2386,6 +2386,10 @@
     "panel.checklist.text.course.section": "Section",
     "panel.checklist.text.course.term": "Term",
 
+    "panel.appointment.detail.meeting.id.label": "Identificación de la reunión:",
+    "panel.appointment.detail.meeting.passcode.label": "Código de acceso:",
+    "panel.appointment.detail.cancel.description": "Para cancelar una cita, vaya a MyMcKinley.illinois.edu o llame al (217-333-2700) durante el horario comercial. Para evitar el cargo de una cita perdida, debe cancelar su cita al menos dos horas antes de la hora de la cita programada.",
+
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
 
     "widget.game_detail_heading.button.live_stats.title":"Estadísticas en vivo",

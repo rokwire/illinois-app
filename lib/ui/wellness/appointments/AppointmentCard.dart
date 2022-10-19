@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -54,11 +56,9 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
   @override
   Widget build(BuildContext context) {
     const double imageSize = 64;
-    DateTime now = DateTime.now();
-    bool isUpcoming = (widget.appointment.dateTimeUtc != null) && widget.appointment.dateTimeUtc!.isAfter(now.toUtc());
     String? imageUrl = widget.appointment.imageUrl;
     bool isFavorite = Auth2().isFavorite(widget.appointment);
-    bool starVisible = Auth2().canFavorite && isUpcoming;
+    bool starVisible = Auth2().canFavorite && widget.appointment.isUpcoming;
 
     return InkWell(
         onTap: _onTapAppointmentCard,
@@ -133,7 +133,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                                       Padding(
                                           padding: EdgeInsets.only(right: 6),
                                           child: Image.asset((widget.appointment.type == AppointmentType.online)
-                                              ? 'images/icon-telehealth.png'
+                                              ? 'images/laptop.png'
                                               : 'images/icon-location.png')),
                                       Expanded(
                                           child: Text(StringUtils.ensureNotEmpty(Appointment.typeToDisplayString(widget.appointment.type)),
@@ -156,12 +156,13 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                                                   excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders)))))
                             ]))
                       ]))),
-              Container(color: (isUpcoming ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary), height: 4)
+              Container(color: (widget.appointment.isUpcoming ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary), height: 4)
             ])));
   }
 
   void _onTapAppointmentCard() {
-    //TBD: Appointment - implement
+    Analytics().logSelect(target: 'Appointment Detail');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: widget.appointment)));
   }
 
   void _onTapCardImage(String imageUrl) {

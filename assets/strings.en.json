@@ -2389,6 +2389,10 @@
     "panel.checklist.text.course.section": "Section",
     "panel.checklist.text.course.term": "Term",
 
+    "panel.appointment.detail.meeting.id.label": "Meeting ID:",
+    "panel.appointment.detail.meeting.passcode.label": "Passcode:",
+    "panel.appointment.detail.cancel.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
+
     "widget.game_day.label.its_game_day":"It's Game Day!",
 
     "widget.game_detail_heading.button.live_stats.title":"Live Stats",

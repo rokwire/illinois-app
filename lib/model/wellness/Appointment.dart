@@ -57,6 +57,11 @@ class Appointment with Explore, Favorite {
     return AppDateTime().formatDateTime(dateTimeUtc, format: 'MMM dd, H:mma');
   }
 
+  bool get isUpcoming {
+    DateTime now = DateTime.now();
+    return (dateTimeUtc != null) && dateTimeUtc!.isAfter(now.toUtc());
+  }
+
   String? get hostDisplayName {
     String? displayName;
     if (host != null) {
@@ -160,9 +165,10 @@ class AppointmentLocation {
   final String? id;
   final double? latitude;
   final double? longitude;
+  final String? title;
   final String? phone;
 
-  AppointmentLocation({this.id, this.latitude, this.longitude, this.phone});
+  AppointmentLocation({this.id, this.latitude, this.longitude, this.title, this.phone});
 
   static AppointmentLocation? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -172,6 +178,7 @@ class AppointmentLocation {
         id: JsonUtils.stringValue(json['id']),
         latitude: JsonUtils.doubleValue(json['latitude']),
         longitude: JsonUtils.doubleValue(json['longitude']),
+        title: JsonUtils.stringValue(json['title']),
         phone: JsonUtils.stringValue(json['phone']));
   }
 }
