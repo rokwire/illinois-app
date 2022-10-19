@@ -24,15 +24,29 @@ class Appointments /* with Service */ {
   factory Appointments() => _service;
   Appointments._internal();
 
-  Future<List<Appointment>?> loadAppointments() async {
+  Future<List<Appointment>?> loadAppointments({bool? onlyUpcoming, AppointmentType? type}) async {
     List<Appointment>? appointments;
     try {
       appointments = Appointment.listFromJson(JsonUtils.decodeList(await rootBundle.loadString('assets/appointments.json')));
     } catch (e) {
       debugPrint(e.toString());
     }
-    _sortAppointments(appointments);
-    return appointments;
+    List<Appointment>? resultAppointments;
+    //TBD: Appointment - do this filtering on the backend
+    if (CollectionUtils.isNotEmpty(appointments)) {
+      resultAppointments = <Appointment>[];
+      for (Appointment appointment in appointments!) {
+        if ((onlyUpcoming == true) && !appointment.isUpcoming) {
+          continue;
+        }
+        if ((type != null) && (type != appointment.type)) {
+          continue;
+        }
+        resultAppointments.add(appointment);
+      }
+      _sortAppointments(resultAppointments);
+    }
+    return resultAppointments;
   }
 
   void _sortAppointments(List<Appointment>? appointments) {
