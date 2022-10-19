@@ -137,7 +137,7 @@ class Appointment with Explore, Favorite {
   @override String? get exploreTitle => title;
   @override Map<String, dynamic> toJson() {
     //TBD: Appointment - implement
-    throw UnimplementedError();
+    return {};
   }
 }
 

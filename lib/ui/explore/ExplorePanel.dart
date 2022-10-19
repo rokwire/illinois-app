@@ -19,6 +19,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Laundries.dart';
@@ -62,7 +64,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
-enum ExploreItem { Events, Dining, Laundry, Buildings, StudentCourse, StateFarmWayfinding }
+enum ExploreItem { Events, Dining, Laundry, Buildings, StudentCourse, StateFarmWayfinding, Appointments }
 
 enum EventsDisplayType {single, multiple, all}
 
@@ -279,6 +281,9 @@ class ExplorePanelState extends State<ExplorePanel>
         else if (code == 'state_farm_wayfinding') {
           exploreItems.add(ExploreItem.StateFarmWayfinding);
         }
+        else if (code == 'appointments') {
+          exploreItems.add(ExploreItem.Appointments);
+        }
       }
     }
     
@@ -483,6 +488,11 @@ class ExplorePanelState extends State<ExplorePanel>
           _viewStateFarmPoi();
           break;
 
+        case ExploreItem.Appointments:
+        //TBD: Appointments - filtering
+          task = _loadAppointments();
+          break;
+
         default:
           break;
       }
@@ -564,6 +574,10 @@ class ExplorePanelState extends State<ExplorePanel>
   Future<List<Explore>?> _loadStudentCourse(List<ExploreFilter>? selectedFilterList) async {
     String? termId = _getSelectedTermId(selectedFilterList) ?? StudentCourses().displayTermId;
     return (termId != null) ? StudentCourses().loadCourses(termId: termId) : null;
+  }
+
+  Future<List<Explore>?> _loadAppointments() async {
+    return Appointments().loadAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
   }
 
   List<Event>? _buildDisplayEvents(List<Event> allEvents) {
@@ -1546,6 +1560,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus View');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
+      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.title', 'MyMcKinley In-Person Appointments');
       default:                              return null;
     }
   }
@@ -1558,6 +1573,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.hint', '');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.hint', '');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
+      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.hint', '');
       default:                              return null;
     }
   }
@@ -1570,6 +1586,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.header.buildings.title', 'Campus Buildings');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.header.student_course.title', 'My Courses');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
+      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.header.appointments.title', 'MyMcKinley In-Person Appointments');
       default:                              return null;
     }
   }
