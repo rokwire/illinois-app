@@ -594,7 +594,7 @@
 	"panel.onboarding.roles.button.parent.hint":"",
 	"panel.onboarding.roles.button.gies.title":"GIES學生",
 	"panel.onboarding.roles.button.gies.hint":"",
-"panel.onboarding.roles.button.continue.title":"继续",
+	"panel.onboarding.roles.button.continue.title":"继续",
 	"panel.onboarding.roles.button.continue.hint":"",
 
 	"panel.onboarding.sports.label.title":"",
@@ -866,11 +866,12 @@
 	"panel.onboarding2.questionnaire.demographics.error.select.multi": "Please choose at least {{MinQuestionAnswers}} aswers of \"{{QuestionTitle}}\".",
 
 	"panel.explore.header.events.title":"活动",
-  "panel.explore.header.dining.title":"宿舍餐廳",
+	"panel.explore.header.dining.title":"宿舍餐廳",
 	"panel.explore.header.laundry.title":"洗衣店",
 	"panel.explore.header.buildings.title":"校園建築",
 	"panel.explore.header.student_course.title":"我的課程",
-  "panel.explore.header.state_farm.title":"國營農場尋路",
+	"panel.explore.header.state_farm.title":"國營農場尋路",
+	"panel.explore.header.appointments.title":"MyMcKinley 面對面約會",
 	"panel.explore.button.events.title":"活动",
 	"panel.explore.button.events.hint":"",
 	"panel.explore.button.dining.title":"宿舍餐廳",
@@ -883,6 +884,8 @@
 	"panel.explore.button.student_course.hint":"",
 	"panel.explore.button.state_farm.title":"國營農場尋路",
 	"panel.explore.button.state_farm.hint":"",
+    "panel.explore.button.appointments.title":"MyMcKinley 面對面約會",
+    "panel.explore.button.appointments.hint":"",
 	"panel.explore.button.directions.title":"路线",
 	"panel.explore.button.directions.hint":"",
 	"panel.explore.button.details.title":"详细信息",
@@ -940,6 +943,8 @@
 	"panel.explore.item.courses.name":"培訓班",
 	"panel.explore.item.unknown.name":"探索",
 	"panel.explore.map.popup.title.format":"%d %s",
+
+    "panel.explore.missing.appointments.msg":"您目前沒有在伊利諾伊州應用程序中鏈接的即將到來的面對面約會。",
 
 	"panel.explore_list.header.title":"探索",
 
@@ -1716,6 +1721,7 @@
 	"panel.wellness.section.daily_tips.label": "今天的健康小貼士",
 	"panel.wellness.section.rings.label": "每日健康戒指",
 	"panel.wellness.section.todo.label": "待辦事項清單",
+    "panel.wellness.section.appointments.label": "MyMcKinley 約會",
 	"panel.wellness.section.resources.label": "健康資源",
 	"panel.wellness.section.podcast.label": "健康伊利尼播客",
 	"panel.wellness.section.struggling.label": "我正在掙扎",
@@ -1790,6 +1796,12 @@
 
 	"panel.wellness.resources.button.all.title": "查看全部",
 	"panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
+
+    "panel.wellness.appointments.home.reschedule_appointment.label": "需要取消或重新安排？",
+    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
+    "panel.wellness.appointments.home.upcoming.list.empty.msg": "您目前沒有在伊利諾伊州應用程序中鏈接的即將到來的約會。",
+    "panel.wellness.appointments.home.past.list.empty.msg": "您沒有在伊利諾伊應用程序中鏈接最近的過去約會。",
+    "panel.wellness.appointments.home.past_appointments.header.label": "最近過去的約會",
 
 	"panel.wellness.home.header.title": "養生",
 	"panel.wellness.home.eight_dimensions.header.title": "8健康維度",
@@ -2387,6 +2399,10 @@
 	"panel.checklist.text.course.section": "Section",
 	"panel.checklist.text.course.term": "Term",
 
+    "panel.appointment.detail.meeting.id.label": "會議編號：",
+    "panel.appointment.detail.meeting.passcode.label": "密碼：",
+    "panel.appointment.detail.cancel.description": "要取消預約，請訪問 MyMcKinley.illinois.edu 或在工作時間致電 (217-333-2700)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
+
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 
 	"widget.game_detail_heading.button.live_stats.title":"实时信息",
@@ -2898,6 +2914,11 @@
 	"model.wellness.todo.category.reminder.type.morning_of.label": "上午 (上午 8:00)",
 	"model.wellness.todo.category.reminder.type.night_before.label": "前一天晚上 (晚上 9:00)",
 	"model.wellness.todo.category.reminder.type.specific_time.label": "特定的時間",
+
+    "model.wellness.appointment.type.in_person.label": "親自",
+    "model.wellness.appointment.type.online.label": "遠程醫療",
+    "model.wellness.appointment.category.label": "MYMCKINLEY 任命",
+    "model.wellness.appointment.title.label": "MyMcKinley 預約",
 
 	"logic.date_time.greeting.morning": "早上好",
 	"logic.date_time.greeting.afternoon": "下午好",
