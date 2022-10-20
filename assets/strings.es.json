@@ -864,6 +864,7 @@
     "panel.onboarding2.research.questionnaire.button.submit.hint": "",
     "panel.onboarding2.research.questionnaire.error.select.single": "Please choose at least {{MinQuestionAnswers}} aswer of \"{{QuestionTitle}}\".",
     "panel.onboarding2.research.questionnaire.error.select.multi": "Please choose at least {{MinQuestionAnswers}} aswers of \"{{QuestionTitle}}\".",
+    "panel.onboarding2.research.questionnaire.error.load": "Failed to load research questionnaire.",
 
     "panel.explore.header.events.title":"Eventos",
     "panel.explore.header.dining.title":"Comedor de la residencia",

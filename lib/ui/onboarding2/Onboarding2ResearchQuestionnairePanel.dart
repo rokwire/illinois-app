@@ -343,7 +343,8 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
               Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 24, bottom: 24), child:
                 Row(children: [
                   Expanded(child:
-                    Text('Failed to load demographics questionnaire.', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 20, color: Styles().colors?.fillColorPrimary), textAlign: TextAlign.center,),
+                    Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.error.load', 'Failed to load research questionnaire.'), style:
+                      TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 20, color: Styles().colors?.fillColorPrimary), textAlign: TextAlign.center,),
                   ),
                 ],)
               )
