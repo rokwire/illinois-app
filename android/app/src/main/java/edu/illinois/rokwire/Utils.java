@@ -529,6 +529,8 @@ public class Utils {
                 return ExploreType.BUILDING;
             } else if (singleExplore.get("coursetitle") != null) {
                 return ExploreType.STUDENT_COURSE;
+            } else if (singleExplore.get("uin") != null) {
+                return ExploreType.APPOINTMENT;
             } else {
                 return ExploreType.UNKNOWN;
             }
@@ -635,6 +637,10 @@ public class Utils {
                 }
 
                 return result;
+            }
+            else if (exporeType == ExploreType.APPOINTMENT) {
+                HashMap locationMap = Utils.Map.getMapValueForKey(exploreMap, "location");
+                return Utils.Map.getStringValueForKey(locationMap, "title");
             }
 
             return null;
@@ -1015,6 +1021,6 @@ public class Utils {
     }
 
     public enum ExploreType {
-        EVENT, DINING, LAUNDRY, PARKING, BUILDING, STUDENT_COURSE, UNKNOWN
+        EVENT, DINING, LAUNDRY, PARKING, BUILDING, STUDENT_COURSE, APPOINTMENT, UNKNOWN
     }
 }
