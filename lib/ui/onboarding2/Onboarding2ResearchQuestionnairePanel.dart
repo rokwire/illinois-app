@@ -1,5 +1,4 @@
 
-import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
@@ -21,25 +20,6 @@ class Onboarding2ResearchQuestionnairePanel extends StatefulWidget {
   @override
   State<Onboarding2ResearchQuestionnairePanel> createState() =>
     _Onboarding2ResearchQuestionnairePanelState();
-
-  static Future<bool?> prompt(BuildContext context) async {
-    String promptEn = 'Do you want to participate in Research Questionnaire?';
-    return await AppAlert.showCustomDialog(context: context,
-      contentWidget:
-        Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt', promptEn),
-          style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary,),
-        ),
-      actions: [
-        TextButton(
-          child: Text(Localization().getStringEx('dialog.yex.title', 'Yes')),
-          onPressed: () { Analytics().logAlert(text: promptEn, selection: 'Yes'); Navigator.of(context).pop(true); }
-        ),
-        TextButton(
-          child: Text(Localization().getStringEx('dialog.no.title', 'No')),
-          onPressed: () { Analytics().logAlert(text: promptEn, selection: 'No'); Navigator.of(context).pop(false); }
-        )
-      ]);
-  }
 }
 
 class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2ResearchQuestionnairePanel> {
@@ -80,10 +60,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       backgroundColor: Styles().colors?.background,
       body: SafeArea(child:
         Stack(children: [
-          OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: () {
-            Analytics().logSelect(target: "Back");
-            Navigator.pop(context);
-          }),
+          OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: _onBack,),
           _buildContent(),
         ],)
       ),
@@ -277,6 +254,11 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     }
   }
 
+  void _onBack() {
+    Analytics().logSelect(target: "Back");
+    Navigator.pop(context);
+  }
+
   void _onSubmit() {
 
     Analytics().logSelect(target: 'Submit');
@@ -304,12 +286,10 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         String promptFormat = Localization().getStringEx('panel.onboarding2.research.questionnaire.acknowledgement', 'Thank you for participating in the {{QuestionnaireName}}.');
         String displayPrompt = promptFormat.replaceAll('{{QuestionnaireName}}', questionaireTitle);
         AppAlert.showDialogResult(context, displayPrompt).then((_) {
+          Navigator.of(context).pop();
           Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
           if (onContinue != null) {
             onContinue();
-          }
-          else {
-            Navigator.of(context).pop();
           }
         });
       }

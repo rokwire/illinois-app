@@ -858,7 +858,7 @@
 	"panel.onboarding2.email.button.link.cancel.hint": "",
 	"panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
 
-	"panel.onboarding2.research.questionnaire.prompt": "Do you want to participate in Demographics Questionnaire?",
+	"panel.onboarding2.research.questionnaire.prompt": "Would you like to participate in Research?",
 	"panel.onboarding2.research.questionnaire.acknowledgement": "Thank you for participating in the {{QuestionnaireName}}.",
 	"panel.onboarding2.research.questionnaire.button.submit.title": "Submit",
 	"panel.onboarding2.research.questionnaire.button.submit.hint": "",
