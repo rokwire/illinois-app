@@ -859,6 +859,13 @@
     "panel.onboarding2.email.button.link.cancel.hint": "",
     "panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
 
+    "panel.onboarding2.questionnaire.demographics.prompt": "Do you want to participate in Demographics Questionnaire?",
+    "panel.onboarding2.questionnaire.demographics.acknowledgement": "Thank you for participating in the {{QuestionnaireName}}.",
+    "panel.onboarding2.questionnaire.demographics.button.submit.title": "Submit",
+    "panel.onboarding2.questionnaire.demographics.button.submit.hint": "",
+    "panel.onboarding2.questionnaire.demographics.error.select.single": "Please choose at least {{MinQuestionAnswers}} aswer of \"{{QuestionTitle}}\".",
+    "panel.onboarding2.questionnaire.demographics.error.select.multi": "Please choose at least {{MinQuestionAnswers}} aswers of \"{{QuestionTitle}}\".",
+
     "panel.explore.header.events.title":"Events",
     "panel.explore.header.dining.title":"Residence Hall Dining",
     "panel.explore.header.laundry.title":"Laundry",
@@ -1314,6 +1321,8 @@
     "panel.settings.home.calendar.on_campus.radio_button.off.title": "Always make me off campus",
     "panel.settings.home.calendar.on_campus.title": "On Campus",
     "panel.settings.home.calendar.ada.title": "Accessibility Needs",
+    "panel.settings.home.calendar.questionnaires.title": "Questionnaires",
+    "panel.settings.home.calendar.questionnaire.demographics.title": "Demographics Questionnaire",
 
     "panel.settings.privacy_center.label.title":"Privacy Center",
     "panel.settings.privacy_center.label.description":"Personalize your privacy and data preferences.",

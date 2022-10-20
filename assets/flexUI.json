@@ -67,7 +67,7 @@
 			
 			"roles": ["student", "employee", "parent", "fan", "alumni", "visitor", "resident"],
 			
-			"onboarding":["get_started", "video_tutorials", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs"],
+			"onboarding":["get_started", "video_tutorials", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs", "demographics_questionnaire"],
 	
 			"campus_guide.features":["athletics", "bus_pass", "dining", "events", "groups", "illini_cash", "illini_id", "laundry", "library_card", "meal_plan", "my_illini", "parking", "quick_polls", "saved"],
 			
@@ -117,6 +117,7 @@
 				"onboarding.verify_phone"         : 3,
 				"onboarding.confirm_phone"        : 3,
 				"onboarding.sport_prefs"          : 3,
+				"onboarding.demographics_questionnaire": 4,
 	
 				"features.analytics"              : 2,
 				"features.location_services"      : 2,
@@ -163,7 +164,9 @@
 				"settings.linked.phone.remove"        : { "phoneLinked": true },
 				"settings.linked.email"               : { "emailLinked": true },
 				"settings.linked.email.info"          : { "emailLinked": true },
-				"settings.linked.email.remove"        : { "emailLinked": true }
+				"settings.linked.email.remove"        : { "emailLinked": true },
+
+				"onboarding.demographics_questionnaire": { "shibbolethLoggedIn": true }
 			},
 			"platform":{
 				"campus_resources": { "build": "debug" }
