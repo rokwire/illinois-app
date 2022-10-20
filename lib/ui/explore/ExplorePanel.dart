@@ -19,12 +19,16 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -62,7 +66,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
-enum ExploreItem { Events, Dining, Laundry, Buildings, StudentCourse, StateFarmWayfinding }
+enum ExploreItem { Events, Dining, Laundry, Buildings, StudentCourse, StateFarmWayfinding, Appointments }
 
 enum EventsDisplayType {single, multiple, all}
 
@@ -279,6 +283,9 @@ class ExplorePanelState extends State<ExplorePanel>
         else if (code == 'state_farm_wayfinding') {
           exploreItems.add(ExploreItem.StateFarmWayfinding);
         }
+        else if (code == 'appointments') {
+          exploreItems.add(ExploreItem.Appointments);
+        }
       }
     }
     
@@ -483,6 +490,11 @@ class ExplorePanelState extends State<ExplorePanel>
           _viewStateFarmPoi();
           break;
 
+        case ExploreItem.Appointments:
+        //TBD: Appointments - filtering
+          task = _loadAppointments();
+          break;
+
         default:
           break;
       }
@@ -512,6 +524,9 @@ class ExplorePanelState extends State<ExplorePanel>
         _loadingProgress = null;
         _displayExplores = explores;
         _placeExploresOnMap();
+        if ((_selectedItem == ExploreItem.Appointments) && CollectionUtils.isEmpty(_displayExplores)) {
+          _showMissingAppointmentsPopup();
+        }
       });
   }
 
@@ -564,6 +579,42 @@ class ExplorePanelState extends State<ExplorePanel>
   Future<List<Explore>?> _loadStudentCourse(List<ExploreFilter>? selectedFilterList) async {
     String? termId = _getSelectedTermId(selectedFilterList) ?? StudentCourses().displayTermId;
     return (termId != null) ? StudentCourses().loadCourses(termId: termId) : null;
+  }
+
+  Future<List<Explore>?> _loadAppointments() async {
+    return Appointments().loadAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
+  }
+
+  void _showMissingAppointmentsPopup() {
+    AppAlert.showCustomDialog(
+        context: context,
+        contentPadding: EdgeInsets.all(0),
+        contentWidget: Container(
+            height: 200,
+            decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
+            child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
+              Padding(
+                  padding: EdgeInsets.all(30),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
+                    Image.asset('images/block-i-orange.png'),
+                    Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        //TBD: Appointments - read properly app title
+                        child: Text(
+                            Localization().getStringEx('panel.explore.missing.appointments.msg',
+                                'You currently have no upcoming in-person appointments linked within Illinois app.'),
+                            textAlign: TextAlign.center,
+                            style: Styles().textStyles?.getTextStyle("widget.detail.small")))
+                  ])),
+              Align(
+                  alignment: Alignment.topRight,
+                  child: GestureDetector(
+                      onTap: () {
+                        Analytics().logSelect(target: 'Close missing appointments popup');
+                        Navigator.of(context).pop();
+                      },
+                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png'))))
+            ])));
   }
 
   List<Event>? _buildDisplayEvents(List<Event> allEvents) {
@@ -1267,6 +1318,10 @@ class ExplorePanelState extends State<ExplorePanel>
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
               AthleticsGameDetailPanel(game: explore)));
         }
+        else if(explore is Appointment) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+              AppointmentDetailPanel(appointment: explore)));
+        }
         else {
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
             ExploreDetailPanel(explore: explore,initialLocationData: _locationData,)));
@@ -1546,6 +1601,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus View');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
+      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.title', 'MyMcKinley In-Person Appointments');
       default:                              return null;
     }
   }
@@ -1558,6 +1614,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.hint', '');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.hint', '');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
+      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.hint', '');
       default:                              return null;
     }
   }
@@ -1570,6 +1627,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.header.buildings.title', 'Campus Buildings');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.header.student_course.title', 'My Courses');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
+      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.header.appointments.title', 'MyMcKinley In-Person Appointments');
       default:                              return null;
     }
   }

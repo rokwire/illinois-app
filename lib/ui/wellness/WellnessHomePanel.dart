@@ -20,6 +20,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
+import 'package:illinois/ui/wellness/appointments/WellnessAppointmentsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessDailyTipsContentWidget.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
@@ -33,7 +34,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum WellnessContent { dailyTips, rings, todo, podcast, resources, struggling }
+enum WellnessContent { dailyTips, rings, todo, appointments, podcast, resources, struggling }
 
 class WellnessHomePanel extends StatefulWidget {
   final WellnessContent? content;
@@ -169,6 +170,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         return WellnessRingsHomeContentWidget();
       case WellnessContent.todo:
         return WellnessToDoHomeContentWidget();
+      case WellnessContent.appointments:
+        return WellnessAppointmentsHomeContentWidget();
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
       default:
@@ -220,6 +223,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         return _loadContentString('panel.wellness.section.rings.label', 'Daily Wellness Rings', language: language);
       case WellnessContent.todo:
         return _loadContentString('panel.wellness.section.todo.label', 'To-Do List');
+      case WellnessContent.appointments:
+        return _loadContentString('panel.wellness.section.appointments.label', 'MyMcKinley Appointments');
       case WellnessContent.resources:
         return _loadContentString('panel.wellness.section.resources.label', 'Wellness Resources', language: language);
       case WellnessContent.podcast:

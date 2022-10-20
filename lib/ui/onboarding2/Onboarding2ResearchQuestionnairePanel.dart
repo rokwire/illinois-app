@@ -1,5 +1,4 @@
 
-import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
@@ -13,36 +12,17 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
-class Onboarding2DemographicsQuestionnairePanel extends StatefulWidget {
+class Onboarding2ResearchQuestionnairePanel extends StatefulWidget {
 
   final Map<String, dynamic>? onboardingContext;
-  Onboarding2DemographicsQuestionnairePanel({this.onboardingContext});
+  Onboarding2ResearchQuestionnairePanel({this.onboardingContext});
 
   @override
-  State<Onboarding2DemographicsQuestionnairePanel> createState() =>
-    _Onboarding2DemographicsQuestionnairePanelState();
-
-  static Future<bool?> prompt(BuildContext context) async {
-    String promptEn = 'Do you want to participate in Demographics Questionnaire?';
-    return await AppAlert.showCustomDialog(context: context,
-      contentWidget:
-        Text(Localization().getStringEx('panel.onboarding2.questionnaire.demographics.prompt', promptEn),
-          style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary,),
-        ),
-      actions: [
-        TextButton(
-          child: Text(Localization().getStringEx('dialog.yex.title', 'Yes')),
-          onPressed: () { Analytics().logAlert(text: promptEn, selection: 'Yes'); Navigator.of(context).pop(true); }
-        ),
-        TextButton(
-          child: Text(Localization().getStringEx('dialog.no.title', 'No')),
-          onPressed: () { Analytics().logAlert(text: promptEn, selection: 'No'); Navigator.of(context).pop(false); }
-        )
-      ]);
-  }
+  State<Onboarding2ResearchQuestionnairePanel> createState() =>
+    _Onboarding2ResearchQuestionnairePanelState();
 }
 
-class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2DemographicsQuestionnairePanel> {
+class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2ResearchQuestionnairePanel> {
 
   bool _loading = false;
   Questionnaire? _questionnaire;
@@ -54,7 +34,7 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
   void initState() {
     _loading = true;
 
-    Questionnaires().loadDemographic().then((Questionnaire? questionnaire) {
+    Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
       if (mounted) {
         setState(() {
           _loading = false;
@@ -80,10 +60,7 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
       backgroundColor: Styles().colors?.background,
       body: SafeArea(child:
         Stack(children: [
-          OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: () {
-            Analytics().logSelect(target: "Back");
-            Navigator.pop(context);
-          }),
+          OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: _onBack,),
           _buildContent(),
         ],)
       ),
@@ -144,8 +121,8 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
         ),
         Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 12, bottom: 12,), child:
           RoundedButton(
-            label: Localization().getStringEx('panel.onboarding2.questionnaire.demographics.button.submit.title', 'Submit'),
-            hint: Localization().getStringEx('panel.onboarding2.questionnaire.demographics.button.submit.hint', ''),
+            label: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.title', 'Submit'),
+            hint: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.hint', ''),
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             borderColor: submitEnabled ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent,
             backgroundColor: Styles().colors!.white,
@@ -253,7 +230,7 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
   void _onAnswer(Answer answer, { required Question question }) {
 
     String answerTitle = _questionnaireString(answer.title, languageCode: 'en');
-    String? questionTitle = _questionnaireString(question.title, languageCode: 'en');;
+    String? questionTitle = _questionnaireString(question.title, languageCode: 'en');
     Analytics().logSelect(target: '$questionTitle => $answerTitle');
 
     String? answerId = answer.id;
@@ -277,6 +254,11 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
     }
   }
 
+  void _onBack() {
+    Analytics().logSelect(target: "Back");
+    Navigator.pop(context);
+  }
+
   void _onSubmit() {
 
     Analytics().logSelect(target: 'Submit');
@@ -289,8 +271,8 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
         int minQuestionAnswers = failQuestion.minAnswers ?? 0;
         String questionTitle = _displayQuestionTitle(failQuestion, index: index + 1);
         String promptFormat = (1 < minQuestionAnswers) ?
-          Localization().getStringEx('panel.onboarding2.questionnaire.demographics.error.select.multi', 'Please choose at least {{MinQuestionAnswers}} aswers of "{{QuestionTitle}}".') :
-          Localization().getStringEx('panel.onboarding2.questionnaire.demographics.error.select.single', 'Please choose at least {{MinQuestionAnswers}} aswer of "{{QuestionTitle}}".');
+          Localization().getStringEx('panel.onboarding2.research.questionnaire.error.select.multi', 'Please choose at least {{MinQuestionAnswers}} aswers of "{{QuestionTitle}}".') :
+          Localization().getStringEx('panel.onboarding2.research.questionnaire.error.select.single', 'Please choose at least {{MinQuestionAnswers}} aswer of "{{QuestionTitle}}".');
         String displayPrompt = promptFormat.
           replaceAll('{{MinQuestionAnswers}}', '$minQuestionAnswers').
           replaceAll('{{QuestionTitle}}', '$questionTitle');
@@ -301,15 +283,13 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
         Auth2().prefs?.setQuestionnaireAnswers(_questionnaire?.id, _selection);
 
         String questionaireTitle = _questionnaireString(_questionnaire?.title);
-        String promptFormat = Localization().getStringEx('panel.onboarding2.questionnaire.demographics.acknowledgement', 'Thank you for participating in the {{QuestionnaireName}}.');
+        String promptFormat = Localization().getStringEx('panel.onboarding2.research.questionnaire.acknowledgement', 'Thank you for participating in the {{QuestionnaireName}}.');
         String displayPrompt = promptFormat.replaceAll('{{QuestionnaireName}}', questionaireTitle);
         AppAlert.showDialogResult(context, displayPrompt).then((_) {
+          Navigator.of(context).pop();
           Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
           if (onContinue != null) {
             onContinue();
-          }
-          else {
-            Navigator.of(context).pop();
           }
         });
       }
@@ -363,7 +343,8 @@ class _Onboarding2DemographicsQuestionnairePanelState extends State<Onboarding2D
               Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 24, bottom: 24), child:
                 Row(children: [
                   Expanded(child:
-                    Text('Failed to load demographics questionnaire.', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 20, color: Styles().colors?.fillColorPrimary), textAlign: TextAlign.center,),
+                    Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.error.load', 'Failed to load research questionnaire.'), style:
+                      TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 20, color: Styles().colors?.fillColorPrimary), textAlign: TextAlign.center,),
                   ),
                 ],)
               )
