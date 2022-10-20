@@ -18,7 +18,7 @@ class Questionnaires /* with Service */ {
 
   // Implementation
 
-  Future<Questionnaire?> loadDemographic() async {
+  Future<Questionnaire?> loadResearch() async {
     try { return Questionnaire.fromJson(JsonUtils.decodeMap(await rootBundle.loadString('assets/questionnaire.demographics.json'))); }
     catch(e) { debugPrint(e.toString()); }
     return null;
