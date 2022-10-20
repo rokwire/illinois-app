@@ -23,7 +23,7 @@ class Onboarding2ResearchQuestionnairePanel extends StatefulWidget {
     _Onboarding2ResearchQuestionnairePanelState();
 
   static Future<bool?> prompt(BuildContext context) async {
-    String promptEn = 'Do you want to participate in Demographics Questionnaire?';
+    String promptEn = 'Do you want to participate in Research Questionnaire?';
     return await AppAlert.showCustomDialog(context: context,
       contentWidget:
         Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt', promptEn),
