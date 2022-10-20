@@ -109,6 +109,17 @@ class Appointment with Explore, Favorite {
     }
   }
 
+  static String? typeToKeyString(AppointmentType? type) {
+    switch (type) {
+      case AppointmentType.in_person:
+        return 'InPerson';
+      case AppointmentType.online:
+        return 'Online';
+      default:
+        return null;
+    }
+  }
+
   static AppointmentType? typeFromString(String? type) {
     switch (type) {
       case 'InPerson':
@@ -133,11 +144,21 @@ class Appointment with Explore, Favorite {
   @override String? get explorePlaceId => null;
   @override String? get exploreShortDescription => null;
   @override DateTime? get exploreStartDateUtc => dateTimeUtc;
-  @override String? get exploreSubTitle => null;
+  @override String? get exploreSubTitle => location?.title;
   @override String? get exploreTitle => title;
   @override Map<String, dynamic> toJson() {
-    //TBD: Appointment - implement
-    return {};
+    return {
+      'id': id,
+      'uin': uin,
+      'title': title,
+      'date_time': AppDateTime().formatDateTime(dateTimeUtc, format: _serverDateTimeFormat, ignoreTimeZone: true),
+      'type': typeToKeyString(type),
+      'location': location?.toJson(),
+      'online_details': onlineDetails?.toJson(),
+      'cancelled': cancelled,
+      'instructions': instructions,
+      'host': host?.toJson()
+    };
   }
 }
 
@@ -149,6 +170,14 @@ class AppointmentOnlineDetails {
   final String? meetingPasscode;
 
   AppointmentOnlineDetails({this.url, this.meetingId, this.meetingPasscode});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'url': url,
+      'meeting_id': meetingId,
+      'meeting_passcode': meetingPasscode
+    };
+  }
 
   static AppointmentOnlineDetails? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -170,6 +199,16 @@ class AppointmentLocation {
 
   AppointmentLocation({this.id, this.latitude, this.longitude, this.title, this.phone});
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'latitude': latitude,
+      'longitude': longitude,
+      'title': title,
+      'phone': phone
+    };
+  }
+
   static AppointmentLocation? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
@@ -188,6 +227,13 @@ class AppointmentHost {
   final String? lastName;
 
   AppointmentHost({this.firstName, this.lastName});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'first_name': firstName,
+      'last_name': lastName
+    };
+  }
 
   static AppointmentHost? fromJson(Map<String, dynamic>? json) {
     if (json == null) {

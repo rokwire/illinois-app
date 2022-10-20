@@ -7,8 +7,8 @@
 	  "location": {
 		"id": "555555",
 		"title": "McKinley Health Center, East wing, 3rd floor",
-		"latitude": 0,
-		"longitude": 0,
+		"latitude": 40.10291,
+		"longitude": -88.21961,
 		"phone": "555-333-777"
 	  },
 	  "cancelled": false,
@@ -28,13 +28,6 @@
 		"meeting_id": "asdasd",
 		"meeting_passcode": "passs"
 	  },
-	  "location": {
-		"id": "6666",
-		"title": "McKinley Health Center 2, West wing, 1st floor",
-		"latitude": 0,
-		"longitude": 0,
-		"phone": "555-666-777"
-	  },
 	  "cancelled": false,
 	  "instructions": "Some instructions 2 ...",
 	  "host": {
@@ -50,8 +43,8 @@
 	  "location": {
 		"id": "777",
 		"title": "McKinley Health Center 8, South wing, 2nd floor",
-		"latitude": 0,
-		"longitude": 0,
+		"latitude": 40.08514,
+		"longitude": -88.27801,
 		"phone": "555-444-777"
 	  },
 	  "cancelled": false,
@@ -70,13 +63,6 @@
 		"url": "https://mymckinley.illinois.edu",
 		"meeting_id": "09jj",
 		"meeting_passcode": "dfkj3940"
-	  },
-	  "location": {
-		"id": "9999",
-		"title": "McKinley Health Center 9, North wing, 4th floor",
-		"latitude": 0,
-		"longitude": 0,
-		"phone": "555-5555-777"
 	  },
 	  "cancelled": false,
 	  "instructions": "Some instructions 4 ...",
