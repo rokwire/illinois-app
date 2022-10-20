@@ -945,6 +945,8 @@
     "panel.explore.item.unknown.name":"Explores",
     "panel.explore.map.popup.title.format":"%d %s",
 
+    "panel.explore.missing.appointments.msg":"You currently have no upcoming in-person appointments linked within Illinois app.",
+
     "panel.explore_list.header.title":"Explore",
 
     "panel.explore_detail.button.get_tickets.title":"Register",

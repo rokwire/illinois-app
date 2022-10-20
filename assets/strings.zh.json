@@ -944,6 +944,8 @@
 	"panel.explore.item.unknown.name":"探索",
 	"panel.explore.map.popup.title.format":"%d %s",
 
+    "panel.explore.missing.appointments.msg":"您目前沒有在伊利諾伊州應用程序中鏈接的即將到來的面對面約會。",
+
 	"panel.explore_list.header.title":"探索",
 
 	"panel.explore_detail.button.get_tickets.title":"Register",

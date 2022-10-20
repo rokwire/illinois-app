@@ -28,6 +28,7 @@ import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -523,6 +524,9 @@ class ExplorePanelState extends State<ExplorePanel>
         _loadingProgress = null;
         _displayExplores = explores;
         _placeExploresOnMap();
+        if ((_selectedItem == ExploreItem.Appointments) && CollectionUtils.isEmpty(_displayExplores)) {
+          _showMissingAppointmentsPopup();
+        }
       });
   }
 
@@ -579,6 +583,38 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Future<List<Explore>?> _loadAppointments() async {
     return Appointments().loadAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
+  }
+
+  void _showMissingAppointmentsPopup() {
+    AppAlert.showCustomDialog(
+        context: context,
+        contentPadding: EdgeInsets.all(0),
+        contentWidget: Container(
+            height: 200,
+            decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
+            child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
+              Padding(
+                  padding: EdgeInsets.all(30),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
+                    Image.asset('images/block-i-orange.png'),
+                    Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        //TBD: Appointments - read properly app title
+                        child: Text(
+                            Localization().getStringEx('panel.explore.missing.appointments.msg',
+                                'You currently have no upcoming in-person appointments linked within Illinois app.'),
+                            textAlign: TextAlign.center,
+                            style: Styles().textStyles?.getTextStyle("widget.detail.small")))
+                  ])),
+              Align(
+                  alignment: Alignment.topRight,
+                  child: GestureDetector(
+                      onTap: () {
+                        Analytics().logSelect(target: 'Close missing appointments popup');
+                        Navigator.of(context).pop();
+                      },
+                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png'))))
+            ])));
   }
 
   List<Event>? _buildDisplayEvents(List<Event> allEvents) {

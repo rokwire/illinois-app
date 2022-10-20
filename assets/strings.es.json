@@ -944,6 +944,8 @@
     "panel.explore.item.unknown.name":"Explora",
     "panel.explore.map.popup.title.format":"%d %s",
 
+    "panel.explore.missing.appointments.msg":"Actualmente no tiene próximas citas en persona vinculadas dentro de la aplicación de Illinois.",
+
     "panel.explore_list.header.title":"Explorar",
 
     "panel.explore_detail.button.get_tickets.title":"Register",
