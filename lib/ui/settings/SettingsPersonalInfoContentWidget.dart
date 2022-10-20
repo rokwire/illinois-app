@@ -21,7 +21,7 @@ import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2DemographicsQuestionnairePanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -377,7 +377,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
 
   void _onDemographicQuestionnaireClicked() {
     Analytics().logSelect(target: 'Demographic Questionnaire');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2DemographicsQuestionnairePanel(onboardingContext: {},)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {},)));
   }
 
   void _onTapOnCampusAuto() {

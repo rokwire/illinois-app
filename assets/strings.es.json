@@ -858,12 +858,12 @@
     "panel.onboarding2.email.button.link.cancel.hint": "",
     "panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
 
-    "panel.onboarding2.questionnaire.demographics.prompt": "Do you want to participate in Demographics Questionnaire?",
-    "panel.onboarding2.questionnaire.demographics.acknowledgement": "Thank you for participating in the {{QuestionnaireName}}.",
-    "panel.onboarding2.questionnaire.demographics.button.submit.title": "Submit",
-    "panel.onboarding2.questionnaire.demographics.button.submit.hint": "",
-    "panel.onboarding2.questionnaire.demographics.error.select.single": "Please choose at least {{MinQuestionAnswers}} aswer of \"{{QuestionTitle}}\".",
-    "panel.onboarding2.questionnaire.demographics.error.select.multi": "Please choose at least {{MinQuestionAnswers}} aswers of \"{{QuestionTitle}}\".",
+    "panel.onboarding2.research.questionnaire.prompt": "Do you want to participate in Demographics Questionnaire?",
+    "panel.onboarding2.research.questionnaire.acknowledgement": "Thank you for participating in the {{QuestionnaireName}}.",
+    "panel.onboarding2.research.questionnaire.button.submit.title": "Submit",
+    "panel.onboarding2.research.questionnaire.button.submit.hint": "",
+    "panel.onboarding2.research.questionnaire.error.select.single": "Please choose at least {{MinQuestionAnswers}} aswer of \"{{QuestionTitle}}\".",
+    "panel.onboarding2.research.questionnaire.error.select.multi": "Please choose at least {{MinQuestionAnswers}} aswers of \"{{QuestionTitle}}\".",
 
     "panel.explore.header.events.title":"Eventos",
     "panel.explore.header.dining.title":"Comedor de la residencia",
