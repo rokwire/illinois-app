@@ -17,12 +17,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Appointments /* with Service */ {
+class Appointments with Service implements ExploreJsonHandler {
   static final Appointments _service = Appointments._internal();
   factory Appointments() => _service;
   Appointments._internal();
+
+  // Service
+  @override
+  void createService() {
+    Explore.addJsonHandler(this);
+    super.createService();
+  }
+
+  @override
+  void destroyService() {
+    Explore.removeJsonHandler(this);
+    super.destroyService();
+  }
 
   Future<List<Appointment>?> loadAppointments({bool? onlyUpcoming, AppointmentType? type}) async {
     List<Appointment>? appointments;
@@ -60,4 +75,8 @@ class Appointments /* with Service */ {
       });
     }
   }
+
+  // ExploreJsonHandler
+  @override bool exploreCanJson(Map<String, dynamic>? json) => Appointment.canJson(json);
+  @override Explore? exploreFromJson(Map<String, dynamic>? json) => Appointment.fromJson(json);
 }

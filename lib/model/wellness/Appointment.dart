@@ -151,7 +151,7 @@ class Appointment with Explore, Favorite {
       'id': id,
       'uin': uin,
       'title': title,
-      'date_time': AppDateTime().formatDateTime(dateTimeUtc, format: _serverDateTimeFormat, ignoreTimeZone: true),
+      'date_time': DateTimeUtils.utcDateTimeToString(dateTimeUtc),
       'type': typeToKeyString(type),
       'location': location?.toJson(),
       'online_details': onlineDetails?.toJson(),
@@ -160,6 +160,38 @@ class Appointment with Explore, Favorite {
       'host': host?.toJson()
     };
   }
+
+  static bool canJson(Map<String, dynamic>? json) {
+    return (json != null) &&
+      (json['uin'] != null) &&
+      (json['date_time'] != null) &&
+      (json['type'] != null);
+  }
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is Appointment) &&
+    (id == other.id) &&
+    (uin == other.uin) &&
+    (dateTimeUtc == other.dateTimeUtc) &&
+    (type == other.type) &&
+    (onlineDetails == other.onlineDetails) &&
+    (location == other.location) &&
+    (cancelled == other.cancelled) &&
+    (instructions == other.instructions) &&
+    (host == other.host);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (uin?.hashCode ?? 0) ^
+    (dateTimeUtc?.hashCode ?? 0) ^
+    (type?.hashCode ?? 0) ^
+    (onlineDetails?.hashCode ?? 0) ^
+    (location?.hashCode ?? 0) ^
+    (cancelled?.hashCode ?? 0) ^
+    (instructions?.hashCode ?? 0) ^
+    (host?.hashCode ?? 0);
 }
 
 enum AppointmentType { in_person, online }
@@ -188,6 +220,19 @@ class AppointmentOnlineDetails {
         meetingId: JsonUtils.stringValue(json['meeting_id']),
         meetingPasscode: JsonUtils.stringValue(json['meeting_passcode']));
   }
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is AppointmentOnlineDetails) &&
+    (url == other.url) &&
+    (meetingId == other.meetingId) &&
+    (meetingPasscode == other.meetingPasscode);
+
+  @override
+  int get hashCode =>
+    (url?.hashCode ?? 0) ^
+    (meetingId?.hashCode ?? 0) ^
+    (meetingPasscode?.hashCode ?? 0);
 }
 
 class AppointmentLocation {
@@ -220,6 +265,23 @@ class AppointmentLocation {
         title: JsonUtils.stringValue(json['title']),
         phone: JsonUtils.stringValue(json['phone']));
   }
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is AppointmentLocation) &&
+    (id == other.id) &&
+    (latitude == other.latitude) &&
+    (longitude == other.longitude) &&
+    (title == other.title) &&
+    (phone == other.phone);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (latitude?.hashCode ?? 0) ^
+    (longitude?.hashCode ?? 0) ^
+    (title?.hashCode ?? 0) ^
+    (phone?.hashCode ?? 0);
 }
 
 class AppointmentHost {
@@ -241,4 +303,15 @@ class AppointmentHost {
     }
     return AppointmentHost(firstName: JsonUtils.stringValue(json['first_name']), lastName: JsonUtils.stringValue(json['last_name']));
   }
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is AppointmentHost) &&
+    (firstName == other.firstName) &&
+    (lastName == other.lastName);
+
+  @override
+  int get hashCode =>
+    (firstName?.hashCode ?? 0) ^
+    (lastName?.hashCode ?? 0);
 }

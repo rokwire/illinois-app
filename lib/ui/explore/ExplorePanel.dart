@@ -26,6 +26,7 @@ import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -1280,6 +1281,10 @@ class ExplorePanelState extends State<ExplorePanel>
         else if(explore is Game) {
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
               AthleticsGameDetailPanel(game: explore)));
+        }
+        else if(explore is Appointment) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) =>
+              AppointmentDetailPanel(appointment: explore)));
         }
         else {
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
