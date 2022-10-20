@@ -93,14 +93,22 @@ class Onboarding2 with Service{
   }
 
   void _promptForResearhQuestionnaire(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2PromptResearchQuestionnairePanel(onboardingContext: {
+    Navigator.push(context, CupertinoPageRoute<bool>(builder: (context) => Onboarding2PromptResearchQuestionnairePanel())).then((bool? result) {
+      if (result == true) {
+        _proceedToResearhQuestionnaire(context);
+      }
+      else {
+        _didProceedResearchQuestionnaire(context);
+      }
+    });
+    /*onboardingContext: {
       "onConfirmAction": () {
         _proceedToResearhQuestionnaire(context);
       },
       "onRejectAction": () {
         _didProceedResearchQuestionnaire(context);
       }
-    })));
+    }*/
   }
   
   void _proceedToResearhQuestionnaire(BuildContext context) {

@@ -1310,7 +1310,6 @@
 
     "panel.settings.home.calendar.settings.add_events.label": "Add saved events to calendar",
     "panel.settings.home.calendar.settings.prompt.label": "Prompt when saving events to calendar",
-    "panel.settings.home.calendar.ada.toggle.title": "Display ADA accessible building entrances for My Courses",
     "panel.settings.home.calendar.on_campus.location_services.required.label": "requires location services",
     "panel.settings.home.calendar.on_campus.location_services.not_available.label": "not available",
     "panel.settings.home.calendar.on_campus.radio_button.auto.title": "Automatically detect when I am on Campus",
@@ -1318,8 +1317,11 @@
     "panel.settings.home.calendar.on_campus.radio_button.off.title": "Always make me off campus",
     "panel.settings.home.calendar.on_campus.title": "On Campus",
     "panel.settings.home.calendar.ada.title": "Accessibility Needs",
-    "panel.settings.home.calendar.questionnaires.title": "Questionnaires",
-    "panel.settings.home.calendar.questionnaire.demographics.title": "Demographics Questionnaire",
+    "panel.settings.home.calendar.ada.toggle.title": "Display ADA accessible building entrances for My Courses",
+    "panel.settings.home.calendar.research.title": "Research",
+    "panel.settings.home.calendar.research.toggle.title": "Participate in research",
+    "panel.settings.home.calendar.research.questionnaire.title": "Research questionnaire",
+    "panel.settings.home.calendar.research.prompt.title": "You have decided to no longer participate in research and will clear all my research questionnaire information. Do you want to stop participating?",
 
     "panel.settings.privacy_center.label.title":"Privacy Center",
     "panel.settings.privacy_center.label.description":"Personalize your privacy and data preferences.",

@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/IlliniCash.dart';
 import 'package:illinois/service/OnCampus.dart';
+import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
@@ -286,18 +287,27 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       Column(children:<Widget>[
         Row(children: [
           Expanded(child:
-            Text(Localization().getStringEx('panel.settings.home.calendar.questionnaires.title', 'Questionnaires'), style:
+            Text(Localization().getStringEx('panel.settings.home.calendar.research.title', 'Research'), style:
             Styles().textStyles?.getTextStyle("widget.title.large.fat")
             ),
           ),
         ]),
         Container(height: 4),
+        ToggleRibbonButton(
+          label: Localization().getStringEx('panel.settings.home.calendar.research.toggle.title', 'Participate in research'),
+          border: Border.all(color: Styles().colors!.surfaceAccent!),
+          toggled: Questionnaires().participateInResearch,
+          onTap: _onResearchQuestionnaireToggled
+        ),
+        Container(height: 4),
         RibbonButton(
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
           //borderRadius: BorderRadius.all(Radius.circular(5)),
-          label: Localization().getStringEx("panel.settings.home.calendar.questionnaire.demographics.title", "Demographics Questionnaire"),
-          onTap: _onDemographicQuestionnaireClicked
-        )
+          label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research questionnaire"),
+          textColor: Questionnaires().participateInResearch ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+          rightIconAsset: Questionnaires().participateInResearch ? 'images/chevron-right.png' : 'images/chevron-right-gray.png',
+          onTap: _onResearchQuestionnaireClicked
+        ),
       ]),
     );
   }
@@ -375,8 +385,45 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     });
   }
 
-  void _onDemographicQuestionnaireClicked() {
-    Analytics().logSelect(target: 'Demographic Questionnaire');
+  void _onResearchQuestionnaireToggled() {
+    Analytics().logSelect(target: 'Participate in research');
+    if (Questionnaires().participateInResearch) {
+      _promptTurnOffParticipateInResearch().then((bool? result) {
+        if (result == true) {
+          setState(() {
+            Questionnaires().participateInResearch = false;
+          });
+        }
+      });
+    }
+    else {
+      setState(() {
+        Questionnaires().participateInResearch = true;
+      });
+    }
+  }
+
+  Future<bool?> _promptTurnOffParticipateInResearch() async {
+    String promptEn = 'You have decided to no longer participate in research and will clear all my research questionnaire information. Do you want to stop participating?';
+    return await AppAlert.showCustomDialog(context: context,
+      contentWidget:
+        Text(Localization().getStringEx('panel.settings.home.calendar.research.prompt.title', promptEn),
+          style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary,),
+        ),
+      actions: [
+        TextButton(
+          child: Text(Localization().getStringEx('dialog.yes.title', 'Yes')),
+          onPressed: () { Analytics().logAlert(text: promptEn, selection: 'Yes'); Navigator.of(context).pop(true); }
+        ),
+        TextButton(
+          child: Text(Localization().getStringEx('dialog.no.title', 'No')),
+          onPressed: () { Analytics().logAlert(text: promptEn, selection: 'No'); Navigator.of(context).pop(false); }
+        )
+    ]);
+  }
+
+  void _onResearchQuestionnaireClicked() {
+    Analytics().logSelect(target: 'Research Questionnaire');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {},)));
   }
 
