@@ -46,6 +46,9 @@
 	else if ([self objectForKey:@"coursetitle"] != nil) {
 		return UIUCExploreType_StudentCourse;
 	}
+    else if ([self objectForKey:@"uin"] != nil) {
+        return UIUCExploreType_Appointment;
+    }
 	else if ([self objectForKey:@"explores"] != nil) {
 		return UIUCExploreType_Explores;
 	}
@@ -120,6 +123,10 @@
 	
 		return result;
 	}
+    else if (exploreType == UIUCExploreType_Appointment) {
+        NSDictionary *location = [self inaDictForKey:@"location"];
+        return [location inaStringForKey:@"title"];
+    }
 	
 	return [self.uiucExploreLocation inaStringForKey:@"description"];
 }
