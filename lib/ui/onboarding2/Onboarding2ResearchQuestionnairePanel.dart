@@ -34,7 +34,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   void initState() {
     _loading = true;
 
-    Questionnaires().loadDemographic().then((Questionnaire? questionnaire) {
+    Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
       if (mounted) {
         setState(() {
           _loading = false;
