@@ -1,7 +1,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2DemographicsQuestionnairePanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2PromptResearchQuestionnairePanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/ui/onboarding/OnboardingAuthNotificationsPanel.dart';
@@ -78,31 +79,47 @@ class Onboarding2 with Service{
   }
 
   void _didProceedToLogin(BuildContext context) {
-      _proceedToDemographicsQuestionnaireIfNeeded(context);
+    _proceedToResearhQuestionnaireIfNeeded(context);
   }
 
-  void _proceedToDemographicsQuestionnaireIfNeeded(BuildContext context) {
+  void _proceedToResearhQuestionnaireIfNeeded(BuildContext context) {
     Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
-    if (codes.contains('demographics_questionnaire')) {
-      Onboarding2DemographicsQuestionnairePanel.prompt(context).then((bool? result) {
-        if (result == true) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2DemographicsQuestionnairePanel(onboardingContext: {
-            'onContinueAction':  () {
-              _didProceedToDemographicsQuestionnaire(context);
-            }
-          },)));
-        }
-        else {
-          _didProceedToDemographicsQuestionnaire(context);
-        }
-      });
+    if (codes.contains('research_questionnaire')) {
+      _promptForResearhQuestionnaire(context);
     }
     else {
-      _didProceedToDemographicsQuestionnaire(context);
+      _didProceedResearchQuestionnaire(context);
     }
   }
 
-  void _didProceedToDemographicsQuestionnaire(BuildContext context) {
+  void _promptForResearhQuestionnaire(BuildContext context) {
+    Navigator.push(context, CupertinoPageRoute<bool>(builder: (context) => Onboarding2PromptResearchQuestionnairePanel())).then((bool? result) {
+      if (result == true) {
+        _proceedToResearhQuestionnaire(context);
+      }
+      else {
+        _didProceedResearchQuestionnaire(context);
+      }
+    });
+    /*onboardingContext: {
+      "onConfirmAction": () {
+        _proceedToResearhQuestionnaire(context);
+      },
+      "onRejectAction": () {
+        _didProceedResearchQuestionnaire(context);
+      }
+    }*/
+  }
+  
+  void _proceedToResearhQuestionnaire(BuildContext context) {
+    Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {
+      'onContinueAction':  () {
+        _didProceedResearchQuestionnaire(context);
+      }
+    },)));
+  }
+
+  void _didProceedResearchQuestionnaire(BuildContext context) {
     finish(context);
   }
 
