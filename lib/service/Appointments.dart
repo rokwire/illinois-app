@@ -64,6 +64,21 @@ class Appointments with Service implements ExploreJsonHandler {
     return resultAppointments;
   }
 
+  //TBD: Appointment - load from backend
+  Future<Appointment?> loadAppointment(String? appointmentId) async {
+    if (StringUtils.isNotEmpty(appointmentId)) {
+      List<Appointment>? allAppointments = await loadAppointments();
+      if (CollectionUtils.isNotEmpty(allAppointments)) {
+        for (Appointment appointment in allAppointments!) {
+          if (appointment.id == appointmentId) {
+            return appointment;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   void _sortAppointments(List<Appointment>? appointments) {
     if (CollectionUtils.isNotEmpty(appointments)) {
       appointments!.sort((first, second) {

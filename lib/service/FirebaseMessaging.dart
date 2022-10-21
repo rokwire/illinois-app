@@ -55,6 +55,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyHomeNotification               = "edu.illinois.rokwire.firebase.messaging.home";
   static const String notifyInboxNotification              = "edu.illinois.rokwire.firebase.messaging.inbox";
   static const String notifyCanvasAppDeepLinkNotification  = "edu.illinois.rokwire.firebase.messaging.app.canvas.deeplink";
+  static const String notifyAppointmentNotification        = "edu.illinois.rokwire.firebase.messaging.appointment";
 
   // Topic names
   static const List<String> _permanentTopics = [
@@ -65,6 +66,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
 
   // Settings entry : topic name
   static const Map<String, String> _notifySettingTopics = {
+    _newAppointmentUpdatesNotificationSetting  : _newAppointmentUpdatesNotificationSetting,
     'event_reminders'  : 'event_reminders',
     'dining_specials'  : 'dinning_specials',
     _groupUpdatesPostsNotificationSetting : _groupUpdatesPostsNotificationSetting,
@@ -75,6 +77,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
 
   // Settings entry : setting name (User.prefs.setting name)
   static const Map<String, String> _notifySettingNames = {
+    _newAppointmentUpdatesNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.new_appointment.enabled',
     _eventRemindersUpdatesNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.event_reminders.enabled',
     _diningSpecialsUpdatesNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.dining_specials.enabled',
     _groupUpdatesPostsNotificationSetting       : 'edu.illinois.rokwire.settings.inbox.notification.group.posts.enabled',
@@ -94,6 +97,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   };
 
   //settingKeys
+  static const String _newAppointmentUpdatesNotificationSetting = 'new_appointment';
   static const String _eventRemindersUpdatesNotificationSetting = 'event_reminders';
   static const String _diningSpecialsUpdatesNotificationSetting = 'dining_specials';
   static const String _pauseNotificationKey = 'pause_notifications';
@@ -137,6 +141,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeHome = 'home';
   static const String payloadTypeInbox = 'inbox';
   static const String payloadTypeCanvasAppDeepLink = 'canvas_app_deeplink';
+  static const String payloadTypeAppointment = 'appointment';
 
   DateTime? _pausedDateTime;
   
@@ -290,6 +295,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     else if (type == payloadTypeCanvasAppDeepLink) {
       NotificationService().notify(notifyCanvasAppDeepLinkNotification, data);
     }
+    else if (type == payloadTypeAppointment) {
+      NotificationService().notify(notifyAppointmentNotification, data);
+    }
     else if (_isScoreTypeMessage(type)) {
       NotificationService().notify(notifyScoreMessage, data);
     }
@@ -361,6 +369,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   }
 
   // Settings topics
+
+  bool? get notifyNewAppointment               { return _getNotifySetting('new_appointment'); } 
+       set notifyNewAppointment(bool? value)   { _setNotifySetting('new_appointment', value); }
 
   bool? get notifyEventReminders               { return _getNotifySetting('event_reminders'); } 
        set notifyEventReminders(bool? value)   { _setNotifySetting('event_reminders', value); }

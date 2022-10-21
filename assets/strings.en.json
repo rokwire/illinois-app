@@ -1439,6 +1439,11 @@
     "panel.settings.notifications.label.desctiption":"Don’t miss an event or campus update.",
     "panel.settings.notifications.label.notifications":"Notifications",
     "panel.settings.notifications.label.info":"To receive notifications enable in your device's settings.",
+    "panel.settings.notifications.appointments.new":"New MyMcKinley Appointment",
+    "panel.settings.notifications.appointments.reminders":"Appointment Reminders",
+    "panel.settings.notifications.appointments.reminders.morning_of.label":"Morning Of (8:00 AM)",
+    "panel.settings.notifications.appointments.reminders.night_before.label":"Night Before (9:00 PM)",
+    "panel.settings.notifications.appointments.description.label":"MyMcKinley appointment reminder settings only apply within the Illinois app.",
     "panel.settings.notifications.reminders":"Event Reminders",
     "panel.settings.notifications.athletics_updates":"Athletics Updates",
     "panel.settings.notifications.athletics_updates.description.label": "Based on your favorite sports",
@@ -2409,6 +2414,7 @@
     "panel.appointment.detail.meeting.id.label": "Meeting ID:",
     "panel.appointment.detail.meeting.passcode.label": "Passcode:",
     "panel.appointment.detail.cancel.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
+    "panel.appointment.detail.error.msg": "Failed to load appointment data.",
 
     "widget.game_day.label.its_game_day":"It's Game Day!",
 
