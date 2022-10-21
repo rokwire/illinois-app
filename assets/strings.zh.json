@@ -1439,6 +1439,11 @@
 	"panel.settings.notifications.label.desctiption":"不要错过活动或校园更新.",
 	"panel.settings.notifications.label.notifications":"通知",
 	"panel.settings.notifications.label.info":"在设备设置中启用接收通知.",
+    "panel.settings.notifications.appointments.new":"新的 MyMcKinley 預約",
+    "panel.settings.notifications.appointments.reminders":"預約提醒",
+    "panel.settings.notifications.appointments.reminders.morning_of.label":"上午（上午 8:00）",
+    "panel.settings.notifications.appointments.reminders.night_before.label":"前一天晚上（晚上 9:00）",
+    "panel.settings.notifications.appointments.description.label":"MyMcKinley 約會提醒設置僅適用於伊利諾伊州應用程序。",
 	"panel.settings.notifications.reminders":"事件提醒",
 	"panel.settings.notifications.athletics_updates":"体育更新",
 	"panel.settings.notifications.athletics_updates.description.label": "基於您最喜歡的運動",
@@ -2405,6 +2410,7 @@
     "panel.appointment.detail.meeting.id.label": "會議編號：",
     "panel.appointment.detail.meeting.passcode.label": "密碼：",
     "panel.appointment.detail.cancel.description": "要取消預約，請訪問 MyMcKinley.illinois.edu 或在工作時間致電 (217-333-2700)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
+    "panel.appointment.detail.error.msg": "無法加載約會數據。",
 
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 

@@ -99,6 +99,54 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
     List<Widget> widgets = [];
 
+    
+    widgets.add(_CustomToggleButton(
+          enabled: _toggleButtonEnabled,
+          borderRadius: _topRounding,
+          label: Localization().getStringEx("panel.settings.notifications.appointments.new", "New MyMcKinley Appointment"),
+          toggled: FirebaseMessaging().notifyNewAppointment,
+          onTap: _toggleButtonEnabled ? _onNewAppointmentToggled : (){},
+          textStyle: _toggleButtonEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+    ));
+    //TBD: Appointments - properly implement reminders
+    widgets.add(_CustomToggleButton(
+          enabled: _toggleButtonEnabled,
+          borderRadius: BorderRadius.zero,
+          label: Localization().getStringEx("panel.settings.notifications.appointments.reminders", "Appointment Reminders"),
+          toggled: false,
+          onTap: (){},
+          textStyle: _toggleButtonEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+    ));
+    widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
+      _CustomToggleButton(
+          enabled: _appointmentRemindersSubNotificationsEnabled,
+          borderRadius: BorderRadius.zero,
+          label: Localization().getStringEx("panel.settings.notifications.appointments.reminders.morning_of.label", "Morning Of (8:00 AM)"),
+          toggled: false,
+          onTap: (){},
+          textStyle: _appointmentRemindersSubNotificationsEnabled ?  Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+    ),
+      _CustomToggleButton(
+          enabled: _appointmentRemindersSubNotificationsEnabled,
+          borderRadius: BorderRadius.zero,
+          label: Localization().getStringEx("panel.settings.notifications.appointments.reminders.night_before.label", "Night Before (9:00 PM)"),
+          toggled: false,
+          onTap: (){},
+          textStyle: _appointmentRemindersSubNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+      )
+    ]))))]));
+    //TBD: Appointments - handle app title in the string
+    widgets.add(Row(children: [
+      Expanded(
+          child: Container(
+              color: Styles().colors!.white,
+              child: Padding(
+                  padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  child: Text(Localization().getStringEx("panel.settings.notifications.appointments.description.label", 'MyMcKinley appointment reminder settings only apply within the Illinois app.'),
+                      style: _notificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")
+                  ))))
+    ]));
+    widgets.add(Container(color:Styles().colors!.surfaceAccent,height: 1));
     widgets.add(_CustomToggleButton(
           enabled: _toggleButtonEnabled,
           borderRadius: _topRounding,
@@ -246,6 +294,14 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     AppSettings.openAppSettings();
   }
 
+  void _onNewAppointmentToggled() {
+    if(!_notificationsEnabled) {
+      return;
+    }
+    Analytics().logSelect(target: "New Appointment");
+    FirebaseMessaging().notifyNewAppointment = !FirebaseMessaging().notifyNewAppointment!;
+  }
+
   void _onEventRemindersToggled() {
     if(!_notificationsEnabled)
       return ;
@@ -335,6 +391,11 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
 
   bool get _notificationsEnabled {
     return _notificationsAuthorized && FlexUI().isNotificationsAvailable;
+  }
+
+  bool get _appointmentRemindersSubNotificationsEnabled {
+    //TBD: Appointments - implement reminders
+    return false;
   }
 
   bool get _athleticsSubNotificationsEnabled {
