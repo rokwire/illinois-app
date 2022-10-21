@@ -2406,6 +2406,7 @@
     "panel.appointment.detail.meeting.id.label": "會議編號：",
     "panel.appointment.detail.meeting.passcode.label": "密碼：",
     "panel.appointment.detail.cancel.description": "要取消預約，請訪問 MyMcKinley.illinois.edu 或在工作時間致電 (217-333-2700)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
+    "panel.appointment.detail.error.msg": "無法加載約會數據。",
 
 	"widget.game_day.label.its_game_day":"这是比赛日！",
 

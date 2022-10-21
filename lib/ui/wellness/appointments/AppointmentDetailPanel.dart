@@ -20,8 +20,10 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -38,10 +40,11 @@ import 'package:illinois/ui/WebPanel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppointmentDetailPanel extends StatefulWidget {
-  final Appointment appointment;
+  final Appointment? appointment;
+  final String? appointmentId;
   final Core.Position? initialLocationData;
 
-  AppointmentDetailPanel({required this.appointment, this.initialLocationData});
+  AppointmentDetailPanel({this.appointment, this.appointmentId, this.initialLocationData});
 
   @override
   _AppointmentDetailPanelState createState() => _AppointmentDetailPanelState();
@@ -50,8 +53,9 @@ class AppointmentDetailPanel extends StatefulWidget {
 class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> implements NotificationsListener {
   static final double _horizontalPadding = 24;
 
-  //Maps
+  Appointment? _appointment;
   Core.Position? _locationData;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -61,6 +65,12 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
     ]);
+
+    if (widget.appointment != null) {
+      _appointment = widget.appointment;
+    } else {
+      _loadAppointment();
+    }
 
     _locationData = widget.initialLocationData;
     _loadCurrentLocation().then((_) {
@@ -76,6 +86,14 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     super.dispose();
   }
 
+  void _loadAppointment() {
+    _setLoading(true);
+    Appointments().loadAppointment(widget.appointmentId).then((app) {
+      _appointment = app;
+      _setLoading(false);
+    });
+  }
+
   Future<void> _loadCurrentLocation() async {
     _locationData = FlexUI().isLocationServicesAvailable ? await LocationServices().location : null;
   }
@@ -88,52 +106,85 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Column(children: <Widget>[
-          Expanded(
-              child: Container(
-                  child: CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
-            SliverToutHeaderBar(flexImageUrl: widget.appointment.imageUrl, flexRightToLeftTriangleColor: Colors.white),
-            SliverList(
-                delegate: SliverChildListDelegate([
-              Stack(children: <Widget>[
-                Container(
-                    child: Column(children: <Widget>[
-                  Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    _buildHeading(),
-                    Column(children: <Widget>[
-                      Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 0),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Container(
-                                    padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
-                                    color: Colors.white,
-                                    child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[_buildTitle(), _buildDetails()])),
-                                Container(
-                                    padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
-                                    child: Column(children: [_buildCancelDescription()]))
-                              ]))
-                    ])
-                  ])
-                ]))
+    return Scaffold(body: _buildContent(), backgroundColor: Styles().colors!.background, bottomNavigationBar: uiuc.TabBar());
+  }
+
+  Widget _buildContent() {
+    if (_loading) {
+      return _buildLoadingContent();
+    } else if (_appointment != null) {
+      return _buildAppointmentContent();
+    } else {
+      return _buildErrorContent();
+    }
+  }
+
+  Widget _buildLoadingContent() {
+    return Column(children: <Widget>[
+      HeaderBar(),
+      Expanded(
+          child: Center(
+              child: CircularProgressIndicator(
+                  strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary))))
+    ]);
+  }
+
+  Widget _buildErrorContent() {
+    return Column(children: <Widget>[
+      HeaderBar(),
+      Expanded(
+          child: Center(
+              child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 32),
+                  child: Text(Localization().getStringEx("panel.appointment.detail.error.msg", 'Failed to load appointment data.'),
+                      style: Styles().textStyles?.getTextStyle('widget.message.large')))))
+    ]);
+  }
+
+  Widget _buildAppointmentContent() {
+    return Column(children: <Widget>[
+      Expanded(
+          child: Container(
+              child: CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
+        SliverToutHeaderBar(flexImageUrl: _appointment!.imageUrl, flexRightToLeftTriangleColor: Colors.white),
+        SliverList(
+            delegate: SliverChildListDelegate([
+          Stack(children: <Widget>[
+            Container(
+                child: Column(children: <Widget>[
+              Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                _buildHeading(),
+                Column(children: <Widget>[
+                  Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 0),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                                padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
+                                color: Colors.white,
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[_buildTitle(), _buildDetails()])),
+                            Container(
+                                padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
+                                child: Column(children: [_buildCancelDescription()]))
+                          ]))
+                ])
               ])
-            ], addSemanticIndexes: false))
-          ])))
-        ]),
-        backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: uiuc.TabBar());
+            ]))
+          ])
+        ], addSemanticIndexes: false))
+      ])))
+    ]);
   }
 
   Widget _buildHeading() {
-    String? category = widget.appointment.category;
-    bool isFavorite = Auth2().isFavorite(widget.appointment);
-    bool starVisible = Auth2().canFavorite && widget.appointment.isUpcoming;
+    String? category = _appointment!.category;
+    bool isFavorite = Auth2().isFavorite(_appointment);
+    bool starVisible = Auth2().canFavorite && _appointment!.isUpcoming;
     return Container(
         color: Colors.white,
         padding: EdgeInsets.only(left: _horizontalPadding),
@@ -150,7 +201,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                       child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onTap: () {
-                            Analytics().logSelect(target: "Favorite: ${widget.appointment.title}");
+                            Analytics().logSelect(target: "Favorite: ${_appointment!.title}");
                             Auth2().prefs?.toggleFavorite(widget.appointment);
                           },
                           child: Container(
@@ -172,7 +223,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     return Padding(
         padding: EdgeInsets.only(bottom: 8),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          Expanded(child: Text(widget.appointment.title!, style: TextStyle(fontSize: 24, color: Styles().colors!.fillColorPrimary)))
+          Expanded(child: Text(_appointment!.title!, style: TextStyle(fontSize: 24, color: Styles().colors!.fillColorPrimary)))
         ]));
   }
 
@@ -217,7 +268,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget? _buildTimeDetail() {
-    String? displayTime = widget.appointment.displayDate;
+    String? displayTime = _appointment!.displayDate;
     if (StringUtils.isEmpty(displayTime)) {
       return null;
     }
@@ -235,13 +286,13 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget? _buildLocationDetail() {
-    AppointmentType? type = widget.appointment.type;
+    AppointmentType? type = _appointment!.type;
     if (type != AppointmentType.in_person) {
       return null;
     }
     String typeLabel = Appointment.typeToDisplayString(type)!;
-    String? longDisplayLocation = widget.appointment.getLongDisplayLocation(_locationData) ?? "";
-    String? locationTitle = widget.appointment.location?.title;
+    String? longDisplayLocation = _appointment!.getLongDisplayLocation(_locationData) ?? "";
+    String? locationTitle = _appointment!.location?.title;
     String? locationTextValue;
     if (StringUtils.isNotEmpty(longDisplayLocation)) {
       locationTextValue = longDisplayLocation;
@@ -284,14 +335,14 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget? _buildOnlineOnlineDetails() {
-    AppointmentType? type = widget.appointment.type;
+    AppointmentType? type = _appointment!.type;
     if (type != AppointmentType.online) {
       return null;
     }
 
     String typeLabel = Appointment.typeToDisplayString(type)!;
-    String? meetingId = widget.appointment.onlineDetails?.meetingId;
-    String? meetingPasscode = widget.appointment.onlineDetails?.meetingPasscode;
+    String? meetingId = _appointment!.onlineDetails?.meetingId;
+    String? meetingPasscode = _appointment!.onlineDetails?.meetingPasscode;
     return Padding(
         padding: EdgeInsets.only(bottom: 8),
         child: Column(
@@ -333,7 +384,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget? _buildHostDetail() {
-    String? hostDisplayName = widget.appointment.hostDisplayName;
+    String? hostDisplayName = _appointment!.hostDisplayName;
     if (StringUtils.isEmpty(hostDisplayName)) {
       return null;
     }
@@ -348,7 +399,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget? _buildPhoneDetail() {
-    String? phone = widget.appointment.location?.phone;
+    String? phone = _appointment!.location?.phone;
     if (StringUtils.isEmpty(phone)) {
       return null;
     }
@@ -398,7 +449,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   void _onLocationDetailTapped() {
-    if ((widget.appointment.location?.latitude != null) && (widget.appointment.location?.longitude != null)) {
+    if ((_appointment!.location?.latitude != null) && (_appointment!.location?.longitude != null)) {
       Analytics().logSelect(target: "Location Detail");
       NativeCommunicator().launchExploreMapDirections(target: widget.appointment);
     }
@@ -415,6 +466,12 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         }
       }
     }
+  }
+
+  void _setLoading(bool loading) {
+    setStateIfMounted(() {
+      _loading = loading;
+    });
   }
 
   // NotificationsListener

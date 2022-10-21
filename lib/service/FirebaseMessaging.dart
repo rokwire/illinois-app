@@ -55,6 +55,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyHomeNotification               = "edu.illinois.rokwire.firebase.messaging.home";
   static const String notifyInboxNotification              = "edu.illinois.rokwire.firebase.messaging.inbox";
   static const String notifyCanvasAppDeepLinkNotification  = "edu.illinois.rokwire.firebase.messaging.app.canvas.deeplink";
+  static const String notifyAppointmentNotification        = "edu.illinois.rokwire.firebase.messaging.appointment";
 
   // Topic names
   static const List<String> _permanentTopics = [
@@ -293,6 +294,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeCanvasAppDeepLink) {
       NotificationService().notify(notifyCanvasAppDeepLinkNotification, data);
+    }
+    else if (type == payloadTypeAppointment) {
+      NotificationService().notify(notifyAppointmentNotification, data);
     }
     else if (_isScoreTypeMessage(type)) {
       NotificationService().notify(notifyScoreMessage, data);
