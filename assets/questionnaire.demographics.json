@@ -121,7 +121,7 @@
 		"description_prefix":null,
 		"description_suffix":null,
 		"min_answers":1,
-		"max_answers":null,
+		"max_answers":2,
 		"answers": [
 			{"id":"a01", "title":"Asian Indian"},
 			{"id":"a02", "title":"Cambodian"},
