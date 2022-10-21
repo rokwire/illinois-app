@@ -99,6 +99,16 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     BorderRadius _topRounding = BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5));
     List<Widget> widgets = [];
 
+    
+    widgets.add(_CustomToggleButton(
+          enabled: _toggleButtonEnabled,
+          borderRadius: _topRounding,
+          label: Localization().getStringEx("panel.settings.notifications.appointments.new", "New MyMcKinley Appointment"),
+          toggled: FirebaseMessaging().notifyNewAppointment,
+          onTap: _toggleButtonEnabled ? _onNewAppointmentToggled : (){},
+          textStyle: _toggleButtonEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+    ));
+    widgets.add(Container(color:Styles().colors!.surfaceAccent,height: 1));
     widgets.add(_CustomToggleButton(
           enabled: _toggleButtonEnabled,
           borderRadius: _topRounding,
@@ -244,6 +254,14 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
   
   void _onOpenSystemSettings() async{
     AppSettings.openAppSettings();
+  }
+
+  void _onNewAppointmentToggled() {
+    if(!_notificationsEnabled) {
+      return;
+    }
+    Analytics().logSelect(target: "New Appointment");
+    FirebaseMessaging().notifyNewAppointment = !FirebaseMessaging().notifyNewAppointment!;
   }
 
   void _onEventRemindersToggled() {

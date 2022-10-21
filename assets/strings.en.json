@@ -1439,6 +1439,7 @@
     "panel.settings.notifications.label.desctiption":"Don’t miss an event or campus update.",
     "panel.settings.notifications.label.notifications":"Notifications",
     "panel.settings.notifications.label.info":"To receive notifications enable in your device's settings.",
+    "panel.settings.notifications.appointments.new":"New MyMcKinley Appointment",
     "panel.settings.notifications.reminders":"Event Reminders",
     "panel.settings.notifications.athletics_updates":"Athletics Updates",
     "panel.settings.notifications.athletics_updates.description.label": "Based on your favorite sports",

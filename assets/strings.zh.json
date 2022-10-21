@@ -1439,6 +1439,7 @@
 	"panel.settings.notifications.label.desctiption":"不要错过活动或校园更新.",
 	"panel.settings.notifications.label.notifications":"通知",
 	"panel.settings.notifications.label.info":"在设备设置中启用接收通知.",
+    "panel.settings.notifications.appointments.new":"新的 MyMcKinley 預約",
 	"panel.settings.notifications.reminders":"事件提醒",
 	"panel.settings.notifications.athletics_updates":"体育更新",
 	"panel.settings.notifications.athletics_updates.description.label": "基於您最喜歡的運動",
