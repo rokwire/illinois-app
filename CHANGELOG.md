@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Minor updates in Research Questinnaire content [#2465](https://github.com/rokwire/illinois-app/issues/2465).
+### Added
+- Intermediate work on Appointments UI [#2464](https://github.com/rokwire/illinois-app/issues/2464).
 
 ## [4.2.6] - 2022-10-20
 ### Added
