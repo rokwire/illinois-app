@@ -864,7 +864,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapInbox(BuildContext context) {
     Analytics().logSelect(target: "Inbox");
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.all);
   }
 
   void _onTapSuggestedEvents(BuildContext context) {

@@ -17,7 +17,9 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsInboxHomeContentWidget extends StatefulWidget {
-  SettingsInboxHomeContentWidget();
+  final bool? muted;
+  final bool? unread;
+  SettingsInboxHomeContentWidget({this.muted, this.unread});
 
   _SettingsInboxHomeContentWidgetState createState() => _SettingsInboxHomeContentWidgetState();
 }
@@ -612,7 +614,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   Future<void> _onPullToRefresh() async {
     int limit = max(_messages.length, _messagesPageSize);
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    List<InboxMessage>? messages = await Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
+    List<InboxMessage>? messages = await Inbox().loadMessages(muted: widget.muted, unread: widget.unread, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
     if (mounted) {
       setState(() {
         if (messages != null) {
@@ -644,7 +646,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     });
 
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox().loadMessages(muted: widget.muted, unread: widget.unread, offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -668,7 +670,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     });
 
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox().loadMessages(muted: widget.muted, unread: widget.unread, offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -689,7 +691,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
 
     int limit = max(messagesCount ?? _messages.length, _messagesPageSize);
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox().loadMessages(muted: widget.muted, unread: widget.unread, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {

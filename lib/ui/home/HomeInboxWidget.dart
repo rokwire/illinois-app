@@ -283,6 +283,6 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
 
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.all);
   }
 }

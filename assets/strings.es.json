@@ -1308,7 +1308,9 @@
     "panel.settings.profile.content.privacy.label": "Configuración de privacidad de mi aplicación",
     "panel.settings.profile.header.profile.label": "Perfil",
 
-    "panel.settings.notifications.content.inbox.label": "Mis Notificaciones",
+    "panel.settings.notifications.content.notifications.all.label": "Todas las notificaciones",
+    "panel.settings.notifications.content.notifications.muted.label": "Notificaciones silenciadas",
+    "panel.settings.notifications.content.notifications.unread.label": "Notificaciones no leídas",
     "panel.settings.notifications.content.preferences.label": "Mis preferencias de notificación",
     "panel.settings.notifications.header.inbox.label": "Notificaciones",
 

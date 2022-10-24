@@ -340,7 +340,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
     String? currentRouteName = ModalRoute.of(context)?.settings.name;
     if (currentRouteName != SettingsNotificationsContentPanel.routeName) {
       Analytics().logSelect(target: "Notifications");
-      SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+      SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.all);
     }
   }
 

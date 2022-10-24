@@ -413,7 +413,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
 
   void _onTapInbox(BuildContext context) {
     Analytics().logSelect(target: "Inbox", source: runtimeType.toString());
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.all);
   }
 }
 
