@@ -1435,7 +1435,7 @@
     "widget.settings.dialog.button.cancel.title": "Cancelar",
 
     "panel.settings.notifications.label.desctiption":"No se pierda ningún evento o actualización del campus.",
-    "panel.settings.notifications.label.notifications":"Notificaciones",
+    "panel.settings.notifications.label.notifications":"Notificaciones push",
     "panel.settings.notifications.label.info":"Para recibir notificaciones, habilite en la configuración de su dispositivo.",
     "panel.settings.notifications.appointments.new":"Nueva cita de MyMcKinley",
     "panel.settings.notifications.appointments.reminders":"Recordatorios de citas",

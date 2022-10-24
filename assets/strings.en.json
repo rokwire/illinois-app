@@ -1436,7 +1436,7 @@
     "widget.settings.dialog.button.cancel.title": "Cancel",
 
     "panel.settings.notifications.label.desctiption":"Don’t miss an event or campus update.",
-    "panel.settings.notifications.label.notifications":"Notifications",
+    "panel.settings.notifications.label.notifications":"Push Notifications",
     "panel.settings.notifications.label.info":"To receive notifications enable in your device's settings.",
     "panel.settings.notifications.appointments.new":"New MyMcKinley Appointment",
     "panel.settings.notifications.appointments.reminders":"Appointment Reminders",
