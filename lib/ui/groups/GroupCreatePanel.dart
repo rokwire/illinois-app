@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -147,13 +150,14 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                               _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "images/icon-member.png"),
                               _buildAuthManLayout(),
                             ])),
-                            Visibility(
-                              visible: !_isAuthManGroup,
-                              child: Column(children: [
-                                Container(height: 16),
-                                _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
-                                _buildMembershipLayout(),
-                              ],)),
+                            Visibility(visible: !_isAuthManGroup, child: Padding(padding: EdgeInsets.only(top: 16), child: Column(children: [
+                              _buildTitle("Research", "images/icon-gear.png"),
+                              _buildResearchLayout(),
+                            ],),),),
+                            Visibility(visible: !_isAuthManGroup, child: Padding(padding: EdgeInsets.only(top: 0), child: Column(children: [
+                              _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
+                              _buildMembershipLayout(),
+                            ],),),),
                             Container(height: 8,),
                             _buildCanAutojoinLayout(),
                             Container(height: 8),
@@ -586,6 +590,43 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       setState(() {});
     });
   }
+
+  // Research Questions
+  Map<String, LinkedHashSet<String>> _testGroupProfile = <String, LinkedHashSet<String>>{};
+
+  Widget _buildResearchLayout() {
+    int questionsCount = _testGroupProfile.length;
+    String questionsDescription = (0 < questionsCount) ?
+      sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format","%s Question(s)"), [questionsCount.toString()]) :
+      Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
+
+    return Container(
+      color: Styles().colors!.background,
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(children: <Widget>[
+        Container(height: 12),
+        Semantics(
+            explicitChildNodes: true,
+            child: _buildMembershipButton(
+                title: "Target Audience",
+                description: questionsDescription,
+                onTap: _onTapResearchProfile)),
+        Container(height: 20),
+      ]),
+    );
+  }
+
+  void _onTapResearchProfile() {
+    Analytics().logSelect(target: "Target Audience");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResearchProjectProfilePanel(profile: _testGroupProfile,))).then((dynamic profile){
+      setState(() {
+        if (profile is Map<String, LinkedHashSet<String>>) {
+          _testGroupProfile = profile;
+        }
+      });
+    });
+  }
+
   //Autojoin
   Widget _buildCanAutojoinLayout(){
     return Visibility(visible: _isManagedGroupAdmin, child: Container(
