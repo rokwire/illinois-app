@@ -26,6 +26,7 @@ import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:rokwire_plugin/service/events.dart';
@@ -92,6 +93,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyHomeNotification,
       FirebaseMessaging.notifyInboxNotification,
       FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
+      FirebaseMessaging.notifyAppointmentNotification,
       Events.notifyEventDetail,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
@@ -202,6 +204,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == FirebaseMessaging.notifyCanvasAppDeepLinkNotification) {
       _onFirebaseCanvasAppDeepLinkNotification(param);
+    }
+    else if (name == FirebaseMessaging.notifyAppointmentNotification) {
+      _onFirebaseAppointmentNotification(param);
     }
     else if (name == HomePanel.notifyCustomize) {
       _onSelectHome();
@@ -669,6 +674,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if (param is Map<String, dynamic>) {
       String? deepLink = JsonUtils.stringValue(param['deep_link']);
       Canvas().openCanvasAppDeepLink(StringUtils.ensureNotEmpty(deepLink));
+    }
+  }
+
+  void _onFirebaseAppointmentNotification(dynamic param) {
+    if (param is Map<String, dynamic>) {
+      String? appointmentId = JsonUtils.stringValue(param['appointment_id']);
+      if (StringUtils.isNotEmpty(appointmentId)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
+      }
     }
   }
 }

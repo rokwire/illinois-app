@@ -158,7 +158,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             padding: EdgeInsets.symmetric(vertical: 10),
             child: new RichText(
               text: new TextSpan(
-                style:Styles().textStyles?.getTextStyle("widget.item.regular"),
+                style:Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                 children: <TextSpan>[
                   new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
                   new TextSpan(
@@ -187,7 +187,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             padding: EdgeInsets.symmetric(vertical: 10),
             child: new RichText(
               text: new TextSpan(
-                style: Styles().textStyles?.getTextStyle("widget.item.regular"),
+                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                 children: <TextSpan>[
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "),
@@ -805,7 +805,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
           Text(Localization().getStringEx("panel.settings.home.feedback.description",
             "Enjoying the app? Missing something? The {{app_title}} app team needs your ideas and input. Thank you!").
               replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-                style: Styles().textStyles?.getTextStyle("widget.item.regular"))
+                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"))
         ])
       ),
       Padding(padding: EdgeInsets.only(top: 12), child:
@@ -909,7 +909,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     return Container(
         alignment: Alignment.center,
         child: Text(versionLabel,
-            style: Styles().textStyles?.getTextStyle("widget.item.regular")));
+            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")));
   }
 
   void _loadVersionInfo() async {
@@ -927,7 +927,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     return Container(
         alignment: Alignment.center,
         child: Text(copyrightLabel, textAlign: TextAlign.center,
-            style:  Styles().textStyles?.getTextStyle("widget.item.regular")));
+            style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin")));
   }
 
   // Utilities
@@ -995,7 +995,7 @@ class _OptionsSection extends StatelessWidget {
                   padding: EdgeInsets.only(left: 8, right: 8, bottom: 12),
                   child: Text(
                     description!,
-                    style: Styles().textStyles?.getTextStyle("widget.item.regular"),
+                    style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                   )),
           Stack(alignment: Alignment.topCenter, children: [
             Container(

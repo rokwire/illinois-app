@@ -276,7 +276,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                                   children: [
                                     Expanded(child:
                                     Text("Congratulations!", textAlign: TextAlign.center,
-                                      style :TextStyle(color: Styles().colors!.fillColorPrimary!, fontFamily: Styles().fontFamilies!.bold, fontSize: 18),
+                                      style : Styles().textStyles?.getTextStyle("widget.title.medium.fat")
                                     )
                                     )
                                   ],
@@ -290,13 +290,13 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
                                         text: TextSpan(
                                             children:[
                                               TextSpan(text:"You've completed your ",
-                                                style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),),
+                                                style : Styles().textStyles?.getTextStyle("panel.wellness.ring.home.detail.message")),
                                               TextSpan(text:"${data.name} ", //TBD
-                                                style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.bold, fontSize: 16),),
+                                                style : Styles().textStyles?.getTextStyle("panel.wellness.ring.home.detail.message.fat")),
                                               TextSpan(text:"ring for ",
-                                                style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),),
+                                                style : Styles().textStyles?.getTextStyle("panel.wellness.ring.home.detail.message")),
                                               TextSpan(text:"${WellnessRings().getTotalCompletionCountString(param)} time!",
-                                                style :TextStyle(color: Styles().colors!.textSurface!, fontFamily: Styles().fontFamilies!.bold, fontSize: 16),),
+                                                style : Styles().textStyles?.getTextStyle("panel.wellness.ring.home.detail.message.fat")),
                                             ]
                                         ))
                                     ),

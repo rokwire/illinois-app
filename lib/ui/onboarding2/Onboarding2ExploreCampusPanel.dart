@@ -103,12 +103,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                                   child: Text(
                                     _title!,
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Styles().colors!.fillColorPrimary,
-                                        fontSize: 24,
-                                        fontFamily: Styles().fontFamilies!.bold,
-                                        height: 1.4
-                                  ))
+                                    style: Styles().textStyles?.getTextStyle("panel.onboarding2.explore_campus.title"))
                               ),
                             )),
                         Semantics(
@@ -121,10 +116,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                                   child: Text(
                                     _description!,
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontFamily: Styles().fontFamilies!.regular,
-                                        fontSize: 16,
-                                        color: Styles().colors!.fillColorPrimary),
+                                    style: Styles().textStyles?.getTextStyle("widget.detail.regular")
                                   )),
                             )),
                         Container(height: 10,),

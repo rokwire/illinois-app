@@ -124,17 +124,17 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
       Semantics(label:semanticsQuestionText,excludeSemantics: true,child:
-        Text(wantsToKnow, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 12),)),
+        Text(wantsToKnow, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.small"),)),
       Semantics(excludeSemantics: true,child:
         Padding(padding: EdgeInsets.symmetric(vertical: 20),child:
-          Text(poll.title ?? '', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24),),)),
+          Text(poll.title ?? '', style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.large.fat"),),)),
 
       Column(children: _buildResultOptions(poll),),
       Semantics(label: semanticsStatusText, excludeSemantics: true,child:
         Padding(padding: EdgeInsets.only(top: 20), child: Wrap(children: <Widget>[
-          Text(votesNum, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 12, ),),
-          Text('  ', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 12, ),),
-          Text(pollStatus ?? '', style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 12, ),),
+          Text(votesNum, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.small.regular")),
+          Text('  ', style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.small.regular")),
+          Text(pollStatus ?? '', style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.small.thin")),
       ],),)),
 
       _buildResultsDoneButton(),
@@ -175,12 +175,12 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
               CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.fillColorPrimary, progressColor: Styles().colors!.lightGray!.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(/*height:30, width: _progressWidth*/),),
               Container(/*height: 30,*/ child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                 Padding(padding: EdgeInsets.only(left: 5), child:
-                  Text(poll.options![optionIndex], style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
+                  Text(poll.options![optionIndex], style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.regular")),),
               ],),),
               ],)
             ),
             Expanded(child:
-              Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', style: TextStyle(color: Styles().colors!.surfaceAccent, fontFamily: Styles().fontFamilies!.regular, fontSize: 14, fontWeight: FontWeight.w500),),),
+              Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.medium.accent")),),
             )
             ],))
       ));
@@ -207,8 +207,8 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
       Padding(padding: EdgeInsets.only(top: 32, bottom:20),child:
-        Text(resultsIn, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 24, fontWeight: FontWeight.w900),),),
-      Text(pollClosed, style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w300),),
+        Text(resultsIn, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.large.fat")),),
+      Text(pollClosed, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.regular.thin")),
       _buildViewResultsButton(),
     ];
   }

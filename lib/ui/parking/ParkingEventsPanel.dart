@@ -89,11 +89,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
                         Text(
                           Localization().getStringEx("panel.parking_events.label.loading", "Loading parking events. Please wait..."),
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.regular,
-                            fontSize: 16,
-                            color: Styles().colors!.mediumGray,
-                          ),
+                          style: Styles().textStyles?.getTextStyle("widget.message.light.regular")
                         )
                       )
                     ],)
@@ -112,7 +108,7 @@ class _ParkingEventsPanelState extends State<ParkingEventsPanel>{
       Padding(padding: EdgeInsets.symmetric(horizontal: 24), child:
         Text(Localization().getStringEx("panel.parking_events.label.no_events", "Currently there is no parking information for any State Farm Center events."),
           textAlign: TextAlign.center,
-          style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 18, color: Styles().colors!.fillColorPrimary,),
+          style: Styles().textStyles?.getTextStyle("widget.message.medium")
         ),
       )
     );
@@ -148,35 +144,19 @@ class _ParkingEventWidget extends StatelessWidget{
           children: <Widget>[
             Text(
               event!.name!,
-                style: TextStyle(
-                  fontFamily: Styles().fontFamilies!.bold,
-                  fontSize: 18,
-                  color: Styles().colors!.fillColorPrimary,
-                ),
+                style: Styles().textStyles?.getTextStyle("widget.title.medium.fat")
             ),
             Text(
               Localization().getStringEx("panel.parking_events.label.from","From: ")+"${event!.displayParkingFromDate}",
-              style: TextStyle(
-                fontFamily: Styles().fontFamilies!.regular,
-                fontSize: 16,
-                color: Styles().colors!.mediumGray,
-              ),
+              style: Styles().textStyles?.getTextStyle("widget.detail.light.regular")
             ),
             Text(
               Localization().getStringEx("panel.parking_events.label.to","To: ")+"${event!.displayParkingToDate}",
-              style: TextStyle(
-                fontFamily: Styles().fontFamilies!.regular,
-                fontSize: 16,
-                color: Styles().colors!.mediumGray,
-              ),
+              style: Styles().textStyles?.getTextStyle("widget.detail.light.regular")
             ),
             Text(
               Localization().getStringEx("panel.parking_events.label.status","Status: ")+"$status",
-              style: TextStyle(
-                fontFamily: Styles().fontFamilies!.regular,
-                fontSize: 16,
-                color: Styles().colors!.mediumGray,
-              ),
+              style: Styles().textStyles?.getTextStyle("widget.detail.light.regular")
             )
           ],
         ),
