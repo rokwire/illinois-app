@@ -149,10 +149,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                                         child: Text(
                                           _privacyDescription!,
                                           textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontFamily: Styles().fontFamilies!.bold,
-                                              fontSize: 32,
-                                              color: Styles().colors!.white),
+                                          style: Styles().textStyles?.getTextStyle("panel.onboarding2.heading.title"),
                                         )),
                                   )),
                               Container(height: 35,),
@@ -193,10 +190,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                       Text(
                         _privacyLongDescription!,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontFamily: Styles().fontFamilies!.regular,
-                            fontSize: 16,
-                            color: Styles().colors!.fillColorPrimary),
+                        style: Styles().textStyles?.getTextStyle("widget.description.regular"),
                       )
                     ),
                     _buildPrivacySlider(),
@@ -211,10 +205,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                     Text(
                       Localization().getStringEx("panel.onboarding2.privacy.label.continue.description", "You can adjust what you store and share at any time in the Privacy Center."),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.regular,
-                          fontSize: 14,
-                          color: Styles().colors!.textSurface),
+                      style: Styles().textStyles?.getTextStyle("widget.info.small"),
                     ),
                     Padding(
                       padding: EdgeInsets.only(
@@ -436,10 +427,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
                         Text(
                           _privacyLevel.toString(),
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 26,
-                              color: Styles().colors!.white
-                          ),
+                          style: Styles().textStyles?.getTextStyle("panel.onboarding2.privacy.badge")
                         ))
                     )
                   ],
@@ -466,10 +454,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
             Row(children: [
               Text(
                 Localization().getStringEx('panel.onboarding2.privacy.button.privacy_policy.title', "Privacy Notice "),
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.regular,
-                    fontSize: 14,
-                    color: Styles().colors!.white),
+                style: Styles().textStyles?.getTextStyle("widget.colourful_button.title.title.regular")
 
               ),
               Container(padding: EdgeInsets.only(bottom: 3),

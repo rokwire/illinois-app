@@ -128,7 +128,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 24),
             child: Text(
               Localization().getStringEx("panel.create_poll.description","People can vote through the {{app_title}} app by asking you for the 4 Digit Poll #.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-              style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
+              style: Styles().textStyles?.getTextStyle("widget.item.small.thin"),
             )));
   }
 
@@ -142,7 +142,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
         child: Row(
           children: <Widget>[
             Expanded(flex: 5,
-              child: Text(name, style: TextStyle(color: Styles().colors!.textBackground, fontSize: 19, fontFamily: Styles().fontFamilies!.regular)),
+              child: Text(name, style:Styles().textStyles?.getTextStyle("widget.item.medium")),
             ),
             Container(
               width: 7,
@@ -150,7 +150,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
             Expanded(
               flex: 3,
               child: Text(wantToKnowText,
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold)),
+                style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
             )
           ],
         )));
@@ -229,11 +229,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                   child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                     Text(
                       label,
-                      style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.bold,
-                        fontSize: 16,
-                        color: Styles().colors!.fillColorPrimary,
-                      ),
+                      style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 5),
@@ -259,7 +255,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                       Expanded(child:
                         Padding(
                           padding: EdgeInsets.only(left: 10),
-                          child: Text(additionalSettingsText, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
+                          child: Text(additionalSettingsText, style: Styles().textStyles?.getTextStyle("widget.title.regular"),
                           ),
                         )
                       )
@@ -301,7 +297,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   }
 
   List<Widget> _buildSettingsButtons() {
-    TextStyle _textStyle = TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium);
+    TextStyle? _textStyle = Styles().textStyles?.getTextStyle("widget.button.title.medium");
     BorderRadius rounding = BorderRadius.all(Radius.circular(5));
     List<Widget> widgets =  [];
 
@@ -373,7 +369,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                       child: Text(
                         Localization()
                             .getStringEx("panel.create_poll.description.non_editable.text", "Once started, you can no longer edit the poll."),
-                        style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
+                        style: Styles().textStyles?.getTextStyle("widget.item.small.thin"),
                       )),
                   UnderlinedButton(
                       title: Localization().getStringEx("panel.create_poll.setting.button.save.title", "Save poll for starting later"),//TBD localize
@@ -400,14 +396,14 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                 children: <Widget>[
                   Text(
                     Localization().getStringEx("panel.create_poll.cancel_dialog.title", "Illinois"),
-                    style: TextStyle(fontSize: 24, color: Colors.black),
+                    style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.large"),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 26),
                     child: Text(
                       Localization().getStringEx("panel.create_poll.cancel_dialog.message", "Are you sure you want to cancel this Quick Poll?"),
                       textAlign: TextAlign.left,
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
+                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.medium"),
                     ),
                   ),
                   Row(
@@ -512,10 +508,10 @@ class _PollOptionViewState extends State<PollOptionView> {
           Padding(padding: EdgeInsets.only(bottom: 8, top: 24), child:
             Row(children: <Widget>[
               Expanded(child:
-                Text(widget.title!, textAlign: TextAlign.left, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 12, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 0.86),
+                Text(widget.title!, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("panel.poll.create.poll_option.title"),
                 )
               ),
-              Text(_getCounterText(), style: TextStyle( color: Styles().colors!.mediumGray, fontSize: 14, fontFamily: Styles().fontFamilies!.regular, ), )
+              Text(_getCounterText(), style: Styles().textStyles?.getTextStyle("panel.poll.create.poll_option.counter"), )
             ])
           )
         ),
@@ -533,7 +529,7 @@ class _PollOptionViewState extends State<PollOptionView> {
                 decoration: InputDecoration(hintText: widget.hint, border: InputBorder.none, counterText: ""),
                 maxLength: widget.maxLength,
                 maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                style: Styles().textStyles?.getTextStyle("widget.detail.regular"),
                 enabled: widget.enabled,
                 textCapitalization: TextCapitalization.sentences,
               )),
@@ -588,14 +584,7 @@ class UnderlinedButton extends StatelessWidget {
                       padding: EdgeInsets.only(bottom: 2),
                       child: Text(
                         title!,
-                        style: TextStyle(
-                            fontFamily: fontFamily ?? Styles().fontFamilies!.medium,
-                            fontSize: fontSize,
-                            color: Styles().colors!.fillColorPrimary,
-                            decorationColor: Styles().colors!.fillColorSecondary,
-                            decorationThickness: 1,
-                            decorationStyle:
-                            TextDecorationStyle.solid),
+                        style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline")?.copyWith(fontSize: fontSize, fontFamily: fontFamily ?? Styles().fontFamilies!.medium),
                       )))),
               progress ?
               Align(alignment: Alignment.center,

@@ -189,7 +189,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
                         Stack(children: [
                           Center(child: AspectRatio(aspectRatio: playerAspectRatio, child: Semantics(label: Localization().getStringEx('panel.onboarding2.video.semantics.label', 'Onboarding video'), child: VideoPlayer(_controller!)))),
                           ClosedCaption(
-                              text: _currentCaptionText, textStyle: TextStyle(fontSize: 16, color: Styles().colors!.white))
+                              text: _currentCaptionText, textStyle: Styles().textStyles?.getTextStyle("panel.onboarding2.video_tutorial.caption.text"))
                         ]),
                         Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton())
                       ]))));
@@ -200,7 +200,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     } else {
       return Center(
           child: Text(Localization().getStringEx('panel.onboarding2.video.missing.msg', 'Missing video'),
-              style: TextStyle(color: Styles().colors!.white, fontSize: 20, fontFamily: Styles().fontFamilies!.bold)));
+              style: Styles().textStyles?.getTextStyle("panel.onboarding2.video_tutorial.message.empty")));
     }
   }
 
@@ -220,10 +220,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
                             borderRadius: BorderRadius.all(Radius.circular(6))),
                         child: Center(
                             child: Text('CC',
-                                style: TextStyle(
-                                    color: (_ccEnabled ? Styles().colors!.white! : Styles().colors!.disabledTextColorTwo!),
-                                    fontSize: 18,
-                                    fontFamily: Styles().fontFamilies!.bold)))))));
+                                style: _ccEnabled? Styles().textStyles?.getTextStyle("panel.onboarding2.video_tutorial.cc.enabled") : Styles().textStyles?.getTextStyle("panel.onboarding2.video_tutorial.cc.disabled")))))));
   }
 
   void _onTapBack() {

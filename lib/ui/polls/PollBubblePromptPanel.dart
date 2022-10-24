@@ -193,20 +193,20 @@ class _PollContentState extends State<PollContentWidget> implements Notification
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
       Semantics(label:semanticsQuestionText,excludeSemantics: true,child:
-      Text(wantsToKnow, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w600),)),
+      Text(wantsToKnow, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.small")?.copyWith(color: _textColor))),
       Semantics(excludeSemantics: true,child:
       Padding(padding: EdgeInsets.symmetric(vertical: 20),child:
-      Text(pollTitle, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 24, fontWeight: FontWeight.w900),),)),
+      Text(pollTitle, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.large.fat")?.copyWith(color: _textColor)),)),
       Padding(padding: EdgeInsets.only(bottom: 20),child:
-      Text(_votingRulesDetails, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 15),),),
+      Text(_votingRulesDetails, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.voting.result")?.copyWith(color: _textColor),),),
 
       Column(children: contentOptionsList,),
 
       Semantics(label: semanticsStatusText, excludeSemantics: true,child:
       Padding(padding: EdgeInsets.only(top: 20), child: Wrap(children: <Widget>[
-        Text(votesNum, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w500),),
-        Text('  ', style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w900),),
-        Text(pollStatus ?? '', style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 12, fontWeight: FontWeight.w200),),
+        Text(votesNum, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.small.regular")?.copyWith(color: _textColor),),
+        Text('  ', style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.small.regular")?.copyWith(color: _textColor),),
+        Text(pollStatus ?? '', style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.small.thin")?.copyWith(color: _textColor)),
       ],),)),
 
       footerWidget,
@@ -219,8 +219,8 @@ class _PollContentState extends State<PollContentWidget> implements Notification
     return <Widget>[
       Row(children: <Widget>[Expanded(child: Container(),)],),
       Padding(padding: EdgeInsets.only(top: 32, bottom:20),child:
-      Text(thanks, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 24, fontWeight: FontWeight.w900),),),
-      Text(willNotify, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w300),),
+      Text(thanks, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.large.fat")?.copyWith(color: _textColor)),),
+      Text(willNotify, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.regular.thin")?.copyWith(color: _textColor)),
     ];
   }
 
@@ -303,12 +303,12 @@ class _PollContentState extends State<PollContentWidget> implements Notification
                 Padding(padding: EdgeInsets.only(left: 5), child:
                 Row(children: <Widget>[
                   Expanded(child:
-                  Text(optionString, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
+                  Text(optionString, maxLines: 1, overflow: TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.regular")?.copyWith(color: _textColor)),),
                 ],))
               ],),),
             ],)
             ),
-            Padding(padding: EdgeInsets.only(left: 10), child: Text(votesString, style: TextStyle(color: Styles().colors!.surfaceAccent, fontFamily: Styles().fontFamilies!.regular, fontSize: 14, fontWeight: FontWeight.w500),),),
+            Padding(padding: EdgeInsets.only(left: 10), child: Text(votesString, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.medium.accent"),),),
           ],)
           ))));
     }
@@ -349,12 +349,12 @@ class _PollContentState extends State<PollContentWidget> implements Notification
           CustomPaint(painter: PollProgressPainter(backgroundColor: Styles().colors!.fillColorPrimary, progressColor: Styles().colors!.lightGray!.withOpacity(0.2), progress: votesPercent / 100.0), child: Container(height:30, width: _progressWidth),),
           Container(/*height: 30,*/ child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
             Padding(padding: EdgeInsets.only(left: 5), child:
-            Text(_poll!.options![optionIndex],  maxLines: 5, overflow:TextOverflow.ellipsis, style: TextStyle(color: _textColor, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, fontWeight: FontWeight.w500),),),
+            Text(_poll!.options![optionIndex],  maxLines: 5, overflow:TextOverflow.ellipsis, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.regular")?.copyWith(color: _textColor)),),
           ],),),
         ],)
         ),
         Expanded(child:
-        Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign:TextAlign.right, style: TextStyle(color: Styles().colors!.surfaceAccent, fontFamily: Styles().fontFamilies!.regular, fontSize: 14, fontWeight: FontWeight.w500),),),
+        Padding(padding: EdgeInsets.only(left: 10), child: Text('$votesString (${votesPercent.toStringAsFixed(0)}%)', textAlign:TextAlign.right, style: Styles().textStyles?.getTextStyle("panel.poll.bubble.prompt.detail.medium.accent")),),
         )
       ],))
       ));
