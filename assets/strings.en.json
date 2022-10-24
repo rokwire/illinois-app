@@ -1130,7 +1130,6 @@
     "panel.saved.label.news": "My Athletics News",
     "panel.saved.label.laundry": "My Laundry",
     "panel.saved.label.campus_guide": "My Campus Guide",
-    "panel.saved.label.inbox": "My Notifications",
 
     "panel.saved.notifications.label": "Don’t miss an event! Get reminders of upcoming events.",
     "panel.saved.notifications.enable.label": "Enable notifications",
@@ -2642,7 +2641,6 @@
     "widget.home.favorites.title.news": "My Athletics News",
     "widget.home.favorites.title.laundry": "My Laundry",
     "widget.home.favorites.title.campus_guide": "My Campus Guide",
-    "widget.home.favorites.title.inbox": "My Notifications",
 
     "widget.home.favorites.message.offline.events": "My Events are not available while offline.",
     "widget.home.favorites.message.offline.dining": "My Dining Locations are not available while offline.",
@@ -2650,7 +2648,6 @@
     "widget.home.favorites.message.offline.news": "My Athletics News are not available while offline.",
     "widget.home.favorites.message.offline.laundry": "My Laundry are not available while offline.",
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide are not available while offline.",
-    "widget.home.favorites.message.offline.inbox": "My Notifications are not available while offline.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
     "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
@@ -2658,9 +2655,6 @@
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
     "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here.",
     "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.inbox": "See your most recent <a href='{{local_url}}'><b>Notifications</b></a> for quick access here.",
-
-    "widget.home.favorites.message.logged_out.inbox": "You need to be logged in with your NetID to access My Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 
     "widget.home.favorites.all.title": "View All",
     "widget.home.favorites.all.hint.events": "Tap to view all favorite events",
@@ -2669,7 +2663,6 @@
     "widget.home.favorites.all.hint.news": "Tap to view all favorite athletics news",
     "widget.home.favorites.all.hint.laundry": "Tap to view all favorite laundries",
     "widget.home.favorites.all.hint.campus_guide": "Tap to view all favorite campus guide articles",
-    "widget.home.favorites.all.hint.inbox": "Tap to view all favorite notifications",
 
 	"widget.home.wellness_resources.header.label": "My Wellness Resources",
     "widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> so you can quickly find them here.",

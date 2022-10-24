@@ -56,7 +56,6 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -489,15 +488,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeFavoritesWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position, favoriteKey: LaundryRoom.favoriteKeyName);
       } else {
         return HomeFavoritesWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController, favoriteKey: LaundryRoom.favoriteKeyName, );
-      }
-    }
-    else if (code == 'my_inbox') {
-      if (title) {
-        return HomeFavoritesWidget.titleFromKey(favoriteKey: InboxMessage.favoriteKeyName);
-      } else if (handle) {
-        return HomeFavoritesWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position, favoriteKey: InboxMessage.favoriteKeyName, );
-      } else {
-        return HomeFavoritesWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController, favoriteKey: InboxMessage.favoriteKeyName, );
       }
     }
     else if (code == 'my_campus_guide') {

@@ -57,7 +57,6 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -538,11 +537,9 @@ class _BrowseEntry extends StatelessWidget {
       case "my.canvas_courses":              _onTapCanvasCourses(context); break;
       case "my.my_groups":                   _onTapMyGroups(context); break;
       case "my.my_laundry":                  _onTapMyLaundry(context); break;
-      case "my.my_inbox":                    _onTapMyNotifications(context); break;
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
 
       case "inbox.recent_inbox":             _onTapInbox(context); break;
-      case "inbox.my_inbox":                 _onTapMyNotifications(context); break;
 
       case "polls.create_poll":              _onTapCreatePoll(context); break;
       case "polls.recent_polls":             _onTapViewPolls(context); break;
@@ -928,11 +925,6 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapMyLaundry(BuildContext context) {
     Analytics().logSelect(target: "My Laundry");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [LaundryRoom.favoriteKeyName]); } ));
-  }
-
-  void _onTapMyNotifications(BuildContext context) {
-    Analytics().logSelect(target: "My Notifications");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [InboxMessage.favoriteKeyName]); } ));
   }
 
   void _onTapMyCampusGuide(BuildContext context) {
