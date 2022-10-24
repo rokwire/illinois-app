@@ -562,7 +562,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         Expanded(
           child: Center(
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 32),
-              child: Text(Localization().getStringEx("panel.group_detail.label.error_message", 'Failed to load group data.'),  style:  Styles().textStyles?.getTextStyle('widget.message.large'),)
+              child: Text(Localization().getStringEx("panel.group_detail.label.error_message", 'Failed to load group data.'),  style:  Styles().textStyles?.getTextStyle('widget.message.large.fat'),)
             ),
           ),
         ),
@@ -1405,7 +1405,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       border: Border.all(color: Styles().colors!.textSurface!, width: 1),
       alignment: Alignment.center,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
-      infoTextStyle: Styles().textStyles?.getTextStyle('widget.description.medium"'),
+      infoTextStyle: Styles().textStyles?.getTextStyle('widget.description.regular.thin"'),
       closeIcon: Image.asset('images/close-orange-small.png'),
     ),);
   }

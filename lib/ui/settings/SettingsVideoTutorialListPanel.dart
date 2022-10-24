@@ -48,7 +48,7 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 32),
               child: Text(Localization().getStringEx("panel.settings.video_tutorials.empty.msg", "There are no video tutorials."),
-                  style: Styles().textStyles?.getTextStyle("widget.message.large"))));
+                  style: Styles().textStyles?.getTextStyle("widget.message.large.fat"))));
     }
     List<Widget> contentList = <Widget>[];
     for (dynamic video in widget.videoTutorials!) {

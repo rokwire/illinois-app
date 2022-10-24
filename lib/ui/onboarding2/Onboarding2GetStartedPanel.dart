@@ -41,7 +41,7 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
                 Container(height: 14,),
                 Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
                   Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the {{app_title}} app connects you to our campus ecosystem.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-                    textAlign: TextAlign.center, style: TextStyle( fontWeight: FontWeight.w500, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
+                    textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.onboarding2.get_started.description"),),
                 ),
               ]),
             )

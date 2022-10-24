@@ -549,7 +549,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
     String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
     return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
       Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-        Text(privacyLevel, style: Styles().textStyles?.getTextStyle("widget.title.medium_variant"))
+        Text(privacyLevel, style: Styles().textStyles?.getTextStyle("widget.title.medium.extra_fat"))
       ),
     );
   }
@@ -719,7 +719,7 @@ class _DateLabel extends StatelessWidget {
     return Container(width: 70,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(label!, style: Styles().textStyles?.getTextStyle("widget.item.regular"),),
+        Text(label!, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),),
         Container(height: 2, color: Styles().colors!.surfaceAccent,)
       ],),);
   }

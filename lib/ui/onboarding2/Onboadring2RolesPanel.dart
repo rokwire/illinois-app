@@ -73,7 +73,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
                 hint: Localization().getStringEx('panel.onboarding2.roles.label.title.hint', 'Header 1').toLowerCase(),
                 excludeSemantics: true,
                 child: Text(Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who Are You?'),
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24, color: Styles().colors!.fillColorPrimary),
+                  style: Styles().textStyles?.getTextStyle("widget.title.extra_large"),
                 ),
               ),
             ],),),
@@ -84,12 +84,7 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
         Padding(padding: EdgeInsets.symmetric(horizontal: 36, vertical: 6),
           child: Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Select all that apply to help us understand who you are.'),
             textAlign: TextAlign.center,
-            style: TextStyle(
-                fontFamily: Styles().fontFamilies!.regular,
-                fontSize: 16,
-                color: Styles().colors!.fillColorPrimary,
-                height: 1.5
-            ),
+            style: Styles().textStyles?.getTextStyle("panel.onboarding2.roles.description")
           ),
         ),
         

@@ -157,7 +157,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                             Flexible(flex: 8, child:
                               Container(width: double.infinity, child:
                                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                                  Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style:Styles().textStyles?.getTextStyle('widget.card.detail.tiny_variant')),
+                                  Text(Localization().getStringEx('widget.card.label.interests', 'Because of your interest in:'), style:Styles().textStyles?.getTextStyle('widget.card.detail.tiny.fat')),
                                   Text(StringUtils.ensureNotEmpty(interestsLabelValue), style:Styles().textStyles?.getTextStyle("widget.explore.card.detail.small"))
                                 ],),
                               ),

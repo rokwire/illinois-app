@@ -63,13 +63,13 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
                   Semantics(label: titleString, hint: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.hint', ''), excludeSemantics: true, header:true, child:
                     Padding(padding: EdgeInsets.symmetric(horizontal: 18), child:
                       Center(child:
-                        Text(titleString, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary)),
+                        Text(titleString, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.onboarding2.login_email.heading.title")),
                       )
                     ),
                   ),
                   Container(height: 24,),
                   Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
-                    Text(Localization().getStringEx('panel.onboarding2.phone_or_email_statement.description', 'This saves your preferences so you can have the same experience on more than one device.'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))
+                    Text(Localization().getStringEx('panel.onboarding2.phone_or_email_statement.description', 'This saves your preferences so you can have the same experience on more than one device.'), textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.description.large"))
                   ),
                 ]),
               ),

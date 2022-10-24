@@ -33,7 +33,7 @@ class _SettingsLinkedAccountState extends State<SettingsLinkedAccountPanel>{
                   child: Column(children:[
                     Row(children: [ Expanded(child:
                       Text(_description,
-                        style: Styles().textStyles?.getTextStyle("widget.description.large"),
+                        style: Styles().textStyles?.getTextStyle("widget.description.medium"),
                       )
                     )],),
                     Container(height: 48),

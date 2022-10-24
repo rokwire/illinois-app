@@ -23,7 +23,6 @@ import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -137,7 +136,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
               child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 32),
                   child: Text(Localization().getStringEx("panel.appointment.detail.error.msg", 'Failed to load appointment data.'),
-                      style: Styles().textStyles?.getTextStyle('widget.message.large')))))
+                      style: Styles().textStyles?.getTextStyle('widget.message.large.fat')))))
     ]);
   }
 

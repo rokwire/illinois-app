@@ -36,7 +36,7 @@ class Onboarding2PromptResearchQuestionnairePanel extends StatelessWidget {
         Row(children: [
           Expanded(child: 
             Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt', 'Would you like to participate in Research?'), textAlign: TextAlign.center,
-              style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 24, color: Styles().colors?.fillColorPrimary,),
+              style: Styles().textStyles?.getTextStyle("widget.message.extra_large.fat"),
             ),
           )
         ],),

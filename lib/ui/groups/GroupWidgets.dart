@@ -2233,7 +2233,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
                 Semantics(label:semanticsQuestionText, excludeSemantics: true, child:
                   Text(wantsToKnow, style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny'))),
               ),
-              Text(pin, style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny_variant')),
+              Text(pin, style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.fat')),
               Visibility(visible: _GroupPollOptionsState._hasPollOptions(widget), child:
                 Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
                   GestureDetector(onTap: _onPollOptionsTap, child:
@@ -2258,7 +2258,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
                         Text(pollVotesStatus, style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny'),),
                       ),
                       Expanded(child:
-                        Text(pollStatus ?? "", textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny_variant'),))
+                        Text(pollStatus ?? "", textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle('widget.card.detail.tiny.fat'),))
                     ],),
                   ),
                 ),
