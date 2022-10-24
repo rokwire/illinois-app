@@ -133,7 +133,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
       widgets.add(Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(Localization().getStringEx("panel.parking_lots.label.empty","No parking lots available for this event"),
-          style: Styles().textStyles?.getTextStyle("widget.item.regular")
+          style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
         ),
       ));
     }

@@ -103,12 +103,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                                     child: Text(
                                         _title!,
                                         textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: Styles().colors!.fillColorPrimary,
-                                            fontSize: 24,
-                                            fontFamily: Styles().fontFamilies!.bold,
-                                            height: 1.2
-                                        ))
+                                        style: Styles().textStyles?.getTextStyle("panel.onboarding2.improve.heading.title"))
                                 ),
                               )),
                           Semantics(
@@ -121,10 +116,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                                     child: Text(
                                       _description!,
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontFamily: Styles().fontFamilies!.regular,
-                                          fontSize: 16,
-                                          color: Styles().colors!.fillColorPrimary),
+                                      style: Styles().textStyles?.getTextStyle("widget.description.regular")
                                     )),
                               )),
                           Container(height: 10,),

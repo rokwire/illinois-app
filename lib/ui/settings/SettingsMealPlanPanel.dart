@@ -719,7 +719,7 @@ class _DateLabel extends StatelessWidget {
     return Container(width: 70,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text(label!, style: Styles().textStyles?.getTextStyle("widget.item.regular"),),
+        Text(label!, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),),
         Container(height: 2, color: Styles().colors!.surfaceAccent,)
       ],),);
   }

@@ -360,7 +360,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           Container(height: 16,),
           Text(description,
             textAlign: TextAlign.center,
-            style:Styles().textStyles?.getTextStyle("widget.item.regular") ),
+            style:Styles().textStyles?.getTextStyle("widget.item.regular.thin") ),
         ]
     ));
   }
@@ -378,7 +378,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           Container(height: 16,),
           Text(error,
             textAlign: TextAlign.center,
-            style: Styles().textStyles?.getTextStyle("widget.item.regular"),)
+            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),)
         ]
     ));
   }

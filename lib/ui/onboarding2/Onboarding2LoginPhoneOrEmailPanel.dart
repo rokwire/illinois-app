@@ -113,15 +113,15 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                       header: true,
                       child: Padding(padding: EdgeInsets.symmetric(horizontal: 36), child:
                         Text(title,
-                          textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary))
+                          textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.onboarding2.login_email.heading.title"))
                     )),
                     Container(height: 24,),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
                       Text(description,
-                        textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 18, color: Styles().colors!.fillColorPrimary)),
+                        textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.description.medium")),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
-                      Text(entryText, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
+                      Text(entryText, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
                       Semantics(
@@ -140,7 +140,7 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                             onSubmitted: (_) => _clearErrorMsg,
                             cursorColor: Styles().colors!.textBackground,
                             keyboardType: TextInputType.emailAddress,
-                            style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
+                            style: Styles().textStyles?.getTextStyle("widget.input_field.text.regular"),
                             decoration: InputDecoration(
                               enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0, style: BorderStyle.solid),),
                               focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0),),
@@ -153,11 +153,11 @@ class _Onboarding2LoginPhoneOrEmailPanelState extends State<Onboarding2LoginPhon
                       Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), child:
                         Column(
                           children: [
-                            Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+                            Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style:  Styles().textStyles?.getTextStyle("panel.settings.error.text")),
                             Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
+                                child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style:  Styles().textStyles?.getTextStyle("widget.message.small")),
                               ),
                             ),
                           ],

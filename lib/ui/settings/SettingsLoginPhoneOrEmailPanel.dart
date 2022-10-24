@@ -121,7 +121,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
             Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: Column(children:[
                 Row(children: [ Expanded(child:
-                  Text(description, style:  Styles().textStyles?.getTextStyle("widget.description.large"),)
+                  Text(description, style:  Styles().textStyles?.getTextStyle("widget.description.medium"),)
                 )],),
                 Container(height: 48),
                 Row(children: [ Expanded(child:

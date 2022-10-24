@@ -91,7 +91,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         Semantics(label: description, hint: '', excludeSemantics: true, child:
           Row(children: [
             Expanded(child:
-              Text(description, style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground), textAlign: TextAlign.left,),
+              Text(description, style: Styles().textStyles?.getTextStyle("widget.item.regular"), textAlign: TextAlign.left,),
             )
           ],)
         ),
@@ -109,7 +109,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
           Semantics(label: title, hint: '', excludeSemantics: true, child:
             Row(children: [
               Expanded(child:
-                Text(title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 24, color: Styles().colors?.fillColorPrimary), textAlign: TextAlign.center,),
+                Text(title, style: Styles().textStyles?.getTextStyle("widget.title.extra_large"), textAlign: TextAlign.center,),
               )
             ],)
           ),
@@ -153,7 +153,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
         Row(children: [
           Expanded(child:
-            Text(title, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), textAlign: TextAlign.left,),
+            Text(title, style: Styles().textStyles?.getTextStyle("widget.title.large.fat"), textAlign: TextAlign.left,),
           )
         ])      
       ));
@@ -164,7 +164,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 2), child:
         Row(children: [
           Expanded(child:
-            Text(descriptionPrefix, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground), textAlign: TextAlign.left,),
+            Text(descriptionPrefix, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"), textAlign: TextAlign.left,),
           )
         ])
       ));
@@ -182,7 +182,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, bottom: 16), child:
         Row(children: [
           Expanded(child:
-            Text(descriptionSuffix, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground), textAlign: TextAlign.left,),
+            Text(descriptionSuffix, style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"), textAlign: TextAlign.left,),
           )
         ])
       ));
@@ -220,7 +220,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         ),
         Expanded(child:
           Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
-            Text(title, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary), textAlign: TextAlign.left,)
+            Text(title, style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
           ),
         ),
       ]),
@@ -344,7 +344,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
                 Row(children: [
                   Expanded(child:
                     Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.error.load', 'Failed to load research questionnaire.'), style:
-                      TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 20, color: Styles().colors?.fillColorPrimary), textAlign: TextAlign.center,),
+              Styles().textStyles?.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
                   ),
                 ],)
               )

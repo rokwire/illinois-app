@@ -64,7 +64,7 @@ class _SettingsRolesContentWidgetState extends State<SettingsRolesContentWidget>
                   padding: EdgeInsets.only(top: 16),
                   child: Text(
                     Localization().getStringEx('panel.onboarding.roles.label.description', 'Select all that apply'),
-                    style: Styles().textStyles?.getTextStyle("widget.item.regular")
+                    style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
                   ),
                 ),
               ),

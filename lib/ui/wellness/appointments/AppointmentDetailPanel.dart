@@ -137,7 +137,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
               child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 32),
                   child: Text(Localization().getStringEx("panel.appointment.detail.error.msg", 'Failed to load appointment data.'),
-                      style: Styles().textStyles?.getTextStyle('widget.message.large')))))
+                      style: Styles().textStyles?.getTextStyle('widget.message.large.fat')))))
     ]);
   }
 
