@@ -328,7 +328,7 @@
 	"panel.browse.entry.campus_resources.groups.title": "團體",
 	"panel.browse.entry.campus_resources.quick_polls.title": "快速投票",
 	"panel.browse.entry.campus_resources.campus_guide.title": "校園指南",
-	"panel.browse.entry.campus_resources.inbox.title": "通知",
+	"panel.browse.entry.campus_resources.all_notifications.title": "通知",
 
 	"panel.browse.entry.dinings.dinings_all.title": "宿舍餐廳",
 	"panel.browse.entry.dinings.dinings_open.title": "宿舍餐廳現在開放",
@@ -359,8 +359,8 @@
 	"panel.browse.entry.my.my_campus_guide.title": "我的校園指南",
 	"panel.browse.entry.my.wellness_resources.title": "我的健康資源",
 
-	"panel.browse.entry.inbox.recent_inbox.title": "所有通知",
-	"panel.browse.entry.inbox.unread_inbox.title": "未讀通知",
+	"panel.browse.entry.inbox.all_notifications.title": "所有通知",
+	"panel.browse.entry.inbox.unread_notifications.title": "未讀通知",
 
 	"panel.browse.entry.polls.create_poll.title": "創建投票",
 	"panel.browse.entry.polls.recent_polls.title": "查看民意調查",

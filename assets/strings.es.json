@@ -328,7 +328,7 @@
     "panel.browse.entry.campus_resources.groups.title": "Grupos",
     "panel.browse.entry.campus_resources.quick_polls.title": "Encuestas rápidas",
     "panel.browse.entry.campus_resources.campus_guide.title": "Guía del Campus",
-    "panel.browse.entry.campus_resources.inbox.title": "Notificaciones",
+    "panel.browse.entry.campus_resources.all_notifications.title": "Notificaciones",
 
     "panel.browse.entry.dinings.dinings_all.title": "Comedor de la residencia",
     "panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Abierto ahora",
@@ -359,8 +359,8 @@
     "panel.browse.entry.my.my_campus_guide.title": "Guía de mi campus",
     "panel.browse.entry.my.wellness_resources.title": "Mis recursos de bienestar",
 
-    "panel.browse.entry.inbox.recent_inbox.title": "Todas las notificaciones",
-    "panel.browse.entry.inbox.unread_inbox.title": "Notificaciones no leídas",
+    "panel.browse.entry.inbox.all_notifications.title": "Todas las notificaciones",
+    "panel.browse.entry.inbox.unread_notifications.title": "Notificaciones no leídas",
 
     "panel.browse.entry.polls.create_poll.title": "Crear una encuesta",
     "panel.browse.entry.polls.recent_polls.title": "Ver encuestas",

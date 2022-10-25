@@ -408,7 +408,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeWPGUFMRadioWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
       }
     }
-    else if (code == 'inbox') {
+    else if (code == 'all_notifications') {
       if (title) {
         return HomeInboxWidget.title(content: HomeInboxContent.all);
       } else if (handle) {
@@ -417,7 +417,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeInboxWidget(key: _widgetKey(code), content: HomeInboxContent.all, favoriteId: code, updateController: _updateController,);
       }
     }
-    else if (code == 'unread_inbox') {
+    else if (code == 'unread_notifications') {
       if (title) {
         return HomeInboxWidget.title(content: HomeInboxContent.unread);
       } else if (handle) {
