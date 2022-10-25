@@ -410,20 +410,20 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (code == 'inbox') {
       if (title) {
-        return HomeInboxWidget.title;
+        return HomeInboxWidget.title(content: HomeInboxContent.all);
       } else if (handle) {
-        return HomeInboxWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position,);
+        return HomeInboxWidget.handle(key: _handleKey(code), content: HomeInboxContent.all, favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
-        return HomeInboxWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
+        return HomeInboxWidget(key: _widgetKey(code), content: HomeInboxContent.all, favoriteId: code, updateController: _updateController,);
       }
     }
     else if (code == 'unread_inbox') {
       if (title) {
-        return HomeUnreadInboxWidget.title;
+        return HomeInboxWidget.title(content: HomeInboxContent.unread);
       } else if (handle) {
-        return HomeUnreadInboxWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position,);
+        return HomeInboxWidget.handle(key: _handleKey(code), content: HomeInboxContent.unread, favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
-        return HomeUnreadInboxWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
+        return HomeInboxWidget(key: _widgetKey(code), content: HomeInboxContent.unread, favoriteId: code, updateController: _updateController,);
       }
     }
     else if (code == 'app_help') {
