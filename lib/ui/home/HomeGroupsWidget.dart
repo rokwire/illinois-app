@@ -18,12 +18,12 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 
 
-class HomeMyGroupsWidget extends StatefulWidget {
+class HomeGroupsWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
   final GroupsContentType contentType;
 
-  const HomeMyGroupsWidget({Key? key, required this.contentType, this.favoriteId, this.updateController}) : super(key: key);
+  const HomeGroupsWidget({Key? key, required this.contentType, this.favoriteId, this.updateController}) : super(key: key);
 
   static Widget handle({required GroupsContentType contentType, Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
@@ -42,10 +42,10 @@ class HomeMyGroupsWidget extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => _HomeMyGroupsState();
+  State<StatefulWidget> createState() => _HomeGroupsWidgetState();
 }
 
-class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements NotificationsListener{
+class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements NotificationsListener{
   List<Group>? _groups;
   DateTime? _pausedDateTime;
 
