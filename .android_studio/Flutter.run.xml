@@ -3,7 +3,7 @@
     <option name="buildFlavor" value="IllinoisDev" />
     <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
     <method v="2">
-      <option name="RunConfigurationTask" enabled="true" run_configuration_name="clean_app_resources" run_configuration_type="ShConfigurationType" />
+      <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_clean_app_resources" />
     </method>
   </configuration>
 </component>
