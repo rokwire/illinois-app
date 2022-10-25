@@ -84,6 +84,9 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   static final double _defaultPadding = 16;
   static SettingsNotificationsContent? _lastSelectedContent;
   late SettingsNotificationsContent _selectedContent;
+  final GlobalKey _allContentKey = GlobalKey();
+  final GlobalKey _mutedContentKey = GlobalKey();
+  final GlobalKey _unreadContentKey = GlobalKey();
   final GlobalKey _headerBarKey = GlobalKey();
   final GlobalKey _tabBarKey = GlobalKey();
   final GlobalKey _contentDropDownKey = GlobalKey();
@@ -235,11 +238,11 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   Widget get _contentWidget {
     switch (_selectedContent) {
       case SettingsNotificationsContent.all:
-        return SettingsInboxHomeContentWidget();
+        return SettingsInboxHomeContentWidget(key: _allContentKey);
       case SettingsNotificationsContent.muted:
-        return SettingsInboxHomeContentWidget(muted: true);
+        return SettingsInboxHomeContentWidget(muted: true, key: _mutedContentKey);
       case SettingsNotificationsContent.unread:
-        return SettingsInboxHomeContentWidget(unread: true);
+        return SettingsInboxHomeContentWidget(unread: true, key: _unreadContentKey);
       case SettingsNotificationsContent.preferences:
         return SettingsNotificationPreferencesContentWidget();
     }

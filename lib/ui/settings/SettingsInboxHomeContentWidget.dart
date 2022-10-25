@@ -19,7 +19,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class SettingsInboxHomeContentWidget extends StatefulWidget {
   final bool? muted;
   final bool? unread;
-  SettingsInboxHomeContentWidget({this.muted, this.unread});
+  SettingsInboxHomeContentWidget({Key? key, this.muted, this.unread}) : super(key: key);
 
   _SettingsInboxHomeContentWidgetState createState() => _SettingsInboxHomeContentWidgetState();
 }
