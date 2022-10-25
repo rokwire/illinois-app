@@ -272,6 +272,8 @@
     "panel.browse.section.feeds.description": "Escuche WPGU 107.1 y obtenga lo último en las redes sociales de {{app_title}}.",
     "panel.browse.section.groups.title": "Grupos",
     "panel.browse.section.groups.description": "Comience su propio grupo o descubra un nuevo grupo para unirse.",
+    "panel.browse.section.research_projects.title": "Proyectos de investigación",
+    "panel.browse.section.research_projects.description": "Comience sus propios proyectos de investigación o descubra nuevos proyectos para unirse.",
     "panel.browse.section.laundry.title": "Ropa sucia",
     "panel.browse.section.laundry.description": "Vea las ubicaciones de lavandería y la disponibilidad de lavadoras/secadoras.",
     "panel.browse.section.my.title": "Mi",
@@ -342,6 +344,9 @@
 
     "panel.browse.entry.groups.all_groups.title": "Todos los grupos",
     "panel.browse.entry.groups.my_groups.title": "Mis grupos",
+
+    "panel.browse.entry.research_projects.open_research_projects.title": "Proyectos de Investigación Abierta",
+    "panel.browse.entry.research_projects.my_research_projects.title": "Mis Proyectos de Investigación",
 
     "panel.browse.entry.laundry.laundry.title": "Ropa sucia",
     "panel.browse.entry.laundry.my_laundry.title": "Mi colada",
@@ -2249,6 +2254,10 @@
     "panel.group_polls.empty.description": "You will see the polls for your group here.",
     "panel.group_polls.text.error": "Error",
 
+    "panel.research_projects.home.header_bar.title": "Research Projects",
+    "panel.research_projects.home.content_type.open.title": "Open Research Projects",
+    "panel.research_projects.home.content_type.my.title": "My Research Projects",
+
     "panel.guide_categories.label.heading": "Campus Guide",
     "panel.guide_categories.label.content.empty": "Contenido de la guía vacía",
 
@@ -2489,8 +2498,15 @@
     "widget.home.groups.all.label.header.title":"Todos los grupos",
 	"widget.home.groups.my.text.empty.description": "Aún no has creado ningún grupo.",
 	"widget.home.groups.all.text.empty.description": "No se pudieron cargar los grupos.",
-    "widget.home.my_groups.button.all.title":"Ver todo",
-    "widget.home.my_groups.button.all.hint":"Toca para ver todos los grupos",
+    "widget.home.groups.button.all.title":"Ver todo",
+    "widget.home.groups.button.all.hint":"Toca para ver todos los grupos",
+
+    "widget.home.research_projects.my.label.header.title":"Mis Proyectos de Investigación",
+    "widget.home.research_projects.open.label.header.title":"Proyectos de Investigación Abierta",
+	"widget.home.research_projects.my.text.empty.description": "Aún no ha creado ningún proyecto de investigación.",
+	"widget.home.research_projects.all.text.empty.description": "No se pudieron cargar los proyectos de investigación.",
+    "widget.home.research_projects.button.all.title": "Ver todo",
+    "widget.home.research_projects.button.all.hint": "Toque para ver todos los proyectos de investigación",
 
     "widget.home.campus_resources.label.campus_tools":"Recursos del campus",
     "widget.home.campus_resources.button.events.title":"Eventos",

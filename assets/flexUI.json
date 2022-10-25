@@ -5,7 +5,8 @@
 	
 			"home": ["wallet", "my_dining", "dinings", "my_laundry", "laundry",
 				"wellness_resources", "wellness_todo", "wellness_rings", "wellness_tips",
-				"daily_illini", "wpgufm_radio", "twitter", "all_groups", "my_groups", "create_poll", "recent_polls", 
+				"daily_illini", "wpgufm_radio", "twitter", "all_groups", "my_groups",
+				"open_research_projects", "my_research_projects", "create_poll", "recent_polls", 
 				"my_events", "suggested_events", "sport_events", "sport_news", "my_athletics", "my_game_day",
 				"my_campus_guide", "campus_reminders", "inbox", "state_farm_center", "app_help", "video_tutorials",
 				"gies_checklist", "new_student_checklist", "safer", "student_courses", "canvas_courses",
@@ -23,7 +24,7 @@
 
 			"home.twitter.account": ["gies", "", "canvas"],
 			
-			"browse": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_resources", "dinings", "events", "feeds", "laundry", "groups", "my", "inbox", "polls", "recent", "state_farm_center", "wallet", "wellness"],
+			"browse": ["academics", "app_help", "athletics", "safer", "campus_guide", "campus_resources", "dinings", "events", "feeds", "laundry", "groups", "my", "inbox", "polls", "recent", "research_projects", "state_farm_center", "wallet", "wellness"],
 			"browse.academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "campus_reminders", "due_date_catalog"],
 			"browse.app_help": ["faqs", "feedback", "review", "video_tutorials"],
 			"browse.athletics": ["my_game_day", "sport_events", "my_athletics", "sport_news", "my_news"],
@@ -35,7 +36,8 @@
 			"browse.events": ["suggested_events", "my_events"],
 			"browse.feeds": ["twitter", "daily_illini", "wpgufm_radio"],
 			"browse.groups": ["all_groups", "my_groups"],
-			"browse.my": ["my_athletics", "my_news", "my_campus_guide", "student_courses", "my_dining", "my_events", "my_game_day", "canvas_courses", "my_groups", "my_laundry", "my_inbox", "wellness_resources"],
+			"browse.research_projects": ["open_research_projects", "my_research_projects"],
+			"browse.my": ["my_athletics", "my_news", "my_campus_guide", "student_courses", "my_dining", "my_events", "my_game_day", "canvas_courses", "my_groups", "my_research_projects", "my_laundry", "my_inbox", "wellness_resources"],
 			"browse.inbox": ["recent_inbox", "my_inbox"],
 			"browse.polls": ["create_poll", "recent_polls"],
 			"browse.recent": ["recent_items"],
@@ -195,7 +197,7 @@
 					"student": [
 						"dinings", "gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "laundry",
 						"wallet", "daily_illini", "wpgufm_radio", "campus_highlights", "campus_reminders", "inbox",
-						"all_groups", "twitter", "my_dining", "my_events", "my_groups", "my_inbox",
+						"all_groups", "open_research_projects", "twitter", "my_dining", "my_events", "my_groups", "my_research_projects", "my_inbox",
 						"wellness_resources", "wellness_rings", "wellness_todo", "wellness_tips",
 						"my_game_day", "my_athletics", "my_news", "my_campus_guide", "create_poll",
 						"recent_polls", "recent_items", "suggested_events",
@@ -203,7 +205,7 @@
 					],
 					"gies_oncampus":[
 						"gies_checklist", "student_courses", "canvas_courses", "wallet", "daily_illini", "wpgufm_radio",
-						"twitter", "recent_items", "all_groups", "my_groups", "my_inbox",
+						"twitter", "recent_items", "all_groups", "open_research_projects", "my_groups", "my_research_projects", "my_inbox",
 						"wellness_resources", "wellness_rings", "wellness_todo", "wellness_tips",
 						"my_campus_guide", "sport_events", "sport_news",
 						"my_athletics", "my_news", "my_game_day", "create_poll", "recent_polls",
@@ -212,7 +214,7 @@
 					],
 					"gies_offcampus":[
 						"gies_checklist", "student_courses", "canvas_courses", "wallet", "daily_illini", "wpgufm_radio",
-						"twitter", "recent_items", "all_groups", "my_groups", "my_inbox",
+						"twitter", "recent_items", "all_groups", "open_research_projects", "my_groups", "my_research_projects", "my_inbox",
 						"wellness_resources", "wellness_rings", "wellness_todo", "wellness_tips",
 						"my_campus_guide", "sport_events", "sport_news",
 						"my_athletics", "my_news", "my_game_day", "create_poll", "recent_polls",

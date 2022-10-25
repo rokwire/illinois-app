@@ -1,43 +1,43 @@
+
 import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/groups/GroupsHomePanel.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:illinois/ui/groups/GroupWidgets.dart';
 
-
-class HomeGroupsWidget extends StatefulWidget {
+class HomeResearchProjectsWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
-  final GroupsContentType contentType;
+  final ResearchProjectsContentType contentType;
 
-  const HomeGroupsWidget({Key? key, required this.contentType, this.favoriteId, this.updateController}) : super(key: key);
+  const HomeResearchProjectsWidget({Key? key, required this.contentType, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({required GroupsContentType contentType, Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+  static Widget handle({required ResearchProjectsContentType contentType, Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: titleForContentType(contentType),
     );
 
   String get _title => titleForContentType(contentType);
   
-  static String title({required GroupsContentType contentType}) => titleForContentType(contentType);
+  static String title({required ResearchProjectsContentType contentType}) => titleForContentType(contentType);
 
-  static String titleForContentType(GroupsContentType contentType) {
+  static String titleForContentType(ResearchProjectsContentType contentType) {
     switch(contentType) {
-      case GroupsContentType.my: return Localization().getStringEx('widget.home.groups.my.label.header.title', 'My Groups');
-      case GroupsContentType.all: return Localization().getStringEx('widget.home.groups.all.label.header.title', 'All Groups');
+      case ResearchProjectsContentType.open: return Localization().getStringEx('panel.research_projects.home.content_type.open.title', 'Open Research Projects');
+      case ResearchProjectsContentType.my: return Localization().getStringEx('panel.research_projects.home.content_type.my.title', 'My Research Projects');
     }
   }
 
@@ -45,8 +45,9 @@ class HomeGroupsWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeGroupsWidgetState();
 }
 
-class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements NotificationsListener{
-  List<Group>? _groups;
+class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implements NotificationsListener {
+
+  List<Group>? _researchProjects;
   DateTime? _pausedDateTime;
 
   PageController? _pageController;
@@ -58,23 +59,18 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     super.initState();
 
     NotificationService().subscribe(this, [
-      Groups.notifyUserMembershipUpdated,
-      Groups.notifyGroupCreated,
-      Groups.notifyGroupUpdated,
-      Groups.notifyGroupDeleted,
-      Groups.notifyUserGroupsUpdated,
       Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,]);
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
-          _updateGroups();
+          _updateResearchProjects();
         }
       });
     }
 
-    _loadGroups();
+    _loadResearchProjects();
   }
 
   @override
@@ -84,23 +80,23 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     NotificationService().unsubscribe(this);
   }
 
-  void _loadGroups(){
-    Groups().loadGroups(contentType: widget.contentType).then((groups) {
-      _sortGroups(groups);
+  void _loadResearchProjects(){
+    Groups().loadResearchProjects(contentType: widget.contentType).then((List<Group>? researchProjects) {
+      _sortResearchProjects(researchProjects);
       if (mounted) {
         setState(() {
-          _groups = groups;
+          _researchProjects = researchProjects;
         });
       }
     });
   }
 
-  void _updateGroups() {
-    Groups().loadGroups(contentType: widget.contentType).then((List<Group>? groups) {
-      _sortGroups(groups);
-      if (mounted && !DeepCollectionEquality().equals(_groups, groups)) {
+  void _updateResearchProjects() {
+    Groups().loadResearchProjects(contentType: widget.contentType).then((List<Group>? researchProjects) {
+      _sortResearchProjects(researchProjects);
+      if (mounted && !DeepCollectionEquality().equals(_researchProjects, researchProjects)) {
         setState(() {
-          _groups = groups;
+          _researchProjects = researchProjects;
           _pageViewKey = UniqueKey();
           _pageController = null;
         });
@@ -108,24 +104,12 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     });
   }
 
-  void _applyUserGroups() {
-    if (widget.contentType == GroupsContentType.my) {
-      List<Group>? userGroups = Groups().userGroups;
-      _sortGroups(userGroups);
-      if (mounted) {
-        setState(() {
-          _groups = userGroups;
-        });
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: widget._title,
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      child: _haveGroups ? _buildContent() : _buildEmpty(),
+      child: _haveResearchProjects ? _buildContent() : _buildEmpty(),
     );
   }
 
@@ -133,13 +117,13 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
   Widget _buildContent() {
 
     List<Widget> pages = <Widget>[];
-    if(_groups?.isNotEmpty ?? false) {
-      for (Group? group in _groups!) {
-        if ((group != null) && group.isVisible) {
+    if(_researchProjects?.isNotEmpty ?? false) {
+      for (Group? researchProject in _researchProjects!) {
+        if ((researchProject != null) && researchProject.isVisible) {
           pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
             Semantics(
-              // excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),
-             child: GroupCard(group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
+              // excludeSemantics: !(_pageController?.page == _researchProjects?.indexOf(researchProject)),
+             child: GroupCard(group: researchProject, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
           )));
         }
       }
@@ -164,17 +148,17 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
       ),
       AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
       LinkButton(
-        title: Localization().getStringEx('widget.home.groups.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),
+        title: Localization().getStringEx('widget.home.research_projects.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.research_projects.button.all.hint', 'Tap to view all research projects'),
         onTap: _onSeeAll,
       ),
     ],);
 
   }
 
-  List<Group>? _sortGroups(List<Group>? groups){
-    if(groups?.isNotEmpty ?? false){
-      groups!.sort((group1, group2) {
+  List<Group>? _sortResearchProjects(List<Group>? researchProjects){
+    if(researchProjects?.isNotEmpty ?? false){
+      researchProjects!.sort((group1, group2) {
         if (group2.dateUpdatedUtc == null) {
           return -1;
         }
@@ -186,19 +170,14 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
       });
     }
 
-    return groups;
+    return researchProjects;
   }
 
   Widget _buildEmpty() {
     String message;
     switch(widget.contentType) {
-      case GroupsContentType.my:
-        message = Localization().getStringEx('widget.home.groups.my.text.empty.description', 'You have not created any groups yet.');
-        break;
-      
-      case GroupsContentType.all:
-        message = Localization().getStringEx('widget.home.groups.all.text.empty.description', 'Failed to load groups.');
-        break;
+      case ResearchProjectsContentType.my: message = Localization().getStringEx('widget.home.research_projects.my.text.empty.description', 'You have not created any research projects yet.'); break;
+      case ResearchProjectsContentType.open: message = Localization().getStringEx('widget.home.research_projects.all.text.empty.description', 'Failed to load research projects.'); break;
     }
     return HomeMessageCard(message: message,);
   }
@@ -208,15 +187,8 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
-    else if ((name == Groups.notifyGroupCreated) ||
-      (name == Groups.notifyGroupUpdated) ||
-      (name == Groups.notifyGroupDeleted) ||
-      (name == Groups.notifyUserMembershipUpdated) ||
-      (name == Auth2.notifyLoginChanged)) {
-        _loadGroups();
-    }
-    else if (name == Groups.notifyUserGroupsUpdated) {
-      _applyUserGroups();
+    else if (name == Auth2.notifyLoginChanged) {
+      _loadResearchProjects();
     }
   }
 
@@ -228,18 +200,18 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _updateGroups();
+          _updateResearchProjects();
         }
       }
     }
   }
 
-  bool get _haveGroups{
-    return _groups?.isNotEmpty ?? false;
+  bool get _haveResearchProjects {
+    return _researchProjects?.isNotEmpty ?? false;
   }
 
   void _onSeeAll() {
     Analytics().logSelect(target: "View All", source: '${widget.runtimeType}(${widget.contentType})' );
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel(contentType: widget.contentType,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResearchProjectsHomePanel(contentType: widget.contentType,)));
   }
 }

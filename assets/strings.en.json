@@ -273,6 +273,8 @@
     "panel.browse.section.feeds.description": "Listen to WPGU 107.1 and catch the latest on {{app_title}} social media.",
     "panel.browse.section.groups.title": "Groups",
     "panel.browse.section.groups.description": "Start your own group or discover a new group to join.",
+    "panel.browse.section.research_projects.title": "Research Projects",
+    "panel.browse.section.research_projects.description": "Start your own research projects or discover a new projects to join.",
     "panel.browse.section.laundry.title": "Laundry",
     "panel.browse.section.laundry.description": "View laundry locations and washer/dryer availability",
     "panel.browse.section.my.title": "My",
@@ -343,6 +345,9 @@
 
     "panel.browse.entry.groups.all_groups.title": "All Groups",
     "panel.browse.entry.groups.my_groups.title": "My Groups",
+
+    "panel.browse.entry.research_projects.open_research_projects.title": "Open Research Projects",
+    "panel.browse.entry.research_projects.my_research_projects.title": "My Research Projects",
 
     "panel.browse.entry.laundry.laundry.title": "Laundry",
     "panel.browse.entry.laundry.my_laundry.title": "My Laundry",
@@ -2251,6 +2256,10 @@
     "panel.group_polls.empty.description": "You will see the polls for your group here.",
     "panel.group_polls.text.error": "Error",
 
+    "panel.research_projects.home.header_bar.title": "Research Projects",
+    "panel.research_projects.home.content_type.open.title": "Open Research Projects",
+    "panel.research_projects.home.content_type.my.title": "My Research Projects",
+
     "panel.guide_categories.label.heading": "Campus Guide",
     "panel.guide_categories.label.content.empty": "Empty guide content",
 
@@ -2492,8 +2501,15 @@
     "widget.home.groups.all.label.header.title":"All Groups",
 	"widget.home.groups.my.text.empty.description": "You have not created any groups yet.",
 	"widget.home.groups.all.text.empty.description": "Failed to load groups.",
-    "widget.home.my_groups.button.all.title":"View All",
-    "widget.home.my_groups.button.all.hint":"Tap to view all groups",
+    "widget.home.groups.button.all.title":"View All",
+    "widget.home.groups.button.all.hint":"Tap to view all groups",
+
+    "widget.home.research_projects.my.label.header.title":"My Research Projects",
+    "widget.home.research_projects.open.label.header.title":"Open Research Projects",
+	"widget.home.research_projects.my.text.empty.description": "You have not created any research projects yet.",
+	"widget.home.research_projects.all.text.empty.description": "Failed to load research projects.",
+    "widget.home.research_projects.button.all.title": "View All",
+    "widget.home.research_projects.button.all.hint": "Tap to view all research projects",
 
     "widget.home.campus_resources.label.campus_tools":"Campus Resources",
     "widget.home.campus_resources.button.events.title":"Events",
