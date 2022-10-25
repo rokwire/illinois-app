@@ -417,6 +417,15 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeInboxWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
       }
     }
+    else if (code == 'unread_inbox') {
+      if (title) {
+        return HomeUnreadInboxWidget.title;
+      } else if (handle) {
+        return HomeUnreadInboxWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeUnreadInboxWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
+      }
+    }
     else if (code == 'app_help') {
       if (title) {
         return HomeAppHelpWidget.title;

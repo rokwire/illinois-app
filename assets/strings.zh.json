@@ -359,8 +359,8 @@
 	"panel.browse.entry.my.my_campus_guide.title": "我的校園指南",
 	"panel.browse.entry.my.wellness_resources.title": "我的健康資源",
 
-	"panel.browse.entry.inbox.recent_inbox.title": "最近的通知",
-	"panel.browse.entry.inbox.my_inbox.title": "我的通知",
+	"panel.browse.entry.inbox.recent_inbox.title": "所有通知",
+	"panel.browse.entry.inbox.unread_inbox.title": "未讀通知",
 
 	"panel.browse.entry.polls.create_poll.title": "創建投票",
 	"panel.browse.entry.polls.recent_polls.title": "查看民意調查",
@@ -2599,7 +2599,8 @@
 	"widget.home.recent_polls.button.all.title": "查看全部",
 	"widget.home.recent_polls.button.all.hint": "點按即可查看所有民意調查",
 
-	"widget.home.inbox.text.title": "最近的通知",
+    "widget.home.inbox.text.all.title": "所有通知",
+    "widget.home.inbox.text.unread.title": "未讀通知",
 	"widget.home.inbox.text.empty.description": "通知現在可用。",
 	"widget.home.inbox.text.offline": "最近的通知在離線時不可用。",
 	"widget.home.inbox.text.logged_out": "您需要登錄才能訪問通知。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",

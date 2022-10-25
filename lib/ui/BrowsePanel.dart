@@ -540,6 +540,7 @@ class _BrowseEntry extends StatelessWidget {
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
 
       case "inbox.recent_inbox":             _onTapInbox(context); break;
+      case "inbox.unread_inbox":             _onTapInbox(context, unread: true); break;
 
       case "polls.create_poll":              _onTapCreatePoll(context); break;
       case "polls.recent_polls":             _onTapViewPolls(context); break;
@@ -862,9 +863,10 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
   }
 
-  void _onTapInbox(BuildContext context) {
-    Analytics().logSelect(target: "Inbox");
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.all);
+  void _onTapInbox(BuildContext context, {bool? unread}) {
+    bool isUnread = (unread == true);
+    Analytics().logSelect(target: isUnread ? "Unread Inbox" : "Inbox");
+    SettingsNotificationsContentPanel.present(context, content: isUnread ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
   }
 
   void _onTapSuggestedEvents(BuildContext context) {

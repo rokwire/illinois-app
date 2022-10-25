@@ -359,8 +359,8 @@
     "panel.browse.entry.my.my_campus_guide.title": "Guía de mi campus",
     "panel.browse.entry.my.wellness_resources.title": "Mis recursos de bienestar",
 
-    "panel.browse.entry.inbox.recent_inbox.title": "Notificaciones recientes",
-    "panel.browse.entry.inbox.my_inbox.title": "Mis Notificaciones",
+    "panel.browse.entry.inbox.recent_inbox.title": "Todas las notificaciones",
+    "panel.browse.entry.inbox.unread_inbox.title": "Notificaciones no leídas",
 
     "panel.browse.entry.polls.create_poll.title": "Crear una encuesta",
     "panel.browse.entry.polls.recent_polls.title": "Ver encuestas",
@@ -2600,7 +2600,8 @@
     "widget.home.recent_polls.button.all.title": "Ver todo",
     "widget.home.recent_polls.button.all.hint": "Toca para ver todas las encuestas",
 
-    "widget.home.inbox.text.title": "Notificaciones recientes",
+    "widget.home.inbox.text.all.title": "Todas las notificaciones",
+    "widget.home.inbox.text.unread.title": "Notificaciones no leídas",
     "widget.home.inbox.text.empty.description": "Las notificaciones están disponibles ahora mismo.",
     "widget.home.inbox.text.offline": "Las notificaciones recientes no están disponibles sin conexión.",
     "widget.home.inbox.text.logged_out": "Debe iniciar sesión para acceder a las notificaciones. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",

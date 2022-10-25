@@ -24,17 +24,18 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeInboxWidget extends StatefulWidget {
 
+  final bool? unread;
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  HomeInboxWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  HomeInboxWidget({Key? key, this.unread, this.favoriteId, this.updateController}) : super(key: key);
 
   static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.inbox.text.title', 'Recent Notifications');
+  static String get title => Localization().getStringEx('widget.home.inbox.text.all.title', 'All Notifications');
 
   State<HomeInboxWidget> createState() => _HomeInboxWidgetState();
 }
@@ -71,7 +72,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
 
     if (Connectivity().isOnline && Auth2().isLoggedIn) {
       _loadingMessages = true;
-      Inbox().loadMessages(offset: 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
+      Inbox().loadMessages(unread: widget.unread, offset: 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
         setStateIfMounted(() {
           _loadingMessages = false;
           _messages = messages;
@@ -125,7 +126,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
         setState(() {
           _loadingMessagesPage = true;
         });
-        Inbox().loadMessages(offset: 0, limit: max(_messages?.length ?? 0, Config().homeRecentNotificationsCount)).then((List<InboxMessage>? messages) {
+        Inbox().loadMessages(unread: widget.unread, offset: 0, limit: max(_messages?.length ?? 0, Config().homeRecentNotificationsCount)).then((List<InboxMessage>? messages) {
           setStateIfMounted(() {
             _loadingMessages = false;
             _messages = messages;
@@ -145,7 +146,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
         setState(() {
           _loadingMessagesPage = true;
         });
-        Inbox().loadMessages(offset: _messages?.length ?? 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
+        Inbox().loadMessages(unread: widget.unread, offset: _messages?.length ?? 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
           setStateIfMounted(() {
             _loadingMessagesPage = false;
             _hasMoreMessages = (messages?.length ?? 0) == Config().homeRecentNotificationsCount;
@@ -170,7 +171,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: HomeInboxWidget.title,
+      title: (widget.unread == true) ? HomeUnreadInboxWidget.title : HomeInboxWidget.title,
       titleIcon: Image.asset('images/icon-news.png'),
       child: _buildContent(),
     );
@@ -283,6 +284,21 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
 
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.all);
+    SettingsNotificationsContentPanel.present(context, content: (widget.unread == true) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
   }
+}
+
+class HomeUnreadInboxWidget extends HomeInboxWidget {
+
+  final String? favoriteId;
+  final StreamController<String>? updateController;
+
+  HomeUnreadInboxWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key, unread: true, favoriteId: favoriteId, updateController: updateController);
+
+  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+    HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
+      title: title,
+    );
+
+  static String get title => Localization().getStringEx('widget.home.inbox.text.unread.title', 'Unread Notifications');
 }
