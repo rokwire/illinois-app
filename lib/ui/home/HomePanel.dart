@@ -356,20 +356,20 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (code == 'my_groups') {
       if (title) {
-        return HomeMyGroupsWidget.title(contentType: GroupsContentType.my);
+        return HomeGroupsWidget.title(contentType: GroupsContentType.my);
       } else if (handle) {
-        return HomeMyGroupsWidget.handle(contentType: GroupsContentType.my, favoriteId: code, dragAndDropHost: this, position: position,);
+        return HomeGroupsWidget.handle(contentType: GroupsContentType.my, favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
-        return HomeMyGroupsWidget(key: _widgetKey(code), contentType: GroupsContentType.my, favoriteId: code, updateController: _updateController,);
+        return HomeGroupsWidget(key: _widgetKey(code), contentType: GroupsContentType.my, favoriteId: code, updateController: _updateController,);
       }
     }
     else if (code == 'all_groups') {
       if (title) {
-        return HomeMyGroupsWidget.titleForContentType(GroupsContentType.all);
+        return HomeGroupsWidget.titleForContentType(GroupsContentType.all);
       } else if (handle) {
-        return HomeMyGroupsWidget.handle(contentType: GroupsContentType.all, favoriteId: code, dragAndDropHost: this, position: position,);
+        return HomeGroupsWidget.handle(contentType: GroupsContentType.all, favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
-        return HomeMyGroupsWidget(key: _widgetKey(code), contentType: GroupsContentType.all, favoriteId: code, updateController: _updateController,);
+        return HomeGroupsWidget(key: _widgetKey(code), contentType: GroupsContentType.all, favoriteId: code, updateController: _updateController,);
       }
     }
     else if (code == 'safer') {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -9,6 +10,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupAllEventsPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -64,11 +66,18 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
 
     if (_groupEvents != null) {
       for (Event? groupEvent in _groupEvents!) {
-        content.add(GroupEventCard(groupEvent: groupEvent, group: widget.group));
+        content.add(GroupEventCard(groupEvent: groupEvent, group: widget.group, onImageTap: (){_showModalImage(groupEvent?.eventImageUrl);}));
       }
     }
 
     return Column(
         children: content);
+  }
+
+  void _showModalImage(String? url){
+    Analytics().logSelect(target: "Image");
+    if (url != null) {
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image",))));
+    }
   }
 }
