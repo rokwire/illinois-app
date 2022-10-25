@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - HomeMyGroupsWidget renamed to HomeGroupsWidget.
+- Make group images expandable [#2474](https://github.com/rokwire/illinois-app/issues/2474).
 
 ## [4.2.7] - 2022-10-21
 ### Changed
