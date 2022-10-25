@@ -360,8 +360,9 @@ class GroupsConfirmationDialog extends StatelessWidget{
 class GroupEventCard extends StatefulWidget {
   final Event? groupEvent;
   final Group? group;
+  final Function? onImageTap;
 
-  GroupEventCard({this.groupEvent, this.group});
+  GroupEventCard({this.groupEvent, this.group, this.onImageTap});
 
   @override
   createState()=> _GroupEventCardState();
@@ -380,7 +381,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
             boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
             borderRadius: BorderRadius.all(Radius.circular(8))
         ),
-        child: _EventContent(event: event, group: widget.group),
+        child: _EventContent(event: event, group: widget.group, onImageTap: widget.onImageTap,),
       ),
     );
   }
@@ -389,8 +390,9 @@ class _GroupEventCardState extends State<GroupEventCard>{
 class _EventContent extends StatefulWidget {
   final Group? group;
   final Event? event;
+  final Function? onImageTap;
 
-  _EventContent({this.event, this.group});
+  _EventContent({this.event, this.group, this.onImageTap});
 
   @override
   createState()=> _EventContentState();
@@ -489,13 +491,19 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
             ],),
             Visibility(visible:
                 StringUtils.isNotEmpty(imageUrl),
-                child: Padding(
+                child: InkWell(
+                  onTap: (){
+                    if(widget.onImageTap!=null){
+                      widget.onImageTap!();
+                    }
+                  },
+                    child:Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 8),
                   child: SizedBox(
                     width: _smallImageSize,
                     height: _smallImageSize,
                     child: Image.network(
-                      imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),),)),
+                      imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),),))),
                 ])
                 )
     ],);
@@ -2080,7 +2088,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
         color: Styles().colors!.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(imageUrl)
-              ? Positioned.fill(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover))
+              ? Positioned.fill(child: InkWell(onTap: (){_showModalImage(imageUrl);}, child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)))
               : Container(),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),
@@ -2116,6 +2124,13 @@ class _ImageChooserState extends State<ImageChooserWidget>{
       }
     }
     Log.d("Image Url: $imageUrl");
+  }
+
+  //Modal Image Dialog
+  void _showModalImage(String? url){
+    Analytics().logSelect(target: "Image");
+    if (url != null) {
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));    }
   }
 
 }
