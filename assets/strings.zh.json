@@ -2256,6 +2256,12 @@
 	"panel.research_projects.home.header_bar.title": "Research Projects",
 	"panel.research_projects.home.content_type.open.title": "Open Research Projects",
 	"panel.research_projects.home.content_type.my.title": "My Research Projects",
+	"panel.research_projects.home.button.create.title": "Create",
+	"panel.research_projects.home.button.search.title": "Search",
+	"panel.research_projects.home.status.error.open.text": "Failed to load open research projects.",
+	"panel.research_projects.home.status.error.my.text": "Failed to load your research projects.",
+	"panel.research_projects.home.status.empty.open.text": "There are no opened research projects at the moment.",
+	"panel.research_projects.home.status.empty.my.text": "You have not created and do not participate in any research projects.",
 
 	"panel.guide_categories.label.heading": "Campus Guide",
 	"panel.guide_categories.label.content.empty": "空的指南內容",

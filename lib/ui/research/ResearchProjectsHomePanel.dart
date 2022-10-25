@@ -1,12 +1,21 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/groups/GroupCreatePanel.dart';
+import 'package:illinois/ui/groups/GroupSearchPanel.dart';
+import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class ResearchProjectsHomePanel extends StatefulWidget {
 
@@ -20,9 +29,13 @@ class ResearchProjectsHomePanel extends StatefulWidget {
 class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> implements NotificationsListener {
   
   final Color _dimmedBackgroundColor = Color(0x99000000);
+  //final int _pageSize = 16;
 
   ResearchProjectsContentType? _selectedContentType;
   bool _contentTypesDropdownExpanded = false;
+
+  List<Group>? _researchProjects;
+  bool _loadingResearchProjects = false;
 
   @override
   void initState() {
@@ -31,6 +44,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     if (widget.contentType != null) {
       _selectedContentType = widget.contentType;
     }
+    _loadInitialContent();
     super.initState();
   }
 
@@ -52,21 +66,26 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       appBar: RootBackHeaderBar(
         title: Localization().getStringEx('panel.research_projects.home.header_bar.title', 'Research Projects'),
       ),
-      body: _buildContent(),
+      body: _buildPage(),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildPage() {
     return Column(children: [
       _buildContentTypeDropdownButton(),
       Expanded(child:
         Stack(children: [
           Column(children: [
+            _buildToolBar(),
             Expanded(child:
-              Container(color: Styles().colors?.white,)
-            )
+              RefreshIndicator(onRefresh: _onPullToRefresh, child:
+                SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
+                  _buildContent()
+                ),
+              ),
+            ),
           ],),
           _buildContentTypesDropdownContainer()
         ],)
@@ -74,7 +93,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     ],);
   }
 
-  // Content type dropdown
+  // Content Type Dropdown
 
   Widget _buildContentTypeDropdownButton() {
     return Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
@@ -153,4 +172,166 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     }
   }
 
+  // ToolBar
+
+  Widget _buildToolBar() {
+    String createTitle = Localization().getStringEx("panel.research_projects.home.button.create.title", "Create");
+    String searchTitle = Localization().getStringEx("panel.research_projects.home.button.search.title", "Search");
+    
+    return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+      Visibility(visible: _canCreateResearchProject, child:
+        Semantics(label: createTitle, button: true, child:
+          InkWell(onTap: _onTapCreate, child: 
+            Padding(padding: EdgeInsets.only(left: 16, right: 6, top: 12, bottom: 12), child:
+              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Text(createTitle, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
+                Padding(padding: EdgeInsets.only(left: 5), child:
+                  Image.asset('images/icon-add-more.png')
+                )
+              ])
+            ),
+          ),
+        ),
+      ),
+      Semantics(label: searchTitle, button: true, child:
+        InkWell(onTap: _onTapSearch, child: 
+          Padding(padding: EdgeInsets.only(left: 6, right: 16, top: 12, bottom: 12), child:
+            Image.asset('images/icon-search.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: true, width: 25, height: 25),
+          ),
+        ),
+      )
+    ],);
+  }
+
+  void _onTapCreate() {
+    Analytics().logSelect(target: "Create");
+    Navigator.push(context, MaterialPageRoute(builder: (context) => GroupCreatePanel()));
+  }
+
+  void _onTapSearch() {
+    Analytics().logSelect(target: "Search");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
+  }
+
+  bool get _canCreateResearchProject {
+    return Auth2().isOidcLoggedIn && FlexUI().isSharingAvailable;
+  }
+
+  // Content Widget
+
+  Widget _buildContent() {
+    if (_loadingResearchProjects) {
+      return _buildLoading();
+    }
+    else if (_researchProjects == null) {
+      return _buildStatus(_errorDisplayStatus);
+    }
+    else if (_researchProjects!.isEmpty) {
+      return _buildStatus(_emptyDisplayStatus);
+    }
+    else {
+      return _buildResearchProjects();
+    }
+  }
+
+  Widget _buildResearchProjects() {
+    List<Widget> widgets = [];
+    GroupCardDisplayType cardDisplayType = (_selectedContentType == ResearchProjectsContentType.my) ? GroupCardDisplayType.myGroup : GroupCardDisplayType.allGroups;
+    if (CollectionUtils.isNotEmpty(_researchProjects)) {
+      for (Group researchProject in _researchProjects!) {
+        if (researchProject.isVisible) {
+          widgets.add(Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: GroupCard(group: researchProject, displayType: cardDisplayType, onImageTap: () => _onTapImage(researchProject) ,),
+          ));
+        }
+      }
+      widgets.add(Container(height: 8,));
+    }
+    return Column(children: widgets,);
+  }
+
+  Widget _buildLoading() {
+    double screenHeight = MediaQuery.of(context).size.height;
+    return Padding(padding: EdgeInsets.only(top: screenHeight / 5), child:
+      Align(alignment: Alignment.center, child:
+        CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3, ),
+      )
+    );
+  }
+
+  Widget _buildStatus(String status) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    return Padding(padding: EdgeInsets.only(left: 32, right: 32, top: screenHeight / 5), child:
+        Row(children: [
+          Expanded(child:
+            Text(status ,style:
+              Styles().textStyles?.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
+          ),
+        ],)
+    );
+  }
+
+  String get _errorDisplayStatus {
+    switch(_selectedContentType) {
+      case ResearchProjectsContentType.open: return Localization().getStringEx('panel.research_projects.home.status.error.open.text', 'Failed to load open research projects.');
+      case ResearchProjectsContentType.my: return Localization().getStringEx('panel.research_projects.home.status.error.my.text', 'Failed to load your research projects.');
+      default: return '';
+    }
+  }
+
+  String get _emptyDisplayStatus {
+    switch(_selectedContentType) {
+      case ResearchProjectsContentType.open: return Localization().getStringEx('panel.research_projects.home.status.empty.open.text', 'There are no opened research projects at the moment.');
+      case ResearchProjectsContentType.my: return Localization().getStringEx('panel.research_projects.home.status.empty.my.text', 'You have not created and do not participate in any research projects.');
+      default: return '';
+    }
+  }
+
+  void _onTapImage(Group? group){
+    Analytics().logSelect(target: "Image");
+    if (group?.imageURL != null) {
+      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: group!.imageURL!, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));
+    }
+  }
+
+  // Content Data
+
+  void _loadInitialContent() {
+    _loadingResearchProjects = true;
+    
+    ResearchProjectsContentType contentType = _selectedContentType ?? ResearchProjectsContentType.my;
+    Groups().loadResearchProjects(contentType: contentType).then((List<Group>? researchProjects) {
+      if ((_selectedContentType == null) && (researchProjects != null) && (researchProjects.length == 0)) {
+        contentType = ResearchProjectsContentType.open;
+        Groups().loadResearchProjects(contentType: contentType).then((List<Group>? researchProjects) {
+          if (mounted) {
+            setState(() {
+              _loadingResearchProjects = false;
+              _selectedContentType = contentType;
+              _researchProjects = researchProjects;
+            });
+          }
+        });
+      }
+      else if (mounted) {
+        setState(() {
+          _loadingResearchProjects = false;
+          _selectedContentType = contentType;
+          _researchProjects = researchProjects;
+        });
+      }
+    });
+  }
+
+  Future<void> _onPullToRefresh() async {
+    setState(() {
+      _loadingResearchProjects = true;
+    });
+
+    Groups().loadResearchProjects(contentType: _selectedContentType).then((List<Group>? researchProjects) {
+
+    });
+
+  }
 }
