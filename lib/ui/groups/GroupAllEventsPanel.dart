@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -65,7 +66,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
 
     if (_groupEvents != null) {
       for (Event? groupEvent in _groupEvents!) {
-        content.add(GroupEventCard(groupEvent: groupEvent, group: widget.group, onImageTap: (){_showModalImage(groupEvent?.imageURL);}));
+        content.add(GroupEventCard(groupEvent: groupEvent, group: widget.group, onImageTap: (){_showModalImage(groupEvent?.eventImageUrl);}));
       }
     }
 

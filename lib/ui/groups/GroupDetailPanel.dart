@@ -18,6 +18,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
@@ -836,7 +837,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     if (CollectionUtils.isNotEmpty(_groupEvents)) {
       for (Event? groupEvent in _groupEvents!) {
-        content.add(GroupEventCard(groupEvent: groupEvent, group: _group, onImageTap: (){_showModalImage(groupEvent?.imageURL);}));
+        content.add(GroupEventCard(groupEvent: groupEvent, group: _group, onImageTap: (){ _showModalImage(groupEvent?.eventImageUrl);}));
       }
 
       content.add(Padding(padding: EdgeInsets.only(top: 16), child:
