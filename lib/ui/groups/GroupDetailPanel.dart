@@ -18,6 +18,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
@@ -619,6 +620,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildImageHeader(){
     return Container(height: 200, color: Styles().colors?.background, child:
+    InkWell(onTap: (){ _showModalImage(_group?.imageURL);}, child:
       Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(_group?.imageURL) ?  Positioned.fill(child: Image.network(_group!.imageURL!, excludeFromSemantics: true, fit: BoxFit.cover, headers: Config().networkAuthHeaders)) : Container(),
           CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child:
@@ -629,7 +631,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           ),
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildGroupInfo() {
@@ -835,7 +837,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     if (CollectionUtils.isNotEmpty(_groupEvents)) {
       for (Event? groupEvent in _groupEvents!) {
-        content.add(GroupEventCard(groupEvent: groupEvent, group: _group));
+        content.add(GroupEventCard(groupEvent: groupEvent, group: _group, onImageTap: (){ _showModalImage(groupEvent?.eventImageUrl);}));
       }
 
       content.add(Padding(padding: EdgeInsets.only(top: 16), child:
