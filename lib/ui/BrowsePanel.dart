@@ -57,7 +57,6 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
@@ -512,7 +511,7 @@ class _BrowseEntry extends StatelessWidget {
       case "campus_resources.groups":       _onTapGroups(context); break;
       case "campus_resources.quick_polls":  _onTapQuickPolls(context); break;
       case "campus_resources.campus_guide": _onTapCampusGuide(context); break;
-      case "campus_resources.inbox":        _onTapInbox(context); break;
+      case "campus_resources.all_notifications": _onTapNotifications(context); break;
 
       case "dinings.dinings_all":            _onTapDiningsAll(context); break;
       case "dinings.dinings_open":           _onTapDiningsOpen(context); break;
@@ -538,11 +537,10 @@ class _BrowseEntry extends StatelessWidget {
       case "my.canvas_courses":              _onTapCanvasCourses(context); break;
       case "my.my_groups":                   _onTapMyGroups(context); break;
       case "my.my_laundry":                  _onTapMyLaundry(context); break;
-      case "my.my_inbox":                    _onTapMyNotifications(context); break;
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
 
-      case "inbox.recent_inbox":             _onTapInbox(context); break;
-      case "inbox.my_inbox":                 _onTapMyNotifications(context); break;
+      case "inbox.all_notifications":        _onTapNotifications(context); break;
+      case "inbox.unread_notifications":     _onTapNotifications(context, unread: true); break;
 
       case "polls.create_poll":              _onTapCreatePoll(context); break;
       case "polls.recent_polls":             _onTapViewPolls(context); break;
@@ -865,9 +863,10 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
   }
 
-  void _onTapInbox(BuildContext context) {
-    Analytics().logSelect(target: "Inbox");
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+  void _onTapNotifications(BuildContext context, {bool? unread}) {
+    bool isUnread = (unread == true);
+    Analytics().logSelect(target: isUnread ? "Unread Notifications" : "All Notifications");
+    SettingsNotificationsContentPanel.present(context, content: isUnread ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
   }
 
   void _onTapSuggestedEvents(BuildContext context) {
@@ -928,11 +927,6 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapMyLaundry(BuildContext context) {
     Analytics().logSelect(target: "My Laundry");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [LaundryRoom.favoriteKeyName]); } ));
-  }
-
-  void _onTapMyNotifications(BuildContext context) {
-    Analytics().logSelect(target: "My Notifications");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [InboxMessage.favoriteKeyName]); } ));
   }
 
   void _onTapMyCampusGuide(BuildContext context) {

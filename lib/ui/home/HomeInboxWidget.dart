@@ -24,17 +24,29 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeInboxWidget extends StatefulWidget {
 
+  final HomeInboxContent content;
   final String? favoriteId;
   final StreamController<String>? updateController;
 
-  HomeInboxWidget({Key? key, this.favoriteId, this.updateController}) : super(key: key);
+  HomeInboxWidget({Key? key, required this.content, this.favoriteId, this.updateController}) : super(key: key);
 
-  static Widget handle({Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
+  static Widget handle({Key? key, required HomeInboxContent content, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
-      title: title,
+      title: titleForContent(content),
     );
 
-  static String get title => Localization().getStringEx('widget.home.inbox.text.title', 'Recent Notifications');
+  String get _title => titleForContent(content);
+  
+  static String title({required HomeInboxContent content}) => titleForContent(content);
+
+  static String titleForContent(HomeInboxContent content) {
+    switch (content) {
+      case HomeInboxContent.all:
+        return Localization().getStringEx('widget.home.inbox.text.all.title', 'All Notifications');
+      case HomeInboxContent.unread:
+        return Localization().getStringEx('widget.home.inbox.text.unread.title', 'Unread Notifications');
+    }
+  }
 
   State<HomeInboxWidget> createState() => _HomeInboxWidgetState();
 }
@@ -44,6 +56,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
   bool _loadingMessages = false;
   bool _loadingMessagesPage = false;
   bool _hasMoreMessages = true;
+  bool? _unread;
   DateTime? _pausedDateTime;
 
   PageController? _pageController;
@@ -61,6 +74,8 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
       Inbox.notifyInboxUserInfoChanged,
     ]);
 
+    _unread = (widget.content == HomeInboxContent.unread) ? true : null;
+
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
@@ -71,7 +86,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
 
     if (Connectivity().isOnline && Auth2().isLoggedIn) {
       _loadingMessages = true;
-      Inbox().loadMessages(offset: 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
+      Inbox().loadMessages(unread: _unread, offset: 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
         setStateIfMounted(() {
           _loadingMessages = false;
           _messages = messages;
@@ -125,7 +140,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
         setState(() {
           _loadingMessagesPage = true;
         });
-        Inbox().loadMessages(offset: 0, limit: max(_messages?.length ?? 0, Config().homeRecentNotificationsCount)).then((List<InboxMessage>? messages) {
+        Inbox().loadMessages(unread: _unread, offset: 0, limit: max(_messages?.length ?? 0, Config().homeRecentNotificationsCount)).then((List<InboxMessage>? messages) {
           setStateIfMounted(() {
             _loadingMessages = false;
             _messages = messages;
@@ -145,7 +160,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
         setState(() {
           _loadingMessagesPage = true;
         });
-        Inbox().loadMessages(offset: _messages?.length ?? 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
+        Inbox().loadMessages(unread: _unread, offset: _messages?.length ?? 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
           setStateIfMounted(() {
             _loadingMessagesPage = false;
             _hasMoreMessages = (messages?.length ?? 0) == Config().homeRecentNotificationsCount;
@@ -170,7 +185,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: HomeInboxWidget.title,
+      title: widget._title,
       titleIcon: Image.asset('images/icon-news.png'),
       child: _buildContent(),
     );
@@ -283,6 +298,8 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
 
   void _onTapSeeAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+    SettingsNotificationsContentPanel.present(context, content: (_unread == true) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
   }
 }
+
+enum HomeInboxContent { all, unread }
