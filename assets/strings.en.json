@@ -329,7 +329,7 @@
     "panel.browse.entry.campus_resources.groups.title": "Groups",
     "panel.browse.entry.campus_resources.quick_polls.title": "Quick Polls",
     "panel.browse.entry.campus_resources.campus_guide.title": "Campus Guide",
-    "panel.browse.entry.campus_resources.inbox.title": "Notifications",
+    "panel.browse.entry.campus_resources.all_notifications.title": "Notifications",
 
     "panel.browse.entry.dinings.dinings_all.title": "Residence Hall Dining",
     "panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Open Now",
@@ -360,8 +360,8 @@
     "panel.browse.entry.my.my_campus_guide.title": "My Campus Guide",
     "panel.browse.entry.my.wellness_resources.title": "My Wellness Resources",
 
-    "panel.browse.entry.inbox.recent_inbox.title": "Recent Notifications",
-    "panel.browse.entry.inbox.my_inbox.title": "My Notifications",
+    "panel.browse.entry.inbox.all_notifications.title": "All Notifications",
+    "panel.browse.entry.inbox.unread_notifications.title": "Unread Notifications",
 
     "panel.browse.entry.polls.create_poll.title": "Create a Poll",
     "panel.browse.entry.polls.recent_polls.title": "View Polls",
@@ -1130,7 +1130,6 @@
     "panel.saved.label.news": "My Athletics News",
     "panel.saved.label.laundry": "My Laundry",
     "panel.saved.label.campus_guide": "My Campus Guide",
-    "panel.saved.label.inbox": "My Notifications",
 
     "panel.saved.notifications.label": "Don’t miss an event! Get reminders of upcoming events.",
     "panel.saved.notifications.enable.label": "Enable notifications",
@@ -1310,7 +1309,9 @@
     "panel.settings.profile.content.privacy.label": "My App Privacy Settings",
     "panel.settings.profile.header.profile.label": "Profile",
 
-    "panel.settings.notifications.content.inbox.label": "My Notifications",
+    "panel.settings.notifications.content.notifications.all.label": "All Notifications",
+    "panel.settings.notifications.content.notifications.muted.label": "Muted Notifications",
+    "panel.settings.notifications.content.notifications.unread.label": "Unread Notifications",
     "panel.settings.notifications.content.preferences.label": "My Notification Preferences",
     "panel.settings.notifications.header.inbox.label": "Notifications",
 
@@ -1437,7 +1438,7 @@
     "widget.settings.dialog.button.cancel.title": "Cancel",
 
     "panel.settings.notifications.label.desctiption":"Don’t miss an event or campus update.",
-    "panel.settings.notifications.label.notifications":"Notifications",
+    "panel.settings.notifications.label.notifications":"Push Notifications",
     "panel.settings.notifications.label.info":"To receive notifications enable in your device's settings.",
     "panel.settings.notifications.appointments.new":"New MyMcKinley Appointment",
     "panel.settings.notifications.appointments.reminders":"Appointment Reminders",
@@ -2602,7 +2603,8 @@
     "widget.home.recent_polls.button.all.title": "View All",
     "widget.home.recent_polls.button.all.hint": "Tap to view all polls",
 
-    "widget.home.inbox.text.title": "Recent Notifications",
+    "widget.home.inbox.text.all.title": "All Notifications",
+    "widget.home.inbox.text.unread.title": "Unread Notifications",
     "widget.home.inbox.text.empty.description": "Notifications are available right now.",
     "widget.home.inbox.text.offline": "Notifications are not available while offline.",
     "widget.home.inbox.text.logged_out": "You need to be logged in to access Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
@@ -2642,7 +2644,6 @@
     "widget.home.favorites.title.news": "My Athletics News",
     "widget.home.favorites.title.laundry": "My Laundry",
     "widget.home.favorites.title.campus_guide": "My Campus Guide",
-    "widget.home.favorites.title.inbox": "My Notifications",
 
     "widget.home.favorites.message.offline.events": "My Events are not available while offline.",
     "widget.home.favorites.message.offline.dining": "My Dining Locations are not available while offline.",
@@ -2650,7 +2651,6 @@
     "widget.home.favorites.message.offline.news": "My Athletics News are not available while offline.",
     "widget.home.favorites.message.offline.laundry": "My Laundry are not available while offline.",
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide are not available while offline.",
-    "widget.home.favorites.message.offline.inbox": "My Notifications are not available while offline.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
     "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
@@ -2658,9 +2658,6 @@
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
     "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here.",
     "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.inbox": "See your most recent <a href='{{local_url}}'><b>Notifications</b></a> for quick access here.",
-
-    "widget.home.favorites.message.logged_out.inbox": "You need to be logged in with your NetID to access My Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 
     "widget.home.favorites.all.title": "View All",
     "widget.home.favorites.all.hint.events": "Tap to view all favorite events",
@@ -2669,7 +2666,6 @@
     "widget.home.favorites.all.hint.news": "Tap to view all favorite athletics news",
     "widget.home.favorites.all.hint.laundry": "Tap to view all favorite laundries",
     "widget.home.favorites.all.hint.campus_guide": "Tap to view all favorite campus guide articles",
-    "widget.home.favorites.all.hint.inbox": "Tap to view all favorite notifications",
 
 	"widget.home.wellness_resources.header.label": "My Wellness Resources",
     "widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> so you can quickly find them here.",

@@ -328,7 +328,7 @@
     "panel.browse.entry.campus_resources.groups.title": "Grupos",
     "panel.browse.entry.campus_resources.quick_polls.title": "Encuestas rápidas",
     "panel.browse.entry.campus_resources.campus_guide.title": "Guía del Campus",
-    "panel.browse.entry.campus_resources.inbox.title": "Notificaciones",
+    "panel.browse.entry.campus_resources.all_notifications.title": "Notificaciones",
 
     "panel.browse.entry.dinings.dinings_all.title": "Comedor de la residencia",
     "panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Abierto ahora",
@@ -359,8 +359,8 @@
     "panel.browse.entry.my.my_campus_guide.title": "Guía de mi campus",
     "panel.browse.entry.my.wellness_resources.title": "Mis recursos de bienestar",
 
-    "panel.browse.entry.inbox.recent_inbox.title": "Notificaciones recientes",
-    "panel.browse.entry.inbox.my_inbox.title": "Mis Notificaciones",
+    "panel.browse.entry.inbox.all_notifications.title": "Todas las notificaciones",
+    "panel.browse.entry.inbox.unread_notifications.title": "Notificaciones no leídas",
 
     "panel.browse.entry.polls.create_poll.title": "Crear una encuesta",
     "panel.browse.entry.polls.recent_polls.title": "Ver encuestas",
@@ -1129,7 +1129,6 @@
     "panel.saved.label.news": "My Athletics News",
     "panel.saved.label.laundry": "My Laundry",
     "panel.saved.label.campus_guide": "My Campus Guide",
-    "panel.saved.label.inbox": "My Notifications",
 
     "panel.saved.notifications.label": "¡No te pierdas un evento! Reciba recordatorios de los próximos eventos!",
     "panel.saved.notifications.enable.label": "Permitir notificaciones",
@@ -1309,7 +1308,9 @@
     "panel.settings.profile.content.privacy.label": "Configuración de privacidad de mi aplicación",
     "panel.settings.profile.header.profile.label": "Perfil",
 
-    "panel.settings.notifications.content.inbox.label": "Mis Notificaciones",
+    "panel.settings.notifications.content.notifications.all.label": "Todas las notificaciones",
+    "panel.settings.notifications.content.notifications.muted.label": "Notificaciones silenciadas",
+    "panel.settings.notifications.content.notifications.unread.label": "Notificaciones no leídas",
     "panel.settings.notifications.content.preferences.label": "Mis preferencias de notificación",
     "panel.settings.notifications.header.inbox.label": "Notificaciones",
 
@@ -1436,7 +1437,7 @@
     "widget.settings.dialog.button.cancel.title": "Cancelar",
 
     "panel.settings.notifications.label.desctiption":"No se pierda ningún evento o actualización del campus.",
-    "panel.settings.notifications.label.notifications":"Notificaciones",
+    "panel.settings.notifications.label.notifications":"Notificaciones push",
     "panel.settings.notifications.label.info":"Para recibir notificaciones, habilite en la configuración de su dispositivo.",
     "panel.settings.notifications.appointments.new":"Nueva cita de MyMcKinley",
     "panel.settings.notifications.appointments.reminders":"Recordatorios de citas",
@@ -2599,7 +2600,8 @@
     "widget.home.recent_polls.button.all.title": "Ver todo",
     "widget.home.recent_polls.button.all.hint": "Toca para ver todas las encuestas",
 
-    "widget.home.inbox.text.title": "Notificaciones recientes",
+    "widget.home.inbox.text.all.title": "Todas las notificaciones",
+    "widget.home.inbox.text.unread.title": "Notificaciones no leídas",
     "widget.home.inbox.text.empty.description": "Las notificaciones están disponibles ahora mismo.",
     "widget.home.inbox.text.offline": "Las notificaciones recientes no están disponibles sin conexión.",
     "widget.home.inbox.text.logged_out": "Debe iniciar sesión para acceder a las notificaciones. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
@@ -2639,7 +2641,6 @@
     "widget.home.favorites.title.news": "Mis noticias de atletismo",
     "widget.home.favorites.title.laundry": "Mi Colada",
     "widget.home.favorites.title.campus_guide": "Guía de Mi Campus",
-    "widget.home.favorites.title.inbox": "Mis Notificaciones",
 
     "widget.home.favorites.message.offline.events": "Mis Eventos no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.dining": "Mis ubicaciones para cenar no están disponibles sin conexión.",
@@ -2647,7 +2648,6 @@
     "widget.home.favorites.message.offline.news": "My Athletics News no está disponible sin conexión.",
     "widget.home.favorites.message.offline.laundry": "Mi Lavandería no está disponible sin conexión.",
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide no está disponible sin conexión.",
-    "widget.home.favorites.message.offline.inbox": "Mis Notificaciones no están disponibles sin conexión.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
     "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
@@ -2655,9 +2655,6 @@
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
     "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here.",
     "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.inbox": "See your most recent <a href='{{local_url}}'><b>Notifications</b></a> for quick access here.",
-
-    "widget.home.favorites.message.logged_out.inbox": "You need to be logged in with your NetID to access My Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 
     "widget.home.favorites.all.title": "Ver todo",
     "widget.home.favorites.all.hint.events": "Toque para ver todos los eventos favoritos",
@@ -2666,7 +2663,6 @@
     "widget.home.favorites.all.hint.news": "Toque para ver todas las noticias de atletismo favoritas",
     "widget.home.favorites.all.hint.laundry": "Toca para ver todas las lavanderías favoritas",
     "widget.home.favorites.all.hint.campus_guide": "Toque para ver todos los artículos favoritos de la guía del campus",
-    "widget.home.favorites.all.hint.inbox": "Toca para ver todas las notificaciones favoritas",
 
 	"widget.home.wellness_resources.header.label": "Mis recursos de bienestar",
     "widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> so you can quickly find them here.",
