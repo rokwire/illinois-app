@@ -41,7 +41,7 @@
 			"browse.recent": ["recent_items"],
 			"browse.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
 			"browse.wallet": ["illini_cash_card", "add_illini_cash", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card"],
-			"browse.wellness": ["wellness_resources", "wellness_rings", "wellness_todo", "wellness_tips"],
+			"browse.wellness": ["wellness_resources", "wellness_rings", "wellness_todo", "wellness_tips", "wellness_symptom_screener"],
 	
 			"settings": ["connect", "connected", "link", "linked", "feedback"],
 			"settings.connect": ["netid", "phone_or_email"],

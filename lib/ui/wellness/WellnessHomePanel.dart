@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
@@ -32,9 +33,10 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/ui/widgets/survey.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum WellnessContent { dailyTips, rings, todo, appointments, podcast, resources, struggling }
+enum WellnessContent { dailyTips, rings, todo, appointments, symptomScreener, podcast, resources, struggling }
 
 class WellnessHomePanel extends StatefulWidget {
   final WellnessContent? content;
@@ -172,6 +174,10 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         return WellnessToDoHomeContentWidget();
       case WellnessContent.appointments:
         return WellnessAppointmentsHomeContentWidget();
+      case WellnessContent.symptomScreener:
+        return SurveyWidget(survey: Config().symptomScreenerId, onChangeSurveyResponse: (_) {
+          setState(() {});
+        });
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
       default:
@@ -225,6 +231,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         return _loadContentString('panel.wellness.section.todo.label', 'To-Do List');
       case WellnessContent.appointments:
         return _loadContentString('panel.wellness.section.appointments.label', 'MyMcKinley Appointments');
+      case WellnessContent.symptomScreener:
+        return _loadContentString('panel.wellness.section.symptom_screener.label', 'Symptom Screener');
       case WellnessContent.resources:
         return _loadContentString('panel.wellness.section.resources.label', 'Wellness Resources', language: language);
       case WellnessContent.podcast:
