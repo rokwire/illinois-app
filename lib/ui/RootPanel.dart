@@ -20,6 +20,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
@@ -97,6 +98,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       Events.notifyEventDetail,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
+      Appointments.notifyAppointmentDetail,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
       Localization.notifyStringsUpdated,
@@ -161,6 +163,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Groups.notifyGroupDetail) {
       _onGroupDetail(param);
+    }
+    else if (name == Appointments.notifyAppointmentDetail) {
+      _onAppointmentDetail(param);
     }
     else if (name == Guide.notifyGuideDetail) {
       _onGuideDetail(param);
@@ -455,6 +460,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   Future<void> _onGroupDetail(Map<String, dynamic>? content) async {
     String? groupId = (content != null) ? JsonUtils.stringValue(content['group_id']) : null;
     _presentGroupDetailPanel(groupId: groupId);
+  }
+
+  Future<void> _onAppointmentDetail(Map<String, dynamic>? content) async {
+    String? appointmentId = (content != null) ? JsonUtils.stringValue(content['appointment_id']) : null;
+    if (StringUtils.isNotEmpty(appointmentId)) {
+      Navigator.of(context).push(CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
+    }
   }
 
   Future<void> _onGuideDetail(Map<String, dynamic>? content) async {
