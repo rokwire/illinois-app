@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make group images expandable [#2474](https://github.com/rokwire/illinois-app/issues/2474).
 ### Added
 - Introduce the UI for "muted" and "unread" notifications [#2472](https://github.com/rokwire/illinois-app/issues/2472).
+- Store appointment in device calendar [#2464](https://github.com/rokwire/illinois-app/issues/2464).
 
 ## [4.2.7] - 2022-10-21
 ### Changed
