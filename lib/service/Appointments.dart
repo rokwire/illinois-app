@@ -18,10 +18,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/service/deep_link.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class Appointments with Service implements ExploreJsonHandler {
+class Appointments with Service implements ExploreJsonHandler, NotificationsListener {
+  static const String notifyAppointmentDetail = "edu.illinois.rokwire.appointments.detail";
+
+  List<Map<String, dynamic>>? _appointmentDetailsCache;
+
+  // Singleton
   static final Appointments _service = Appointments._internal();
   factory Appointments() => _service;
   Appointments._internal();
@@ -29,16 +36,27 @@ class Appointments with Service implements ExploreJsonHandler {
   // Service
   @override
   void createService() {
+    NotificationService().subscribe(this, [
+      DeepLink.notifyUri,
+    ]);
     Explore.addJsonHandler(this);
+    _appointmentDetailsCache = <Map<String, dynamic>>[];
     super.createService();
   }
 
   @override
   void destroyService() {
     Explore.removeJsonHandler(this);
+    NotificationService().unsubscribe(this);
     super.destroyService();
   }
 
+  @override
+  void initServiceUI() {
+    _processCachedAppointmentDetails();
+  }
+
+  // APIs
   Future<List<Appointment>?> loadAppointments({bool? onlyUpcoming, AppointmentType? type}) async {
     List<Appointment>? appointments;
     try {
@@ -94,4 +112,60 @@ class Appointments with Service implements ExploreJsonHandler {
   // ExploreJsonHandler
   @override bool exploreCanJson(Map<String, dynamic>? json) => Appointment.canJson(json);
   @override Explore? exploreFromJson(Map<String, dynamic>? json) => Appointment.fromJson(json);
+
+  // DeepLinks
+  String get appointmentDetailUrl => '${DeepLink().appUrl}/appointment';
+
+  void _onDeepLinkUri(Uri? uri) {
+    if (uri != null) {
+      Uri? appointmentUri = Uri.tryParse(appointmentDetailUrl);
+      if ((appointmentUri != null) &&
+          (appointmentUri.scheme == uri.scheme) &&
+          (appointmentUri.authority == uri.authority) &&
+          (appointmentUri.path == uri.path)) {
+        try {
+          _handleAppointmentDetail(uri.queryParameters.cast<String, dynamic>());
+        } catch (e) {
+          print(e.toString());
+        }
+      }
+    }
+  }
+
+  void _handleAppointmentDetail(Map<String, dynamic>? params) {
+    if ((params != null) && params.isNotEmpty) {
+      if (_appointmentDetailsCache != null) {
+        _cacheAppointmentDetail(params);
+      } else {
+        _processAppointmentDetail(params);
+      }
+    }
+  }
+
+  void _processAppointmentDetail(Map<String, dynamic> params) {
+    NotificationService().notify(notifyAppointmentDetail, params);
+  }
+
+  void _cacheAppointmentDetail(Map<String, dynamic> params) {
+    _appointmentDetailsCache?.add(params);
+  }
+
+  void _processCachedAppointmentDetails() {
+    if (_appointmentDetailsCache != null) {
+      List<Map<String, dynamic>> appointmentDetailsCache = _appointmentDetailsCache!;
+      _appointmentDetailsCache = null;
+
+      for (Map<String, dynamic> appointmentDetail in appointmentDetailsCache) {
+        _processAppointmentDetail(appointmentDetail);
+      }
+    }
+  }
+
+  // NotificationsListener
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == DeepLink.notifyUri) {
+      _onDeepLinkUri(param);
+    }
+  }
 }
