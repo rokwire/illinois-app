@@ -36,6 +36,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
 
   List<Group>? _researchProjects;
   bool _loadingResearchProjects = false;
+  bool _researchProjectsBusy = false;
 
   @override
   void initState() {
@@ -157,10 +158,13 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
 
   void _onTapContentTypeDropdownItem(ResearchProjectsContentType contentType) {
     Analytics().logSelect(target: _getContentTypeName(contentType, languageCode: 'en'));
-    setState(() {
-      _selectedContentType = contentType;
-      _contentTypesDropdownExpanded = false;
-    });
+    if (_selectedContentType != contentType) {
+      setState(() {
+        _selectedContentType = contentType;
+        _contentTypesDropdownExpanded = false;
+      });
+      _updateContent();
+    }
   }
 
 
@@ -220,7 +224,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   // Content Widget
 
   Widget _buildContent() {
-    if (_loadingResearchProjects) {
+    if (_researchProjectsBusy) {
       return _buildLoading();
     }
     else if (_researchProjects == null) {
@@ -298,40 +302,64 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   // Content Data
 
   void _loadInitialContent() {
-    _loadingResearchProjects = true;
-    
-    ResearchProjectsContentType contentType = _selectedContentType ?? ResearchProjectsContentType.my;
-    Groups().loadResearchProjects(contentType: contentType).then((List<Group>? researchProjects) {
-      if ((_selectedContentType == null) && (researchProjects != null) && (researchProjects.length == 0)) {
-        contentType = ResearchProjectsContentType.open;
-        Groups().loadResearchProjects(contentType: contentType).then((List<Group>? researchProjects) {
-          if (mounted) {
-            setState(() {
-              _loadingResearchProjects = false;
-              _selectedContentType = contentType;
-              _researchProjects = researchProjects;
-            });
-          }
-        });
-      }
-      else if (mounted) {
-        setState(() {
-          _loadingResearchProjects = false;
-          _selectedContentType = contentType;
-          _researchProjects = researchProjects;
-        });
-      }
-    });
+    if (_loadingResearchProjects == false) {
+      _loadingResearchProjects = _researchProjectsBusy = true;
+      
+      ResearchProjectsContentType contentType = _selectedContentType ?? ResearchProjectsContentType.my;
+      Groups().loadResearchProjects(contentType: contentType).then((List<Group>? researchProjects) {
+        if ((_selectedContentType == null) && (researchProjects != null) && (researchProjects.length == 0)) {
+          contentType = ResearchProjectsContentType.open;
+          Groups().loadResearchProjects(contentType: contentType).then((List<Group>? researchProjects) {
+            if (mounted) {
+              setState(() {
+                _loadingResearchProjects = _researchProjectsBusy = false;
+                _selectedContentType = contentType;
+                _researchProjects = researchProjects;
+              });
+            }
+          });
+        }
+        else if (mounted) {
+          setState(() {
+            _loadingResearchProjects = _researchProjectsBusy = false;
+            _selectedContentType = contentType;
+            _researchProjects = researchProjects;
+          });
+        }
+      });
+
+    }
+  }
+
+  void _updateContent() {
+    if (_loadingResearchProjects == false) {
+      setState(() {
+        _loadingResearchProjects = _researchProjectsBusy = true;
+      });
+
+      Groups().loadResearchProjects(contentType: _selectedContentType).then((List<Group>? researchProjects) {
+        if (mounted) {
+          setState(() {
+            _loadingResearchProjects = _researchProjectsBusy = false;
+            _researchProjects = researchProjects;
+          });
+        }
+      });
+    }
   }
 
   Future<void> _onPullToRefresh() async {
-    setState(() {
+    if (_loadingResearchProjects == false) {
+
       _loadingResearchProjects = true;
-    });
+      List<Group>? researchProjects = await Groups().loadResearchProjects(contentType: _selectedContentType);
+      _loadingResearchProjects = false;
 
-    Groups().loadResearchProjects(contentType: _selectedContentType).then((List<Group>? researchProjects) {
-
-    });
-
+      if ((researchProjects != null) && mounted) {
+        setState(() {
+          _researchProjects = researchProjects;
+        });
+      }
+    }
   }
 }
