@@ -82,7 +82,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeCanvasCoursesWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'courses',
       child: _buildContent(),
     );
   }

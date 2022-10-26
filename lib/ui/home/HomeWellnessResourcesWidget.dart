@@ -112,7 +112,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessResourcesWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'wellness',
       child: _buildContent(),
     );
   }

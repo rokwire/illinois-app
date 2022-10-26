@@ -28,7 +28,7 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: favoriteId,
       title: HomeWPGUFMRadioWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'radio',
       childPadding: HomeSlantWidget.defaultChildPadding,
       child: _isEnabled ? _WPGUFMRadioControl(borderRadius: BorderRadius.all(Radius.circular(6)),) : HomeMessageCard(
         message: Localization().getStringEx('widget.home.radio.disabled.message', 'WPGU 107.1 FM is not enabled.'),

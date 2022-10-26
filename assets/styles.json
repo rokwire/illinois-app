@@ -385,5 +385,33 @@
     "panel.onboarding2.video_tutorial.cc.disabled": {"font_family": "ProximaNovaBold", "size": 18.0, "color": "disabledTextColorTwo"},
     "panel.onboarding2.video_tutorial.caption.text": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "white"},
     "panel.onboarding2.video_tutorial.message.empty": {"font_family": "ProximaNovaBold", "size": 20.0, "color": "white"}
+  },
+  "image": {
+    "campus-tools": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "calendar": {"src": "images/icon-calendar.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "news": {"src": "images/icon-news.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "polls": {"src": "images/icon-browse-quick-polls.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "dining": {"src": "images/icon-dining-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "member": {"src": "images/icon-member.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "reminder": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "courses": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "checklist": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "laundry": {"src": "images/icon-news.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "inbox": {"src": "images/icon-news.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "guide": {"src": "images/icon-news.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "athletics": {"src": "images/icon-calendar.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "groups": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "recent": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "video": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "wellness": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "wellness-rings": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "tips": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "todo": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "radio": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "arrow-up": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 10},
+    "arrow-down": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 10},
+
+    "close-white": {"src": "images/close-white.png", "type": "flutter.asset", "color": "surface", "size": 24},
+    "more-white": {"src": "images/groups-more-inactive.png", "type": "flutter.asset", "color": "surface", "size": 24}
   }
 }

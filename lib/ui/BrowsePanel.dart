@@ -173,7 +173,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       contentList.add(
         HomeSlantWidget(
           title: Localization().getStringEx('panel.browse.label.sections.title', 'App Sections'),
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+          titleIconKey: 'campus-tools',
           childPadding: HomeSlantWidget.defaultChildPadding,
           child: Column(children: sectionsList,),
         )    
@@ -295,8 +295,8 @@ class _BrowseSection extends StatelessWidget {
                       Center(child:
                         _hasBrowseContent ? (
                           expanded ?
-                            Image.asset('images/arrow-up-orange.png', excludeFromSemantics: true) :
-                            Image.asset('images/arrow-down-orange.png', excludeFromSemantics: true)
+                            Styles().images?.getImage('arrow-up', excludeFromSemantics: true) :
+                            Styles().images?.getImage('arrow-down', excludeFromSemantics: true)
                         ) : Container()
                       ),
                     )

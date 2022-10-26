@@ -337,7 +337,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       padding: _detailPadding,
       child: Row(
         children: <Widget>[
-          Image.asset('images/icon-calendar.png', excludeFromSemantics: true),
+          Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
           Padding(
             padding: _iconPadding,
           ),

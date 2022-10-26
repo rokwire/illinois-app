@@ -171,7 +171,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeInboxWidget.title,
-      titleIcon: Image.asset('images/icon-news.png'),
+      titleIconKey: 'inbox',
       child: _buildContent(),
     );
   }

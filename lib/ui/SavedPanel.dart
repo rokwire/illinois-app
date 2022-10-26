@@ -247,7 +247,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
             ),
             InkWell(onTap: _onAuthorizeSkip, child: 
               Padding(padding: EdgeInsets.only(right: 16), child:
-                Image.asset('images/close-white.png', excludeFromSemantics: true))
+                Styles().images?.getImage('close-white', excludeFromSemantics: true))
               )
           ],),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:

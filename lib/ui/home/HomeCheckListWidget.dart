@@ -64,7 +64,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
     return Visibility(visible: true, child:
         HomeSlantWidget(favoriteId: widget.favoriteId,
           title: widget._title,
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+          titleIconKey: 'checklist',
           headerAxisAlignment: CrossAxisAlignment.start,
           childPadding: HomeSlantWidget.defaultChildPadding,
           child: _buildContent(),

@@ -125,7 +125,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
         title: HomeLaundryWidget.title,
-        titleIcon: Image.asset('images/icon-news.png'),
+        titleIconKey: 'laundry',
         child: _buildContent(),
     );
   }

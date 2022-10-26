@@ -60,7 +60,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessToDoWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'todo',
       childPadding: HomeSlantWidget.defaultChildPadding,
       child: _buildContent(),
     );

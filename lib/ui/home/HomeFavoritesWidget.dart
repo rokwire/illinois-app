@@ -172,7 +172,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: headingTitle,
-      titleIcon: headingIcon,
+      titleIconKey: headingIconKey,
       child: _buildContent()
     );
   }
@@ -504,15 +504,15 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   String? get headingTitle => HomeFavoritesWidget.titleFromKey(favoriteKey: widget.favoriteKey);
 
 
-  Image? get headingIcon {
+  String? get headingIconKey {
     switch(widget.favoriteKey) {
-      case Event.favoriteKeyName: return Image.asset('images/icon-calendar.png', excludeFromSemantics: true,);
-      case Dining.favoriteKeyName: return Image.asset('images/icon-dining-orange.png', excludeFromSemantics: true,);
-      case Game.favoriteKeyName: return Image.asset('images/icon-calendar.png', excludeFromSemantics: true,);
-      case News.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
-      case LaundryRoom.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
-      case InboxMessage.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
-      case GuideFavorite.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
+      case Event.favoriteKeyName: return 'calendar';
+      case Dining.favoriteKeyName: return 'dining';
+      case Game.favoriteKeyName: return 'athletics';
+      case News.favoriteKeyName: return 'news';
+      case LaundryRoom.favoriteKeyName: return 'laundry';
+      case InboxMessage.favoriteKeyName: return 'inbox';
+      case GuideFavorite.favoriteKeyName: return 'guide';
     }
     return null;
   }

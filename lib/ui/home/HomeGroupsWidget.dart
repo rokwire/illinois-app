@@ -124,7 +124,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: widget._title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'groups',
       child: _haveGroups ? _buildContent() : _buildEmpty(),
     );
   }

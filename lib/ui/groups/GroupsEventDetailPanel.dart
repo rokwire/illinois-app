@@ -95,11 +95,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                 button: true,
                 excludeSemantics: true,
                 child: IconButton(
-                  icon: Image.asset(
-                    'images/groups-more-inactive.png',
-                  ),
+                  icon: Styles().images?.getImage('more-white') ?? Container(),
                   onPressed:_onOptionsTap,
-              )))
+              ))
+          )
         ],
       ),
       backgroundColor: Styles().colors!.background,
@@ -229,7 +228,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child: Image.asset('images/icon-calendar.png'),
+                  child: Styles().images?.getImage('calendar'),
                 ),
                 Expanded(child: Text(displayTime!,
                     style: TextStyle(
