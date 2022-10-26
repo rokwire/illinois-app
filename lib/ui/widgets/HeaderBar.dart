@@ -26,7 +26,6 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/header_bar.dart' as rokwire;
-import 'package:rokwire_plugin/utils/utils.dart';
 
 class HeaderBar extends rokwire.HeaderBar {
 
