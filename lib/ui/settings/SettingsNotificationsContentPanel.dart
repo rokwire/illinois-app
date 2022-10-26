@@ -25,6 +25,7 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -67,6 +68,9 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
   }
 
   static void launchMessageDetail(InboxMessage message) {
+    if (message.unread == true) {
+      Inbox().readMessage(message.messageId);
+    }
     FirebaseMessaging().processDataMessageEx(message.data, allowedPayloadTypes: {
       FirebaseMessaging.payloadTypeEventDetail,
       FirebaseMessaging.payloadTypeGameDetail,
