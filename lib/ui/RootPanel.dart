@@ -667,7 +667,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebaseInboxNotification() {
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.all);
   }
   
   void _onFirebaseCanvasAppDeepLinkNotification(dynamic param) {

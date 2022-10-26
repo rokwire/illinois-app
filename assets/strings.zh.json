@@ -330,7 +330,7 @@
 	"panel.browse.entry.campus_resources.groups.title": "團體",
 	"panel.browse.entry.campus_resources.quick_polls.title": "快速投票",
 	"panel.browse.entry.campus_resources.campus_guide.title": "校園指南",
-	"panel.browse.entry.campus_resources.inbox.title": "通知",
+	"panel.browse.entry.campus_resources.all_notifications.title": "通知",
 
 	"panel.browse.entry.dinings.dinings_all.title": "宿舍餐廳",
 	"panel.browse.entry.dinings.dinings_open.title": "宿舍餐廳現在開放",
@@ -364,8 +364,8 @@
 	"panel.browse.entry.my.my_campus_guide.title": "我的校園指南",
 	"panel.browse.entry.my.wellness_resources.title": "我的健康資源",
 
-	"panel.browse.entry.inbox.recent_inbox.title": "最近的通知",
-	"panel.browse.entry.inbox.my_inbox.title": "我的通知",
+	"panel.browse.entry.inbox.all_notifications.title": "所有通知",
+	"panel.browse.entry.inbox.unread_notifications.title": "未讀通知",
 
 	"panel.browse.entry.polls.create_poll.title": "創建投票",
 	"panel.browse.entry.polls.recent_polls.title": "查看民意調查",
@@ -1134,7 +1134,6 @@
 	"panel.saved.label.news": "My Athletics News",
 	"panel.saved.label.laundry": "My Laundry",
 	"panel.saved.label.campus_guide": "My Campus Guide",
-	"panel.saved.label.inbox": "My Notifications",
 
 	"panel.saved.notifications.label": "不要错过任何活动！获取即将发生的事件的提醒。",
 	"panel.saved.notifications.enable.label": " 启用通知",
@@ -1314,7 +1313,9 @@
 	"panel.settings.profile.content.privacy.label": "我的應用隱私設置",
 	"panel.settings.profile.header.profile.label": "輪廓",
 
-	"panel.settings.notifications.content.inbox.label": "我的通知",
+	"panel.settings.notifications.content.notifications.all.label": "所有通知",
+    "panel.settings.notifications.content.notifications.muted.label": "靜音通知",
+    "panel.settings.notifications.content.notifications.unread.label": "未讀通知",
 	"panel.settings.notifications.content.preferences.label": "我的通知偏好",
 	"panel.settings.notifications.header.inbox.label": "通知",
 
@@ -1442,7 +1443,7 @@
 	"widget.settings.dialog.button.cancel.title": "取消",
 
 	"panel.settings.notifications.label.desctiption":"不要错过活动或校园更新.",
-	"panel.settings.notifications.label.notifications":"通知",
+	"panel.settings.notifications.label.notifications":"推送通知",
 	"panel.settings.notifications.label.info":"在设备设置中启用接收通知.",
     "panel.settings.notifications.appointments.new":"新的 MyMcKinley 預約",
     "panel.settings.notifications.appointments.reminders":"預約提醒",
@@ -2620,7 +2621,8 @@
 	"widget.home.recent_polls.button.all.title": "查看全部",
 	"widget.home.recent_polls.button.all.hint": "點按即可查看所有民意調查",
 
-	"widget.home.inbox.text.title": "最近的通知",
+    "widget.home.inbox.text.all.title": "所有通知",
+    "widget.home.inbox.text.unread.title": "未讀通知",
 	"widget.home.inbox.text.empty.description": "通知現在可用。",
 	"widget.home.inbox.text.offline": "最近的通知在離線時不可用。",
 	"widget.home.inbox.text.logged_out": "您需要登錄才能訪問通知。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
@@ -2660,7 +2662,6 @@
 	"widget.home.favorites.title.news": "我的田徑新聞",
 	"widget.home.favorites.title.laundry": "我的洗衣店",
 	"widget.home.favorites.title.campus_guide": "我的校園指南",
-	"widget.home.favorites.title.inbox": "我的通知",
 
 	"widget.home.favorites.message.offline.events": "我的活動在離線時不可用。",
 	"widget.home.favorites.message.offline.dining": "我的用餐地點在離線時不可用。",
@@ -2668,7 +2669,6 @@
 	"widget.home.favorites.message.offline.news": "我的田徑新聞在離線時不可用。",
 	"widget.home.favorites.message.offline.laundry": "我的洗衣房在離線時不可用。",
 	"widget.home.favorites.message.offline.campus_guide": "我的校園指南在離線時不可用。",
-	"widget.home.favorites.message.offline.inbox": "我的通知在離線時不可用。",
 
 	"widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
@@ -2676,9 +2676,6 @@
 	"widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
-	"widget.home.favorites.message.empty.inbox": "See your most recent <a href='{{local_url}}'><b>Notifications</b></a> for quick access here.",
-
-	"widget.home.favorites.message.logged_out.inbox": "You need to be logged in with your NetID to access My Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 
 	"widget.home.favorites.all.title": "查看全部",
 	"widget.home.favorites.all.hint.events": "點按即可查看所有喜愛的活動",
@@ -2687,7 +2684,6 @@
 	"widget.home.favorites.all.hint.news": "點擊查看所有喜愛的田徑新聞",
 	"widget.home.favorites.all.hint.laundry": "點擊查看所有喜歡的洗衣店",
 	"widget.home.favorites.all.hint.campus_guide": "點擊查看所有喜歡的校園指南文章",
-	"widget.home.favorites.all.hint.inbox": "點按即可查看所有收藏通知",
 
 	"widget.home.wellness_resources.header.label": "我的健康資源",
 	"widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> so you can quickly find them here.",

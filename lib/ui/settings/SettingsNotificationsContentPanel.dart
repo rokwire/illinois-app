@@ -25,11 +25,12 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum SettingsNotificationsContent { inbox, preferences }
+enum SettingsNotificationsContent { all, muted, unread, preferences }
 
 class SettingsNotificationsContentPanel extends StatefulWidget {
   static final String routeName = 'settings_notifications_content_panel';
@@ -39,7 +40,7 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
   SettingsNotificationsContentPanel._({this.content});
 
   static void present(BuildContext context, {SettingsNotificationsContent? content}) {
-    if (content == SettingsNotificationsContent.inbox) {
+    if (content != SettingsNotificationsContent.preferences) {
       if (Connectivity().isOffline) {
         AppAlert.showOfflineMessage(
             context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
@@ -67,6 +68,9 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
   }
 
   static void launchMessageDetail(InboxMessage message) {
+    if (message.unread == true) {
+      Inbox().readMessage(message.messageId);
+    }
     FirebaseMessaging().processDataMessageEx(message.data, allowedPayloadTypes: {
       FirebaseMessaging.payloadTypeEventDetail,
       FirebaseMessaging.payloadTypeGameDetail,
@@ -84,6 +88,9 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   static final double _defaultPadding = 16;
   static SettingsNotificationsContent? _lastSelectedContent;
   late SettingsNotificationsContent _selectedContent;
+  final GlobalKey _allContentKey = GlobalKey();
+  final GlobalKey _mutedContentKey = GlobalKey();
+  final GlobalKey _unreadContentKey = GlobalKey();
   final GlobalKey _headerBarKey = GlobalKey();
   final GlobalKey _tabBarKey = GlobalKey();
   final GlobalKey _contentDropDownKey = GlobalKey();
@@ -185,11 +192,11 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
 
   void _initInitialContent() {
     // Do not allow not logged in users to view "Notifications" content
-    if (!Auth2().isLoggedIn && (_lastSelectedContent == SettingsNotificationsContent.inbox)) {
+    if (!Auth2().isLoggedIn && (_lastSelectedContent != SettingsNotificationsContent.preferences)) {
       _lastSelectedContent = null;
     }
     _selectedContent = widget.content ??
-        (_lastSelectedContent ?? (Auth2().isLoggedIn ? SettingsNotificationsContent.inbox : SettingsNotificationsContent.preferences));
+        (_lastSelectedContent ?? (Auth2().isLoggedIn ? SettingsNotificationsContent.all : SettingsNotificationsContent.preferences));
   }
 
   void _onTapContentItem(SettingsNotificationsContent contentItem) {
@@ -234,23 +241,31 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case SettingsNotificationsContent.inbox:
-        return SettingsInboxHomeContentWidget();
+      case SettingsNotificationsContent.all:
+        return SettingsInboxHomeContentWidget(key: _allContentKey);
+      case SettingsNotificationsContent.muted:
+        return SettingsInboxHomeContentWidget(muted: true, key: _mutedContentKey);
+      case SettingsNotificationsContent.unread:
+        return SettingsInboxHomeContentWidget(unread: true, key: _unreadContentKey);
       case SettingsNotificationsContent.preferences:
         return SettingsNotificationPreferencesContentWidget();
     }
   }
 
   bool get _isInboxContent {
-    return (_selectedContent == SettingsNotificationsContent.inbox);
+    return (_selectedContent != SettingsNotificationsContent.preferences);
   }
 
   // Utilities
 
   String _getContentLabel(SettingsNotificationsContent content) {
     switch (content) {
-      case SettingsNotificationsContent.inbox:
-        return Localization().getStringEx('panel.settings.notifications.content.inbox.label', 'My Notifications');
+      case SettingsNotificationsContent.all:
+        return Localization().getStringEx('panel.settings.notifications.content.notifications.all.label', 'All Notifications');
+      case SettingsNotificationsContent.muted:
+        return Localization().getStringEx('panel.settings.notifications.content.notifications.muted.label', 'Muted Notifications');
+      case SettingsNotificationsContent.unread:
+        return Localization().getStringEx('panel.settings.notifications.content.notifications.unread.label', 'Unread Notifications');
       case SettingsNotificationsContent.preferences:
         return Localization().getStringEx('panel.settings.notifications.content.preferences.label', 'My Notification Preferences');
     }
@@ -261,7 +276,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   @override
   void onNotification(String name, param) {
     if (name == Auth2.notifyLoginChanged) {
-      if ((_selectedContent == SettingsNotificationsContent.inbox) && !Auth2().isLoggedIn) {
+      if ((_selectedContent != SettingsNotificationsContent.preferences) && !Auth2().isLoggedIn) {
         // Do not allow not logged in users to view "Notifications" content
         _selectedContent = _lastSelectedContent = SettingsNotificationsContent.preferences;
       }
