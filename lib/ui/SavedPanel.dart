@@ -28,14 +28,12 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Dinings.dart';
-import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -65,7 +63,6 @@ class SavedPanel extends StatefulWidget {
     Game.favoriteKeyName,
     News.favoriteKeyName,
     LaundryRoom.favoriteKeyName,
-    InboxMessage.favoriteKeyName,
     GuideFavorite.favoriteKeyName,
   ];
 
@@ -333,7 +330,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case Game.favoriteKeyName: return _loadFavoriteGames;
       case News.favoriteKeyName: return _loadFavoriteNews;
       case LaundryRoom.favoriteKeyName: return _laundryAvailable ? _loadFavoriteLaundries : _loadNOP;
-      case InboxMessage.favoriteKeyName: return _loadFavoriteNotifications;
       case GuideFavorite.favoriteKeyName: return _loadFavoriteGuideItems;
     }
     return _loadNOP;
@@ -355,9 +351,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   Future<List<Favorite>?> _loadFavoriteLaundries(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList((await Laundries().loadSchoolRooms())?.rooms, favoriteIds) : null;
-
-  Future<List<Favorite>?> _loadFavoriteNotifications(LinkedHashSet<String>? favoriteIds) async =>
-    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Inbox().loadMessages(messageIds: favoriteIds), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteGuideItems(LinkedHashSet<String>? favoriteIds) async {
     List<Favorite>? guideItems;
@@ -425,7 +418,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My Athletics News');
       case LaundryRoom.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
-      case InboxMessage.favoriteKeyName:  return Localization().getStringEx('panel.saved.label.inbox', 'My Notifications');
     }
     return null;
   }
@@ -438,7 +430,6 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case News.favoriteKeyName:          return 'images/icon-news.png';
       case LaundryRoom.favoriteKeyName:   return 'images/icon-news.png';
       case GuideFavorite.favoriteKeyName: return 'images/icon-news.png';
-      case InboxMessage.favoriteKeyName:  return 'images/icon-news.png';
     }
     return null;
   }

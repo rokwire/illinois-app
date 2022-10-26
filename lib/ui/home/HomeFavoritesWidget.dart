@@ -30,10 +30,8 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
-import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -62,7 +60,6 @@ class HomeFavoritesWidget extends StatefulWidget {
       case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.athletics', 'My Athletics Events');
       case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.news', 'My Athletics News');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.laundry', 'My Laundry');
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.inbox', 'My Notifications');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.campus_guide', 'My Campus Guide');
     }
     return null;
@@ -80,7 +77,6 @@ class HomeFavoritesWidget extends StatefulWidget {
       case News.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.news", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Athletics News</b></a> for quick access here."); break;
       case LaundryRoom.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.laundry", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Laundry Locations</b></a> for quick access here."); break;
       case GuideFavorite.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.campus_guide", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Campus Guide</b></a> for quick access here."); break;
-      case InboxMessage.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.inbox", "See your most recent <a href='$localUrlMacro'><b>Notifications</b></a> for quick access here."); break;
     }
     return (message != null) ? message.replaceAll(localUrlMacro, '$localScheme://${key.toLowerCase()}') : null;
   }
@@ -93,7 +89,6 @@ class HomeFavoritesWidget extends StatefulWidget {
       case News.favoriteKeyName: return Styles().colors?.fillColorPrimary;
       case LaundryRoom.favoriteKeyName: return Styles().colors?.accentColor2;
       case GuideFavorite.favoriteKeyName: return Styles().colors?.accentColor3;
-      case InboxMessage.favoriteKeyName: return Styles().colors?.fillColorSecondary;
     }
     return null;
   }
@@ -180,9 +175,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   Widget _buildContent() {
     if (Connectivity().isOffline) {
       return HomeMessageCard(title: Localization().getStringEx("common.message.offline", "You appear to be offline"), message: _offlineMessage,);
-    }
-    else if ((widget.favoriteKey == InboxMessage.favoriteKeyName) && !Auth2().isOidcLoggedIn) {
-      return HomeMessageCard(title: Localization().getStringEx("common.message.logged_out", "You are not logged in"), message: _loggedOutMessage,);
     }
     else if (_loadingFavorites) {
       return HomeProgressWidget();
@@ -406,7 +398,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         case Game.favoriteKeyName: return _loadFavoriteGames(favoriteIds);
         case News.favoriteKeyName: return _loadFavoriteNews(favoriteIds);
         case LaundryRoom.favoriteKeyName: return _loadFavoriteLaundries(favoriteIds);
-        case InboxMessage.favoriteKeyName: return _loadFavoriteNotifications(favoriteIds);
         case GuideFavorite.favoriteKeyName: return _loadFavoriteGuideItems(favoriteIds);
       }
     }
@@ -427,9 +418,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   Future<List<Favorite>?> _loadFavoriteLaundries(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList((await Laundries().loadSchoolRooms())?.rooms, favoriteIds) : null;
-
-  Future<List<Favorite>?> _loadFavoriteNotifications(LinkedHashSet<String>? favoriteIds) async =>
-    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Inbox().loadMessages(messageIds: favoriteIds), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteGuideItems(LinkedHashSet<String>? favoriteIds) async {
     List<Favorite>? guideItems;
@@ -511,7 +499,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       case Game.favoriteKeyName: return Image.asset('images/icon-calendar.png', excludeFromSemantics: true,);
       case News.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
       case LaundryRoom.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
-      case InboxMessage.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
       case GuideFavorite.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
     }
     return null;
@@ -524,15 +511,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.athletics', 'My Athletics Events are not available while offline.');
       case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.news', 'My Athletics News are not available while offline.');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.laundry', 'My Laundry are not available while offline.');
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.inbox', 'My Notifications are not available while offline.');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.campus_guide', 'My Campus Guide are not available while offline.');
-    }
-    return null;
-  }
-
-  String? get _loggedOutMessage {
-    switch(widget.favoriteKey) {
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.logged_out.inbox', 'You need to be logged in with your NetID to access My Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.');
     }
     return null;
   }
@@ -544,7 +523,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.athletics', 'Tap to view all favorite athletics events');
       case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.news', 'Tap to view all favorite athletics news');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.laundry', 'Tap to view all favorite laundries');
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.inbox', 'Tap to view all favorite notifications');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.campus_guide', 'Tap to view all favorite campus guide articles');
     }
     return null;
