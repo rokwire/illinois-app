@@ -232,7 +232,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
       case WellnessContent.appointments:
         return _loadContentString('panel.wellness.section.appointments.label', 'MyMcKinley Appointments');
       case WellnessContent.symptomScreener:
-        return _loadContentString('panel.wellness.section.symptom_screener.label', 'Symptom Screener');
+        return _loadContentString('panel.wellness.section.symptom_screener.label', 'Illinois Health Screener');
       case WellnessContent.resources:
         return _loadContentString('panel.wellness.section.resources.label', 'Wellness Resources', language: language);
       case WellnessContent.podcast:
