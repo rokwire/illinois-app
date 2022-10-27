@@ -25,6 +25,7 @@
 #import "NSDictionary+UIUCExplore.h"
 #import "CGGeometry+InaUtils.h"
 #import "InaSymbols.h"
+#import "UILabel+InaMeasure.h"
 
 #import <GoogleMaps/GoogleMaps.h>
 
@@ -359,6 +360,7 @@ CGSize  const kExploresMarkerViewSize = { 180, kExploresMarkerIconSize2 + kExplo
 
 @interface MapMarkerView2() {
 	UIImageView *iconView;
+	UIView		  *popupView;
 	UILabel     *titleLabel;
 	UILabel     *descrLabel;
 }
@@ -372,9 +374,13 @@ CGSize  const kExploresMarkerViewSize = { 180, kExploresMarkerIconSize2 + kExplo
 CGFloat const kMarkerIconSize = 20;
 CGFloat const kGroupMarkerIconSize = 24;
 CGFloat const kMarkerView2IconGutter = 3;
+CGSize const  kMarkerView2PopupEdgeInsets = {4, 2};
+CGFloat const kMarkerView2PopupInnerGutter = 2;
 CGFloat const kMarkerView2TitleFontSize = 12;
-CGFloat const kMarkerView2DescrFontSize = 12;
-CGFloat const kMarkerView2Width = 180;
+NSInteger const kMarkerView2TitleLinesCount = 2;
+CGFloat const kMarkerView2DescrFontSize = 10;
+NSInteger const kMarkerView2DescrLinesCount = 1;
+CGFloat const kMarkerView2Width = 150;
 
 - (id)initWithFrame:(CGRect)frame {
 	if (self = [super initWithFrame:frame]) {
@@ -383,30 +389,40 @@ CGFloat const kMarkerView2Width = 180;
 	
 		iconView = [[UIImageView alloc] initWithFrame:CGRectZero];
 		[self addSubview:iconView];
+		
+		popupView = [[UIView alloc] initWithFrame:CGRectZero];
+		popupView.backgroundColor = [UIColor whiteColor];
+		popupView.layer.borderColor = [[UIColor darkGrayColor] CGColor];
+		popupView.layer.borderWidth = 0.5;
+		popupView.layer.cornerRadius = 5;
+		popupView.clipsToBounds = YES;
+		[self addSubview:popupView];
 
 		titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-		titleLabel.font = [UIFont boldSystemFontOfSize:kExploreMarkerTitleFontSize];
+		titleLabel.font = self.class.titleFont;
 		titleLabel.textAlignment = NSTextAlignmentCenter;
-		titleLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
+		titleLabel.lineBreakMode = (1 < kMarkerView2TitleLinesCount) ? NSLineBreakByWordWrapping : NSLineBreakByTruncatingTail;
+		titleLabel.numberOfLines = kMarkerView2TitleLinesCount;
 		titleLabel.textColor = [UIColor inaColorWithHex:@"13294b"]; // darkSlateBlueTwo
 		titleLabel.shadowColor = [UIColor colorWithWhite:1.0 alpha:0.5];
 		titleLabel.shadowOffset = CGSizeMake(1, 1);
-		[self addSubview:titleLabel];
+		[popupView addSubview:titleLabel];
 
 		descrLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-		descrLabel.font = [UIFont boldSystemFontOfSize:kExploreMarkerDescrFontSize];
+		descrLabel.font = self.class.descrFont;
 		descrLabel.textAlignment = NSTextAlignmentCenter;
-		descrLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
+		descrLabel.lineBreakMode = (1 < kMarkerView2DescrLinesCount) ? NSLineBreakByWordWrapping : NSLineBreakByTruncatingTail;
+		descrLabel.numberOfLines = kMarkerView2DescrLinesCount;
 		descrLabel.textColor = [UIColor inaColorWithHex:@"244372"]; // darkSlateBlue
 		descrLabel.shadowColor = [UIColor colorWithWhite:1.0 alpha:0.5];
 		descrLabel.shadowOffset = CGSizeMake(1, 1);
-		[self addSubview:descrLabel];
+		[popupView addSubview:descrLabel];
 	}
 	return self;
 }
 
 - (id)initWithIcon:(UIImage*)icon iconAnchor:(CGPoint)iconAnchor title:(NSString*)title descr:(NSString*)descr displayMode:(MapMarkerDisplayMode)displayMode {
-	CGFloat contentHeight = [self.class contentHeightForIconHeight:icon.size.height];
+	CGFloat contentHeight = [self.class contentHeightForIcon:icon];
 	if (self = [self initWithFrame:CGRectMake(0, 0, kMarkerView2Width, contentHeight)]) {
 		iconView.image = icon;
 		titleLabel.text = title;
@@ -420,20 +436,36 @@ CGFloat const kMarkerView2Width = 180;
 
 - (void)layoutSubviews {
 	CGSize contentSize = self.frame.size;
-
-	CGFloat y = 0;
+	CGFloat contentH = contentSize.height;
+	CGFloat contentW = contentSize.width;
 	
 	CGSize iconSize = iconView.image.size;
-	iconView.frame = CGRectMake((contentSize.width - iconSize.width) / 2, 0, iconSize.width, iconSize.height);
-	y += iconSize.height + kMarkerView2IconGutter;
+	iconView.frame = CGRectMake((contentW - iconSize.width) / 2, contentH - iconSize.height, iconSize.width, iconSize.height);
+	contentH = MAX(contentH - iconSize.height - kMarkerView2IconGutter, 0);
+	
+	
+	CGFloat popupX = kMarkerView2PopupEdgeInsets.width;
+	CGFloat popupW = MAX(contentW - 2 * kMarkerView2PopupEdgeInsets.width, 0);
 
-	CGFloat titleH = titleLabel.font.pointSize;
-	titleLabel.frame = CGRectMake(0, y, contentSize.width, titleH);
-	y += titleH;
-
-	CGFloat descrH = descrLabel.font.pointSize;
-	descrLabel.frame = CGRectMake(0, y, contentSize.width, descrH);
-	y += descrH;
+	CGFloat popupH = 0, titleH = 0, descrH = 0;
+	if (MapMarkerDisplayMode_Title <= self.displayMode) {
+		titleH = [titleLabel inaTextSizeForBoundWidth: popupW].height;
+		popupH += titleH + 2 * kMarkerView2PopupEdgeInsets.height;
+	}
+	if (MapMarkerDisplayMode_Extended <= self.displayMode) {
+		descrH = [descrLabel inaTextSizeForBoundWidth: popupW].height;
+		popupH += descrH + kMarkerView2PopupInnerGutter;
+	}
+	
+	CGFloat popupY = MAX(contentH - popupH, 0);
+	popupView.frame = CGRectMake(0, popupY, contentW, popupH);
+	
+	popupY = kMarkerView2PopupEdgeInsets.height;
+	popupH = MAX(popupH - 2 * kMarkerView2PopupEdgeInsets.height, 0);
+	
+	titleLabel.frame = CGRectMake(popupX, popupY, popupW, titleH);
+	popupY += titleH + kMarkerView2PopupInnerGutter;
+	descrLabel.frame = CGRectMake(popupX, popupY, popupW, descrH);
 }
 
 - (void)setDisplayMode:(MapMarkerDisplayMode)displayMode {
@@ -444,6 +476,7 @@ CGFloat const kMarkerView2Width = 180;
 }
 
 - (void)updateDisplayMode {
+	popupView.hidden = (self.displayMode < MapMarkerDisplayMode_Title);
 	titleLabel.hidden = (self.displayMode < MapMarkerDisplayMode_Title);
 	descrLabel.hidden = (self.displayMode < MapMarkerDisplayMode_Extended);
 	[self setNeedsLayout];
@@ -454,15 +487,32 @@ CGFloat const kMarkerView2Width = 180;
 }
 
 - (CGFloat)contentHeight {
-	return [self.class contentHeightForIconHeight:self.iconHeight];
+	return [self.class contentHeightForIcon:iconView.image titleFont:titleLabel.font descrFont:descrLabel.font];
 }
 
-+ (CGFloat)contentHeightForIconHeight:(CGFloat)iconHeight {
-	return iconHeight + kMarkerView2IconGutter + kMarkerView2TitleFontSize + kMarkerView2DescrFontSize;
++ (UIFont*)titleFont {
+	return [UIFont boldSystemFontOfSize:kExploreMarkerTitleFontSize];
+}
+
++ (UIFont*)descrFont {
+	return [UIFont systemFontOfSize:kExploreMarkerDescrFontSize];
+}
+
++ (CGFloat)contentHeightForIcon:(UIImage*)icon {
+	return [self contentHeightForIcon:icon titleFont:self.titleFont descrFont:self.descrFont];
+}
+
++ (CGFloat)contentHeightForIcon:(UIImage*)icon titleFont:(UIFont*)titleFont descrFont:(UIFont*)descrFont {
+	return icon.size.height + kMarkerView2IconGutter +
+		2 * kMarkerView2PopupEdgeInsets.height +
+		titleFont.lineHeight * kMarkerView2TitleLinesCount +
+		kMarkerView2PopupInnerGutter +
+		descrFont.lineHeight * kMarkerView2DescrLinesCount;
 }
 
 - (CGPoint)anchor {
-	return CGPointMake(_iconAnchor.x, (_iconAnchor.y * self.iconHeight) / self.contentHeight);
+	CGFloat contentH = self.contentHeight;
+	return CGPointMake(_iconAnchor.x, (contentH - (1 - _iconAnchor.y) * self.iconHeight) / contentH);
 }
 
 + (UIImage*)markerImageWithHexColor:(NSString*)hexColor {
