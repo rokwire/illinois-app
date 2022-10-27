@@ -137,9 +137,9 @@ class _DeviceCalendarEvent extends rokwire.DeviceCalendarEvent {
   static _DeviceCalendarEvent? fromAppointment(Appointment? appointment){
     return (appointment != null) ? _DeviceCalendarEvent(
       title: appointment.title,
-      internalEventId: appointment.id,
+      internalEventId: appointment.sourceId,
       startDate: AppDateTime().getUniLocalTimeFromUtcTime(appointment.dateTimeUtc),
-      deepLinkUrl: "${Appointments().appointmentDetailUrl}?appointment_id=${appointment.id}"
+      deepLinkUrl: "${Appointments().appointmentDetailUrl}?appointment_id=${appointment.sourceId}"
     ) : null;
   }
 }

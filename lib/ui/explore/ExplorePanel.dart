@@ -491,7 +491,6 @@ class ExplorePanelState extends State<ExplorePanel>
           break;
 
         case ExploreItem.Appointments:
-        //TBD: Appointments - filtering
           task = _loadAppointments();
           break;
 
@@ -599,10 +598,9 @@ class ExplorePanelState extends State<ExplorePanel>
                     Image.asset('images/block-i-orange.png'),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
-                        //TBD: Appointments - read properly app title
                         child: Text(
                             Localization().getStringEx('panel.explore.missing.appointments.msg',
-                                'You currently have no upcoming in-person appointments linked within Illinois app.'),
+                                'You currently have no upcoming in-person appointments linked within {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
                             textAlign: TextAlign.center,
                             style: Styles().textStyles?.getTextStyle("widget.detail.small")))
                   ])),

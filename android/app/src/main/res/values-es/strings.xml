@@ -30,6 +30,7 @@
     <string name="parkings">Estacionamientos</string>
     <string name="buildings">Edificios</string>
     <string name="student_courses">Cursos</string>
+    <string name="appointments">Equipo</string>
     <string name="ok">OK</string>
 
     <!-- MapDirectionsActivity -->
