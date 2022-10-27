@@ -370,7 +370,7 @@
 }
 
 - (MapMarkerDisplayMode)markerDisplayMode {
-	return (_mapView.camera.zoom < kMarkerThresold1Zoom) ? MapMarkerDisplayMode_Plain : ((_mapView.camera.zoom < kMarkerThresold2Zoom) ? MapMarkerDisplayMode_Title : MapMarkerDisplayMode_Extended);
+	return (_mapView.camera.zoom < kMarker2Thresold1Zoom) ? MapMarkerDisplayMode_Plain : ((_mapView.camera.zoom < kMarker2Thresold2Zoom) ? MapMarkerDisplayMode_Title : MapMarkerDisplayMode_Extended);
 }
 
 #pragma mark GMSMapViewDelegate
