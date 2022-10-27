@@ -39,7 +39,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         setState(() {
           _loading = false;
           _questionnaire = questionnaire;
-          Map<String, LinkedHashSet<String>>? answers = Auth2().prefs?.getQuestionnaireAnswers(questionnaire?.id);
+          Map<String, LinkedHashSet<String>>? answers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
           if (answers != null) {
             _selection.addAll(answers);
           }
@@ -280,7 +280,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         AppAlert.showDialogResult(context, displayPrompt);
       }
       else {
-        Auth2().prefs?.setQuestionnaireAnswers(_questionnaire?.id, _selection);
+        Auth2().profile?.setResearchQuestionnaireAnswers(_questionnaire?.id, _selection);
 
         String questionaireTitle = _questionnaireString(_questionnaire?.title);
         String promptFormat = Localization().getStringEx('panel.onboarding2.research.questionnaire.acknowledgement', 'Thank you for participating in the {{QuestionnaireName}}.');
