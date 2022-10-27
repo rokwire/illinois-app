@@ -126,6 +126,7 @@
 }
 
 - (void)buildDisplayExploresForThresoldDistance:(double)thresoldDistance {
+	NSLog(@"ThresoldDistance: %@", @(thresoldDistance));
 	_displayExplores = [self buildExplores:_explores thresoldDistance:thresoldDistance];
 	[self buildMarkers];
 }
@@ -212,7 +213,7 @@
 	if ((0 <= zoomIndex) && (zoomIndex < _countof(kThresoldDistanceByZoom))) {
 		double zoomDistance = kThresoldDistanceByZoom[zoomIndex];
 		double nextZoomDistance = ((zoomIndex + 1) < _countof(kThresoldDistanceByZoom)) ? kThresoldDistanceByZoom[zoomIndex + 1] : 0;
-		return nextZoomDistance + (zoom - zoomIndex) * (zoomDistance - nextZoomDistance);
+		return zoomDistance - (zoom - (double)zoomIndex) * (zoomDistance - nextZoomDistance);
 	}
 	return 0;
 }
