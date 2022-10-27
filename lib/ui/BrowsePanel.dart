@@ -751,7 +751,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapMyMcKinley(BuildContext context) {
     Analytics().logSelect(target: 'MyMcKinley');
-    String? saferMcKinleyUrl = Config().saferMcKinley['url'];
+    String? saferMcKinleyUrl = Config().saferMcKinleyUrl;
     if (StringUtils.isNotEmpty(saferMcKinleyUrl)) {
       Uri? saferMcKinleyUri = Uri.tryParse(saferMcKinleyUrl!);
       if (saferMcKinleyUri != null) {

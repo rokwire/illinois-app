@@ -413,7 +413,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget? _buildUrlDetail() {
-    String? url = Config().saferMcKinley['url'];
+    String? url = Config().saferMcKinleyUrl;
     if (StringUtils.isEmpty(url)) {
       return null;
     }
