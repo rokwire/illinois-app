@@ -83,11 +83,7 @@
 	if (!_didFirstLayout) {
 		_didFirstLayout = true;
 		[self acknowledgePOI];
-
-		GMSCoordinateBounds* bounds = [self buildDisplayExplores];
-		GMSCameraUpdate *cameraUpdate = [self cameraUpdateFromBounds:bounds];
-		[_mapView moveCamera:cameraUpdate];
-
+		[self acknowledgeExplores];
 		[self applyEnabled];
 	}
 }
@@ -96,20 +92,42 @@
 	_explores = explores;
 	_exploreOptions = options;
 	if (_didFirstLayout) {
-		GMSCoordinateBounds* bounds = [self buildDisplayExplores];
+		[self acknowledgeExplores];
+	}
+}
+
+- (void)acknowledgeExplores {
+	if ((_explores != nil) && _didFirstLayout) {
+		GMSCoordinateBounds* bounds = [self boundsOfExplores:_explores];
+
+		double thresoldDistance;
+		NSNumber *debugThresoldDistance = [_exploreOptions inaNumberForKey:@"LocationThresoldDistance"];
+		if (debugThresoldDistance != nil) {
+			thresoldDistance = debugThresoldDistance.doubleValue;
+		}
+		else {
+			GMSCameraPosition *camera = [_mapView cameraForBounds:bounds insets: UIEdgeInsetsMake(50, 50, 50, 50)];
+			thresoldDistance = [self thresoldDistanceForZoom:camera.zoom];
+		}
+
+		[self buildDisplayExploresForThresoldDistance:thresoldDistance];
+
 		GMSCameraUpdate *cameraUpdate = [self cameraUpdateFromBounds:bounds];
 		[_mapView moveCamera:cameraUpdate];
 	}
 }
 
-- (GMSCoordinateBounds*)buildDisplayExplores {
+- (void)buildDisplayExplores {
 	if (_didFirstLayout) {
 		NSNumber *debugThresoldDistance = [_exploreOptions inaNumberForKey:@"LocationThresoldDistance"];
 		double thresoldDistance = (debugThresoldDistance != nil) ? debugThresoldDistance.doubleValue : self.automaticThresoldDistance;
-		_displayExplores = [self buildExplores:_explores thresoldDistance:thresoldDistance];
-		return [self buildMarkers];
+		[self buildDisplayExploresForThresoldDistance:thresoldDistance];
 	}
-	return nil;
+}
+
+- (void)buildDisplayExploresForThresoldDistance:(double)thresoldDistance {
+	_displayExplores = [self buildExplores:_explores thresoldDistance:thresoldDistance];
+	[self buildMarkers];
 }
 
 - (NSArray*)buildExplores:(NSArray*)rawExplores thresoldDistance:(double)thresoldDistance {
@@ -160,7 +178,29 @@
 	return resultExplores;
 }
 
+- (GMSCoordinateBounds*)boundsOfExplores:(NSArray*)rawExplores {
+	GMSCoordinateBounds *bounds = nil;
+	for (NSDictionary *explore in rawExplores) {
+		if ([explore isKindOfClass:[NSDictionary class]]) {
+			CLLocationCoordinate2D exploreCoord = explore.uiucExploreLocationCoordinate;
+			if (CLLocationCoordinate2DIsValid(exploreCoord)) {
+				if (bounds == nil) {
+					bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:exploreCoord coordinate:exploreCoord];
+				}
+				else {
+					bounds = [bounds includingCoordinate:exploreCoord];
+				}
+			}
+		}
+	}
+	return bounds;
+}
+
 - (double)automaticThresoldDistance {
+	return [self thresoldDistanceForZoom:_mapView.camera.zoom];
+}
+
+- (double)thresoldDistanceForZoom:(double)zoom {
 	static double const kThresoldDistanceByZoom[] = {
 		1000000, 800000, 600000, 200000, 100000, // zoom 0 - 4
 		 100000,  80000,  60000,  20000,  10000, // zoom 5 - 9
@@ -168,14 +208,15 @@
 		     50,      0,                         // zoom 15 - 16
 		
 	};
-	NSInteger zoomIndex = floor(_mapView.camera.zoom);
+	NSInteger zoomIndex = floor(zoom);
 	if ((0 <= zoomIndex) && (zoomIndex < _countof(kThresoldDistanceByZoom))) {
 		double zoomDistance = kThresoldDistanceByZoom[zoomIndex];
 		double nextZoomDistance = ((zoomIndex + 1) < _countof(kThresoldDistanceByZoom)) ? kThresoldDistanceByZoom[zoomIndex + 1] : 0;
-		return nextZoomDistance + (_mapView.camera.zoom - zoomIndex) * (zoomDistance - nextZoomDistance);
+		return nextZoomDistance + (zoom - zoomIndex) * (zoomDistance - nextZoomDistance);
 	}
 	return 0;
 }
+
 
 - (GMSCameraUpdate*)cameraUpdateFromBounds:(GMSCoordinateBounds*)bounds {
 		if ((bounds == nil) || !bounds.isValid) {
@@ -246,31 +287,22 @@
 
 #pragma mark Display
 
-- (GMSCoordinateBounds*)buildMarkers {
+- (void)buildMarkers {
 
 	for (GMSMarker *marker in _markers) {
 		marker.map = nil;
 	}
 	[_markers removeAllObjects];
 	
-	GMSCoordinateBounds *bounds = nil;
 	for (NSDictionary *explore in _displayExplores) {
 		if ([explore isKindOfClass:[NSDictionary class]]) {
 			GMSMarker *marker = [self markerFromExplore: explore];
 			if (marker != nil) {
 				marker.map = _mapView;
 				[_markers addObject:marker];
-				
-				if (bounds == nil) {
-					bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:marker.position coordinate:marker.position];
-				}
-				else {
-					bounds = [bounds includingCoordinate:marker.position];
-				}
 			}
 		}
 	}
-	return bounds;
 }
 
 - (GMSMarker*)markerFromExplore:(NSDictionary*)explore {
