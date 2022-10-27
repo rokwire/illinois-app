@@ -1,5 +1,5 @@
 {
-	"id":"demographics-questionnaire",
+	"id":"demographics",
 	"title":"Research Questionnaire",
 	"description": "This questionnaire will help determine the demographic groups to which you belong.",
 	"questions": [{
