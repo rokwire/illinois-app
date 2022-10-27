@@ -5,12 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Store research questionnaire answers in account profile [#2477](https://github.com/rokwire/illinois-app/issues/2477).
 
 ## [4.2.8] - 2022-10-26
 ### Changed
 - HomeMyGroupsWidget renamed to HomeGroupsWidget.
 - Make group images expandable [#2474](https://github.com/rokwire/illinois-app/issues/2474).
-- Store research questionnaire answers in account profile [#2477](https://github.com/rokwire/illinois-app/issues/2477).
 ### Added
 - Introduce the UI for "muted" and "unread" notifications [#2472](https://github.com/rokwire/illinois-app/issues/2472).
 - Store appointment in device calendar [#2464](https://github.com/rokwire/illinois-app/issues/2464).
