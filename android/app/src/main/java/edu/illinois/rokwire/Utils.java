@@ -529,7 +529,7 @@ public class Utils {
                 return ExploreType.BUILDING;
             } else if (singleExplore.get("coursetitle") != null) {
                 return ExploreType.STUDENT_COURSE;
-            } else if (singleExplore.get("uin") != null) {
+            } else if (singleExplore.get("source_id") != null) {
                 return ExploreType.APPOINTMENT;
             } else {
                 return ExploreType.UNKNOWN;
@@ -684,6 +684,9 @@ public class Utils {
                         break;
                     case STUDENT_COURSE:
                         typeSuffix = context.getString(R.string.student_courses);
+                        break;
+                    case APPOINTMENT:
+                        typeSuffix = context.getString(R.string.appointments);
                         break;
                     default:
                         typeSuffix = context.getString(R.string.explores);

@@ -363,6 +363,7 @@
 	"panel.browse.entry.my.my_inbox.title": "我的通知",
 	"panel.browse.entry.my.my_campus_guide.title": "我的校園指南",
 	"panel.browse.entry.my.wellness_resources.title": "我的健康資源",
+    "panel.browse.entry.my.my_appointments.title": "我的麥金利約會",
 
 	"panel.browse.entry.inbox.all_notifications.title": "所有通知",
 	"panel.browse.entry.inbox.unread_notifications.title": "未讀通知",
@@ -385,6 +386,7 @@
 
 	"panel.browse.entry.wellness.wellness_rings.title": "戒指",
 	"panel.browse.entry.wellness.wellness_todo.title": "待辦事項清單",
+    "panel.browse.entry.wellness.my_appointments.title": "我的麥金利約會",
 	"panel.browse.entry.wellness.wellness_tips.title": "每日提示",
 	"panel.browse.entry.wellness.wellness_resources.title": "資源",
 
@@ -950,7 +952,7 @@
 	"panel.explore.item.unknown.name":"探索",
 	"panel.explore.map.popup.title.format":"%d %s",
 
-    "panel.explore.missing.appointments.msg":"您目前沒有在伊利諾伊州應用程序中鏈接的即將到來的面對面約會。",
+    "panel.explore.missing.appointments.msg":"您目前沒有在 {{app_title}} 應用中鏈接的即將到來的面對面約會。",
 
 	"panel.explore_list.header.title":"探索",
 
@@ -1449,7 +1451,7 @@
     "panel.settings.notifications.appointments.reminders":"預約提醒",
     "panel.settings.notifications.appointments.reminders.morning_of.label":"上午（上午 8:00）",
     "panel.settings.notifications.appointments.reminders.night_before.label":"前一天晚上（晚上 9:00）",
-    "panel.settings.notifications.appointments.description.label":"MyMcKinley 約會提醒設置僅適用於伊利諾伊州應用程序。",
+    "panel.settings.notifications.appointments.description.label":"MyMcKinley 約會提醒設置僅適用於 {{app_title}} 應用程序。",
 	"panel.settings.notifications.reminders":"事件提醒",
 	"panel.settings.notifications.athletics_updates":"体育更新",
 	"panel.settings.notifications.athletics_updates.description.label": "基於您最喜歡的運動",
@@ -1812,10 +1814,11 @@
 	"panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
 
     "panel.wellness.appointments.home.reschedule_appointment.label": "需要取消或重新安排？",
-    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
+    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "要取消約會，請轉到 <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> 或 在工作時間致電 (<u>{{mckinley_phone}}</u>)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
     "panel.wellness.appointments.home.upcoming.list.empty.msg": "您目前沒有在伊利諾伊州應用程序中鏈接的即將到來的約會。",
     "panel.wellness.appointments.home.past.list.empty.msg": "您沒有在伊利諾伊應用程序中鏈接最近的過去約會。",
     "panel.wellness.appointments.home.past_appointments.header.label": "最近過去的約會",
+    "panel.wellness.appointments.home.past_appointments.footer.description": "<a href='{{mckinley url}}'>訪問 {{mckinley_url_label}} 以查看過去約會的完整歷史記錄。</a>&nbsp;<img src='asset:{{external_links icon}}' alt= ''/>",
 
 	"panel.wellness.home.header.title": "養生",
 	"panel.wellness.home.eight_dimensions.header.title": "8健康維度",
@@ -2425,7 +2428,7 @@
 
     "panel.appointment.detail.meeting.id.label": "會議編號：",
     "panel.appointment.detail.meeting.passcode.label": "密碼：",
-    "panel.appointment.detail.cancel.description": "要取消預約，請訪問 MyMcKinley.illinois.edu 或在工作時間致電 (217-333-2700)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
+    "panel.appointment.detail.cancel.description": "要取消約會，請轉到 <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> 或 在工作時間致電 (<u>{{mckinley_phone}}</u>)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
     "panel.appointment.detail.error.msg": "無法加載約會數據。",
 
 	"widget.game_day.label.its_game_day":"这是比赛日！",
@@ -2738,6 +2741,11 @@
     "widget.home.daily_illini.button.all.title": "查看全部",
     "widget.home.daily_illini.button.all.hint": "點擊查看每日伊利尼飼料",
     "widget.home.daily_illini.text.empty.description": "無法加載每日 illini Feed。",
+    
+    "widget.home.appointments.my.label.header.title": "我的麥金利約會",
+    "widget.home.appointments.my.text.empty.description": "您目前沒有在 {{app_title}} 應用中鏈接的即將到來的約會。",
+    "widget.home.appointments.my.button.all.title": "查看全部",
+    "widget.home.appointments.my.button.all": "點擊查看所有約會",
 
 	"widget.food_detail.label.loading.title":"正在加载菜单数据",
 	"widget.food_detail.label.loading.hint":"",
