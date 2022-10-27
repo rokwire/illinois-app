@@ -215,7 +215,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       Visibility(visible: _canCreateResearchProject, child:
         Semantics(label: createTitle, button: true, child:
           InkWell(onTap: _onTapCreate, child: 
-            Padding(padding: EdgeInsets.only(left: 16, right: 6, top: 12, bottom: 12), child:
+            Padding(padding: EdgeInsets.only(left: 0, right: 4, top: 12, bottom: 12), child:
               Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                 Text(createTitle, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
                 Padding(padding: EdgeInsets.only(left: 5), child:
@@ -228,7 +228,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       ),
       Semantics(label: searchTitle, button: true, child:
         InkWell(onTap: _onTapSearch, child: 
-          Padding(padding: EdgeInsets.only(left: 6, right: 16, top: 12, bottom: 12), child:
+          Padding(padding: EdgeInsets.only(left: 4, right: 16, top: 10, bottom: 10), child:
             Image.asset('images/icon-search.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: true, width: 25, height: 25),
           ),
         ),
