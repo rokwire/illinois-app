@@ -30,6 +30,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
+import 'package:illinois/ui/home/HomeAppointmentsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
@@ -370,6 +371,15 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeGroupsWidget.handle(contentType: GroupsContentType.all, favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
         return HomeGroupsWidget(key: _widgetKey(code), contentType: GroupsContentType.all, favoriteId: code, updateController: _updateController,);
+      }
+    }
+    else if (code == 'my_appointments') {
+      if (title) {
+        return HomeAppointmentsWidget.title;
+      } else if (handle) {
+        return HomeAppointmentsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeAppointmentsWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
       }
     }
     else if (code == 'safer') {
