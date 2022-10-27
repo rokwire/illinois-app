@@ -6,6 +6,7 @@ import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupCreatePanel.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -26,10 +27,13 @@ class ResearchProjectsHomePanel extends StatefulWidget {
   State<ResearchProjectsHomePanel> createState() => _ResearchProjectsHomePanelState();
 }
 
+enum _FilterType { category, tags }
+enum _TagFilter { all, my }
+
 class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> implements NotificationsListener {
   
-  final Color _dimmedBackgroundColor = Color(0x99000000);
-  //final int _pageSize = 16;
+  static String _allCategories = Localization().getStringEx("panel.groups_home.label.all_categories", "All Categories");
+  static Color _dimmedBackgroundColor = Color(0x99000000);
 
   ResearchProjectsContentType? _selectedContentType;
   bool _contentTypesDropdownExpanded = false;
@@ -37,6 +41,12 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   List<Group>? _researchProjects;
   bool _loadingResearchProjects = false;
   bool _researchProjectsBusy = false;
+
+  List<String> _categories = <String>[ _allCategories ];
+  String _selectedCategoryFilter = _allCategories;
+
+  _TagFilter _selectedTagFilter = _TagFilter.all;
+  _FilterType? _activeFilterType;
 
   @override
   void initState() {
@@ -46,6 +56,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       _selectedContentType = widget.contentType;
     }
     _loadInitialContent();
+    _loadFilters();
     super.initState();
   }
 
@@ -80,12 +91,16 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         Stack(children: [
           Column(children: [
             _buildToolBar(),
-            Expanded(child:
-              RefreshIndicator(onRefresh: _onPullToRefresh, child:
-                SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
-                  _buildContent()
+            Expanded(child: _researchProjectsBusy ?
+              _buildLoading() :
+              Stack(children: [
+                RefreshIndicator(onRefresh: _onPullToRefresh, child:
+                  SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
+                    _buildContent()
+                  ),
                 ),
-              ),
+                _buildFiltersDropdownContainer()
+              ],),
             ),
           ],),
           _buildContentTypesDropdownContainer()
@@ -147,6 +162,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   void _onTapContentTypeDropdownButton() {
     setState(() {
       _contentTypesDropdownExpanded = !_contentTypesDropdownExpanded;
+      _activeFilterType = null;
     });
   }
 
@@ -182,7 +198,20 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     String createTitle = Localization().getStringEx("panel.research_projects.home.button.create.title", "Create");
     String searchTitle = Localization().getStringEx("panel.research_projects.home.button.search.title", "Search");
     
-    return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+    return Row(children: [
+      FilterSelector(
+        padding: EdgeInsets.only(left: 16, top: 12, bottom: 12),
+        title: _selectedCategoryFilter,
+        active: (_activeFilterType == _FilterType.category),
+        onTap: _onTapCategoriesFilter
+      ),
+      FilterSelector(
+        padding: EdgeInsets.only(left: 8, top: 12, bottom: 12),
+        title: _filterTagToDisplayString(_selectedTagFilter),
+        active: (_activeFilterType == _FilterType.tags),
+        onTap: _onTapTagsFilter
+      ),
+      Expanded(child: Container()),
       Visibility(visible: _canCreateResearchProject, child:
         Semantics(label: createTitle, button: true, child:
           InkWell(onTap: _onTapCreate, child: 
@@ -207,6 +236,27 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     ],);
   }
 
+  static String _filterTagToDisplayString(_TagFilter tagFilter, { String? language }) {
+    switch (tagFilter) {
+      case _TagFilter.all: return Localization().getStringEx('panel.groups_home.filter.tag.all.label', 'All Tags', language: language);
+      case _TagFilter.my: return Localization().getStringEx('panel.groups_home.filter.tag.my.label', 'My Tags', language: language);
+    }
+  }
+
+  void _onTapCategoriesFilter() {
+    Analytics().logSelect(target: "Category Filter");
+    setState(() {
+      _activeFilterType = (_activeFilterType != _FilterType.category) ? _FilterType.category : null;
+    });
+  }
+
+  void _onTapTagsFilter() {
+    Analytics().logSelect(target: "Tags Filter");
+    setState(() {
+      _activeFilterType = (_activeFilterType != _FilterType.tags) ? _FilterType.tags : null;
+    });
+  }
+
   void _onTapCreate() {
     Analytics().logSelect(target: "Create");
     Navigator.push(context, MaterialPageRoute(builder: (context) => GroupCreatePanel()));
@@ -221,13 +271,103 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     return Auth2().isOidcLoggedIn && FlexUI().isSharingAvailable;
   }
 
+  // Filters Widget
+
+  Widget _buildFiltersDropdownContainer() {
+    return (_activeFilterType != null) ?
+      Stack(children: [
+        GestureDetector(onTap: _onTapFilterBackgroundContainer, child:
+          Container(color: _dimmedBackgroundColor)),
+        _buildFiltersDropdownList()
+    ]) : Container();
+  }
+
+  Widget _buildFiltersDropdownList() {
+    List<Widget> filterWidgets = <Widget>[];
+    if (_activeFilterType == _FilterType.category) {
+      for (String category in _categories) {
+        if (filterWidgets.isNotEmpty) {
+          filterWidgets.add(Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,));
+        }
+        filterWidgets.add(FilterListItem(
+          title: category,
+          selected: _selectedCategoryFilter == category,
+          onTap: () => _onTapCategoryFilter(category),
+          iconAsset: "images/oval-orange.png",
+          selectedIconAsset: "images/checkbox-selected.png",
+        ));
+      }
+    }
+    else if (_activeFilterType == _FilterType.tags) {
+      for (_TagFilter tagFilter in _TagFilter.values) {
+        if (filterWidgets.isNotEmpty) {
+          filterWidgets.add(Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,));
+        }
+        filterWidgets.add(FilterListItem(
+          title: _filterTagToDisplayString(tagFilter),
+          selected: _selectedTagFilter == tagFilter,
+          onTap: () => _onTapTagFilter(tagFilter),
+          iconAsset: "images/oval-orange.png",
+          selectedIconAsset: "images/checkbox-selected.png",
+        ));
+      }
+    }
+
+    return Semantics(child:
+      Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 40), child:
+        Semantics(child:
+          Container(decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.circular(5.0),), child:
+            Padding(padding: EdgeInsets.only(top: 2), child:
+              Container(color: Colors.white, child:
+                SingleChildScrollView(child:
+                  Column(children: filterWidgets,)
+                ),
+             ),
+            ),
+          )
+        ),
+      )
+    );
+  }
+
+  void _onTapFilterBackgroundContainer() {
+    setState(() {
+      _activeFilterType = null;
+    });
+  }
+
+  void _onTapCategoryFilter(String category) {
+    Analytics().logSelect(target: "Category Filter: $category");
+    if (_selectedCategoryFilter != category) {
+      setState(() {
+        _selectedCategoryFilter = category;
+      });
+      _updateContent();
+    }
+    setState(() {
+      _activeFilterType = null;
+    });
+  }
+
+  void _onTapTagFilter(_TagFilter tagFilter) {
+    String tagFilterName = _filterTagToDisplayString(tagFilter, language: 'en');
+    Analytics().logSelect(target: "Category Filter: $tagFilterName");
+
+    if (_selectedTagFilter != tagFilter) {
+      setState(() {
+        _selectedTagFilter = tagFilter;
+      });
+      _updateContent();
+    }
+    setState(() {
+      _activeFilterType = null;
+    });
+  }
+
   // Content Widget
 
   Widget _buildContent() {
-    if (_researchProjectsBusy) {
-      return _buildLoading();
-    }
-    else if (_researchProjects == null) {
+    if (_researchProjects == null) {
       return _buildStatus(_errorDisplayStatus);
     }
     else if (_researchProjects!.isEmpty) {
@@ -256,11 +396,8 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   }
 
   Widget _buildLoading() {
-    double screenHeight = MediaQuery.of(context).size.height;
-    return Padding(padding: EdgeInsets.only(top: screenHeight / 5), child:
-      Align(alignment: Alignment.center, child:
-        CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3, ),
-      )
+    return Align(alignment: Alignment.center, child:
+      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3, ),
     );
   }
 
@@ -337,7 +474,11 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         _loadingResearchProjects = _researchProjectsBusy = true;
       });
 
-      Groups().loadResearchProjects(contentType: _selectedContentType).then((List<Group>? researchProjects) {
+      Groups().loadResearchProjects(
+        contentType: _selectedContentType,
+        category: (_selectedCategoryFilter != _allCategories) ? _selectedCategoryFilter : null,
+        tags: (_selectedTagFilter == _TagFilter.my) ? Auth2().prefs?.positiveTags : null,
+      ).then((List<Group>? researchProjects) {
         if (mounted) {
           setState(() {
             _loadingResearchProjects = _researchProjectsBusy = false;
@@ -361,5 +502,20 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         });
       }
     }
+  }
+
+  // Filters
+
+  void _loadFilters() {
+    Groups().loadCategories().then((List<String>? groupsCategories) {
+      if (mounted) {
+        setState(() {
+          if (groupsCategories != null) {
+            _categories.addAll(groupsCategories);
+          }
+        });
+
+      }
+    });
   }
 }
