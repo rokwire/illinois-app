@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Store research questionnaire answers in account profile [#2477](https://github.com/rokwire/illinois-app/issues/2477).
 ### Added
-- Read appointments default url and phone from app config [#2464](https://github.com/rokwire/illinois-app/issues/2464).
+- Show Appointments in Browse and Favorites. Read appointments default url and phone from app config [#2464](https://github.com/rokwire/illinois-app/issues/2464).
 
 ## [4.2.8] - 2022-10-26
 ### Changed
