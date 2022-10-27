@@ -163,17 +163,9 @@ class Config extends rokwire.Config {
 
   // Getters: McKinley
 
-  String? get saferMcKinleyUrl {
-    return saferMcKinley['url'];
-  }
-
-  String? get saferMcKinleyUrlLabel {
-    return saferMcKinley['url_label'];
-  }
-
-  String? get saferMcKinleyPhone {
-    return saferMcKinley['phone'];
-  }
+  String? get saferMcKinleyUrl       => JsonUtils.stringValue(saferMcKinley['url']);
+  String? get saferMcKinleyUrlLabel  => JsonUtils.stringValue(saferMcKinley['url_label']);
+  String? get saferMcKinleyPhone     => JsonUtils.stringValue(saferMcKinley['phone']);
 
   // Getters: settings
   int  get homeCampusGuideCount      => JsonUtils.intValue(settings['homeCampusGuideCount']) ?? 3;
