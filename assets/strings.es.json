@@ -358,6 +358,7 @@
     "panel.browse.entry.my.my_inbox.title": "Mis Notificaciones",
     "panel.browse.entry.my.my_campus_guide.title": "Guía de mi campus",
     "panel.browse.entry.my.wellness_resources.title": "Mis recursos de bienestar",
+    "panel.browse.entry.my.my_appointments.title": "Mis citas de McKinley",
 
     "panel.browse.entry.inbox.all_notifications.title": "Todas las notificaciones",
     "panel.browse.entry.inbox.unread_notifications.title": "Notificaciones no leídas",
@@ -380,6 +381,7 @@
 
     "panel.browse.entry.wellness.wellness_rings.title": "Anillos",
     "panel.browse.entry.wellness.wellness_todo.title": "Lista de quehaceres",
+    "panel.browse.entry.wellness.my_appointments.title": "Mis citas de McKinley",
     "panel.browse.entry.wellness.wellness_tips.title": "Consejo diario",
     "panel.browse.entry.wellness.wellness_resources.title": "Resources",
 
@@ -2717,6 +2719,11 @@
     "widget.home.daily_illini.button.all.title": "Ver todo",
     "widget.home.daily_illini.button.all.hint": "Toque para ver la alimentación diaria de illini",
     "widget.home.daily_illini.text.empty.description": "No se pudo cargar la alimentación diaria de illini.",
+    
+    "widget.home.appointments.my.label.header.title": "Mis citas de McKinley",
+    "widget.home.appointments.my.text.empty.description": "Actualmente no tiene citas próximas vinculadas dentro de la aplicación de Illinois.",
+    "widget.home.appointments.my.button.all.title": "Ver todo",
+    "widget.home.appointments.my.button.all": "Toque para ver todas las citas",
 
     "widget.food_detail.label.loading.title": "Cargando datos del menú",
     "widget.food_detail.label.loading.hint": "",

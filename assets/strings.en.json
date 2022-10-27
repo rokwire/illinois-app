@@ -359,6 +359,7 @@
     "panel.browse.entry.my.my_inbox.title": "My Notifications",
     "panel.browse.entry.my.my_campus_guide.title": "My Campus Guide",
     "panel.browse.entry.my.wellness_resources.title": "My Wellness Resources",
+    "panel.browse.entry.my.my_appointments.title": "MyMcKinley Appointments",
 
     "panel.browse.entry.inbox.all_notifications.title": "All Notifications",
     "panel.browse.entry.inbox.unread_notifications.title": "Unread Notifications",
@@ -381,6 +382,7 @@
 
     "panel.browse.entry.wellness.wellness_rings.title": "Rings",
     "panel.browse.entry.wellness.wellness_todo.title": "To-Do List",
+    "panel.browse.entry.wellness.my_appointments.title": "MyMcKinley Appointments",
     "panel.browse.entry.wellness.wellness_tips.title": "Daily Tip",
     "panel.browse.entry.wellness.wellness_resources.title": "Resources",
 
@@ -2720,6 +2722,11 @@
     "widget.home.daily_illini.button.all.title": "View All",
     "widget.home.daily_illini.button.all.hint": "Tap to view the daily illini feed",
     "widget.home.daily_illini.text.empty.description": "Failed to load daily illini feed.",
+    
+    "widget.home.appointments.my.label.header.title": "MyMcKinley Appointments",
+    "widget.home.appointments.my.text.empty.description": "You currently have no upcoming appointments linked within the Illinois app.",
+    "widget.home.appointments.my.button.all.title": "View All",
+    "widget.home.appointments.my.button.all": "Tap to view all appointments",
 
     "widget.food_detail.label.loading.title": "Loading menu data",
     "widget.food_detail.label.loading.hint": "",

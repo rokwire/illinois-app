@@ -358,6 +358,7 @@
 	"panel.browse.entry.my.my_inbox.title": "我的通知",
 	"panel.browse.entry.my.my_campus_guide.title": "我的校園指南",
 	"panel.browse.entry.my.wellness_resources.title": "我的健康資源",
+    "panel.browse.entry.my.my_appointments.title": "我的麥金利約會",
 
 	"panel.browse.entry.inbox.all_notifications.title": "所有通知",
 	"panel.browse.entry.inbox.unread_notifications.title": "未讀通知",
@@ -380,6 +381,7 @@
 
 	"panel.browse.entry.wellness.wellness_rings.title": "戒指",
 	"panel.browse.entry.wellness.wellness_todo.title": "待辦事項清單",
+    "panel.browse.entry.wellness.my_appointments.title": "我的麥金利約會",
 	"panel.browse.entry.wellness.wellness_tips.title": "每日提示",
 	"panel.browse.entry.wellness.wellness_resources.title": "資源",
 
@@ -2716,6 +2718,11 @@
     "widget.home.daily_illini.button.all.title": "查看全部",
     "widget.home.daily_illini.button.all.hint": "點擊查看每日伊利尼飼料",
     "widget.home.daily_illini.text.empty.description": "無法加載每日 illini Feed。",
+    
+    "widget.home.appointments.my.label.header.title": "我的麥金利約會",
+    "widget.home.appointments.my.text.empty.description": "您目前沒有在伊利諾伊州應用程序中鏈接的即將到來的約會。",
+    "widget.home.appointments.my.button.all.title": "查看全部",
+    "widget.home.appointments.my.button.all": "點擊查看所有約會",
 
 	"widget.food_detail.label.loading.title":"正在加载菜单数据",
 	"widget.food_detail.label.loading.hint":"",
