@@ -83,7 +83,6 @@ class Appointment with Explore, Favorite {
   }
 
   String? get _randomImageUrl {
-    //TBD: Appointment - check how to retrieve the image
     return Assets().randomStringFromListWithKey('images.random.events.Other');
   }
 

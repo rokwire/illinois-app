@@ -142,10 +142,9 @@ class _HomeAppointmentsWidgetState extends State<HomeAppointmentsWidget> impleme
   }
 
   Widget _buildEmpty() {
-    //TBD: Appointments - handle app title properly
     return HomeMessageCard(
         message: Localization().getStringEx('widget.home.appointments.my.text.empty.description',
-            'You currently have no upcoming appointments linked within the Illinois app.'));
+            'You currently have no upcoming appointments linked within the {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
   }
 
   @override

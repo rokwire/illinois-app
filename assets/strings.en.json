@@ -948,7 +948,7 @@
     "panel.explore.item.unknown.name":"Explores",
     "panel.explore.map.popup.title.format":"%d %s",
 
-    "panel.explore.missing.appointments.msg":"You currently have no upcoming in-person appointments linked within Illinois app.",
+    "panel.explore.missing.appointments.msg":"You currently have no upcoming in-person appointments linked within {{app_title}} app.",
 
     "panel.explore_list.header.title":"Explore",
 
@@ -1446,7 +1446,7 @@
     "panel.settings.notifications.appointments.reminders":"Appointment Reminders",
     "panel.settings.notifications.appointments.reminders.morning_of.label":"Morning Of (8:00 AM)",
     "panel.settings.notifications.appointments.reminders.night_before.label":"Night Before (9:00 PM)",
-    "panel.settings.notifications.appointments.description.label":"MyMcKinley appointment reminder settings only apply within the Illinois app.",
+    "panel.settings.notifications.appointments.description.label":"MyMcKinley appointment reminder settings only apply within the {{app_title}} app.",
     "panel.settings.notifications.reminders":"Event Reminders",
     "panel.settings.notifications.athletics_updates":"Athletics Updates",
     "panel.settings.notifications.athletics_updates.description.label": "Based on your favorite sports",
@@ -1809,10 +1809,11 @@
     "panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
 
     "panel.wellness.appointments.home.reschedule_appointment.label": "Need to cancel or reschedule?",
-    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
+    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call (<u>{{mckinley_phone}}</u>) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
     "panel.wellness.appointments.home.upcoming.list.empty.msg": "You currently have no upcoming appointments linked within the Illinois app.",
     "panel.wellness.appointments.home.past.list.empty.msg": "You don't have recent past appointments linked within the Illinois app.",
     "panel.wellness.appointments.home.past_appointments.header.label": "Recent Past Appointments",
+    "panel.wellness.appointments.home.past_appointments.footer.description": "<a href='{{mckinley_url}}'>Visit {{mckinley_url_label}} to view a full history of past appointments.</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>",
 
     "panel.wellness.home.header.title": "Wellness",
     "panel.wellness.home.eight_dimensions.header.title": "8 Dimensions of Wellness",
@@ -2416,7 +2417,7 @@
 
     "panel.appointment.detail.meeting.id.label": "Meeting ID:",
     "panel.appointment.detail.meeting.passcode.label": "Passcode:",
-    "panel.appointment.detail.cancel.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
+    "panel.appointment.detail.cancel.description": "To cancel an appointment, go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call (<u>{{mckinley_phone}}</u>) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
     "panel.appointment.detail.error.msg": "Failed to load appointment data.",
 
     "widget.game_day.label.its_game_day":"It's Game Day!",
@@ -2724,7 +2725,7 @@
     "widget.home.daily_illini.text.empty.description": "Failed to load daily illini feed.",
     
     "widget.home.appointments.my.label.header.title": "MyMcKinley Appointments",
-    "widget.home.appointments.my.text.empty.description": "You currently have no upcoming appointments linked within the Illinois app.",
+    "widget.home.appointments.my.text.empty.description": "You currently have no upcoming appointments linked within the {{app_title}} app.",
     "widget.home.appointments.my.button.all.title": "View All",
     "widget.home.appointments.my.button.all": "Tap to view all appointments",
 
