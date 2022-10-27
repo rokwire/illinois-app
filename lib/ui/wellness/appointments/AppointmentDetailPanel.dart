@@ -413,7 +413,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget? _buildUrlDetail() {
-    String? url = Config().saferMcKinley['url'];
+    String? url = Config().saferMcKinleyUrl;
     if (StringUtils.isEmpty(url)) {
       return null;
     }
@@ -429,13 +429,21 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
             ])));
   }
 
-  //TBD: Appointment - display url and phone with different style
   Widget _buildCancelDescription() {
+    final String urlLabelMacro = '{{mckinley_url_label}}';
+    final String urlMacro = '{{mckinley_url}}';
+    final String externalLinkIconMacro = '{{external_link_icon}}';
+    final String phoneMacro = '{{mckinley_phone}}';
+    String descriptionHtml = Localization().getStringEx("panel.appointment.detail.cancel.description",
+        "To cancel an appointment, go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call (<u>{{mckinley_phone}}</u>) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.");
+    descriptionHtml = descriptionHtml.replaceAll(urlMacro, Config().saferMcKinleyUrl ?? '');
+    descriptionHtml = descriptionHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
+    descriptionHtml = descriptionHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
+    descriptionHtml = descriptionHtml.replaceAll(phoneMacro, Config().saferMcKinleyPhone ?? '');
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Html(
-            data: Localization().getStringEx('panel.appointment.detail.cancel.description',
-                'To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.'),
+            data: descriptionHtml,
             onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url),
             style: {
               "body": Style(
@@ -443,7 +451,8 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                   fontFamily: Styles().fontFamilies!.medium,
                   fontSize: FontSize(16),
                   padding: EdgeInsets.zero,
-                  margin: EdgeInsets.zero)
+                  margin: EdgeInsets.zero),
+              "a": Style(color: Styles().colors?.textSurface)
             }));
   }
 
