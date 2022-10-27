@@ -197,8 +197,8 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
 
   void _onMyMcKinley() {
     Analytics().logSelect(target: 'MyMcKinley', source: widget.runtimeType.toString());
-    if (StringUtils.isNotEmpty(Config().saferMcKinley['url'])) {
-      Uri? uri = Uri.tryParse(Config().saferMcKinley['url']);
+    if (StringUtils.isNotEmpty(Config().saferMcKinleyUrl)) {
+      Uri? uri = Uri.tryParse(Config().saferMcKinleyUrl!);
       if (uri != null) {
         launchUrl(uri);
       }

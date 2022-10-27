@@ -46,7 +46,7 @@
 	else if ([self objectForKey:@"coursetitle"] != nil) {
 		return UIUCExploreType_StudentCourse;
 	}
-    else if ([self objectForKey:@"uin"] != nil) {
+    else if ([self objectForKey:@"source_id"] != nil) {
         return UIUCExploreType_Appointment;
     }
 	else if ([self objectForKey:@"explores"] != nil) {
@@ -231,6 +231,7 @@
 			case UIUCExploreType_Parking:       exploresName = @"Parkings"; break;
 			case UIUCExploreType_Building:      exploresName = @"Buildings"; break;
 			case UIUCExploreType_StudentCourse: exploresName = @"Courses"; break;
+            case UIUCExploreType_Appointment:   exploresName = @"Appointments"; break;
 			default:                            exploresName = @"Explores"; break;
 		}
 		
