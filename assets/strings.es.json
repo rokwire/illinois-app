@@ -272,8 +272,8 @@
     "panel.browse.section.feeds.description": "Escuche WPGU 107.1 y obtenga lo último en las redes sociales de {{app_title}}.",
     "panel.browse.section.groups.title": "Grupos",
     "panel.browse.section.groups.description": "Comience su propio grupo o descubra un nuevo grupo para unirse.",
-    "panel.browse.section.research_projects.title": "Proyectos de investigación",
-    "panel.browse.section.research_projects.description": "Comience sus propios proyectos de investigación o descubra nuevos proyectos para unirse.",
+    "panel.browse.section.research_projects.title": "Investigación en Illinois",
+    "panel.browse.section.research_projects.description": "Inicie sus propios proyectos de investigación o descubra otros proyectos para participar.",
     "panel.browse.section.laundry.title": "Ropa sucia",
     "panel.browse.section.laundry.description": "Vea las ubicaciones de lavandería y la disponibilidad de lavadoras/secadoras.",
     "panel.browse.section.my.title": "Mi",
@@ -346,7 +346,7 @@
     "panel.browse.entry.groups.my_groups.title": "Mis grupos",
 
     "panel.browse.entry.research_projects.open_research_projects.title": "Proyectos de Investigación Abierta",
-    "panel.browse.entry.research_projects.my_research_projects.title": "Mis Proyectos de Investigación",
+    "panel.browse.entry.research_projects.my_research_projects.title": "Mi participación en la investigación",
 
     "panel.browse.entry.laundry.laundry.title": "Ropa sucia",
     "panel.browse.entry.laundry.my_laundry.title": "Mi colada",
@@ -2263,9 +2263,9 @@
     "panel.group_polls.empty.description": "You will see the polls for your group here.",
     "panel.group_polls.text.error": "Error",
 
-    "panel.research_projects.home.header_bar.title": "Research Projects",
+    "panel.research_projects.home.header_bar.title": "Research at Illinois",
     "panel.research_projects.home.content_type.open.title": "Open Research Projects",
-    "panel.research_projects.home.content_type.my.title": "My Research Projects",
+    "panel.research_projects.home.content_type.my.title": "My Research Participation",
     "panel.research_projects.home.button.create.title": "Create",
     "panel.research_projects.home.button.search.title": "Search",
 	"panel.research_projects.home.status.error.open.text": "Failed to load open research projects.",

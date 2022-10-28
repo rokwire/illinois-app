@@ -272,8 +272,8 @@
 	"panel.browse.section.feeds.description": "收聽 WPGU 107.1 並在{{app_title}}社交媒體上了解最新消息。",
 	"panel.browse.section.groups.title": "團體",
 	"panel.browse.section.groups.description": "開始您自己的群組或發現新的群組加入。",
-	"panel.browse.section.research_projects.title": "研究項目",
-	"panel.browse.section.research_projects.description": "開始您自己的研究項目或發現要加入的新項目。",
+	"panel.browse.section.research_projects.title": "伊利諾伊州研究",
+	"panel.browse.section.research_projects.description": "開始您自己的研究項目或發現其他參與的項目。",
 "panel.browse.section.laundry.title": "洗衣店",
 	"panel.browse.section.laundry.description": "查看洗衣地點和洗衣機/烘乾機的可用性。",
 	"panel.browse.section.my.title": "我的",
@@ -346,7 +346,7 @@
 	"panel.browse.entry.groups.my_groups.title": "我的群組",
 
 	"panel.browse.entry.research_projects.open_research_projects.title": "開放研究項目",
-	"panel.browse.entry.research_projects.my_research_projects.title": "我的研究項目",
+	"panel.browse.entry.research_projects.my_research_projects.title": "我的研究參與",
 
 	"panel.browse.entry.laundry.laundry.title": "洗衣店",
 	"panel.browse.entry.laundry.my_laundry.title": "我的洗衣店",
@@ -2262,10 +2262,10 @@
 	"panel.group_polls.empty.description": "You will see the polls for your group here.",
 	"panel.group_polls.text.error": "Error",
 
-	"panel.research_projects.home.header_bar.title": "Research Projects",
+	"panel.research_projects.home.header_bar.title": "Research at Illinois",
 	"panel.research_projects.home.content_type.open.title": "Open Research Projects",
-	"panel.research_projects.home.content_type.my.title": "My Research Projects",
-	"panel.research_projects.home.button.create.title": "Create",
+	"panel.research_projects.home.content_type.my.title": "My Research Participation",
+"panel.research_projects.home.button.create.title": "Create",
 	"panel.research_projects.home.button.search.title": "Search",
 	"panel.research_projects.home.status.error.open.text": "Failed to load open research projects.",
 	"panel.research_projects.home.status.error.my.text": "Failed to load your research projects.",
