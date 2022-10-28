@@ -55,6 +55,8 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
   @override
   void initState() {
+    _refreshHistory();
+
     super.initState();
     NotificationService().subscribe(this, []);
   }
@@ -105,11 +107,12 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
         ),
         HomeSlantWidget(
           title: Localization().getStringEx('panel.wellness.sections.health_screener.label.history.title', 'History'),
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true),
           childPadding: HomeSlantWidget.defaultChildPadding,
           child: Column(children: [
             _buildFiltersWidget(),
-            _buildResponesesSection(),
+            SizedBox(height: 16.0),
+            _buildResponsesSection(),
           ]),
         )
       ]);
@@ -172,74 +175,14 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     );
   }
 
-  Widget _buildResponesesSection() {
+  Widget _buildResponsesSection() {
     List<Widget> content = [];
     for(SurveyResponse response in _responses) {
-      Widget widget = _buildSurveyResponseCard(context, response, showTimeOnly: _selectedTimeframe == "Today");
+      Widget widget = SurveyWidgets.buildSurveyResponseCard(context, response, showTimeOnly: _selectedTimeframe == "Today");
       content.add(widget);
       content.add(Container(height: 16.0));
     }
     return Column(children: content);
-  }
-
-  Widget _buildSurveyResponseCard(BuildContext context, SurveyResponse response, {bool showTimeOnly = false}) {
-    List<Widget> widgets = [];
-
-    String? date;
-    if (showTimeOnly) {
-      date = DateTimeUtils.getDisplayTime(dateTimeUtc: response.dateCreated);
-    } else {
-      date = DateTimeUtils.getDisplayDateTime(response.dateCreated);
-    }
-
-    widgets.addAll([
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(response.survey.title.toUpperCase(), style: Styles().textStyles?.getTextStyle('widget.title.small.fat')),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(date ?? '', style: Styles().textStyles?.getTextStyle('widget.title.small')),
-              Container(width: 8.0),
-              Image.asset('images/chevron-right.png')
-              // UIIcon(IconAssets.chevronRight, size: 14.0, color: Styles().colors.headlineText),
-            ],
-          ),
-        ],
-      ),
-      Container(height: 8),
-    ]);
-
-    dynamic result = response.survey.resultData;
-    if (result is Map<String, dynamic>) {
-      if (result['type'] == 'survey_data.result') {
-        SurveyDataResponse dataResult = SurveyDataResponse.fromJson('result', result);
-        widgets.add(Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(Localization().getStringEx("panel.wellness.sections.health_screener.label.result.title", "Results:"), style: Styles().textStyles?.getTextStyle('widget.title.regular.fat')),
-            SurveyWidgets.buildSurveyDataResult(context, dataResult) ?? Container(),
-          ],
-        ));
-      }
-    }
-
-    return Material(
-      borderRadius: BorderRadius.circular(30),
-      color: Styles().colors?.surface,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(30),
-        // onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => EventSummaryPanel(event: event, plan: plan))),
-        child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: widgets,
-            )
-        ),
-      ),
-    );
   }
 
   void _onTapTakeSymptomScreener() {
@@ -281,7 +224,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     }
 
     //TODO: Handle pagination
-    Polls().loadSurveyResponses(typeIDs: types, startDate: startDate, limit: 100).then((responses) {
+    Polls().loadSurveyResponses(surveyTypes: types, startDate: startDate, limit: 100).then((responses) {
       setState(() {
         _responses = responses ?? [];
       });
