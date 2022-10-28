@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -111,9 +114,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             _buildPrivacyDropDown(),
                             _buildHiddenForSearch(),
                             Visibility(visible: _canViewManagedSettings, child: _buildAuthManLayout()),
-                            Visibility(
-                              visible: !_isAuthManGroup,
-                              child: _buildMembershipLayout()),
+                            Visibility(visible: !_isAuthManGroup, child: _buildResearchLayout()),
+                            Visibility(visible: !_isAuthManGroup, child: _buildMembershipLayout()),
                             Container(height: 8, color: Styles().colors!.background),
                             _buildPollsLayout(),
                             Container(height: 16, color: Styles().colors!.background),
@@ -758,6 +760,45 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         _group!.questions = questions;
       }
       setState(() {});
+    });
+  }
+
+  //
+  //Research Project
+  Map<String, LinkedHashSet<String>> _testGroupProfile = <String, LinkedHashSet<String>>{};
+  
+  Widget _buildResearchLayout(){
+    int questionsCount = _testGroupProfile.length;
+    String questionsDescription = (0 < questionsCount) ?
+      sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format","%s Question(s)"), [questionsCount.toString()]) :
+      Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
+
+    return
+      Container(
+        color: Styles().colors!.background,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Column( children: <Widget>[
+          _buildSectionTitle("Research", "images/icon-gear.png"),
+          Container(height: 12,),
+          Semantics(explicitChildNodes: true,
+            child: _buildMembershipButton(title: "Target Audience",
+              description: questionsDescription,
+              onTap: _onTapResearchProfile)),
+          Container(height: 20,),
+    ]),);
+  }
+
+  void _onTapResearchProfile() {
+    if (!_canUpdate) {
+      return;
+    }
+    Analytics().logSelect(target: "Target Audience");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResearchProjectProfilePanel(profile: _testGroupProfile,))).then((dynamic profile){
+      setState(() {
+        if (profile is Map<String, LinkedHashSet<String>>) {
+          _testGroupProfile = profile;
+        }
+      });
     });
   }
 

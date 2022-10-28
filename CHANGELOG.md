@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.2.10] - 2022-10-28
+### Added
+- Prelimiary work on Research Projects [#2473](https://github.com/rokwire/illinois-app/issues/2473).
 ### Changed
 - Text, layout and navigation updates for Research Questionnaire [#2484](https://github.com/rokwire/illinois-app/issues/2484).
 

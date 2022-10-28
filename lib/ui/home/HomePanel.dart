@@ -41,6 +41,7 @@ import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/home/HomeInboxWidget.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/home/HomeRecentPollsWidget.dart';
+import 'package:illinois/ui/home/HomeResearchProjectsWidget.dart';
 import 'package:illinois/ui/home/HomeStateFarmCenterWidget.dart';
 import 'package:illinois/ui/home/HomeStudentCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeToutWidget.dart';
@@ -371,6 +372,24 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeGroupsWidget.handle(contentType: GroupsContentType.all, favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
         return HomeGroupsWidget(key: _widgetKey(code), contentType: GroupsContentType.all, favoriteId: code, updateController: _updateController,);
+      }
+    }
+    else if (code == 'my_research_projects') {
+      if (title) {
+        return HomeResearchProjectsWidget.title(contentType: ResearchProjectsContentType.my);
+      } else if (handle) {
+        return HomeResearchProjectsWidget.handle(contentType: ResearchProjectsContentType.my, favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeResearchProjectsWidget(key: _widgetKey(code), contentType: ResearchProjectsContentType.my, favoriteId: code, updateController: _updateController,);
+      }
+    }
+    else if (code == 'open_research_projects') {
+      if (title) {
+        return HomeResearchProjectsWidget.titleForContentType(ResearchProjectsContentType.open);
+      } else if (handle) {
+        return HomeResearchProjectsWidget.handle(contentType: ResearchProjectsContentType.open, favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeResearchProjectsWidget(key: _widgetKey(code), contentType: ResearchProjectsContentType.open, favoriteId: code, updateController: _updateController,);
       }
     }
     else if (code == 'my_appointments') {
