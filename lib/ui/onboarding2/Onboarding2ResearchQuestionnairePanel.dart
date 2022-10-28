@@ -87,7 +87,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     bool submitEnabled = (_failSubmitQuestion < 0);
 
     if (description.isNotEmpty) {
-      contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, bottom: 20), child:
+      contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 10, bottom: 20), child:
         Semantics(label: description, hint: '', excludeSemantics: true, child:
           Row(children: [
             Expanded(child:
@@ -120,16 +120,33 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
           ),
         ),
         Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 12, bottom: 12,), child:
-          RoundedButton(
-            label: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.title', 'Submit'),
-            hint: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.hint', ''),
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            borderColor: submitEnabled ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent,
-            backgroundColor: Styles().colors!.white,
-            textColor: submitEnabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-            fontSize: 16,
-            onTap: () => _onSubmit(),
-          ),
+          Row(children: [
+            Expanded(child:
+              RoundedButton(
+                label: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.title', 'Submit'),
+                hint: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.hint', ''),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                borderColor: submitEnabled ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent,
+                backgroundColor: Styles().colors!.white,
+                textColor: submitEnabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+                fontSize: 16,
+                onTap: () => _onSubmit(),
+              ),
+            ),
+            Container(width: 12,),
+            Expanded(child:
+              RoundedButton(
+                label: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.cancel.title', 'Cancel'),
+                hint: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.cancel.hint', ''),
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                borderColor: Styles().colors?.fillColorSecondary,
+                backgroundColor: Styles().colors!.white,
+                textColor: Styles().colors?.fillColorPrimary,
+                fontSize: 16,
+                onTap: () => _onCancel(),
+              ),
+            ),
+          ],),
         ),
       ])
     );
@@ -256,6 +273,11 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
   void _onBack() {
     Analytics().logSelect(target: "Back");
+    Navigator.pop(context);
+  }
+
+  void _onCancel() {
+    Analytics().logSelect(target: "Cancel");
     Navigator.pop(context);
   }
 

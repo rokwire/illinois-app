@@ -866,6 +866,8 @@
     "panel.onboarding2.research.questionnaire.acknowledgement": "Thank you for participating in the {{QuestionnaireName}}.",
     "panel.onboarding2.research.questionnaire.button.submit.title": "Submit",
     "panel.onboarding2.research.questionnaire.button.submit.hint": "",
+    "panel.onboarding2.research.questionnaire.button.cancel.title": "Cancel",
+    "panel.onboarding2.research.questionnaire.button.cancel.hint": "",
     "panel.onboarding2.research.questionnaire.error.select.single": "Please choose at least {{MinQuestionAnswers}} aswer of \"{{QuestionTitle}}\".",
     "panel.onboarding2.research.questionnaire.error.select.multi": "Please choose at least {{MinQuestionAnswers}} aswers of \"{{QuestionTitle}}\".",
     "panel.onboarding2.research.questionnaire.error.load": "Failed to load research questionnaire.",
