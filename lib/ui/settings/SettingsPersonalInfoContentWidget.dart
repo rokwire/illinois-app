@@ -22,6 +22,7 @@ import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -38,6 +39,10 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsPersonalInfoContentWidget extends StatefulWidget {
+  final String? parentRouteName;
+
+  SettingsPersonalInfoContentWidget({Key? key, this.parentRouteName}) : super(key: key);
+
   _SettingsPersonalInfoContentWidgetState createState() => _SettingsPersonalInfoContentWidgetState();
 }
 
@@ -287,7 +292,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       Column(children:<Widget>[
         Row(children: [
           Expanded(child:
-            Text(Localization().getStringEx('panel.settings.home.calendar.research.title', 'Research'), style:
+            Text(Localization().getStringEx('panel.settings.home.calendar.research.title', 'Research at Illinois'), style:
             Styles().textStyles?.getTextStyle("widget.title.large.fat")
             ),
           ),
@@ -303,7 +308,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         RibbonButton(
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
           //borderRadius: BorderRadius.all(Radius.circular(5)),
-          label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research questionnaire"),
+          label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
           textColor: Questionnaires().participateInResearch ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
           rightIconAsset: Questionnaires().participateInResearch ? 'images/chevron-right.png' : 'images/chevron-right-gray.png',
           onTap: _onResearchQuestionnaireClicked
@@ -404,7 +409,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   }
 
   Future<bool?> _promptTurnOffParticipateInResearch() async {
-    String promptEn = 'You have decided to no longer participate in research and will clear all my research questionnaire information. Do you want to stop participating?';
+    String promptEn = 'Please confirm that you wish to no longer participate in Research at Illinois. All information filled out in your questionnaire will be deleted.';
     return await AppAlert.showCustomDialog(context: context,
       contentWidget:
         Text(Localization().getStringEx('panel.settings.home.calendar.research.prompt.title', promptEn),
@@ -424,7 +429,31 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
 
   void _onResearchQuestionnaireClicked() {
     Analytics().logSelect(target: 'Research Questionnaire');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {},)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {
+      "onContinueAction": () {
+        _didResearchQuestionnaire();
+      }
+    },)));
+  }
+
+  void _didResearchQuestionnaire() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnaireAcknowledgementPanel(onboardingContext: {
+      "onContinueAction": () {
+        _didAcknowledgeResearchQuestionnaire();
+      }
+    },)));
+  }
+
+  void _didAcknowledgeResearchQuestionnaire() {
+    if (widget.parentRouteName != null) {
+      Navigator.of(context).popUntil((Route route){
+        return route.settings.name == widget.parentRouteName;
+      });
+    }
+    else {
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    }
   }
 
   void _onTapOnCampusAuto() {

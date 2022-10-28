@@ -164,7 +164,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   Widget get _contentWidget {
     switch (_selectedContent) {
       case SettingsProfileContent.profile:
-        return SettingsPersonalInfoContentWidget();
+        return SettingsPersonalInfoContentWidget(parentRouteName: SettingsProfileContentPanel.routeName,);
       case SettingsProfileContent.who_are_you:
         return SettingsRolesContentWidget();
       case SettingsProfileContent.privacy:
