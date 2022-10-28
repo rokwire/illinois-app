@@ -98,20 +98,18 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
   void _onYes(BuildContext context) {
     Analytics().logSelect(target: "Yes");
     Questionnaires().participateInResearch = true;
-    Navigator.pop(context, true);
-    /*Function? onConfirm = (onboardingContext != null) ? onboardingContext!["onConfirmAction"] : null;
+    Function? onConfirm = (onboardingContext != null) ? onboardingContext!["onConfirmAction"] : null;
     if (onConfirm != null) {
       onConfirm();
-    }*/
+    }
   }
 
   void _onNo(BuildContext context) {
     Analytics().logSelect(target: "No");
     Questionnaires().participateInResearch = false;
-    Navigator.pop(context, false);
-    /*Function? onReject = (onboardingContext != null) ? onboardingContext!["onRejectAction"] : null;
+    Function? onReject = (onboardingContext != null) ? onboardingContext!["onRejectAction"] : null;
     if (onReject != null) {
       onReject();
-    }*/
+    }
   }
 }

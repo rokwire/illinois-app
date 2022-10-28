@@ -303,17 +303,11 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       }
       else {
         Auth2().profile?.setResearchQuestionnaireAnswers(_questionnaire?.id, _selection);
-
-        String questionaireTitle = _questionnaireString(_questionnaire?.title);
-        String promptFormat = Localization().getStringEx('panel.onboarding2.research.questionnaire.acknowledgement', 'Thank you for participating in the {{QuestionnaireName}}.');
-        String displayPrompt = promptFormat.replaceAll('{{QuestionnaireName}}', questionaireTitle);
-        AppAlert.showDialogResult(context, displayPrompt).then((_) {
-          Navigator.of(context).pop();
-          Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
-          if (onContinue != null) {
-            onContinue();
-          }
-        });
+        
+        Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
+        if (onContinue != null) {
+          onContinue();
+        }
       }
     }
   }
