@@ -7,10 +7,10 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
-class Onboarding2PromptResearchQuestionnairePanel extends StatelessWidget {
+class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
 
   final Map<String, dynamic>? onboardingContext;
-  Onboarding2PromptResearchQuestionnairePanel({this.onboardingContext});
+  Onboarding2ResearchQuestionnairePromptPanel({this.onboardingContext});
 
   @override
   Widget build(BuildContext context) {

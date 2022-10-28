@@ -1,7 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2PromptResearchQuestionnairePanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -93,7 +93,7 @@ class Onboarding2 with Service{
   }
 
   void _promptForResearhQuestionnaire(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute<bool>(builder: (context) => Onboarding2PromptResearchQuestionnairePanel())).then((bool? result) {
+    Navigator.push(context, CupertinoPageRoute<bool>(builder: (context) => Onboarding2ResearchQuestionnairePromptPanel())).then((bool? result) {
       if (result == true) {
         _proceedToResearhQuestionnaire(context);
       }
