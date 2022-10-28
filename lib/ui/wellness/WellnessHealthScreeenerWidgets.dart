@@ -191,28 +191,23 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     // })));
   }
 
-  void _refreshHistory() {
-    _setLoading(true);
-
+  DateTime? get _selectedStartDate {
     DateTime now = DateTime.now();
-    DateTime? startDate;
     switch(_selectedTimeframe) {
       case "Today":
-        startDate = DateTime(now.year, now.month, now.day);
-        break;
+        return DateTime(now.year, now.month, now.day);
       case "This Week":
-        startDate = DateTime(now.year, now.month, now.day).subtract(Duration(days: now.weekday - 1));
-        break;
+        return DateTime(now.year, now.month, now.day).subtract(Duration(days: now.weekday - 1));
       case "This Month":
-        startDate = DateTime(now.year, now.month);
-        break;
+        return DateTime(now.year, now.month);
       case "All Time":
-        startDate = null;
-        break;
+        return null;
       default:
-        startDate = DateTime(now.year, now.month, now.day);
+        return DateTime(now.year, now.month, now.day);
     }
+  }
 
+  List<String> get _selectedSurveyTypes {
     List<String> types = [];
     if (_selectedSurveyType == "All") {
       types.addAll(_surveyTypes.skip(1));
@@ -222,9 +217,14 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     for (int i = 0; i < types.length; i++) {
       types[i] = types[i].toLowerCase().replaceAll(' ', '_');
     }
+    return types;
+  }
+
+  void _refreshHistory() {
+    _setLoading(true);
 
     //TODO: Handle pagination
-    Polls().loadSurveyResponses(surveyTypes: types, startDate: startDate, limit: 100).then((responses) {
+    Polls().loadSurveyResponses(surveyTypes: _selectedSurveyTypes, startDate: _selectedStartDate, limit: 100).then((responses) {
       setState(() {
         _responses = responses ?? [];
       });
