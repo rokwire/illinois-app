@@ -24,6 +24,7 @@ import 'package:illinois/model/News.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -158,6 +159,7 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
             imageUrl: news.imageUrl,
             slantImageColor: Styles().colors!.fillColorPrimaryTransparent03,
             slantImageAsset:  'images/slant-down-right-blue.png',
+            onImageTap: (){},
             child: _buildAthleticsNewsCard(news)
           ) : _buildAthleticsNewsCard(news);
         },
@@ -260,6 +262,20 @@ class _AthleticsNewsListPanelState extends State<AthleticsNewsListPanel>{
         context,
         CupertinoPageRoute(
             builder: (context) => AthleticsNewsArticlePanel(article: news)));
+  }
+
+  void _onTapNewsToutImage(String? url) {
+    Analytics().logSelect(target: "News Image");
+    if (url != null) {
+      Navigator.push(
+          context,
+          PageRouteBuilder(
+              opaque: false,
+              pageBuilder: (context, _, __) =>
+                  ModalImagePanel(imageUrl: url,
+                      onCloseAnalytics: () =>
+                          Analytics().logSelect(target: "Close Image"))));
+    }
   }
 
   void _onFilterTypeClicked() {

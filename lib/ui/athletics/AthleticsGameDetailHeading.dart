@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/widgets/ExpandableNetworkImage.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
@@ -415,7 +416,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     if(widget.showImageTout) {
       if (!StringUtils.isEmpty(widget.game?.imageUrl)) {
         widgets.add(Positioned(
-            child: Image.network(
+            child: ExpandableNetworkImage(
               widget.game!.imageUrl!,
               semanticLabel: widget.game?.sport?.title ?? "sport",
             )));
@@ -739,7 +740,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
       if(StringUtils.isNotEmpty(opponentUrl)) {
-        return Image.network(opponentUrl!, excludeFromSemantics: true);
+        return ExpandableNetworkImage(opponentUrl!, excludeFromSemantics: true);
       } else {
         return Container();
       }
@@ -791,7 +792,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
       if(StringUtils.isNotEmpty(opponentUrl)) {
-        return Image.network(opponentUrl!, excludeFromSemantics: true);
+        return ExpandableNetworkImage(opponentUrl!, excludeFromSemantics: true);
       } else {
         return Container();
       }
@@ -899,7 +900,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     } else {
       //return opponent image
       String? opponentUrl = widget._game!.opponent?.logoImage;
-      return StringUtils.isNotEmpty(opponentUrl) ? Image.network(opponentUrl!, excludeFromSemantics: true) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? ExpandableNetworkImage(opponentUrl!, excludeFromSemantics: true) : null;
     }
   }
 
@@ -910,7 +911,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     } else {
       //return opponent image
       String? opponentUrl = widget._game?.opponent?.logoImage;
-      return StringUtils.isNotEmpty(opponentUrl) ? Image.network(opponentUrl!, excludeFromSemantics: true) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? ExpandableNetworkImage(opponentUrl!, excludeFromSemantics: true) : null;
     }
   }
 

@@ -19,6 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/ui/widgets/ExpandableNetworkImage.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/dining/LocationsWithSpecialPanel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -132,9 +133,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
 
     Html html = Html(key:_keyHtml, data: widget.special!.title);
 
-    return GestureDetector(
-      onTap: () => _onOfferTap(context),
-      child: Padding(
+    return Padding(
         padding: const EdgeInsets.symmetric(vertical: 0),
         child: ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(6)),
@@ -145,7 +144,7 @@ class _SpecialOfferState extends State<_SpecialOffer> {
               //crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 _hasImage
-                    ? Image.network(
+                    ? ExpandableNetworkImage(
                       widget.special!.imageUrl!,
                       excludeFromSemantics: true,
                       width: imageWidth,
@@ -154,17 +153,19 @@ class _SpecialOfferState extends State<_SpecialOffer> {
                     )
                     : Container(),
                 Expanded(
-                  child: Padding(
-                    padding: _textPadding,
-                    child: html,
-                  ),
+                  child: GestureDetector(
+                    onTap: () => _onOfferTap(context),
+                    child: Padding(
+                      padding: _textPadding,
+                      child: html,
+                    ),
+                  )
                 )
               ],
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   bool get _hasImage {

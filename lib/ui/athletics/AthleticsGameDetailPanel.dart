@@ -22,6 +22,7 @@ import 'package:illinois/ext/Game.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/RecentItems.dart';
+import 'package:illinois/ui/widgets/ExpandableNetworkImage.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -237,7 +238,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
       widgets.add(Container(
         height: 200,
         child: SizedBox.expand(
-          child: Image.network(
+          child: ExpandableNetworkImage(
             game!.newsImageUrl!,
             semanticLabel: "game",
             fit: BoxFit.fitWidth,

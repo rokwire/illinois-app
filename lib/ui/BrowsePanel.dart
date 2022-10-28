@@ -68,6 +68,8 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'widgets/ExpandableNetworkImage.dart';
+
 class BrowsePanel extends StatefulWidget {
 
   static const String notifyRefresh      = "edu.illinois.rokwire.browse.refresh";
@@ -1083,7 +1085,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   @override
   Widget build(BuildContext context) {
     return (_imageUrl != null) ? Stack(children: [
-      Image.network(_imageUrl!, semanticLabel: 'tout', loadingBuilder:(  BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+        ExpandableNetworkImage(_imageUrl!, semanticLabel: 'tout', loadingBuilder:(  BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
         return (loadingProgress != null) ? Container(color: Styles().colors?.fillColorPrimary, width: imageWidth, height: imageHeight, child:

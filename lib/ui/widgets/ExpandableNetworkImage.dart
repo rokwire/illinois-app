@@ -10,10 +10,13 @@ class ExpandableNetworkImage extends StatelessWidget{
   final BoxFit? fit;
   final Map<String, String>? headers;
   final bool excludeFromSemantics;
+  final ImageLoadingBuilder? loadingBuilder;
+  final double? width, height;
+  final AlignmentGeometry alignment;
 
   final Widget? child;
 
-  const ExpandableNetworkImage(this.url, {Key? key, this.child, this.semanticLabel, this.fit, this.headers, this.excludeFromSemantics = false}) : super(key: key);
+  const ExpandableNetworkImage(this.url, {Key? key, this.child, this.semanticLabel, this.fit, this.headers, this.excludeFromSemantics = false, this.loadingBuilder, this.width, this.height, this.alignment = Alignment.center}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -21,7 +24,8 @@ class ExpandableNetworkImage extends StatelessWidget{
         _showModalImage(url, context);
       },
       child: child??
-          (StringUtils.isNotEmpty(url)? Image.network(url!, semanticLabel: semanticLabel ?? "", fit: fit, headers: headers, excludeFromSemantics: excludeFromSemantics,) : Container()),
+          (StringUtils.isNotEmpty(url)? Image.network(url!, semanticLabel: semanticLabel ?? "", fit: fit, headers: headers, excludeFromSemantics: excludeFromSemantics, loadingBuilder: this.loadingBuilder, width: this.width, height: this.height, alignment: this.alignment)
+          : Container()),
     );
   }
 
