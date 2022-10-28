@@ -26,7 +26,6 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/groups/GroupMembersSelectionPanel.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
-import 'package:illinois/ui/widgets/ExpandableNetworkImage.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -50,6 +49,7 @@ import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -495,7 +495,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                   child: SizedBox(
                     width: _smallImageSize,
                     height: _smallImageSize,
-                    child: ExpandableNetworkImage(imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),),)),
+                    child: ModalImageHolder(child: Image.network(imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders)),),)),
                 ])
                 )
     ],);
@@ -1180,7 +1180,7 @@ class _GroupPostCardState extends State<GroupPostCard> {
                                 child: SizedBox(
                                   width: _smallImageSize,
                                   height: _smallImageSize,
-                                  child: ExpandableNetworkImage(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,),),)
+                                  child: ModalImageHolder(child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,)),),)
                             ))
                     ],),
                     Container(
@@ -1359,7 +1359,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                           child: SizedBox(
                           width: _smallImageSize,
                           height: _smallImageSize,
-                           child: ExpandableNetworkImage(widget.reply!.imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,),),))
+                           child: ModalImageHolder(child: Image.network(widget.reply!.imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,)),),))
                   )
                 ],),
               Container(
@@ -2066,7 +2066,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
         color: Styles().colors!.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(imageUrl)
-              ? Positioned.fill(child: ExpandableNetworkImage(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover))
+              ? Positioned.fill(child: ModalImageHolder(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)))
               : Container(),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),

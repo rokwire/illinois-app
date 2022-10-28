@@ -16,7 +16,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:illinois/ui/widgets/ExpandableNetworkImage.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/assets.dart';
@@ -32,7 +31,7 @@ import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsCard.dart';
-import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/athletics/AthleticsSchedulePanel.dart';
@@ -133,7 +132,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
               alignment: Alignment.bottomCenter,
               children: <Widget>[
                 Positioned(
-                    child: ExpandableNetworkImage(randomImageURL, semanticLabel: widget.sport?.name ?? "sport",)),
+                    child: ModalImageHolder(child: Image.network(randomImageURL, semanticLabel: widget.sport?.name ?? "sport",))),
                 CustomPaint(
                   painter: TrianglePainter(painterColor: Colors.white),
                   child: Container(
@@ -632,7 +631,6 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
           imageUrl: news.imageUrl,
           slantImageColor: Styles().colors!.fillColorPrimaryTransparent03,
           slantImageAsset: 'images/slant-down-right-blue.png',
-          onImageTap: (){_onTapNewsToutImage(news.imageUrl);},
           child: _buildAthleticsNewsCard(news)
         ) : _buildAthleticsNewsCard(news);
       },
@@ -749,20 +747,6 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
         CupertinoPageRoute(
             builder: (context) =>
                 AthleticsCoachDetailPanel(widget.sport, coach)));
-  }
-
-  void _onTapNewsToutImage(String? url) {
-    Analytics().logSelect(target: "News Image");
-    if (url != null) {
-      Navigator.push(
-          context,
-          PageRouteBuilder(
-              opaque: false,
-              pageBuilder: (context, _, __) =>
-                  ModalImagePanel(imageUrl: url,
-                      onCloseAnalytics: () =>
-                          Analytics().logSelect(target: "Close Image"))));
-    }
   }
 
   List<Widget> _buildTeamRoster() {

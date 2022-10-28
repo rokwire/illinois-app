@@ -19,9 +19,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/ui/widgets/ExpandableNetworkImage.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/dining/LocationsWithSpecialPanel.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -144,13 +144,14 @@ class _SpecialOfferState extends State<_SpecialOffer> {
               //crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 _hasImage
-                    ? ExpandableNetworkImage(
-                      widget.special!.imageUrl!,
-                      excludeFromSemantics: true,
-                      width: imageWidth,
-                      height: _imageHeight,
-                      fit: BoxFit.cover,
-                    )
+                    ? ModalImageHolder(
+                      child: Image.network(
+                        widget.special!.imageUrl!,
+                        excludeFromSemantics: true,
+                        width: imageWidth,
+                        height: _imageHeight,
+                        fit: BoxFit.cover,
+                    ))
                     : Container(),
                 Expanded(
                   child: GestureDetector(

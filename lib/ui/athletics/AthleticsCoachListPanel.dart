@@ -17,13 +17,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:illinois/ui/widgets/ExpandableNetworkImage.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsCoachDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/model/sport/Coach.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -242,7 +242,7 @@ class _CoachItem extends StatelessWidget{
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
                     child: (StringUtils.isNotEmpty(coach.thumbPhotoUrl) ?
-                      ExpandableNetworkImage(coach.thumbPhotoUrl!, semanticLabel: "coach", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,):
+                    ModalImageHolder(child: Image.network(coach.thumbPhotoUrl!, semanticLabel: "coach", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,)):
                       Container(height: 96, width: 80, color: Colors.white,)),
                   ),
                 ),
