@@ -538,6 +538,7 @@ class _BrowseEntry extends StatelessWidget {
       case "my.my_groups":                   _onTapMyGroups(context); break;
       case "my.my_laundry":                  _onTapMyLaundry(context); break;
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
+      case "my.my_appointments":             _onTapMyAppointments(context); break;
 
       case "inbox.all_notifications":        _onTapNotifications(context); break;
       case "inbox.unread_notifications":     _onTapNotifications(context, unread: true); break;
@@ -561,6 +562,7 @@ class _BrowseEntry extends StatelessWidget {
       case "wellness.wellness_resources":    _onTapWellnessResources(context); break;
       case "wellness.wellness_rings":        _onTapWellnessRings(context); break;
       case "wellness.wellness_todo":         _onTapWellnessToDo(context); break;
+      case "wellness.my_appointments":       _onTapMyAppointments(context); break;
       case "wellness.wellness_tips":         _onTapWellnessTips(context); break;
       case "wellness.wellness_symptom_screener": _onTapWellnessSymptomScreener(context); break;
     }
@@ -750,7 +752,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapMyMcKinley(BuildContext context) {
     Analytics().logSelect(target: 'MyMcKinley');
-    String? saferMcKinleyUrl = Config().saferMcKinley['url'];
+    String? saferMcKinleyUrl = Config().saferMcKinleyUrl;
     if (StringUtils.isNotEmpty(saferMcKinleyUrl)) {
       Uri? saferMcKinleyUri = Uri.tryParse(saferMcKinleyUrl!);
       if (saferMcKinleyUri != null) {
@@ -938,6 +940,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapWellnessResources(BuildContext context) {
     Analytics().logSelect(target: "Wellness Resources");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.resources,); } ));
+  }
+
+  void _onTapMyAppointments(BuildContext context) {
+    Analytics().logSelect(target: "My Appointments");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return WellnessHomePanel(content: WellnessContent.appointments); } ));
   }
 
   void _onTapCreatePoll(BuildContext context) {

@@ -1,7 +1,7 @@
 [
 	{
-	  "id": "08c122e3-2174-438b-94d4-f231198c26ba",
-	  "uin": "2222",
+	  "source_id": "08c122e3-2174-438b-94d4-f231198c26ba",
+	  "account_id": "2222",
 	  "date_time": "2022-12-01T07:30:444Z",
 	  "type": "InPerson",
 	  "location": {
@@ -19,8 +19,8 @@
 	  }
 	},
 	{
-	  "id": "08c122e3-2174-438b-f231198c26ba",
-	  "uin": "3333",
+	  "source_id": "08c122e3-2174-438b-f231198c26ba",
+	  "account_id": "2222",
 	  "date_time": "2022-12-02T08:22:444Z",
 	  "type": "Online",
 	  "online_details": {
@@ -36,8 +36,8 @@
 	  }
 	},
 	{
-	  "id": "2174-438b-94d4-f231198c26ba",
-	  "uin": "4444",
+	  "source_id": "2174-438b-94d4-f231198c26ba",
+	  "account_id": "2222",
 	  "date_time": "2022-10-01T10:30:444Z",
 	  "type": "InPerson",
 	  "location": {
@@ -55,8 +55,8 @@
 	  }
 	},
 	{
-	  "id": "08c122e3",
-	  "uin": "88888",
+	  "source_id": "08c122e3",
+	  "account_id": "2222",
 	  "date_time": "2022-10-05T11:34:444Z",
 	  "type": "Online",
 	  "online_details": {

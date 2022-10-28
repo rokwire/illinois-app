@@ -88,7 +88,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
       List<Appointment>? allAppointments = await loadAppointments();
       if (CollectionUtils.isNotEmpty(allAppointments)) {
         for (Appointment appointment in allAppointments!) {
-          if (appointment.id == appointmentId) {
+          if (appointment.sourceId == appointmentId) {
             return appointment;
           }
         }

@@ -30,6 +30,7 @@
     <string name="parkings">停車場</string>
     <string name="buildings">建築物</string>
     <string name="student_courses">培訓班</string>
+    <string name="appointments">約會</string>
     <string name="ok">好</string>
 
     <!-- MapDirectionsActivity -->

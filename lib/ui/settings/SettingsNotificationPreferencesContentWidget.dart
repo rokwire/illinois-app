@@ -135,14 +135,13 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           textStyle: _appointmentRemindersSubNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       )
     ]))))]));
-    //TBD: Appointments - handle app title in the string
     widgets.add(Row(children: [
       Expanded(
           child: Container(
               color: Styles().colors!.white,
               child: Padding(
                   padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                  child: Text(Localization().getStringEx("panel.settings.notifications.appointments.description.label", 'MyMcKinley appointment reminder settings only apply within the Illinois app.'),
+                  child: Text(Localization().getStringEx("panel.settings.notifications.appointments.description.label", 'MyMcKinley appointment reminder settings only apply within the {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
                       style: _notificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")
                   ))))
     ]));

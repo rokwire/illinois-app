@@ -20,6 +20,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/wellness/WellnessHealthScreeenerWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/appointments/WellnessAppointmentsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingsHomeContentWidget.dart';
@@ -184,8 +185,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> implements Notifi
       case WellnessContent.appointments:
         return WellnessAppointmentsHomeContentWidget();
       case WellnessContent.symptomScreener:
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().symptomScreenerId, onComplete: () => SurveyUtils.onTapDismiss(dismissContext: context),)));
-        return Container();
+        return WellnessHealthScreenerHomeWidget();
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
       default:

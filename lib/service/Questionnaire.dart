@@ -29,7 +29,7 @@ class Questionnaires /* with Service */ {
   bool get participateInResearch => (Auth2().prefs?.getBoolSetting(_participateInResearchSetting) == true);
   set participateInResearch(bool value) {
     if (value == false) {
-      Auth2().prefs?.clearAllQuestionnaireAnswers();
+      Auth2().profile?.clearAllResearchQuestionnaireAnswers();
     }
     Auth2().prefs?.applySetting(_participateInResearchSetting, value);
   }
