@@ -1331,10 +1331,10 @@
 	"panel.settings.home.calendar.on_campus.title": "在校園",
 	"panel.settings.home.calendar.ada.title": "可訪問性需求",
 	"panel.settings.home.calendar.ada.toggle.title": "顯示“我的課程”的 ADA 無障礙建築入口",
-	"panel.settings.home.calendar.research.title": "研究",
+	"panel.settings.home.calendar.research.title": "伊利諾伊州研究",
 	"panel.settings.home.calendar.research.toggle.title": "參與研究",
-	"panel.settings.home.calendar.research.questionnaire.title": "研究問卷",
-	"panel.settings.home.calendar.research.prompt.title": "您已決定不再參與研究，並將清除我所有的研究問卷信息。 您想停止參與嗎？",
+	"panel.settings.home.calendar.research.questionnaire.title": "研究興趣表",
+	"panel.settings.home.calendar.research.prompt.title": "請確認您希望不再參與伊利諾伊州的研究。 您在問卷中填寫的所有信息都將被刪除。",
 
 	"panel.settings.privacy_center.label.title":"隐私中心",
 	"panel.settings.privacy_center.label.description":"个性化您的隐私和数据偏好.",

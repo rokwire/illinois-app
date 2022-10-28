@@ -1332,9 +1332,9 @@
     "panel.settings.home.calendar.ada.title": "Necesidades de accesibilidad",
     "panel.settings.home.calendar.ada.toggle.title": "Mostrar entradas de edificios accesibles según ADA para Mis cursos",
     "panel.settings.home.calendar.research.toggle.title": "Participar en la investigación",
-    "panel.settings.home.calendar.research.title": "Investigar",
-    "panel.settings.home.calendar.research.questionnaire.title": "Cuestionario de investigación",
-    "panel.settings.home.calendar.research.prompt.title": "Ha decidido no participar más en la investigación y borrará toda la información de mi cuestionario de investigación. ¿Quieres dejar de participar?",
+    "panel.settings.home.calendar.research.title": "Investigación en Illinois",
+    "panel.settings.home.calendar.research.questionnaire.title": "Formulario de interés de investigación",
+    "panel.settings.home.calendar.research.prompt.title": "Confirme que ya no desea participar en Research at Illinois. Toda la información completada en su cuestionario será eliminada.",
 
     "panel.settings.privacy_center.label.title":"Centro de privacidad",
     "panel.settings.privacy_center.label.description":"Personalice sus preferencias de privacidad y datos.",

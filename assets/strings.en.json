@@ -1332,10 +1332,10 @@
     "panel.settings.home.calendar.on_campus.title": "On Campus",
     "panel.settings.home.calendar.ada.title": "Accessibility Needs",
     "panel.settings.home.calendar.ada.toggle.title": "Display ADA accessible building entrances for My Courses",
-    "panel.settings.home.calendar.research.title": "Research",
+    "panel.settings.home.calendar.research.title": "Research at Illinois",
     "panel.settings.home.calendar.research.toggle.title": "Participate in research",
-    "panel.settings.home.calendar.research.questionnaire.title": "Research questionnaire",
-    "panel.settings.home.calendar.research.prompt.title": "You have decided to no longer participate in research and will clear all my research questionnaire information. Do you want to stop participating?",
+    "panel.settings.home.calendar.research.questionnaire.title": "Research interest form",
+    "panel.settings.home.calendar.research.prompt.title": "Please confirm that you wish to no longer participate in Research at Illinois. All information filled out in your questionnaire will be deleted.",
 
     "panel.settings.privacy_center.label.title":"Privacy Center",
     "panel.settings.privacy_center.label.description":"Personalize your privacy and data preferences.",
