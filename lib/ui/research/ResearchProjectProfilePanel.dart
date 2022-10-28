@@ -8,9 +8,10 @@ import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class ResearchProjectProfilePanel extends StatefulWidget  {
-  final Map<String, LinkedHashSet<String>>? profile;
+  final Map<String, dynamic>? profile;
   
   ResearchProjectProfilePanel({this.profile});
 
@@ -30,10 +31,6 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
   @override
   void initState() {
 
-    if (widget.profile != null) {
-      _selection.addAll(widget.profile!);
-    }
-
     _loading = true;
 
     Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
@@ -41,6 +38,12 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
         setState(() {
           _loading = false;
           _questionnaire = questionnaire;
+          if ((widget.profile != null) && (_questionnaire?.id != null)) {
+            Map<String, LinkedHashSet<String>>? selection = JsonUtils.mapOfStringToLinkedHashSetOfStringsValue(widget.profile![questionnaire?.id]);
+            if (selection != null) {
+              _selection.addAll(selection);
+            }
+          }
         });
       }
     });
@@ -248,7 +251,9 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
   void _onSubmit() {
     Analytics().logSelect(target: 'Submit');
-    Navigator.of(context).pop(_selection);
+    Navigator.of(context).pop({
+       (_questionnaire?.id ?? '') : JsonUtils.mapOfStringToLinkedHashSetOfStringsJsonValue(_selection)
+    });
   }
 
   String _questionnaireString(String? key, { String? languageCode }) => _questionnaire?.stringValue(key, languageCode: languageCode) ?? key ?? '';

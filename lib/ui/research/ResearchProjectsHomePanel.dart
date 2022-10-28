@@ -259,7 +259,10 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
 
   void _onTapCreate() {
     Analytics().logSelect(target: "Create");
-    Navigator.push(context, MaterialPageRoute(builder: (context) => GroupCreatePanel()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => GroupCreatePanel(group: Group(
+      researchGroup: true,
+      researchOpen: true,
+    ),)));
   }
 
   void _onTapSearch() {
