@@ -175,9 +175,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
       case WellnessContent.appointments:
         return WellnessAppointmentsHomeContentWidget();
       case WellnessContent.symptomScreener:
-        return SurveyWidget(survey: Config().symptomScreenerId, onChangeSurveyResponse: (_) {
-          setState(() {});
-        });
+        return SurveyWidget(survey: Config().symptomScreenerId, onChangeSurveyResponse: (_) { setState(() {}); },);
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
       default:
