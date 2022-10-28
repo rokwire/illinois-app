@@ -31,8 +31,7 @@ class Onboarding2PromptResearchQuestionnairePanel extends StatelessWidget {
   Widget _buildContent(BuildContext context) {
     return Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 148), child: 
     Column(children: [
-      Expanded(flex: 1, child: Container(),),
-      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0), child:
+      Padding(padding: EdgeInsets.only(top: 48), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             Expanded(child: 
@@ -41,7 +40,7 @@ class Onboarding2PromptResearchQuestionnairePanel extends StatelessWidget {
               ),
             )
           ],),
-          Container(height: 16,),
+          Container(height: 32,),
           Row(children: [
             Expanded(child:
               RichText(text:
@@ -59,7 +58,7 @@ class Onboarding2PromptResearchQuestionnairePanel extends StatelessWidget {
           ],),
         ],),
       ),
-      Expanded(flex: 4, child: Container(),),
+      Expanded(child: Container(),),
       Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
         Row(children: [
           Expanded(child:
