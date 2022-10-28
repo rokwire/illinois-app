@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -35,12 +36,15 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class GroupCreatePanel extends StatefulWidget {
+  final Group? group;
+  GroupCreatePanel({Key? key, this.group}) : super(key: key);
   _GroupCreatePanelState createState() => _GroupCreatePanelState();
 }
 
 class _GroupCreatePanelState extends State<GroupCreatePanel> {
   final _groupTitleController = TextEditingController();
   final _groupDescriptionController = TextEditingController();
+  final _groupResearchDescriptionController = TextEditingController();
   final _authManGroupNameController = TextEditingController();
 
   Group? _group;
@@ -67,11 +71,30 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _groupTitleController.dispose();
+    _groupDescriptionController.dispose();
+    _groupResearchDescriptionController.dispose();
+    _authManGroupNameController.dispose();
+    super.dispose();
+  }
+
   //Init
+
+  void _initGroup(){
+    _group = (widget.group != null) ? Group.fromOther(widget.group) : Group();
+    _group?.onlyAdminsCanCreatePolls ??= true;
+
+    _groupTitleController.text = _group?.title ?? '';
+    _groupDescriptionController.text = _group?.description ?? '';
+    _groupResearchDescriptionController.text = _group?.researchDescription ?? '';
+    _authManGroupNameController.text = _group?.authManGroupName ?? '';
+  }
 
   void _initPrivacyData(){
     _groupPrivacyOptions = GroupPrivacy.values;
-    _group!.privacy = _groupPrivacyOptions![0]; //default value Private
+    _group?.privacy = GroupPrivacy.values.first; //default value Private
   }
 
   void _initCategories(){
@@ -79,21 +102,16 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       _groupCategoeriesLoading = true;
     });
     Groups().loadCategories().then((categories){
-      setState(() {
+      setStateIfMounted(() {
         _groupCategories = categories;
       });
     }).whenComplete((){
-      setState(() {
+      setStateIfMounted(() {
         _groupCategoeriesLoading = false;
       });
     });
   }
 
-  void _initGroup(){
-    _group = Group();
-    //default values
-    _group!.onlyAdminsCanCreatePolls = true;
-  }
   //
 
   @override
@@ -136,24 +154,44 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "images/icon-search.png"),
                             _buildCategoryDropDown(),
                             _buildTagsLayout(),
-                            Container(height: 24,),
-                            Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                            Container(height: 24,),
-                            _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
-                            Container(height: 8),
-                            _buildPrivacyDropDown(),
-                            _buildHiddenForSearch(),
+
+                            Column(children: [
+                              Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
+                                Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                              ),
+                              _buildTitle("Research", "images/icon-gear.png"),
+                              _buildResearchOptionLayout(),
+                              Visibility(visible:_isResearchGroup, child:
+                                Column(children: [
+                                  _buildResearchOpenLayout(),
+                                  _buildResearchDescriptionField(),
+                                  _buildResearchAudienceLayout(),
+                                ])
+                              ),
+                            ],),
+
+                            Visibility(visible: !_isResearchGroup, child:
+                              Column(children: [
+                                Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
+                                  Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                                ),
+                                _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
+                                Container(height: 8),
+                                _buildPrivacyDropDown(),
+                                _buildHiddenForSearch(),
+                              ])
+                            ),
+
                             Visibility(visible: _isManagedGroupAdmin, child: Column(children: [
                               _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "images/icon-member.png"),
                               _buildAuthManLayout(),
                             ])),
-                            Visibility(
-                              visible: !_isAuthManGroup,
-                              child: Column(children: [
-                                Container(height: 16),
-                                _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
-                                _buildMembershipLayout(),
-                              ],)),
+                            
+                            Visibility(visible: !_isAuthManGroup, child: Padding(padding: EdgeInsets.only(top: 20), child: Column(children: [
+                              _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
+                              _buildMembershipLayout(),
+                            ],),),),
+                            
                             Container(height: 8,),
                             _buildCanAutojoinLayout(),
                             Container(height: 8),
@@ -292,6 +330,39 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         ],
       ),
 
+    );
+  }
+  //
+  //Research Description
+  Widget _buildResearchDescriptionField() {
+    String? title = "RESEARCH DESCRIPTION";
+    String? description = "What’s the purpose of your research project? Who should join? What will you do at your events?";
+    String? fieldTitle = "RESEARCH DESCRIPTION FIELD";
+    String? fieldHint = "";
+
+    return Visibility(visible: _isResearchGroup, child:
+      Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          _buildSectionTitle(title, description),
+          Container(height: 5,),
+          Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white), child:
+            Row(children: [
+              Expanded(child:
+                  Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
+                    TextField(
+                        controller: _groupResearchDescriptionController,
+                        maxLines: 5,
+                        decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
+                        style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                        onChanged: (text) => _group?.researchDescription = text,
+                    )
+                  ),
+                )
+              ])
+            ),
+          ],
+        ),
+      ),
     );
   }
   //
@@ -492,7 +563,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Visibility(
         visible: _isPrivateGroup,
         child: Padding(
-            padding: EdgeInsets.only(left: 16, right: 16, bottom: 40),
+            padding: EdgeInsets.only(left: 16, right: 16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(
                   child: _buildSwitch(
@@ -526,7 +597,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount)
         ? (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_create.questions.existing.label", "Question(s)"))
-        : Localization().getStringEx("panel.groups_create..questions.missing.label", "No question");
+        : Localization().getStringEx("panel.groups_create.questions.missing.label", "No questions");
 
     return Container(
       color: Styles().colors!.background,
@@ -586,6 +657,88 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       setState(() {});
     });
   }
+
+  // Research 
+  
+  Widget _buildResearchOptionLayout() {
+    return Container(
+        padding: EdgeInsets.only(left: 16, right: 16, top: 8),
+        child: _buildSwitch(
+            title: "Is this a research project?",
+            value: _group?.researchGroup,
+            onTap: _onTapResearchProject));
+  }
+
+  void _onTapResearchProject() {
+    if (_group != null) {
+      if (mounted) {
+        setState(() {
+          _group?.researchGroup = !(_group?.researchGroup ?? false);
+        });
+      }
+    }
+  }
+
+  Widget _buildResearchOpenLayout() {
+    return Container(
+        padding: EdgeInsets.only(left: 16, right: 16, top: 8),
+        child: _buildSwitch(
+            title: "Is the research project open?",
+            value: _group?.researchOpen,
+            onTap: _onTapResearchOpen));
+  }
+
+  void _onTapResearchOpen() {
+    if (_group != null) {
+      if (mounted) {
+        setState(() {
+          _group?.researchOpen = !(_group?.researchOpen ?? false);
+        });
+      }
+    }
+  }
+
+  Widget _buildResearchAudienceLayout() {
+    int questionsCount = researchProfileQuestionsCount;
+    String questionsDescription = (0 < questionsCount) ?
+      sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format","%s Question(s)"), [questionsCount.toString()]) :
+      Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
+
+    return Container(
+      color: Styles().colors!.background,
+      padding: EdgeInsets.only(left: 16, right: 16, top: 8),
+      child: Column(children: <Widget>[
+        Semantics(
+            explicitChildNodes: true,
+            child: _buildMembershipButton(
+                title: "Target Audience",
+                description: questionsDescription,
+                onTap: _onTapResearchProfile)),
+      ]),
+    );
+  }
+
+  int get researchProfileQuestionsCount {
+    int count = 0;
+    _group?.researchProfile?.forEach((String key, dynamic value) {
+      if (value is Map) {
+        count += value.length;
+      }
+    });
+    return count;
+  }
+
+  void _onTapResearchProfile() {
+    Analytics().logSelect(target: "Target Audience");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResearchProjectProfilePanel(profile: _group?.researchProfile,))).then((dynamic profile){
+      setState(() {
+        if (profile is Map<String, dynamic>) {
+          _group?.researchProfile = profile;
+        }
+      });
+    });
+  }
+
   //Autojoin
   Widget _buildCanAutojoinLayout(){
     return Visibility(visible: _isManagedGroupAdmin, child: Container(
@@ -855,6 +1008,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return _group?.authManEnabled ?? false;
   }
 
+  bool get _isResearchGroup {
+    return _group?.researchGroup ?? false;
+  }
+
   bool get _isPrivateGroup {
     return _group?.privacy == GroupPrivacy.private;
   }
@@ -862,4 +1019,5 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool get _isPublicGroup {
     return _group?.privacy == GroupPrivacy.public;
   }
+
 }

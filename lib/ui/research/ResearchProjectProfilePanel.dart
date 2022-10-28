@@ -4,25 +4,23 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Questionnaire.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
-import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/localization.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
-class Onboarding2ResearchQuestionnairePanel extends StatefulWidget {
-
-  final Map<String, dynamic>? onboardingContext;
-  Onboarding2ResearchQuestionnairePanel({this.onboardingContext});
+class ResearchProjectProfilePanel extends StatefulWidget  {
+  final Map<String, dynamic>? profile;
+  
+  ResearchProjectProfilePanel({this.profile});
 
   @override
-  State<Onboarding2ResearchQuestionnairePanel> createState() =>
-    _Onboarding2ResearchQuestionnairePanelState();
+  State<ResearchProjectProfilePanel> createState() =>
+      _ResearchProjectProfilePanelState();
 }
 
-class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2ResearchQuestionnairePanel> {
+class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePanel> {
 
   bool _loading = false;
   Questionnaire? _questionnaire;
@@ -32,6 +30,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
   @override
   void initState() {
+
     _loading = true;
 
     Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
@@ -39,9 +38,11 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         setState(() {
           _loading = false;
           _questionnaire = questionnaire;
-          Map<String, LinkedHashSet<String>>? answers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
-          if (answers != null) {
-            _selection.addAll(answers);
+          if ((widget.profile != null) && (_questionnaire?.id != null)) {
+            Map<String, LinkedHashSet<String>>? selection = JsonUtils.mapOfStringToLinkedHashSetOfStringsValue(widget.profile![questionnaire?.id]);
+            if (selection != null) {
+              _selection.addAll(selection);
+            }
           }
         });
       }
@@ -56,14 +57,14 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      backgroundColor: Styles().colors?.background,
-      body: SafeArea(child:
-        Stack(children: [
-          OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: _onBack,),
-          _buildContent(),
-        ],)
+      appBar: HeaderBar(
+        title: 'Target Audience',
+        leadingAsset: 'images/icon-circle-close.png',
       ),
+      body: _buildContent(),
+      backgroundColor: Styles().colors?.background,
     );
   }
 
@@ -78,78 +79,61 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       return _buildQuestionnaire(_questionnaire!);
     }
   }
-    
+
   Widget _buildQuestionnaire(Questionnaire questionnaire) {
 
     List<Widget> contentList = <Widget>[];
-    String title = questionnaire.stringValue(questionnaire.title)  ?? '';
-    String description = questionnaire.stringValue(questionnaire.description) ?? '';
-    bool submitEnabled = (_failSubmitQuestion < 0);
-
-    if (description.isNotEmpty) {
-      contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 10, bottom: 20), child:
-        Semantics(label: description, hint: '', excludeSemantics: true, child:
-          Row(children: [
-            Expanded(child:
-              Text(description, style: Styles().textStyles?.getTextStyle("widget.item.regular"), textAlign: TextAlign.left,),
-            )
-          ],)
-        ),
-      ),);
-    }
 
     List<Widget> questions = _buildQuestions(questionnaire.questions);
     if (questions.isNotEmpty) {
       contentList.addAll(questions);
     }
 
-    return Padding(padding: EdgeInsets.only(top: 20), child:
-      Column(children: <Widget>[
-        Padding(padding: EdgeInsets.only(left: 48, right: 48, bottom: 12), child:
-          Semantics(label: title, hint: '', excludeSemantics: true, child:
-            Row(children: [
+    return Column(children: <Widget>[
+      Container(color: Styles().colors?.white, child:
+        Padding(padding: EdgeInsets.all(_hPadding), child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children:<Widget>[
+            Row(children: <Widget>[
               Expanded(child:
-                Text(title, style: Styles().textStyles?.getTextStyle("widget.title.extra_large"), textAlign: TextAlign.center,),
-              )
-            ],)
-          ),
+                Text('Select Answers',
+                  style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary),),
+              ),
+            ],),
+            Padding(padding: EdgeInsets.only(top: 8), child:
+              Text('Create project target audience by selecting the answers that these users have chosen.',
+                style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textSurfaceAccent)),
+            ),
+          ]),
         ),
-        Expanded(child:
-          SingleChildScrollView(child:
+      ),
+      Container(height: 1, color: Styles().colors?.surfaceAccent,),
+
+      Expanded(child:
+        SingleChildScrollView(child:
+          Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
             Column(children: contentList,),
+          )
+        ),
+      ),
+      
+      Container(height: 1, color: Styles().colors?.surfaceAccent,),
+      Container(color: Styles().colors?.white, child:
+        Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 24, bottom: 12,), child:
+          SafeArea(child: 
+          RoundedButton(
+            label: 'Submit',
+            hint: '',
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            borderColor: Styles().colors?.fillColorSecondary,
+            backgroundColor: Styles().colors!.white,
+            textColor: Styles().colors?.fillColorPrimary,
+            fontSize: 16,
+            onTap: () => _onSubmit(),
+          ),
           ),
         ),
-        Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 12, bottom: 12,), child:
-          Row(children: [
-            Expanded(child:
-              RoundedButton(
-                label: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.title', 'Submit'),
-                hint: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.hint', ''),
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                borderColor: submitEnabled ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent,
-                backgroundColor: Styles().colors!.white,
-                textColor: submitEnabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-                fontSize: 16,
-                onTap: () => _onSubmit(),
-              ),
-            ),
-            Container(width: 12,),
-            Expanded(child:
-              RoundedButton(
-                label: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.cancel.title', 'Cancel'),
-                hint: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.cancel.hint', ''),
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                borderColor: Styles().colors?.fillColorSecondary,
-                backgroundColor: Styles().colors!.white,
-                textColor: Styles().colors?.fillColorPrimary,
-                fontSize: 16,
-                onTap: () => _onCancel(),
-              ),
-            ),
-          ],),
-        ),
-      ])
-    );
+      ),
+    ]);
   }
 
   List<Widget> _buildQuestions(List<Question>? questions) {
@@ -261,73 +245,15 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         else {
           selectedAnswers.add(answerId);
         }
-
-        if (question.maxAnswers != null) {
-          while (question.maxAnswers! < selectedAnswers.length) {
-            selectedAnswers.remove(selectedAnswers.first);
-          }
-        }
       });
     }
   }
 
-  void _onBack() {
-    Analytics().logSelect(target: "Back");
-    Navigator.pop(context);
-  }
-
-  void _onCancel() {
-    Analytics().logSelect(target: "Cancel");
-    Navigator.pop(context);
-  }
-
   void _onSubmit() {
-
     Analytics().logSelect(target: 'Submit');
-
-    List<Question>? questions = _questionnaire?.questions;
-    if (questions != null) {
-      int index = this._failSubmitQuestion;
-      Question? failQuestion = ((0 <= index) && (index < questions.length)) ? questions[index] : null;
-      if (failQuestion != null) {
-        int minQuestionAnswers = failQuestion.minAnswers ?? 0;
-        String questionTitle = _displayQuestionTitle(failQuestion, index: index + 1);
-        String promptFormat = (1 < minQuestionAnswers) ?
-          Localization().getStringEx('panel.onboarding2.research.questionnaire.error.select.multi', 'Please choose at least {{MinQuestionAnswers}} aswers of "{{QuestionTitle}}".') :
-          Localization().getStringEx('panel.onboarding2.research.questionnaire.error.select.single', 'Please choose at least {{MinQuestionAnswers}} aswer of "{{QuestionTitle}}".');
-        String displayPrompt = promptFormat.
-          replaceAll('{{MinQuestionAnswers}}', '$minQuestionAnswers').
-          replaceAll('{{QuestionTitle}}', '$questionTitle');
-
-        AppAlert.showDialogResult(context, displayPrompt);
-      }
-      else {
-        Auth2().profile?.setResearchQuestionnaireAnswers(_questionnaire?.id, _selection);
-        
-        Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
-        if (onContinue != null) {
-          onContinue();
-        }
-      }
-    }
-  }
-
-  int get _failSubmitQuestion {
-    List<Question>? questions = _questionnaire?.questions;
-    if (questions != null) {
-      for (int index = 0; index < questions.length; index++) {
-        Question question = questions[index];
-        int? minQuestionAnswers = question.minAnswers;
-        if (minQuestionAnswers != null) {
-          LinkedHashSet<String>? selectedAnswers = _selection[question.id];
-          int selectedAnswersCount = selectedAnswers?.length ?? 0;
-          if (selectedAnswersCount < minQuestionAnswers) {
-            return index;
-          }
-        }
-      }
-    }
-    return -1;
+    Navigator.of(context).pop({
+       (_questionnaire?.id ?? '') : JsonUtils.mapOfStringToLinkedHashSetOfStringsJsonValue(_selection)
+    });
   }
 
   String _questionnaireString(String? key, { String? languageCode }) => _questionnaire?.stringValue(key, languageCode: languageCode) ?? key ?? '';
@@ -359,8 +285,8 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
               Padding(padding: EdgeInsets.only(left: 32, right: 32, top: 24, bottom: 24), child:
                 Row(children: [
                   Expanded(child:
-                    Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.error.load', 'Failed to load research questionnaire.'), style:
-              Styles().textStyles?.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
+                    Text('Failed to load research questionnaire.', style:
+                      Styles().textStyles?.getTextStyle("widget.message.large"), textAlign: TextAlign.center,),
                   ),
                 ],)
               )
@@ -369,5 +295,4 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         ],))
     ]);
   }
-
 }

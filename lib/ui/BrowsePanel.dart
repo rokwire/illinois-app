@@ -42,6 +42,7 @@ import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
 import 'package:illinois/ui/polls/PollsHomePanel.dart';
+import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsAddIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsIlliniCashPanel.dart';
 import 'package:illinois/ui/settings/SettingsMealPlanPanel.dart';
@@ -528,6 +529,9 @@ class _BrowseEntry extends StatelessWidget {
       case "groups.all_groups":              _onTapAllGroups(context); break;
       case "groups.my_groups":               _onTapMyGroups(context); break;
 
+      case "research_projects.open_research_projects": _onTapOpenResearchProjects(context); break;
+      case "research_projects.my_research_projects": _onTapMyResearchProjects(context); break;
+
       case "my.my_athletics":                _onTapMyAthletics(context); break;
       case "my.my_news":                     _onTapMyNews(context); break;
       case "my.my_campus_guide":             _onTapMyCampusGuide(context); break;
@@ -900,6 +904,16 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapMyGroups(BuildContext context) {
     Analytics().logSelect(target: "My Groups");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsHomePanel(contentType: GroupsContentType.my)));
+  }
+
+  void _onTapOpenResearchProjects(BuildContext context) {
+    Analytics().logSelect(target: "Open Research Projects");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResearchProjectsHomePanel(contentType: ResearchProjectsContentType.open,)));
+  }
+
+  void _onTapMyResearchProjects(BuildContext context) {
+    Analytics().logSelect(target: "My Research Projects");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResearchProjectsHomePanel(contentType: ResearchProjectsContentType.my)));
   }
 
   void _onTapMyGameDay(BuildContext context) {
