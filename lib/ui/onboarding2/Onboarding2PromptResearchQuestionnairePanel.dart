@@ -32,13 +32,31 @@ class Onboarding2PromptResearchQuestionnairePanel extends StatelessWidget {
     return Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 148), child: 
     Column(children: [
       Expanded(flex: 1, child: Container(),),
-      Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 0), child:
-        Row(children: [
-          Expanded(child: 
-            Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt', 'Would you like to participate in Research?'), textAlign: TextAlign.center,
-              style: Styles().textStyles?.getTextStyle("widget.message.extra_large.fat"),
-            ),
-          )
+      Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Expanded(child: 
+              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.introduction', 'Illinois is one of the world’s great research universities. Become a citizen scientist and take part in the discovery by participating in research at Illinois.'), textAlign: TextAlign.left,
+                style: Styles().textStyles?.getTextStyle("widget.message.large"),
+              ),
+            )
+          ],),
+          Container(height: 16,),
+          Row(children: [
+            Expanded(child:
+              RichText(text:
+                TextSpan(children: [
+                  TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.question', 'Would you like to get invitations to participate in research studies via the Illinois app?'),
+                    style: Styles().textStyles?.getTextStyle("widget.message.large.fat"),
+                  ),
+                  TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.explanation', ' Many studies offer incentives.'),
+                    style: Styles().textStyles?.getTextStyle("widget.message.large"),
+                  ),
+                ]),
+              ),
+
+            )
+          ],),
         ],),
       ),
       Expanded(flex: 4, child: Container(),),
