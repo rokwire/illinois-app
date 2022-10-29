@@ -17,29 +17,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
-import 'package:illinois/ui/wellness/WellnessHealthScreeenerWidgets.dart';
+import 'package:illinois/ui/wellness/WellnessHealthScreenerWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/appointments/WellnessAppointmentsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/WellnessDailyTipsContentWidget.dart';
 import 'package:illinois/ui/wellness/todo/WellnessToDoHomeContentWidget.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/rules.dart';
-import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:rokwire_plugin/utils/widget_utils.dart';
-import 'package:rokwire_plugin/ui/popups/popup_message.dart';
-import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum WellnessContent { dailyTips, rings, todo, appointments, symptomScreener, podcast, resources, struggling }
@@ -54,7 +47,7 @@ class WellnessHomePanel extends StatefulWidget {
   _WellnessHomePanelState createState() => _WellnessHomePanelState();
 }
 
-class _WellnessHomePanelState extends State<WellnessHomePanel> implements NotificationsListener {
+class _WellnessHomePanelState extends State<WellnessHomePanel> {
   static WellnessContent? _lastSelectedContent;
   late WellnessContent _selectedContent;
   bool _contentValuesVisible = false;
@@ -62,9 +55,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> implements Notifi
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, [
-      RuleAction.notifyAlert,
-    ]);
 
     _selectedContent = selectableContent(widget.content) ?? (_lastSelectedContent ?? WellnessContent.dailyTips);
   }
@@ -252,18 +242,6 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> implements Notifi
 
   static String _loadContentString(String key, String defaults, {String? language}) {
     return Localization().getString(key, defaults: defaults, language: language) ?? defaults;
-  }
-
-  void _onNotifyAlert(SurveyDataResult survey) {
-    WidgetsBinding.instance.addPostFrameCallback((_) =>
-        ActionsMessage.show(context: context, title: survey.text, message: survey.moreInfo, buttons: SurveyUtils.buildResultSurveyButtons(context, survey)));
-  }
-
-  @override
-  void onNotification(String name, param) {
-    if (name == RuleAction.notifyAlert) {
-      _onNotifyAlert(param as SurveyDataResult);
-    }
   }
 }
 
