@@ -19,15 +19,13 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
-import 'package:rokwire_plugin/model/rules.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
-import 'package:rokwire_plugin/ui/popups/popup_message.dart';
+import 'package:rokwire_plugin/ui/widget_builders/survey.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/survey.dart';
 
 class WellnessHealthScreenerHomeWidget extends StatefulWidget {
   WellnessHealthScreenerHomeWidget();
@@ -52,9 +50,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     _refreshHistory();
 
     super.initState();
-    NotificationService().subscribe(this, [
-      RuleAction.notifyAlert,
-    ]);
+    NotificationService().subscribe(this, []);
   }
 
   @override
@@ -174,7 +170,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   Widget _buildResponsesSection() {
     List<Widget> content = [];
     for(SurveyResponse response in _responses) {
-      Widget widget = SurveyUtils.buildSurveyResponseCard(context, response, showTimeOnly: _selectedTimeframe == "Today");
+      Widget widget = SurveyBuilder.surveyResponseCard(context, response, showTimeOnly: _selectedTimeframe == "Today");
       content.add(widget);
       content.add(Container(height: 16.0));
     }
@@ -182,7 +178,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   void _onTapTakeSymptomScreener() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().symptomScreenerId, onComplete: () => SurveyUtils.onTapDismiss(dismissContext: context),)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().symptomSurveyID)));
   }
 
   DateTime? get _selectedStartDate {
@@ -253,17 +249,10 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     }
   }
 
-  void _onNotifyAlert(SurveyDataResult survey) {
-    WidgetsBinding.instance.addPostFrameCallback((_) =>
-        ActionsMessage.show(context: context, title: survey.text, message: survey.moreInfo, buttons: SurveyUtils.buildResultSurveyButtons(context, survey)));
-  }
-
   // Notifications Listener
 
   @override
   void onNotification(String name, param) {
-    if (name == RuleAction.notifyAlert) {
-      _onNotifyAlert(param as SurveyDataResult);
-    }
+
   }
 }

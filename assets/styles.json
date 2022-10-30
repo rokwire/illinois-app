@@ -385,5 +385,8 @@
     "panel.onboarding2.video_tutorial.cc.disabled": {"font_family": "ProximaNovaBold", "size": 18.0, "color": "disabledTextColorTwo"},
     "panel.onboarding2.video_tutorial.caption.text": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "white"},
     "panel.onboarding2.video_tutorial.message.empty": {"font_family": "ProximaNovaBold", "size": 20.0, "color": "white"}
+  },
+  "images": {
+    "circle-xmark": {"src": "0xf057", "type": "fa.icon", "size": 18.0, "color": "surface"}
   }
 }
