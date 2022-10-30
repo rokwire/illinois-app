@@ -98,18 +98,26 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   Widget _buildSymptomScreenerSectionWidget(bool canTakeScreener) {
     Widget content;
     if (canTakeScreener) {
-      content = Column(children: [
-        Text(
-          Localization().getStringEx('panel.wellness.sections.health_screener.label.symptom_screener.title',
-              'Feeling sick? Use the Symptom Screener to help you find the right resources'),
+      if (StringUtils.isNotEmpty(Config().symptomSurveyID)) {
+        content = Column(children: [
+          Text(
+            Localization().getStringEx('panel.wellness.sections.health_screener.label.symptom_screener.title',
+                'Feeling sick? Use the Symptom Screener to help you find the right resources'),
+            style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
+          ),
+          SizedBox(height: 16),
+          RoundedButton(
+              label: Localization().getStringEx('panel.wellness.sections.health_screener.button.take_screener.title', 'Take the Symptom Screener'),
+              textStyle: Styles().textStyles?.getTextStyle('widget.detail.regular.fat'),
+              onTap: _onTapTakeSymptomScreener),
+        ]);
+      } else {
+        content = Text(
+          Localization().getStringEx('panel.wellness.sections.health_screener.label.symptom_screener.missing.title',
+              'The Illinois Health Screener is currently unavailable. Please check back later.'),
           style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
-        ),
-        SizedBox(height: 16),
-        RoundedButton(
-            label: Localization().getStringEx('panel.wellness.sections.health_screener.button.take_screener.title', 'Take the Symptom Screener'),
-            textStyle: Styles().textStyles?.getTextStyle('widget.detail.regular.fat'),
-            onTap: _onTapTakeSymptomScreener),
-      ]);
+        );
+      }
     } else {
       content = Text(
         Localization().getStringEx('panel.wellness.sections.health_screener.label.symptom_screener.invalid_role.title',
