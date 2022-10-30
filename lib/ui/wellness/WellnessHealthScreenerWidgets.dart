@@ -60,7 +60,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   void initState() {
     _sectionEntryCodes = JsonUtils.setStringsValue(FlexUI()['wellness.symptom_screener']);
 
-    _pagerController = ScrollPagerController(limit: 20, onPage: _loadPage);
+    _pagerController = ScrollPagerController(limit: 20, onPage: _loadPage, onStateChanged: _onPagerStateChanged);
     _pagerController.registerScrollController(widget.scrollController);
 
     super.initState();
@@ -266,7 +266,11 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
         _responses.addAll(responses);
       });
     }
-    return responses?.length ?? -1;
+    return responses?.length ?? 0;
+  }
+
+  void _onPagerStateChanged() {
+    setState(() { });
   }
 
   List<DropdownMenuItem<T>> _getDropDownItems<T>(List<T> options, {String? nullOption}) {
