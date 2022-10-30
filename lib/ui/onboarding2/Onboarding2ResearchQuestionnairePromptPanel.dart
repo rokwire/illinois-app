@@ -7,10 +7,10 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
-class Onboarding2PromptResearchQuestionnairePanel extends StatelessWidget {
+class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
 
   final Map<String, dynamic>? onboardingContext;
-  Onboarding2PromptResearchQuestionnairePanel({this.onboardingContext});
+  Onboarding2ResearchQuestionnairePromptPanel({this.onboardingContext});
 
   @override
   Widget build(BuildContext context) {
@@ -31,17 +31,34 @@ class Onboarding2PromptResearchQuestionnairePanel extends StatelessWidget {
   Widget _buildContent(BuildContext context) {
     return Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 148), child: 
     Column(children: [
-      Expanded(flex: 1, child: Container(),),
-      Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 0), child:
-        Row(children: [
-          Expanded(child: 
-            Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt', 'Would you like to participate in Research?'), textAlign: TextAlign.center,
-              style: Styles().textStyles?.getTextStyle("widget.message.extra_large.fat"),
-            ),
-          )
+      Padding(padding: EdgeInsets.only(top: 48), child:
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Expanded(child: 
+              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.introduction', 'Illinois is one of the world’s great research universities. Become a citizen scientist and take part in the discovery by participating in research at Illinois.'), textAlign: TextAlign.left,
+                style: Styles().textStyles?.getTextStyle("widget.message.large"),
+              ),
+            )
+          ],),
+          Container(height: 32,),
+          Row(children: [
+            Expanded(child:
+              RichText(text:
+                TextSpan(children: [
+                  TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.question', 'Would you like to get invitations to participate in research studies via the Illinois app?'),
+                    style: Styles().textStyles?.getTextStyle("widget.message.large.fat"),
+                  ),
+                  TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.explanation', ' Many studies offer incentives.'),
+                    style: Styles().textStyles?.getTextStyle("widget.message.large"),
+                  ),
+                ]),
+              ),
+
+            )
+          ],),
         ],),
       ),
-      Expanded(flex: 4, child: Container(),),
+      Expanded(child: Container(),),
       Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
         Row(children: [
           Expanded(child:
@@ -81,20 +98,18 @@ class Onboarding2PromptResearchQuestionnairePanel extends StatelessWidget {
   void _onYes(BuildContext context) {
     Analytics().logSelect(target: "Yes");
     Questionnaires().participateInResearch = true;
-    Navigator.pop(context, true);
-    /*Function? onConfirm = (onboardingContext != null) ? onboardingContext!["onConfirmAction"] : null;
+    Function? onConfirm = (onboardingContext != null) ? onboardingContext!["onConfirmAction"] : null;
     if (onConfirm != null) {
       onConfirm();
-    }*/
+    }
   }
 
   void _onNo(BuildContext context) {
     Analytics().logSelect(target: "No");
     Questionnaires().participateInResearch = false;
-    Navigator.pop(context, false);
-    /*Function? onReject = (onboardingContext != null) ? onboardingContext!["onRejectAction"] : null;
+    Function? onReject = (onboardingContext != null) ? onboardingContext!["onRejectAction"] : null;
     if (onReject != null) {
       onReject();
-    }*/
+    }
   }
 }
