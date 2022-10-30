@@ -52,6 +52,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   late WellnessContent _selectedContent;
   bool _contentValuesVisible = false;
 
+  ScrollController _contentScrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -81,7 +83,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
               child: Stack(children: [
             Padding(
                 padding: EdgeInsets.only(top: 16),
-                child: SingleChildScrollView(child: Padding(padding: EdgeInsets.only(bottom: 16), child: _contentWidget))),
+                child: SingleChildScrollView(controller: _contentScrollController,
+                    child: Padding(padding: EdgeInsets.only(bottom: 16), child: _contentWidget))),
             _buildContentValuesContainer()
           ]))
         ]),
@@ -175,7 +178,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
       case WellnessContent.appointments:
         return WellnessAppointmentsHomeContentWidget();
       case WellnessContent.symptomScreener:
-        return WellnessHealthScreenerHomeWidget();
+        return WellnessHealthScreenerHomeWidget(_contentScrollController);
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
       default:

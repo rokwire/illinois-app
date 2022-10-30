@@ -26,12 +26,16 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/service/polls.dart' as polls;
 import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
+import 'package:rokwire_plugin/ui/widget_builders/scroll_pager.dart';
 import 'package:rokwire_plugin/ui/widget_builders/survey.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessHealthScreenerHomeWidget extends StatefulWidget {
-  WellnessHealthScreenerHomeWidget();
+  ScrollController scrollController;
+
+  WellnessHealthScreenerHomeWidget(this.scrollController);
 
   @override
   State<WellnessHealthScreenerHomeWidget> createState() => _WellnessHealthScreenerHomeWidgetState();
@@ -50,11 +54,14 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
   Set<String>? _sectionEntryCodes;
 
+  late ScrollPagerController _pagerController;
+
   @override
   void initState() {
-    _refreshHistory();
-
     _sectionEntryCodes = JsonUtils.setStringsValue(FlexUI()['wellness.symptom_screener']);
+
+    _pagerController = ScrollPagerController(limit: 20, onPage: _loadPage);
+    _pagerController.registerScrollController(widget.scrollController);
 
     super.initState();
     NotificationService().subscribe(this, [
@@ -65,13 +72,14 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
   @override
   void dispose() {
+    _pagerController.deregisterScrollController();
     NotificationService().unsubscribe(this);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _loading ? _buildLoadingContent() : _buildContent();
+    return _buildContent();
   }
 
   Widget _buildContent() {
@@ -132,6 +140,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
         _buildFiltersWidget(),
         SizedBox(height: 16.0),
         _buildResponsesSection(),
+        ScrollPagerBuilder.buildScrollPagerFooter(_pagerController) ?? Container(),
       ]),
     );
   }
@@ -237,15 +246,19 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   void _refreshHistory() {
-    _setLoading(true);
+    _responses.clear();
+    _pagerController.reset();
+  }
 
-    //TODO: Handle pagination
-    Polls().loadSurveyResponses(surveyTypes: _selectedSurveyTypes, startDate: _selectedStartDate, limit: 100).then((responses) {
+  Future<int> _loadPage({required int offset, required int limit}) async {
+    List<SurveyResponse>? responses = await Polls().loadSurveyResponses(surveyTypes: _selectedSurveyTypes,
+        startDate: _selectedStartDate, limit: limit, offset: offset);
+    if (responses != null) {
       setState(() {
-        _responses = responses ?? [];
+        _responses.addAll(responses);
       });
-      _setLoading(false);
-    });
+    }
+    return responses?.length ?? -1;
   }
 
   List<DropdownMenuItem<T>> _getDropDownItems<T>(List<T> options, {String? nullOption}) {
@@ -257,22 +270,6 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
       dropDownItems.add(DropdownMenuItem(value: option, child: Text(option.toString(), style: Styles().textStyles?.getTextStyle('widget.detail.regular'))));
     }
     return dropDownItems;
-  }
-
-  Widget _buildLoadingContent() {
-    return Center(
-        child: Column(children: <Widget>[
-          Container(height: MediaQuery.of(context).size.height / 5),
-          CircularProgressIndicator(),
-          Container(height: MediaQuery.of(context).size.height / 5 * 3)
-        ]));
-  }
-
-  void _setLoading(bool loading) {
-    _loading = loading;
-    if (mounted) {
-      setState(() {});
-    }
   }
 
   // Notifications Listener
