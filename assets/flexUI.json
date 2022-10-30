@@ -56,7 +56,9 @@
 			"settings.linked.email": ["info", "remove", "verify"],
 	
 			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "due_date_catalog", "my_illini"],
-			
+
+			"wellness.symptom_screener": ["take_screener"],
+
 			"explore.list": ["events", "dining"],
 			"explore.map":  ["events", "dining", "laundry", "student_courses", "buildings", "state_farm_wayfinding", "appointments"],
 	
@@ -80,15 +82,16 @@
 		"rules": {
 			"roles" : {
 	
-				"student_courses"                        : ["student"],
+				"student_courses"                         : ["student"],
 
-				"onboarding.login_netid"                 : ["student", "OR", "employee"],
-				"onboarding.login_phone"                 : ["NOT", ["employee", "OR", "student"]],
-				"onboarding.verify_phone"                : ["NOT", ["employee", "OR", "student"]],
-				"onboarding.confirm_phone"               : ["NOT", ["employee", "OR", "student"]],
+				"onboarding.login_netid"                  : ["student", "OR", "employee"],
+				"onboarding.login_phone"                  : ["NOT", ["employee", "OR", "student"]],
+				"onboarding.verify_phone"                 : ["NOT", ["employee", "OR", "student"]],
+				"onboarding.confirm_phone"                : ["NOT", ["employee", "OR", "student"]],
 	
-				"onboarding.sport_prefs"                 : ["fan"]
-	
+				"onboarding.sport_prefs"                  : ["fan"],
+
+				"wellness.symptom_screener.take_screener" : ["student"]
 			},
 			"groups": {
 				"home.twitter.account.canvas"            : ["${config.settings.groups.canvas}", "AND", ["NOT", "${config.settings.groups.gies}"]],

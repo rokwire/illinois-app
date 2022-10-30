@@ -17,15 +17,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/polls.dart' as polls;
 import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/widget_builders/survey.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessHealthScreenerHomeWidget extends StatefulWidget {
   WellnessHealthScreenerHomeWidget();
@@ -45,12 +48,19 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
   List<SurveyResponse> _responses = [];
 
+  Set<String>? _sectionEntryCodes;
+
   @override
   void initState() {
     _refreshHistory();
 
+    _sectionEntryCodes = JsonUtils.setStringsValue(FlexUI()['wellness.symptom_screener']);
+
     super.initState();
-    NotificationService().subscribe(this, []);
+    NotificationService().subscribe(this, [
+      polls.Polls.notifySurveyResponseCreated,
+      FlexUI.notifyChanged
+    ]);
   }
 
   @override
@@ -65,49 +75,65 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   Widget _buildContent() {
+    bool canTakeScreener = _sectionEntryCodes?.contains('take_screener') == true;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // SurveyWidget(survey: Config().symptomSurveyID, onChangeSurveyResponse: (_) {
         //   setState(() {});
         // }),
-        HomeSlantWidget(
-          title: Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Symptom Screener'),
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-          childPadding: HomeSlantWidget.defaultChildPadding,
-          child: Column(children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Text(
-                      Localization().getStringEx('panel.wellness.sections.health_screener.label.symptom_screener.title',
-                        'Feeling sick? Use the Symptom Screener to help you find the right resources'),
-                      style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
-                    ),
-                    SizedBox(height: 16),
-                    RoundedButton(
-                      label: Localization().getStringEx('panel.wellness.sections.health_screener.button.take_screener.title', 'Take the Symptom Screener'),
-                      textStyle: Styles().textStyles?.getTextStyle('widget.detail.regular.fat'),
-                      onTap: _onTapTakeSymptomScreener),
-                  ],
-                ),
-              ),
-            )
-          ]),
-        ),
-        HomeSlantWidget(
-          title: Localization().getStringEx('panel.wellness.sections.health_screener.label.history.title', 'History'),
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true),
-          childPadding: HomeSlantWidget.defaultChildPadding,
-          child: Column(children: [
-            _buildFiltersWidget(),
-            SizedBox(height: 16.0),
-            _buildResponsesSection(),
-          ]),
-        )
+        _buildSymptomScreenerSectionWidget(canTakeScreener),
+        Visibility(visible: canTakeScreener, child: _buildHistorySectionWidget()),
       ]);
+  }
+
+  Widget _buildSymptomScreenerSectionWidget(bool canTakeScreener) {
+    Widget content;
+    if (canTakeScreener) {
+      content = Column(children: [
+        Text(
+          Localization().getStringEx('panel.wellness.sections.health_screener.label.symptom_screener.title',
+              'Feeling sick? Use the Symptom Screener to help you find the right resources'),
+          style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
+        ),
+        SizedBox(height: 16),
+        RoundedButton(
+            label: Localization().getStringEx('panel.wellness.sections.health_screener.button.take_screener.title', 'Take the Symptom Screener'),
+            textStyle: Styles().textStyles?.getTextStyle('widget.detail.regular.fat'),
+            onTap: _onTapTakeSymptomScreener),
+      ]);
+    } else {
+      content = Text(
+        Localization().getStringEx('panel.wellness.sections.health_screener.label.symptom_screener.invalid_role.title',
+            'The Illinois Health Screener is currently only available to students. Please check back later.'),
+        style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
+      );
+    }
+
+    return HomeSlantWidget(
+      title: Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Symptom Screener'),
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      childPadding: HomeSlantWidget.defaultChildPadding,
+      child: Card(
+        child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: content
+        ),
+      )
+    );
+  }
+
+  Widget _buildHistorySectionWidget() {
+    return HomeSlantWidget(
+      title: Localization().getStringEx('panel.wellness.sections.health_screener.label.history.title', 'History'),
+      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true),
+      childPadding: HomeSlantWidget.defaultChildPadding,
+      child: Column(children: [
+        _buildFiltersWidget(),
+        SizedBox(height: 16.0),
+        _buildResponsesSection(),
+      ]),
+    );
   }
 
   Widget _buildFiltersWidget() {
@@ -253,6 +279,12 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
   @override
   void onNotification(String name, param) {
-
+    if (name == polls.Polls.notifySurveyResponseCreated) {
+      _refreshHistory();
+    } else if (name == FlexUI.notifyChanged) {
+      setState(() {
+        _sectionEntryCodes = JsonUtils.setStringsValue(FlexUI()['wellness.symptom_screener']);
+      });
+    }
   }
 }

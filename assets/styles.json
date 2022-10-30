@@ -32,7 +32,9 @@
 
     "iconColor"                             :"#E84A27",
 
-    "transparentWalletColor"        : "#ff0f2040",
+    "alert"                                 :"#ff0000",
+
+    "transparentWalletColor"                : "#ff0f2040",
 
     "eventColor"                            :"#E54B30",
     "diningColor"                           :"#F09842",
@@ -133,6 +135,9 @@
     "widget.description.small": { "font_family": "ProximaNovaMedium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.description.small_underline": { "font_family": "ProximaNovaMedium", "size": 14.0, "decoration": "underline"},
     "widget.description.small.fat": { "font_family": "ProximaNovaBold", "size": 14.0, "color": "fillColorPrimary"},
+
+    "widget.error.regular": { "font_family": "ProximaNovaRegular", "size": 16.0, "color": "alert"},
+    "widget.error.regular.fat": { "font_family": "ProximaNovaBold", "size": 16.0, "color": "alert"},
 
     "widget.item.medium.fat": { "font_family": "ProximaNovaBold", "size": 18.0, "color": "textBackground"},
     "widget.item.medium": { "font_family": "ProximaNovaRegular", "size": 18.0, "color": "textBackground"},
