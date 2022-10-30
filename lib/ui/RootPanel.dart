@@ -54,6 +54,7 @@ import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/ui/popups/alerts.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -95,6 +96,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyInboxNotification,
       FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
       FirebaseMessaging.notifyAppointmentNotification,
+      Alerts.notifyAlert,
       Events.notifyEventDetail,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
@@ -139,6 +141,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == DeviceCalendar.notifyShowConsoleMessage) {
       _showConsoleMessage(param);
+    }
+    else if (name == Alerts.notifyAlert) {
+      Alerts.handleNotification(context, param);
     }
     else if (name == FirebaseMessaging.notifyForegroundMessage){
       _onFirebaseForegroundMessage(param);

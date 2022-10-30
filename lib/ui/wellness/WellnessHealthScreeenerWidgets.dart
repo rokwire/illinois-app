@@ -31,10 +31,8 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
+import 'package:rokwire_plugin/ui/widget_builders/survey.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
-import 'package:rokwire_plugin/ui/widgets/survey.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class WellnessHealthScreenerHomeWidget extends StatefulWidget {
   WellnessHealthScreenerHomeWidget();
@@ -179,7 +177,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   Widget _buildResponsesSection() {
     List<Widget> content = [];
     for(SurveyResponse response in _responses) {
-      Widget widget = SurveyWidgets.buildSurveyResponseCard(context, response, showTimeOnly: _selectedTimeframe == "Today");
+      Widget widget = SurveyBuilder.surveyResponseCard(context, response, showTimeOnly: _selectedTimeframe == "Today");
       content.add(widget);
       content.add(Container(height: 16.0));
     }
