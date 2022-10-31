@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Add health screener surveys [#2480](https://github.com/rokwire/illinois-app/issues/2480)
+- Introduce ModalImageHolder widget  [#2474](https://github.com/rokwire/illinois-app/issues/2474)
 ### Changed
 - "Campus Guide Highlights" renamed to "Campus Safety Resources" [#2488](https://github.com/rokwire/illinois-app/issues/2488).
 
