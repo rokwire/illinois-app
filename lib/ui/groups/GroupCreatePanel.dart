@@ -49,7 +49,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   Group? _group;
 
-  List<GroupPrivacy>? _groupPrivacyOptions;
+  final List<GroupPrivacy> _groupPrivacyOptions = GroupPrivacy.values;
   List<String>? _groupCategories;
 
   bool _groupCategoeriesLoading = false;
@@ -66,7 +66,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   @override
   void initState() {
     _initGroup();
-    _initPrivacyData();
     _initCategories();
     super.initState();
   }
@@ -85,16 +84,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _initGroup(){
     _group = (widget.group != null) ? Group.fromOther(widget.group) : Group();
     _group?.onlyAdminsCanCreatePolls ??= true;
+    _group?.researchOpen ??= (_group?.researchGroup == true) ? true : null;
+    _group?.privacy = (_group?.researchGroup == true) ? GroupPrivacy.public : GroupPrivacy.private;
 
     _groupTitleController.text = _group?.title ?? '';
     _groupDescriptionController.text = _group?.description ?? '';
     _groupResearchDescriptionController.text = _group?.researchDescription ?? '';
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
-  }
-
-  void _initPrivacyData(){
-    _groupPrivacyOptions = GroupPrivacy.values;
-    _group?.privacy = GroupPrivacy.values.first; //default value Private
   }
 
   void _initCategories(){
