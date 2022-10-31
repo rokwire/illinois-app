@@ -775,8 +775,8 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: 'Campus Highlights');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
       contentList: Guide().promotedList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Guide Highlights."),
+      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Safety Resources'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Safety Resources."),
     )));
   }
 
