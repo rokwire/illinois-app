@@ -315,7 +315,7 @@
     "panel.browse.entry.safer.my_mckinley.title": "MiMcKinley",
     "panel.browse.entry.safer.wellness_answer_center.title": "Centro de respuestas",
 
-    "panel.browse.entry.campus_guide.campus_highlights.title": "Puntos destacados de la guía del campus",
+    "panel.browse.entry.campus_guide.campus_highlights.title": "Recursos de seguridad del campus",
     "panel.browse.entry.campus_guide.campus_guide.title": "Guía Completa del Campus",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "Guía de mi campus",
 
@@ -2287,8 +2287,8 @@
     "panel.inbox.label.time.last_month": "El mes pasado",
 
     "panel.guide_list.label.highlights.heading": "Campus Guide",
-    "panel.guide_list.label.highlights.empty": "No hay Destacados de la Guía del Campus activos.",
-    "panel.guide_list.label.highlights.section": "Reflejos",
+    "panel.guide_list.label.highlights.empty": "No hay recursos de seguridad en el campus activos.",
+    "panel.guide_list.label.highlights.section": "Recursos de seguridad",
     "panel.guide_list.label.campus_reminders.section": "Recordatorios del campus",
     "panel.guide_list.label.campus_reminders.empty": "No hay recordatorios de campus activos.",
     "panel.guide_list.label.content.empty": "Contenido de la guía vacía",
@@ -2559,8 +2559,8 @@
     "widget.home_create_poll.button.create_poll.label":"Crea una encuesta",
     "widget.home_create_poll.button.login.label":"Iniciar sesión",
 
-    "widget.home.campus_guide_highlights.label.heading": "Puntos destacados de la guía del campus",
-    "widget.home.campus_guide_highlights.text.empty.description": "No hay Destacados de la Guía del Campus activos.",
+    "widget.home.campus_guide_highlights.label.heading": "Recursos de seguridad del campus",
+    "widget.home.campus_guide_highlights.text.empty.description": "No hay recursos de seguridad en el campus activos.",
     "widget.home.campus_guide_highlights.button.all.title": "Ver todo",
     "widget.home.campus_guide_highlights.button.all.hint": "Toca para ver todos los aspectos destacados",
 

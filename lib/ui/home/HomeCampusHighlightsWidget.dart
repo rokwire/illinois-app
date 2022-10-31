@@ -31,7 +31,7 @@ class HomeCampusHighlightsWidget extends StatefulWidget {
       title: title,
     );
 
-  static String get title => Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Guide Highlights');
+  static String get title => Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Safety Resources');
   
   @override
   _HomeCampusHighlightsWidgetState createState() => _HomeCampusHighlightsWidgetState();
@@ -104,7 +104,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   @override
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
-      title: Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
+      title: Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Safety Resources'),
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
       child: _buildContent() 
     );
@@ -112,7 +112,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
 
   Widget _buildContent() {
     return  (_promotedItems?.isEmpty ?? true) ? HomeMessageCard(
-      message: Localization().getStringEx("widget.home.campus_guide_highlights.text.empty.description", "There are no active Campus Guide Highlights."),
+      message: Localization().getStringEx("widget.home.campus_guide_highlights.text.empty.description", "There are no active Campus Safety Resources."),
     ) : _buildPromotedContent();
   }
 
@@ -193,8 +193,8 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
       contentList: _promotedItems,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Guide Highlights."),
+      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Safety Resources'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Safety Resources."),
     )));
   }
 }
