@@ -13,6 +13,7 @@ import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -106,7 +107,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   Widget _buildImageWidget(String imageUrl) {
     final double triangleHeight = 40;
     return Stack(children: [
-      Image.network(imageUrl, semanticLabel: 'tout',
+    ModalImageHolder(child: Image.network(imageUrl, semanticLabel: 'tout',
           loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
@@ -118,7 +119,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
                 child: Center(
                     child: CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white))))
             : child;
-      }),
+      })),
       Align(
           alignment: Alignment.topCenter,
           child: CustomPaint(
