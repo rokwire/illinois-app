@@ -315,7 +315,7 @@
 	"panel.browse.entry.safer.my_mckinley.title": "麥金利",
 	"panel.browse.entry.safer.wellness_answer_center.title": "解答中心",
 
-	"panel.browse.entry.campus_guide.campus_highlights.title": "校園指南亮點",
+	"panel.browse.entry.campus_guide.campus_highlights.title": "校園安全資源",
 	"panel.browse.entry.campus_guide.campus_guide.title": "完整的校園指南",
 	"panel.browse.entry.campus_guide.my_campus_guide.title": "我的校園指南",
 
@@ -1743,6 +1743,7 @@
 	"panel.wellness.section.rings.label": "每日健康戒指",
 	"panel.wellness.section.todo.label": "待辦事項清單",
     "panel.wellness.section.appointments.label": "MyMcKinley 約會",
+    "panel.wellness.section.symptom_screener.label": "Illinois Health Screener",
 	"panel.wellness.section.resources.label": "健康資源",
 	"panel.wellness.section.podcast.label": "健康伊利尼播客",
 	"panel.wellness.section.struggling.label": "我正在掙扎",
@@ -2285,8 +2286,8 @@
 	"panel.inbox.label.time.last_month": "上個月",
 
 	"panel.guide_list.label.highlights.heading": "Campus Guide",
-	"panel.guide_list.label.highlights.empty": "沒有有效的校園指南亮點。",
-	"panel.guide_list.label.highlights.section": "強調",
+	"panel.guide_list.label.highlights.empty": "沒有有效的校園安全資源。",
+	"panel.guide_list.label.highlights.section": "安全資源",
 	"panel.guide_list.label.campus_reminders.section": "校園提醒",
 	"panel.guide_list.label.campus_reminders.empty": "沒有有效的校園提醒。",
 	"panel.guide_list.label.content.empty": "空的指南內容",
@@ -2557,8 +2558,8 @@
 	"widget.home_create_poll.button.create_poll.label":"创建投票",
 	"widget.home_create_poll.button.login.label":"登录",
 
-	"widget.home.campus_guide_highlights.label.heading": "校園指南亮點",
-	"widget.home.campus_guide_highlights.text.empty.description": "沒有有效的校園指南亮點。",
+	"widget.home.campus_guide_highlights.label.heading": "校園安全資源",
+	"widget.home.campus_guide_highlights.text.empty.description": "沒有有效的校園安全資源。",
 	"widget.home.campus_guide_highlights.button.all.title": "查看全部",
 	"widget.home.campus_guide_highlights.button.all.hint": "點按即可查看所有亮點",
 

@@ -568,6 +568,7 @@ class _BrowseEntry extends StatelessWidget {
       case "wellness.wellness_todo":         _onTapWellnessToDo(context); break;
       case "wellness.my_appointments":       _onTapMyAppointments(context); break;
       case "wellness.wellness_tips":         _onTapWellnessTips(context); break;
+      case "wellness.wellness_symptom_screener": _onTapWellnessSymptomScreener(context); break;
     }
   }
 
@@ -775,8 +776,8 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: 'Campus Highlights');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
       contentList: Guide().promotedList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Guide Highlights."),
+      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Safety Resources'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Safety Resources."),
     )));
   }
 
@@ -1027,6 +1028,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapWellnessTips(BuildContext context) {
     Analytics().logSelect(target: "Wellness Daily Tips");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.dailyTips,)));
+  }
+
+  void _onTapWellnessSymptomScreener(BuildContext context) {
+    Analytics().logSelect(target: "Wellness Symptom Screener");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.symptomScreener,)));
   }
 
   void _notImplemented(BuildContext context) {
