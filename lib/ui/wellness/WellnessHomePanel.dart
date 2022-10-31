@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/wellness/WellnessHealthScreenerWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessResourcesContentWidget.dart';
 import 'package:illinois/ui/wellness/appointments/WellnessAppointmentsHomeContentWidget.dart';
 import 'package:illinois/ui/wellness/rings/WellnessRingsHomeContentWidget.dart';
@@ -34,7 +35,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum WellnessContent { dailyTips, rings, todo, appointments, podcast, resources, struggling }
+enum WellnessContent { dailyTips, rings, todo, appointments, symptomScreener, podcast, resources, struggling }
 
 class WellnessHomePanel extends StatefulWidget {
   final WellnessContent? content;
@@ -51,9 +52,12 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   late WellnessContent _selectedContent;
   bool _contentValuesVisible = false;
 
+  ScrollController _contentScrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
+
     _selectedContent = selectableContent(widget.content) ?? (_lastSelectedContent ?? WellnessContent.dailyTips);
   }
 
@@ -79,7 +83,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
               child: Stack(children: [
             Padding(
                 padding: EdgeInsets.only(top: 16),
-                child: SingleChildScrollView(child: Padding(padding: EdgeInsets.only(bottom: 16), child: _contentWidget))),
+                child: SingleChildScrollView(controller: _contentScrollController,
+                    child: Padding(padding: EdgeInsets.only(bottom: 16), child: _contentWidget))),
             _buildContentValuesContainer()
           ]))
         ]),
@@ -172,6 +177,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         return WellnessToDoHomeContentWidget();
       case WellnessContent.appointments:
         return WellnessAppointmentsHomeContentWidget();
+      case WellnessContent.symptomScreener:
+        return WellnessHealthScreenerHomeWidget(_contentScrollController);
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
       default:
@@ -225,6 +232,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         return _loadContentString('panel.wellness.section.todo.label', 'To-Do List');
       case WellnessContent.appointments:
         return _loadContentString('panel.wellness.section.appointments.label', 'MyMcKinley Appointments');
+      case WellnessContent.symptomScreener:
+        return _loadContentString('panel.wellness.section.symptom_screener.label', 'Illinois Health Screener');
       case WellnessContent.resources:
         return _loadContentString('panel.wellness.section.resources.label', 'Wellness Resources', language: language);
       case WellnessContent.podcast:
