@@ -30,6 +30,10 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:sprintf/sprintf.dart';
 
 class GroupsSearchPanel extends StatefulWidget {
+  final bool researchProject;
+
+  GroupsSearchPanel({Key? key, this.researchProject = false }) : super(key: key);
+
   @override
   _GroupsSearchPanelState createState() => _GroupsSearchPanelState();
 }
@@ -38,7 +42,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
   List<Group>? _groups;
   String? _searchValue;
   TextEditingController _searchController = TextEditingController();
-  String? _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching Only Groups Titles');
+  String? _searchLabel;
   int _resultsCount = 0;
   bool _resultsCountLabelVisible = false;
   bool _loading = false;
@@ -46,6 +50,8 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
   @override
   void initState() {
     super.initState();
+    _searchLabel = _defaultSearchLabelValue;
+
     NotificationService().subscribe(this, [
       Auth2.notifyLoginSucceeded,
       Auth2.notifyLogout,
@@ -237,7 +243,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
   void _refreshSearch() {
     if (StringUtils.isNotEmpty(_searchValue)) {
       setState(() { _loading = true; });
-      Groups().searchGroups(_searchValue!).then((groups) {
+      Groups().searchGroups(_searchValue!, researchGroups: widget.researchProject, researchOpen: widget.researchProject).then((groups) {
         if (mounted) {
           setState(() {
             if (groups != null) {
@@ -287,15 +293,21 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
     _searchController.clear();
     _resultsCountLabelVisible = false;
     setState(() {
-      _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching Only Groups Titles');
+      _searchLabel = _defaultSearchLabelValue;
     });
   }
 
   void _onTextChanged(String text) {
     _resultsCountLabelVisible = false;
     setState(() {
-      _searchLabel = Localization().getStringEx('panel.groups_search.label.search_for', 'Searching Only Groups Titles');
+      _searchLabel = _defaultSearchLabelValue;
     });
+  }
+
+  String get _defaultSearchLabelValue {
+    return widget.researchProject ?
+      'Searching Only Research Project Titles' :
+      Localization().getStringEx('panel.groups_search.label.search_for', 'Searching Only Groups Titles');
   }
 
   void _setLoading(bool loading) {

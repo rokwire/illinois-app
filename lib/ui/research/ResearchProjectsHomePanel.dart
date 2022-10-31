@@ -279,7 +279,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
 
   void _onTapSearch() {
     Analytics().logSelect(target: "Search");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel(researchProject: true,)));
   }
 
   bool get _canCreateResearchProject {
