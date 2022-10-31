@@ -33,6 +33,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -374,14 +375,14 @@ class _DailyIlliniItemWidget extends StatelessWidget {
 
   Widget _buildImage() {
     return StringUtils.isNotEmpty(illiniItem?.thumbImageUrl)
-        ? Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true, loadingBuilder: (context, child, loadingProgress) {
+        ? ModalImageHolder(child: Image.network(illiniItem!.thumbImageUrl!, excludeFromSemantics: true, loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) {
               return child;
             }
             return Padding(padding: EdgeInsets.symmetric(vertical: 30), child: CircularProgressIndicator());
           }, errorBuilder: (context, error, stackTrace) {
             return _defaultPlaceholderImage();
-          })
+          }))
         : _defaultPlaceholderImage();
   }
 

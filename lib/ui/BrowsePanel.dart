@@ -65,6 +65,7 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -1103,7 +1104,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
   @override
   Widget build(BuildContext context) {
     return (_imageUrl != null) ? Stack(children: [
-      Image.network(_imageUrl!, semanticLabel: 'tout', loadingBuilder:(  BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+      ModalImageHolder(child: Image.network(_imageUrl!, semanticLabel: 'tout', loadingBuilder:(  BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
         return (loadingProgress != null) ? Container(color: Styles().colors?.fillColorPrimary, width: imageWidth, height: imageHeight, child:
@@ -1111,7 +1112,7 @@ class _BrowseToutWidgetState extends State<_BrowseToutWidget> implements Notific
             CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white), ) 
           ),
         ) : child;
-      }),
+      })),
       Positioned.fill(child:
         Align(alignment: Alignment.bottomCenter, child:
           Column(mainAxisSize: MainAxisSize.min, children: [
