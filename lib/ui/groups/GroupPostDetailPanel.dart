@@ -36,7 +36,6 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:sprintf/sprintf.dart';
 
 class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
@@ -457,7 +456,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 semanticsLabel: "options",
                 showRepliesCount: showRepliesCount,
                 onIconTap: optionsFunctionTap,
-                onImageTap: (){_showModalImage(reply.imageUrl);},
                 onCardTap: (){_onTapReplyCard(reply);},
             ))));
       if(reply.id == focusedReplyId) {
@@ -899,13 +897,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _clearBodyControllerContent() {
     _replyEditData?.body = '';
-  }
-
-  //Modal Image Dialog
-  void _showModalImage(String? url){
-    Analytics().logSelect(target: "Image");
-    if (url != null) {
-Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));    }
   }
 
   //Scroll
