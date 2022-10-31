@@ -192,12 +192,22 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                               _buildMembershipLayout(),
                             ],),),),
                             
-                            Container(height: 8,),
-                            _buildCanAutojoinLayout(),
-                            Container(height: 8),
-                            _buildPollsLayout(),
-                            Container(height: 16),
-                            _buildAttendanceLayout(),
+                            Visibility(visible: _isManagedGroupAdmin, child:
+                              Padding(padding: EdgeInsets.only(top: 8), child:
+                                _buildCanAutojoinLayout(),
+                              )
+                            ),
+
+                            Visibility(visible: true, child:
+                              Padding(padding: EdgeInsets.only(top: 8), child:
+                                _buildPollsLayout(),
+                              )
+                            ),
+                            Visibility(visible: !_isResearchGroup, child:
+                              Padding(padding: EdgeInsets.only(top: 8), child:
+                                _buildAttendanceLayout(),
+                              )
+                            ),
                             Container(height: 40),
                         ],),)
 
@@ -741,7 +751,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   //Autojoin
   Widget _buildCanAutojoinLayout(){
-    return Visibility(visible: _isManagedGroupAdmin, child: Container(
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.auto_join.enabled.label", "Group can be joined automatically?"),
         value: _group?.canJoinAutomatically,
@@ -753,7 +763,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           }
         }
       ),
-    ));
+    );
   }
 
   // AuthMan Group
