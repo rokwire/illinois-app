@@ -33,7 +33,7 @@ import 'package:rokwire_plugin/ui/widgets/scroll_pager.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class WellnessHealthScreenerHomeWidget extends StatefulWidget {
-  ScrollController scrollController;
+  final ScrollController scrollController;
 
   WellnessHealthScreenerHomeWidget(this.scrollController);
 
@@ -42,7 +42,7 @@ class WellnessHealthScreenerHomeWidget extends StatefulWidget {
 }
 
 class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreenerHomeWidget> implements NotificationsListener {
-  bool _loading = false;
+  //bool _loading = false;
 
   List<String> _timeframes = ["Today", "This Week", "This Month", "All Time"];
   List<String> _surveyTypes = ["All", "Symptoms", "Illness Screener"];
