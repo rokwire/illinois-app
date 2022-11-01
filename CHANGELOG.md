@@ -5,10 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Fixed analytics logs from Settings panels [#2492](https://github.com/rokwire/illinois-app/issues/2492).
 
 ## [4.2.11] - 2022-10-31
 ### Added
-- Add health screener surveys [#2480](https://github.com/rokwire/illinois-app/issues/2480)
+- Add health screener surveys [#2480](https://github.com/rokwire/illinois-app/issues/2480).
 - Introduce ModalImageHolder widget  [#2474](https://github.com/rokwire/illinois-app/issues/2474)
 ### Changed
 - "Campus Guide Highlights" renamed to "Campus Safety Resources" [#2488](https://github.com/rokwire/illinois-app/issues/2488).
