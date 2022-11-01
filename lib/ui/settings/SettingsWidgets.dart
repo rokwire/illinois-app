@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -101,8 +102,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
                 style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.fat"),
               )),
               Semantics(label: Localization().getStringEx("dialog.close.title", "Close"), button: true,
-              child:GestureDetector(
-              onTap: () => Navigator.pop(context),
+              child:GestureDetector(onTap: _onClose,
               child:
                 Container(
                   padding: EdgeInsets.only(left: 50, top: 4),
@@ -180,15 +180,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
                   )
               ],)
           ),
-          onTap: (){
-            AppSemantics.announceCheckBoxStateChange(context, !isChecked, option);
-             if(selectedOptions.contains(option)){
-               selectedOptions.remove(option);
-             } else {
-               selectedOptions.add(option);
-             }
-             setState((){});
-          },
+          onTap: () => _onOption(option),
         ));
   }
 
@@ -196,7 +188,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
     return
       Semantics( button: true,
       child: GestureDetector(
-        onTap: (){ Navigator.pop(context);},
+        onTap: _onCancel,
         child: Container(
           alignment: Alignment.center,
 //          height: widget.longButtonTitle?56 : 42,
@@ -221,7 +213,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
       Semantics( button: true, enabled: _getIsContinueEnabled,
         child: Stack(children: <Widget>[
           GestureDetector(
-              onTap: (){ widget.onContinue!(selectedOptions, ({bool? loading})=>setState((){_loading = loading;}));},
+              onTap: _onConfirm,
               child: Container(
                 key: _confirmKey,
                 alignment: Alignment.center,
@@ -270,6 +262,43 @@ class _SettingsDialogState extends State<SettingsDialog>{
     }
   }
 
+  void _onClose() {
+    Analytics().logSelect(target: 'Close');
+    Analytics().logAlert(text: widget.title, selection: 'Close');
+    Navigator.pop(context); 
+  }
+
+  void _onOption(String option) {
+    Analytics().logSelect(target: option);
+    bool isChecked = selectedOptions.contains(option);
+    AppSemantics.announceCheckBoxStateChange(context, !isChecked, option);
+    if(isChecked){
+      selectedOptions.remove(option);
+    } else {
+      selectedOptions.add(option);
+    }
+    setState((){});
+  }
+
+  void _onCancel() {
+    Analytics().logSelect(target: 'Cancel');
+    Analytics().logAlert(text: widget.title, selection: 'Cancel');
+    Navigator.pop(context); 
+  }
+
+  void _onConfirm() {
+    Analytics().logSelect(target: widget.continueButtonTitle);
+    Analytics().logAlert(text: widget.title, selection: widget.continueButtonTitle);
+    if (widget.onContinue != null) {
+      widget.onContinue!(selectedOptions, ({bool? loading}) {
+        if (mounted) {
+          setState((){
+            _loading = loading;
+          });
+        }
+      });
+    }
+  }
 }
 
 class InfoButton extends StatelessWidget {

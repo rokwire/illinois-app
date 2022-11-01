@@ -414,6 +414,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
   }
 
   Widget _buildLogoutDialog(BuildContext context) {
+    String promptEn = 'Are you sure you want to sign out?';
     return Dialog(
       child: Padding(
         padding: EdgeInsets.all(18),
@@ -427,7 +428,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
-                Localization().getStringEx("panel.settings.home.logout.message", "Are you sure you want to sign out?"),
+                Localization().getStringEx("panel.settings.home.logout.message", promptEn),
                 textAlign: TextAlign.left,
                 style: Styles().textStyles?.getTextStyle("widget.message.dark.medium")
               ),
@@ -437,14 +438,14 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
               children: <Widget>[
                 TextButton(
                     onPressed: () {
-                      Analytics().logAlert(text: "Sign out", selection: "Yes");
+                      Analytics().logAlert(text: promptEn, selection: "Yes");
                       Navigator.pop(context);
                       Auth2().logout();
                     },
                     child: Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes"))),
                 TextButton(
                     onPressed: () {
-                      Analytics().logAlert(text: "Sign out", selection: "No");
+                      Analytics().logAlert(text: promptEn, selection: "No");
                       Navigator.pop(context);
                     },
                     child: Text(Localization().getStringEx("panel.settings.home.logout.no", "No")))
