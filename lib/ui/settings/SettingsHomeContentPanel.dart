@@ -17,6 +17,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
@@ -92,7 +93,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
                                 border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
                                 rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
                                 label: _getContentLabel(_selectedContent),
-                                onTap: _changeSettingsContentValuesVisibility)),
+                                onTap: _onTapContentDropdown)),
                         _buildContent()
                       ]))))
         ]),
@@ -155,7 +156,13 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         onTap: () => _onTapContentItem(contentItem));
   }
 
+  void _onTapContentDropdown() {
+    Analytics().logSelect(target: 'Content Dropdown');
+    _changeSettingsContentValuesVisibility();
+  }
+
   void _onTapContentItem(SettingsContent contentItem) {
+    Analytics().logSelect(target: "Content Item: ${contentItem.toString()}");
     if (contentItem == SettingsContent.favorites) {
       NotificationService().notify(HomePanel.notifyCustomize);
     }
@@ -238,11 +245,13 @@ class _DebugContainerState extends State<_DebugContainer> {
     return GestureDetector(
       child: widget._child,
       onTap: () {
+        Analytics().logSelect(target: 'Debug 7 Clicks', source: 'Header Bar');
         Log.d("On tap debug widget");
         _clickedCount++;
 
         if (_clickedCount == 7) {
           if (Auth2().isDebugManager) {
+            Analytics().logSelect(target: 'Debug 7th Click', source: 'Header Bar');
             Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
           }
           _clickedCount = 0;
