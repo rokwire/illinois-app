@@ -183,6 +183,8 @@ class App extends StatefulWidget {
 
   final ServiceError? initializeError;
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  final Map<String, dynamic> _data = <String, dynamic>{};
+  final String _stateKey = 'state';
   static App? _instance;
 
   App({this.initializeError}) {
@@ -190,14 +192,15 @@ class App extends StatefulWidget {
   }
 
   static App? get instance => _instance;
+  _AppState? get state => _data[_stateKey];
 
   BuildContext? get currentContext => navigatorKey.currentContext;
 
   @override
-  _AppState createState() => _AppState();
+  _AppState createState() => (_data[_stateKey] = _AppState());
 }
 
-class _AppState extends State<App> implements NotificationsListener {
+class _AppState extends State<App> with TickerProviderStateMixin implements NotificationsListener {
 
   Key _key = UniqueKey();
   String? _lastRunVersion;
