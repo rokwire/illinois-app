@@ -101,7 +101,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   scrollDirection: Axis.vertical,
                   slivers: <Widget>[
                     SliverHeaderBar(
-                      title: Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),
+                      title: (_group?.researchGroup == true) ? "Project Settings" : Localization().getStringEx("panel.groups_settings.label.heading", "Group Settings"),
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate([
@@ -110,7 +110,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                           child: Column(children: <Widget>[
                             _buildImageSection(),
                             Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"), "images/icon-schedule.png"),
+                              _buildSectionTitle((_group?.researchGroup == true) ? "General project information" : Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"), "images/icon-schedule.png"),
                             ),
                             _buildNameField(),
                             _buildDescriptionField(),
@@ -153,7 +153,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               ])
                             ),
 
-                            Visibility(visible: _canViewManagedSettings, child:
+                            Visibility(visible: _canViewManagedSettings && !_isResearchGroup, child:
                               _buildAuthManLayout()
                             ),
                             
@@ -161,13 +161,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               _buildMembershipLayout()
                             ),
                             
-                            Visibility(visible: _canViewManagedSettings, child:
+                            Visibility(visible: _canViewManagedSettings  && !_isResearchGroup, child:
                               Padding(padding: EdgeInsets.only(top: 8), child:
                                 _buildCanAutoJoinLayout(),
                               )
                             ),
 
-                            Visibility(visible: true, child:
+                            Visibility(visible: !_isResearchGroup, child:
                               Padding(padding: EdgeInsets.only(top: 8), child:
                                 _buildPollsLayout(),
                               )
@@ -269,7 +269,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Name
   Widget _buildNameField() {
-    String title = Localization().getStringEx("panel.groups_settings.name.title", "GROUP NAME");
+    String title = (_group?.researchGroup == true) ? "PROJECT NAME" : Localization().getStringEx("panel.groups_settings.name.title", "GROUP NAME");
     String? fieldTitle = Localization().getStringEx("panel.groups_settings.name.field", "NAME FIELD");
     String? fieldHint = Localization().getStringEx("panel.groups_settings.name.field.hint", "");
 
@@ -337,8 +337,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Description
   Widget _buildDescriptionField() {
-    String title = Localization().getStringEx("panel.groups_settings.description.title", "GROUP DESCRIPTION");
-    String? fieldTitle = Localization().getStringEx("panel.groups_settings.description.field", "What’s the purpose of your group? Who should join? What will you do at your events?");
+    String title = (_group?.researchGroup == true) ? "PROJECT DESCRIPTION" : Localization().getStringEx("panel.groups_settings.description.title", "GROUP DESCRIPTION");
+    String? fieldTitle = (_group?.researchGroup == true) ?
+      "What’s the purpose of your project? Who should join? What will you do at your events?" :
+      Localization().getStringEx("panel.groups_settings.description.field", "What’s the purpose of your group? Who should join? What will you do at your events?");
     String? fieldHint = Localization().getStringEx("panel.groups_settings.description.field.hint", "");
 
     return Container(
@@ -454,9 +456,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Research Description
   Widget _buildResearchDescriptionField() {
-    String? title = "RESEARCH DESCRIPTION";
+    String? title = "IRB DESCRIPTION";
     String? description = "What’s the purpose of your research project? Who should join? What will you do at your events?";
-    String? fieldTitle = "RESEARCH DESCRIPTION FIELD";
+    String? fieldTitle = "IRB DESCRIPTION FIELD";
     String? fieldHint = "";
 
     return Visibility(visible: _isResearchGroup, child:
@@ -493,7 +495,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             _buildInfoHeader(Localization().getStringEx("panel.groups_settings.category.title", "CATEGORY"),
-              Localization().getStringEx("panel.groups_settings.category.description", "Choose the category your group can be filtered by."),),
+              (_group?.researchGroup == true) ?
+                "Choose the category your project can be filtered by." :
+                Localization().getStringEx("panel.groups_settings.category.description", "Choose the category your group can be filtered by."),),
             Semantics(
             explicitChildNodes: true,
             child: GroupDropDownButton(
@@ -517,7 +521,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //Tags
   Widget _buildTagsLayout(){
     String title = Localization().getStringEx("panel.groups_create.tags.title", "TAGS");
-    String? description = Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group.");
+    String? description = (_group?.researchGroup == true) ?
+      "Tags help people understand more about your project." :
+      Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group.");
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child:Column(
@@ -1021,8 +1027,24 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       _loading = true;
     });
 
+    // control research groups options
+    if (_group?.researchGroup == true) {
+      _group?.privacy = GroupPrivacy.public;
+      _group?.hiddenForSearch = false;
+      _group?.canJoinAutomatically = false;
+      _group?.onlyAdminsCanCreatePolls = true;
+      _group?.authManEnabled = false;
+      _group?.authManGroupName = null;
+      _group!.attendanceGroup = false;
+    }
+    else {
+      _group?.researchOpen = null;
+      _group?.researchDescription = null;
+      _group?.researchProfile = null;
+    }
+
     // if the group is not authman then clear authman group name
-    if ((_group != null) && (_group!.authManEnabled != true)) {
+    if (_group?.authManEnabled != true) {
       _group!.authManGroupName = null;
     }
 
