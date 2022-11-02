@@ -178,6 +178,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return _isAdmin || ((_group?.canMemberCreatePoll ?? false) && _isMember && FlexUI().isSharingAvailable);
   }
 
+  bool get _isResearchProject {
+    return (_group?.researchGroup == true);
+  }
+
+  bool get _isAttendanceGroup {
+    return (_group?.attendanceGroup == true);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -682,21 +690,23 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         ));
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent,));
         commands.add(RibbonButton(
-          label: Localization().getStringEx("panel.group_detail.button.group_settings.title", "Group Settings"),
-          hint: Localization().getStringEx("panel.group_detail.button.group_settings.hint", ""),
+          label: _isResearchProject ? 'Project Settings' : Localization().getStringEx("panel.group_detail.button.group_settings.title", "Group Settings"),
+          hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.group_settings.hint", ""),
           leftIconAsset: 'images/icon-gear.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapSettings,
         ));
-        commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
-        commands.add(RibbonButton(
-          label: Localization().getStringEx("panel.group_detail.button.group_promote.title", "Promote this group"),
-          hint: Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
-          leftIconAsset: 'images/icon-qr-code.png',
-          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
-          onTap: _onTapPromote,
-        ));
-        if (_group?.attendanceGroup == true) {
+        if (!_isResearchProject) {
+          commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
+          commands.add(RibbonButton(
+            label: _isResearchProject ? 'Promote this project' : Localization().getStringEx("panel.group_detail.button.group_promote.title", "Promote this group"),
+            hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
+            leftIconAsset: 'images/icon-qr-code.png',
+            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+            onTap: _onTapPromote,
+          ));
+        }
+        if (_isAttendanceGroup && !_isResearchProject) {
           commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
           commands.add(Stack(alignment: Alignment.center, children: [
             RibbonButton(
@@ -706,8 +716,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
             onTap: _onTapTakeAttendance,
           ),
-          Visibility(
-                visible: _memberAttendLoading, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2))
+          Visibility(visible: _memberAttendLoading, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2))
           ]));
         }
       }
@@ -980,7 +989,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildAbout() {
     String description = _group?.description ?? '';
-    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+    String researchDescription = _group?.researchDescription ?? '';
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 4), child:
           Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'), ),),
@@ -988,6 +998,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
           trimLinesCount: 4,
           readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
+        researchDescription.isNotEmpty ?
+          Padding(padding: EdgeInsets.only(top: 8), child:
+            ExpandableText(researchDescription,
+              textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
+              trimLinesCount: 4,
+              readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
+          ) : Container()
       ],),);
   }
 
@@ -1002,7 +1019,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       description = Localization().getStringEx("panel.group_detail.label.description.public", '\u2022 Only admins can see members.\n\u2022 Only members can see posts.\n\u2022 All users can see group events, unless they are marked private.\n\u2022 All users can see admins.');
     }
     
-    return (StringUtils.isNotEmpty(title) && StringUtils.isNotEmpty(description)) ?
+    return (StringUtils.isNotEmpty(title) && StringUtils.isNotEmpty(description) && !_isResearchProject) ?
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(padding: EdgeInsets.only(bottom: 4), child:
@@ -1253,7 +1270,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     visible: _canEditGroup,
                     child: RibbonButton(
                         leftIconAsset: "images/icon-gear.png",
-                        label: Localization().getStringEx("panel.group_detail.button.group.edit.title", "Group Settings"),
+                        label: _isResearchProject ? 'Project Settings' : Localization().getStringEx("panel.group_detail.button.group.edit.title", "Group Settings"),
                         onTap: () {
                           Navigator.pop(context);
                           _onTapSettings();

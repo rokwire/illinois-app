@@ -50,7 +50,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   Group? _group;
 
-  List<GroupPrivacy>? _groupPrivacyOptions;
+  final List<GroupPrivacy> _groupPrivacyOptions = GroupPrivacy.values;
   List<String>? _groupCategories;
 
   bool _groupCategoeriesLoading = false;
@@ -67,7 +67,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   @override
   void initState() {
     _initGroup();
-    _initPrivacyData();
     _initCategories();
     super.initState();
   }
@@ -86,16 +85,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void _initGroup(){
     _group = (widget.group != null) ? Group.fromOther(widget.group) : Group();
     _group?.onlyAdminsCanCreatePolls ??= true;
+    _group?.researchOpen ??= (_group?.researchGroup == true) ? true : null;
+    _group?.privacy = (_group?.researchGroup == true) ? GroupPrivacy.public : GroupPrivacy.private;
 
     _groupTitleController.text = _group?.title ?? '';
     _groupDescriptionController.text = _group?.description ?? '';
     _groupResearchDescriptionController.text = _group?.researchDescription ?? '';
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
-  }
-
-  void _initPrivacyData(){
-    _groupPrivacyOptions = GroupPrivacy.values;
-    _group?.privacy = GroupPrivacy.values.first; //default value Private
   }
 
   void _initCategories(){
@@ -139,7 +135,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   scrollDirection: Axis.vertical,
                   slivers: <Widget>[
                     SliverHeaderBar(
-                      title: Localization().getStringEx("panel.groups_create.label.heading", "Create a Group"),
+                      title: (_group?.researchGroup == true) ? 'Create Research Project' : Localization().getStringEx("panel.groups_create.label.heading", "Create a Group"),
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate([
@@ -183,7 +179,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                               ])
                             ),
 
-                            Visibility(visible: _isManagedGroupAdmin, child: Column(children: [
+                            Visibility(visible: _isManagedGroupAdmin && !_isResearchGroup, child: Column(children: [
                               _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "images/icon-member.png"),
                               _buildAuthManLayout(),
                             ])),
@@ -193,12 +189,22 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                               _buildMembershipLayout(),
                             ],),),),
                             
-                            Container(height: 8,),
-                            _buildCanAutojoinLayout(),
-                            Container(height: 8),
-                            _buildPollsLayout(),
-                            Container(height: 16),
-                            _buildAttendanceLayout(),
+                            Visibility(visible: _isManagedGroupAdmin && !_isResearchGroup, child:
+                              Padding(padding: EdgeInsets.only(top: 8), child:
+                                _buildCanAutojoinLayout(),
+                              )
+                            ),
+
+                            Visibility(visible: !_isResearchGroup, child:
+                              Padding(padding: EdgeInsets.only(top: 8), child:
+                                _buildPollsLayout(),
+                              )
+                            ),
+                            Visibility(visible: !_isResearchGroup, child:
+                              Padding(padding: EdgeInsets.only(top: 8), child:
+                                _buildAttendanceLayout(),
+                              )
+                            ),
                             Container(height: 40),
                         ],),)
 
@@ -260,7 +266,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   //Name
   Widget _buildNameField() {
-    String? title = Localization().getStringEx("panel.groups_create.name.title", "NAME YOUR GROUP");
+    String? title = (_group?.researchGroup == true) ? "NAME YOUR PROJECT" : Localization().getStringEx("panel.groups_create.name.title", "NAME YOUR GROUP");
     String? fieldTitle = Localization().getStringEx("panel.groups_create.name.field", "NAME FIELD");
     String? fieldHint = Localization().getStringEx("panel.groups_create.name.field.hint", "");
 
@@ -295,7 +301,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //Name
   Widget _buildDescriptionField() {
     String? title = Localization().getStringEx("panel.groups_create.description.title", "DESCRIPTION");
-    String? description = Localization().getStringEx("panel.groups_create.description.description", "What’s the purpose of your group? Who should join? What will you do at your events?");
+    String? description = (_group?.researchGroup == true) ?
+      "What’s the purpose of your project? Who should join? What will you do at your events?" :
+      Localization().getStringEx("panel.groups_create.description.description", "What’s the purpose of your group? Who should join? What will you do at your events?");
     String? fieldTitle = Localization().getStringEx("panel.groups_create.description.field", "DESCRIPTION FIELD");
     String? fieldHint = Localization().getStringEx("panel.groups_create.description.field.hint", "");
 
@@ -336,9 +344,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //
   //Research Description
   Widget _buildResearchDescriptionField() {
-    String? title = "RESEARCH DESCRIPTION";
-    String? description = "What’s the purpose of your research project? Who should join? What will you do at your events?";
-    String? fieldTitle = "RESEARCH DESCRIPTION FIELD";
+    String? title = "IRB DESCRIPTION";
+    String? description = "What’s the purpose of your project? Who should join? What will you do at your events?";
+    String? fieldTitle = "IRB DESCRIPTION FIELD";
     String? fieldHint = "";
 
     return Visibility(visible: _isResearchGroup, child:
@@ -374,8 +382,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildSectionTitle(Localization().getStringEx("panel.groups_create.category.title", "GROUP CATEGORY"),
-              Localization().getStringEx("panel.groups_create.category.description", "Choose the category your group can be filtered by."), true),
+            _buildSectionTitle(
+              (_group?.researchGroup == true) ? "PROJECT CATEGORY" : Localization().getStringEx("panel.groups_create.category.title", "GROUP CATEGORY"),
+              (_group?.researchGroup == true) ? "Choose the category your project can be filtered by." : Localization().getStringEx("panel.groups_create.category.description", "Choose the category your group can be filtered by."), true),
             GroupDropDownButton(
               emptySelectionText: Localization().getStringEx("panel.groups_create.category.default_text", "Select a category.."),
               buttonHint: Localization().getStringEx("panel.groups_create.category.hint", "Double tap to show categories options"),
@@ -403,7 +412,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             Expanded(
                 flex: 5,
                 child: _buildSectionTitle(
-                    fieldTitle, Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."))),
+                    fieldTitle, (_group?.researchGroup == true) ? "Tags help people understand more about your project." : Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."))),
             Container(width: 8),
             Expanded(
                 flex: 2,
@@ -742,7 +751,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   //Autojoin
   Widget _buildCanAutojoinLayout(){
-    return Visibility(visible: _isManagedGroupAdmin, child: Container(
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.auto_join.enabled.label", "Group can be joined automatically?"),
         value: _group?.canJoinAutomatically,
@@ -754,7 +763,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           }
         }
       ),
-    ));
+    );
   }
 
   // AuthMan Group
@@ -849,7 +858,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
             child: RoundedButton(
-              label: Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
+              label: (_group?.researchGroup == true) ? "Create Project" : Localization().getStringEx("panel.groups_create.button.create.title", "Create Group"),
               backgroundColor: Styles().colors!.white,
               borderColor: _canSave ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
               textColor: _canSave ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
@@ -885,10 +894,28 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       setState(() {
         _creating = true;
       });
-      // if the group is not authman then clear authman group name
-      if ((_group != null) && (_group!.authManEnabled != true)) {
-        _group!.authManGroupName = null;
+
+      // control research groups options
+      if (_group?.researchGroup == true) {
+        _group?.privacy = GroupPrivacy.public;
+        _group?.hiddenForSearch = false;
+        _group?.canJoinAutomatically = false;
+        _group?.onlyAdminsCanCreatePolls = true;
+        _group?.authManEnabled = false;
+        _group?.authManGroupName = null;
+        _group!.attendanceGroup = false;
       }
+      else {
+        _group?.researchOpen = null;
+        _group?.researchDescription = null;
+        _group?.researchProfile = null;
+      }
+
+      // if the group is not authman then clear authman group name
+      if (_group?.authManEnabled != true) {
+        _group?.authManGroupName = null;
+      }
+
       Groups().createGroup(_group).then((GroupError? error) {
         if (mounted) {
           setState(() {
