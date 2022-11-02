@@ -32,7 +32,9 @@ CLLocationCoordinate2D const kInitialCameraLocation = { 40.102116, -88.227129 };
 float const kInitialCameraZoom = 17;
 float const kMarkerThresold1Zoom = 16.0;
 float const kMarkerThresold2Zoom = 16.89f;
+float const kMarker2Thresold1Zoom = 17.0;
+float const kMarker2Thresold2Zoom = 18.0f;
 
 // --------------------------------------------
 
-double const kExploreLocationThresoldDistance = 200.0; // in meters
+float const kThresoldZoomUpdateStep = 0.3f;

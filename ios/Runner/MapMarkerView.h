@@ -34,6 +34,7 @@ typedef NS_ENUM(NSInteger, MapMarkerDisplayMode) {
 
 @interface MapMarkerView : UIView
 + (instancetype)createFromExplore:(NSDictionary*)explore;
++ (instancetype)createFromExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode;
 
 @property (nonatomic) MapMarkerDisplayMode displayMode;
 @property (nonatomic) bool blurred;
@@ -44,5 +45,14 @@ typedef NS_ENUM(NSInteger, MapMarkerDisplayMode) {
 + (UIImage*)markerImageWithHexColor:(NSString*)hexColor;
 @end
 
+@interface MapMarkerView2 : UIView
+- (id)initWithIcon:(UIImage*)icon iconAnchor:(CGPoint)iconAnchor title:(NSString*)title descr:(NSString*)descr displayMode:(MapMarkerDisplayMode)displayMode;
 
+@property (nonatomic) MapMarkerDisplayMode displayMode;
+@property (nonatomic, readonly) CGPoint iconAnchor;
+@property (nonatomic, readonly) CGPoint anchor;
+
++ (UIImage*)markerImageWithHexColor:(NSString*)hexColor;
++ (UIImage*)groupMarkerImageWithHexColor:(NSString*)hexColor count:(NSInteger)count;
+@end
 
