@@ -272,7 +272,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
       return;
     }
     _setLoading(true);
-    Groups().searchGroups(searchValue).then((groups) {
+    Groups().searchGroups(searchValue, researchGroups: widget.researchProject, researchOpen: widget.researchProject).then((groups) {
       _groups = _buildVisibleGroups(groups);
       _searchValue = searchValue;
       _resultsCount = _groups?.length ?? 0;
