@@ -5,6 +5,7 @@ import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidget {
 
@@ -16,7 +17,18 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
     return Scaffold(
       backgroundColor: Styles().colors?.background,
       body: Stack(children: [
-        Image.asset("images/login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
+        Column(children: [
+          Container(color: Styles().colors?.white, height: 90,),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.white, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
+            Container(height: 70,),
+          ),
+        ],),
+        Image.asset("images/questionnaire-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
+        Padding(padding: EdgeInsets.only(top: 90), child:
+          Align(alignment: Alignment.topCenter, child: 
+            Image.asset('images/questionnaire-icon.png'),
+          ),
+        ),
         SafeArea(child:
           _buildContent(context)
         ),
@@ -42,7 +54,7 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
           Container(height: 32,),
           Row(children: [
             Expanded(child:
-              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.acknowledgement.explanation', 'View current studies that match your completed Research Interest Form under Browse > Research at Illinois. Opt in and become part of the study\u2019s recruitment pool.'),
+              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.acknowledgement.explanation', 'View current studies that match your completed Research Interest Form under Browse > Research at Illinois. Opt in and become part of the study\u2019s recruitment pool.'), textAlign: TextAlign.center,
                 style: Styles().textStyles?.getTextStyle("widget.message.regular"),
               ),
             )
@@ -52,7 +64,7 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
       Expanded(child: Container(),),
       Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
         RoundedButton(
-          label: Localization().getStringEx('dialog.continue.title', 'Continue'),
+          label: Localization().getStringEx('dialog.OK.title', 'OK'),
           fontSize: 16,
           padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           backgroundColor: Styles().colors!.white,

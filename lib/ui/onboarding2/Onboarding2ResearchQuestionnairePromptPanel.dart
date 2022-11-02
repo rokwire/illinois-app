@@ -6,6 +6,7 @@ import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
 
@@ -17,7 +18,18 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
     return Scaffold(
       backgroundColor: Styles().colors?.background,
       body: Stack(children: [
-        Image.asset("images/login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
+        Column(children: [
+          Container(color: Styles().colors?.white, height: 90,),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.white, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
+            Container(height: 70,),
+          ),
+        ],),
+        Image.asset("images/questionnaire-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
+        Padding(padding: EdgeInsets.only(top: 90), child:
+          Align(alignment: Alignment.topCenter, child: 
+            Image.asset('images/questionnaire-icon.png'),
+          ),
+        ),
         SafeArea(child:
           _buildContent(context)
         ),
@@ -29,13 +41,15 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
-    return Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 148), child: 
+  String notRightNow = Localization().getStringEx('panel.onboarding.base.not_now.title":"Not right now', 'Not right now');
+  
+  return Padding(padding: EdgeInsets.symmetric(horizontal: 24), child: 
     Column(children: [
-      Padding(padding: EdgeInsets.only(top: 48), child:
+      Padding(padding: EdgeInsets.only(top: 180), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             Expanded(child: 
-              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.introduction', 'Illinois is one of the world’s great research universities. Become a citizen scientist and take part in the discovery by participating in research at Illinois.'), textAlign: TextAlign.left,
+              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.introduction', 'Illinois is one of the world’s great research universities. Become a citizen scientist and take part in the discovery by participating in research at Illinois.'), textAlign: TextAlign.center,
                 style: Styles().textStyles?.getTextStyle("widget.message.large"),
               ),
             )
@@ -52,36 +66,47 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
                     style: Styles().textStyles?.getTextStyle("widget.message.large"),
                   ),
                 ]),
+                textAlign: TextAlign.center,
               ),
-
             )
           ],),
         ],),
       ),
       Expanded(child: Container(),),
-      Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
-        Row(children: [
-          Expanded(child:
-            RoundedButton(
-              label: Localization().getStringEx('dialog.yes.title', 'Yes'),
-              fontSize: 16,
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              backgroundColor: Styles().colors!.white,
-              borderColor: Styles().colors!.fillColorSecondaryVariant,
-              textColor: Styles().colors!.fillColorPrimary,
-              onTap: () => _onYes(context),
+      Padding(padding: EdgeInsets.only(top: 24), child:
+        Column(children: [
+          Row(children: [
+            Expanded(child:
+              RoundedButton(
+                label: Localization().getStringEx('dialog.yes.title', 'Yes'),
+                fontSize: 16,
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                backgroundColor: Styles().colors!.white,
+                borderColor: Styles().colors!.fillColorSecondaryVariant,
+                textColor: Styles().colors!.fillColorPrimary,
+                onTap: () => _onYes(context),
+              ),
             ),
-          ),
-          Container(width: 12,),
-          Expanded(child:
-            RoundedButton(
-              label: Localization().getStringEx('dialog.no.title', 'No'),
-              fontSize: 16,
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              backgroundColor: Styles().colors!.white,
-              borderColor: Styles().colors!.fillColorSecondaryVariant,
-              textColor: Styles().colors!.fillColorPrimary,
-              onTap: () => _onNo(context),
+            Container(width: 12,),
+            Expanded(child:
+              RoundedButton(
+                label: Localization().getStringEx('dialog.no.title', 'No'),
+                fontSize: 16,
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                backgroundColor: Styles().colors!.white,
+                borderColor: Styles().colors!.fillColorSecondaryVariant,
+                textColor: Styles().colors!.fillColorPrimary,
+                onTap: () => _onNo(context),
+              ),
+            ),
+          ],),
+          InkWell(onTap: () => _onNotRightNow(context), child:
+            Semantics(button: true, label: notRightNow, hint: Localization().getStringEx('panel.onboarding.base.not_now.hint', ''), excludeSemantics: true, child:
+              Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
+                Text(notRightNow, style:
+                  TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary, decorationThickness: 1, decorationStyle: TextDecorationStyle.solid),
+                ),
+              ),
             ),
           ),
         ],)
@@ -107,6 +132,14 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
   void _onNo(BuildContext context) {
     Analytics().logSelect(target: "No");
     Questionnaires().participateInResearch = false;
+    Function? onReject = (onboardingContext != null) ? onboardingContext!["onRejectAction"] : null;
+    if (onReject != null) {
+      onReject();
+    }
+  }
+
+  void _onNotRightNow(BuildContext context) {
+    Analytics().logSelect(target: "Not right now");
     Function? onReject = (onboardingContext != null) ? onboardingContext!["onRejectAction"] : null;
     if (onReject != null) {
       onReject();
