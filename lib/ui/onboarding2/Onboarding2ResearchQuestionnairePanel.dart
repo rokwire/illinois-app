@@ -6,11 +6,12 @@ import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Questionnaire.dart';
-import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
+import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
+import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 
 class Onboarding2ResearchQuestionnairePanel extends StatefulWidget {
 
@@ -57,12 +58,10 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: HeaderBar(title: _questionnaire?.title ?? ''),
       backgroundColor: Styles().colors?.background,
       body: SafeArea(child:
-        Stack(children: [
-          OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: _onBack,),
-          _buildContent(),
-        ],)
+        _buildContent(),
       ),
     );
   }
@@ -82,20 +81,23 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
   Widget _buildQuestionnaire(Questionnaire questionnaire) {
 
     List<Widget> contentList = <Widget>[];
-    String title = questionnaire.stringValue(questionnaire.title)  ?? '';
     String description = questionnaire.stringValue(questionnaire.description) ?? '';
     bool submitEnabled = (_failSubmitQuestion < 0);
 
     if (description.isNotEmpty) {
-      contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 10, bottom: 20), child:
-        Semantics(label: description, hint: '', excludeSemantics: true, child:
-          Row(children: [
-            Expanded(child:
-              Text(description, style: Styles().textStyles?.getTextStyle("widget.item.regular"), textAlign: TextAlign.left,),
-            )
-          ],)
+      contentList.add(
+        Container(color: Styles().colors?.white, child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24), child:
+            Semantics(label: description, hint: '', excludeSemantics: true, child:
+              Row(children: [
+                Expanded(child:
+                  Text(description, style: Styles().textStyles?.getTextStyle("widget.item.regular"), textAlign: TextAlign.center,),
+                )
+              ],)
+            ),
+          ),
         ),
-      ),);
+      );
     }
 
     List<Widget> questions = _buildQuestions(questionnaire.questions);
@@ -103,53 +105,43 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       contentList.addAll(questions);
     }
 
-    return Padding(padding: EdgeInsets.only(top: 20), child:
-      Column(children: <Widget>[
-        Padding(padding: EdgeInsets.only(left: 48, right: 48, bottom: 12), child:
-          Semantics(label: title, hint: '', excludeSemantics: true, child:
-            Row(children: [
-              Expanded(child:
-                Text(title, style: Styles().textStyles?.getTextStyle("widget.title.extra_large"), textAlign: TextAlign.center,),
-              )
-            ],)
-          ),
+    return Column(children: <Widget>[
+      Expanded(child:
+        SingleChildScrollView(child:
+          Column(children: contentList,),
         ),
-        Expanded(child:
-          SingleChildScrollView(child:
-            Column(children: contentList,),
-          ),
-        ),
-        Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 12, bottom: 12,), child:
-          Row(children: [
-            Expanded(child:
-              RoundedButton(
-                label: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.title', 'Submit'),
-                hint: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.hint', ''),
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                borderColor: submitEnabled ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent,
-                backgroundColor: Styles().colors!.white,
-                textColor: submitEnabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-                fontSize: 16,
-                onTap: () => _onSubmit(),
-              ),
+      ),
+      Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 12, bottom: 12,), child:
+        Row(children: [
+          Expanded(child:
+            RoundedButton(
+              label: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.cancel.title', 'Cancel'),
+              hint: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.cancel.hint', ''),
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              borderColor: Styles().colors?.fillColorPrimary,
+              backgroundColor: Styles().colors!.white,
+              fontFamily: Styles().fontFamilies?.medium,
+              textColor: Styles().colors?.fillColorPrimary,
+              fontSize: 16,
+              onTap: () => _onCancel(),
             ),
-            Container(width: 12,),
-            Expanded(child:
-              RoundedButton(
-                label: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.cancel.title', 'Cancel'),
-                hint: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.cancel.hint', ''),
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                borderColor: Styles().colors?.fillColorSecondary,
-                backgroundColor: Styles().colors!.white,
-                textColor: Styles().colors?.fillColorPrimary,
-                fontSize: 16,
-                onTap: () => _onCancel(),
-              ),
+          ),
+          Container(width: 12,),
+          Expanded(child:
+            RoundedButton(
+              label: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.title', 'Submit'),
+              hint: Localization().getStringEx('panel.onboarding2.research.questionnaire.button.submit.hint', ''),
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              borderColor: submitEnabled ? Styles().colors?.fillColorSecondary : Styles().colors?.surfaceAccent,
+              backgroundColor: Styles().colors!.white,
+              textColor: submitEnabled ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+              fontSize: 16,
+              onTap: () => _onSubmit(),
             ),
-          ],),
-        ),
-      ])
-    );
+          ),
+        ],),
+      ),
+    ]);
   }
 
   List<Widget> _buildQuestions(List<Question>? questions) {
@@ -167,7 +159,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
     String title = _displayQuestionTitle(question, index: index);
     if (title.isNotEmpty) {
-      contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
+      contentList.add(Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding), child:
         Row(children: [
           Expanded(child:
             Text(title, style: Styles().textStyles?.getTextStyle("widget.title.large.fat"), textAlign: TextAlign.left,),
@@ -189,7 +181,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
     List<Widget> answers = _buildAnswers(question);
     if (answers.isNotEmpty) {
-      contentList.add(Padding(padding: EdgeInsets.only(top: 8), child:
+      contentList.add(Padding(padding: EdgeInsets.only(top: 0), child:
         Column(children: answers,),
       ));
     }
@@ -210,7 +202,18 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
       ));
     }
 
-    return Column(children: contentList,);
+    return Stack(children: [
+      Column(children: [
+        Column(children: [
+          Container(color: Styles().colors?.backgroundVariant, height: 100,),
+          CustomPaint(painter: TrianglePainter(painterColor: Styles().colors?.backgroundVariant, vertDir: TriangleVertDirection.bottomToTop, horzDir: TriangleHorzDirection.leftToRight), child:
+            Container(height: 40,),
+          ),
+        ],),
+      ],),
+      Column(children: contentList,),
+    ],
+    );
   }
 
   List<Widget> _buildAnswers(Question question) {
@@ -218,7 +221,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     List<Answer>? answers = question.answers;
     if (answers != null) {
       for (Answer answer in answers) {
-        answersList.add(_buildAnswer(answer, question: question));
+        answersList.add(Padding(padding: EdgeInsets.only(top: answersList.isNotEmpty ? 5 : 0), child:_buildAnswer(answer, question: question)));
       }
     }
     return answersList;
@@ -228,19 +231,23 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     LinkedHashSet<String>? selectedAnswers = _selection[question.id];
     bool selected = selectedAnswers?.contains(answer.id) ?? false;
     String title = _questionnaireString(answer.title);
-    return Padding(padding: EdgeInsets.only(left: _hPadding - 12, right: _hPadding), child:
-      Row(children: [
-        InkWell(onTap: () => _onAnswer(answer, question: question), child:
-          Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 8, ), child:
-            Image.asset(selected ? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
+    return InkWell(onTap: () => _onAnswer(answer, question: question), child:
+      Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
+        Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: selected ? Styles().colors!.fillColorPrimary! : Styles().colors!.white!, width: 1)), child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
+            Row(children: [
+              Padding(padding: EdgeInsets.only(right: 12), child:
+                Image.asset(selected ? "images/checkbox-radio-selected.png" : "images/checkbox-radio-unselected.png"),
+              ),
+              Expanded(child:
+                Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
+                  Text(title, style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
+                ),
+              ),
+            ]),
           ),
         ),
-        Expanded(child:
-          Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
-            Text(title, style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
-          ),
-        ),
-      ]),
+      ),
     );
   }
 
@@ -269,11 +276,6 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
         }
       });
     }
-  }
-
-  void _onBack() {
-    Analytics().logSelect(target: "Back");
-    Navigator.pop(context);
   }
 
   void _onCancel() {
