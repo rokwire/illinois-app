@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed analytics logs from Settings panels [#2492](https://github.com/rokwire/illinois-app/issues/2492).
 ### Changed
-- Updated Questionnaire onboarding panels UI [#2495](https://github.com/rokwire/illinois-app/issues/2495)
+- Updated Questionnaire onboarding panels UI [#2495](https://github.com/rokwire/illinois-app/issues/2495).
+- Updated marksers processing in iOS Maps [#2448](https://github.com/rokwire/illinois-app/issues/2448).
 ### Added
 - Initial work on Research Projects [#2473](https://github.com/rokwire/illinois-app/issues/2473).
 
