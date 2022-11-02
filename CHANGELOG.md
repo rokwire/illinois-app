@@ -5,10 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.2.12] - 2022-11-02
 ### Fixed
 - Fixed analytics logs from Settings panels [#2492](https://github.com/rokwire/illinois-app/issues/2492).
 ### Changed
 - Updated Questionnaire onboarding panels UI [#2495](https://github.com/rokwire/illinois-app/issues/2495)
+### Added
+- Initial work on Research Projects [#2473](https://github.com/rokwire/illinois-app/issues/2473).
 
 ## [4.2.11] - 2022-10-31
 ### Added
