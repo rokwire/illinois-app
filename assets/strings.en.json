@@ -2525,6 +2525,7 @@
 	"widget.home.research_projects.my.text.empty.description": "You have not created any research projects yet.",
 	"widget.home.research_projects.all.text.empty.description": "Failed to load research projects.",
     "widget.home.research_projects.message.offline":"Research Projects are not available while offline.",
+    "widget.home.research_projects.message.logged_out":"You need to be logged in to access Research Projects.",
     "widget.home.research_projects.button.all.title": "View All",
     "widget.home.research_projects.button.all.hint": "Tap to view all research projects",
 

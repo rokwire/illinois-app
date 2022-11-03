@@ -128,6 +128,12 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
         message: Localization().getStringEx('widget.home.research_projects.message.offline', 'Research Projects are not available while offline.'),
       );
     }
+    else if (!Auth2().isLoggedIn) {
+      return HomeMessageCard(
+        title: Localization().getStringEx("common.message.logged_out", "You are not logged in"),
+        message: Localization().getStringEx('widget.home.research_projects.message.logged_out', 'You need to be logged in to access Research Projects.'),
+      );
+    }
     else if (_loadingResearchProjects) {
       return HomeProgressWidget();
     }
