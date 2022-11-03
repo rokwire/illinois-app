@@ -1597,6 +1597,7 @@
 	"panel.profile_info.logout.no":"否",
     "panel.profile_info.picture.upload.failed.msg":"上傳個人資料圖片失敗. 請稍後再試.",
     "panel.profile_info.picture.delete.failed.msg":"無法刪除頭像. 請稍後再試.",
+	"panel.profile_info.picture.delete.confirmation.msg": "Are you sure you want to remove this profile picture?",
 
 	"panel.create_poll.header.title": "创建快速投票",
 	"panel.create_poll.description": "人們可以通過{{app_title}}應用程序向您詢問 4 位投票號碼來投票。",

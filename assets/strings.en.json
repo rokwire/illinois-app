@@ -1597,6 +1597,7 @@
     "panel.profile_info.logout.no":"No",
     "panel.profile_info.picture.upload.failed.msg":"Failed to upload profile picture. Please, try again later.",
     "panel.profile_info.picture.delete.failed.msg":"Failed to delete profile picture. Please, try again later.",
+    "panel.profile_info.picture.delete.confirmation.msg": "Are you sure you want to remove this profile picture?",
 
     "panel.create_poll.header.title": "Create a Quick Poll",
     "panel.create_poll.description": "People can vote through the {{app_title}} app by asking you for the 4 Digit Poll #.",
