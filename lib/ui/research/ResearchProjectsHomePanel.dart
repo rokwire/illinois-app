@@ -283,7 +283,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   }
 
   bool get _canCreateResearchProject {
-    return Auth2().isOidcLoggedIn && FlexUI().isSharingAvailable;
+    return Auth2().isOidcLoggedIn && FlexUI().isSharingAvailable && (Auth2().account?.isResearchGroupAdmin ?? false);
   }
 
   // Filters Widget
