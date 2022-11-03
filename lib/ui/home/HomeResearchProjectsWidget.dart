@@ -14,6 +14,7 @@ import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -48,6 +49,7 @@ class HomeResearchProjectsWidget extends StatefulWidget {
 class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implements NotificationsListener {
 
   List<Group>? _researchProjects;
+  bool _loadingResearchProjects = false;
   DateTime? _pausedDateTime;
 
   PageController? _pageController;
@@ -59,6 +61,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
     super.initState();
 
     NotificationService().subscribe(this, [
+      Connectivity.notifyStatusChanged,
       Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,]);
 
@@ -80,15 +83,21 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
     NotificationService().unsubscribe(this);
   }
 
-  void _loadResearchProjects(){
-    Groups().loadResearchProjects(contentType: widget.contentType).then((List<Group>? researchProjects) {
-      _sortResearchProjects(researchProjects);
-      if (mounted) {
-        setState(() {
-          _researchProjects = researchProjects;
-        });
-      }
-    });
+  void _loadResearchProjects() {
+    if (mounted) {
+      setState(() {
+        _loadingResearchProjects = true;
+      });
+      Groups().loadResearchProjects(contentType: widget.contentType).then((List<Group>? researchProjects) {
+        _sortResearchProjects(researchProjects);
+        if (mounted) {
+          setState(() {
+            _researchProjects = researchProjects;
+            _loadingResearchProjects = false;
+          });
+        }
+      });
+    }
   }
 
   void _updateResearchProjects() {
@@ -109,12 +118,28 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: widget._title,
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      child: _haveResearchProjects ? _buildContent() : _buildEmpty(),
+      child: _buildContent(),
     );
   }
-
-
   Widget _buildContent() {
+    if (Connectivity().isOffline) {
+      return HomeMessageCard(
+        title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
+        message: Localization().getStringEx('widget.home.research_projects.message.offline', 'Research Projects are not available while offline.'),
+      );
+    }
+    else if (_loadingResearchProjects) {
+      return HomeProgressWidget();
+    }
+    else if (_researchProjects?.isEmpty ?? true) {
+      return _buildEmpty();
+    }
+    else {
+      return _buildProjects();
+    }
+  }
+
+  Widget _buildProjects() {
 
     List<Widget> pages = <Widget>[];
     if(_researchProjects?.isNotEmpty ?? false) {
@@ -182,6 +207,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
     return HomeMessageCard(message: message,);
   }
 
+
   @override
   void onNotification(String name, param) {
     if (name == AppLivecycle.notifyStateChanged) {
@@ -189,6 +215,11 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
     }
     else if (name == Auth2.notifyLoginChanged) {
       _loadResearchProjects();
+    }
+    else if (name == Connectivity.notifyStatusChanged) {
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
@@ -204,10 +235,6 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
         }
       }
     }
-  }
-
-  bool get _haveResearchProjects {
-    return _researchProjects?.isNotEmpty ?? false;
   }
 
   void _onSeeAll() {

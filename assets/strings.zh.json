@@ -2518,8 +2518,9 @@
 
 	"widget.home.research_projects.my.label.header.title":"我的研究項目",
 	"widget.home.research_projects.open.label.header.title":"開放研究項目",
-"widget.home.research_projects.my.text.empty.description": "您尚未創建任何研究項目。",
-"widget.home.research_projects.all.text.empty.description": "未能加載研究項目。",
+	"widget.home.research_projects.my.text.empty.description": "您尚未創建任何研究項目。",
+	"widget.home.research_projects.all.text.empty.description": "未能加載研究項目。",
+	"widget.home.research_projects.message.offline":"研究項目在離線時不可用。",
 	"widget.home.research_projects.button.all.title": "查看全部",
 	"widget.home.research_projects.button.all.hint": "點擊查看所有研究項目",
 
