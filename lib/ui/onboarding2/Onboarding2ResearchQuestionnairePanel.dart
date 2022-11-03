@@ -33,20 +33,25 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
   @override
   void initState() {
-    _loading = true;
+    dynamic questionnaire = (widget.onboardingContext != null) ? widget.onboardingContext!['questionanire'] : null;
+    if (questionnaire is Questionnaire) {
+      _questionnaire = questionnaire;
+      _selection.addAll(Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire.id) ?? <String, LinkedHashSet<String>>{});
+    }
+    else {
+      _loading = true;
+      Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
+        if (mounted) {
+          setState(() {
+            _loading = false;
+            _questionnaire = questionnaire;
+            _selection.addAll(Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id) ?? <String, LinkedHashSet<String>>{});
+          });
+        }
+      });
+    }
 
-    Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
-      if (mounted) {
-        setState(() {
-          _loading = false;
-          _questionnaire = questionnaire;
-          Map<String, LinkedHashSet<String>>? answers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
-          if (answers != null) {
-            _selection.addAll(answers);
-          }
-        });
-      }
-    });
+
     super.initState();
   }
 
