@@ -231,13 +231,20 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     LinkedHashSet<String>? selectedAnswers = _selection[question.id];
     bool selected = selectedAnswers?.contains(answer.id) ?? false;
     String title = _questionnaireString(answer.title);
+    String imageAsset;
+    if (question.maxAnswers == 1) {
+      imageAsset = selected ? "images/checkbox-radio-selected.png" : "images/checkbox-radio-unselected.png";
+    }
+    else {
+      imageAsset = selected ? "images/selected-checkbox.png" : "images/deselected-checkbox.png";
+    }
     return InkWell(onTap: () => _onAnswer(answer, question: question), child:
       Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
         Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: selected ? Styles().colors!.fillColorPrimary! : Styles().colors!.white!, width: 1)), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Row(children: [
               Padding(padding: EdgeInsets.only(right: 12), child:
-                Image.asset(selected ? "images/checkbox-radio-selected.png" : "images/checkbox-radio-unselected.png"),
+                Image.asset(imageAsset),
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
