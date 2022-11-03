@@ -34,6 +34,7 @@ import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -592,11 +593,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           Expanded(child:
             Container(width: 189, height: 189, child:
               Semantics(image: true, label: "Profile", child:
-                Container(decoration:
-                  BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
-                    DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage.image)
-                  )
-                ),
+                ModalImageHolder(
+                  image: _hasProfilePicture? profileImage.image : null,
+                  child: Container(decoration:
+                    BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
+                      DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage.image)
+                    )
+                  ),
+                )
               )
             ),
           ),
@@ -774,7 +778,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       });
   }
 
-  void _onTapDeletePicture() {
+  void _deleteProfilePicture(){
     Analytics().logSelect(target: "Delete Profile Picture");
     _setProfilePicProcessing(true);
     Content().deleteCurrentUserProfileImage().then((deleteImageResult) {
@@ -796,6 +800,29 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           break;
       }
     });
+  }
+
+  void _onTapDeletePicture() {
+    String promptEn = Localization().getStringEx('panel.profile_info.picture.delete.confirmation.msg', 'Are you sure you want to remove this profile picture?');
+    AppAlert.showCustomDialog(context: context,
+        contentWidget:
+        Text(promptEn,
+          style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary,),
+        ),
+        actions: [
+          TextButton(
+              child: Text(Localization().getStringEx('dialog.ok.title', 'OK')),
+              onPressed: () {
+                Analytics().logAlert(text: promptEn, selection: 'OK');
+                Navigator.of(context).pop(true);
+                _deleteProfilePicture();
+              }
+          ),
+          TextButton(
+              child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')),
+              onPressed: () { Analytics().logAlert(text: promptEn, selection: 'Cancel'); Navigator.of(context).pop(false); }
+          )
+        ]);
   }
 
   Widget _buildDeleteMyAccount() {

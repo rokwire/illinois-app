@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Research UI updates [#2499](https://github.com/rokwire/illinois-app/issues/2499).
+- Profile Image enhancements [#2501](https://github.com/rokwire/illinois-app/issues/2501).
 
 ## [4.2.12] - 2022-11-02
 ### Fixed
