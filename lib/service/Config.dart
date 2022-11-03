@@ -161,6 +161,12 @@ class Config extends rokwire.Config {
   String? get canvasCourseDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['course_format']);
   String? get canvasAssignmentDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['assignment_format']);
 
+  // Getters: McKinley
+
+  String? get saferMcKinleyUrl       => JsonUtils.stringValue(saferMcKinley['url']);
+  String? get saferMcKinleyUrlLabel  => JsonUtils.stringValue(saferMcKinley['url_label']);
+  String? get saferMcKinleyPhone     => JsonUtils.stringValue(saferMcKinley['phone']);
+
   // Getters: settings
   int  get homeCampusGuideCount      => JsonUtils.intValue(settings['homeCampusGuideCount']) ?? 3;
   int  get homeCampusHighlightsCount => JsonUtils.intValue(settings['homeCampusHighlightsCount']) ?? 3;
@@ -180,12 +186,14 @@ class Config extends rokwire.Config {
   int  get appReviewSessionDuration  => JsonUtils.intValue(settings['appReviewSessionDuration']) ?? 120;
   int  get appReviewActivityTimeout  => JsonUtils.intValue(settings['appReviewActivityTimeout']) ?? 3;
   int  get appReviewRequestTimeout   => JsonUtils.intValue(settings['appReviewRequestTimeout']) ?? 21;
-  
+
   String? get timezoneLocation       => JsonUtils.stringValue(settings['timezoneLocation']);
 
   String get appPrivacyVersion       => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');
   bool get allowGroupsAuthmanSync    => JsonUtils.boolValue(settings['allowGroupsAuthmanSync']) ?? false;
   bool get showGroupPostReactions    => JsonUtils.boolValue(settings['showGroupPostReactions']) ?? false;
+
+  String? get symptomSurveyID        => JsonUtils.stringValue(settings['symptom_survey_id']);
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;

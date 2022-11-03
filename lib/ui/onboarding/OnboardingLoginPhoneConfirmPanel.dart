@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
@@ -44,7 +45,7 @@ class OnboardingLoginPhoneConfirmPanel extends StatefulWidget with OnboardingPan
   }
 }
 
-class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneConfirmPanel> {
+class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneConfirmPanel> implements Onboarding2ProgressableState {
   TextEditingController _codeController = TextEditingController();
   String? _verificationErrorMsg;
 
@@ -269,17 +270,21 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
   }
 
   void _finishedPhoneVerification() {
-    if (widget.onboardingContext != null) {
-      Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
-      if(onSuccess!=null){
-        onSuccess();
-      } else {
-        Onboarding().next(context, widget);
-      }
-
+    // Hook this panels to Onboarding2
+    Function? onWidgetFinish = widget.onFinish;
+    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
+    Function? onContinueEx = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueActionEx"] : null; 
+    if (onContinueEx != null) {
+      onContinueEx(this);
     }
-    else if (widget.onFinish != null) {
-      widget.onFinish!(widget);
+    else if (onContinue != null) {
+      onContinue();
+    }
+    else if (onWidgetFinish != null) {
+      onWidgetFinish(widget);
+    }
+    else {
+      Onboarding().next(context, widget);
     }
   }
 
@@ -322,5 +327,19 @@ class _OnboardingLoginPhoneConfirmPanelState extends State<OnboardingLoginPhoneC
     setState(() {
       _verificationErrorMsg = null;
     });
+  }
+
+  // Onboarding2ProgressableState
+
+  @override
+  bool get onboarding2Progress => _isLoading;
+  
+  @override
+  set onboarding2Progress(bool progress) {
+    if (mounted) {
+      setState(() {
+        _isLoading = progress;
+      });
+    }
   }
 }

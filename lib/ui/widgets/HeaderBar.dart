@@ -21,6 +21,7 @@ import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsProfileContentPanel.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -295,11 +296,17 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
   }
 
   Widget buildHeaderNotificationsButton(BuildContext context) {
+    int unreadMsgsCount = Inbox().unreadMessagesCount;
     return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.notifications.hint', ''), button: true, excludeSemantics: true, child:
 //    IconButton(icon: Image.asset('images/notifications-white.png', excludeFromSemantics: true), onPressed: () => onTapNotifications(context))
       InkWell(onTap: () => onTapNotifications(context), child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
-          Image.asset('images/notifications-white.png', excludeFromSemantics: true,),
+        Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 2), child:
+          Stack(alignment: Alignment.topRight, children: [
+            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Image.asset('images/notifications-white.png', excludeFromSemantics: true,))),
+            Visibility(visible: (unreadMsgsCount > 0), child: 
+              Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(2), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child: 
+                Text(unreadMsgsCount.toString(), style: TextStyle(color: Styles().colors!.white, fontSize: 10, fontFamily: Styles().fontFamilies!.medium)))))
+          ])
         )
       )
     );
@@ -340,7 +347,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
     String? currentRouteName = ModalRoute.of(context)?.settings.name;
     if (currentRouteName != SettingsNotificationsContentPanel.routeName) {
       Analytics().logSelect(target: "Notifications");
-      SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+      SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.all);
     }
   }
 
@@ -360,6 +367,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   void initState() {
     NotificationService().subscribe(this, [
       WPGUFMRadio.notifyPlayerStateChanged,
+      Inbox.notifyInboxUnreadMessagesCountChanged,
     ]);
     super.initState();
   }
@@ -383,6 +391,10 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
   @override
   void onNotification(String name, dynamic param) {
     if (name == WPGUFMRadio.notifyPlayerStateChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    } else if (name == Inbox.notifyInboxUnreadMessagesCountChanged) {
       if (mounted) {
         setState(() {});
       }

@@ -500,7 +500,7 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 		_gmsExploreMarker = [[GMSMarker alloc] init];
 		_gmsExploreMarker.position = _exploreLocation.uiucLocationCoordinate;
 
-		MapMarkerView *iconView = [MapMarkerView createFromExplore:_explore];
+		MapMarkerView *iconView = [MapMarkerView createFromExplore:_explore displayMode:self.markerDisplayMode];
 		_gmsExploreMarker.iconView = iconView;
 		_gmsExploreMarker.title = iconView.title;
 		_gmsExploreMarker.snippet = iconView.descr;
@@ -515,8 +515,12 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 - (void)updateExploreMarker {
 	MapMarkerView *iconView = [_gmsExploreMarker.iconView isKindOfClass:[MapMarkerView class]] ? ((MapMarkerView*)_gmsExploreMarker.iconView) : nil;
 	if (iconView != nil) {
-		iconView.displayMode =  (self.gmsMapView.camera.zoom < kMarkerThresold1Zoom) ? MapMarkerDisplayMode_Plain : ((self.gmsMapView.camera.zoom < kMarkerThresold2Zoom) ? MapMarkerDisplayMode_Title : MapMarkerDisplayMode_Extended);
+		iconView.displayMode = self.markerDisplayMode;
 	}
+}
+
+- (MapMarkerDisplayMode)markerDisplayMode {
+	return (self.gmsMapView.camera.zoom < kMarkerThresold1Zoom) ? MapMarkerDisplayMode_Plain : ((self.gmsMapView.camera.zoom < kMarkerThresold2Zoom) ? MapMarkerDisplayMode_Title : MapMarkerDisplayMode_Extended);
 }
 
 - (void)buildExplorePolygon {

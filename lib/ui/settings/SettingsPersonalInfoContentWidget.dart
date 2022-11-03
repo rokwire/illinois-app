@@ -22,6 +22,7 @@ import 'package:illinois/service/OnCampus.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/groups/ImageEditPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 import 'package:illinois/ui/settings/SettingsWidgets.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -33,11 +34,16 @@ import 'package:rokwire_plugin/service/content.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsPersonalInfoContentWidget extends StatefulWidget {
+  final String? parentRouteName;
+
+  SettingsPersonalInfoContentWidget({Key? key, this.parentRouteName}) : super(key: key);
+
   _SettingsPersonalInfoContentWidgetState createState() => _SettingsPersonalInfoContentWidgetState();
 }
 
@@ -287,7 +293,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       Column(children:<Widget>[
         Row(children: [
           Expanded(child:
-            Text(Localization().getStringEx('panel.settings.home.calendar.research.title', 'Research'), style:
+            Text(Localization().getStringEx('panel.settings.home.calendar.research.title', 'Research at Illinois'), style:
             Styles().textStyles?.getTextStyle("widget.title.large.fat")
             ),
           ),
@@ -303,7 +309,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         RibbonButton(
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
           //borderRadius: BorderRadius.all(Radius.circular(5)),
-          label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research questionnaire"),
+          label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
           textColor: Questionnaires().participateInResearch ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
           rightIconAsset: Questionnaires().participateInResearch ? 'images/chevron-right.png' : 'images/chevron-right-gray.png',
           onTap: _onResearchQuestionnaireClicked
@@ -404,7 +410,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   }
 
   Future<bool?> _promptTurnOffParticipateInResearch() async {
-    String promptEn = 'You have decided to no longer participate in research and will clear all my research questionnaire information. Do you want to stop participating?';
+    String promptEn = 'Please confirm that you wish to no longer participate in Research at Illinois. All information filled out in your questionnaire will be deleted.';
     return await AppAlert.showCustomDialog(context: context,
       contentWidget:
         Text(Localization().getStringEx('panel.settings.home.calendar.research.prompt.title', promptEn),
@@ -424,7 +430,31 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
 
   void _onResearchQuestionnaireClicked() {
     Analytics().logSelect(target: 'Research Questionnaire');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {},)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {
+      "onContinueAction": () {
+        _didResearchQuestionnaire();
+      }
+    },)));
+  }
+
+  void _didResearchQuestionnaire() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnaireAcknowledgementPanel(onboardingContext: {
+      "onContinueAction": () {
+        _didAcknowledgeResearchQuestionnaire();
+      }
+    },)));
+  }
+
+  void _didAcknowledgeResearchQuestionnaire() {
+    if (widget.parentRouteName != null) {
+      Navigator.of(context).popUntil((Route route){
+        return route.settings.name == widget.parentRouteName;
+      });
+    }
+    else {
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    }
   }
 
   void _onTapOnCampusAuto() {
@@ -500,6 +530,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
   }
 
   Widget _buildLogoutDialog(BuildContext context) {
+    String promptEn = 'Are you sure you want to sign out?';
     return Dialog(
       child: Padding(
         padding: EdgeInsets.all(18),
@@ -513,7 +544,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
-                Localization().getStringEx("panel.profile_info.logout.message", "Are you sure you want to sign out?"),
+                Localization().getStringEx("panel.profile_info.logout.message", promptEn),
                 textAlign: TextAlign.left,
                 style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.medium")
               ),
@@ -523,14 +554,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
               children: <Widget>[
                 TextButton(
                     onPressed: () {
-                      Analytics().logAlert(text: "Sign out", selection: "Yes");
+                      Analytics().logAlert(text: promptEn, selection: "Yes");
                       Navigator.pop(context);
                       Auth2().logout();
                     },
                     child: Text(Localization().getStringEx("panel.profile_info.logout.button.yes", "Yes"))),
                 TextButton(
                     onPressed: () {
-                      Analytics().logAlert(text: "Sign out", selection: "No");
+                      Analytics().logAlert(text: promptEn, selection: "No");
                       Navigator.pop(context);
                     },
                     child: Text(Localization().getStringEx("panel.profile_info.logout.no", "No")))
@@ -562,11 +593,14 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           Expanded(child:
             Container(width: 189, height: 189, child:
               Semantics(image: true, label: "Profile", child:
-                Container(decoration:
-                  BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
-                    DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage.image)
-                  )
-                ),
+                ModalImageHolder(
+                  image: _hasProfilePicture? profileImage.image : null,
+                  child: Container(decoration:
+                    BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
+                      DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage.image)
+                    )
+                  ),
+                )
               )
             ),
           ),
@@ -744,7 +778,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
       });
   }
 
-  void _onTapDeletePicture() {
+  void _deleteProfilePicture(){
     Analytics().logSelect(target: "Delete Profile Picture");
     _setProfilePicProcessing(true);
     Content().deleteCurrentUserProfileImage().then((deleteImageResult) {
@@ -766,6 +800,29 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           break;
       }
     });
+  }
+
+  void _onTapDeletePicture() {
+    String promptEn = Localization().getStringEx('panel.profile_info.picture.delete.confirmation.msg', 'Are you sure you want to remove this profile picture?');
+    AppAlert.showCustomDialog(context: context,
+        contentWidget:
+        Text(promptEn,
+          style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary,),
+        ),
+        actions: [
+          TextButton(
+              child: Text(Localization().getStringEx('dialog.ok.title', 'OK')),
+              onPressed: () {
+                Analytics().logAlert(text: promptEn, selection: 'OK');
+                Navigator.of(context).pop(true);
+                _deleteProfilePicture();
+              }
+          ),
+          TextButton(
+              child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')),
+              onPressed: () { Analytics().logAlert(text: promptEn, selection: 'Cancel'); Navigator.of(context).pop(false); }
+          )
+        ]);
   }
 
   Widget _buildDeleteMyAccount() {

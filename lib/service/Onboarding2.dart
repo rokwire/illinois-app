@@ -1,7 +1,13 @@
 
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/model/Questionnaire.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/ui/onboarding2/Onboarding2PromptResearchQuestionnairePanel.dart';
+import 'package:illinois/service/Questionnaire.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePromptPanel.dart';
 import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -11,7 +17,7 @@ import 'package:illinois/ui/onboarding2/Onboarding2LoginPhoneOrEmailStatementPan
 
 import 'Storage.dart';
 
-class Onboarding2 with Service{
+class Onboarding2 with Service {
 
   static const String notifyFinished  = "edu.illinois.rokwire.onboarding.finished";
 
@@ -63,6 +69,9 @@ class Onboarding2 with Service{
       Navigator.push(context, CupertinoPageRoute(builder: (context) => OnboardingLoginNetIdPanel(onboardingContext: {
         "onContinueAction": () {
           _didProceedToLogin(context);
+        },
+        "onContinueActionEx": (dynamic state) {
+          _didProceedToLogin(context, loginPanelState: state);
         }
       })));
     }
@@ -70,6 +79,9 @@ class Onboarding2 with Service{
       Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2LoginPhoneOrEmailStatementPanel(onboardingContext: {
         "onContinueAction": () {
           _didProceedToLogin(context);
+        },
+        "onContinueActionEx": (dynamic state) {
+          _didProceedToLogin(context, loginPanelState: state);
         }
       })));
     }
@@ -78,41 +90,50 @@ class Onboarding2 with Service{
     }
   }
 
-  void _didProceedToLogin(BuildContext context) {
-    _proceedToResearhQuestionnaireIfNeeded(context);
+  void _didProceedToLogin(BuildContext context, { dynamic loginPanelState}) {
+    _startResearhQuestionnaireIfNeeded(context, currentPanelState: loginPanelState);
   }
 
-  void _proceedToResearhQuestionnaireIfNeeded(BuildContext context) {
+  void _startResearhQuestionnaireIfNeeded(BuildContext context, { dynamic currentPanelState}) {
     Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
     if (codes.contains('research_questionnaire')) {
-      _promptForResearhQuestionnaire(context);
+      if (Questionnaires().participateInResearch) {
+        Onboarding2ProgressableState? progressableState = (currentPanelState is Onboarding2ProgressableState) ? currentPanelState : null;
+        progressableState?.onboarding2Progress = true;
+        Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
+          progressableState?.onboarding2Progress = false;
+          Map<String, LinkedHashSet<String>>? questionnaireAnswers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
+          if (questionnaireAnswers?.isNotEmpty ?? false) {
+            _didFinishResearhQuestionnaire(context);
+          }
+          else {
+            _promptForResearhQuestionnaire(context);
+          }
+        });
+      }
+      else {
+        _promptForResearhQuestionnaire(context);
+      }
     }
     else {
-      _didProceedResearchQuestionnaire(context);
+      _didFinishResearhQuestionnaire(context);
     }
   }
 
-  void _promptForResearhQuestionnaire(BuildContext context) {
-    Navigator.push(context, CupertinoPageRoute<bool>(builder: (context) => Onboarding2PromptResearchQuestionnairePanel())).then((bool? result) {
-      if (result == true) {
-        _proceedToResearhQuestionnaire(context);
-      }
-      else {
-        _didProceedResearchQuestionnaire(context);
-      }
-    });
-    /*onboardingContext: {
+  void _promptForResearhQuestionnaire(BuildContext context, { Questionnaire? questionanire}) {
+    Navigator.push(context, CupertinoPageRoute<bool>(builder: (context) => Onboarding2ResearchQuestionnairePromptPanel(onboardingContext: {
+      "questionanire": questionanire,
       "onConfirmAction": () {
         _proceedToResearhQuestionnaire(context);
       },
       "onRejectAction": () {
-        _didProceedResearchQuestionnaire(context);
+        _didFinishResearhQuestionnaire(context);
       }
-    }*/
+    })));
   }
   
   void _proceedToResearhQuestionnaire(BuildContext context) {
-    Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {
       'onContinueAction':  () {
         _didProceedResearchQuestionnaire(context);
       }
@@ -120,6 +141,22 @@ class Onboarding2 with Service{
   }
 
   void _didProceedResearchQuestionnaire(BuildContext context) {
+    _acknowledgeResearhQuestionnaire(context);
+  }
+
+  void _acknowledgeResearhQuestionnaire(BuildContext context) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnaireAcknowledgementPanel(onboardingContext: {
+      'onContinueAction':  () {
+        _didAcknowledgeResearhQuestionnaire(context);
+      }
+    },)));
+  }
+
+  void _didAcknowledgeResearhQuestionnaire(BuildContext context) {
+    _didFinishResearhQuestionnaire(context);
+  }
+
+  void _didFinishResearhQuestionnaire(BuildContext context) {
     finish(context);
   }
 
@@ -183,4 +220,9 @@ class Onboarding2 with Service{
 
     return privacyLevel;
   }
+}
+
+abstract class Onboarding2ProgressableState {
+  bool get onboarding2Progress;
+  set onboarding2Progress(bool progress);
 }

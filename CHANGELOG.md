@@ -6,8 +6,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Research UI updates [#2499](https://github.com/rokwire/illinois-app/issues/2499).
+- Profile Image enhancements [#2501](https://github.com/rokwire/illinois-app/issues/2501).
+
+## [4.2.12] - 2022-11-02
+### Fixed
+- Fixed analytics logs from Settings panels [#2492](https://github.com/rokwire/illinois-app/issues/2492).
+### Changed
+- Updated Questionnaire onboarding panels UI [#2495](https://github.com/rokwire/illinois-app/issues/2495).
+- Updated marksers processing in iOS Maps [#2448](https://github.com/rokwire/illinois-app/issues/2448).
+### Added
+- Initial work on Research Projects [#2473](https://github.com/rokwire/illinois-app/issues/2473).
+
+## [4.2.11] - 2022-10-31
+### Added
+- Add health screener surveys [#2480](https://github.com/rokwire/illinois-app/issues/2480).
+- Introduce ModalImageHolder widget  [#2474](https://github.com/rokwire/illinois-app/issues/2474)
+### Changed
+- "Campus Guide Highlights" renamed to "Campus Safety Resources" [#2488](https://github.com/rokwire/illinois-app/issues/2488).
+
+## [4.2.10] - 2022-10-28
+### Added
+- Prelimiary work on Research Projects [#2473](https://github.com/rokwire/illinois-app/issues/2473).
+### Changed
+- Text, layout and navigation updates for Research Questionnaire [#2484](https://github.com/rokwire/illinois-app/issues/2484).
+
+## [4.2.9] - 2022-10-27
+### Changed
+- Store research questionnaire answers in account profile [#2477](https://github.com/rokwire/illinois-app/issues/2477).
+### Added
+- Show Appointments in Browse and Favorites. Read appointments default url and phone from app config [#2464](https://github.com/rokwire/illinois-app/issues/2464).
+
+## [4.2.8] - 2022-10-26
+### Changed
 - HomeMyGroupsWidget renamed to HomeGroupsWidget.
 - Make group images expandable [#2474](https://github.com/rokwire/illinois-app/issues/2474).
+### Added
+- Introduce the UI for "muted" and "unread" notifications [#2472](https://github.com/rokwire/illinois-app/issues/2472).
+- Store appointment in device calendar [#2464](https://github.com/rokwire/illinois-app/issues/2464).
 
 ## [4.2.7] - 2022-10-21
 ### Changed

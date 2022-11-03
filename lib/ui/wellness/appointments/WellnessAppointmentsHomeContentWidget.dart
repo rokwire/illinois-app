@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WellnessAppointmentsHomeContentWidget extends StatefulWidget {
   WellnessAppointmentsHomeContentWidget();
@@ -141,20 +146,26 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildPastAppointmentsDescription() {
-    //TBD: appointments - make it clickable and take url from config or external resource
+    final String urlLabelMacro = '{{mckinley_url_label}}';
+    final String urlMacro = '{{mckinley_url}}';
+    final String externalLinkIconMacro = '{{external_link_icon}}';
+    String descriptionHtml = Localization().getStringEx("panel.wellness.appointments.home.past_appointments.footer.description",
+        "<a href='{{mckinley_url}}'>Visit {{mckinley_url_label}} to view a full history of past appointments.</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>");
+    descriptionHtml = descriptionHtml.replaceAll(urlMacro, Config().saferMcKinleyUrl ?? '');
+    descriptionHtml = descriptionHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
+    descriptionHtml = descriptionHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
     return Padding(
         padding: EdgeInsets.only(left: 20, right: 20, top: 16),
-        child: Text(
-            Localization().getStringEx('panel.wellness.appointments.home.past_appointments.description',
-                'Visit MyMcKinley to view a full history of past appointments.'),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 16,
-                color: Styles().colors!.fillColorPrimary,
-                fontFamily: Styles().fontFamilies!.regular,
-                decoration: TextDecoration.underline,
-                decorationColor: Styles().colors!.fillColorPrimary,
-                decorationThickness: 1)));
+        child: Html(data: descriptionHtml, onLinkTap: (url, renderContext, attributes, element) => _onTapMcKinleyUrl(url), style: {
+          "body": Style(
+              textAlign: TextAlign.center,
+              color: Styles().colors!.fillColorPrimary,
+              fontFamily: Styles().fontFamilies!.regular,
+              fontSize: FontSize(16),
+              padding: EdgeInsets.zero,
+              margin: EdgeInsets.zero),
+          "a": Style(color: Styles().colors?.fillColorPrimary)
+        }));
   }
 
   List<Widget> _buildAppointmentsWidgetList(List<Appointment>? appointments) {
@@ -169,6 +180,16 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   void _showRescheduleAppointmentPopup() {
+    final String urlLabelMacro = '{{mckinley_url_label}}';
+    final String urlMacro = '{{mckinley_url}}';
+    final String externalLinkIconMacro = '{{external_link_icon}}';
+    final String phoneMacro = '{{mckinley_phone}}';
+    String rescheduleContentHtml = Localization().getStringEx("panel.wellness.appointments.home.reschedule_appointment.alert.description",
+        "To cancel an appointment, go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call (<u>{{mckinley_phone}}</u>) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.");
+    rescheduleContentHtml = rescheduleContentHtml.replaceAll(urlMacro, Config().saferMcKinleyUrl ?? '');
+    rescheduleContentHtml = rescheduleContentHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
+    rescheduleContentHtml = rescheduleContentHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
+    rescheduleContentHtml = rescheduleContentHtml.replaceAll(phoneMacro, Config().saferMcKinleyPhone ?? '');
     AppAlert.showCustomDialog(
         context: context,
         contentPadding: EdgeInsets.all(0),
@@ -182,12 +203,16 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
                     Image.asset('images/block-i-orange.png'),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
-                        //TBD: Appointment - load url and phone from the config or other resource. And also apply image and hyperlink
-                        child: Text(
-                            Localization().getStringEx('panel.wellness.appointments.home.reschedule_appointment.alert.description',
-                                'To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.'),
-                            textAlign: TextAlign.center,
-                            style: Styles().textStyles?.getTextStyle("widget.detail.small")))
+                        child:
+                            Html(data: rescheduleContentHtml, onLinkTap: (url, renderContext, attributes, element) => _onTapMcKinleyUrl(url), style: {
+                          "body": Style(
+                              color: Styles().colors!.fillColorPrimary,
+                              fontFamily: Styles().fontFamilies!.regular,
+                              fontSize: FontSize(14),
+                              padding: EdgeInsets.zero,
+                              margin: EdgeInsets.zero),
+                          "a": Style(color: Styles().colors?.fillColorPrimary)
+                        }))
                   ])),
               Align(
                   alignment: Alignment.topRight,
@@ -200,6 +225,20 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   void _onTapCloseReschedulePopup() {
     Analytics().logSelect(target: 'Close reschedule appointment popup');
     Navigator.of(context).pop();
+  }
+
+  void _onTapMcKinleyUrl(String? url) {
+    Analytics().logSelect(target: 'McKinley Url');
+    if (StringUtils.isNotEmpty(url)) {
+      if (UrlUtils.launchInternal(url)) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+      } else {
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri);
+        }
+      }
+    }
   }
 
   void _loadAppointments() {

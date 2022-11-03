@@ -49,6 +49,7 @@ import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -360,9 +361,8 @@ class GroupsConfirmationDialog extends StatelessWidget{
 class GroupEventCard extends StatefulWidget {
   final Event? groupEvent;
   final Group? group;
-  final Function? onImageTap;
 
-  GroupEventCard({this.groupEvent, this.group, this.onImageTap});
+  GroupEventCard({this.groupEvent, this.group});
 
   @override
   createState()=> _GroupEventCardState();
@@ -381,7 +381,7 @@ class _GroupEventCardState extends State<GroupEventCard>{
             boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))],
             borderRadius: BorderRadius.all(Radius.circular(8))
         ),
-        child: _EventContent(event: event, group: widget.group, onImageTap: widget.onImageTap,),
+        child: _EventContent(event: event, group: widget.group),
       ),
     );
   }
@@ -390,9 +390,8 @@ class _GroupEventCardState extends State<GroupEventCard>{
 class _EventContent extends StatefulWidget {
   final Group? group;
   final Event? event;
-  final Function? onImageTap;
 
-  _EventContent({this.event, this.group, this.onImageTap});
+  _EventContent({this.event, this.group});
 
   @override
   createState()=> _EventContentState();
@@ -491,19 +490,12 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
             ],),
             Visibility(visible:
                 StringUtils.isNotEmpty(imageUrl),
-                child: InkWell(
-                  onTap: (){
-                    if(widget.onImageTap!=null){
-                      widget.onImageTap!();
-                    }
-                  },
-                    child:Padding(
+                child:Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 8),
                   child: SizedBox(
                     width: _smallImageSize,
                     height: _smallImageSize,
-                    child: Image.network(
-                      imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),),))),
+                    child: ModalImageHolder(child: Image.network(imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders)),),)),
                 ])
                 )
     ],);
@@ -1103,9 +1095,8 @@ class _GroupCardState extends State<GroupCard> {
 class GroupPostCard extends StatefulWidget {
   final GroupPost? post;
   final Group? group;
-  final Function? onImageTap;
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.onImageTap}) :
+  GroupPostCard({Key? key, required this.post, required this.group}) :
     super(key: key);
 
   @override
@@ -1184,18 +1175,12 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             label: "post image",
                             button: true,
                             hint: "Double tap to zoom the image",
-                            child:GestureDetector(
-                              onTap: (){
-                                if(widget.onImageTap!=null){
-                                  widget.onImageTap!();
-                                }
-                              },
-                              child: Container(
+                            child: Container(
                                 padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
                                 child: SizedBox(
                                   width: _smallImageSize,
                                   height: _smallImageSize,
-                                  child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,),),))
+                                  child: ModalImageHolder(child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,)),),)
                             ))
                     ],),
                     Container(
@@ -1265,9 +1250,8 @@ class GroupReplyCard extends StatefulWidget {
   final void Function()? onIconTap;
   final void Function()? onCardTap;
   final bool showRepliesCount;
-  final void Function()? onImageTap;
 
-  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.onImageTap});
+  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1370,18 +1354,12 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       flex: 1,
                       child: Semantics (
                         button: true, label: "Image",
-                       child: GestureDetector(
-                        onTap: (){
-                          if(widget.onImageTap!=null){
-                            widget.onImageTap!();
-                          }
-                        },
-                        child: Container(
+                       child: Container(
                           padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
                           child: SizedBox(
                           width: _smallImageSize,
                           height: _smallImageSize,
-                           child: Image.network(widget.reply!.imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,),),)))
+                           child: ModalImageHolder(child: Image.network(widget.reply!.imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,)),),))
                   )
                 ],),
               Container(
@@ -2088,7 +2066,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
         color: Styles().colors!.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(imageUrl)
-              ? Positioned.fill(child: InkWell(onTap: (){_showModalImage(imageUrl);}, child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)))
+              ? Positioned.fill(child: ModalImageHolder(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)))
               : Container(),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),
@@ -2125,14 +2103,6 @@ class _ImageChooserState extends State<ImageChooserWidget>{
     }
     Log.d("Image Url: $imageUrl");
   }
-
-  //Modal Image Dialog
-  void _showModalImage(String? url){
-    Analytics().logSelect(target: "Image");
-    if (url != null) {
-      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));    }
-  }
-
 }
 
 //Polls

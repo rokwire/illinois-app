@@ -272,7 +272,9 @@
 	"panel.browse.section.feeds.description": "收聽 WPGU 107.1 並在{{app_title}}社交媒體上了解最新消息。",
 	"panel.browse.section.groups.title": "團體",
 	"panel.browse.section.groups.description": "開始您自己的群組或發現新的群組加入。",
-	"panel.browse.section.laundry.title": "洗衣店",
+	"panel.browse.section.research_projects.title": "伊利諾伊州研究",
+	"panel.browse.section.research_projects.description": "開始您自己的研究項目或發現其他參與的項目。",
+"panel.browse.section.laundry.title": "洗衣店",
 	"panel.browse.section.laundry.description": "查看洗衣地點和洗衣機/烘乾機的可用性。",
 	"panel.browse.section.my.title": "我的",
 	"panel.browse.section.my.description": "您感興趣的所有內容的個性化視圖。",
@@ -313,7 +315,7 @@
 	"panel.browse.entry.safer.my_mckinley.title": "麥金利",
 	"panel.browse.entry.safer.wellness_answer_center.title": "解答中心",
 
-	"panel.browse.entry.campus_guide.campus_highlights.title": "校園指南亮點",
+	"panel.browse.entry.campus_guide.campus_highlights.title": "校園安全資源",
 	"panel.browse.entry.campus_guide.campus_guide.title": "完整的校園指南",
 	"panel.browse.entry.campus_guide.my_campus_guide.title": "我的校園指南",
 
@@ -328,7 +330,7 @@
 	"panel.browse.entry.campus_resources.groups.title": "團體",
 	"panel.browse.entry.campus_resources.quick_polls.title": "快速投票",
 	"panel.browse.entry.campus_resources.campus_guide.title": "校園指南",
-	"panel.browse.entry.campus_resources.inbox.title": "通知",
+	"panel.browse.entry.campus_resources.all_notifications.title": "通知",
 
 	"panel.browse.entry.dinings.dinings_all.title": "宿舍餐廳",
 	"panel.browse.entry.dinings.dinings_open.title": "宿舍餐廳現在開放",
@@ -342,6 +344,9 @@
 
 	"panel.browse.entry.groups.all_groups.title": "所有組",
 	"panel.browse.entry.groups.my_groups.title": "我的群組",
+
+	"panel.browse.entry.research_projects.open_research_projects.title": "開放研究項目",
+	"panel.browse.entry.research_projects.my_research_projects.title": "我的研究參與",
 
 	"panel.browse.entry.laundry.laundry.title": "洗衣店",
 	"panel.browse.entry.laundry.my_laundry.title": "我的洗衣店",
@@ -358,9 +363,10 @@
 	"panel.browse.entry.my.my_inbox.title": "我的通知",
 	"panel.browse.entry.my.my_campus_guide.title": "我的校園指南",
 	"panel.browse.entry.my.wellness_resources.title": "我的健康資源",
+    "panel.browse.entry.my.my_appointments.title": "我的麥金利約會",
 
-	"panel.browse.entry.inbox.recent_inbox.title": "最近的通知",
-	"panel.browse.entry.inbox.my_inbox.title": "我的通知",
+	"panel.browse.entry.inbox.all_notifications.title": "所有通知",
+	"panel.browse.entry.inbox.unread_notifications.title": "未讀通知",
 
 	"panel.browse.entry.polls.create_poll.title": "創建投票",
 	"panel.browse.entry.polls.recent_polls.title": "查看民意調查",
@@ -380,6 +386,7 @@
 
 	"panel.browse.entry.wellness.wellness_rings.title": "戒指",
 	"panel.browse.entry.wellness.wellness_todo.title": "待辦事項清單",
+    "panel.browse.entry.wellness.my_appointments.title": "我的麥金利約會",
 	"panel.browse.entry.wellness.wellness_tips.title": "每日提示",
 	"panel.browse.entry.wellness.wellness_resources.title": "資源",
 
@@ -858,10 +865,15 @@
 	"panel.onboarding2.email.button.link.cancel.hint": "",
 	"panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
 
-	"panel.onboarding2.research.questionnaire.prompt": "Would you like to participate in Research?",
-	"panel.onboarding2.research.questionnaire.acknowledgement": "Thank you for participating in the {{QuestionnaireName}}.",
+	"panel.onboarding2.research.questionnaire.prompt.introduction": "Illinois is one of the world’s great research universities. Become a citizen scientist and take part in the discovery by participating in research at Illinois.",
+	"panel.onboarding2.research.questionnaire.prompt.question": "Would you like to get invitations to participate in research studies via the Illinois app?",
+	"panel.onboarding2.research.questionnaire.prompt.explanation": " Many studies offer incentives.",
+	"panel.onboarding2.research.questionnaire.acknowledgement.title": "Thank you! We will notify you when you become eligible for any upcoming research projects.",
+	"panel.onboarding2.research.questionnaire.acknowledgement.explanation": "View current studies that match your completed Research Interest Form under Browse > Research at Illinois. Opt in and become part of the study\u2019s recruitment pool.",
 	"panel.onboarding2.research.questionnaire.button.submit.title": "Submit",
 	"panel.onboarding2.research.questionnaire.button.submit.hint": "",
+	"panel.onboarding2.research.questionnaire.button.cancel.title": "Cancel",
+	"panel.onboarding2.research.questionnaire.button.cancel.hint": "",
 	"panel.onboarding2.research.questionnaire.error.select.single": "Please choose at least {{MinQuestionAnswers}} aswer of \"{{QuestionTitle}}\".",
 	"panel.onboarding2.research.questionnaire.error.select.multi": "Please choose at least {{MinQuestionAnswers}} aswers of \"{{QuestionTitle}}\".",
   "panel.onboarding2.research.questionnaire.error.load": "Failed to load research questionnaire.",
@@ -945,7 +957,7 @@
 	"panel.explore.item.unknown.name":"探索",
 	"panel.explore.map.popup.title.format":"%d %s",
 
-    "panel.explore.missing.appointments.msg":"您目前沒有在伊利諾伊州應用程序中鏈接的即將到來的面對面約會。",
+    "panel.explore.missing.appointments.msg":"您目前沒有在 {{app_title}} 應用中鏈接的即將到來的面對面約會。",
 
 	"panel.explore_list.header.title":"探索",
 
@@ -1129,7 +1141,6 @@
 	"panel.saved.label.news": "My Athletics News",
 	"panel.saved.label.laundry": "My Laundry",
 	"panel.saved.label.campus_guide": "My Campus Guide",
-	"panel.saved.label.inbox": "My Notifications",
 
 	"panel.saved.notifications.label": "不要错过任何活动！获取即将发生的事件的提醒。",
 	"panel.saved.notifications.enable.label": " 启用通知",
@@ -1309,7 +1320,9 @@
 	"panel.settings.profile.content.privacy.label": "我的應用隱私設置",
 	"panel.settings.profile.header.profile.label": "輪廓",
 
-	"panel.settings.notifications.content.inbox.label": "我的通知",
+	"panel.settings.notifications.content.notifications.all.label": "所有通知",
+    "panel.settings.notifications.content.notifications.muted.label": "靜音通知",
+    "panel.settings.notifications.content.notifications.unread.label": "未讀通知",
 	"panel.settings.notifications.content.preferences.label": "我的通知偏好",
 	"panel.settings.notifications.header.inbox.label": "通知",
 
@@ -1323,10 +1336,10 @@
 	"panel.settings.home.calendar.on_campus.title": "在校園",
 	"panel.settings.home.calendar.ada.title": "可訪問性需求",
 	"panel.settings.home.calendar.ada.toggle.title": "顯示“我的課程”的 ADA 無障礙建築入口",
-	"panel.settings.home.calendar.research.title": "研究",
+	"panel.settings.home.calendar.research.title": "伊利諾伊州研究",
 	"panel.settings.home.calendar.research.toggle.title": "參與研究",
-	"panel.settings.home.calendar.research.questionnaire.title": "研究問卷",
-	"panel.settings.home.calendar.research.prompt.title": "您已決定不再參與研究，並將清除我所有的研究問卷信息。 您想停止參與嗎？",
+	"panel.settings.home.calendar.research.questionnaire.title": "研究興趣表",
+	"panel.settings.home.calendar.research.prompt.title": "請確認您希望不再參與伊利諾伊州的研究。 您在問卷中填寫的所有信息都將被刪除。",
 
 	"panel.settings.privacy_center.label.title":"隐私中心",
 	"panel.settings.privacy_center.label.description":"个性化您的隐私和数据偏好.",
@@ -1437,13 +1450,13 @@
 	"widget.settings.dialog.button.cancel.title": "取消",
 
 	"panel.settings.notifications.label.desctiption":"不要错过活动或校园更新.",
-	"panel.settings.notifications.label.notifications":"通知",
+	"panel.settings.notifications.label.notifications":"推送通知",
 	"panel.settings.notifications.label.info":"在设备设置中启用接收通知.",
     "panel.settings.notifications.appointments.new":"新的 MyMcKinley 預約",
     "panel.settings.notifications.appointments.reminders":"預約提醒",
     "panel.settings.notifications.appointments.reminders.morning_of.label":"上午（上午 8:00）",
     "panel.settings.notifications.appointments.reminders.night_before.label":"前一天晚上（晚上 9:00）",
-    "panel.settings.notifications.appointments.description.label":"MyMcKinley 約會提醒設置僅適用於伊利諾伊州應用程序。",
+    "panel.settings.notifications.appointments.description.label":"MyMcKinley 約會提醒設置僅適用於 {{app_title}} 應用程序。",
 	"panel.settings.notifications.reminders":"事件提醒",
 	"panel.settings.notifications.athletics_updates":"体育更新",
 	"panel.settings.notifications.athletics_updates.description.label": "基於您最喜歡的運動",
@@ -1584,6 +1597,7 @@
 	"panel.profile_info.logout.no":"否",
     "panel.profile_info.picture.upload.failed.msg":"上傳個人資料圖片失敗. 請稍後再試.",
     "panel.profile_info.picture.delete.failed.msg":"無法刪除頭像. 請稍後再試.",
+	"panel.profile_info.picture.delete.confirmation.msg": "Are you sure you want to remove this profile picture?",
 
 	"panel.create_poll.header.title": "创建快速投票",
 	"panel.create_poll.description": "人們可以通過{{app_title}}應用程序向您詢問 4 位投票號碼來投票。",
@@ -1730,6 +1744,7 @@
 	"panel.wellness.section.rings.label": "每日健康戒指",
 	"panel.wellness.section.todo.label": "待辦事項清單",
     "panel.wellness.section.appointments.label": "MyMcKinley 約會",
+    "panel.wellness.section.symptom_screener.label": "Illinois Health Screener",
 	"panel.wellness.section.resources.label": "健康資源",
 	"panel.wellness.section.podcast.label": "健康伊利尼播客",
 	"panel.wellness.section.struggling.label": "我正在掙扎",
@@ -1806,10 +1821,11 @@
 	"panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
 
     "panel.wellness.appointments.home.reschedule_appointment.label": "需要取消或重新安排？",
-    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
+    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "要取消約會，請轉到 <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> 或 在工作時間致電 (<u>{{mckinley_phone}}</u>)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
     "panel.wellness.appointments.home.upcoming.list.empty.msg": "您目前沒有在伊利諾伊州應用程序中鏈接的即將到來的約會。",
     "panel.wellness.appointments.home.past.list.empty.msg": "您沒有在伊利諾伊應用程序中鏈接最近的過去約會。",
     "panel.wellness.appointments.home.past_appointments.header.label": "最近過去的約會",
+    "panel.wellness.appointments.home.past_appointments.footer.description": "<a href='{{mckinley url}}'>訪問 {{mckinley_url_label}} 以查看過去約會的完整歷史記錄。</a>&nbsp;<img src='asset:{{external_links icon}}' alt= ''/>",
 
 	"panel.wellness.home.header.title": "養生",
 	"panel.wellness.home.eight_dimensions.header.title": "8健康維度",
@@ -2248,6 +2264,16 @@
 	"panel.group_polls.empty.description": "You will see the polls for your group here.",
 	"panel.group_polls.text.error": "Error",
 
+	"panel.research_projects.home.header_bar.title": "Research at Illinois",
+	"panel.research_projects.home.content_type.open.title": "Open Research Projects",
+	"panel.research_projects.home.content_type.my.title": "My Research Participation",
+"panel.research_projects.home.button.create.title": "Create",
+	"panel.research_projects.home.button.search.title": "Search",
+	"panel.research_projects.home.status.error.open.text": "Failed to load open research projects.",
+	"panel.research_projects.home.status.error.my.text": "Failed to load your research projects.",
+	"panel.research_projects.home.status.empty.open.text": "There are no opened research projects at the moment.",
+	"panel.research_projects.home.status.empty.my.text": "You have not created and do not participate in any research projects.",
+
 	"panel.guide_categories.label.heading": "Campus Guide",
 	"panel.guide_categories.label.content.empty": "空的指南內容",
 
@@ -2261,8 +2287,8 @@
 	"panel.inbox.label.time.last_month": "上個月",
 
 	"panel.guide_list.label.highlights.heading": "Campus Guide",
-	"panel.guide_list.label.highlights.empty": "沒有有效的校園指南亮點。",
-	"panel.guide_list.label.highlights.section": "強調",
+	"panel.guide_list.label.highlights.empty": "沒有有效的校園安全資源。",
+	"panel.guide_list.label.highlights.section": "安全資源",
 	"panel.guide_list.label.campus_reminders.section": "校園提醒",
 	"panel.guide_list.label.campus_reminders.empty": "沒有有效的校園提醒。",
 	"panel.guide_list.label.content.empty": "空的指南內容",
@@ -2409,7 +2435,7 @@
 
     "panel.appointment.detail.meeting.id.label": "會議編號：",
     "panel.appointment.detail.meeting.passcode.label": "密碼：",
-    "panel.appointment.detail.cancel.description": "要取消預約，請訪問 MyMcKinley.illinois.edu 或在工作時間致電 (217-333-2700)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
+    "panel.appointment.detail.cancel.description": "要取消約會，請轉到 <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> 或 在工作時間致電 (<u>{{mckinley_phone}}</u>)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
     "panel.appointment.detail.error.msg": "無法加載約會數據。",
 
 	"widget.game_day.label.its_game_day":"这是比赛日！",
@@ -2488,8 +2514,17 @@
 	"widget.home.groups.all.label.header.title":"所有組",
 	"widget.home.groups.my.text.empty.description": "您還沒有創建任何組。",
 	"widget.home.groups.all.text.empty.description": "未能加載組。",
-	"widget.home.my_groups.button.all.title":"查看全部",
-	"widget.home.my_groups.button.all.hint":"點按即可查看所有群組",
+	"widget.home.groups.button.all.title":"查看全部",
+	"widget.home.groups.button.all.hint":"點按即可查看所有群組",
+
+	"widget.home.research_projects.my.label.header.title":"我的研究項目",
+	"widget.home.research_projects.open.label.header.title":"開放研究項目",
+	"widget.home.research_projects.my.text.empty.description": "您尚未創建任何研究項目。",
+	"widget.home.research_projects.all.text.empty.description": "未能加載研究項目。",
+	"widget.home.research_projects.message.offline":"研究項目在離線時不可用。",
+	"widget.home.research_projects.message.logged_out":"您需要登錄才能訪問研究項目。",
+	"widget.home.research_projects.button.all.title": "查看全部",
+	"widget.home.research_projects.button.all.hint": "點擊查看所有研究項目",
 
 	"widget.home.campus_resources.label.campus_tools":"校园资源",
 	"widget.home.campus_resources.button.events.title":"活动",
@@ -2526,8 +2561,8 @@
 	"widget.home_create_poll.button.create_poll.label":"创建投票",
 	"widget.home_create_poll.button.login.label":"登录",
 
-	"widget.home.campus_guide_highlights.label.heading": "校園指南亮點",
-	"widget.home.campus_guide_highlights.text.empty.description": "沒有有效的校園指南亮點。",
+	"widget.home.campus_guide_highlights.label.heading": "校園安全資源",
+	"widget.home.campus_guide_highlights.text.empty.description": "沒有有效的校園安全資源。",
 	"widget.home.campus_guide_highlights.button.all.title": "查看全部",
 	"widget.home.campus_guide_highlights.button.all.hint": "點按即可查看所有亮點",
 
@@ -2598,7 +2633,8 @@
 	"widget.home.recent_polls.button.all.title": "查看全部",
 	"widget.home.recent_polls.button.all.hint": "點按即可查看所有民意調查",
 
-	"widget.home.inbox.text.title": "最近的通知",
+    "widget.home.inbox.text.all.title": "所有通知",
+    "widget.home.inbox.text.unread.title": "未讀通知",
 	"widget.home.inbox.text.empty.description": "通知現在可用。",
 	"widget.home.inbox.text.offline": "最近的通知在離線時不可用。",
 	"widget.home.inbox.text.logged_out": "您需要登錄才能訪問通知。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
@@ -2638,7 +2674,6 @@
 	"widget.home.favorites.title.news": "我的田徑新聞",
 	"widget.home.favorites.title.laundry": "我的洗衣店",
 	"widget.home.favorites.title.campus_guide": "我的校園指南",
-	"widget.home.favorites.title.inbox": "我的通知",
 
 	"widget.home.favorites.message.offline.events": "我的活動在離線時不可用。",
 	"widget.home.favorites.message.offline.dining": "我的用餐地點在離線時不可用。",
@@ -2646,7 +2681,6 @@
 	"widget.home.favorites.message.offline.news": "我的田徑新聞在離線時不可用。",
 	"widget.home.favorites.message.offline.laundry": "我的洗衣房在離線時不可用。",
 	"widget.home.favorites.message.offline.campus_guide": "我的校園指南在離線時不可用。",
-	"widget.home.favorites.message.offline.inbox": "我的通知在離線時不可用。",
 
 	"widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
@@ -2654,9 +2688,6 @@
 	"widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
-	"widget.home.favorites.message.empty.inbox": "See your most recent <a href='{{local_url}}'><b>Notifications</b></a> for quick access here.",
-
-	"widget.home.favorites.message.logged_out.inbox": "You need to be logged in with your NetID to access My Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 
 	"widget.home.favorites.all.title": "查看全部",
 	"widget.home.favorites.all.hint.events": "點按即可查看所有喜愛的活動",
@@ -2665,7 +2696,6 @@
 	"widget.home.favorites.all.hint.news": "點擊查看所有喜愛的田徑新聞",
 	"widget.home.favorites.all.hint.laundry": "點擊查看所有喜歡的洗衣店",
 	"widget.home.favorites.all.hint.campus_guide": "點擊查看所有喜歡的校園指南文章",
-	"widget.home.favorites.all.hint.inbox": "點按即可查看所有收藏通知",
 
 	"widget.home.wellness_resources.header.label": "我的健康資源",
 	"widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> so you can quickly find them here.",
@@ -2720,6 +2750,11 @@
     "widget.home.daily_illini.button.all.title": "查看全部",
     "widget.home.daily_illini.button.all.hint": "點擊查看每日伊利尼飼料",
     "widget.home.daily_illini.text.empty.description": "無法加載每日 illini Feed。",
+    
+    "widget.home.appointments.my.label.header.title": "我的麥金利約會",
+    "widget.home.appointments.my.text.empty.description": "您目前沒有在 {{app_title}} 應用中鏈接的即將到來的約會。",
+    "widget.home.appointments.my.button.all.title": "查看全部",
+    "widget.home.appointments.my.button.all": "點擊查看所有約會",
 
 	"widget.food_detail.label.loading.title":"正在加载菜单数据",
 	"widget.food_detail.label.loading.hint":"",

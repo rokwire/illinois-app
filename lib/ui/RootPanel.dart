@@ -20,6 +20,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
@@ -53,6 +54,7 @@ import 'package:illinois/ui/polls/PollBubblePromptPanel.dart';
 import 'package:illinois/ui/polls/PollBubbleResultPanel.dart';
 import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/ui/popups/alerts.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -94,9 +96,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyInboxNotification,
       FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
       FirebaseMessaging.notifyAppointmentNotification,
+      Alerts.notifyAlert,
       Events.notifyEventDetail,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
+      Appointments.notifyAppointmentDetail,
       Guide.notifyGuideDetail,
       Guide.notifyGuideList,
       Localization.notifyStringsUpdated,
@@ -138,6 +142,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == DeviceCalendar.notifyShowConsoleMessage) {
       _showConsoleMessage(param);
     }
+    else if (name == Alerts.notifyAlert) {
+      Alerts.handleNotification(context, param);
+    }
     else if (name == FirebaseMessaging.notifyForegroundMessage){
       _onFirebaseForegroundMessage(param);
     }
@@ -161,6 +168,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Groups.notifyGroupDetail) {
       _onGroupDetail(param);
+    }
+    else if (name == Appointments.notifyAppointmentDetail) {
+      _onAppointmentDetail(param);
     }
     else if (name == Guide.notifyGuideDetail) {
       _onGuideDetail(param);
@@ -457,6 +467,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     _presentGroupDetailPanel(groupId: groupId);
   }
 
+  Future<void> _onAppointmentDetail(Map<String, dynamic>? content) async {
+    String? appointmentId = (content != null) ? JsonUtils.stringValue(content['appointment_id']) : null;
+    if (StringUtils.isNotEmpty(appointmentId)) {
+      Navigator.of(context).push(CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointmentId: appointmentId)));
+    }
+  }
+
   Future<void> _onGuideDetail(Map<String, dynamic>? content) async {
     String? guideId = (content != null) ? JsonUtils.stringValue(content['guide_id']) : null;
     if (StringUtils.isNotEmpty(guideId)){
@@ -667,7 +684,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebaseInboxNotification() {
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.all);
   }
   
   void _onFirebaseCanvasAppDeepLinkNotification(dynamic param) {

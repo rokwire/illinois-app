@@ -25,7 +25,7 @@ import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -156,12 +156,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     return Container(
       height: 200,
       color: Styles().colors!.background,
-      child: InkWell(
-        onTap: (){_showModalImage(imageUrl);},
-        child:Stack(
+      child:Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)) : Container(),
+          StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child: ModalImageHolder(child: Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true))) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(
@@ -176,7 +174,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
           ),
         ],
       ),
-    ));
+    );
   }
 
   Widget _eventTitle(){
@@ -756,13 +754,6 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         }
       }
     }
-  }
-
-  //Modal Image Dialog
-  void _showModalImage(String? url){
-    Analytics().logSelect(target: "Image");
-    if (url != null) {
-      Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));    }
   }
 
   bool get isFavorite => Auth2().isFavorite(_event);

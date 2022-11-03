@@ -272,6 +272,8 @@
     "panel.browse.section.feeds.description": "Escuche WPGU 107.1 y obtenga lo último en las redes sociales de {{app_title}}.",
     "panel.browse.section.groups.title": "Grupos",
     "panel.browse.section.groups.description": "Comience su propio grupo o descubra un nuevo grupo para unirse.",
+    "panel.browse.section.research_projects.title": "Investigación en Illinois",
+    "panel.browse.section.research_projects.description": "Inicie sus propios proyectos de investigación o descubra otros proyectos para participar.",
     "panel.browse.section.laundry.title": "Ropa sucia",
     "panel.browse.section.laundry.description": "Vea las ubicaciones de lavandería y la disponibilidad de lavadoras/secadoras.",
     "panel.browse.section.my.title": "Mi",
@@ -313,7 +315,7 @@
     "panel.browse.entry.safer.my_mckinley.title": "MiMcKinley",
     "panel.browse.entry.safer.wellness_answer_center.title": "Centro de respuestas",
 
-    "panel.browse.entry.campus_guide.campus_highlights.title": "Puntos destacados de la guía del campus",
+    "panel.browse.entry.campus_guide.campus_highlights.title": "Recursos de seguridad del campus",
     "panel.browse.entry.campus_guide.campus_guide.title": "Guía Completa del Campus",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "Guía de mi campus",
 
@@ -328,7 +330,7 @@
     "panel.browse.entry.campus_resources.groups.title": "Grupos",
     "panel.browse.entry.campus_resources.quick_polls.title": "Encuestas rápidas",
     "panel.browse.entry.campus_resources.campus_guide.title": "Guía del Campus",
-    "panel.browse.entry.campus_resources.inbox.title": "Notificaciones",
+    "panel.browse.entry.campus_resources.all_notifications.title": "Notificaciones",
 
     "panel.browse.entry.dinings.dinings_all.title": "Comedor de la residencia",
     "panel.browse.entry.dinings.dinings_open.title": "Residence Hall Dining Abierto ahora",
@@ -342,6 +344,9 @@
 
     "panel.browse.entry.groups.all_groups.title": "Todos los grupos",
     "panel.browse.entry.groups.my_groups.title": "Mis grupos",
+
+    "panel.browse.entry.research_projects.open_research_projects.title": "Proyectos de Investigación Abierta",
+    "panel.browse.entry.research_projects.my_research_projects.title": "Mi participación en la investigación",
 
     "panel.browse.entry.laundry.laundry.title": "Ropa sucia",
     "panel.browse.entry.laundry.my_laundry.title": "Mi colada",
@@ -358,9 +363,10 @@
     "panel.browse.entry.my.my_inbox.title": "Mis Notificaciones",
     "panel.browse.entry.my.my_campus_guide.title": "Guía de mi campus",
     "panel.browse.entry.my.wellness_resources.title": "Mis recursos de bienestar",
+    "panel.browse.entry.my.my_appointments.title": "Mis citas de McKinley",
 
-    "panel.browse.entry.inbox.recent_inbox.title": "Notificaciones recientes",
-    "panel.browse.entry.inbox.my_inbox.title": "Mis Notificaciones",
+    "panel.browse.entry.inbox.all_notifications.title": "Todas las notificaciones",
+    "panel.browse.entry.inbox.unread_notifications.title": "Notificaciones no leídas",
 
     "panel.browse.entry.polls.create_poll.title": "Crear una encuesta",
     "panel.browse.entry.polls.recent_polls.title": "Ver encuestas",
@@ -380,6 +386,7 @@
 
     "panel.browse.entry.wellness.wellness_rings.title": "Anillos",
     "panel.browse.entry.wellness.wellness_todo.title": "Lista de quehaceres",
+    "panel.browse.entry.wellness.my_appointments.title": "Mis citas de McKinley",
     "panel.browse.entry.wellness.wellness_tips.title": "Consejo diario",
     "panel.browse.entry.wellness.wellness_resources.title": "Resources",
 
@@ -858,10 +865,15 @@
     "panel.onboarding2.email.button.link.cancel.hint": "",
     "panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
 
-    "panel.onboarding2.research.questionnaire.prompt": "Would you like to participate in Research?",
-    "panel.onboarding2.research.questionnaire.acknowledgement": "Thank you for participating in the {{QuestionnaireName}}.",
+    "panel.onboarding2.research.questionnaire.prompt.introduction": "Illinois is one of the world’s great research universities. Become a citizen scientist and take part in the discovery by participating in research at Illinois.",
+    "panel.onboarding2.research.questionnaire.prompt.question": "Would you like to get invitations to participate in research studies via the Illinois app?",
+    "panel.onboarding2.research.questionnaire.prompt.explanation": " Many studies offer incentives.",
+    "panel.onboarding2.research.questionnaire.acknowledgement.title": "Thank you! We will notify you when you become eligible for any upcoming research projects.",
+    "panel.onboarding2.research.questionnaire.acknowledgement.explanation": "View current studies that match your completed Research Interest Form under Browse > Research at Illinois. Opt in and become part of the study\u2019s recruitment pool.",
     "panel.onboarding2.research.questionnaire.button.submit.title": "Submit",
     "panel.onboarding2.research.questionnaire.button.submit.hint": "",
+    "panel.onboarding2.research.questionnaire.button.cancel.title": "Cancel",
+    "panel.onboarding2.research.questionnaire.button.cancel.hint": "",
     "panel.onboarding2.research.questionnaire.error.select.single": "Please choose at least {{MinQuestionAnswers}} aswer of \"{{QuestionTitle}}\".",
     "panel.onboarding2.research.questionnaire.error.select.multi": "Please choose at least {{MinQuestionAnswers}} aswers of \"{{QuestionTitle}}\".",
     "panel.onboarding2.research.questionnaire.error.load": "Failed to load research questionnaire.",
@@ -945,7 +957,7 @@
     "panel.explore.item.unknown.name":"Explora",
     "panel.explore.map.popup.title.format":"%d %s",
 
-    "panel.explore.missing.appointments.msg":"Actualmente no tiene próximas citas en persona vinculadas dentro de la aplicación de Illinois.",
+    "panel.explore.missing.appointments.msg":"Actualmente no tiene próximas citas en persona vinculadas dentro de la aplicación {{app_title}}.",
 
     "panel.explore_list.header.title":"Explorar",
 
@@ -1129,7 +1141,6 @@
     "panel.saved.label.news": "My Athletics News",
     "panel.saved.label.laundry": "My Laundry",
     "panel.saved.label.campus_guide": "My Campus Guide",
-    "panel.saved.label.inbox": "My Notifications",
 
     "panel.saved.notifications.label": "¡No te pierdas un evento! Reciba recordatorios de los próximos eventos!",
     "panel.saved.notifications.enable.label": "Permitir notificaciones",
@@ -1309,7 +1320,9 @@
     "panel.settings.profile.content.privacy.label": "Configuración de privacidad de mi aplicación",
     "panel.settings.profile.header.profile.label": "Perfil",
 
-    "panel.settings.notifications.content.inbox.label": "Mis Notificaciones",
+    "panel.settings.notifications.content.notifications.all.label": "Todas las notificaciones",
+    "panel.settings.notifications.content.notifications.muted.label": "Notificaciones silenciadas",
+    "panel.settings.notifications.content.notifications.unread.label": "Notificaciones no leídas",
     "panel.settings.notifications.content.preferences.label": "Mis preferencias de notificación",
     "panel.settings.notifications.header.inbox.label": "Notificaciones",
 
@@ -1324,9 +1337,9 @@
     "panel.settings.home.calendar.ada.title": "Necesidades de accesibilidad",
     "panel.settings.home.calendar.ada.toggle.title": "Mostrar entradas de edificios accesibles según ADA para Mis cursos",
     "panel.settings.home.calendar.research.toggle.title": "Participar en la investigación",
-    "panel.settings.home.calendar.research.title": "Investigar",
-    "panel.settings.home.calendar.research.questionnaire.title": "Cuestionario de investigación",
-    "panel.settings.home.calendar.research.prompt.title": "Ha decidido no participar más en la investigación y borrará toda la información de mi cuestionario de investigación. ¿Quieres dejar de participar?",
+    "panel.settings.home.calendar.research.title": "Investigación en Illinois",
+    "panel.settings.home.calendar.research.questionnaire.title": "Formulario de interés de investigación",
+    "panel.settings.home.calendar.research.prompt.title": "Confirme que ya no desea participar en Research at Illinois. Toda la información completada en su cuestionario será eliminada.",
 
     "panel.settings.privacy_center.label.title":"Centro de privacidad",
     "panel.settings.privacy_center.label.description":"Personalice sus preferencias de privacidad y datos.",
@@ -1436,13 +1449,13 @@
     "widget.settings.dialog.button.cancel.title": "Cancelar",
 
     "panel.settings.notifications.label.desctiption":"No se pierda ningún evento o actualización del campus.",
-    "panel.settings.notifications.label.notifications":"Notificaciones",
+    "panel.settings.notifications.label.notifications":"Notificaciones push",
     "panel.settings.notifications.label.info":"Para recibir notificaciones, habilite en la configuración de su dispositivo.",
     "panel.settings.notifications.appointments.new":"Nueva cita de MyMcKinley",
     "panel.settings.notifications.appointments.reminders":"Recordatorios de citas",
     "panel.settings.notifications.appointments.reminders.morning_of.label":"Mañana de (8:00 AM)",
     "panel.settings.notifications.appointments.reminders.night_before.label":"Noche anterior (9:00 p. m.)",
-    "panel.settings.notifications.appointments.description.label":"La configuración del recordatorio de citas de MyMcKinley solo se aplica dentro de la aplicación de Illinois.",
+    "panel.settings.notifications.appointments.description.label":"La configuración del recordatorio de citas de MyMcKinley solo se aplica dentro de la aplicación {{app_title}}.",
     "panel.settings.notifications.reminders":"Recordatorios de eventos",
     "panel.settings.notifications.athletics_updates":"Actualizaciones de atletismo",
     "panel.settings.notifications.athletics_updates.description.label": "Basado en tus deportes favoritos",
@@ -1583,6 +1596,7 @@
     "panel.profile_info.logout.no":"No",
     "panel.profile_info.picture.upload.failed.msg":"No se pudo cargar la imagen de perfil. Por favor, inténtelo de nuevo más tarde.",
     "panel.profile_info.picture.delete.failed.msg":"Error al eliminar la foto de perfil. Por favor, inténtelo de nuevo más tarde.",
+    "panel.profile_info.picture.delete.confirmation.msg": "Are you sure you want to remove this profile picture?",
 
     "panel.create_poll.header.title": "Crear una encuesta rápida",
     "panel.create_poll.description": "Las personas pueden votar a través de la aplicación de {{app_title}} pidiéndole el número de encuesta de 4 dígitos.",
@@ -1729,6 +1743,7 @@
     "panel.wellness.section.rings.label": "Anillos de bienestar diarios",
     "panel.wellness.section.todo.label": "Lista de quehaceres",
     "panel.wellness.section.appointments.label": "Citas MyMcKinley",
+    "panel.wellness.section.symptom_screener.label": "Illinois Health Screener",
     "panel.wellness.section.resources.label": "Recursos de bienestar",
     "panel.wellness.section.podcast.label": "Podcast saludable de Illini",
     "panel.wellness.section.struggling.label": "Estoy luchando",
@@ -1805,10 +1820,11 @@
     "panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
 
     "panel.wellness.appointments.home.reschedule_appointment.label": "¿Necesitas cancelar o reprogramar?",
-    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
+    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "Para cancelar una cita, vaya a <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> o llame a (<u>{{mckinley_phone}}</u>) durante el horario comercial. Para evitar el cargo de una cita perdida, debe cancelar su cita al menos dos horas antes de la hora de la cita programada.",
     "panel.wellness.appointments.home.upcoming.list.empty.msg": "Actualmente no tiene citas próximas vinculadas dentro de la aplicación de Illinois.",
     "panel.wellness.appointments.home.past.list.empty.msg": "No tiene citas pasadas recientes vinculadas dentro de la aplicación de Illinois.",
     "panel.wellness.appointments.home.past_appointments.header.label": "Citas pasadas recientes",
+    "panel.wellness.appointments.home.past_appointments.footer.description": "<a href='{{mckinley url}}'>Visite {{mckinley_url_label}} para ver un historial completo de citas anteriores.</a>&nbsp;<img src='asset:{{external_links icon}}' alt= ''/>",
 
     "panel.wellness.home.header.title": "Bienestar",
     "panel.wellness.home.eight_dimensions.header.title": "8 dimensiones de bienestar",
@@ -2249,6 +2265,16 @@
     "panel.group_polls.empty.description": "You will see the polls for your group here.",
     "panel.group_polls.text.error": "Error",
 
+    "panel.research_projects.home.header_bar.title": "Research at Illinois",
+    "panel.research_projects.home.content_type.open.title": "Open Research Projects",
+    "panel.research_projects.home.content_type.my.title": "My Research Participation",
+    "panel.research_projects.home.button.create.title": "Create",
+    "panel.research_projects.home.button.search.title": "Search",
+	"panel.research_projects.home.status.error.open.text": "Failed to load open research projects.",
+	"panel.research_projects.home.status.error.my.text": "Failed to load your research projects.",
+	"panel.research_projects.home.status.empty.open.text": "There are no opened research projects at the moment.",
+	"panel.research_projects.home.status.empty.my.text": "You have not created and do not participate in any research projects.",
+
     "panel.guide_categories.label.heading": "Campus Guide",
     "panel.guide_categories.label.content.empty": "Contenido de la guía vacía",
 
@@ -2262,8 +2288,8 @@
     "panel.inbox.label.time.last_month": "El mes pasado",
 
     "panel.guide_list.label.highlights.heading": "Campus Guide",
-    "panel.guide_list.label.highlights.empty": "No hay Destacados de la Guía del Campus activos.",
-    "panel.guide_list.label.highlights.section": "Reflejos",
+    "panel.guide_list.label.highlights.empty": "No hay recursos de seguridad en el campus activos.",
+    "panel.guide_list.label.highlights.section": "Recursos de seguridad",
     "panel.guide_list.label.campus_reminders.section": "Recordatorios del campus",
     "panel.guide_list.label.campus_reminders.empty": "No hay recordatorios de campus activos.",
     "panel.guide_list.label.content.empty": "Contenido de la guía vacía",
@@ -2410,7 +2436,7 @@
 
     "panel.appointment.detail.meeting.id.label": "Identificación de la reunión:",
     "panel.appointment.detail.meeting.passcode.label": "Código de acceso:",
-    "panel.appointment.detail.cancel.description": "Para cancelar una cita, vaya a MyMcKinley.illinois.edu o llame al (217-333-2700) durante el horario comercial. Para evitar el cargo de una cita perdida, debe cancelar su cita al menos dos horas antes de la hora de la cita programada.",
+    "panel.appointment.detail.cancel.description": "Para cancelar una cita, vaya a <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> o llame a (<u>{{mckinley_phone}}</u>) durante el horario comercial. Para evitar el cargo de una cita perdida, debe cancelar su cita al menos dos horas antes de la hora de la cita programada.",
     "panel.appointment.detail.error.msg": "No se pudieron cargar los datos de la cita.",
 
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
@@ -2489,8 +2515,17 @@
     "widget.home.groups.all.label.header.title":"Todos los grupos",
 	"widget.home.groups.my.text.empty.description": "Aún no has creado ningún grupo.",
 	"widget.home.groups.all.text.empty.description": "No se pudieron cargar los grupos.",
-    "widget.home.my_groups.button.all.title":"Ver todo",
-    "widget.home.my_groups.button.all.hint":"Toca para ver todos los grupos",
+    "widget.home.groups.button.all.title":"Ver todo",
+    "widget.home.groups.button.all.hint":"Toca para ver todos los grupos",
+
+    "widget.home.research_projects.my.label.header.title":"Mis Proyectos de Investigación",
+    "widget.home.research_projects.open.label.header.title":"Proyectos de Investigación Abierta",
+	"widget.home.research_projects.my.text.empty.description": "Aún no ha creado ningún proyecto de investigación.",
+	"widget.home.research_projects.all.text.empty.description": "No se pudieron cargar los proyectos de investigación.",
+    "widget.home.research_projects.message.offline":"Los proyectos de investigación no están disponibles sin conexión.",
+    "widget.home.research_projects.message.logged_out":"Debe iniciar sesión para acceder a Proyectos de Investigación.",
+    "widget.home.research_projects.button.all.title": "Ver todo",
+    "widget.home.research_projects.button.all.hint": "Toque para ver todos los proyectos de investigación",
 
     "widget.home.campus_resources.label.campus_tools":"Recursos del campus",
     "widget.home.campus_resources.button.events.title":"Eventos",
@@ -2527,8 +2562,8 @@
     "widget.home_create_poll.button.create_poll.label":"Crea una encuesta",
     "widget.home_create_poll.button.login.label":"Iniciar sesión",
 
-    "widget.home.campus_guide_highlights.label.heading": "Puntos destacados de la guía del campus",
-    "widget.home.campus_guide_highlights.text.empty.description": "No hay Destacados de la Guía del Campus activos.",
+    "widget.home.campus_guide_highlights.label.heading": "Recursos de seguridad del campus",
+    "widget.home.campus_guide_highlights.text.empty.description": "No hay recursos de seguridad en el campus activos.",
     "widget.home.campus_guide_highlights.button.all.title": "Ver todo",
     "widget.home.campus_guide_highlights.button.all.hint": "Toca para ver todos los aspectos destacados",
 
@@ -2599,7 +2634,8 @@
     "widget.home.recent_polls.button.all.title": "Ver todo",
     "widget.home.recent_polls.button.all.hint": "Toca para ver todas las encuestas",
 
-    "widget.home.inbox.text.title": "Notificaciones recientes",
+    "widget.home.inbox.text.all.title": "Todas las notificaciones",
+    "widget.home.inbox.text.unread.title": "Notificaciones no leídas",
     "widget.home.inbox.text.empty.description": "Las notificaciones están disponibles ahora mismo.",
     "widget.home.inbox.text.offline": "Las notificaciones recientes no están disponibles sin conexión.",
     "widget.home.inbox.text.logged_out": "Debe iniciar sesión para acceder a las notificaciones. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
@@ -2639,7 +2675,6 @@
     "widget.home.favorites.title.news": "Mis noticias de atletismo",
     "widget.home.favorites.title.laundry": "Mi Colada",
     "widget.home.favorites.title.campus_guide": "Guía de Mi Campus",
-    "widget.home.favorites.title.inbox": "Mis Notificaciones",
 
     "widget.home.favorites.message.offline.events": "Mis Eventos no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.dining": "Mis ubicaciones para cenar no están disponibles sin conexión.",
@@ -2647,7 +2682,6 @@
     "widget.home.favorites.message.offline.news": "My Athletics News no está disponible sin conexión.",
     "widget.home.favorites.message.offline.laundry": "Mi Lavandería no está disponible sin conexión.",
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide no está disponible sin conexión.",
-    "widget.home.favorites.message.offline.inbox": "Mis Notificaciones no están disponibles sin conexión.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
     "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
@@ -2655,9 +2689,6 @@
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
     "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here.",
     "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
-    "widget.home.favorites.message.empty.inbox": "See your most recent <a href='{{local_url}}'><b>Notifications</b></a> for quick access here.",
-
-    "widget.home.favorites.message.logged_out.inbox": "You need to be logged in with your NetID to access My Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 
     "widget.home.favorites.all.title": "Ver todo",
     "widget.home.favorites.all.hint.events": "Toque para ver todos los eventos favoritos",
@@ -2666,7 +2697,6 @@
     "widget.home.favorites.all.hint.news": "Toque para ver todas las noticias de atletismo favoritas",
     "widget.home.favorites.all.hint.laundry": "Toca para ver todas las lavanderías favoritas",
     "widget.home.favorites.all.hint.campus_guide": "Toque para ver todos los artículos favoritos de la guía del campus",
-    "widget.home.favorites.all.hint.inbox": "Toca para ver todas las notificaciones favoritas",
 
 	"widget.home.wellness_resources.header.label": "Mis recursos de bienestar",
     "widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> so you can quickly find them here.",
@@ -2721,6 +2751,11 @@
     "widget.home.daily_illini.button.all.title": "Ver todo",
     "widget.home.daily_illini.button.all.hint": "Toque para ver la alimentación diaria de illini",
     "widget.home.daily_illini.text.empty.description": "No se pudo cargar la alimentación diaria de illini.",
+    
+    "widget.home.appointments.my.label.header.title": "Mis citas de McKinley",
+    "widget.home.appointments.my.text.empty.description": "Actualmente no tiene citas próximas vinculadas dentro de la aplicación {{app_title}}.",
+    "widget.home.appointments.my.button.all.title": "Ver todo",
+    "widget.home.appointments.my.button.all": "Toque para ver todas las citas",
 
     "widget.food_detail.label.loading.title": "Cargando datos del menú",
     "widget.food_detail.label.loading.hint": "",

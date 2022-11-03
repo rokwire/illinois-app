@@ -188,8 +188,5 @@ extension FavoriteExt on Favorite {
     else if (lowerCaseKey == GuideFavorite.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
     }
-    else if (lowerCaseKey == InboxMessage.favoriteKeyName.toLowerCase()) {
-      SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
-    }
   }
 }

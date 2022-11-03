@@ -89,7 +89,7 @@ class MapController {
       }
     }
     var options = {
-      "LocationThresoldDistance": Storage().debugMapThresholdDistance ?? mapThresoldDistance
+      "LocationThresoldDistance": Storage().debugMapThresholdDistance // ?? mapThresoldDistance
     };
     return _channel.invokeMethod('placePOIs', { "explores": jsonData, "options": options});
   }

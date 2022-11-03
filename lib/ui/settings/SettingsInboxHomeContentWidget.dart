@@ -3,11 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -17,10 +15,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/ext/Favorite.dart';
 
 class SettingsInboxHomeContentWidget extends StatefulWidget {
-  SettingsInboxHomeContentWidget();
+  final bool? muted;
+  final bool? unread;
+  SettingsInboxHomeContentWidget({Key? key, this.muted, this.unread}) : super(key: key);
 
   _SettingsInboxHomeContentWidgetState createState() => _SettingsInboxHomeContentWidgetState();
 }
@@ -615,7 +614,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   Future<void> _onPullToRefresh() async {
     int limit = max(_messages.length, _messagesPageSize);
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    List<InboxMessage>? messages = await Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
+    List<InboxMessage>? messages = await Inbox().loadMessages(muted: widget.muted, unread: widget.unread, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
     if (mounted) {
       setState(() {
         if (messages != null) {
@@ -647,7 +646,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     });
 
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox().loadMessages(muted: widget.muted, unread: widget.unread, offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -671,7 +670,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     });
 
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox().loadMessages(muted: widget.muted, unread: widget.unread, offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -692,7 +691,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
 
     int limit = max(messagesCount ?? _messages.length, _messagesPageSize);
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox().loadMessages(muted: widget.muted, unread: widget.unread, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -839,16 +838,12 @@ class InboxMessageCard extends StatefulWidget {
 
 class _InboxMessageCardState extends State<InboxMessageCard> implements NotificationsListener {
 
-  late bool _isFavorite;
-
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
     ]);
-    _isFavorite = Auth2().isFavorite(widget.message);
   }
 
   @override
@@ -861,12 +856,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setStateIfMounted(() {
-        _isFavorite = Auth2().isFavorite(widget.message);
-      });
-    }
-    else if (name == FlexUI.notifyChanged) {
+    if (name == FlexUI.notifyChanged) {
       setStateIfMounted(() {
       });
     }
@@ -875,7 +865,6 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
   @override
   Widget build(BuildContext context) {
     double leftPadding = (widget.selected != null) ? 12 : 16;
-    Image? favoriteStarIcon = widget.message?.favoriteStarIcon(selected: _isFavorite);
     return Container(
         decoration: BoxDecoration(
           color: Styles().colors!.white,
@@ -928,29 +917,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
             ),
           ),
           Container(color: Styles().colors!.fillColorSecondary, height: 4),
-          Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
-            Align(alignment: Alignment.topRight, child:
-            Semantics(
-              label: _isFavorite
-                  ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
-                  : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-              hint: _isFavorite
-                  ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
-                  : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-              button: true,
-              child:
-              GestureDetector(onTap: _onTapFavorite, child:
-                Container(padding: EdgeInsets.only(left: 9, right: 9, top: 13, bottom: 9), child:
-                  favoriteStarIcon
-            ),)),),),
         ],)
     );
-  }
-
-  void _onTapFavorite() {
-    Analytics().logSelect(target: "Favorite: ${widget.message!.subject}");
-    setState(() {
-      Auth2().prefs?.toggleFavorite(widget.message);
-    });
   }
 }
