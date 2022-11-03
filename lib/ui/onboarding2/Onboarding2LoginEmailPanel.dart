@@ -16,6 +16,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
@@ -39,7 +40,7 @@ class Onboarding2LoginEmailPanel extends StatefulWidget with OnboardingPanel {
   _Onboarding2LoginEmailPanelState createState() => _Onboarding2LoginEmailPanelState();
 }
 
-class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel> {
+class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel> implements Onboarding2ProgressableState {
 
   static final Color _successColor = Colors.green.shade800;
   static final Color _errorColor = Colors.red.shade700;
@@ -508,13 +509,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
         });
         setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.invalid.text", "Incorrect password."));
       }
-      else if (widget.onboardingContext != null) {
-        Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
-        if(onSuccess!=null){
-          onSuccess();
-        } else {
-          Onboarding().next(context, widget);
-        }
+      else {
+        _onContinue();
       }
     }
   }
@@ -534,13 +530,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                 setErrorMsg(Localization().getStringEx("panel.onboarding2.email.link.cancel.text", "Failed to remove email address from your account."));
               });
             }
-            else if (widget.onboardingContext != null) {
-              Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
-              if(onSuccess!=null){
-                onSuccess();
-              } else {
-                Onboarding().next(context, widget);
-              }
+            else {
+              _onContinue();
             }
           }
         });
@@ -548,14 +539,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       }
     }
 
-    if (widget.onboardingContext != null) {
-      Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
-      if(onSuccess!=null){
-        onSuccess();
-      } else {
-        Onboarding().next(context, widget);
-      }
-    }
+    _onContinue();
   }
 
   void setErrorMsg(String? msg, { Color? color}) {
@@ -578,5 +562,34 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
     setState(() {
       _validationErrorText = null;
     });
+  }
+
+  void _onContinue() {
+    // Hook this panels to Onboarding2
+    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
+    Function? onContinueEx = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueActionEx"] : null; 
+    if (onContinueEx != null) {
+      onContinueEx(this);
+    }
+    else if (onContinue != null) {
+      onContinue();
+    }
+    else {
+      Onboarding().next(context, widget);
+    }
+  }
+
+  // Onboarding2ProgressableState
+
+  @override
+  bool get onboarding2Progress => _isLoading;
+  
+  @override
+  set onboarding2Progress(bool progress) {
+    if (mounted) {
+      setState(() {
+        _isLoading = progress;
+      });
+    }
   }
 }

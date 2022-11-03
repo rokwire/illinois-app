@@ -33,20 +33,25 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
 
   @override
   void initState() {
-    _loading = true;
+    dynamic questionnaire = (widget.onboardingContext != null) ? widget.onboardingContext!['questionanire'] : null;
+    if (questionnaire is Questionnaire) {
+      _questionnaire = questionnaire;
+      _selection.addAll(Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire.id) ?? <String, LinkedHashSet<String>>{});
+    }
+    else {
+      _loading = true;
+      Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
+        if (mounted) {
+          setState(() {
+            _loading = false;
+            _questionnaire = questionnaire;
+            _selection.addAll(Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id) ?? <String, LinkedHashSet<String>>{});
+          });
+        }
+      });
+    }
 
-    Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
-      if (mounted) {
-        setState(() {
-          _loading = false;
-          _questionnaire = questionnaire;
-          Map<String, LinkedHashSet<String>>? answers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
-          if (answers != null) {
-            _selection.addAll(answers);
-          }
-        });
-      }
-    });
+
     super.initState();
   }
 
@@ -231,13 +236,16 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     LinkedHashSet<String>? selectedAnswers = _selection[question.id];
     bool selected = selectedAnswers?.contains(answer.id) ?? false;
     String title = _questionnaireString(answer.title);
+    String imageAsset = (question.maxAnswers == 1) ?
+      (selected ? "images/checkbox-radio-selected.png" : "images/checkbox-radio-unselected.png") :
+      (selected ? "images/selected-checkbox.png" : "images/deselected-checkbox.png");
     return InkWell(onTap: () => _onAnswer(answer, question: question), child:
       Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
         Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: selected ? Styles().colors!.fillColorPrimary! : Styles().colors!.white!, width: 1)), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Row(children: [
               Padding(padding: EdgeInsets.only(right: 12), child:
-                Image.asset(selected ? "images/checkbox-radio-selected.png" : "images/checkbox-radio-unselected.png"),
+                Image.asset(imageAsset),
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
