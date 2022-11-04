@@ -13,7 +13,7 @@
 		{
 			"label": "cleanupAppResources",
 			"type": "shell",
-			"command": "./scripts/cleanup_app_resources.sh",
+			"command": ".\\scripts\\cleanup_app_resources.bat",
 			"group": "build",
 			"presentation": {
         "reveal": "never"

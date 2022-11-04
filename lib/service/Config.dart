@@ -38,6 +38,9 @@ class Config extends rokwire.Config {
 
   factory Config({rokwire.ConfigEnvironment? defaultEnvironment}) => ((rokwire.Config.instance is Config) ? (rokwire.Config.instance as Config) : (rokwire.Config.instance = Config.internal(defaultEnvironment: defaultEnvironment)));
 
+  @override
+  String get quickPollsUrl => 'http://10.0.0.189:85/polls/api';
+
   // Getters: compound entries
 
   Map<String, dynamic> get thirdPartyServices  => JsonUtils.mapValue(content['thirdPartyServices']) ?? {};
