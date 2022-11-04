@@ -128,7 +128,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
     return HomeSlantWidget(
       title: Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Symptom Screener'),
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'campus-tools', //TODO: Change icon
       childPadding: HomeSlantWidget.defaultChildPadding,
       child: Card(
         child: Padding(
@@ -142,7 +142,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   Widget _buildHistorySectionWidget() {
     return HomeSlantWidget(
       title: Localization().getStringEx('panel.wellness.sections.health_screener.label.history.title', 'History'),
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true),
+      titleIconKey: 'campus-tools', //TODO: Change icon
       childPadding: HomeSlantWidget.defaultChildPadding,
       child: Column(children: [
         _buildFiltersWidget(),

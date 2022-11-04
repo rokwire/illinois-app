@@ -415,9 +415,10 @@
     "radio": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
     "arrow-up": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 10},
     "arrow-down": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 10},
-    "circle-xmark": {"src": "0xf057", "type": "fa.icon", "size": 18.0, "color": "surface"},
 
     "close-white": {"src": "images/close-white.png", "type": "flutter.asset", "color": "surface", "size": 24},
-    "more-white": {"src": "images/groups-more-inactive.png", "type": "flutter.asset", "color": "surface", "size": 24}
+    "more-white": {"src": "images/groups-more-inactive.png", "type": "flutter.asset", "color": "surface", "size": 24},
+
+    "retry-gray": {"src": "0xf2f9", "type": "fa.icon", "weight": "solid", "size": 18.0, "color": "mediumGray"}
   }
 }

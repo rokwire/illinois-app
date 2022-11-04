@@ -106,7 +106,7 @@ class _HomeAppointmentsWidgetState extends State<HomeAppointmentsWidget> impleme
     return HomeSlantWidget(
         favoriteId: widget.favoriteId,
         title: HomeAppointmentsWidget.title,
-        titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true),
+        titleIconKey: 'campus-tools', // TODO: Change icon
         child: _haveAppointments ? _buildContent() : _buildEmpty());
   }
 
