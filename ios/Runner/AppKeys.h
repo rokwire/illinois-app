@@ -29,5 +29,6 @@ extern float const kMarkerThresold1Zoom;
 extern float const kMarkerThresold2Zoom;
 extern float const kMarker2Thresold1Zoom;
 extern float const kMarker2Thresold2Zoom;
+extern float const kNoPoiThresoldZoom;
 
 extern float const kThresoldZoomUpdateStep;

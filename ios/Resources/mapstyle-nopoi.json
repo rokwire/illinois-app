@@ -1,0 +1,16 @@
+[
+  {
+    "featureType": "all",
+    "elementType": "labels",
+    "stylers": [{
+    	"visibility": "off"
+		}]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "all",
+    "stylers": [{
+    	"visibility": "off"
+		}]
+  }
+]

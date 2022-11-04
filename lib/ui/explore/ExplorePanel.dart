@@ -1667,7 +1667,9 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _placeExploresOnMap() {
     if (_nativeMapController != null)   {
-      _nativeMapController!.placePOIs(_displayExplores);
+      _nativeMapController!.placePOIs(_displayExplores, options: <String, dynamic>{
+        MapController.HideBuildingLabelsParams : (_selectedItem == ExploreItem.Buildings) ? true : null
+      });
     }
   }
 
