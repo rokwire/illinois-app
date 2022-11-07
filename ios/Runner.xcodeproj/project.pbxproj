@@ -458,6 +458,7 @@
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
 				B6BDCD39242CCF5F002F7364 /* Localizable.strings */,
+				268115402915449500945B3B /* mapstyle-nopoi.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -495,7 +496,6 @@
 				26AAA20028CA28B900BE694B /* Runner */,
 				26AAA20128CA2A5300BE694B /* Illinois */,
 				26E582A028ED971500EFE29A /* Wisconsin */,
-				268115402915449500945B3B /* mapstyle-nopoi.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
