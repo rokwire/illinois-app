@@ -58,7 +58,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   GroupsContentType? _selectedContentType;
   bool _contentTypesVisible = false;
 
-  List<Group>? _visibleAllGroups;
+  List<Group>? _allGroups;
   List<Group>? _userGroups;
 
   String? _selectedCategory;
@@ -108,7 +108,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   // Data Loading
 
   void _reloadGroupsContent() {
-    _visibleAllGroups = null;
+    _allGroups = null;
     _loadUserGroups();
     _loadAllGroups();
   }
@@ -133,33 +133,22 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       return;
     }
     _increaseGroupsLoadingProgress();
-    Groups().loadGroups(contentType: GroupsContentType.all).then((List<Group>? groups) {
-      int resultsCount = groups?.length ?? 0;
-      if (resultsCount > 0) {
-        if (_visibleAllGroups == null) {
-          _visibleAllGroups = <Group>[];
-        }
-        _visibleAllGroups!.addAll(groups!);
-      }
+    Groups().loadGroups(
+      contentType: GroupsContentType.all,
+      category: (_selectedCategory != _allCategoriesValue) ? _selectedCategory : null,
+      tags: (_selectedTagFilter == _TagFilter.my) ? Auth2().prefs?.positiveTags : null,
+    ).then((List<Group>? groups) {
+      _allGroups = groups;
       _decreaseGroupsLoadingProgress();
       _checkGroupsContentLoaded();
     });
   }
 
   void _checkGroupsContentLoaded() {
-    if (_isGroupsLoading) {
-      return;
+    if (!_isGroupsLoading) {
+      _selectedContentType ??= (CollectionUtils.isNotEmpty(_userGroups) ? GroupsContentType.my : GroupsContentType.all);
+      _updateState();
     }
-    // if all groups are empty and user groups are not then set all groups to be user groups. 
-    // This means that device failed to load all groups for some reason - connectivity issues etc.
-    if (CollectionUtils.isEmpty(_visibleAllGroups) && CollectionUtils.isNotEmpty(_userGroups)) {
-      _visibleAllGroups = _userGroups;
-    }
-    if (_selectedContentType != null) {
-      return;
-    }
-    _selectedContentType = CollectionUtils.isNotEmpty(_userGroups) ? GroupsContentType.my : GroupsContentType.all;
-    _updateState();
   }
 
   Future<void> _loadFilters() async{
@@ -209,27 +198,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         }
       }
     }
-  }
-
-  List<Group>? get _filteredAllGroupsContent {
-    if (CollectionUtils.isEmpty(_visibleAllGroups)) {
-      return _visibleAllGroups;
-    }
-    // Filter By Category
-    String? selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
-    List<Group>? filteredGroups = _visibleAllGroups;
-    if (StringUtils.isNotEmpty(selectedCategory)) {
-      filteredGroups = _visibleAllGroups!.where((group) => (selectedCategory == group.category)).toList();
-    }
-    // Filter by User Tags
-    if (_selectedTagFilter == _TagFilter.my) {
-      Set<String>? userTags = Auth2().prefs?.positiveTags;
-      if (CollectionUtils.isNotEmpty(userTags) && CollectionUtils.isNotEmpty(filteredGroups)) {
-        filteredGroups = filteredGroups!.where((group) => group.tags?.any((tag) => userTags!.contains(tag)) ?? false).toList();
-      }
-    }
-
-    return filteredGroups;
   }
 
   void _increaseGroupsLoadingProgress() {
@@ -588,10 +556,9 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildAllGroupsContent(){
-    List<Group>? filteredGroups = CollectionUtils.isNotEmpty(_visibleAllGroups) ? _filteredAllGroupsContent : null;
-    if(CollectionUtils.isNotEmpty(filteredGroups)){
+    if(CollectionUtils.isNotEmpty(_allGroups)){
       List<Widget> widgets = [];
-      for(Group group in filteredGroups!) {
+      for(Group group in _allGroups!) {
         if (group.isVisible) {
           widgets.add(Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -603,10 +570,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
     else{
       String text;
-      if (_visibleAllGroups == null) {
+      if (_allGroups == null) {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.failed", "Failed to load groups");
       }
-      else if (_visibleAllGroups!.isEmpty) {
+      else if (_allGroups!.isEmpty) {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.empty", "There are no groups created yet");
       }
       else {
@@ -663,6 +630,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     setState(() {
       _activeFilterType = _FilterType.none;
     });
+    _loadAllGroups();
   }
 
   void _onSelectAllGroups(){
