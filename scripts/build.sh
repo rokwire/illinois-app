@@ -12,7 +12,14 @@ help() {
     echo ""
 }
 
+cleanupResources(){
+    echo "Calling cleanup resource script"
+    ./scripts/cleanup_app_resources.sh
+    echo "Cleanup resource script finished"
+}
+
 help
+cleanupResources
 
 CURRENT_DIR=$(PWD)
 FILE_PUBSPEC=$(cat pubspec.yaml)
