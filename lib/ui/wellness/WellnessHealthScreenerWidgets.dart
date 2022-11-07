@@ -46,10 +46,10 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   //bool _loading = false;
 
   List<String> _timeframes = ["Today", "This Week", "This Month", "All Time"];
-  List<String> _surveyTypes = ["All", "Health Screener", "Symptoms", "Illness Screener"];
+  // List<String> _surveyTypes = ["All", "Health Screener", "Symptoms", "Illness Screener"];
 
   String? _selectedTimeframe = "This Week";
-  String? _selectedSurveyType = "All";
+  String? _selectedSurveyType = "Health Screener";
 
   List<SurveyResponse> _responses = [];
 
@@ -186,21 +186,21 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
                 ),
               ],
             ),
-            Row(
-              children: [
-                Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.type.title", "Type:"), style: Styles().textStyles?.getTextStyle('widget.title.regular'),),
-                Container(width: 8.0),
-                Expanded(
-                  child: DropdownButton(value: _selectedSurveyType, style: Styles().textStyles?.getTextStyle('widget.detail.regular'),
-                      items: _getDropDownItems(_surveyTypes), isExpanded: true, onChanged: (String? selected) {
-                    setState(() {
-                      _selectedSurveyType = selected;
-                      _refreshHistory();
-                    });
-                  }),
-                ),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.type.title", "Type:"), style: Styles().textStyles?.getTextStyle('widget.title.regular'),),
+            //     Container(width: 8.0),
+            //     Expanded(
+            //       child: DropdownButton(value: _selectedSurveyType, style: Styles().textStyles?.getTextStyle('widget.detail.regular'),
+            //           items: _getDropDownItems(_surveyTypes), isExpanded: true, onChanged: (String? selected) {
+            //         setState(() {
+            //           _selectedSurveyType = selected;
+            //           _refreshHistory();
+            //         });
+            //       }),
+            //     ),
+            //   ],
+            // ),
             // Row(
             //   children: [
             //     Text(Localization().getStringEx("panel.activity.dropdown.filter.illness.title", "Illness:"), style: Styles().textStyles.headline4,),
@@ -254,7 +254,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   List<String> get _selectedSurveyTypes {
     List<String> types = [];
     if (_selectedSurveyType == "All") {
-      types.addAll(_surveyTypes.skip(1));
+      // types.addAll(_surveyTypes.skip(1));
     } else if (_selectedSurveyType != null) {
       types.add(_selectedSurveyType!);
     }
