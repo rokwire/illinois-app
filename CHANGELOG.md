@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.2.15] - 2022-11-07
+## Added
+- Handle plugin local notifications [#2506](https://github.com/rokwire/illinois-app/issues/2506).
+- Updated display strings for research projects in GroupDetailPanel [#2473](https://github.com/rokwire/illinois-app/issues/2473).
+- Hook Appointments API (in progress) [#2511](https://github.com/rokwire/illinois-app/issues/2511).
+### Changed
+- Do not show / apply filters for My Research Projects content [#2473](https://github.com/rokwire/illinois-app/issues/2473).
+- Do not filter all groups content "manually" in Groups home panel [#2473](https://github.com/rokwire/illinois-app/issues/2473).
+
+## [4.2.14] - 2022-11-04
+### Changed
+- Campus View Maps updates [#2503](https://github.com/rokwire/illinois-app/issues/2503).
+
+## [4.2.13] - 2022-11-03
 ### Changed
 - Research UI updates [#2499](https://github.com/rokwire/illinois-app/issues/2499).
 - Profile Image enhancements [#2501](https://github.com/rokwire/illinois-app/issues/2501).

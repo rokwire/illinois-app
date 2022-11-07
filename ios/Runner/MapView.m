@@ -43,6 +43,7 @@
 	NSArray*      _displayExplores;
 	NSDictionary* _poi;
 	NSMutableSet* _markers;
+	GMSMapStyle*  _mapStyleNoPoi;
 	float         _currentZoom;
 	bool          _didFirstLayout;
 	bool          _enabled;
@@ -54,6 +55,7 @@
 
 - (instancetype)initWithFrame:(CGRect)frame {
 	if (self = [super initWithFrame:frame]) {
+	
 		GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:kInitialCameraLocation.latitude longitude:kInitialCameraLocation.longitude zoom:(_currentZoom = kInitialCameraZoom)];
 		CGRect mapRect = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
 		_mapView = [GMSMapView mapWithFrame:mapRect camera:camera];
@@ -64,6 +66,9 @@
 
 		_markers = [[NSMutableSet alloc] init];
 		_enabled = true;
+
+	  NSURL *noPoiUrl = [NSBundle.mainBundle URLForResource:@"mapstyle-nopoi" withExtension:@"json"];
+		_mapStyleNoPoi = [GMSMapStyle styleWithContentsOfFileURL:noPoiUrl	 error:NULL];
 	}
 	return self;
 }
@@ -373,6 +378,16 @@
 	return (_mapView.camera.zoom < kMarker2Thresold1Zoom) ? MapMarkerDisplayMode_Plain : ((_mapView.camera.zoom < kMarker2Thresold2Zoom) ? MapMarkerDisplayMode_Title : MapMarkerDisplayMode_Extended);
 }
 
+- (void)updateMapStyle {
+	NSNumber *hideBuildingLabels = [_exploreOptions inaNumberForKey:@"HideBuildingLabels"];
+	if ([hideBuildingLabels boolValue]) {
+		GMSMapStyle *mapStyle = (kNoPoiThresoldZoom <= _mapView.camera.zoom) ? _mapStyleNoPoi : nil;
+		if (_mapView.mapStyle != mapStyle) {
+			_mapView.mapStyle = mapStyle;
+		}
+	}
+}
+
 #pragma mark GMSMapViewDelegate
 
 - (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {
@@ -408,6 +423,7 @@
 	else {
 		[self updateMarkersDisplayMode];
 	}
+	[self updateMapStyle];
 }
 
 @end

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -64,6 +64,8 @@
 		2626D94E22DCB80000F6BC2F /* MapMarkerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94D22DCB80000F6BC2F /* MapMarkerView.m */; };
 		264C99E828B3DA150089848F /* maps-icon-marker-origin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */; };
 		266DC99628ACD972007F51EA /* MapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 266DC99528ACD972007F51EA /* MapController.m */; };
+		268115412915449500945B3B /* mapstyle-nopoi.json in Resources */ = {isa = PBXBuildFile; fileRef = 268115402915449500945B3B /* mapstyle-nopoi.json */; };
+		268115422915449500945B3B /* mapstyle-nopoi.json in Resources */ = {isa = PBXBuildFile; fileRef = 268115402915449500945B3B /* mapstyle-nopoi.json */; };
 		268F30F122E5DD7900547FE1 /* travel-mode-walk@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30ED22E5DD7900547FE1 /* travel-mode-walk@2x.png */; };
 		268F30F222E5DD7900547FE1 /* travel-mode-transit@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EE22E5DD7900547FE1 /* travel-mode-transit@2x.png */; };
 		268F30F322E5DD7900547FE1 /* travel-mode-bicycle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EF22E5DD7900547FE1 /* travel-mode-bicycle@2x.png */; };
@@ -114,7 +116,7 @@
 		B681B2B923DEFD9E00093A67 /* NSData+InaHex.m in Sources */ = {isa = PBXBuildFile; fileRef = B681B2B823DEFD9E00093A67 /* NSData+InaHex.m */; };
 		B6BDCD37242CCF5F002F7364 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6BDCD39242CCF5F002F7364 /* Localizable.strings */; };
 		B6EA372423A7EF76001D78A5 /* Bluetooth+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EA372323A7EF76001D78A5 /* Bluetooth+InaUtils.m */; };
-		BB7BF12F5D3356D25889D23A /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		BB7BF12F5D3356D25889D23A /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		D604F124B491DE058CE3A2B6 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACB526D062122D3F8BC62A77 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -170,6 +172,7 @@
 		26695108D663C5F02B96B5EB /* Pods-Runner.debug-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-illinoisdev.xcconfig"; sourceTree = "<group>"; };
 		266DC99428ACD972007F51EA /* MapController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapController.h; sourceTree = "<group>"; };
 		266DC99528ACD972007F51EA /* MapController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapController.m; sourceTree = "<group>"; };
+		268115402915449500945B3B /* mapstyle-nopoi.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "mapstyle-nopoi.json"; sourceTree = "<group>"; };
 		268F30ED22E5DD7900547FE1 /* travel-mode-walk@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "travel-mode-walk@2x.png"; sourceTree = "<group>"; };
 		268F30EE22E5DD7900547FE1 /* travel-mode-transit@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "travel-mode-transit@2x.png"; sourceTree = "<group>"; };
 		268F30EF22E5DD7900547FE1 /* travel-mode-bicycle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "travel-mode-bicycle@2x.png"; sourceTree = "<group>"; };
@@ -310,7 +313,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB7BF12F5D3356D25889D23A /* BuildFile in Frameworks */,
+				BB7BF12F5D3356D25889D23A /* (null) in Frameworks */,
 				D604F124B491DE058CE3A2B6 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -325,6 +328,7 @@
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
 				B6BDCD39242CCF5F002F7364 /* Localizable.strings */,
+				268115402915449500945B3B /* mapstyle-nopoi.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -703,6 +707,7 @@
 				261784C928C8ED6A009172BB /* button-icon-nav-prev.png in Resources */,
 				261784CA28C8ED6A009172BB /* AppFrameworkInfo.plist in Resources */,
 				261784CB28C8ED6A009172BB /* maps-icon-marker-circle-20@2x.png in Resources */,
+				268115422915449500945B3B /* mapstyle-nopoi.json in Resources */,
 				261784CC28C8ED6A009172BB /* maps-icon-marker-pin-20@2x.png in Resources */,
 				261784CD28C8ED6A009172BB /* maps-icon-marker-pin-50@2x.png in Resources */,
 				261784CE28C8ED6A009172BB /* button-icon-nav-clear.png in Resources */,
@@ -735,6 +740,7 @@
 				26A170EC22DDFB6500299773 /* button-icon-nav-prev.png in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				269F83E822D73E7400CC11A4 /* maps-icon-marker-circle-20@2x.png in Resources */,
+				268115412915449500945B3B /* mapstyle-nopoi.json in Resources */,
 				26962B542306E8000026240A /* maps-icon-marker-pin-20@2x.png in Resources */,
 				26962B592306EB190026240A /* maps-icon-marker-pin-50@2x.png in Resources */,
 				26A170ED22DDFB6500299773 /* button-icon-nav-clear.png in Resources */,

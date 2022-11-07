@@ -44,7 +44,7 @@ class WellnessRingDefinition {
     this.colorHex = other.colorHex;
     this.name= other.name;
     this.unit = other.unit;
-    this.dateCreatedUtc = other.dateCreatedUtc != null ? DateTimeUtils().copyDateTime(other.dateCreatedUtc!): null;
+    this.dateCreatedUtc = other.dateCreatedUtc != null ? DateTimeUtils.copyDateTime(other.dateCreatedUtc!): null;
   }
 
   @override

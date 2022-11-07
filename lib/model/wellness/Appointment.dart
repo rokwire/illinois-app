@@ -24,8 +24,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class Appointment with Explore, Favorite {
   static final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 
-  final String? sourceId;
-  final String? accountId;
+  final String? id;
+  final String? sourceId;//TBD
+  final String? accountId;//TBD
   final DateTime? dateTimeUtc;
   final AppointmentType? type;
   final AppointmentOnlineDetails? onlineDetails;
@@ -35,16 +36,17 @@ class Appointment with Explore, Favorite {
   final AppointmentHost? host;
 
   Appointment(
-      {this.sourceId, this.accountId, this.dateTimeUtc, this.type, this.onlineDetails, this.location, this.cancelled, this.instructions, this.host});
+      {this.id, this.sourceId, this.accountId, this.dateTimeUtc, this.type, this.onlineDetails, this.location, this.cancelled, this.instructions, this.host});
 
   static Appointment? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
     return Appointment(
-        sourceId: JsonUtils.stringValue(json['source_id']),
-        accountId: JsonUtils.stringValue(json['account_id']),
-        dateTimeUtc: DateTimeUtils.dateTimeFromString(json['date_time'], format: _serverDateTimeFormat, isUtc: true),
+        id: JsonUtils.stringValue(json['id']),
+        sourceId: JsonUtils.stringValue(json['source_id']),//TBD
+        accountId: JsonUtils.stringValue(json['account_id']),//TBD
+        dateTimeUtc: DateTimeUtils.dateTimeFromString(json['date'], format: _serverDateTimeFormat, isUtc: true),
         type: typeFromString(JsonUtils.stringValue(json['type'])),
         onlineDetails: AppointmentOnlineDetails.fromJson(JsonUtils.mapValue(json['online_details'])),
         location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
@@ -147,6 +149,7 @@ class Appointment with Explore, Favorite {
   @override String? get exploreTitle => title;
   @override Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'source_id': sourceId,
       'account_id': accountId,
       'title': title,
@@ -170,6 +173,7 @@ class Appointment with Explore, Favorite {
   @override
   bool operator==(dynamic other) =>
     (other is Appointment) &&
+    (id == other.id) &&
     (sourceId == other.sourceId) &&
     (accountId == other.accountId) &&
     (dateTimeUtc == other.dateTimeUtc) &&
@@ -182,6 +186,7 @@ class Appointment with Explore, Favorite {
 
   @override
   int get hashCode =>
+    (id?.hashCode ?? 0) ^
     (sourceId?.hashCode ?? 0) ^
     (accountId?.hashCode ?? 0) ^
     (dateTimeUtc?.hashCode ?? 0) ^

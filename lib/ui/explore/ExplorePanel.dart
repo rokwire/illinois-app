@@ -1596,7 +1596,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Events:              return Localization().getStringEx('panel.explore.button.events.title', 'Events');
       case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
       case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry');
-      case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus View');
+      case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.title', 'MyMcKinley In-Person Appointments');
@@ -1667,7 +1667,9 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _placeExploresOnMap() {
     if (_nativeMapController != null)   {
-      _nativeMapController!.placePOIs(_displayExplores);
+      _nativeMapController!.placePOIs(_displayExplores, options: <String, dynamic>{
+        MapController.HideBuildingLabelsParams : (_selectedItem == ExploreItem.Buildings) ? true : null
+      });
     }
   }
 

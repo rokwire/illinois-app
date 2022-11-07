@@ -212,17 +212,21 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     String searchTitle = Localization().getStringEx("panel.research_projects.home.button.search.title", "Search");
     
     return Row(children: [
-      FilterSelector(
-        padding: EdgeInsets.only(left: 16, top: 12, bottom: 12),
-        title: _selectedCategoryFilter,
-        active: (_activeFilterType == _FilterType.category),
-        onTap: _onTapCategoriesFilter
+      Visibility(visible: _selectedContentType == ResearchProjectsContentType.open, child:
+        FilterSelector(
+          padding: EdgeInsets.only(left: 16, top: 12, bottom: 12),
+          title: _selectedCategoryFilter,
+          active: (_activeFilterType == _FilterType.category),
+          onTap: _onTapCategoriesFilter
+        ),
       ),
-      FilterSelector(
-        padding: EdgeInsets.only(left: 8, top: 12, bottom: 12),
-        title: _filterTagToDisplayString(_selectedTagFilter),
-        active: (_activeFilterType == _FilterType.tags),
-        onTap: _onTapTagsFilter
+      Visibility(visible: _selectedContentType == ResearchProjectsContentType.open, child:
+        FilterSelector(
+          padding: EdgeInsets.only(left: 8, top: 12, bottom: 12),
+          title: _filterTagToDisplayString(_selectedTagFilter),
+          active: (_activeFilterType == _FilterType.tags),
+          onTap: _onTapTagsFilter
+        ),
       ),
       Expanded(child: Container()),
       Visibility(visible: _canCreateResearchProject, child:
@@ -491,8 +495,8 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
 
       Groups().loadResearchProjects(
         contentType: _selectedContentType,
-        category: (_selectedCategoryFilter != _allCategories) ? _selectedCategoryFilter : null,
-        tags: (_selectedTagFilter == _TagFilter.my) ? Auth2().prefs?.positiveTags : null,
+        category: ((_selectedContentType == ResearchProjectsContentType.open) && (_selectedCategoryFilter != _allCategories)) ? _selectedCategoryFilter : null,
+        tags: ((_selectedContentType == ResearchProjectsContentType.open) && (_selectedTagFilter == _TagFilter.my)) ? Auth2().prefs?.positiveTags : null,
       ).then((List<Group>? researchProjects) {
         if (mounted) {
           setState(() {
@@ -508,7 +512,11 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     if (_loadingResearchProjects == false) {
 
       _loadingResearchProjects = true;
-      List<Group>? researchProjects = await Groups().loadResearchProjects(contentType: _selectedContentType);
+      List<Group>? researchProjects = await Groups().loadResearchProjects(
+        contentType: _selectedContentType,
+        category: ((_selectedContentType == ResearchProjectsContentType.open) && (_selectedCategoryFilter != _allCategories)) ? _selectedCategoryFilter : null,
+        tags: ((_selectedContentType == ResearchProjectsContentType.open) && (_selectedTagFilter == _TagFilter.my)) ? Auth2().prefs?.positiveTags : null,
+      );
       _loadingResearchProjects = false;
 
       if ((researchProjects != null) && mounted) {
