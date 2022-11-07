@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Polls.dart';
@@ -45,7 +46,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   //bool _loading = false;
 
   List<String> _timeframes = ["Today", "This Week", "This Month", "All Time"];
-  List<String> _surveyTypes = ["All", "Symptoms", "Illness Screener"];
+  List<String> _surveyTypes = ["All", "Health Screener", "Symptoms", "Illness Screener"];
 
   String? _selectedTimeframe = "This Week";
   String? _selectedSurveyType = "All";
@@ -91,51 +92,61 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
         //   setState(() {});
         // }),
         _buildSymptomScreenerSectionWidget(canTakeScreener),
-        Visibility(visible: canTakeScreener, child: _buildHistorySectionWidget()),
+        Visibility(visible: canTakeScreener && Auth2().isLoggedIn, child: _buildHistorySectionWidget()),
       ]);
   }
 
   Widget _buildSymptomScreenerSectionWidget(bool canTakeScreener) {
     Widget content;
-    if (canTakeScreener) {
-      if (StringUtils.isNotEmpty(Config().symptomSurveyID)) {
-        content = Column(children: [
-          Text(
-            Localization().getStringEx('panel.wellness.sections.health_screener.label.symptom_screener.title',
-                'Feeling sick? Use the Symptom Screener to help you find the right resources'),
+    if (Auth2().isLoggedIn) {
+      if (canTakeScreener) {
+        if (StringUtils.isNotEmpty(Config().symptomSurveyID)) {
+          content = Column(children: [
+            Text(
+              Localization().getStringEx('panel.wellness.sections.health_screener.label.symptom_screener.title',
+                  'Feeling sick? Use the Symptom Screener to help you find the right resources'),
+              style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
+            ),
+            SizedBox(height: 16),
+            RoundedButton(
+                label: Localization().getStringEx('panel.wellness.sections.health_screener.button.take_screener.title',
+                    'Take the Symptom Screener'),
+                textStyle: Styles().textStyles?.getTextStyle('widget.detail.regular.fat'),
+                onTap: _onTapTakeSymptomScreener),
+          ]);
+        } else {
+          content = Text(
+            Localization().getStringEx('panel.wellness.sections.health_screener.label.symptom_screener.missing.title',
+                'The Illinois Health Screener is currently unavailable. Please check back later.'),
             style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
-          ),
-          SizedBox(height: 16),
-          RoundedButton(
-              label: Localization().getStringEx('panel.wellness.sections.health_screener.button.take_screener.title', 'Take the Symptom Screener'),
-              textStyle: Styles().textStyles?.getTextStyle('widget.detail.regular.fat'),
-              onTap: _onTapTakeSymptomScreener),
-        ]);
+          );
+        }
       } else {
         content = Text(
-          Localization().getStringEx('panel.wellness.sections.health_screener.label.symptom_screener.missing.title',
-              'The Illinois Health Screener is currently unavailable. Please check back later.'),
+          Localization().getStringEx('panel.wellness.sections.health_screener.label.symptom_screener.invalid_role.title',
+              'The Illinois Health Screener is currently only available to students'),
           style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
         );
       }
-    } else {
-      content = Text(
-        Localization().getStringEx('panel.wellness.sections.health_screener.label.symptom_screener.invalid_role.title',
-            'The Illinois Health Screener is currently only available to students. Please check back later.'),
-        style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
+      content = Card(
+        child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: content
+        ),
       );
+    }
+    else {
+      //TODO: Build standardized widget for logged out warning and actions
+      content = HomeMessageCard(
+        title: Localization().getStringEx("common.message.logged_out", "You are not logged in"),
+        message: Localization().getStringEx("panel.wellness.sections.health_screener.label.symptom_screener.logged_out.text", "You need to be logged in to access the Illinois Health Screener."),);
     }
 
     return HomeSlantWidget(
       title: Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Symptom Screener'),
       titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
       childPadding: HomeSlantWidget.defaultChildPadding,
-      child: Card(
-        child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: content
-        ),
-      )
+      child: content
     );
   }
 
@@ -177,7 +188,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
             ),
             Row(
               children: [
-                Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.event_type.title", "Type:"), style: Styles().textStyles?.getTextStyle('widget.title.regular'),),
+                Text(Localization().getStringEx("panel.wellness.sections.health_screener.dropdown.filter.type.title", "Type:"), style: Styles().textStyles?.getTextStyle('widget.title.regular'),),
                 Container(width: 8.0),
                 Expanded(
                   child: DropdownButton(value: _selectedSurveyType, style: Styles().textStyles?.getTextStyle('widget.detail.regular'),
