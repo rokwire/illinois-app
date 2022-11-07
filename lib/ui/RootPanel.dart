@@ -168,7 +168,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       _showAthleticsGameDetail(param);
     }
     else if (name == LocalNotifications.notifyLocalNotificationTapped) {
-      ActionBuilder.getAction(context, param, dismissContext: context)?.call();
+      _onLocalNotification(param);
     }
     else if (name == Events.notifyEventDetail) {
       _onFirebaseEventDetail(param);
@@ -470,6 +470,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if (StringUtils.isNotEmpty(gameId) && StringUtils.isNotEmpty(sport)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(sportName: sport, gameId: gameId,)));
     }
+  }
+
+  void _onLocalNotification(dynamic param) {
+    if (param is ActionData) {
+      ActionBuilder.getAction(context, param, dismissContext: context)?.call();
+    }
+    /*else if (param is NotificationResponse) {
+      // TBD
+    }*/
   }
 
   Future<void> _onGroupDetail(Map<String, dynamic>? content) async {
