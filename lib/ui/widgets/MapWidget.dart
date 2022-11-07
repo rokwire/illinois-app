@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:illinois/ext/explore.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -68,6 +66,9 @@ class _MapWidgetState extends State<MapWidget> {
 class MapController {
   static const int DefaultMapThresholdDistance = 200;
 
+  static const String LocationThresoldDistanceParam = 'LocationThresoldDistance';
+  static const String HideBuildingLabelsParams = 'HideBuildingLabels';
+
   late MethodChannel _channel;
   int? _mapId;
 
@@ -79,19 +80,22 @@ class MapController {
 
   int? get mapId { return _mapId; }
 
-  Future<void> placePOIs(List<Explore>? explores) async {
-    int? mapThresoldDistance;
+  Future<void> placePOIs(List<Explore>? explores, { Map<String, dynamic>? options }) async {
     List<dynamic> jsonData = [];
     if (CollectionUtils.isNotEmpty(explores)) {
       for (Explore explore in explores!) {
-        mapThresoldDistance = (mapThresoldDistance != null) ? min(explore.mapThresholdDistance, mapThresoldDistance) : explore.mapThresholdDistance;
         jsonData.add(explore.toJson());
       }
     }
-    var options = {
-      "LocationThresoldDistance": Storage().debugMapThresholdDistance ?? mapThresoldDistance
+
+    Map<String, dynamic> optionsParam = <String, dynamic>{
+      LocationThresoldDistanceParam: Storage().debugMapThresholdDistance // ?? DefaultMapThresholdDistance
     };
-    return _channel.invokeMethod('placePOIs', { "explores": jsonData, "options": options});
+    if (options != null) {
+      optionsParam.addAll(options);
+    }
+
+    return _channel.invokeMethod('placePOIs', { "explores": jsonData, "options": optionsParam});
   }
 
   Future<void>enable(bool enable) async {

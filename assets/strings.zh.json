@@ -891,7 +891,7 @@
 	"panel.explore.button.dining.hint":"",
 	"panel.explore.button.laundry.title":"洗衣店",
 	"panel.explore.button.laundry.hint":"",
-	"panel.explore.button.buildings.title":"校園景觀",
+	"panel.explore.button.buildings.title":"校園建築",
 	"panel.explore.button.buildings.hint":"",
 	"panel.explore.button.student_course.title":"我的課程",
 	"panel.explore.button.student_course.hint":"",
@@ -1597,6 +1597,7 @@
 	"panel.profile_info.logout.no":"否",
     "panel.profile_info.picture.upload.failed.msg":"上傳個人資料圖片失敗. 請稍後再試.",
     "panel.profile_info.picture.delete.failed.msg":"無法刪除頭像. 請稍後再試.",
+	"panel.profile_info.picture.delete.confirmation.msg": "Are you sure you want to remove this profile picture?",
 
 	"panel.create_poll.header.title": "创建快速投票",
 	"panel.create_poll.description": "人們可以通過{{app_title}}應用程序向您詢問 4 位投票號碼來投票。",
@@ -2518,8 +2519,10 @@
 
 	"widget.home.research_projects.my.label.header.title":"我的研究項目",
 	"widget.home.research_projects.open.label.header.title":"開放研究項目",
-"widget.home.research_projects.my.text.empty.description": "您尚未創建任何研究項目。",
-"widget.home.research_projects.all.text.empty.description": "未能加載研究項目。",
+	"widget.home.research_projects.my.text.empty.description": "您尚未創建任何研究項目。",
+	"widget.home.research_projects.all.text.empty.description": "未能加載研究項目。",
+	"widget.home.research_projects.message.offline":"研究項目在離線時不可用。",
+	"widget.home.research_projects.message.logged_out":"您需要登錄才能訪問研究項目。",
 	"widget.home.research_projects.button.all.title": "查看全部",
 	"widget.home.research_projects.button.all.hint": "點擊查看所有研究項目",
 

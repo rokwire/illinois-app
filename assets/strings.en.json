@@ -892,7 +892,7 @@
     "panel.explore.button.dining.hint":"",
     "panel.explore.button.laundry.title":"Laundry",
     "panel.explore.button.laundry.hint":"",
-    "panel.explore.button.buildings.title":"Campus View",
+    "panel.explore.button.buildings.title":"Campus Buildings",
     "panel.explore.button.buildings.hint":"",
     "panel.explore.button.student_course.title":"My Courses",
     "panel.explore.button.student_course.hint":"",
@@ -1597,6 +1597,7 @@
     "panel.profile_info.logout.no":"No",
     "panel.profile_info.picture.upload.failed.msg":"Failed to upload profile picture. Please, try again later.",
     "panel.profile_info.picture.delete.failed.msg":"Failed to delete profile picture. Please, try again later.",
+    "panel.profile_info.picture.delete.confirmation.msg": "Are you sure you want to remove this profile picture?",
 
     "panel.create_poll.header.title": "Create a Quick Poll",
     "panel.create_poll.description": "People can vote through the {{app_title}} app by asking you for the 4 Digit Poll #.",
@@ -2524,6 +2525,8 @@
     "widget.home.research_projects.open.label.header.title":"Open Research Projects",
 	"widget.home.research_projects.my.text.empty.description": "You have not created any research projects yet.",
 	"widget.home.research_projects.all.text.empty.description": "Failed to load research projects.",
+    "widget.home.research_projects.message.offline":"Research Projects are not available while offline.",
+    "widget.home.research_projects.message.logged_out":"You need to be logged in to access Research Projects.",
     "widget.home.research_projects.button.all.title": "View All",
     "widget.home.research_projects.button.all.hint": "Tap to view all research projects",
 

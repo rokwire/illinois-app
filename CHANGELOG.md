@@ -5,10 +5,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## Added
+- Handle plugin local notifications [#2506](https://github.com/rokwire/illinois-app/issues/2506)
+
+## [4.2.14] - 2022-11-04
+### Changed
+- Campus View Maps updates [#2503](https://github.com/rokwire/illinois-app/issues/2503).
+
+## [4.2.13] - 2022-11-03
+### Changed
+- Research UI updates [#2499](https://github.com/rokwire/illinois-app/issues/2499).
+- Profile Image enhancements [#2501](https://github.com/rokwire/illinois-app/issues/2501).
+
+## [4.2.12] - 2022-11-02
 ### Fixed
 - Fixed analytics logs from Settings panels [#2492](https://github.com/rokwire/illinois-app/issues/2492).
 ### Changed
-- Updated Questionnaire onboarding panels UI [#2495](https://github.com/rokwire/illinois-app/issues/2495)
+- Updated Questionnaire onboarding panels UI [#2495](https://github.com/rokwire/illinois-app/issues/2495).
+- Updated marksers processing in iOS Maps [#2448](https://github.com/rokwire/illinois-app/issues/2448).
+### Added
+- Initial work on Research Projects [#2473](https://github.com/rokwire/illinois-app/issues/2473).
 
 ## [4.2.11] - 2022-10-31
 ### Added

@@ -51,6 +51,10 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   @override
   void initState() {
     NotificationService().subscribe(this, [
+      Groups.notifyGroupCreated,
+      Groups.notifyGroupUpdated,
+      Groups.notifyGroupDeleted,
+      Auth2.notifyLoginChanged,
     ]);
     if (widget.contentType != null) {
       _selectedContentType = widget.contentType;
@@ -69,7 +73,16 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
  // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-
+    if ((name == Groups.notifyGroupCreated) || (name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted)) {
+      if (mounted) {
+        _updateContent();
+      }
+    }
+    else if (name == Auth2.notifyLoginChanged) {
+      if (mounted) {
+        _updateContent();
+      }
+    }
   }
  
   @override
@@ -260,18 +273,17 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   void _onTapCreate() {
     Analytics().logSelect(target: "Create");
     Navigator.push(context, MaterialPageRoute(builder: (context) => GroupCreatePanel(group: Group(
-      researchGroup: true,
-      researchOpen: true,
+      researchGroup: true
     ),)));
   }
 
   void _onTapSearch() {
     Analytics().logSelect(target: "Search");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel(researchProject: true,)));
   }
 
   bool get _canCreateResearchProject {
-    return Auth2().isOidcLoggedIn && FlexUI().isSharingAvailable;
+    return Auth2().isOidcLoggedIn && FlexUI().isSharingAvailable && (Auth2().account?.isResearchGroupAdmin ?? false);
   }
 
   // Filters Widget

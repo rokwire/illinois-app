@@ -891,7 +891,7 @@
     "panel.explore.button.dining.hint":"",
     "panel.explore.button.laundry.title":"Ropa sucia",
     "panel.explore.button.laundry.hint":"",
-    "panel.explore.button.buildings.title":"Vista del campus",
+    "panel.explore.button.buildings.title":"Edificios del campus",
     "panel.explore.button.buildings.hint":"",
     "panel.explore.button.student_course.title":"Mis cursos",
     "panel.explore.button.student_course.hint":"",
@@ -1596,6 +1596,7 @@
     "panel.profile_info.logout.no":"No",
     "panel.profile_info.picture.upload.failed.msg":"No se pudo cargar la imagen de perfil. Por favor, inténtelo de nuevo más tarde.",
     "panel.profile_info.picture.delete.failed.msg":"Error al eliminar la foto de perfil. Por favor, inténtelo de nuevo más tarde.",
+    "panel.profile_info.picture.delete.confirmation.msg": "Are you sure you want to remove this profile picture?",
 
     "panel.create_poll.header.title": "Crear una encuesta rápida",
     "panel.create_poll.description": "Las personas pueden votar a través de la aplicación de {{app_title}} pidiéndole el número de encuesta de 4 dígitos.",
@@ -2521,6 +2522,8 @@
     "widget.home.research_projects.open.label.header.title":"Proyectos de Investigación Abierta",
 	"widget.home.research_projects.my.text.empty.description": "Aún no ha creado ningún proyecto de investigación.",
 	"widget.home.research_projects.all.text.empty.description": "No se pudieron cargar los proyectos de investigación.",
+    "widget.home.research_projects.message.offline":"Los proyectos de investigación no están disponibles sin conexión.",
+    "widget.home.research_projects.message.logged_out":"Debe iniciar sesión para acceder a Proyectos de Investigación.",
     "widget.home.research_projects.button.all.title": "Ver todo",
     "widget.home.research_projects.button.all.hint": "Toque para ver todos los proyectos de investigación",
 
