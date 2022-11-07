@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 - Handle plugin local notifications [#2506](https://github.com/rokwire/illinois-app/issues/2506).
 - Updated display strings for research projects in GroupDetailPanel [#2473](https://github.com/rokwire/illinois-app/issues/2473).
+### Changed
+- Do not show / apply filters for My Research Projects content [#2473](https://github.com/rokwire/illinois-app/issues/2473).
+- Do not filter all groups content "manually" in Groups home panel [#2473](https://github.com/rokwire/illinois-app/issues/2473).
 
 ## [4.2.14] - 2022-11-04
 ### Changed
