@@ -18,7 +18,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -224,18 +224,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
         }
       }
     }
-  }
-
-  // AndroidNotificationChannel
-
-  @override
-  AndroidNotificationChannel get androidNotificationChannel {
-    return const AndroidNotificationChannel(
-      "Notifications_Channel_ID", // id
-      "Illinois", // name
-      description: "Receive notifications",
-      importance: Importance.high,
-    );
   }
 
   // Token

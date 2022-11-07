@@ -19,9 +19,14 @@ import 'package:flutter/services.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
+import 'package:rokwire_plugin/service/log.dart';
+import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:illinois/service/Config.dart';
+import 'package:http/http.dart' as http;
+import 'package:illinois/service/Auth2.dart';
 
 class Appointments with Service implements ExploreJsonHandler, NotificationsListener {
   static const String notifyAppointmentDetail = "edu.illinois.rokwire.appointments.detail";
@@ -59,11 +64,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   // APIs
   Future<List<Appointment>?> loadAppointments({bool? onlyUpcoming, AppointmentType? type}) async {
     List<Appointment>? appointments;
-    try {
-      appointments = Appointment.listFromJson(JsonUtils.decodeList(await rootBundle.loadString('assets/appointments.json')));
-    } catch (e) {
-      debugPrint(e.toString());
-    }
+   appointments = await loadBBAppointments();
     List<Appointment>? resultAppointments;
     //TBD: Appointment - do this filtering on the backend
     if (CollectionUtils.isNotEmpty(appointments)) {
@@ -80,6 +81,38 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
       _sortAppointments(resultAppointments);
     }
     return resultAppointments;
+  }
+
+  Future<List<Appointment>?> loadBBAppointments() async {
+    if (!isEnabled) {
+      Log.w('Failed to load wellness todo items. Missing wellness url.');
+      return null;
+    }
+    String? url;
+    url = "${Config().appointmentsUrl}/services/appointments";
+    url = "https://api-dev.rokwire.illinois.edu/appointments/services/appointments"; //TBD add Appointments URL to the config
+    http.Response? response = await Network().get(url, auth: Auth2());
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      List<Appointment>? items = Appointment.listFromJson(JsonUtils.decodeList(responseString));
+      return items;
+    } else {
+      Log.w('Failed to load Appointments items. Response:\n$responseCode: $responseString');
+      return null;
+    }
+  }
+
+  //TBD remove when not needed for testing
+  Future<List<Appointment>?> loadAssetsAppointments() async {
+    List<Appointment>? appointments;
+    try {
+      appointments = Appointment.listFromJson(JsonUtils.decodeList(await rootBundle.loadString('assets/appointments.json')));
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+
+    return appointments;
   }
 
   //TBD: Appointment - load from backend
@@ -160,6 +193,8 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
       }
     }
   }
+
+  bool get isEnabled => StringUtils.isNotEmpty(Config().wellnessUrl);
 
   // NotificationsListener
   @override

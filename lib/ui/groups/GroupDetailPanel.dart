@@ -570,7 +570,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         Expanded(
           child: Center(
             child: Padding(padding: EdgeInsets.symmetric(horizontal: 32),
-              child: Text(Localization().getStringEx("panel.group_detail.label.error_message", 'Failed to load group data.'),  style:  Styles().textStyles?.getTextStyle('widget.message.large.fat'),)
+              child: Text(_isResearchProject ? 'Failed to load project data.' : Localization().getStringEx("panel.group_detail.label.error_message", 'Failed to load group data.'),  style:  Styles().textStyles?.getTextStyle('widget.message.large.fat'),)
             ),
           ),
         ),
@@ -1223,10 +1223,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Analytics().logSelect(target: 'Group Options', attributes: _group?.analyticsAttributes);
     int membersCount = _groupStats?.activeMembersCount ?? 0;
     String? confirmMsg = (membersCount > 1)
-        ? sprintf(
-            Localization().getStringEx(
-                "panel.group_detail.members_count.group.delete.confirm.msg", "This group has %d members. Are you sure you want to delete this group?"),
-            [membersCount])
+        ? sprintf(Localization().getStringEx("panel.group_detail.members_count.group.delete.confirm.msg", "This group has %d members. Are you sure you want to delete this group?"), [membersCount])
         : Localization().getStringEx("panel.group_detail.group.delete.confirm.msg", "Are you sure you want to delete this group?");
 
     showModalBottomSheet(
@@ -1255,14 +1252,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     visible: _canLeaveGroup,
                     child: RibbonButton(
                         leftIconAsset: "images/icon-leave-group.png",
-                        label: Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
+                        label: _isResearchProject ? 'Leave project' : Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
                         onTap: () {
                           Analytics().logSelect(target: "Leave group", attributes: _group?.analyticsAttributes);
                           showDialog(
                               context: context,
                               builder: (context) => _buildConfirmationDialog(
-                                  confirmationTextMsg:
-                                      Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
+                                  confirmationTextMsg: _isResearchProject ?
+                                    "Are you sure you want to leave this project?" :
+                                    Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
                                   positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.leave.title", "Leave"),
                                   onPositiveTap: _onTapLeaveDialog)).then((value) => Navigator.pop(context));
                         })),
@@ -1279,7 +1277,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                     visible: _canDeleteGroup,
                     child: RibbonButton(
                         leftIconAsset: "images/icon-delete-group.png",
-                        label: Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
+                        label: _isResearchProject ? 'Delete project' : Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
                         onTap: () {
                           Analytics().logSelect(target: "Delete group", attributes: _group?.analyticsAttributes);
                           showDialog(
@@ -1376,7 +1374,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     showDialog(
         context: context,
         builder: (context) => _buildConfirmationDialog(
-            confirmationTextMsg: Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
+            confirmationTextMsg: _isResearchProject ? "Are you sure you want to leave this project?" : Localization().getStringEx("panel.group_detail.label.confirm.leave", "Are you sure you want to leave this group?"),
             positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.leave.title", "Leave"),
             onPositiveTap: _onTapLeaveDialog));
   }
@@ -1391,7 +1389,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if ((succeeded == true)) {
         Navigator.of(context).pop(); // Pop to previous panel
       } else {
-        AppAlert.showDialogResult(context, Localization().getStringEx('panel.group_detail.group.delete.failed.msg', 'Failed to delete group.'));
+        AppAlert.showDialogResult(context, _isResearchProject ? 'Failed to delete project.' : Localization().getStringEx('panel.group_detail.group.delete.failed.msg', 'Failed to delete group.'));
       }
     });
   }
@@ -1545,12 +1543,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     } else {
       // Do not allow a student to attend to authman group which one is not member of.
       if (_group?.authManEnabled == true) {
-        AppAlert.showDialogResult(
-            context,
-            sprintf(
-                Localization().getStringEx('panel.group_detail.attendance.authman.uin.not_member.msg',
-                    'Student with UIN "%s" is not a member of this group and is not allowed to attend.'),
-                [uin]));
+        AppAlert.showDialogResult(context,
+          sprintf(Localization().getStringEx('panel.group_detail.attendance.authman.uin.not_member.msg', 'Student with UIN "%s" is not a member of this group and is not allowed to attend.'), [uin]));
       }
       // Create new member and attend to non-authman group
       else {
@@ -1600,7 +1594,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     showDialog(
         context: context,
         builder: (context) => _buildConfirmationDialog(
-            confirmationTextMsg:
+            confirmationTextMsg: _isResearchProject ?
+                "Are you sure you want to cancel your request to join this project?" :
                 Localization().getStringEx("panel.group_detail.label.confirm.cancel", "Are you sure you want to cancel your request to join this group?"),
             positiveButtonLabel: Localization().getStringEx("panel.group_detail.button.dialog.cancel_request.title", "Cancel request"),
             positiveButtonFlex: 2,

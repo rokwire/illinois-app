@@ -28,6 +28,7 @@ import 'package:illinois/ui/guide/GuideListPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
+import 'package:rokwire_plugin/model/actions.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
 import 'package:rokwire_plugin/service/events.dart';
@@ -56,8 +57,10 @@ import 'package:illinois/ui/widgets/CalendarSelectionDialog.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/popups/alerts.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
+import 'package:rokwire_plugin/ui/widget_builders/actions.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 enum RootTab { Home, Favorites, Athletics, Explore, Browse, Maps, Academics, Wellness }
@@ -96,6 +99,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyInboxNotification,
       FirebaseMessaging.notifyCanvasAppDeepLinkNotification,
       FirebaseMessaging.notifyAppointmentNotification,
+      LocalNotifications.notifyLocalNotificationTapped,
       Alerts.notifyAlert,
       Events.notifyEventDetail,
       Sports.notifyGameDetail,
@@ -121,6 +125,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
     Services().initUI();
     _showPresentPoll();
+    _checkDidNotificationLaunch().then((action) {
+      action?.call();
+    });
   }
 
   @override
@@ -159,6 +166,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if(name == FirebaseMessaging.notifyAthleticsGameStarted) {
       _showAthleticsGameDetail(param);
+    }
+    else if (name == LocalNotifications.notifyLocalNotificationTapped) {
+      _onLocalNotification(param);
     }
     else if (name == Events.notifyEventDetail) {
       _onFirebaseEventDetail(param);
@@ -462,6 +472,15 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
   }
 
+  void _onLocalNotification(dynamic param) {
+    if (param is ActionData) {
+      ActionBuilder.getAction(context, param, dismissContext: context)?.call();
+    }
+    /*else if (param is NotificationResponse) {
+      // TBD
+    }*/
+  }
+
   Future<void> _onGroupDetail(Map<String, dynamic>? content) async {
     String? groupId = (content != null) ? JsonUtils.stringValue(content['group_id']) : null;
     _presentGroupDetailPanel(groupId: groupId);
@@ -528,6 +547,11 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
         }
       });
     }
+  }
+
+  Future<Function?> _checkDidNotificationLaunch() async {
+    ActionData? notificationResponseAction = await LocalNotifications().getNotificationResponseAction();
+    return ActionBuilder.getAction(context, notificationResponseAction, dismissContext: context);
   }
 
   void _presentPollVote(String? pollId) {

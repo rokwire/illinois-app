@@ -12,7 +12,14 @@ help() {
     echo ""
 }
 
+cleanupResources(){
+    echo "Calling cleanup resource script"
+    ./scripts/cleanup_app_resources.sh
+    echo "Cleanup resource script finished"
+}
+
 help
+cleanupResources
 
 CURRENT_DIR=$(PWD)
 FILE_PUBSPEC=$(cat pubspec.yaml)
@@ -122,7 +129,7 @@ if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "android" ]; then
       echo "Copy to $APK_OUT_PATH"
     fi
 
-  #aws s3 cp $APK_OUT_PATH s3://rokwire-ios-beta/Installs/
+  aws s3 cp $APK_OUT_PATH s3://rokwire-ios-beta/Installs/
 fi
 
 if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "ios" ]; then
@@ -148,9 +155,9 @@ if [ "$PLATFORM" = "all" ] || [ "$PLATFORM" = "ios" ]; then
   cp ./build/_output/tmp/Illinois.ipa ./build/_output/$BRAND-$VERSION-$ENV.ipa
   #rm -rf ./build/_output/tmp/
 
-  #aws s3 cp $QR_BUILD_PATH s3://rokwire-ios-beta/Installs/
-  #aws s3 cp $PLIST_BUILD_PATH s3://rokwire-ios-beta/Installs/
-  #aws s3 cp ./build/_output/$BRAND-$VERSION-$ENV.ipa s3://rokwire-ios-beta/Installs/
+  aws s3 cp $QR_BUILD_PATH s3://rokwire-ios-beta/Installs/
+  aws s3 cp $PLIST_BUILD_PATH s3://rokwire-ios-beta/Installs/
+  aws s3 cp ./build/_output/$BRAND-$VERSION-$ENV.ipa s3://rokwire-ios-beta/Installs/
 fi
 
 echo "Building finished!"
