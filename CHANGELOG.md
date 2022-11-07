@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.2.15] - 2022-11-07
 ## Added
 - Handle plugin local notifications [#2506](https://github.com/rokwire/illinois-app/issues/2506).
 - Updated display strings for research projects in GroupDetailPanel [#2473](https://github.com/rokwire/illinois-app/issues/2473).
