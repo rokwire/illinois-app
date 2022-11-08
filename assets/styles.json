@@ -416,9 +416,15 @@
     "arrow-up": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 10},
     "arrow-down": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 10},
 
+    "location": {"src": "images/icon-location.png", "type": "flutter.asset", "color": "fillColorPrimary", "todo": "remove background, check size"},
+    "button-plus": {"src": "images/button-plus-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 34},
+
     "close-white": {"src": "images/close-white.png", "type": "flutter.asset", "color": "surface", "size": 24},
     "more-white": {"src": "images/groups-more-inactive.png", "type": "flutter.asset", "color": "surface", "size": 24},
 
-    "retry-gray": {"src": "0xf2f9", "type": "fa.icon", "weight": "solid", "size": 18.0, "color": "mediumGray"}
+    "retry-gray": {"src": "0xf2f9", "type": "fa.icon", "weight": "solid", "size": 18.0, "color": "mediumGray"},
+
+    "explore_illustration": {"src": "images/explore_illustration.png", "type": "flutter.asset", "width":  250, "fit": "fitWidth"},
+    "explore_illustration": {"src": "images/explore_illustration.png", "type": "flutter.asset", "width":  250, "fit": "fitWidth"}
   }
 }

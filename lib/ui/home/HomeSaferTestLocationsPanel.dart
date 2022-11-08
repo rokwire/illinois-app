@@ -188,7 +188,7 @@ class _TestLocation extends StatelessWidget {
     TextStyle linkStyle = TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.accentColor3, decoration: TextDecoration.underline);
 
     List<Widget> locationContent = <Widget>[
-      Image.asset('images/icon-location.png',excludeFromSemantics: true),
+      Styles().images?.getImage('location', excludeFromSemantics: true) ?? Container(),
       Container(width: 8),
     ];
 
