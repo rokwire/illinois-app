@@ -21,6 +21,7 @@ import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluationWidget.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
@@ -206,6 +207,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContent.due_date_catalog;
     } else if (code == 'my_illini') {
       return AcademicsContent.my_illini;
+    } else if (code == 'skills_self_evaluation') {
+      return AcademicsContent.skills_self_evaluation;
     } else {
       return null;
     }
@@ -300,6 +303,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return CanvasCoursesContentWidget();
       case AcademicsContent.student_courses:
         return StudentCoursesContentWidget();
+      case AcademicsContent.skills_self_evaluation:
+        return SkillsSelfEvaluationWidget();
       default:
         return Container();
     }
@@ -329,6 +334,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return Localization().getStringEx('panel.academics.section.due_date_catalog.label', 'Due Date Catalog');
       case AcademicsContent.my_illini:
         return Localization().getStringEx('panel.academics.section.my_illini.label', 'myIllini');
+      case AcademicsContent.skills_self_evaluation:
+        return Localization().getStringEx('panel.academics.section.skills_self_evaluation.label', 'Skills Self-Evaluation');
     }
   }
 
@@ -344,4 +351,4 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 }
 
-enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, student_courses, due_date_catalog, my_illini }
+enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, student_courses, due_date_catalog, my_illini, skills_self_evaluation }

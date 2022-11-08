@@ -413,6 +413,7 @@
     "panel.academics.section.student_courses.label": "Mis cursos",
     "panel.academics.section.due_date_catalog.label": "Catálogo de fecha de vencimiento",
     "panel.academics.section.my_illini.label": "myIllini",
+    "panel.academics.section.skills_self_evaluation.label": "Skills Self-Evaluation",
     "panel.academics.section.events.offline.msg": "No hay eventos académicos disponibles sin conexión.",
     "panel.academics.section.events.empty.msg": "Sin eventos académicos.",
 

@@ -414,6 +414,7 @@
     "panel.academics.section.student_courses.label": "My Courses",
     "panel.academics.section.due_date_catalog.label": "Due Date Catalog",
     "panel.academics.section.my_illini.label": "myIllini",
+    "panel.academics.section.skills_self_evaluation.label": "Skills Self-Evaluation",
     "panel.academics.section.events.offline.msg": "No academic events available while offline.",
     "panel.academics.section.events.empty.msg": "No academic events.",
 
