@@ -21,7 +21,7 @@ import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
-import 'package:illinois/ui/academics/SkillsSelfEvaluationWidget.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
@@ -304,7 +304,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       case AcademicsContent.student_courses:
         return StudentCoursesContentWidget();
       case AcademicsContent.skills_self_evaluation:
-        return SkillsSelfEvaluationWidget();
+        return SkillsSelfEvaluation();
       default:
         return Container();
     }
