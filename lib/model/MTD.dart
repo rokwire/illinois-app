@@ -82,6 +82,40 @@ class MTDStop {
     }
     return jsonList;
   }
+
+  // List Lookup
+
+  static MTDStop? stopInList(List<MTDStop>? stops, { String? name, double? latitude, double? longitude, double locationPrecision = 0.000001 }) {
+    if (stops != null) {
+      for (MTDStop stop in stops) {
+        MTDStop? stopPoint = stopInList(stop.points, name: name, latitude: latitude, longitude: longitude, locationPrecision: locationPrecision );
+        if (stopPoint != null) {
+          return stopPoint;
+        }
+        if (stop.match(name: name, latitude: latitude, longitude: longitude, locationPrecision: locationPrecision)) {
+          return stop;
+        }
+      }
+    }
+    return null;
+  }
+
+  bool match({ String? name, double? latitude, double? longitude, double locationPrecision = 0.000001 }) {
+    
+    if ((name != null) && (name != this.name)) {
+      return false;
+    }
+    
+    if ((latitude != null) && ((this.latitude == null) || ((latitude - this.latitude!).abs() > locationPrecision))) {
+      return false;
+    }
+    
+    if ((longitude != null) && ((this.longitude == null) || ((longitude - this.longitude!).abs() > locationPrecision))) {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 class MTDStops {
@@ -116,4 +150,10 @@ class MTDStops {
   int get hashCode =>
     (changesetId?.hashCode ?? 0) ^
     DeepCollectionEquality().hash(stops);
+
+  // Operations
+
+  MTDStop? findStop({ String? name, double? latitude, double? longitude, double locationPrecision = 0.000001 }) {
+    return MTDStop.stopInList(stops, name: name, latitude: latitude, longitude: longitude, locationPrecision: locationPrecision);
+  }
 }

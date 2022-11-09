@@ -18,12 +18,14 @@ import 'package:flutter/semantics.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Laundries.dart';
+import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
@@ -165,6 +167,7 @@ class ExplorePanelState extends State<ExplorePanel>
       Localization.notifyStringsUpdated,
       NativeCommunicator.notifyMapSelectExplore,
       NativeCommunicator.notifyMapClearExplore,
+      NativeCommunicator.notifyMapSelectPOI,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
@@ -1194,6 +1197,9 @@ class ExplorePanelState extends State<ExplorePanel>
   Widget _buildMapView() {
     String? title, description;
     Color? exploreColor = Colors.white;
+    String? detailsLabel = Localization().getStringEx('panel.explore.button.details.title', 'Details');
+    String? detailsHint = Localization().getStringEx('panel.explore.button.details.hint', '');
+
     if (_selectedMapExplore is Explore) {
       title = _selectedMapExplore?.exploreTitle;
       description = _selectedMapExplore.exploreLocation?.description;
@@ -1206,6 +1212,13 @@ class ExplorePanelState extends State<ExplorePanel>
       description = explore?.exploreLocation?.description ?? "";
       exploreColor = explore?.uiColor ?? Styles().colors!.fillColorSecondary!;
       exploreColor = _exploreColor(explore) ?? Styles().colors?.fillColorSecondary;
+    }
+    else if (_selectedMapExplore is MTDStop) {
+      title = (_selectedMapExplore as MTDStop).name;
+      description = (_selectedMapExplore as MTDStop).code;
+      exploreColor = UiColors.fromHex("#2376e5");
+      detailsLabel = 'Timetable';
+      detailsHint = '';
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
@@ -1242,8 +1255,8 @@ class ExplorePanelState extends State<ExplorePanel>
                 ]) : Container(),
                 SizedBox(width: buttonWidth, child:
                   RoundedButton(
-                    label: Localization().getStringEx('panel.explore.button.details.title', 'Details'),
-                    hint: Localization().getStringEx('panel.explore.button.details.hint', ''),
+                    label: detailsLabel,
+                    hint: detailsHint,
                     backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     fontSize: 16.0,
@@ -1327,6 +1340,9 @@ class ExplorePanelState extends State<ExplorePanel>
       }
       else if (explore is List<Explore>) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: explore)));
+      }
+      else if (explore is MTDStop) {
+        // TBD
       }
   }
 
@@ -1747,6 +1763,9 @@ class ExplorePanelState extends State<ExplorePanel>
     else if (name == NativeCommunicator.notifyMapClearExplore) {
       _onNativeMapClearExplore(param['mapId']);
     }
+    else if (name == NativeCommunicator.notifyMapSelectPOI) {
+      _onNativeMapSelectPOI(param['mapId'], param['poiJson']);
+    }
     else if(name == Storage.offsetDateKey){
       _loadExplores();
     }
@@ -1823,6 +1842,25 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
+  void _onNativeMapSelectPOI(int? mapID, dynamic poiJson) {
+    if (_nativeMapController!.mapId == mapID) {
+      Map<String, dynamic>? poi = JsonUtils.mapValue(poiJson);
+      String? poiName = (poi != null) ? JsonUtils.stringValue(poi['name']) : null;
+      Map<String, dynamic>? poiLocation = (poi != null) ? JsonUtils.mapValue(poi['location']) : null;
+      double? poiLatitude = (poiLocation != null) ? JsonUtils.doubleValue(poiLocation['latitude']) : null;
+      double? poiLongitude = (poiLocation != null) ? JsonUtils.doubleValue(poiLocation['longitude']) : null;
+      if ((poiLatitude != null) && (poiLongitude != null)) {
+        MTDStop? mtdStop = MTD().stops?.findStop(name: poiName, latitude: poiLatitude, longitude: poiLongitude);
+        if ((mtdStop == null) && (poiName != null)) {
+          mtdStop = MTD().stops?.findStop(latitude: poiLatitude, longitude: poiLongitude) ??
+            MTD().stops?.findStop(name: poiName);
+        }
+        if (mtdStop != null) {
+          _selectMapExplore(mtdStop);
+        }
+      }
+    }
+  }
 }
 
 class ExploreFilter {
@@ -1840,4 +1878,3 @@ class ExploreFilter {
     return selectedIndexes.first;
   }
 }
-
