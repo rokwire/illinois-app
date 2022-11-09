@@ -433,6 +433,20 @@
 	NSLog(@"POIWithPlaceID: %@ name: %@ location: [%@, %@]", placeID, name,
 		@(round(location.latitude * 1000000) / 1000000),
 		@(round(location.longitude * 1000000) / 1000000));
+		
+	NSDictionary *arguments = @{
+		@"mapId" : @(_mapId),
+		@"poi" : @{
+			@"placeID" : placeID ?: [NSNull null],
+			@"name" : name ?: [NSNull null],
+			@"location": @{
+				@"latitude" : @(location.latitude),
+				@"longitude" : @(location.longitude),
+			}
+		}
+	};
+	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"map.poi.select" arguments:arguments.inaJsonString];
+	
 }
 
 
