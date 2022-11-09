@@ -29,7 +29,8 @@ typedef NS_ENUM(NSInteger, UIUCExploreType) {
 	UIUCExploreType_Parking,
 	UIUCExploreType_Building,
 	UIUCExploreType_StudentCourse,
-    UIUCExploreType_Appointment,
+	UIUCExploreType_Appointment,
+	UIUCExploreType_MTDStop,
 	UIUCExploreType_Explores,
 };
 
