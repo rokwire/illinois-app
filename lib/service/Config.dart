@@ -46,6 +46,7 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get secretIlliniCash => JsonUtils.mapValue(secretKeys['illini_cash']) ?? {};
   Map<String, dynamic> get secretParkhub => JsonUtils.mapValue(secretKeys['parkhub']) ?? {};
   Map<String, dynamic> get secretPadaapi => JsonUtils.mapValue(secretKeys['padaapi']) ?? {};
+  Map<String, dynamic> get secretMTD => JsonUtils.mapValue(secretKeys['mtd']) ?? {};
   Map<String, dynamic> get secretTwitter => JsonUtils.mapValue(secretKeys['twitter']) ?? {};
   
   Map<String, dynamic> get twitter => JsonUtils.mapValue(content['twitter']) ?? {};
@@ -71,6 +72,7 @@ class Config extends rokwire.Config {
   String? get illiniCashSecretKey    => JsonUtils.stringValue(secretIlliniCash['secret_key']);
 
   String? get padaapiApiKey          => JsonUtils.stringValue(secretPadaapi['api_key']);
+  String? get mtdApiKey              => JsonUtils.stringValue(secretMTD['api_key']);
 
   String? get twitterToken           => JsonUtils.stringValue(secretTwitter['token']);
   String? get twitterTokenType       => JsonUtils.stringValue(secretTwitter['token_type']);
@@ -96,6 +98,7 @@ class Config extends rokwire.Config {
   String? get crisisHelpUrl          => JsonUtils.stringValue(otherUniversityServices['crisis_help_url']);
   String? get privacyPolicyUrl       => JsonUtils.stringValue(otherUniversityServices['privacy_policy_url']);
   String? get padaapiUrl             => JsonUtils.stringValue(otherUniversityServices['padaapi_url']);
+  String? get mtdUrl                 => JsonUtils.stringValue(otherUniversityServices['mtd_url']);
   String? get canvasZoomMeetingUrl   => JsonUtils.stringValue(otherUniversityServices['canvas_zoom_meeting_url']);
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);

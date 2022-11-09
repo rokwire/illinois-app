@@ -32,6 +32,8 @@ class NativeCommunicator with Service {
   static const String notifyMapRouteStart  = "edu.illinois.rokwire.nativecommunicator.map.route.start";
   static const String notifyMapRouteFinish = "edu.illinois.rokwire.nativecommunicator.map.route.finish";
   
+  static const String notifyMapSelectPOI  = "edu.illinois.rokwire.nativecommunicator.map.poi.select";
+
   final MethodChannel _platformChannel = const MethodChannel('edu.illinois.rokwire/native_call');
 
   // Singletone
@@ -242,6 +244,10 @@ class NativeCommunicator with Service {
         _notifyMapRouteFinish(call.arguments);
         break;
       
+      case "map.poi.select":
+        _notifyMapSelectPOI(call.arguments);
+        break;
+
       case "firebase_message":
         //PS use firebase messaging plugin!
         //FirebaseMessaging().onMessage(call.arguments);
@@ -285,6 +291,18 @@ class NativeCommunicator with Service {
     dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
     Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
     NotificationService().notify(notifyMapRouteFinish, params);
+  }
+
+  void _notifyMapSelectPOI(dynamic arguments) {
+    dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
+    Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
+    int? mapId = (params is Map) ? params!['mapId'] : null;
+    dynamic poiJson = (params is Map) ? params!['poi'] : null;
+
+    NotificationService().notify(notifyMapSelectPOI, {
+      'mapId': mapId,
+      'poiJson': poiJson
+    });
   }
 }
 
