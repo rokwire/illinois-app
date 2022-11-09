@@ -62,6 +62,9 @@
 		_mapView.delegate = self;
 		_mapView.settings.compassButton = YES;
 		_mapView.accessibilityElementsHidden = NO;
+		//_mapView.buildingsEnabled = NO;
+		//_mapView.indoorEnabled = NO;
+		//_mapView.settings.indoorPicker = NO;
 		[self addSubview:_mapView];
 
 		_markers = [[NSMutableSet alloc] init];
@@ -425,6 +428,13 @@
 	}
 	[self updateMapStyle];
 }
+
+- (void)mapView:(GMSMapView *)mapView didTapPOIWithPlaceID:(NSString *)placeID name:(NSString *)name location:(CLLocationCoordinate2D)location {
+	NSLog(@"POIWithPlaceID: %@ name: %@ location: [%@, %@]", placeID, name,
+		@(round(location.latitude * 1000000) / 1000000),
+		@(round(location.longitude * 1000000) / 1000000));
+}
+
 
 @end
 
