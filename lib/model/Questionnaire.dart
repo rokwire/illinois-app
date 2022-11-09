@@ -6,7 +6,7 @@ class Questionnaire {
   final String? id;
   final String? title;
   final String? description;
-  List<Question>? questions;
+  final List<Question>? questions;
   final Map<String, dynamic>? strings;
 
   Questionnaire({this.id, this.title, this.description, this.questions, this.strings});
