@@ -85,10 +85,10 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleMaps (3.10.0):
-    - GoogleMaps/Maps (= 3.10.0)
-  - GoogleMaps/Base (3.10.0)
-  - GoogleMaps/Maps (3.10.0):
+  - GoogleMaps (7.2.0):
+    - GoogleMaps/Maps (= 7.2.0)
+  - GoogleMaps/Base (7.2.0)
+  - GoogleMaps/Maps (7.2.0):
     - GoogleMaps/Base
   - GoogleUtilities/AppDelegateSwizzler (7.8.0):
     - GoogleUtilities/Environment
@@ -165,7 +165,7 @@ DEPENDENCIES:
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - gallery_saver (from `.symlinks/plugins/gallery_saver/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
-  - GoogleMaps (= 3.10.0)
+  - GoogleMaps (= 7.2.0)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
@@ -289,7 +289,7 @@ SPEC CHECKSUMS:
   gallery_saver: 9fc173c9f4fcc48af53b2a9ebea1b643255be542
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
-  GoogleMaps: 8c080862ff2748ece9929471b30feb56a6c5079d
+  GoogleMaps: 65ce5426e2398bb81433c8076f2ab6419c2c5537
   GoogleUtilities: 1d20a6ad97ef46f67bbdec158ce00563a671ebb7
   image_picker_ios: b786a5dcf033a8336a657191401bfdf12017dabb
   in_app_review: 4a97249f7a2f539a0f294c2d9196b7fe35e49541
@@ -311,6 +311,6 @@ SPEC CHECKSUMS:
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
   ZXingObjC: 512b34b9b6920e8ef0461a4159d0814c5e48c28a
 
-PODFILE CHECKSUM: d1f6e301b44a06a3c4553b788f08738370018766
+PODFILE CHECKSUM: f838ae666eddda2f72ca6f88b537b5a60bc0a193
 
 COCOAPODS: 1.11.3
