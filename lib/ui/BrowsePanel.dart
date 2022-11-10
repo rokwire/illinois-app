@@ -564,12 +564,12 @@ class _BrowseEntry extends StatelessWidget {
       case "wallet.illini_id_card":          _onTapIlliniId(context); break;
       case "wallet.library_card":            _onTapLibraryCard(context); break;
 
-      case "wellness.wellness_resources":    _onTapWellnessResources(context); break;
-      case "wellness.wellness_rings":        _onTapWellnessRings(context); break;
-      case "wellness.wellness_todo":         _onTapWellnessToDo(context); break;
-      case "wellness.my_appointments":       _onTapMyAppointments(context); break;
-      case "wellness.wellness_tips":         _onTapWellnessTips(context); break;
-      case "wellness.wellness_symptom_screener": _onTapWellnessSymptomScreener(context); break;
+      case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
+      case "wellness.wellness_rings":           _onTapWellnessRings(context); break;
+      case "wellness.wellness_todo":            _onTapWellnessToDo(context); break;
+      case "wellness.my_appointments":          _onTapMyAppointments(context); break;
+      case "wellness.wellness_tips":            _onTapWellnessTips(context); break;
+      case "wellness.wellness_health_screener": _onTapWellnessHealthScreener(context); break;
     }
   }
 
@@ -1031,9 +1031,9 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.dailyTips,)));
   }
 
-  void _onTapWellnessSymptomScreener(BuildContext context) {
-    Analytics().logSelect(target: "Wellness Symptom Screener");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.symptomScreener,)));
+  void _onTapWellnessHealthScreener(BuildContext context) {
+    Analytics().logSelect(target: "Wellness Health Screener");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.healthScreener,)));
   }
 
   void _notImplemented(BuildContext context) {
