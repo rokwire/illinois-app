@@ -153,7 +153,7 @@ class MTDStop {
 }
 
 ///////////////////////////
-// MTDStop
+// MTDStops
 
 class MTDStops {
   final String? changesetId;
@@ -279,4 +279,42 @@ class MTDRoute {
     }
     return jsonList;
   }
+}
+
+///////////////////////////
+// MTDRoutes
+
+class MTDRoutes {
+  final String? changesetId;
+  final List<MTDRoute>? routes;
+  
+  MTDRoutes({this.changesetId, this.routes});
+
+  // JSON serialization
+
+  static MTDRoutes? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDRoutes(
+      changesetId: JsonUtils.stringValue(json['changeset_id']),
+      routes: MTDRoute.listFromJson(JsonUtils.listValue(json['routes'])),
+    ) : null;
+  }
+
+  toJson() => {
+    'changeset_id': changesetId,
+    'routes': routes,
+ };
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDRoutes) &&
+    (changesetId == other.changesetId) &&
+    (DeepCollectionEquality().equals(routes, other.routes));
+
+  @override
+  int get hashCode =>
+    (changesetId?.hashCode ?? 0) ^
+    DeepCollectionEquality().hash(routes);
+
 }
