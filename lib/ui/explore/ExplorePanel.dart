@@ -150,7 +150,7 @@ class ExplorePanelState extends State<ExplorePanel>
   bool _eventsDisplayDropDownValuesVisible = false;
 
   //Maps
-  static const double MapBarHeight = 114;
+  static const double MapBarHeight = 116;
   static const Color MTDStopColor = const Color(0xff2376e5);
 
   bool? _mapAllowed;
@@ -1291,7 +1291,7 @@ class ExplorePanelState extends State<ExplorePanel>
     if (_selectedMapStopRoutes != null) {
       for (MTDRoute route in _selectedMapStopRoutes!) {
         routeWidgets.add(
-          Container(decoration: BoxDecoration(color: route.color, borderRadius: BorderRadius.circular(5)), child:
+          Container(decoration: BoxDecoration(color: route.color, border: Border.all(color: route.textColor ?? Colors.transparent, width: 1), borderRadius: BorderRadius.circular(5)), child:
             Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2), child:
               Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 12, color: route.textColor,)),
             )
