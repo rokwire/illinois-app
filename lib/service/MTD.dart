@@ -104,6 +104,7 @@ class MTD with Service implements NotificationsListener {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _updateStops();
+          _updateRoutes();
         }
       }
     }
@@ -199,6 +200,24 @@ class MTD with Service implements NotificationsListener {
       Response? response = await Network().get(url);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
       return (responseJson != null) ? MTDRoute.listFromJson(JsonUtils.listValue(responseJson['routes'])) : null;
+    }
+    return null;
+  }
+
+  // Stop Times
+
+  Future<List<MTDStopTime>?> getStopTimes({String? stopId, String? tripId}) async {
+    if (StringUtils.isNotEmpty(Config().mtdUrl) && StringUtils.isNotEmpty(Config().mtdApiKey)) {
+      String? url;
+      if (stopId != null) {
+        url = "${Config().mtdUrl}/getroutesbystop?key=${Config().mtdApiKey}&stop_id=$stopId";
+      }
+      else if (tripId != null) {
+        url = "${Config().mtdUrl}/getstoptimesbytrip?key=${Config().mtdApiKey}&trip_id=$tripId";
+      }
+      Response? response = (url != null) ? await Network().get(url) : null;
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
+      return (responseJson != null) ? MTDStopTime.listFromJson(JsonUtils.listValue(responseJson['stop_times'])) : null;
     }
     return null;
   }

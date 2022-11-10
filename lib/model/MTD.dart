@@ -316,5 +316,166 @@ class MTDRoutes {
   int get hashCode =>
     (changesetId?.hashCode ?? 0) ^
     DeepCollectionEquality().hash(routes);
+}
 
+///////////////////////////
+// MTDTrip
+
+class MTDTrip {
+  final String? id;
+  final String? headsign;
+  final String? direction;
+  final String? routeId;
+  final String? serviceId;
+  final String? blockId;
+  final String? shapeId;
+
+  MTDTrip({this.id, this.headsign, this.direction, this.routeId, this.serviceId, this.blockId, this.shapeId});
+
+  // JSON serialization
+
+  static MTDTrip? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDTrip(
+      id: JsonUtils.stringValue(json['trip_id']),
+      headsign: JsonUtils.stringValue(json['trip_headsign']),
+      direction: JsonUtils.stringValue(json['direction']),
+      routeId: JsonUtils.stringValue(json['route_id']),
+      serviceId: JsonUtils.stringValue(json['service_id']),
+      blockId: JsonUtils.stringValue(json['block_id']),
+      shapeId: JsonUtils.stringValue(json['shape_id']),
+    ) : null;
+  }
+
+  toJson() => {
+    'trip_id': id,
+    'trip_headsign': headsign,
+    'direction': direction,
+    'route_id': routeId,
+    'service_id': serviceId,
+    'block_id': blockId,
+    'shape_id': shapeId,
+  };
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDTrip) &&
+    (id == other.id) &&
+    (headsign == other.headsign) &&
+    (direction == other.direction) &&
+    (routeId == other.routeId) &&
+    (serviceId == other.serviceId) &&
+    (blockId == other.blockId) &&
+    (shapeId == other.shapeId);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (headsign?.hashCode ?? 0) ^
+    (direction?.hashCode ?? 0) ^
+    (routeId?.hashCode ?? 0) ^
+    (serviceId?.hashCode ?? 0) ^
+    (blockId?.hashCode ?? 0) ^
+    (shapeId?.hashCode ?? 0);
+
+  // JSON List Serialization
+
+  static List<MTDTrip>? listFromJson(List<dynamic>? jsonList) {
+    List<MTDTrip>? values;
+    if (jsonList != null) {
+      values = <MTDTrip>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(values, MTDTrip.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<MTDTrip>? values) {
+    List<dynamic>? jsonList;
+    if (values != null) {
+      jsonList = <dynamic>[];
+      for (MTDTrip value in values) {
+        ListUtils.add(jsonList, value.toJson());
+      }
+    }
+    return jsonList;
+  }
+}
+
+///////////////////////////
+// MTDStopTime
+
+class MTDStopTime {
+  final String? arrivalTimeString;
+  final String? departureTimeString;
+  final String? stopSequence;
+  final String? stopId;
+  final MTDTrip? trip;
+
+  MTDStopTime({this.arrivalTimeString, this.departureTimeString, this.stopSequence, this.stopId, this.trip});
+
+  // JSON serialization
+
+  static MTDStopTime? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDStopTime(
+      arrivalTimeString: JsonUtils.stringValue(json['arrival_time']),
+      departureTimeString: JsonUtils.stringValue(json['departure_time']),
+      stopSequence: JsonUtils.stringValue(json['stop_sequence']),
+      stopId: JsonUtils.stringValue(json['stop_id']),
+      trip: MTDTrip.fromJson(JsonUtils.mapValue(json['trip'])),
+    ) : null;
+  }
+
+  toJson() => {
+    'arrival_time': arrivalTimeString,
+    'departure_time': departureTimeString,
+    'stop_sequence': stopSequence,
+    'stop_id': stopId,
+    'trip': trip?.toJson(),
+  };
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDStopTime) &&
+    (arrivalTimeString == other.arrivalTimeString) &&
+    (departureTimeString == other.departureTimeString) &&
+    (stopSequence == other.stopSequence) &&
+    (stopId == other.stopId) &&
+    (trip == other.trip);
+
+  @override
+  int get hashCode =>
+    (arrivalTimeString?.hashCode ?? 0) ^
+    (departureTimeString?.hashCode ?? 0) ^
+    (stopSequence?.hashCode ?? 0) ^
+    (stopId?.hashCode ?? 0) ^
+    (trip?.hashCode ?? 0);
+
+  // JSON List Serialization
+
+  static List<MTDStopTime>? listFromJson(List<dynamic>? jsonList) {
+    List<MTDStopTime>? values;
+    if (jsonList != null) {
+      values = <MTDStopTime>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(values, MTDStopTime.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<MTDStopTime>? values) {
+    List<dynamic>? jsonList;
+    if (values != null) {
+      jsonList = <dynamic>[];
+      for (MTDStopTime value in values) {
+        ListUtils.add(jsonList, value.toJson());
+      }
+    }
+    return jsonList;
+  }
 }
