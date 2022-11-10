@@ -296,7 +296,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     if (StringUtils.isNotEmpty(longDisplayLocation)) {
       locationTextValue = longDisplayLocation;
     }
-    if (StringUtils.isNotEmpty(locationTitle)) {
+    else if (StringUtils.isNotEmpty(locationTitle)) {
       if (locationTextValue != null) {
         locationTextValue += ', $locationTitle';
       } else {
