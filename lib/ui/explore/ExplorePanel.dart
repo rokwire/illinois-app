@@ -148,15 +148,18 @@ class ExplorePanelState extends State<ExplorePanel>
   bool? _loadingProgress;
   bool _itemsDropDownValuesVisible = false;
   bool _eventsDisplayDropDownValuesVisible = false;
-  
+
   //Maps
   static const double MapBarHeight = 114;
+  static const Color MTDStopColor = const Color(0xff2376e5);
 
   bool? _mapAllowed;
   MapController? _nativeMapController;
   ListMapDisplayType? _displayType;
   dynamic _selectedMapExplore;
   late AnimationController _mapExploreBarAnimationController;
+  String? _loadingMapStopIdRoutes;
+  List<MTDRoute>? _selectedMapStopRoutes;
 
   @override
   void initState() {
@@ -1200,6 +1203,7 @@ class ExplorePanelState extends State<ExplorePanel>
     Color? exploreColor = Colors.white;
     String? detailsLabel = Localization().getStringEx('panel.explore.button.details.title', 'Details');
     String? detailsHint = Localization().getStringEx('panel.explore.button.details.hint', '');
+    Widget? descriptionWidget;
 
     if (_selectedMapExplore is Explore) {
       title = _selectedMapExplore?.exploreTitle;
@@ -1211,15 +1215,17 @@ class ExplorePanelState extends State<ExplorePanel>
       title = sprintf(Localization().getStringEx('panel.explore.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
       Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
       description = explore?.exploreLocation?.description ?? "";
-      exploreColor = explore?.uiColor ?? Styles().colors!.fillColorSecondary!;
       exploreColor = _exploreColor(explore) ?? Styles().colors?.fillColorSecondary;
     }
     else if (_selectedMapExplore is MTDStop) {
       title = (_selectedMapExplore as MTDStop).name;
       description = (_selectedMapExplore as MTDStop).code;
-      exploreColor = UiColors.fromHex("#2376e5");
-      detailsLabel = 'Timetable';
+      exploreColor = MTDStopColor;
+      detailsLabel = 'Bus Schedule';
       detailsHint = '';
+      descriptionWidget = Padding(padding: EdgeInsets.only(left: 8), child:
+        (_loadingMapStopIdRoutes != null) ? _buildStopRoutesLoading() : _buildStopRouteWidgets(),
+      );
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
@@ -1233,7 +1239,10 @@ class ExplorePanelState extends State<ExplorePanel>
           Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Text(title ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary, )),
-              Text((description != null) ? description : "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
+              Row(children: <Widget>[
+                Text((description != null) ? description : "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
+                descriptionWidget ?? Container()
+              ]),
               Container(height: 8,),
               Row(children: <Widget>[
                 _userLocationEnabled() ? Row(children: <Widget>[
@@ -1277,6 +1286,28 @@ class ExplorePanelState extends State<ExplorePanel>
     ]);
   }
 
+  Widget _buildStopRouteWidgets() {
+    List<Widget> routeWidgets = <Widget>[];
+    if (_selectedMapStopRoutes != null) {
+      for (MTDRoute route in _selectedMapStopRoutes!) {
+        routeWidgets.add(
+          Container(decoration: BoxDecoration(color: route.color, borderRadius: BorderRadius.circular(5)), child:
+            Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2), child:
+              Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 12, color: route.textColor,)),
+            )
+          )
+        );
+      }
+    }
+    return routeWidgets.isNotEmpty ? Wrap(spacing: 6, children: routeWidgets,) : Container();
+  }
+
+  Widget _buildStopRoutesLoading() {
+    return SizedBox(width: 16, height: 16, child:
+      CircularProgressIndicator(color: MTDStopColor, strokeWidth: 2,),
+    );
+  }
+
   static Color? _exploreColor(Explore? explore) {
     if (explore is Event) {
       return explore.uiColor;
@@ -1295,11 +1326,13 @@ class ExplorePanelState extends State<ExplorePanel>
   void _selectMapExplore(dynamic explore) {
     if (explore != null) {
       _refresh(() { _selectedMapExplore = explore;});
+      _updateSelectedMapStopRoutes();
       _mapExploreBarAnimationController.forward();
     }
     else if (_selectedMapExplore != null) {
       _mapExploreBarAnimationController.reverse().then((_){
         _refresh(() { _selectedMapExplore = null;});
+        _updateSelectedMapStopRoutes();
       });
     }
   }
@@ -1345,6 +1378,65 @@ class ExplorePanelState extends State<ExplorePanel>
       else if (explore is MTDStop) {
         // TBD
       }
+  }
+
+  void _updateSelectedMapStopRoutes() {
+    String? stopId = (_selectedMapExplore is MTDStop) ? (_selectedMapExplore as MTDStop).id : null;
+    if ((stopId != null) && (stopId != _loadingMapStopIdRoutes)) {
+      _refresh(() { _loadingMapStopIdRoutes = stopId; });
+      MTD().getRoutes(stopId: stopId).then((List<MTDRoute>? routes) {
+        String? currentStopId = (_selectedMapExplore is MTDStop) ? (_selectedMapExplore as MTDStop).id : null;
+        if (currentStopId == stopId) {
+          _refresh(() {
+            _loadingMapStopIdRoutes = null;
+            _selectedMapStopRoutes = _buildStopRoutes(routes);
+          });
+        }
+      });
+    }
+    else if ((stopId == null) && ((_loadingMapStopIdRoutes != null) || (_selectedMapStopRoutes != null))) {
+      _refresh(() {
+        _loadingMapStopIdRoutes = null;
+        _selectedMapStopRoutes = null;
+      });
+    }
+  }
+
+  static List<MTDRoute>? _buildStopRoutes(List<MTDRoute>? sourceRoutes) {
+    List<MTDRoute>? routes;
+    if (sourceRoutes != null) {
+      routes = <MTDRoute>[];
+      for (MTDRoute route in sourceRoutes) {
+
+        bool routeProcessed = false;
+        for (MTDRoute processedRoute in routes) {
+          if ((processedRoute.shortName == route.shortName) && (processedRoute.colorCode == route.colorCode) && (processedRoute.textColorCode == route.textColorCode)) {
+            routeProcessed = true;
+            break;
+          }
+        }
+
+        if (!routeProcessed) {
+          routes.add(route);
+        }
+      }
+      routes.sort((MTDRoute route1, MTDRoute route2) {
+        String? routeName1 = route1.shortName;
+        String? routeName2 = route2.shortName;
+        if ((routeName1 != null) && (routeName2 != null)) {
+          int? routeNum1 = int.tryParse(routeName1);
+          int? routeNum2 = int.tryParse(routeName2);
+          if ((routeNum1 != null) && (routeNum2 != null)) {
+            return routeNum1.compareTo(routeNum2);
+          }
+          else {
+            return routeName1.compareTo(routeName2);
+          }
+        }
+        return 0;
+      });
+    }
+    return routes;
   }
 
   Widget _buildLoading() {

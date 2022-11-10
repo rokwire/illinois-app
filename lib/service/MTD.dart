@@ -133,4 +133,18 @@ class MTD with Service implements NotificationsListener {
       NotificationService().notify(notifyStopsChanged);
     }
   }
+
+  // Routes
+
+  Future<List<MTDRoute>?> getRoutes({String? stopId}) async {
+    if (StringUtils.isNotEmpty(Config().mtdUrl) && StringUtils.isNotEmpty(Config().mtdApiKey)) {
+      String url = StringUtils.isNotEmpty(stopId) ?
+        "${Config().mtdUrl}/getroutesbystop?key=${Config().mtdApiKey}&stop_id=$stopId" :
+        "${Config().mtdUrl}/getroutes?key=${Config().mtdApiKey}";
+      Response? response = await Network().get(url);
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
+      return (responseJson != null) ? MTDRoute.listFromJson(JsonUtils.listValue(responseJson['routes'])) : null;
+    }
+    return null;
+  }
 }

@@ -1,7 +1,12 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Location.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+///////////////////////////
+// MTDStop
 
 class MTDStop {
   final String? id;
@@ -147,6 +152,9 @@ class MTDStop {
   }
 }
 
+///////////////////////////
+// MTDStop
+
 class MTDStops {
   final String? changesetId;
   final List<MTDStop>? stops;
@@ -189,5 +197,86 @@ class MTDStops {
       return nearestStop ?? result.first;
     }
     return null;
+  }
+}
+
+///////////////////////////
+// MTDRoute
+
+class MTDRoute {
+  final String? id;
+  final String? shortName;
+  final String? longName;
+  final String? colorCode;
+  final String? textColorCode;
+
+  MTDRoute({this.id, this.shortName, this.longName, this.colorCode, this.textColorCode});
+
+  // JSON serialization
+
+  static MTDRoute? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDRoute(
+      id: JsonUtils.stringValue(json['route_id']),
+      shortName: JsonUtils.stringValue(json['route_short_name']),
+      longName: JsonUtils.stringValue(json['route_long_name']),
+      colorCode: JsonUtils.stringValue(json['route_color']),
+      textColorCode: JsonUtils.stringValue(json['route_text_color']),
+    ) : null;
+  }
+
+  toJson() => {
+    'route_id': id,
+    'route_short_name': shortName,
+    'route_long_name': longName,
+    'route_color': color,
+    'route_text_color': textColor,
+  };
+
+  // Operations
+  
+  Color? get color => UiColors.fromHex(colorCode);
+  Color? get textColor => UiColors.fromHex(textColorCode);
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDRoute) &&
+    (id == other.id) &&
+    (shortName == other.shortName) &&
+    (longName == other.longName) &&
+    (colorCode == other.colorCode) &&
+    (textColorCode == other.textColorCode);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (shortName?.hashCode ?? 0) ^
+    (longName?.hashCode ?? 0) ^
+    (colorCode?.hashCode ?? 0) ^
+    (textColorCode?.hashCode ?? 0);
+
+  // JSON List Serialization
+
+  static List<MTDRoute>? listFromJson(List<dynamic>? jsonList) {
+    List<MTDRoute>? values;
+    if (jsonList != null) {
+      values = <MTDRoute>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(values, MTDRoute.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<MTDRoute>? values) {
+    List<dynamic>? jsonList;
+    if (values != null) {
+      jsonList = <dynamic>[];
+      for (MTDRoute value in values) {
+        ListUtils.add(jsonList, value.toJson());
+      }
+    }
+    return jsonList;
   }
 }
