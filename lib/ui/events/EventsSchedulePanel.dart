@@ -943,10 +943,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       setState(() { });
     }
     else if (name == NativeCommunicator.notifyMapSelectExplore) {
-      _onNativeMapSelectExplore(param['mapId'], param['exploreJson']);
+      _onNativeMapSelectExplore(param);
     }
     else if (name == NativeCommunicator.notifyMapClearExplore) {
-      _onNativeMapClearExplore(param['mapId']);
+      _onNativeMapClearExplore(param);
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateLocationServicesStatus();
@@ -975,9 +975,11 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
   }
 
-  void _onNativeMapSelectExplore(int? mapID, dynamic exploreJson) {
-    if (_nativeMapController!.mapId == mapID) {
+  void _onNativeMapSelectExplore(Map<String, dynamic>? params) {
+    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
+    if (_nativeMapController!.mapId == mapId) {
       dynamic explore;
+      dynamic exploreJson = (params != null) ? params['explore'] : null;
       if (exploreJson is Map) {
         explore = _exploreFromMapExplore(Explore.fromJson(exploreJson as Map<String, dynamic>?));
       }
@@ -991,8 +993,9 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
   }
 
-  void _onNativeMapClearExplore(int? mapID) {
-    if (_nativeMapController!.mapId == mapID) {
+  void _onNativeMapClearExplore(Map<String, dynamic>? params) {
+    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
+    if (_nativeMapController!.mapId == mapId) {
       _selectMapExplore(null);
     }
   }

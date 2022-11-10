@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -14,7 +15,6 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:geolocator/geolocator.dart' as Core;
 
 extension ExploreExt on Explore {
@@ -23,8 +23,9 @@ extension ExploreExt on Explore {
     ExploreLocation? location = exploreLocation;
     if (location != null) {
       if ((locationData != null) && (location.latitude != null) && (location.longitude != null)) {
-        double distance = LocationUtils.distance(location.latitude!.toDouble(), location.longitude!.toDouble(), locationData.latitude, locationData.longitude);
-        return distance.toStringAsFixed(1) + " mi away";
+        double distanceInMeters = Core.Geolocator.distanceBetween(location.latitude!.toDouble(), location.longitude!.toDouble(), locationData.latitude, locationData.longitude);
+        double distanceInMiles = distanceInMeters / 1609.344;
+        return distanceInMiles.toStringAsFixed(1) + " mi away";
       }
       if ((location.description != null) && location.description!.isNotEmpty) {
         return location.description;
@@ -53,8 +54,9 @@ extension ExploreExt on Explore {
     ExploreLocation? location = exploreLocation;
     if (location != null) {
       if ((locationData != null) && (location.latitude != null) && (location.longitude != null)) {
-        double distance = LocationUtils.distance(location.latitude!.toDouble(), location.longitude!.toDouble(), locationData.latitude, locationData.longitude);
-        displayText = distance.toStringAsFixed(1) + " mi away";
+        double distanceInMeters = Geolocator.distanceBetween(location.latitude!.toDouble(), location.longitude!.toDouble(), locationData.latitude, locationData.longitude);
+        double distanceInMiles = distanceInMeters / 1609.344;
+        displayText = distanceInMiles.toStringAsFixed(1) + " mi away";
       }
       if ((location.description != null) && location.description!.isNotEmpty) {
         return displayText += (displayText.isNotEmpty ? ", " : "")  + location.description!;

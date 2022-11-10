@@ -1,4 +1,6 @@
 import 'package:collection/collection.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:illinois/model/Location.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class MTDStop {
@@ -85,35 +87,62 @@ class MTDStop {
 
   // List Lookup
 
-  static MTDStop? stopInList(List<MTDStop>? stops, { String? name, double? latitude, double? longitude, double locationPrecision = 0.000001 }) {
-    if (stops != null) {
+  static MTDStop? nearestStopInList(List<MTDStop>? stops, { LatLng? location }) {
+    MTDStop? nearestStop;
+    if ((stops != null) && (location != null) && (location.latitude != null) && (location.longitude != null)) {
+      double? nearestDistance;
       for (MTDStop stop in stops) {
-        MTDStop? stopPoint = stopInList(stop.points, name: name, latitude: latitude, longitude: longitude, locationPrecision: locationPrecision );
-        if (stopPoint != null) {
-          return stopPoint;
-        }
-        if (stop.match(name: name, latitude: latitude, longitude: longitude, locationPrecision: locationPrecision)) {
-          return stop;
+        if ((stop.latitude != null) && (stop.longitude != null)) {
+          double distance = Geolocator.distanceBetween(location.latitude!, location.longitude!, stop.latitude!, stop.longitude!);
+          if ((nearestDistance == null) || (nearestDistance > distance)) {
+            nearestStop = stop;
+            nearestDistance = distance;
+          }
         }
       }
     }
-    return null;
+    return nearestStop;
   }
 
-  bool match({ String? name, double? latitude, double? longitude, double locationPrecision = 0.000001 }) {
+  static List<MTDStop>? stopInList(List<MTDStop>? stops, { String? name, LatLng? location, double locationThresholdDistance = 1 /* in meters */ }) {
+    List<MTDStop>? result;
+    if (stops != null) {
+      for (MTDStop stop in stops) {
+        List<MTDStop>? pointsResult = stopInList(stop.points, name: name, location: location, locationThresholdDistance: locationThresholdDistance);
+        if ((pointsResult != null) && pointsResult.isNotEmpty) {
+          if (result != null) {
+            result.addAll(pointsResult);
+          }
+          else {
+            result = pointsResult;
+          }
+        }
+        if (stop.match(name: name, location: location, locationThresholdDistance: locationThresholdDistance)) {
+          if (result != null) {
+            result.add(stop);
+          }
+          else {
+            result = <MTDStop>[stop];
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  bool match({ String? name, LatLng? location, double locationThresholdDistance = 1 /* in meters */ }) {
     
     if ((name != null) && (name != this.name)) {
       return false;
     }
     
-    if ((latitude != null) && ((this.latitude == null) || ((latitude - this.latitude!).abs() > locationPrecision))) {
+    if ((location != null) && (location.latitude != null) && (location.longitude != null) &&
+        ((this.latitude == null) || (this.longitude == null) ||
+         (Geolocator.distanceBetween(location.latitude!, location.longitude!, this.latitude!, this.longitude!) > locationThresholdDistance)))
+    {
       return false;
     }
     
-    if ((longitude != null) && ((this.longitude == null) || ((longitude - this.longitude!).abs() > locationPrecision))) {
-      return false;
-    }
-
     return true;
   }
 }
@@ -153,7 +182,12 @@ class MTDStops {
 
   // Operations
 
-  MTDStop? findStop({ String? name, double? latitude, double? longitude, double locationPrecision = 0.000001 }) {
-    return MTDStop.stopInList(stops, name: name, latitude: latitude, longitude: longitude, locationPrecision: locationPrecision);
+  MTDStop? findStop({ String? name, LatLng? location, double locationThresholdDistance = 10 /* in meters */ }) {
+    List<MTDStop>? result = MTDStop.stopInList(stops, name: name, location: location, locationThresholdDistance: locationThresholdDistance);
+    if ((result != null) && result.isNotEmpty) {
+      MTDStop? nearestStop = (1 < result.length) ? MTDStop.nearestStopInList(result, location: location) : null;
+      return nearestStop ?? result.first;
+    }
+    return null;
   }
 }
