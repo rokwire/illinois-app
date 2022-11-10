@@ -105,8 +105,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                                     color: Styles().colors!.white,
                                     fontSize: 16),
                               ),
-                              Image.asset(
-                                'images/icon-check-example.png', excludeFromSemantics: true, color: Styles().colors!.white,),
+                              Styles().images?.getImage('check-circle-white', excludeFromSemantics: true) ?? Container(),
                               Expanded(
                                   child:Text(
                                     Localization().getStringEx("panel.group.members.label.follow_team.title", " to select members"),

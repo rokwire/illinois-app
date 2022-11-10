@@ -169,7 +169,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.edit.label', "Edit"), button: true, child:
                         GestureDetector(onTap: _onTapEditMainPost, child:
                           Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                            Image.asset('images/icon-edit.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
+                            Styles().images?.getImage('edit', excludeFromSemantics: true))))))),
 
                 Visibility(visible: _isDeletePostVisible && !widget.hidePostOptions, child:
                   Semantics(container: true, sortKey: OrdinalSortKey(5), child:
@@ -177,19 +177,19 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.delete.label', "Delete"), button: true, child:
                         GestureDetector(onTap: _onTapDeletePost, child:
                             Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                              Image.asset('images/trash.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
+                              Styles().images?.getImage('trash', excludeFromSemantics: true))))))),
 
                 Visibility(visible: _isReportAbuseVisible && !widget.hidePostOptions, child:
                   Semantics(label: Localization().getStringEx('panel.group.detail.post.button.report.label', "Report"), button: true, child:
                     GestureDetector( onTap: () => _onTapReportAbusePostOptions(), child:
                         Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                          Image.asset('images/icon-feedback.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
+                          Styles().images?.getImage('feedback', excludeFromSemantics: true))))),
 
                 Visibility(visible: _isReplyVisible && !widget.hidePostOptions, child:
                   Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"), button: true, child:
                     GestureDetector(onTap: _onTapHeaderReply, child:
                         Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 16), child:
-                          Image.asset('images/icon-group-post-reply.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
+                          Styles().images?.getImage('reply', excludeFromSemantics: true))))),
 
               ]),
             ])

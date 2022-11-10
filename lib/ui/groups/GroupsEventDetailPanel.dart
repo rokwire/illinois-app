@@ -272,7 +272,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(right: 10),
-                          child:Image.asset(iconRes, excludeFromSemantics: true),
+                          child: Styles().images?.getImage(iconRes, excludeFromSemantics: true),
                         ),
                         Container(decoration: (null), padding: EdgeInsets.only(bottom: (0)), child: Text(eventType,
                             style: TextStyle(
@@ -335,7 +335,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(right: 10),
-                          child:Image.asset(iconRes, excludeFromSemantics: true),
+                          child: Styles().images?.getImage(iconRes, excludeFromSemantics: true),
                         ),
                         Container(decoration: (StringUtils.isNotEmpty(value) ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (StringUtils.isNotEmpty(value) ? 2 : 0)), child: Text(eventType,
                             style: TextStyle(

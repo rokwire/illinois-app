@@ -413,18 +413,42 @@
     "tips": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
     "todo": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
     "radio": {"src": "images/campus-tools.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "info": {"src": "images/icon-info-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "edit": {"src": "images/icon-edit.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "trash": {"src": "images/trash.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "feedback": {"src": "images/icon-feedback.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "reply": {"src": "images/icon-group-post-reply.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "location": {"src": "images/location.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "time": {"src": "images/icon-time.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "clear": {"src": "images/icon-x-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "laptop": {"src": "images/laptop.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18, "todo": "size issue?"},
+    "share": {"src": "images/icon-share.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+
+    "star-filled": {"src": "images/icon-star-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 18},
+    "check-circle-filled": {"src": "images/checkbox-selected.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 24},
+
+    "star-outline": {"src": "images/icon-star-gray-frame-thin.png", "type": "flutter.asset", "color": "mediumGray", "size": 18},
+    "circle-outline": {"src": "images/oval-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 24},
+
     "arrow-up": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 10},
     "arrow-down": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 10},
+    "arrow-right": {"src": "images/chevron-right.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 14, "todo": "size issue?"},
+    "close-small": {"src": "images/close-orange-small.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 14, "todo": "replace this"},
 
-    "location": {"src": "images/icon-location.png", "type": "flutter.asset", "color": "fillColorPrimary", "todo": "remove background, check size"},
     "button-plus": {"src": "images/button-plus-orange.png", "type": "flutter.asset", "color": "fillColorPrimary", "size": 34},
 
     "close-white": {"src": "images/close-white.png", "type": "flutter.asset", "color": "surface", "size": 24},
+    "close-white-large": {"src": "images/close-white-large.png", "type": "flutter.asset", "color": "surface", "size": 54},
     "more-white": {"src": "images/groups-more-inactive.png", "type": "flutter.asset", "color": "surface", "size": 24},
+    "check-circle-white": {"src": "images/icon-star-gray-frame-thin.png", "type": "flutter.asset", "color": "surface", "size": 18},
 
     "retry-gray": {"src": "0xf2f9", "type": "fa.icon", "weight": "solid", "size": 18.0, "color": "mediumGray"},
 
+    "check-green": {"src": "images/green-check-mark.png", "type": "flutter.asset", "size": 18},
+
+    "close-dark": {"src": "images/close-blue.png", "type": "flutter.asset", "color": "fillColorSecondary", "size": 24},
+
     "explore_illustration": {"src": "images/explore_illustration.png", "type": "flutter.asset", "width":  250, "fit": "fitWidth"},
-    "explore_illustration": {"src": "images/explore_illustration.png", "type": "flutter.asset", "width":  250, "fit": "fitWidth"}
+    "mtd-logo": {"src": "images/mtd-logo.png", "type": "flutter.asset"},
   }
 }

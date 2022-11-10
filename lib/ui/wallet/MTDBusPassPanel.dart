@@ -141,9 +141,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
             Align(alignment: Alignment.bottomCenter, child:
               Padding(padding: EdgeInsets.only(bottom: 10), child:
                 Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
-                  InkWell(onTap: _onClose, child:
-                    Image.asset('images/close-white-large.png', excludeFromSemantics: true,)
-                  ),
+                  InkWell(onTap: _onClose, child: Styles().images?.getImage('close-white-large', excludeFromSemantics: true)),
                 ),
               ),
             ),
@@ -159,9 +157,8 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
             Align(alignment: Alignment.topRight, child:
               Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
                 InkWell(onTap: _onClose, child:
-                  Container(width: 48, height: 48, alignment: Alignment.center, child:
-                    Image.asset('images/close-blue.png', excludeFromSemantics: true,)
-                  ),
+                  Container(width: 48, height: 48, alignment: Alignment.center,
+                      child: Styles().images?.getImage('close-dark', excludeFromSemantics: true)),
                 ),
               )
             ),
@@ -190,7 +187,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
         Align(alignment: Alignment.center, child:
           Padding(padding: EdgeInsets.only(top: 20), child:
             Opacity(opacity: busPassAvailable ? 1 : 0, child:
-              Image.asset('images/mtd-logo.png', excludeFromSemantics: true,),
+              Styles().images?.getImage('mtd-logo', excludeFromSemantics: true)
             )
           ),
         ),

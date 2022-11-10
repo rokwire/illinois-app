@@ -127,7 +127,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                     splashColor: Styles().colors!.white,
                   ),
                   child: DropdownButton(
-                      icon: Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
+                      icon: Styles().images?.getImage('arrow-down', excludeFromSemantics: true), //Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
                       isExpanded: true,
                       focusColor: Styles().colors!.white,
                       underline: Container(),
@@ -172,9 +172,9 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                           style: isSelected? Styles().textStyles?.getTextStyle("widget.group.dropdown_button.item.selected") :  Styles().textStyles?.getTextStyle("widget.group.dropdown_button.item.not_selected")
                         ),
                       )),
-                  isSelected
-                      ? Image.asset("images/checkbox-selected.png", excludeFromSemantics: true)
-                      : Image.asset("images/oval-orange.png", excludeFromSemantics: true)
+                  (isSelected
+                      ? Styles().images?.getImage('check-circle-filled', excludeFromSemantics: true)
+                      : Styles().images?.getImage('circle-outline', excludeFromSemantics: true)) ?? Container()
                 ]),
             description==null? Container() : Container(height: 6,),
             description==null? Container():

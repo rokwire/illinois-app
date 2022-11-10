@@ -278,9 +278,9 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                     onTap: _onTapExploreCardStar,
                     child:Container(child: Padding(padding: EdgeInsets.only(
                       right: 16, top: 12, left: 24, bottom: 5),
-                      child: Image.asset(isFavorite
-                          ? 'images/icon-star-orange.png'
-                          : 'images/icon-star-gray-frame-thin.png',
+                      child: Styles().images?.getImage(isFavorite
+                          ? 'star-filled'
+                          : 'star-outline',
                         excludeFromSemantics: true,)
                       ))
                   )),)))

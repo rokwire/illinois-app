@@ -450,12 +450,12 @@ class _BrowseEntry extends StatelessWidget {
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 14), child:
-                  Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary)),
+                  Text(_title, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold,
+                      fontSize: 20, color: Styles().colors!.fillColorPrimary)),
                 ),
               ),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18), child:
-                Image.asset('images/chevron-right.png'),
-              ),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  child: Styles().images?.getImage('arrow-right', excludeFromSemantics: true)),
             ],),
         ),
       ),
