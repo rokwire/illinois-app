@@ -52,7 +52,7 @@ class Appointment with Explore, Favorite {
   }
 
   String? get displayDate {
-    return AppDateTime().formatDateTime(dateTimeUtc, format: 'MMM dd, H:mma');
+    return AppDateTime().formatDateTime(AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc), format: 'MMM dd, H:mma');
   }
 
   bool get isUpcoming {
