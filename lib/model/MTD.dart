@@ -479,3 +479,212 @@ class MTDStopTime {
     return jsonList;
   }
 }
+
+///////////////////////////
+// MTDOrgDest
+
+class MTDOrgDest {
+  final String? stopId;
+  
+  MTDOrgDest({this.stopId});
+
+  // JSON serialization
+
+  static MTDOrgDest? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDOrgDest(
+      stopId: JsonUtils.stringValue(json['stop_id']),
+    ) : null;
+  }
+
+  toJson() => {
+    'stop_id': stopId,
+ };
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDOrgDest) &&
+    (stopId == other.stopId);
+
+  @override
+  int get hashCode =>
+    (stopId?.hashCode ?? 0);
+}
+
+///////////////////////////
+// MTDLocation
+
+class MTDLocation {
+  final double? latitude;
+  final double? longitude;
+  
+  MTDLocation({this.latitude, this.longitude});
+
+  // JSON serialization
+
+  static MTDLocation? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDLocation(
+      latitude: JsonUtils.doubleValue(json['lat']),
+      longitude: JsonUtils.doubleValue(json['lon']),
+    ) : null;
+  }
+
+  toJson() => {
+    'lat': latitude,
+    'lon': longitude,
+ };
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDLocation) &&
+    (latitude == other.latitude) &&
+    (longitude == other.longitude);
+
+  @override
+  int get hashCode =>
+    (latitude?.hashCode ?? 0) ^
+    (longitude?.hashCode ?? 0);
+}
+
+///////////////////////////
+// MTDDeparture
+
+class MTDDeparture {
+  final String? stopId;
+  final String? headsign;
+  final String? vehicleId;
+
+  final bool? isMonitored;
+  final bool? isScheduled;
+  final bool? isIStop;
+
+  final String? scheduledString;
+  final String? expectdString;
+  final int? expectedMins;
+
+  final MTDRoute? route;
+  final MTDTrip? trip;
+  final MTDOrgDest? origin;
+  final MTDOrgDest? destination;
+  final MTDLocation? location;
+
+  MTDDeparture({this.stopId, this.headsign, this.vehicleId,
+    this.isMonitored, this.isScheduled, this.isIStop,
+    this.scheduledString, this.expectdString, this.expectedMins,
+    this.route, this.trip, this.origin, this.destination, this.location});
+
+  // JSON serialization
+
+  static MTDDeparture? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDDeparture(
+      stopId: JsonUtils.stringValue(json['stop_id']),
+      headsign: JsonUtils.stringValue(json['headsign']),
+      vehicleId: JsonUtils.stringValue(json['vehicle_id']),
+
+      isMonitored: JsonUtils.boolValue(json['is_monitored']),
+      isScheduled: JsonUtils.boolValue(json['is_scheduled']),
+      isIStop: JsonUtils.boolValue(json['is_istop']),
+
+      scheduledString: JsonUtils.stringValue(json['scheduled']),
+      expectdString: JsonUtils.stringValue(json['expected']),
+      expectedMins: JsonUtils.intValue(json['expected_mins']),
+
+      route: MTDRoute.fromJson(JsonUtils.mapValue(json['route'])),
+      trip: MTDTrip.fromJson(JsonUtils.mapValue(json['trip'])),
+      origin: MTDOrgDest.fromJson(JsonUtils.mapValue(json['origin'])),
+      destination: MTDOrgDest.fromJson(JsonUtils.mapValue(json['destination'])),
+      location: MTDLocation.fromJson(JsonUtils.mapValue(json['location'])),
+    ) : null;
+  }
+
+  toJson() => {
+    'stop_id': stopId,
+    'headsign': headsign,
+    'vehicle_id': vehicleId,
+
+    'is_monitored': isMonitored,
+    'is_scheduled':isScheduled,
+    'is_istop': isIStop,
+
+    'scheduled': scheduledString,
+    'expected': expectdString,
+    'expected_mins': expectedMins,
+
+    'route': route?.toJson(),
+    'trip': trip?.toJson(),
+    'origin': origin?.toJson(),
+    'destination': destination?.toJson(),
+    'location': location?.toJson(),
+  };
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDDeparture) &&
+    
+    (stopId == other.stopId) &&
+    (headsign == other.headsign) &&
+    (vehicleId == other.vehicleId) &&
+    
+    (isMonitored == other.isMonitored) &&
+    (isScheduled == other.isScheduled) &&
+    (isIStop == other.isIStop) &&
+
+    (scheduledString == other.scheduledString) &&
+    (expectdString == other.expectdString) &&
+    (expectedMins == other.expectedMins) &&
+
+    (route == other.route) &&
+    (trip == other.trip) &&
+    (origin == other.origin) &&
+    (destination == other.destination) &&
+    (location == other.location);
+
+  @override
+  int get hashCode =>
+    (stopId?.hashCode ?? 0) ^
+    (headsign?.hashCode ?? 0) ^
+    (vehicleId?.hashCode ?? 0) ^
+    
+    (isMonitored?.hashCode ?? 0) ^
+    (isScheduled?.hashCode ?? 0) ^
+    (isIStop?.hashCode ?? 0) ^
+
+    (scheduledString?.hashCode ?? 0) ^
+    (expectdString?.hashCode ?? 0) ^
+    (expectedMins?.hashCode ?? 0) ^
+
+    (route?.hashCode ?? 0) ^
+    (trip?.hashCode ?? 0) ^
+    (origin?.hashCode ?? 0) ^
+    (destination?.hashCode ?? 0) ^
+    (location?.hashCode ?? 0);
+
+  // JSON List Serialization
+
+  static List<MTDDeparture>? listFromJson(List<dynamic>? jsonList) {
+    List<MTDDeparture>? values;
+    if (jsonList != null) {
+      values = <MTDDeparture>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(values, MTDDeparture.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<MTDDeparture>? values) {
+    List<dynamic>? jsonList;
+    if (values != null) {
+      jsonList = <dynamic>[];
+      for (MTDDeparture value in values) {
+        ListUtils.add(jsonList, value.toJson());
+      }
+    }
+    return jsonList;
+  }
+}

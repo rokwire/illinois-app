@@ -221,4 +221,25 @@ class MTD with Service implements NotificationsListener {
     }
     return null;
   }
+
+  // Departures
+
+  Future<List<MTDDeparture>?> getDepartures({required String stopId, String? routeId, int? previewTime, int? count}) async {
+    if (StringUtils.isNotEmpty(Config().mtdUrl) && StringUtils.isNotEmpty(Config().mtdApiKey)) {
+      String url = "${Config().mtdUrl}/getdeparturesbystop?key=${Config().mtdApiKey}&stop_id=$stopId";
+      if (routeId != null) {
+        url += "&route_id=$routeId";
+      }
+      if (previewTime != null) {
+        url += "&pt=$previewTime";
+      }
+      if (count != null) {
+        url += "&count=$count";
+      }
+      Response? response = await Network().get(url);
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
+      return (responseJson != null) ? MTDDeparture.listFromJson(JsonUtils.listValue(responseJson['stop_times'])) : null;
+    }
+    return null;
+  }
 }
