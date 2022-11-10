@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '12.0'
+platform :ios, '13.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -31,7 +31,7 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-    pod 'GoogleMaps', '3.10.0'
+    pod 'GoogleMaps', '7.2.0'
     pod 'ZXingObjC', '3.6.4'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
@@ -41,7 +41,7 @@ target 'Illinois' do
   use_frameworks!
   use_modular_headers!
 
-    pod 'GoogleMaps', '3.10.0'
+    pod 'GoogleMaps', '7.2.0'
     pod 'ZXingObjC', '3.6.4'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
@@ -51,7 +51,7 @@ target 'Wisconsin' do
   use_frameworks!
   use_modular_headers!
 
-    pod 'GoogleMaps', '3.10.0'
+    pod 'GoogleMaps', '7.2.0'
     pod 'ZXingObjC', '3.6.4'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))

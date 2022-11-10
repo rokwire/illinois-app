@@ -32,6 +32,8 @@ class NativeCommunicator with Service {
   static const String notifyMapRouteStart  = "edu.illinois.rokwire.nativecommunicator.map.route.start";
   static const String notifyMapRouteFinish = "edu.illinois.rokwire.nativecommunicator.map.route.finish";
   
+  static const String notifyMapSelectPOI  = "edu.illinois.rokwire.nativecommunicator.map.poi.select";
+
   final MethodChannel _platformChannel = const MethodChannel('edu.illinois.rokwire/native_call');
 
   // Singletone
@@ -242,6 +244,10 @@ class NativeCommunicator with Service {
         _notifyMapRouteFinish(call.arguments);
         break;
       
+      case "map.poi.select":
+        _notifyMapSelectPOI(call.arguments);
+        break;
+
       case "firebase_message":
         //PS use firebase messaging plugin!
         //FirebaseMessaging().onMessage(call.arguments);
@@ -254,37 +260,23 @@ class NativeCommunicator with Service {
   }
 
   void _notifyMapSelectExplore(dynamic arguments) {
-    dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
-    Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
-    int? mapId = (params is Map) ? params!['mapId'] : null;
-    dynamic exploreJson = (params is Map) ? params!['explore'] : null;
-
-    NotificationService().notify(notifyMapSelectExplore, {
-      'mapId': mapId,
-      'exploreJson': exploreJson
-    });
+    NotificationService().notify(notifyMapSelectExplore, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
   }
   
   void _notifyMapClearExplore(dynamic arguments) {
-    dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
-    Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
-    int? mapId = (params is Map) ? params!['mapId'] : null;
+    NotificationService().notify(notifyMapClearExplore, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
+  }
 
-    NotificationService().notify(notifyMapClearExplore, {
-      'mapId': mapId,
-    });
+  void _notifyMapSelectPOI(dynamic arguments) {
+    NotificationService().notify(notifyMapSelectPOI, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
   }
 
   void _notifyMapRouteStart(dynamic arguments) {
-    dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
-    Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
-    NotificationService().notify(notifyMapRouteStart, params);
+    NotificationService().notify(notifyMapRouteStart, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
   }
 
   void _notifyMapRouteFinish(dynamic arguments) {
-    dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
-    Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
-    NotificationService().notify(notifyMapRouteFinish, params);
+    NotificationService().notify(notifyMapRouteFinish, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
   }
 }
 

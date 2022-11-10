@@ -24,8 +24,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class Appointment with Explore, Favorite {
   static final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 
-  final String? sourceId;
-  final String? accountId;
+  final String? id;
   final DateTime? dateTimeUtc;
   final AppointmentType? type;
   final AppointmentOnlineDetails? onlineDetails;
@@ -35,16 +34,15 @@ class Appointment with Explore, Favorite {
   final AppointmentHost? host;
 
   Appointment(
-      {this.sourceId, this.accountId, this.dateTimeUtc, this.type, this.onlineDetails, this.location, this.cancelled, this.instructions, this.host});
+      {this.id, this.dateTimeUtc, this.type, this.onlineDetails, this.location, this.cancelled, this.instructions, this.host});
 
   static Appointment? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
     return Appointment(
-        sourceId: JsonUtils.stringValue(json['source_id']),
-        accountId: JsonUtils.stringValue(json['account_id']),
-        dateTimeUtc: DateTimeUtils.dateTimeFromString(json['date_time'], format: _serverDateTimeFormat, isUtc: true),
+        id: JsonUtils.stringValue(json['id']),
+        dateTimeUtc: DateTimeUtils.dateTimeFromString(json['date'], format: _serverDateTimeFormat, isUtc: true),
         type: typeFromString(JsonUtils.stringValue(json['type'])),
         onlineDetails: AppointmentOnlineDetails.fromJson(JsonUtils.mapValue(json['online_details'])),
         location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
@@ -54,7 +52,7 @@ class Appointment with Explore, Favorite {
   }
 
   String? get displayDate {
-    return AppDateTime().formatDateTime(dateTimeUtc, format: 'MMM dd, H:mma');
+    return AppDateTime().formatDateTime(AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc), format: 'MMM dd, H:mma');
   }
 
   bool get isUpcoming {
@@ -133,10 +131,10 @@ class Appointment with Explore, Favorite {
   // Favorite
   static const String favoriteKeyName = "appointmentIds";
   @override String get favoriteKey => favoriteKeyName;
-  @override String? get favoriteId => sourceId;
+  @override String? get favoriteId => id;
   
   // Explore
-  @override String? get exploreId => sourceId;
+  @override String? get exploreId => id;
   @override String? get exploreImageURL => imageUrl;
   @override ExploreLocation? get exploreLocation => ExploreLocation(locationId: location?.id, latitude: location?.latitude, longitude: location?.longitude, description: location?.title);
   @override String? get exploreLongDescription => null;
@@ -147,8 +145,7 @@ class Appointment with Explore, Favorite {
   @override String? get exploreTitle => title;
   @override Map<String, dynamic> toJson() {
     return {
-      'source_id': sourceId,
-      'account_id': accountId,
+      'id': id,
       'title': title,
       'date_time': DateTimeUtils.utcDateTimeToString(dateTimeUtc),
       'type': typeToKeyString(type),
@@ -162,7 +159,7 @@ class Appointment with Explore, Favorite {
 
   static bool canJson(Map<String, dynamic>? json) {
     return (json != null) &&
-      (json['account_id'] != null) &&
+      (json['id'] != null) &&
       (json['date_time'] != null) &&
       (json['type'] != null);
   }
@@ -170,8 +167,7 @@ class Appointment with Explore, Favorite {
   @override
   bool operator==(dynamic other) =>
     (other is Appointment) &&
-    (sourceId == other.sourceId) &&
-    (accountId == other.accountId) &&
+    (id == other.id) &&
     (dateTimeUtc == other.dateTimeUtc) &&
     (type == other.type) &&
     (onlineDetails == other.onlineDetails) &&
@@ -182,8 +178,7 @@ class Appointment with Explore, Favorite {
 
   @override
   int get hashCode =>
-    (sourceId?.hashCode ?? 0) ^
-    (accountId?.hashCode ?? 0) ^
+    (id?.hashCode ?? 0) ^
     (dateTimeUtc?.hashCode ?? 0) ^
     (type?.hashCode ?? 0) ^
     (onlineDetails?.hashCode ?? 0) ^

@@ -181,17 +181,17 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget _buildHeading() {
-    String? category = _appointment!.category;
+    // String? category = _appointment!.category;
     bool isFavorite = Auth2().isFavorite(_appointment);
     bool starVisible = Auth2().canFavorite && _appointment!.isUpcoming;
     return Container(
         color: Colors.white,
         padding: EdgeInsets.only(left: _horizontalPadding),
         child: Row(children: <Widget>[
-          Expanded(
-              child: Text(StringUtils.ensureNotEmpty(category).toUpperCase(),
-                  style: TextStyle(
-                      fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary, letterSpacing: 1))),
+          // Expanded(
+          //     child: Text(StringUtils.ensureNotEmpty(category).toUpperCase(),
+          //         style: TextStyle(
+          //             fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary, letterSpacing: 1))),
           Visibility(
               visible: starVisible,
               child: Container(
@@ -296,7 +296,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     if (StringUtils.isNotEmpty(longDisplayLocation)) {
       locationTextValue = longDisplayLocation;
     }
-    if (StringUtils.isNotEmpty(locationTitle)) {
+    else if (StringUtils.isNotEmpty(locationTitle)) {
       if (locationTextValue != null) {
         locationTextValue += ', $locationTitle';
       } else {
