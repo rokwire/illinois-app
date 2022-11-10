@@ -18,6 +18,7 @@ import 'package:flutter/semantics.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
@@ -1758,13 +1759,13 @@ class ExplorePanelState extends State<ExplorePanel>
       _refresh(() { });
     }
     else if (name == NativeCommunicator.notifyMapSelectExplore) {
-      _onNativeMapSelectExplore(param['mapId'], param['exploreJson']);
+      _onNativeMapSelectExplore(param);
     }
     else if (name == NativeCommunicator.notifyMapClearExplore) {
-      _onNativeMapClearExplore(param['mapId']);
+      _onNativeMapClearExplore(param);
     }
     else if (name == NativeCommunicator.notifyMapSelectPOI) {
-      _onNativeMapSelectPOI(param['mapId'], param['poiJson']);
+      _onNativeMapSelectPOI(param);
     }
     else if(name == Storage.offsetDateKey){
       _loadExplores();
@@ -1820,9 +1821,11 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
-  void _onNativeMapSelectExplore(int? mapID, dynamic exploreJson) {
-    if (_nativeMapController!.mapId == mapID) {
+  void _onNativeMapSelectExplore(Map<String, dynamic>? params) {
+    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
+    if (_nativeMapController!.mapId == mapId) {
       dynamic explore;
+      dynamic exploreJson = (params != null) ? params['explore'] : null;
       if (exploreJson is Map) {
         explore = _exploreFromMapExplore(Explore.fromJson(JsonUtils.mapValue(exploreJson)));
       }
@@ -1831,29 +1834,36 @@ class ExplorePanelState extends State<ExplorePanel>
       }
 
       if (explore != null) {
-          _selectMapExplore(explore);
+        _selectMapExplore(explore);
       }
     }
   }
   
-  void _onNativeMapClearExplore(int? mapID) {
-    if (_nativeMapController!.mapId == mapID) {
-      _selectMapExplore(null);
+  void _onNativeMapClearExplore(Map<String, dynamic>? params) {
+    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
+    if (_nativeMapController!.mapId == mapId) {
+      LatLng? location = (params != null) ? LatLng.fromJson(JsonUtils.mapValue(params['location'])) : null;
+      MTDStop? mtdStop = (location != null) ? MTD().stops?.findStop(location: location, locationThresholdDistance: 25 /*in meters*/) : null;
+      if (mtdStop != null) {
+        _selectMapExplore(mtdStop);
+      }
+      else {
+        _selectMapExplore(null);
+      }
     }
   }
 
-  void _onNativeMapSelectPOI(int? mapID, dynamic poiJson) {
-    if (_nativeMapController!.mapId == mapID) {
-      Map<String, dynamic>? poi = JsonUtils.mapValue(poiJson);
+  void _onNativeMapSelectPOI(Map<String, dynamic>? params) {
+    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
+    if (_nativeMapController!.mapId == mapId) {
+      Map<String, dynamic>? poi = (params != null) ? JsonUtils.mapValue(params['poi']) : null;
       String? poiName = (poi != null) ? JsonUtils.stringValue(poi['name']) : null;
-      Map<String, dynamic>? poiLocation = (poi != null) ? JsonUtils.mapValue(poi['location']) : null;
-      double? poiLatitude = (poiLocation != null) ? JsonUtils.doubleValue(poiLocation['latitude']) : null;
-      double? poiLongitude = (poiLocation != null) ? JsonUtils.doubleValue(poiLocation['longitude']) : null;
-      if ((poiLatitude != null) && (poiLongitude != null)) {
-        MTDStop? mtdStop = MTD().stops?.findStop(name: poiName, latitude: poiLatitude, longitude: poiLongitude);
-        if ((mtdStop == null) && (poiName != null)) {
-          mtdStop = MTD().stops?.findStop(latitude: poiLatitude, longitude: poiLongitude) ??
-            MTD().stops?.findStop(name: poiName);
+      LatLng? poiLocation = (poi != null) ? LatLng.fromJson(JsonUtils.mapValue(poi['location'])) : null;
+      if ((poiName != null) || (poiLocation != null)) {
+        MTDStop? mtdStop = MTD().stops?.findStop(name: poiName, location: poiLocation, locationThresholdDistance: 10 /*in meters*/);
+        if ((mtdStop == null) && (poiName != null) && (poiLocation != null)) {
+          mtdStop = MTD().stops?.findStop(name: poiName) ??
+            MTD().stops?.findStop(location: poiLocation, locationThresholdDistance: 10 /*in meters*/);
         }
         if (mtdStop != null) {
           _selectMapExplore(mtdStop);

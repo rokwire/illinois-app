@@ -398,7 +398,11 @@
 		@(round(coordinate.latitude * 1000000) / 1000000),
 		@(round(coordinate.longitude * 1000000) / 1000000));
 	NSDictionary *arguments = @{
-		@"mapId" : @(_mapId)
+		@"mapId" : @(_mapId),
+		@"location": @{
+			@"latitude" : @(coordinate.latitude),
+			@"longitude" : @(coordinate.longitude),
+		}
 	};
 	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"map.explore.clear" arguments:arguments.inaJsonString];
 }
