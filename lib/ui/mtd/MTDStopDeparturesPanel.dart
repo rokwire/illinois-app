@@ -160,7 +160,14 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
   }
 
   Widget _buildDeparture(MTDDeparture departure) {
-    String? status = (departure.isScheduled == true) ? 'Scheduled' : null;
+    
+    String? status;
+    if (departure.isScheduled ?? false) {
+      DateTime? scheduledTime = departure.scheduledTime;
+      String? scheduledTimeString = (scheduledTime != null) ? DateFormat('h:mma').format(scheduledTime).toLowerCase() : null;
+      status = (scheduledTimeString != null) ? 'Scheduled: $scheduledTimeString' : 'Scheduled';
+    }
+    
     String? expectedTimeString1, expectedTimeString2;
     int expectedMins = departure.expectedMins ?? -1;
     if (expectedMins == 0) {
@@ -196,7 +203,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
         ],),
         Row(children: [
           Expanded(child:
-            Text(status ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),)
+            Text(status ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),)
           ),
           Text(expectedTimeString2 ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),),
         ]),
