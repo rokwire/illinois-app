@@ -13,10 +13,12 @@
 // limitations under the License.
 
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:rokwire_plugin/service/polls.dart' as polls;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 
@@ -50,7 +52,9 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
   }
 
   void _onTapStartEvaluation() {
-
+    if (Config().bessiSurveyID != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _onTapResults,)));
+    }
   }
 
   void _onTapResults() {

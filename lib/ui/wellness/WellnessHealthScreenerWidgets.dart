@@ -232,7 +232,11 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   void _onTapTakeSymptomScreener() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().symptomSurveyID)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().symptomSurveyID, onComplete: _onCompleteSymptomScreener)));
+  }
+
+  void _onCompleteSymptomScreener() {
+    Navigator.of(context).pop();
   }
 
   DateTime? get _selectedStartDate {

@@ -31,22 +31,12 @@ class SkillsSelfEvaluationResultsPanel extends StatefulWidget {
 
 class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationResultsPanel> {
   List<SurveyResponse> _responses = [];
-  Set<String> _responseSections = {"Self-Management Skills", "Innovation Skills", "Cooperation Skills", "Social Engagement Skills", "Emotional Resilience Skills"};
+  Set<String> _responseSections = {};
   SurveyResponse? _selectedComparisonResponse;
 
   @override
   void initState() {
-    Polls().loadSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
-      if (CollectionUtils.isNotEmpty(responses)) {
-        _responses = responses!;
-        _responses.sort(((a, b) => a.dateCreated.compareTo(b.dateCreated)));
-        _responseSections.clear();
-        for (SurveyResponse response in responses) {
-          _responseSections.addAll(response.survey.stats?.scores.keys ?? []);
-        }
-      }
-    });
-
+    _loadResults();
     super.initState();
   }
 
@@ -54,13 +44,13 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'),),
-      body: SectionSlantHeader(
+      body: RefreshIndicator(onRefresh: _onPullToRefresh, child: SectionSlantHeader(
         header: _buildHeader(),
         slantColor: Styles().colors?.gradientColorPrimary,
         backgroundColor: Styles().colors?.background,
         children: _buildContent(),
         childrenPadding: const EdgeInsets.only(top: 240),
-      ),
+      )),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: null,
     );
@@ -96,14 +86,15 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         Divider(color: Styles().colors?.surface, thickness: 2),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(children: [
           Flexible(flex: 5, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface),)),
-          Flexible(flex: 3, fit: FlexFit.tight, child: Text(_responses.isNotEmpty ? DateTimeUtils.localDateTimeToString(_responses[0].dateCreated, format: 'MM/dd/yy') ?? 'NONE' : 'NONE', style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface),)),
-          Flexible(flex: 2, fit: FlexFit.tight, child: DropdownButtonHideUnderline(child:
+          Flexible(flex: 3, fit: FlexFit.tight, child: Text(_responses.isNotEmpty ? DateTimeUtils.localDateTimeToString(_responses[0].dateCreated, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface),)),
+          Flexible(flex: 3, fit: FlexFit.tight, child: DropdownButtonHideUnderline(child:
             DropdownButton<SurveyResponse?>(
               icon: Padding(padding: const EdgeInsets.only(left: 4), child: Image.asset('images/icon-down.png', color: Styles().colors?.surface)),
               isExpanded: false,
               style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface),
               // hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: getTermDropDownItemStyle(selected: true)) : null,
               items: _buildResponseDateDropDownItems(),
+              value: _selectedComparisonResponse,
               onChanged: _onResponseDateDropDownChanged,
               dropdownColor: Colors.transparent,
               isDense: true,
@@ -115,7 +106,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   List<Widget> _buildContent() {
-    return <Widget>[
+    return CollectionUtils.isNotEmpty(_responses) ? <Widget>[
       ListView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -124,19 +115,19 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         itemBuilder: (BuildContext context, int index) {
           String section = _responseSections.elementAt(index);
           //TODO: get title string from section key
-          String title = section;
-          num? mostRecentScore = CollectionUtils.isNotEmpty(_responses) ? _responses[0].survey.stats?.scores[section] : null;
+          String title = _responses[0].survey.constants[section].toString();
+          num? mostRecentScore = _responses[0].survey.stats?.scores[section];
           num? comparisonScore = _selectedComparisonResponse?.survey.stats?.scores[section];
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
             child: Card(
               child: InkWell(
                 onTap: () => _showScoreDescription(section),
                 child: Padding(padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16), child: Row(children: [
-                  Flexible(flex: 4, fit: FlexFit.tight, child: Padding(padding: const EdgeInsets.only(right: 16.0), child: 
+                  Flexible(flex: 5, fit: FlexFit.tight, child: Padding(padding: const EdgeInsets.only(right: 16.0), child: 
                     Text(title, style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant)))
                   ),
-                  Flexible(flex: 2, fit: FlexFit.tight, child: Text(mostRecentScore?.toString() ?? "--", style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 36.0, color: Styles().colors?.fillColorSecondary))),
-                  Flexible(flex: 1, fit: FlexFit.tight, child: Text(comparisonScore?.toString() ?? "--", style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 36.0, color: Styles().colors?.mediumGray))),
+                  Flexible(flex: 3, fit: FlexFit.tight, child: Text(mostRecentScore?.toString() ?? "--", style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 36.0, color: Styles().colors?.fillColorSecondary))),
+                  Flexible(flex: 2, fit: FlexFit.tight, child: Text(comparisonScore?.toString() ?? "--", style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 36.0, color: Styles().colors?.mediumGray))),
                   Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Image.asset('images/chevron-right.png', color: Styles().colors?.fillColorSecondary))),
                 ],)),
               )
@@ -151,7 +142,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           decorationColor: Styles().colors?.fillColorSecondary
         )
       ),)),
-    ];
+    ] : [];
   }
 
   List<DropdownMenuItem<SurveyResponse?>> _buildResponseDateDropDownItems() {
@@ -164,7 +155,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     ];
     if (CollectionUtils.isNotEmpty(_responses)) {
       for (SurveyResponse response in _responses) {
-        String dateString = DateTimeUtils.localDateTimeToString(response.dateCreated, format: 'MM/dd/yy') ?? '';
+        String dateString = DateTimeUtils.localDateTimeToString(response.dateCreated, format: 'MM/dd/yy h:mma') ?? '';
         items.add(DropdownMenuItem<SurveyResponse?>(
           value: response,
           child: Text(dateString, style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface,),),
@@ -172,6 +163,24 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       }
     }
     return items;
+  }
+
+  void _loadResults() {
+    Polls().loadSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
+      if (CollectionUtils.isNotEmpty(responses)) {
+        _responses = responses!;
+        _responses.sort(((a, b) => b.dateCreated.compareTo(a.dateCreated)));
+        _responseSections.clear();
+        for (SurveyResponse response in responses) {
+          _responseSections.addAll(response.survey.stats?.scores.keys ?? []);
+        }
+        setState(() {});
+      }
+    });
+  }
+
+  Future<void> _onPullToRefresh() async {
+    _loadResults();
   }
 
   void _onResponseDateDropDownChanged(SurveyResponse? value) {
