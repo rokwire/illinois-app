@@ -3,6 +3,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -148,8 +149,8 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
         locations.sort((fistLocation, secondLocation) {
           if ((fistLocation.latitude != null) && (fistLocation.longitude != null)) {
             if ((secondLocation.latitude != null) && (secondLocation.longitude != null)) {
-              double firstDistance = LocationUtils.distance(fistLocation.latitude!, fistLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
-              double secondDistance = LocationUtils.distance(secondLocation.latitude!, secondLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
+              double firstDistance = Geolocator.distanceBetween(fistLocation.latitude!, fistLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
+              double secondDistance = Geolocator.distanceBetween(secondLocation.latitude!, secondLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
               return firstDistance.compareTo(secondDistance);
             }
             else {

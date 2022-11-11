@@ -79,20 +79,25 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildRescheduleDescription() {
-    return InkWell(
+    String? label =  Localization().getStringEx('panel.wellness.appointments.home.reschedule_appointment.label', 'Need to cancel or reschedule?');
+    return Semantics(
+        label: label,
+        button: true,
+        child:InkWell(
         child: Padding(
             padding: EdgeInsets.only(bottom: 16),
             child: Text(
-                Localization()
-                    .getStringEx('panel.wellness.appointments.home.reschedule_appointment.label', 'Need to cancel or reschedule?'),
+                label,
                 style: TextStyle(
                     fontSize: 18,
                     color: Styles().colors!.fillColorPrimary,
                     fontFamily: Styles().fontFamilies!.regular,
                     decoration: TextDecoration.underline,
                     decorationThickness: 1,
-                    decorationColor: Styles().colors!.fillColorPrimary))),
-        onTap: _showRescheduleAppointmentPopup);
+                    decorationColor: Styles().colors!.fillColorPrimary),
+                  semanticsLabel: "",
+            )),
+        onTap: _showRescheduleAppointmentPopup));
   }
 
   Widget _buildUpcomingAppointments() {
@@ -120,7 +125,9 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
       List<Widget> pastAppointmentsWidgetList = <Widget>[];
       pastAppointmentsWidgetList.add(Padding(
           padding: EdgeInsets.symmetric(vertical: 16),
-          child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+          child: Semantics(
+              header: true,
+              child:Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Expanded(
                 child: Text(
                     Localization()
@@ -128,7 +135,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
                     textAlign: TextAlign.left,
                     style:
                         TextStyle(color: Styles().colors!.blackTransparent06, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)))
-          ])));
+          ]))));
       pastAppointmentsWidgetList.addAll(_buildAppointmentsWidgetList(_pastAppointments));
       pastAppointmentsWidgetList.add(_buildPastAppointmentsDescription());
       return Column(children: pastAppointmentsWidgetList);

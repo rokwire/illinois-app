@@ -394,8 +394,15 @@
 #pragma mark GMSMapViewDelegate
 
 - (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {
+	NSLog(@"didTapAtCoordinate: [%@, %@]",
+		@(round(coordinate.latitude * 1000000) / 1000000),
+		@(round(coordinate.longitude * 1000000) / 1000000));
 	NSDictionary *arguments = @{
-		@"mapId" : @(_mapId)
+		@"mapId" : @(_mapId),
+		@"location": @{
+			@"latitude" : @(coordinate.latitude),
+			@"longitude" : @(coordinate.longitude),
+		}
 	};
 	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"map.explore.clear" arguments:arguments.inaJsonString];
 }
@@ -403,6 +410,9 @@
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(nonnull GMSMarker *)marker {
 	NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
 	id exploreParam = explore.uiucExplores ?: explore;
+	NSLog(@"didTapMarker: %@", [exploreParam isKindOfClass:[NSArray class]] ?
+		[NSString stringWithFormat:@"%@ Explores", @([exploreParam count])] :
+		([exploreParam isKindOfClass:[NSDictionary class]] ? [exploreParam uiucExploreTitle] : @"????"));
 	if (exploreParam != nil) {
 		NSDictionary *arguments = @{
 			@"mapId" : @(_mapId),
@@ -430,7 +440,7 @@
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapPOIWithPlaceID:(NSString *)placeID name:(NSString *)name location:(CLLocationCoordinate2D)location {
-	NSLog(@"POIWithPlaceID: %@ name: %@ location: [%@, %@]", placeID, name,
+	NSLog(@"didTapPOIWithPlaceID: %@ name: %@ location: [%@, %@]", placeID, name,
 		@(round(location.latitude * 1000000) / 1000000),
 		@(round(location.longitude * 1000000) / 1000000));
 		
