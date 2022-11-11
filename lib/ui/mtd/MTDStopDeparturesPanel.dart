@@ -161,9 +161,22 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
 
   Widget _buildDeparture(MTDDeparture departure) {
     String? status = (departure.isScheduled == true) ? 'Scheduled' : null;
-    DateTime? expectedTime = departure.expectedTime;
-    String? expectedTimeString = (expectedTime != null) ? DateFormat('h:mm').format(expectedTime) : null;
-    String? expectedAMPMString = (expectedTime != null) ? DateFormat('a').format(expectedTime) : null;
+    String? expectedTimeString1, expectedTimeString2;
+    int expectedMins = departure.expectedMins ?? -1;
+    if (expectedMins == 0) {
+      expectedTimeString1 = 'Now';
+    }
+    else if (expectedMins == 1) {
+      expectedTimeString1 = '1 min';
+    }
+    else if ((1 < expectedMins) && (expectedMins < 60)) {
+      expectedTimeString1 = '$expectedMins mins';
+    }
+    else {
+      DateTime? expectedTime = departure.expectedTime;
+      expectedTimeString1 = (expectedTime != null) ? DateFormat('h:mm').format(expectedTime) : null;
+      expectedTimeString2 = (expectedTime != null) ? DateFormat('a').format(expectedTime) : null;
+    }
     
     return InkWell(onTap: () => _onDeparture(departure), child: Container(
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -179,13 +192,13 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
           Expanded(child:
             Text(departure.trip?.headsign ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),)
           ),
-          Text(expectedTimeString ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),)
+          Text(expectedTimeString1 ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),)
         ],),
         Row(children: [
           Expanded(child:
             Text(status ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),)
           ),
-          Text(expectedAMPMString ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),),
+          Text(expectedTimeString2 ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),),
         ]),
       ],),
     ),);
