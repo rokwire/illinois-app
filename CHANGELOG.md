@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Fixed tap handling on bus markers [#2516](https://github.com/rokwire/illinois-app/issues/2516).
+- Implemented bus schedule times panel [#2516](https://github.com/rokwire/illinois-app/issues/2516).
 
 ## [4.2.16] - 2022-11-09
 ### Added
