@@ -29,6 +29,7 @@ import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
+import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -151,7 +152,6 @@ class ExplorePanelState extends State<ExplorePanel>
 
   //Maps
   static const double MapBarHeight = 116;
-  static const Color MTDStopColor = const Color(0xff2376e5);
 
   bool? _mapAllowed;
   MapController? _nativeMapController;
@@ -1220,12 +1220,10 @@ class ExplorePanelState extends State<ExplorePanel>
     else if (_selectedMapExplore is MTDStop) {
       title = (_selectedMapExplore as MTDStop).name;
       description = (_selectedMapExplore as MTDStop).code;
-      exploreColor = MTDStopColor;
+      exploreColor = Styles().colors?.mtdColor;
       detailsLabel = 'Bus Schedule';
       detailsHint = '';
-      descriptionWidget = Padding(padding: EdgeInsets.only(left: 8), child:
-        (_loadingMapStopIdRoutes != null) ? _buildStopRoutesLoading() : _buildStopRouteWidgets(),
-      );
+      descriptionWidget = _buildStopDescription();
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
@@ -1286,26 +1284,42 @@ class ExplorePanelState extends State<ExplorePanel>
     ]);
   }
 
-  Widget _buildStopRouteWidgets() {
-    List<Widget> routeWidgets = <Widget>[];
-    if (_selectedMapStopRoutes != null) {
-      for (MTDRoute route in _selectedMapStopRoutes!) {
-        routeWidgets.add(
-          Container(decoration: BoxDecoration(color: route.color, border: Border.all(color: route.textColor ?? Colors.transparent, width: 1), borderRadius: BorderRadius.circular(5)), child:
-            Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2), child:
-              Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 12, color: route.textColor,)),
+  Widget? _buildStopDescription() {
+    if (_loadingMapStopIdRoutes != null) {
+      return Padding(padding: EdgeInsets.only(left: 8), child:
+        SizedBox(width: 16, height: 16, child:
+          CircularProgressIndicator(color: Styles().colors?.mtdColor, strokeWidth: 2,),
+        ),
+      );
+    }
+    else {
+      List<Widget> routeWidgets = <Widget>[];
+      if (_selectedMapStopRoutes != null) {
+        for (MTDRoute route in _selectedMapStopRoutes!) {
+          routeWidgets.add(
+            Padding(padding: EdgeInsets.only(left: routeWidgets.isNotEmpty ? 6 : 0), child:
+              Container(decoration: BoxDecoration(color: route.color, border: Border.all(color: route.textColor ?? Colors.transparent, width: 1), borderRadius: BorderRadius.circular(5)), child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2), child:
+                  Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 12, color: route.textColor,)),
+                )
+              )
             )
+          );
+        }
+      }
+      if (routeWidgets.isNotEmpty) {
+        return Expanded(child:
+          Padding(padding: EdgeInsets.only(left: 8), child:
+            SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+              Row(children: routeWidgets,)
+            ),
           )
         );
       }
+      else {
+        return null;
+      }
     }
-    return routeWidgets.isNotEmpty ? Wrap(spacing: 6, children: routeWidgets,) : Container();
-  }
-
-  Widget _buildStopRoutesLoading() {
-    return SizedBox(width: 16, height: 16, child:
-      CircularProgressIndicator(color: MTDStopColor, strokeWidth: 2,),
-    );
   }
 
   static Color? _exploreColor(Explore? explore) {
@@ -1376,7 +1390,7 @@ class ExplorePanelState extends State<ExplorePanel>
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: explore)));
       }
       else if (explore is MTDStop) {
-        // TBD
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: explore, routes: _selectedMapStopRoutes,)));
       }
   }
 
@@ -1389,7 +1403,7 @@ class ExplorePanelState extends State<ExplorePanel>
         if (currentStopId == stopId) {
           _refresh(() {
             _loadingMapStopIdRoutes = null;
-            _selectedMapStopRoutes = _buildStopRoutes(routes);
+            _selectedMapStopRoutes = MTDRoute.mergeUiRoutes(routes);
           });
         }
       });
@@ -1400,43 +1414,6 @@ class ExplorePanelState extends State<ExplorePanel>
         _selectedMapStopRoutes = null;
       });
     }
-  }
-
-  static List<MTDRoute>? _buildStopRoutes(List<MTDRoute>? sourceRoutes) {
-    List<MTDRoute>? routes;
-    if (sourceRoutes != null) {
-      routes = <MTDRoute>[];
-      for (MTDRoute route in sourceRoutes) {
-
-        bool routeProcessed = false;
-        for (MTDRoute processedRoute in routes) {
-          if ((processedRoute.shortName == route.shortName) && (processedRoute.colorCode == route.colorCode) && (processedRoute.textColorCode == route.textColorCode)) {
-            routeProcessed = true;
-            break;
-          }
-        }
-
-        if (!routeProcessed) {
-          routes.add(route);
-        }
-      }
-      routes.sort((MTDRoute route1, MTDRoute route2) {
-        String? routeName1 = route1.shortName;
-        String? routeName2 = route2.shortName;
-        if ((routeName1 != null) && (routeName2 != null)) {
-          int? routeNum1 = int.tryParse(routeName1);
-          int? routeNum2 = int.tryParse(routeName2);
-          if ((routeNum1 != null) && (routeNum2 != null)) {
-            return routeNum1.compareTo(routeNum2);
-          }
-          else {
-            return routeName1.compareTo(routeName2);
-          }
-        }
-        return 0;
-      });
-    }
-    return routes;
   }
 
   Widget _buildLoading() {
