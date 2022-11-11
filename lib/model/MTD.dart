@@ -523,17 +523,17 @@ class MTDStopTime {
 }
 
 ///////////////////////////
-// MTDOrgDest
+// MTDDepartureEdge
 
-class MTDOrgDest {
+class MTDDepartureEdge {
   final String? stopId;
   
-  MTDOrgDest({this.stopId});
+  MTDDepartureEdge({this.stopId});
 
   // JSON serialization
 
-  static MTDOrgDest? fromJson(Map<String, dynamic>? json) {
-    return (json != null) ? MTDOrgDest(
+  static MTDDepartureEdge? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDDepartureEdge(
       stopId: JsonUtils.stringValue(json['stop_id']),
     ) : null;
   }
@@ -546,7 +546,7 @@ class MTDOrgDest {
 
   @override
   bool operator==(dynamic other) =>
-    (other is MTDOrgDest) &&
+    (other is MTDDepartureEdge) &&
     (stopId == other.stopId);
 
   @override
@@ -609,8 +609,8 @@ class MTDDeparture {
 
   final MTDRoute? route;
   final MTDTrip? trip;
-  final MTDOrgDest? origin;
-  final MTDOrgDest? destination;
+  final MTDDepartureEdge? origin;
+  final MTDDepartureEdge? destination;
   final MTDLocation? location;
 
   MTDDeparture({this.stopId, this.headsign, this.vehicleId,
@@ -636,8 +636,8 @@ class MTDDeparture {
 
       route: MTDRoute.fromJson(JsonUtils.mapValue(json['route'])),
       trip: MTDTrip.fromJson(JsonUtils.mapValue(json['trip'])),
-      origin: MTDOrgDest.fromJson(JsonUtils.mapValue(json['origin'])),
-      destination: MTDOrgDest.fromJson(JsonUtils.mapValue(json['destination'])),
+      origin: MTDDepartureEdge.fromJson(JsonUtils.mapValue(json['origin'])),
+      destination: MTDDepartureEdge.fromJson(JsonUtils.mapValue(json['destination'])),
       location: MTDLocation.fromJson(JsonUtils.mapValue(json['location'])),
     ) : null;
   }
@@ -732,6 +732,555 @@ class MTDDeparture {
     if (values != null) {
       jsonList = <dynamic>[];
       for (MTDDeparture value in values) {
+        ListUtils.add(jsonList, value.toJson());
+      }
+    }
+    return jsonList;
+  }
+}
+
+///////////////////////////
+// MTDShape
+
+class MTDShape {
+  final double? distance;
+  final double? latitude;
+  final double? longitude;
+  final int? sequence;
+  final String? stopId;
+
+  MTDShape({this.distance, this.latitude, this.longitude, this.sequence, this.stopId});
+
+  // JSON serialization
+
+  static MTDShape? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDShape(
+      distance: JsonUtils.doubleValue(json['shape_dist_traveled']),
+      latitude: JsonUtils.doubleValue(json['shape_pt_lat']),
+      longitude: JsonUtils.doubleValue(json['shape_pt_lon']),
+      sequence: JsonUtils.intValue(json['shape_pt_sequence']),
+      stopId: JsonUtils.stringValue(json['stop_id']),
+    ) : null;
+  }
+
+  toJson() => {
+    'shape_dist_traveled': distance,
+    'shape_pt_lat': latitude,
+    'shape_pt_lon': longitude,
+    'shape_pt_sequence': sequence,
+    'stop_id': stopId,
+  };
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDShape) &&
+    (distance == other.distance) &&
+    (latitude == other.latitude) &&
+    (longitude == other.longitude) &&
+    (sequence == other.sequence) &&
+    (stopId == other.stopId);
+
+  @override
+  int get hashCode =>
+    (distance?.hashCode ?? 0) ^
+    (latitude?.hashCode ?? 0) ^
+    (longitude?.hashCode ?? 0) ^
+    (sequence?.hashCode ?? 0) ^
+    (stopId?.hashCode ?? 0);
+
+  // JSON List Serialization
+
+  static List<MTDShape>? listFromJson(List<dynamic>? jsonList) {
+    List<MTDShape>? values;
+    if (jsonList != null) {
+      values = <MTDShape>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(values, MTDShape.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<MTDShape>? values) {
+    List<dynamic>? jsonList;
+    if (values != null) {
+      jsonList = <dynamic>[];
+      for (MTDShape value in values) {
+        ListUtils.add(jsonList, value.toJson());
+      }
+    }
+    return jsonList;
+  }
+}
+
+///////////////////////////
+// MTDVehicle
+
+class MTDVehicle {
+  final String? id;
+  final MTDTrip? trip;
+  final MTDLocation? location;
+  final String? prevStopId;
+  final String? nextStopId;
+  final String? orgStopId;
+  final String? destStopId;
+
+  MTDVehicle({this.id, this.trip, this.location, this.prevStopId, this.nextStopId, this.orgStopId, this.destStopId});
+
+  // JSON serialization
+
+  static MTDVehicle? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDVehicle(
+      id: JsonUtils.stringValue(json['vehicle_id']),
+      trip: MTDTrip.fromJson(JsonUtils.mapValue(json['trip'])) ,
+      location: MTDLocation.fromJson(JsonUtils.mapValue(json['location'])) ,
+      prevStopId: JsonUtils.stringValue(json['previous_stop_id']),
+      nextStopId: JsonUtils.stringValue(json['next_stop_id']),
+      orgStopId: JsonUtils.stringValue(json['origin_stop_id']),
+      destStopId: JsonUtils.stringValue(json['destination_stop_id']),
+    ) : null;
+  }
+
+  toJson() => {
+    'vehicle_id': id,
+    'trip': trip?.toJson(),
+    'location': location?.toJson(),
+    'previous_stop_id': prevStopId,
+    'next_stop_id': nextStopId,
+    'origin_stop_id': orgStopId,
+    'destination_stop_id': destStopId,
+  };
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDVehicle) &&
+    (id == other.id) &&
+    (trip == other.trip) &&
+    (location == other.location) &&
+    (prevStopId == other.prevStopId) &&
+    (nextStopId == other.nextStopId) &&
+    (orgStopId == other.orgStopId) &&
+    (destStopId == other.destStopId);
+
+  @override
+  int get hashCode =>
+    (id?.hashCode ?? 0) ^
+    (trip?.hashCode ?? 0) ^
+    (location?.hashCode ?? 0) ^
+    (prevStopId?.hashCode ?? 0) ^
+    (nextStopId?.hashCode ?? 0) ^
+    (orgStopId?.hashCode ?? 0) ^
+    (destStopId?.hashCode ?? 0);
+
+  // JSON List Serialization
+
+  static List<MTDVehicle>? listFromJson(List<dynamic>? jsonList) {
+    List<MTDVehicle>? values;
+    if (jsonList != null) {
+      values = <MTDVehicle>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(values, MTDVehicle.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<MTDVehicle>? values) {
+    List<dynamic>? jsonList;
+    if (values != null) {
+      jsonList = <dynamic>[];
+      for (MTDVehicle value in values) {
+        ListUtils.add(jsonList, value.toJson());
+      }
+    }
+    return jsonList;
+  }
+}
+
+///////////////////////////
+// MTDLegEdge
+
+class MTDLegEdge {
+  final double? latitude;
+  final double? longitude;
+  final String? name;
+  final String? timeString;
+  final String? stopId;
+
+  MTDLegEdge({this.latitude, this.longitude, this.name, this.timeString, this.stopId});
+
+  // JSON serialization
+
+  static MTDLegEdge? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDLegEdge(
+      latitude: JsonUtils.doubleValue(json['lat']),
+      longitude: JsonUtils.doubleValue(json['lon']),
+      name: JsonUtils.stringValue(json['name']),
+      timeString: JsonUtils.stringValue(json['time']),
+      stopId: JsonUtils.stringValue(json['stop_id']),
+    ) : null;
+  }
+
+  toJson() => {
+    'lat': latitude,
+    'lon': longitude,
+    'name': name,
+    'time': timeString,
+    'stop_id': stopId,
+  };
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDLegEdge) &&
+    (latitude == other.latitude) &&
+    (longitude == other.longitude) &&
+    (name == other.name) &&
+    (timeString == other.timeString) &&
+    (stopId == other.stopId);
+
+  @override
+  int get hashCode =>
+    (latitude?.hashCode ?? 0) ^
+    (longitude?.hashCode ?? 0) ^
+    (name?.hashCode ?? 0) ^
+    (timeString?.hashCode ?? 0) ^
+    (stopId?.hashCode ?? 0);
+}
+
+///////////////////////////
+// MTDLegAtom
+
+class MTDLegAtom {
+  final MTDLegEdge? begin;
+  final MTDLegEdge? end;
+
+  MTDLegAtom({MTDLegEdge? begin, MTDLegEdge? end, MTDLegAtom? other}) :
+    this.begin = (other != null) ? other.begin : begin,
+    this.end = (other != null) ? other.end : end;
+
+ // JSON serialization
+
+  static MTDLegAtom? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDLegAtom(
+      begin: MTDLegEdge.fromJson(JsonUtils.mapValue(json['begin'])),
+      end: MTDLegEdge.fromJson(JsonUtils.mapValue(json['end'])),
+    ) : null;
+  }
+
+  static MTDLegAtom? fromOther(MTDLegAtom? other) {
+    return (other != null) ? MTDLegAtom(
+      begin: other.begin,
+      end: other.end,
+    ) : null;
+  }
+
+  toJson() => {
+    'begin': begin,
+    'lon': end,
+ };
+}
+
+///////////////////////////
+// MTDWalkLegAtom
+
+class MTDWalkLegAtom extends MTDLegAtom {
+  final String? direction;
+  final double? distance;
+
+  MTDWalkLegAtom({this.direction, this.distance, MTDLegAtom? leg}) :
+    super(other: leg);
+
+  // JSON serialization
+
+  static MTDWalkLegAtom? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDWalkLegAtom(
+      direction: JsonUtils.stringValue(json['direction']),
+      distance: JsonUtils.doubleValue(json['distance']),
+      leg: MTDLegAtom.fromJson(json)
+    ) : null;
+  }
+
+  toJson() => MapUtils.combine(super.toJson(), {
+    'direction': direction,
+    'distance': distance,
+  });
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDWalkLegAtom) &&
+    (direction == other.direction) &&
+    (distance == other.distance) &&
+    (super == other);
+
+  @override
+  int get hashCode =>
+    (direction?.hashCode ?? 0) ^
+    (distance?.hashCode ?? 0) ^
+    (super.hashCode);
+}
+
+///////////////////////////
+// MTDServiceLegAtom
+
+class MTDServiceLegAtom extends MTDLegAtom {
+  final MTDRoute? route;
+  final MTDTrip? trip;
+
+  MTDServiceLegAtom({this.route, this.trip, MTDLegAtom? leg}) :
+    super(other: leg);
+
+  // JSON serialization
+
+  static MTDServiceLegAtom? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDServiceLegAtom(
+      route: MTDRoute.fromJson(JsonUtils.mapValue(json['route'])),
+      trip: MTDTrip.fromJson(JsonUtils.mapValue(json['trip'])),
+      leg: MTDLegAtom.fromJson(json)
+    ) : null;
+  }
+
+  toJson() => MapUtils.combine(super.toJson(), {
+    'route': route?.toJson(),
+    'trip': trip?.toJson(),
+  });
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDServiceLegAtom) &&
+    (route == other.route) &&
+    (trip == other.trip) &&
+    (super == other);
+
+  @override
+  int get hashCode =>
+    (route?.hashCode ?? 0) ^
+    (trip?.hashCode ?? 0) ^
+    (super.hashCode);
+
+  // JSON List Serialization
+
+  static List<MTDServiceLegAtom>? listFromJson(List<dynamic>? jsonList) {
+    List<MTDServiceLegAtom>? values;
+    if (jsonList != null) {
+      values = <MTDServiceLegAtom>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(values, MTDServiceLegAtom.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<MTDServiceLegAtom>? values) {
+    List<dynamic>? jsonList;
+    if (values != null) {
+      jsonList = <dynamic>[];
+      for (MTDServiceLegAtom value in values) {
+        ListUtils.add(jsonList, value.toJson());
+      }
+    }
+    return jsonList;
+  }
+}
+
+///////////////////////////
+// MTDLeg
+
+abstract class MTDLeg {
+
+  toJson();
+
+  static MTDLeg? fromJson(Map<String, dynamic>? json) {
+    String? type = (json != null) ? JsonUtils.stringValue(json['type']) : null;
+    if (type == MTDWalkLeg.Type) {
+      return MTDWalkLeg.fromJson(json);
+    }
+    else if (type == MTDServiceLeg.Type) {
+      return MTDServiceLeg.fromJson(json);
+    }
+    else {
+      return null;
+    }
+  }
+
+  // JSON List Serialization
+
+  static List<MTDLeg>? listFromJson(List<dynamic>? jsonList) {
+    List<MTDLeg>? values;
+    if (jsonList != null) {
+      values = <MTDLeg>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(values, MTDLeg.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<MTDLeg>? values) {
+    List<dynamic>? jsonList;
+    if (values != null) {
+      jsonList = <dynamic>[];
+      for (MTDLeg value in values) {
+        ListUtils.add(jsonList, value.toJson());
+      }
+    }
+    return jsonList;
+  }
+}
+
+///////////////////////////
+// MTDWalkLeg
+
+class MTDWalkLeg extends MTDLeg {
+  static const String Type = 'Walk';
+
+  final String? type;
+  final MTDWalkLegAtom? walk;
+  
+  MTDWalkLeg({this.type, this.walk});
+
+  // JSON serialization
+
+  static MTDWalkLeg? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDWalkLeg(
+      type: JsonUtils.stringValue(json['type']),
+      walk: MTDWalkLegAtom.fromJson(JsonUtils.mapValue(json['walk'])),
+    ) : null;
+  }
+
+  @override
+  toJson() => {
+    'type': type,
+    'walk': walk?.toJson(),
+  };
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDWalkLeg) &&
+    (type == other.type) &&
+    (walk == other.walk);
+
+  @override
+  int get hashCode =>
+    (type?.hashCode ?? 0) ^
+    (walk?.hashCode ?? 0);
+}
+
+///////////////////////////
+// MTDServiceLeg
+
+class MTDServiceLeg extends MTDLeg {
+  static const String Type = 'Service';
+
+  final String? type;
+  final List<MTDServiceLegAtom>? services;
+  
+  MTDServiceLeg({this.type, this.services});
+
+  // JSON serialization
+
+  static MTDServiceLeg? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDServiceLeg(
+      type: JsonUtils.stringValue(json['type']),
+      services: MTDServiceLegAtom.listFromJson(JsonUtils.listValue(json['services'])),
+    ) : null;
+  }
+
+  @override
+  toJson() => {
+    'type': type,
+    'services': MTDServiceLegAtom.listToJson(services),
+  };
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDServiceLeg) &&
+    (type == other.type) &&
+    (DeepCollectionEquality().equals(services, other.services));
+
+  @override
+  int get hashCode =>
+    (type?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(services));
+}
+
+///////////////////////////
+// MTDItinerary
+
+class MTDItinerary {
+  final String? startTimeString;
+  final String? endTimeString;
+  final int? travelTime;
+  final List<MTDLeg>? legs;
+  
+  MTDItinerary({this.startTimeString, this.endTimeString, this.travelTime, this.legs});
+
+  // JSON serialization
+
+  static MTDItinerary? fromJson(Map<String, dynamic>? json) {
+    return (json != null) ? MTDItinerary(
+      startTimeString: JsonUtils.stringValue(json['start_time']),
+      endTimeString: JsonUtils.stringValue(json['end_time']),
+      travelTime: JsonUtils.intValue(json['travel_time']),
+      legs: MTDLeg.listFromJson(JsonUtils.listValue(json['legs'])),
+    ) : null;
+  }
+
+  toJson() => {
+    'start_time': startTimeString,
+    'end_time': endTimeString,
+    'travel_time': travelTime,
+    'legs': MTDLeg.listToJson(legs),
+  };
+
+  // Equality
+
+  @override
+  bool operator==(dynamic other) =>
+    (other is MTDItinerary) &&
+    (startTimeString == other.startTimeString) &&
+    (endTimeString == other.endTimeString) &&
+    (travelTime == other.travelTime) &&
+    (DeepCollectionEquality().equals(legs, other.legs));
+
+  @override
+  int get hashCode =>
+    (startTimeString?.hashCode ?? 0) ^
+    (endTimeString?.hashCode ?? 0) ^
+    (travelTime?.hashCode ?? 0) ^
+    (DeepCollectionEquality().hash(legs));
+
+  // JSON List Serialization
+
+  static List<MTDItinerary>? listFromJson(List<dynamic>? jsonList) {
+    List<MTDItinerary>? values;
+    if (jsonList != null) {
+      values = <MTDItinerary>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(values, MTDItinerary.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<MTDItinerary>? values) {
+    List<dynamic>? jsonList;
+    if (values != null) {
+      jsonList = <dynamic>[];
+      for (MTDItinerary value in values) {
         ListUtils.add(jsonList, value.toJson());
       }
     }

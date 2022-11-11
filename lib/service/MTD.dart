@@ -187,4 +187,76 @@ class MTD with Service implements NotificationsListener {
     }
     return null;
   }
+
+  // Shape
+
+  Future<List<MTDShape>?> getShapes({required String shapeId, String? beginStopId, String? endStopId}) async {
+    if (StringUtils.isNotEmpty(Config().mtdUrl) && StringUtils.isNotEmpty(Config().mtdApiKey)) {
+      String url;
+      if ((beginStopId != null) && (endStopId != null)) {
+        url = "${Config().mtdUrl}/getshapebetweenstops?key=${Config().mtdApiKey}&shape_id=$shapeId&begin_stop_id=$beginStopId&end_stop_id=$endStopId";
+      }
+      else {
+        url = "${Config().mtdUrl}/getshape?key=${Config().mtdApiKey}&shape_id=$shapeId";
+      }
+      Response? response = await Network().get(url);
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
+      return (responseJson != null) ? MTDShape.listFromJson(JsonUtils.listValue(responseJson['shapes'])) : null;
+    }
+    return null;
+  }
+
+  // Trip
+
+  Future<List<MTDTrip>?> getTrips({String? tripId, String? blockId, String? routeId}) async {
+    if (StringUtils.isNotEmpty(Config().mtdUrl) && StringUtils.isNotEmpty(Config().mtdApiKey)) {
+      String? url;
+      if (tripId != null) {
+        url = "${Config().mtdUrl}/gettrip?key=${Config().mtdApiKey}&trip_id=$tripId";
+      }
+      else if (blockId != null) {
+        url = "${Config().mtdUrl}/gettripsbyblock?key=${Config().mtdApiKey}&block_id=$blockId";
+      }
+      else if (routeId != null) {
+        url = "${Config().mtdUrl}/gettripsbyroute?key=${Config().mtdApiKey}&route_id=$routeId";
+      }
+      Response? response = (url != null) ? await Network().get(url) : null;
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
+      return (responseJson != null) ? MTDTrip.listFromJson(JsonUtils.listValue(responseJson['trips'])) : null;
+    }
+    return null;
+  }
+
+  // Vehicle
+
+  Future<List<MTDVehicle>?> getVehicles({String? vehicleId, String? routeId}) async {
+    if (StringUtils.isNotEmpty(Config().mtdUrl) && StringUtils.isNotEmpty(Config().mtdApiKey)) {
+      String url;
+      if (vehicleId != null) {
+        url = "${Config().mtdUrl}/getvehicle?key=${Config().mtdApiKey}&vehicle_id=$vehicleId";
+      }
+      else if (routeId != null) {
+        url = "${Config().mtdUrl}/getvehiclesbyroute?key=${Config().mtdApiKey}&route_id=$routeId";
+      }
+      else {
+        url = "${Config().mtdUrl}/getvehicles?key=${Config().mtdApiKey}";
+      }
+      Response? response = await Network().get(url);
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
+      return (responseJson != null) ? MTDVehicle.listFromJson(JsonUtils.listValue(responseJson['vehicles'])) : null;
+    }
+    return null;
+  }
+
+  // Planned Trips
+
+  Future<List<MTDItinerary>?> getPlannedTrip({required MTDLocation origin, required MTDLocation destination}) async {
+    if (StringUtils.isNotEmpty(Config().mtdUrl) && StringUtils.isNotEmpty(Config().mtdApiKey)) {
+      String url = "${Config().mtdUrl}/getplannedtripsbylatlon?key=${Config().mtdApiKey}&origin_lat=${origin.latitude}&origin_lon=${origin.longitude}&destination_lat=${destination.latitude}&destination_lon=${destination.longitude}";
+      Response? response = await Network().get(url);
+      Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
+      return (responseJson != null) ? MTDItinerary.listFromJson(JsonUtils.listValue(responseJson['itineraries'])) : null;
+    }
+    return null;
+  }
 }
