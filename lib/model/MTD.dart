@@ -279,6 +279,48 @@ class MTDRoute {
     }
     return jsonList;
   }
+
+  // List Operations
+
+  static List<MTDRoute>? mergeUiRoutes(List<MTDRoute>? sourceRoutes) {
+    List<MTDRoute>? routes;
+    if (sourceRoutes != null) {
+      routes = <MTDRoute>[];
+      for (MTDRoute route in sourceRoutes) {
+
+        bool routeProcessed = false;
+        for (MTDRoute processedRoute in routes) {
+          if (route.isUiEqual(processedRoute)) {
+            routeProcessed = true;
+            break;
+          }
+        }
+        if (!routeProcessed) {
+          routes.add(route);
+        }
+      }
+
+      routes.sort((MTDRoute route1, MTDRoute route2) {
+        String? routeName1 = route1.shortName;
+        String? routeName2 = route2.shortName;
+        if ((routeName1 != null) && (routeName2 != null)) {
+          int? routeNumber1 = int.tryParse(routeName1);
+          int? routeNumber2 = int.tryParse(routeName2);
+          if ((routeNumber1 != null) && (routeNumber2 != null)) {
+            return routeNumber1.compareTo(routeNumber2);
+          }
+          else {
+            return routeName1.compareTo(routeName2);
+          }
+        }
+        return 0;
+      });
+    }
+    return routes;
+  }
+
+  bool isUiEqual(MTDRoute other) =>
+    (shortName == other.shortName) && (colorCode == other.colorCode) && (textColorCode == other.textColorCode);
 }
 
 ///////////////////////////
@@ -619,6 +661,14 @@ class MTDDeparture {
     'destination': destination?.toJson(),
     'location': location?.toJson(),
   };
+
+  // Operations
+
+  DateTime? get scheduledTime =>
+    DateTimeUtils.dateTimeFromString(scheduledString, format: 'yyyy-MM-ddTHH:mmZ');
+
+  DateTime? get expectedTime =>
+    DateTimeUtils.dateTimeFromString(expectdString, format: 'yyyy-MM-ddTHH:mmZ');
 
   // Equality
 
