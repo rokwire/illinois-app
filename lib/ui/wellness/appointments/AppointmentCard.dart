@@ -147,13 +147,17 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                                   visible: StringUtils.isNotEmpty(imageUrl),
                                   child: Padding(
                                       padding: EdgeInsets.only(left: 16, bottom: 4),
-                                      child: SizedBox(
-                                          width: imageSize,
-                                          height: imageSize,
-                                          child: InkWell(
-                                              onTap: () => _onTapCardImage(imageUrl!),
-                                              child: Image.network(imageUrl!,
-                                                  excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders)))))
+                                      child: Semantics(
+                                            label: "appointment image",
+                                            button: true,
+                                            hint: "Double tap to expand image",
+                                            child:SizedBox(
+                                            width: imageSize,
+                                            height: imageSize,
+                                            child: InkWell(
+                                                onTap: () => _onTapCardImage(imageUrl!),
+                                                child: Image.network(imageUrl!,
+                                                     excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders))))))
                             ]))
                       ]))),
               Container(color: (widget.appointment.isUpcoming ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary), height: 4)
