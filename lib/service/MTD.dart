@@ -19,13 +19,11 @@ class MTD with Service implements NotificationsListener {
   static const String notifyStopsChanged = 'edu.illinois.rokwire.mtd.stops.changed';
   static const String notifyRoutesChanged = 'edu.illinois.rokwire.mtd.routes.changed';
   static const String _mtdStopsName = "mtdStops.json";
-  static const String _mtdRoutesName = "mtdRoutes.json";
 
   late Directory _appDocDir;
   DateTime? _pausedDateTime;
   
   MTDStops? _stops;
-  MTDRoutes? _routes;
 
   // Singleton Factory
 
@@ -65,19 +63,6 @@ class MTD with Service implements NotificationsListener {
       }
     }
 
-    // Init routes
-    _routes = await _loadRoutesFromCache();
-    if (_routes != null) {
-      _updateRoutes();
-    }
-    else {
-      String? routesJsonString = await _loadRoutesStringFromNet();
-      _routes = MTDRoutes.fromJson(JsonUtils.decodeMap(routesJsonString));
-      if (_routes != null) {
-        _saveRoutesStringToCache(routesJsonString);
-      }
-    }
-
     await super.initService();
   }
 
@@ -104,7 +89,6 @@ class MTD with Service implements NotificationsListener {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           _updateStops();
-          _updateRoutes();
         }
       }
     }
@@ -152,45 +136,6 @@ class MTD with Service implements NotificationsListener {
   }
 
   // Routes
-
-  MTDRoutes? get routes => _routes;
-
-  File _getRoutesCacheFile() => File(join(_appDocDir.path, _mtdRoutesName));
-
-  Future<String?> _loadRoutesStringFromCache() async {
-    File routesFile = _getRoutesCacheFile();
-    return await routesFile.exists() ? await routesFile.readAsString() : null;
-  }
-
-  Future<void> _saveRoutesStringToCache(String? value) async {
-    await _getRoutesCacheFile().writeAsString(value ?? '', flush: true);
-  }
-
-  Future<MTDRoutes?> _loadRoutesFromCache() async {
-    return MTDRoutes.fromJson(JsonUtils.decodeMap(await _loadRoutesStringFromCache()));
-  }
-
-  Future<String?> _loadRoutesStringFromNet({ String? changesetId}) async {
-    if (StringUtils.isNotEmpty(Config().mtdUrl) && StringUtils.isNotEmpty(Config().mtdApiKey)) {
-      String url = "${Config().mtdUrl}/getroutes?key=${Config().mtdApiKey}";
-      if (changesetId != null) {
-        url += "&changeset_id=$changesetId";
-      }
-      Response? response = await Network().get(url);
-      return (response?.statusCode == 200) ? response?.body : null;
-    }
-    return null;
-  }
-
-  Future<void> _updateRoutes() async {
-    String? routesJsonString = await _loadRoutesStringFromNet(changesetId: _routes?.changesetId);
-    MTDRoutes? routes = MTDRoutes.fromJson(JsonUtils.decodeMap(routesJsonString));
-    if ((routes != null) && (routes.changesetId != _routes?.changesetId)) {
-      _routes = routes;
-      _saveRoutesStringToCache(routesJsonString);
-      NotificationService().notify(notifyRoutesChanged);
-    }
-  }
 
   Future<List<MTDRoute>?> getRoutes({String? stopId}) async {
     if (StringUtils.isNotEmpty(Config().mtdUrl) && StringUtils.isNotEmpty(Config().mtdApiKey)) {
