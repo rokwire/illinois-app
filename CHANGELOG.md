@@ -5,10 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.2.17] - 2022-11-11
 ### Fixed
 - Fixed tap handling on bus markers [#2516](https://github.com/rokwire/illinois-app/issues/2516).
 - Implemented bus schedule times panel [#2516](https://github.com/rokwire/illinois-app/issues/2516).
 - Implemented appointments semantics [#2520](https://github.com/rokwire/illinois-app/issues/2520).
+
 ## [4.2.16] - 2022-11-09
 ### Added
 - Created initial MTD handling in Maps [#2516](https://github.com/rokwire/illinois-app/issues/2516).
