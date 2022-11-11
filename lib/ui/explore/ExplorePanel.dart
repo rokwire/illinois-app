@@ -29,6 +29,7 @@ import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
+import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -148,15 +149,17 @@ class ExplorePanelState extends State<ExplorePanel>
   bool? _loadingProgress;
   bool _itemsDropDownValuesVisible = false;
   bool _eventsDisplayDropDownValuesVisible = false;
-  
+
   //Maps
-  static const double MapBarHeight = 114;
+  static const double MapBarHeight = 116;
 
   bool? _mapAllowed;
   MapController? _nativeMapController;
   ListMapDisplayType? _displayType;
   dynamic _selectedMapExplore;
   late AnimationController _mapExploreBarAnimationController;
+  String? _loadingMapStopIdRoutes;
+  List<MTDRoute>? _selectedMapStopRoutes;
 
   @override
   void initState() {
@@ -1200,6 +1203,7 @@ class ExplorePanelState extends State<ExplorePanel>
     Color? exploreColor = Colors.white;
     String? detailsLabel = Localization().getStringEx('panel.explore.button.details.title', 'Details');
     String? detailsHint = Localization().getStringEx('panel.explore.button.details.hint', '');
+    Widget? descriptionWidget;
 
     if (_selectedMapExplore is Explore) {
       title = _selectedMapExplore?.exploreTitle;
@@ -1211,15 +1215,15 @@ class ExplorePanelState extends State<ExplorePanel>
       title = sprintf(Localization().getStringEx('panel.explore.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
       Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
       description = explore?.exploreLocation?.description ?? "";
-      exploreColor = explore?.uiColor ?? Styles().colors!.fillColorSecondary!;
       exploreColor = _exploreColor(explore) ?? Styles().colors?.fillColorSecondary;
     }
     else if (_selectedMapExplore is MTDStop) {
       title = (_selectedMapExplore as MTDStop).name;
       description = (_selectedMapExplore as MTDStop).code;
-      exploreColor = UiColors.fromHex("#2376e5");
-      detailsLabel = 'Timetable';
+      exploreColor = Styles().colors?.mtdColor;
+      detailsLabel = 'Bus Schedule';
       detailsHint = '';
+      descriptionWidget = _buildStopDescription();
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
@@ -1233,7 +1237,10 @@ class ExplorePanelState extends State<ExplorePanel>
           Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Text(title ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary, )),
-              Text((description != null) ? description : "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
+              Row(children: <Widget>[
+                Text((description != null) ? description : "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
+                descriptionWidget ?? Container()
+              ]),
               Container(height: 8,),
               Row(children: <Widget>[
                 _userLocationEnabled() ? Row(children: <Widget>[
@@ -1277,6 +1284,44 @@ class ExplorePanelState extends State<ExplorePanel>
     ]);
   }
 
+  Widget? _buildStopDescription() {
+    if (_loadingMapStopIdRoutes != null) {
+      return Padding(padding: EdgeInsets.only(left: 8), child:
+        SizedBox(width: 16, height: 16, child:
+          CircularProgressIndicator(color: Styles().colors?.mtdColor, strokeWidth: 2,),
+        ),
+      );
+    }
+    else {
+      List<Widget> routeWidgets = <Widget>[];
+      if (_selectedMapStopRoutes != null) {
+        for (MTDRoute route in _selectedMapStopRoutes!) {
+          routeWidgets.add(
+            Padding(padding: EdgeInsets.only(left: routeWidgets.isNotEmpty ? 6 : 0), child:
+              Container(decoration: BoxDecoration(color: route.color, border: Border.all(color: route.textColor ?? Colors.transparent, width: 1), borderRadius: BorderRadius.circular(5)), child:
+                Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2), child:
+                  Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 12, color: route.textColor,)),
+                )
+              )
+            )
+          );
+        }
+      }
+      if (routeWidgets.isNotEmpty) {
+        return Expanded(child:
+          Padding(padding: EdgeInsets.only(left: 8), child:
+            SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+              Row(children: routeWidgets,)
+            ),
+          )
+        );
+      }
+      else {
+        return null;
+      }
+    }
+  }
+
   static Color? _exploreColor(Explore? explore) {
     if (explore is Event) {
       return explore.uiColor;
@@ -1295,11 +1340,13 @@ class ExplorePanelState extends State<ExplorePanel>
   void _selectMapExplore(dynamic explore) {
     if (explore != null) {
       _refresh(() { _selectedMapExplore = explore;});
+      _updateSelectedMapStopRoutes();
       _mapExploreBarAnimationController.forward();
     }
     else if (_selectedMapExplore != null) {
       _mapExploreBarAnimationController.reverse().then((_){
         _refresh(() { _selectedMapExplore = null;});
+        _updateSelectedMapStopRoutes();
       });
     }
   }
@@ -1343,8 +1390,30 @@ class ExplorePanelState extends State<ExplorePanel>
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: explore)));
       }
       else if (explore is MTDStop) {
-        // TBD
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: explore, routes: _selectedMapStopRoutes,)));
       }
+  }
+
+  void _updateSelectedMapStopRoutes() {
+    String? stopId = (_selectedMapExplore is MTDStop) ? (_selectedMapExplore as MTDStop).id : null;
+    if ((stopId != null) && (stopId != _loadingMapStopIdRoutes)) {
+      _refresh(() { _loadingMapStopIdRoutes = stopId; });
+      MTD().getRoutes(stopId: stopId).then((List<MTDRoute>? routes) {
+        String? currentStopId = (_selectedMapExplore is MTDStop) ? (_selectedMapExplore as MTDStop).id : null;
+        if (currentStopId == stopId) {
+          _refresh(() {
+            _loadingMapStopIdRoutes = null;
+            _selectedMapStopRoutes = MTDRoute.mergeUiRoutes(routes);
+          });
+        }
+      });
+    }
+    else if ((stopId == null) && ((_loadingMapStopIdRoutes != null) || (_selectedMapStopRoutes != null))) {
+      _refresh(() {
+        _loadingMapStopIdRoutes = null;
+        _selectedMapStopRoutes = null;
+      });
+    }
   }
 
   Widget _buildLoading() {

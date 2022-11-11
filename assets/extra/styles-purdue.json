@@ -33,6 +33,7 @@
     "eventColor"                            : "#CFB991",
     "diningColor"                           : "#CFB991",
     "placeColor"                            : "#CFB991",
+    "mtdColor"                              : "#CFB991",
 
     "white"                                 : "#FFFFFF",
     "whiteTransparent01"                    : "#1AFFFFFF",
