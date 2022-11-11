@@ -238,7 +238,7 @@ class MTD with Service implements NotificationsListener {
       }
       Response? response = await Network().get(url);
       Map<String, dynamic>? responseJson = (response?.statusCode == 200) ? JsonUtils.decodeMap(response?.body)  : null;
-      return (responseJson != null) ? MTDDeparture.listFromJson(JsonUtils.listValue(responseJson['stop_times'])) : null;
+      return (responseJson != null) ? MTDDeparture.listFromJson(JsonUtils.listValue(responseJson['departures'])) : null;
     }
     return null;
   }
