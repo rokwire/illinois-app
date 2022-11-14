@@ -125,7 +125,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   // Content Type Dropdown
 
   Widget _buildContentTypeDropdownButton() {
-    return Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child:
       RibbonButton(
         textColor: Styles().colors?.fillColorSecondary,
         backgroundColor: Styles().colors?.white,
