@@ -2269,6 +2269,8 @@
     "panel.research_projects.home.header_bar.title": "Research at Illinois",
     "panel.research_projects.home.content_type.open.title": "Open Research Projects",
     "panel.research_projects.home.content_type.my.title": "My Research Participation",
+    "panel.research_projects.home.dropdown.create.title": "Create New Research Project",
+    "panel.research_projects.home.dropdown.search.title": "Search Research Projects",
     "panel.research_projects.home.button.create.title": "Create",
     "panel.research_projects.home.button.search.title": "Search",
 	"panel.research_projects.home.status.error.open.text": "Failed to load open research projects.",

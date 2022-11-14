@@ -156,6 +156,22 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         contentList.add(_buildContentTypeDropdownItem(contentType));
       }
     }
+    if (_canCreateResearchProject) {
+      contentList.add(RibbonButton(
+        backgroundColor: Styles().colors?.white,
+        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        rightIconAsset: null,
+        label: Localization().getStringEx('panel.research_projects.home.dropdown.create.title', 'Create New Research Project'),
+        onTap: _onTapCreate
+      ),);
+    }
+    contentList.add(RibbonButton(
+      backgroundColor: Styles().colors?.white,
+      border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+      rightIconAsset: null,
+      label: Localization().getStringEx('panel.research_projects.home.dropdown.search.title', 'Search Research Projects'),
+      onTap: _onTapSearch
+    ),);
     return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       SingleChildScrollView(child:
         Column(children: contentList)
@@ -229,7 +245,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         ),
       ),
       Expanded(child: Container()),
-      Visibility(visible: _canCreateResearchProject, child:
+      Visibility(visible: false /*_canCreateResearchProject*/, child:
         Semantics(label: createTitle, button: true, child:
           InkWell(onTap: _onTapCreate, child: 
             Padding(padding: EdgeInsets.only(left: 0, right: 4, top: 12, bottom: 12), child:
@@ -243,13 +259,15 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
           ),
         ),
       ),
-      Semantics(label: searchTitle, button: true, child:
-        InkWell(onTap: _onTapSearch, child: 
-          Padding(padding: EdgeInsets.only(left: 4, right: 16, top: 10, bottom: 10), child:
-            Image.asset('images/icon-search.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: true, width: 25, height: 25),
+      Visibility(visible: false, child:
+        Semantics(label: searchTitle, button: true, child:
+          InkWell(onTap: _onTapSearch, child: 
+            Padding(padding: EdgeInsets.only(left: 4, right: 16, top: 10, bottom: 10), child:
+              Image.asset('images/icon-search.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: true, width: 25, height: 25),
+            ),
           ),
         ),
-      )
+      ),
     ],);
   }
 
@@ -275,14 +293,20 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   }
 
   void _onTapCreate() {
-    Analytics().logSelect(target: "Create");
+    Analytics().logSelect(target: "Create New Research Project");
+    setState(() {
+      _contentTypesDropdownExpanded = false;
+    });
     Navigator.push(context, MaterialPageRoute(builder: (context) => GroupCreatePanel(group: Group(
       researchGroup: true
     ),)));
   }
 
   void _onTapSearch() {
-    Analytics().logSelect(target: "Search");
+    Analytics().logSelect(target: "Search Research Projects");
+    setState(() {
+      _contentTypesDropdownExpanded = false;
+    });
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel(researchProject: true,)));
   }
 
