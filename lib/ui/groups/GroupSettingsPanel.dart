@@ -457,9 +457,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Research Description
   Widget _buildResearchDescriptionField() {
-    String? title = "IRB DESCRIPTION";
+    String? title = "Recruitment information";
     String? description = "What’s the purpose of your research project? Who should join? What will you do at your events?";
-    String? fieldTitle = "IRB DESCRIPTION FIELD";
+    String? fieldTitle = "RECRUITMENT INFORMATION FIELD";
     String? fieldHint = "";
 
     return Visibility(visible: _isResearchProject, child:
