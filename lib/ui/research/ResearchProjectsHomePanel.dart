@@ -212,7 +212,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     String searchTitle = Localization().getStringEx("panel.research_projects.home.button.search.title", "Search");
     
     return Row(children: [
-      Visibility(visible: _selectedContentType == ResearchProjectsContentType.open, child:
+      Visibility(visible: false /*_selectedContentType == ResearchProjectsContentType.open*/, child:
         FilterSelector(
           padding: EdgeInsets.only(left: 16, top: 12, bottom: 12),
           title: _selectedCategoryFilter,
@@ -220,7 +220,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
           onTap: _onTapCategoriesFilter
         ),
       ),
-      Visibility(visible: _selectedContentType == ResearchProjectsContentType.open, child:
+      Visibility(visible: false /*_selectedContentType == ResearchProjectsContentType.open*/, child:
         FilterSelector(
           padding: EdgeInsets.only(left: 8, top: 12, bottom: 12),
           title: _filterTagToDisplayString(_selectedTagFilter),
