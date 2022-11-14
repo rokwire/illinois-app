@@ -113,115 +113,107 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Column(
-          children: <Widget>[
-            _loading
-            ? Expanded(child:
-                Center(child:
-                  Container(
-                    child: Align(alignment: Alignment.center,
-                      child: SizedBox(height: 24, width: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
-                      ),
+    return Scaffold(backgroundColor: Styles().colors!.background, body:
+      Column(children: <Widget>[
+        _loading
+          ? Expanded(child:
+              Center(child:
+                Container(
+                  child: Align(alignment: Alignment.center,
+                    child: SizedBox(height: 24, width: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
                     ),
                   ),
-                )
-              )
-            : Expanded(
-              child: Container(
-                color: Colors.white,
-                child: CustomScrollView(
-                  scrollDirection: Axis.vertical,
-                  slivers: <Widget>[
-                    SliverHeaderBar(
-                      title: (_group?.researchProject == true) ? 'Create Research Project' : Localization().getStringEx("panel.groups_create.label.heading", "Create a Group"),
-                    ),
-                    SliverList(
-                      delegate: SliverChildListDelegate([
-                        Container(
-                          color: Styles().colors!.background,
-                          child: Column(children: <Widget>[
-                            _buildImageSection(),
-                            _buildNameField(),
-                            _buildDescriptionField(),
-
-                            Visibility(visible: !_isResearchProject, child:
-                              Column(children: [
-                                Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
-                                  Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                                ),
-                                _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "images/icon-search.png"),
-                                _buildCategoryDropDown(),
-                                _buildTagsLayout(),
-                              ]),
-                            ),
-
-
-                            Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
-                              Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                            ),
-                            _buildTitle("Research", "images/icon-gear.png"),
-                            _buildResearchOptionLayout(),
-                            Visibility(visible:_isResearchProject, child:
-                              Column(children: [
-                                _buildResearchOpenLayout(),
-                                _buildResearchDescriptionField(),
-                                _buildResearchAudienceLayout(),
-                              ])
-                            ),
-
-                            Visibility(visible: !_isResearchProject, child:
-                              Column(children: [
-                                Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
-                                  Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                                ),
-                                _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
-                                Container(height: 8),
-                                _buildPrivacyDropDown(),
-                                _buildHiddenForSearch(),
-                              ])
-                            ),
-
-                            Visibility(visible: _isManagedGroupAdmin && !_isResearchProject, child: Column(children: [
-                              _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "images/icon-member.png"),
-                              _buildAuthManLayout(),
-                            ])),
-                            
-                            Visibility(visible: !_isAuthManGroup, child: Padding(padding: EdgeInsets.only(top: 20), child: Column(children: [
-                              _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
-                              _buildMembershipLayout(),
-                            ],),),),
-                            
-                            Visibility(visible: _isManagedGroupAdmin && !_isResearchProject, child:
-                              Padding(padding: EdgeInsets.only(top: 8), child:
-                                _buildCanAutojoinLayout(),
-                              )
-                            ),
-
-                            Visibility(visible: !_isResearchProject, child:
-                              Padding(padding: EdgeInsets.only(top: 8), child:
-                                _buildPollsLayout(),
-                              )
-                            ),
-                            Visibility(visible: !_isResearchProject, child:
-                              Padding(padding: EdgeInsets.only(top: 8), child:
-                                _buildAttendanceLayout(),
-                              )
-                            ),
-                            Container(height: 40),
-                        ],),)
-
-                      ]),
-                    ),
-                  ],
                 ),
+              )
+            )
+          : Expanded(child:
+            Container(color: Colors.white, child:
+              CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
+                SliverHeaderBar(
+                  title: (_group?.researchProject == true) ? 'Create Research Project' : Localization().getStringEx("panel.groups_create.label.heading", "Create a Group"),
+                ),
+                SliverList(delegate: SliverChildListDelegate([
+                  Container(color: Styles().colors!.background, child:
+                    Column(children: <Widget>[
+                      _buildImageSection(),
+                      _buildNameField(),
+                      _buildDescriptionField(),
+
+                      Visibility(visible: !_isResearchProject, child:
+                        Column(children: [
+                          Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
+                            Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                          ),
+                          _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "images/icon-search.png"),
+                          _buildCategoryDropDown(),
+                          _buildTagsLayout(),
+                        ]),
+                      ),
+
+
+                      Visibility(visible:_isResearchProject, child:
+                        Column(children: [
+                          //Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
+                          //  Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                          //),
+                          //_buildTitle("Research", "images/icon-gear.png"),
+                          //_buildResearchOptionLayout(),
+                          //_buildResearchOpenLayout(),
+                          _buildResearchDescriptionField(),
+                          _buildResearchAudienceLayout(),
+                        ])
+                      ),
+
+                      Visibility(visible: !_isResearchProject, child:
+                        Column(children: [
+                          Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
+                            Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                          ),
+                          _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
+                          Container(height: 8),
+                          _buildPrivacyDropDown(),
+                          _buildHiddenForSearch(),
+                        ])
+                      ),
+
+                      Visibility(visible: _isManagedGroupAdmin && !_isResearchProject, child: Column(children: [
+                        _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "images/icon-member.png"),
+                        _buildAuthManLayout(),
+                      ])),
+                      
+                      Visibility(visible: !_isAuthManGroup, child: Padding(padding: EdgeInsets.only(top: 20), child: Column(children: [
+                        _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
+                        _buildMembershipLayout(),
+                      ],),),),
+                      
+                      Visibility(visible: _isManagedGroupAdmin && !_isResearchProject, child:
+                        Padding(padding: EdgeInsets.only(top: 8), child:
+                          _buildCanAutojoinLayout(),
+                        )
+                      ),
+
+                      Visibility(visible: !_isResearchProject, child:
+                        Padding(padding: EdgeInsets.only(top: 8), child:
+                          _buildPollsLayout(),
+                        )
+                      ),
+                      Visibility(visible: !_isResearchProject, child:
+                        Padding(padding: EdgeInsets.only(top: 8), child:
+                          _buildAttendanceLayout(),
+                        )
+                      ),
+                      Container(height: 40),
+                    ],),
+                  )
+                ]),
               ),
-            ),
-            _buildButtonsLayout(),
-          ],
+            ],),
+          ),
         ),
-        backgroundColor: Styles().colors!.background);
+        _buildButtonsLayout(),
+      ],),
+    );
   }
 
   //Image
