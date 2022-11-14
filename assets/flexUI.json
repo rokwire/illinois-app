@@ -113,6 +113,8 @@
 				"settings.connected"              : 4,
 				"settings.link"                   : 4,
 				"settings.linked"                 : 4,
+
+				"academics.skills_self_evaluation": 4,
 	
 				"onboarding.notifications_auth"   : 4,
 				"onboarding.location_auth"        : 2,

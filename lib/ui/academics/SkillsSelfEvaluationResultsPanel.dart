@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluationSkillDescriptionPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -32,7 +34,7 @@ class SkillsSelfEvaluationResultsPanel extends StatefulWidget {
 class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationResultsPanel> {
   List<SurveyResponse> _responses = [];
   Set<String> _responseSections = {};
-  SurveyResponse? _selectedComparisonResponse;
+  DateTime _selectedComparisonDate = DateTime(0);
 
   @override
   void initState() {
@@ -85,18 +87,17 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       children: [
         Divider(color: Styles().colors?.surface, thickness: 2),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(children: [
-          Flexible(flex: 5, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface),)),
-          Flexible(flex: 3, fit: FlexFit.tight, child: Text(_responses.isNotEmpty ? DateTimeUtils.localDateTimeToString(_responses[0].dateCreated, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface),)),
+          Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface),)),
+          Flexible(flex: 3, fit: FlexFit.tight, child: Text(_responses.isNotEmpty ? DateTimeUtils.localDateTimeToString(_responses[0].dateTaken, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface),)),
           Flexible(flex: 3, fit: FlexFit.tight, child: DropdownButtonHideUnderline(child:
-            DropdownButton<SurveyResponse?>(
+            DropdownButton<DateTime>(
               icon: Padding(padding: const EdgeInsets.only(left: 4), child: Image.asset('images/icon-down.png', color: Styles().colors?.surface)),
               isExpanded: false,
-              style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface),
-              // hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: getTermDropDownItemStyle(selected: true)) : null,
+              selectedItemBuilder: _buildSelectedResponseDateWidget,
               items: _buildResponseDateDropDownItems(),
-              value: _selectedComparisonResponse,
+              value: _selectedComparisonDate,
               onChanged: _onResponseDateDropDownChanged,
-              dropdownColor: Colors.transparent,
+              dropdownColor: Styles().colors?.surface,
               isDense: true,
             ),
           )),
@@ -114,14 +115,23 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         itemCount: _responseSections.length,
         itemBuilder: (BuildContext context, int index) {
           String section = _responseSections.elementAt(index);
-          //TODO: get title string from section key
           String title = _responses[0].survey.constants[section].toString();
           num? mostRecentScore = _responses[0].survey.stats?.scores[section];
-          num? comparisonScore = _selectedComparisonResponse?.survey.stats?.scores[section];
+          if (mostRecentScore != null) {
+            mostRecentScore = (mostRecentScore*100/45).round();
+          }
+          num? comparisonScore;
+          try {
+            comparisonScore = _responses.firstWhere((element) => element.dateTaken.isAtSameMomentAs(_selectedComparisonDate)).survey.stats?.scores[section];
+            comparisonScore = (comparisonScore!*100/45).round();
+          } catch (e) {
+            debugPrint(e.toString());
+          }
+
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
             child: Card(
               child: InkWell(
-                onTap: () => _showScoreDescription(section),
+                onTap: () => _showScoreDescription(title, section),
                 child: Padding(padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16), child: Row(children: [
                   Flexible(flex: 5, fit: FlexFit.tight, child: Padding(padding: const EdgeInsets.only(right: 16.0), child: 
                     Text(title, style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant)))
@@ -145,31 +155,39 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     ] : [];
   }
 
-  List<DropdownMenuItem<SurveyResponse?>> _buildResponseDateDropDownItems() {
+  List<DropdownMenuItem<DateTime>> _buildResponseDateDropDownItems() {
     //TODO: add student average option?
-    List<DropdownMenuItem<SurveyResponse?>> items = <DropdownMenuItem<SurveyResponse?>>[
-      DropdownMenuItem<SurveyResponse?>(
-        value: null,
-        child: Text('NONE', style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface,),),
+    List<DropdownMenuItem<DateTime>> items = <DropdownMenuItem<DateTime>>[
+      DropdownMenuItem<DateTime>(
+        value: DateTime(0),
+        child: Text('NONE', style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.fillColorPrimaryVariant,),),
       )
     ];
     if (CollectionUtils.isNotEmpty(_responses)) {
       for (SurveyResponse response in _responses) {
-        String dateString = DateTimeUtils.localDateTimeToString(response.dateCreated, format: 'MM/dd/yy h:mma') ?? '';
-        items.add(DropdownMenuItem<SurveyResponse?>(
-          value: response,
-          child: Text(dateString, style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface,),),
+        String dateString = DateTimeUtils.localDateTimeToString(response.dateTaken, format: 'MM/dd/yy h:mma') ?? '';
+        items.add(DropdownMenuItem<DateTime>(
+          value: response.dateTaken,
+          child: Text(dateString, style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.fillColorPrimaryVariant,),),
         ));
       }
     }
     return items;
   }
 
+  List<Widget> _buildSelectedResponseDateWidget(BuildContext context) {
+    return List.generate(_responses.length + 1, 
+      (index) => index > 0 ? 
+        Text(DateTimeUtils.localDateTimeToString(_responses[index-1].dateTaken, format: 'MM/dd/yy h:mma') ?? '', style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface,)) :
+        Text('NONE', style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface,),),
+    );
+  }
+
   void _loadResults() {
     Polls().loadSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
       if (CollectionUtils.isNotEmpty(responses)) {
         _responses = responses!;
-        _responses.sort(((a, b) => b.dateCreated.compareTo(a.dateCreated)));
+        _responses.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
         _responseSections.clear();
         for (SurveyResponse response in responses) {
           _responseSections.addAll(response.survey.stats?.scores.keys ?? []);
@@ -183,15 +201,15 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     _loadResults();
   }
 
-  void _onResponseDateDropDownChanged(SurveyResponse? value) {
+  void _onResponseDateDropDownChanged(DateTime? value) {
     setState(() {
-      _selectedComparisonResponse = value;
+      _selectedComparisonDate = value ?? DateTime(0);
     });
     //TODO: set scores in card widgets based on value section scores
   }
 
-  void _showScoreDescription(String section) {
-    //TODO: show panel with more info about evaluation section score
+  void _showScoreDescription(String title, String section) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationSkillDescriptionPanel(title: title, code: section)));
   }
 
   void _onTapClearAllScores() {

@@ -14,7 +14,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
+import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/polls.dart' as polls;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -52,12 +54,17 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
   }
 
   void _onTapStartEvaluation() {
-    if (Config().bessiSurveyID != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _onTapResults,)));
-    }
+    dynamic academicUiComponents = FlexUI()['academics'];
+    if (academicUiComponents is Iterable<String>) {
+      if (Config().bessiSurveyID != null && Auth2().isOidcLoggedIn && academicUiComponents.contains('skills_self_evaluation')) {
+        // You need to be signed in with your NetID to access Assessments.\nSet your privacy level to 4 or 5. Then, sign in with your NetID under Settings.
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _onTapResults,)));
+      }
+    } 
   }
 
   void _onTapResults() {
+    Navigator.of(context).pop();
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel()));
   }
 }
