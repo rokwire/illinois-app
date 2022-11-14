@@ -660,7 +660,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   // Research 
   
-  Widget _buildResearchOptionLayout() {
+  /*Widget _buildResearchOptionLayout() {
     return Container(
         padding: EdgeInsets.only(left: 16, right: 16, top: 8),
         child: _buildSwitch(
@@ -696,7 +696,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         });
       }
     }
-  }
+  }*/
 
   Widget _buildResearchAudienceLayout() {
     int questionsCount = researchProfileQuestionsCount;
