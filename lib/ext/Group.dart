@@ -104,25 +104,17 @@ extension GroupExt on Group {
     return !(onlyAdminsCanCreatePolls ?? true);
   }
 
+  bool get isResearchProject {
+    return researchProject == true;
+  }
+
   String? get currentUserStatusText {
     Member? member = currentMember;
     if(member?.status != null){
-      return groupMemberStatusToDisplayString(member!.status);
+      return isResearchProject ? researchParticipantStatusToDisplayString(member!.status) : groupMemberStatusToDisplayString(member!.status);
     }
     return "";
   }
-}
-
-Color? groupMemberStatusToColor(GroupMemberStatus? value) {
-  if (value != null) {
-    switch(value){
-      case GroupMemberStatus.admin    :  return Styles().colors!.fillColorSecondary;
-      case GroupMemberStatus.member   :  return Styles().colors!.fillColorPrimary;
-      case GroupMemberStatus.pending  :  return Styles().colors!.mediumGray1;
-      case GroupMemberStatus.rejected :  return Styles().colors!.mediumGray1;
-    }
-  }
-  return null;
 }
 
 String? groupMemberStatusToDisplayString(GroupMemberStatus? value) {
@@ -139,6 +131,34 @@ String? groupMemberStatusToDisplayString(GroupMemberStatus? value) {
   }
   return null;
 }
+
+String? researchParticipantStatusToDisplayString(GroupMemberStatus? value) {
+  if (value != null) {
+    if (value == GroupMemberStatus.pending) {
+      return 'Pending';
+    } else if (value == GroupMemberStatus.member) {
+      return 'Participant';
+    } else if (value == GroupMemberStatus.admin) {
+      return 'Principle Investigator';
+    } else if (value == GroupMemberStatus.rejected) {
+      return 'Denied';
+    }
+  }
+  return null;
+}
+
+Color? groupMemberStatusToColor(GroupMemberStatus? value) {
+  if (value != null) {
+    switch(value){
+      case GroupMemberStatus.admin    :  return Styles().colors!.fillColorSecondary;
+      case GroupMemberStatus.member   :  return Styles().colors!.fillColorPrimary;
+      case GroupMemberStatus.pending  :  return Styles().colors!.mediumGray1;
+      case GroupMemberStatus.rejected :  return Styles().colors!.mediumGray1;
+    }
+  }
+  return null;
+}
+
 
 extension GroupPostExt on GroupPost {
   String? get displayDateTime {
