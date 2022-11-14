@@ -690,7 +690,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         ));
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent,));
         commands.add(RibbonButton(
-          label: _isResearchProject ? 'Project Settings' : Localization().getStringEx("panel.group_detail.button.group_settings.title", "Group Settings"),
+          label: _isResearchProject ? 'Research Project Settings' : Localization().getStringEx("panel.group_detail.button.group_settings.title", "Group Settings"),
           hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.group_settings.hint", ""),
           leftIconAsset: 'images/icon-gear.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
@@ -1265,30 +1265,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                                   onPositiveTap: _onTapLeaveDialog)).then((value) => Navigator.pop(context));
                         })),
                 Visibility(
-                    visible: _canEditGroup,
-                    child: RibbonButton(
-                        leftIconAsset: "images/icon-gear.png",
-                        label: _isResearchProject ? 'Project Settings' : Localization().getStringEx("panel.group_detail.button.group.edit.title", "Group Settings"),
-                        onTap: () {
-                          Navigator.pop(context);
-                          _onTapSettings();
-                        })),
-                Visibility(
-                    visible: _canDeleteGroup,
-                    child: RibbonButton(
-                        leftIconAsset: "images/icon-delete-group.png",
-                        label: _isResearchProject ? 'Delete project' : Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
-                        onTap: () {
-                          Analytics().logSelect(target: "Delete group", attributes: _group?.analyticsAttributes);
-                          showDialog(
-                              context: context,
-                              builder: (context) => _buildConfirmationDialog(
-                                  confirmationTextMsg: confirmMsg,
-                                  positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
-                                  negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
-                                  onPositiveTap: _onTapDeleteDialog)).then((value) => Navigator.pop(context));
-                        })),
-                Visibility(
                     visible: _canAddEvent,
                     child: RibbonButton(
                         leftIconAsset: "images/icon-edit.png",
@@ -1305,6 +1281,30 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         onTap: (){
                           Navigator.pop(context);
                           _onTapCreateEvent();
+                        })),
+                Visibility(
+                    visible: _canEditGroup,
+                    child: RibbonButton(
+                        leftIconAsset: "images/icon-gear.png",
+                        label: _isResearchProject ? 'Research project settings' : Localization().getStringEx("panel.group_detail.button.group.edit.title", "Group Settings"),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _onTapSettings();
+                        })),
+                Visibility(
+                    visible: _canDeleteGroup,
+                    child: RibbonButton(
+                        leftIconAsset: "images/icon-delete-group.png",
+                        label: _isResearchProject ? 'Delete research project' : Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
+                        onTap: () {
+                          Analytics().logSelect(target: "Delete group", attributes: _group?.analyticsAttributes);
+                          showDialog(
+                              context: context,
+                              builder: (context) => _buildConfirmationDialog(
+                                  confirmationTextMsg: confirmMsg,
+                                  positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
+                                  negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
+                                  onPositiveTap: _onTapDeleteDialog)).then((value) => Navigator.pop(context));
                         })),
               ]));
         });
