@@ -40,6 +40,7 @@
     "eventColor"                            :"#E54B30",
     "diningColor"                           :"#F09842",
     "placeColor"                            :"#62A7A3",
+    "mtdColor"                              :"#2376E5",
 
     "white"                                 :"#FFFFFF",
     "whiteTransparent01"                    :"#1AFFFFFF",
@@ -263,6 +264,12 @@
     "panel.group.detail.fat": {"font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "textVariant"},
     "panel.group.detail.regular": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "textBackground"},
     "panel.group.detail.small": {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "textBackground"},
+
+    "panel.group_member_notifications.error.msg": {"font_family": "ProximaNovaBold", "size": 22.0, "color": "fillColorPrimary"},
+    "panel.group_member_notifications.toggle_button.title.fat.enabled": {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimary"},
+    "panel.group_member_notifications.toggle_button.title.fat.disabled": {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimaryTransparent015"},
+    "panel.group_member_notifications.toggle_button.title.small.enabled": {"font_family": "ProximaNovaBold", "size": 14.0, "color": "fillColorPrimary"},
+    "panel.group_member_notifications.toggle_button.title.small.disabled": {"font_family": "ProximaNovaBold", "size": 14.0, "color": "fillColorPrimaryTransparent015"},
 
     "panel.wellness.ring.select_predefined.message.regular" :  {"font_family": "ProximaNovaRegular", "size": 14.0, "color": "textSurface"},
     "panel.wellness.ring.select_predefined.button.label.regular" :  {"font_family": "ProximaNovaBold", "size": 18.0, "color": "black"},
