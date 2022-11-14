@@ -109,7 +109,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       _sortedMemberStatusList?.addAll([GroupMemberStatus.member, GroupMemberStatus.pending, GroupMemberStatus.rejected]);
     }
     else if (_group?.currentUserIsMember == true) {
-      if (_group?.researchGroup != true) {
+      if (_group?.researchProject != true) {
         _sortedMemberStatusList?.addAll([GroupMemberStatus.member]);
       }
     }

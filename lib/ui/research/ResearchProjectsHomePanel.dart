@@ -298,7 +298,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       _contentTypesDropdownExpanded = false;
     });
     Navigator.push(context, MaterialPageRoute(builder: (context) => GroupCreatePanel(group: Group(
-      researchGroup: true
+      researchProject: true
     ),)));
   }
 
@@ -311,7 +311,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   }
 
   bool get _canCreateResearchProject {
-    return Auth2().isOidcLoggedIn && FlexUI().isSharingAvailable && (Auth2().account?.isResearchGroupAdmin ?? false);
+    return Auth2().isOidcLoggedIn && FlexUI().isSharingAvailable && (Auth2().account?.isResearchProjectAdmin ?? false);
   }
 
   // Filters Widget

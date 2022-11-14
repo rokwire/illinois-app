@@ -179,7 +179,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get _isResearchProject {
-    return (_group?.researchGroup == true);
+    return (_group?.researchProject == true);
   }
 
   bool get _isAttendanceGroup {
