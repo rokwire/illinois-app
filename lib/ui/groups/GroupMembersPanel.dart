@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -74,7 +75,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     NotificationService().subscribe(this, [
       Groups.notifyGroupMembershipApproved, 
       Groups.notifyGroupMembershipRejected,
-      Groups.notifyGroupMembershipRemoved
+      Groups.notifyGroupMembershipRemoved,
+      FirebaseMessaging.notifyGroupsNotification,
     ]);
     
     _scrollController = ScrollController();
@@ -191,9 +193,19 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   @override
   void onNotification(String name, param) {
+    bool reloadMembers = false;
     if ((name == Groups.notifyGroupMembershipApproved) ||
         (name == Groups.notifyGroupMembershipRejected) ||
         (name == Groups.notifyGroupMembershipRemoved)) {
+      Group? group = (param is Group) ? param : null;
+      reloadMembers = (group?.id != null) && (group?.id == _group?.id);
+    }
+    else if (name == FirebaseMessaging.notifyGroupsNotification) {
+      String? groupId = (param is Map) ? JsonUtils.stringValue(param['entity_id']) : null;
+      reloadMembers = (groupId != null) && (groupId == _group?.id);
+    }
+
+    if (reloadMembers) {
       // Switch to all members if there are no more pending users
       if (_selectedMemberStatus == GroupMemberStatus.pending) {
         _switchToAllIfNoPendingMembers = true;
