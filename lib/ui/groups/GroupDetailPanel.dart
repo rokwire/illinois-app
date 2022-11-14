@@ -646,21 +646,24 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     String members;
     int membersCount = _groupStats?.activeMembersCount ?? 0;
     if (membersCount == 0) {
-      members = Localization().getStringEx("panel.group_detail.members.count.empty", "No Current Members");
+      members = _isResearchProject ? "No Current Participants" : Localization().getStringEx("panel.group_detail.members.count.empty", "No Current Members");
     }
     else if (membersCount == 1) {
-      members = Localization().getStringEx("panel.group_detail.members.count.one", "1 Current Member");
+      members = _isResearchProject ? "1 Current Participant" : Localization().getStringEx("panel.group_detail.members.count.one", "1 Current Member");
     }
     else {
-      members = sprintf(Localization().getStringEx("panel.group_detail.members.count.format", "%s Current Members"),[membersCount]);
+      members = sprintf(_isResearchProject ? "%s Current Participants" : Localization().getStringEx("panel.group_detail.members.count.format", "%s Current Members"), [membersCount]);
     }
 
     int pendingCount = _groupStats?.pendingCount ?? 0;
     String pendingMembers;
     if (_group!.currentUserIsAdmin && pendingCount > 0) {
-      pendingMembers = pendingCount > 1 ?
-        sprintf(Localization().getStringEx("panel.group_detail.pending_members.count.format", "%s Pending Members"), [pendingCount]) :
-        Localization().getStringEx("panel.group_detail.pending_members.count.one", "1 Pending Member");
+      if (pendingCount > 1) {
+        pendingMembers = sprintf(_isResearchProject ? "%s Pending Participants" : Localization().getStringEx("panel.group_detail.pending_members.count.format", "%s Pending Members"), [pendingCount]);
+      }
+      else {
+        pendingMembers = _isResearchProject ? "1 Pending Participant" : Localization().getStringEx("panel.group_detail.pending_members.count.one", "1 Pending Member");
+      }
     }
     else {
       pendingMembers = "";
@@ -682,8 +685,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (_isMemberOrAdmin) {
       if(_isAdmin) {
         commands.add(RibbonButton(
-          label: Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
-          hint: Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
+          label: _isResearchProject ? 'Manage Participants' : Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
+          hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
           leftIconAsset: 'images/icon-member.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapMembers,
