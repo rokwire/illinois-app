@@ -115,29 +115,30 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             _buildNameField(),
                             _buildDescriptionField(),
                             _buildLinkField(),
-                            Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                            Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                              _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability"), "images/icon-schedule.png"),
-                            ),
-                            _buildCategoryDropDown(),
-                            _buildTagsLayout(),
                             
-                            Column(children: [
-                              Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
+                            Visibility(visible: !_isResearchGroup, child:
+                              Column(children: [
                                 Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                              ),
-                              Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                                _buildSectionTitle("Research", "images/icon-gear.png"),
-                              ),
-                              _buildResearchOptionLayout(),
-                              Visibility(visible:_isResearchGroup, child:
-                                Column(children: [
-                                  _buildResearchOpenLayout(),
-                                  _buildResearchDescriptionField(),
-                                  _buildResearchAudienceLayout(),
-                                ])
-                              ),
-                            ],),
+                                Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                                  _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability"), "images/icon-schedule.png"),
+                                ),
+                                _buildCategoryDropDown(),
+                                _buildTagsLayout(),
+                              ],)
+                            ),
+                            
+                            Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                              _buildSectionTitle("Research", "images/icon-gear.png"),
+                            ),
+                            _buildResearchOptionLayout(),
+                            Visibility(visible: _isResearchGroup, child:
+                              Column(children: [
+                                _buildResearchOpenLayout(),
+                                _buildResearchDescriptionField(),
+                                _buildResearchAudienceLayout(),
+                              ])
+                            ),
 
                             Visibility(visible: !_isResearchGroup, child:
                               Column(children: [
