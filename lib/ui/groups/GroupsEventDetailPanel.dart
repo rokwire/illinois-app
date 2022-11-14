@@ -422,7 +422,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
             padding: EdgeInsets.only(bottom: 16),
             child: Column(children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Image.asset('images/icon-privacy.png')),
+                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Styles().images?.getImage('privacy')),
                 Expanded(
                     child: Text(privacyText, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
               ])

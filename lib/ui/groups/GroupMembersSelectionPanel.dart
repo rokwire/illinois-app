@@ -320,11 +320,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                 onTap: () {
                   _onTapCancelSearch();
                 },
-                child: Image.asset(
-                  'images/icon-x-orange.png',
-                  width: 25,
-                  height: 25,
-                ),
+                child: Styles().images?.getImage('clear'),
               ),
             ),
           ),

@@ -84,7 +84,7 @@ class _DebugStudentCoursesPanelState extends State<DebugStudentCoursesPanel> {
                     Wrap(children: [
                       InkWell(onTap: _onPaste, child:
                         Padding(padding: EdgeInsets.all(10), child: 
-                          Image.asset('images/icon-paste.png', excludeFromSemantics: true),
+                          Styles().images?.getImage('paste', excludeFromSemantics: true),
                         ),
                       ),
                       InkWell(onTap: _onClear, child:

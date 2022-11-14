@@ -280,7 +280,7 @@ class HeaderBackButton extends StatelessWidget {
       button: true,
       excludeSemantics: true,
       child: IconButton(
-          icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true),
+          icon: Styles().images?.getImage('arrow-left-white', excludeFromSemantics: true) ?? Container(),
           onPressed: (){
             Analytics().logSelect(target: "Back");
             Navigator.pop(context);
@@ -442,7 +442,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
       )),
     ];
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
-      Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
+      Padding(padding: EdgeInsets.only(right: 8), child: Styles().images?.getImage('calendar')),
       Expanded(child:
       Text(widget.event?.timeDisplayString ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small"))
       ),
@@ -474,7 +474,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                   excludeSemantics: true,
                   child: InkWell(onTap: _onFavoriteTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
-                      Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png'),
+                      Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline'),
                     ),
                 ))),
 
@@ -482,7 +482,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                 Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
                   InkWell(onTap: _onEventOptionsTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
-                      Image.asset('images/icon-groups-options-orange.png'),
+                      Styles().images?.getImage('options-circle'),
                     ),
                   ),
                 )
@@ -1308,8 +1308,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     post: widget.reply,
                     reaction: thumbsUpReaction,
                     accountIDs: widget.reply?.reactions[thumbsUpReaction],
-                    selectedIconPath: 'images/icon-thumbs-up-solid.png',
-                    deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                    selectedIconKey: 'thumbs-up-filled',
+                    deselectedIconKey: 'thumbs-up-outline',
                   ),
                 ),
                 Visibility(
@@ -1320,7 +1320,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                         onTap: widget.onIconTap,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10, top: 3),
-                            child: (StringUtils.isNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath!, excludeFromSemantics: true,) : Container())))))))
+                            child: (StringUtils.isNotEmpty(widget.iconPath) ? Styles().images?.getImage(widget.iconPath!, excludeFromSemantics: true,) : Container())))))))
               ]),
               Row(
                 children: [
@@ -1412,12 +1412,11 @@ class GroupPostReaction extends StatelessWidget {
   final GroupPost? post;
   final String reaction;
   final List<String>? accountIDs;
-  final String selectedIconPath;
-  final String deselectedIconPath;
-  final double iconSize;
+  final String selectedIconKey;
+  final String deselectedIconKey;
 
   GroupPostReaction({required this.groupID, required this.post, required this.reaction,
-    this.accountIDs, required this.selectedIconPath, required this.deselectedIconPath, this.iconSize = 18});
+    this.accountIDs, required this.selectedIconKey, required this.deselectedIconKey});
 
   @override
   Widget build(BuildContext context) {
@@ -1430,8 +1429,7 @@ class GroupPostReaction extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(selected ? selectedIconPath : deselectedIconPath,
-                      width: iconSize, height: iconSize, fit: BoxFit.fitWidth, excludeFromSemantics: true),
+                  Styles().images?.getImage(selected ? selectedIconKey : deselectedIconKey, excludeFromSemantics: true) ?? Container(),
                   Visibility(visible: accountIDs != null && accountIDs!.length > 0,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 4.0),
@@ -1471,8 +1469,7 @@ class GroupPostReaction extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Image.asset('images/icon-thumbs-up-solid.png', width: 24, height: 24,
-                fit: BoxFit.fitWidth, excludeFromSemantics: true),
+            Styles().images?.getImage('thumbs-up-filled', size: 24, fit: BoxFit.fill, excludeFromSemantics: true) ?? Container(),
             Container(width: 16),
             Text(member.displayShortName, style: TextStyle(
                 fontFamily: Styles().fontFamilies!.bold,

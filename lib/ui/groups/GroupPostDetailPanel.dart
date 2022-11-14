@@ -157,8 +157,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       post: _post,
                       reaction: thumbsUpReaction,
                       accountIDs: _post?.reactions[thumbsUpReaction],
-                      selectedIconPath: 'images/icon-thumbs-up-solid.png',
-                      deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                      selectedIconKey: 'thumbs-up-filled',
+                      deselectedIconKey: 'thumbs-up-outline',
                     ),
                   ),
                 ),
@@ -440,7 +440,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       String? optionsIconPath;
       void Function()? optionsFunctionTap;
       if (_isReplyVisible) {
-        optionsIconPath = 'images/icon-groups-options-orange.png';
+        optionsIconPath = 'options';
         optionsFunctionTap = () => _onTapReplyOptions(reply);
       }
       replyWidgetList.add(

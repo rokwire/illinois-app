@@ -321,13 +321,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                 padding: EdgeInsets.all(12),
                 child: GestureDetector(
                   onTap: _onTapSearch,
-                  child: Image.asset(
-                      'images/icon-search.png',
-                      color: Styles().colors!.fillColorSecondary,
-                      width: 25,
-                      height: 25,
-                      excludeFromSemantics: true
-                  ),
+                  child: Styles().images?.getImage('search', excludeFromSemantics: true),
                 ),
               ),
             ),
