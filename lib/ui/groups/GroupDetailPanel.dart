@@ -180,7 +180,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get _isResearchProject {
-    return (_group?.researchGroup == true);
+    return (_group?.researchProject == true);
   }
 
   bool get _isAttendanceGroup {
@@ -647,21 +647,24 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     String members;
     int membersCount = _groupStats?.activeMembersCount ?? 0;
     if (membersCount == 0) {
-      members = Localization().getStringEx("panel.group_detail.members.count.empty", "No Current Members");
+      members = _isResearchProject ? "No Current Participants" : Localization().getStringEx("panel.group_detail.members.count.empty", "No Current Members");
     }
     else if (membersCount == 1) {
-      members = Localization().getStringEx("panel.group_detail.members.count.one", "1 Current Member");
+      members = _isResearchProject ? "1 Current Participant" : Localization().getStringEx("panel.group_detail.members.count.one", "1 Current Member");
     }
     else {
-      members = sprintf(Localization().getStringEx("panel.group_detail.members.count.format", "%s Current Members"),[membersCount]);
+      members = sprintf(_isResearchProject ? "%s Current Participants" : Localization().getStringEx("panel.group_detail.members.count.format", "%s Current Members"), [membersCount]);
     }
 
     int pendingCount = _groupStats?.pendingCount ?? 0;
     String pendingMembers;
     if (_group!.currentUserIsAdmin && pendingCount > 0) {
-      pendingMembers = pendingCount > 1 ?
-        sprintf(Localization().getStringEx("panel.group_detail.pending_members.count.format", "%s Pending Members"), [pendingCount]) :
-        Localization().getStringEx("panel.group_detail.pending_members.count.one", "1 Pending Member");
+      if (pendingCount > 1) {
+        pendingMembers = sprintf(_isResearchProject ? "%s Pending Participants" : Localization().getStringEx("panel.group_detail.pending_members.count.format", "%s Pending Members"), [pendingCount]);
+      }
+      else {
+        pendingMembers = _isResearchProject ? "1 Pending Participant" : Localization().getStringEx("panel.group_detail.pending_members.count.one", "1 Pending Member");
+      }
     }
     else {
       pendingMembers = "";
@@ -683,15 +686,15 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (_isMemberOrAdmin) {
       if(_isAdmin) {
         commands.add(RibbonButton(
-          label: Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
-          hint: Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
+          label: _isResearchProject ? 'Manage Participants' : Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
+          hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
           leftIconAsset: 'images/icon-member.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapMembers,
         ));
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent,));
         commands.add(RibbonButton(
-          label: _isResearchProject ? 'Project Settings' : Localization().getStringEx("panel.group_detail.button.group_settings.title", "Group Settings"),
+          label: _isResearchProject ? 'Research Project Settings' : Localization().getStringEx("panel.group_detail.button.group_settings.title", "Group Settings"),
           hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.group_settings.hint", ""),
           leftIconAsset: 'images/icon-gear.png',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
@@ -1067,8 +1070,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildBadgeOrCategoryWidget() {
-    return _showMembershipBadge ?
-      Row(children: <Widget>[
+    if (_showMembershipBadge) {
+      return Row(children: <Widget>[
         Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: _group!.currentUserStatusColor, borderRadius: BorderRadius.all(Radius.circular(2)),), child:
           Center(child:
             Semantics(label: _group?.currentUserStatusText?.toLowerCase(), excludeSemantics: true, child:
@@ -1078,14 +1081,16 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         ),
         Expanded(child: Container(),),
         _buildPolicyButton(),
-      ],) :
-    
-      Row(children: <Widget>[
+      ],);
+    }
+    else {
+      return Row(children: <Widget>[
         Expanded(child:
-          Text(_group?.category?.toUpperCase() ?? '', style:  Styles().textStyles?.getTextStyle('widget.title.tiny'),),
+          Text(_isResearchProject ? '' : (_group?.category?.toUpperCase() ?? ''), style:  Styles().textStyles?.getTextStyle('widget.title.tiny'),),
         ),
         _buildPolicyButton(),
       ],);
+    }
   }
 
   Widget _buildPolicyButton() {
@@ -1138,7 +1143,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Auth2().isOidcLoggedIn && _group!.currentUserCanJoin
           ? Container(color: Colors.white,
               child: Padding(padding: EdgeInsets.all(16),
-                  child: RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
+                  child: RoundedButton(label: _isResearchProject ? "Request to participate" : Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
                     backgroundColor: Styles().colors!.white,
                     textColor: Styles().colors!.fillColorPrimary,
                     fontFamily: Styles().fontFamilies!.bold,
@@ -1277,30 +1282,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                                   onPositiveTap: _onTapLeaveDialog)).then((value) => Navigator.pop(context));
                         })),
                 Visibility(
-                    visible: _canEditGroup,
-                    child: RibbonButton(
-                        leftIconAsset: "images/icon-gear.png",
-                        label: _isResearchProject ? 'Project Settings' : Localization().getStringEx("panel.group_detail.button.group.edit.title", "Group Settings"),
-                        onTap: () {
-                          Navigator.pop(context);
-                          _onTapSettings();
-                        })),
-                Visibility(
-                    visible: _canDeleteGroup,
-                    child: RibbonButton(
-                        leftIconAsset: "images/icon-delete-group.png",
-                        label: _isResearchProject ? 'Delete project' : Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
-                        onTap: () {
-                          Analytics().logSelect(target: "Delete group", attributes: _group?.analyticsAttributes);
-                          showDialog(
-                              context: context,
-                              builder: (context) => _buildConfirmationDialog(
-                                  confirmationTextMsg: confirmMsg,
-                                  positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
-                                  negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
-                                  onPositiveTap: _onTapDeleteDialog)).then((value) => Navigator.pop(context));
-                        })),
-                Visibility(
                     visible: _canAddEvent,
                     child: RibbonButton(
                         leftIconAsset: "images/icon-edit.png",
@@ -1317,6 +1298,30 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                         onTap: (){
                           Navigator.pop(context);
                           _onTapCreateEvent();
+                        })),
+                Visibility(
+                    visible: _canEditGroup,
+                    child: RibbonButton(
+                        leftIconAsset: "images/icon-gear.png",
+                        label: _isResearchProject ? 'Research project settings' : Localization().getStringEx("panel.group_detail.button.group.edit.title", "Group Settings"),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _onTapSettings();
+                        })),
+                Visibility(
+                    visible: _canDeleteGroup,
+                    child: RibbonButton(
+                        leftIconAsset: "images/icon-delete-group.png",
+                        label: _isResearchProject ? 'Delete research project' : Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
+                        onTap: () {
+                          Analytics().logSelect(target: "Delete group", attributes: _group?.analyticsAttributes);
+                          showDialog(
+                              context: context,
+                              builder: (context) => _buildConfirmationDialog(
+                                  confirmationTextMsg: confirmMsg,
+                                  positiveButtonLabel: Localization().getStringEx('dialog.yes.title', 'Yes'),
+                                  negativeButtonLabel: Localization().getStringEx('dialog.no.title', 'No'),
+                                  onPositiveTap: _onTapDeleteDialog)).then((value) => Navigator.pop(context));
                         })),
               ]));
         });

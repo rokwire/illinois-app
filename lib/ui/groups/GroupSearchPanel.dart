@@ -243,7 +243,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
   void _refreshSearch() {
     if (StringUtils.isNotEmpty(_searchValue)) {
       setState(() { _loading = true; });
-      Groups().searchGroups(_searchValue!, researchGroups: widget.researchProject, researchOpen: widget.researchProject).then((groups) {
+      Groups().searchGroups(_searchValue!, researchProjects: widget.researchProject, researchOpen: widget.researchProject).then((groups) {
         if (mounted) {
           setState(() {
             if (groups != null) {
@@ -272,7 +272,7 @@ class _GroupsSearchPanelState extends State<GroupsSearchPanel>  implements Notif
       return;
     }
     _setLoading(true);
-    Groups().searchGroups(searchValue, researchGroups: widget.researchProject, researchOpen: widget.researchProject).then((groups) {
+    Groups().searchGroups(searchValue, researchProjects: widget.researchProject, researchOpen: widget.researchProject).then((groups) {
       _groups = _buildVisibleGroups(groups);
       _searchValue = searchValue;
       _resultsCount = _groups?.length ?? 0;
