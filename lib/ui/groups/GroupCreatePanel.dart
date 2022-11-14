@@ -145,27 +145,31 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                             _buildImageSection(),
                             _buildNameField(),
                             _buildDescriptionField(),
-                            Container(height: 24,),
-                            Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                            Container(height: 24,),
-                            _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "images/icon-search.png"),
-                            _buildCategoryDropDown(),
-                            _buildTagsLayout(),
 
-                            Column(children: [
-                              Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
-                                Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                              ),
-                              _buildTitle("Research", "images/icon-gear.png"),
-                              _buildResearchOptionLayout(),
-                              Visibility(visible:_isResearchGroup, child:
-                                Column(children: [
-                                  _buildResearchOpenLayout(),
-                                  _buildResearchDescriptionField(),
-                                  _buildResearchAudienceLayout(),
-                                ])
-                              ),
-                            ],),
+                            Visibility(visible: !_isResearchGroup, child:
+                              Column(children: [
+                                Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
+                                  Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                                ),
+                                _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "images/icon-search.png"),
+                                _buildCategoryDropDown(),
+                                _buildTagsLayout(),
+                              ]),
+                            ),
+
+
+                            Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
+                              Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                            ),
+                            _buildTitle("Research", "images/icon-gear.png"),
+                            _buildResearchOptionLayout(),
+                            Visibility(visible:_isResearchGroup, child:
+                              Column(children: [
+                                _buildResearchOpenLayout(),
+                                _buildResearchDescriptionField(),
+                                _buildResearchAudienceLayout(),
+                              ])
+                            ),
 
                             Visibility(visible: !_isResearchGroup, child:
                               Column(children: [
@@ -409,23 +413,19 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Expanded(
-                flex: 5,
-                child: _buildSectionTitle(
-                    fieldTitle, (_group?.researchGroup == true) ? "Tags help people understand more about your project." : Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."))),
+            Expanded(flex: 5, child:
+              _buildSectionTitle(fieldTitle, (_group?.researchGroup == true) ? "Tags help people understand more about your project." : Localization().getStringEx("panel.groups_create.tags.description", "Tags help people understand more about your group."))),
             Container(width: 8),
-            Expanded(
-                flex: 2,
-                child: RoundedButton(
-                    label: Localization().getStringEx("panel.groups_create.button.tags.title", "Tags"),
-                    hint: Localization().getStringEx("panel.groups_create.button.tags.hint", ""),
-                    backgroundColor: Styles().colors!.white,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.fillColorSecondary,
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    onTap: _onTapTags))
+            Expanded(flex: 2, child:
+              RoundedButton(
+                label: Localization().getStringEx("panel.groups_create.button.tags.title", "Tags"),
+                hint: Localization().getStringEx("panel.groups_create.button.tags.hint", ""),
+                backgroundColor: Styles().colors!.white,
+                textColor: Styles().colors!.fillColorPrimary,
+                borderColor: Styles().colors!.fillColorSecondary,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                onTap: _onTapTags))
           ]),
-          Container(height: 10),
           _constructTagButtonsContent()
         ]));
   }
@@ -447,12 +447,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       }
       lastRowChildren!.add(buttons[i]);
     }
-    rows.add(Container(height: 24,));
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: rows,
-    );
+    return Padding(padding: EdgeInsets.only(top: 10), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: rows,
+    ));
   }
 
   List<Widget> _buildTagsButtons(){
