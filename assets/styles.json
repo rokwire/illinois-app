@@ -12,6 +12,7 @@
     "textColorSecondary"                    :"#FFFFFF",
     "fillColorSecondaryVariant"             :"#CF3C1B",
     "textColorSecondaryVariant"             :"#FFFFFF",
+    "gradientColorPrimary"                  :"#244372",
 
     "surface"                               :"#FFFFFF",
     "surfaceAccent"                         :"#DADDE1",
