@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -723,6 +724,17 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           ]));
         }
       }
+      if (CollectionUtils.isNotEmpty(commands)) {
+        commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
+      }
+      commands.add(RibbonButton(
+        label: Localization().getStringEx("panel.group_detail.button.notifications.title", "Notifications"),
+        hint: Localization().getStringEx("panel.group_detail.button.notifications.hint", ""),
+        leftIconAsset: 'images/icon-reminder.png',
+        leftIconPadding: EdgeInsets.only(right: 8, left: 2),
+        padding: EdgeInsets.symmetric(vertical: 14),
+        onTap: _onTapNotifications,
+      ));
       if (StringUtils.isNotEmpty(_group?.webURL)) {
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
         commands.add(_buildWebsiteLink());
@@ -1436,6 +1448,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   void _onTapPromote() {
     Analytics().logSelect(target: "Promote Group", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupQrCodePanel(group: _group)));
+  }
+
+  void _onTapNotifications() {
+    Analytics().logSelect(target: "Notifications", attributes: _group?.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberNotificationsPanel(groupId: _group?.id, memberId: _group?.currentMember?.id)));
   }
 
   void _onTapTakeAttendance() {
