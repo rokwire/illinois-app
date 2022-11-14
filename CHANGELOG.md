@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Implement "Group by Group notifications" - override member's default notification preferences per group [#2525](https://github.com/rokwire/illinois-app/issues/2525).
+### Changed
+- Research Project updates [#2526](https://github.com/rokwire/illinois-app/issues/2526).
 
 ## [4.2.17] - 2022-11-11
 ### Fixed
