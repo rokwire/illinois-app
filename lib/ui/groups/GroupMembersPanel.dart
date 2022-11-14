@@ -216,9 +216,13 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   @override
   Widget build(BuildContext context) {
-    String headerTitle = _isAdmin
-        ? Localization().getStringEx("panel.manage_members.header.admin.title", "Manage Members")
-        : Localization().getStringEx("panel.manage_members.header.member.title", "Members");
+    String headerTitle;
+    if (_isAdmin) {
+      headerTitle = _isResearchProject ? "Manage Participants" : Localization().getStringEx("panel.manage_members.header.admin.title", "Manage Members");
+    }
+    else {
+      headerTitle = _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.header.member.title", "Members");
+    }
     return Scaffold(
         backgroundColor: Styles().colors!.background,
         appBar: HeaderBar(title: headerTitle),
@@ -282,7 +286,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
               onTap: _onTapRibbonButton))),
       Stack(children: [
         Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child: contentWidget),
-        _buildStatusValuesContainer()
+        Visibility(visible: _statusValuesVisible, child: _buildStatusDismissLayer()),
+        Visibility(visible: _statusValuesVisible, child: _buildStatusValuesWidget()),
       ])
     ]);
   }
@@ -406,23 +411,20 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     }
   }
 
-  Widget _buildStatusValuesContainer() {
-    return Visibility(
-        visible: _statusValuesVisible,
-        child: Positioned.fill(child: Stack(children: <Widget>[_buildStatusDismissLayer(), _buildStatusValuesWidget()])));
-  }
-
   Widget _buildStatusDismissLayer() {
-    return Positioned.fill(
-        child: BlockSemantics(
-            child: GestureDetector(
-                onTap: () {
-                  Analytics().logSelect(target: 'Close Dropdown');
-                  setState(() {
-                    _statusValuesVisible = false;
-                  });
-                },
-                child: Container(color: Styles().colors!.blackTransparent06))));
+    return Positioned.fill(child:
+      BlockSemantics(child:
+        GestureDetector(
+          onTap: () {
+            Analytics().logSelect(target: 'Close Dropdown');
+            setState(() {
+              _statusValuesVisible = false;
+            });
+          },
+          child: Container(color: Styles().colors!.blackTransparent06)
+        )
+      )
+    );
   }
 
   Widget _buildStatusValuesWidget() {
@@ -438,7 +440,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
         }
       }
     }
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SingleChildScrollView(child: Column(children: widgetList)));
+    return Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 32), child: SingleChildScrollView(child: Column(children: widgetList)));
   }
 
   Widget _buildStatusItem(GroupMemberStatus? status) {
@@ -489,39 +491,39 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   String _getSectionHeading() {
     switch (_selectedMemberStatus) {
       case GroupMemberStatus.admin:
-        return Localization().getStringEx("panel.manage_members.label.admins", "Admins");
+        return _isResearchProject ? "Principle Investigators" : Localization().getStringEx("panel.manage_members.label.admins", "Admins");
       case GroupMemberStatus.member:
-        return Localization().getStringEx("panel.manage_members.label.members", "Members");
+        return _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.label.members", "Members");
       case GroupMemberStatus.pending:
-        return Localization().getStringEx("panel.manage_members.label.requests", "Requests");
+        return _isResearchProject ? "Requests" : Localization().getStringEx("panel.manage_members.label.requests", "Requests");
       case GroupMemberStatus.rejected:
-        return Localization().getStringEx("panel.manage_members.label.members", "Members");
+        return _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.label.members", "Members");
       default: // All
-        return Localization().getStringEx("panel.manage_members.label.members", "Members");
+        return _isResearchProject ? "Participants" : Localization().getStringEx("panel.manage_members.label.members", "Members");
     }
   }
 
   String _getEmptyMembersMessage() {
     switch (_selectedMemberStatus) {
       case GroupMemberStatus.admin:
-        return Localization().getStringEx('panel.manage_members.status.admin.empty.message', 'There are no admins.');
+        return _isResearchProject ? 'There are no principle investigators.' : Localization().getStringEx('panel.manage_members.status.admin.empty.message', 'There are no admins.');
       case GroupMemberStatus.member:
-        return Localization().getStringEx('panel.manage_members.status.member.empty.message', 'There are no members.');
+        return _isResearchProject ? 'There are no participants.' : Localization().getStringEx('panel.manage_members.status.member.empty.message', 'There are no members.');
       case GroupMemberStatus.pending:
-        return Localization().getStringEx('panel.manage_members.status.pending.empty.message', 'There are no pending members.');
+        return _isResearchProject ? 'There are no pending participants.' : Localization().getStringEx('panel.manage_members.status.pending.empty.message', 'There are no pending members.');
       case GroupMemberStatus.rejected:
-        return Localization().getStringEx('panel.manage_members.status.rejected.empty.message', 'There are no rejected members.');
+        return _isResearchProject ? 'There are no rejected participants.' : Localization().getStringEx('panel.manage_members.status.rejected.empty.message', 'There are no rejected members.');
       default: // All
-        return Localization().getStringEx('panel.manage_members.status.all.empty.message', 'There are no members.');
+        return _isResearchProject ? 'There are no participants.' : Localization().getStringEx('panel.manage_members.status.all.empty.message', 'There are no members.');
     }
   }
 
-  static String? _memberStatusToString(GroupMemberStatus? status) {
+  String? _memberStatusToString(GroupMemberStatus? status) {
     switch (status) {
       case GroupMemberStatus.admin:
-        return Localization().getStringEx('panel.manage_members.member.status.admin.label', 'Admin');
+        return _isResearchProject ? 'Principle Investigators' : Localization().getStringEx('panel.manage_members.member.status.admin.label', 'Admin');
       case GroupMemberStatus.member:
-        return Localization().getStringEx('panel.manage_members.member.status.member.label', 'Member');
+        return _isResearchProject ? 'Participants' : Localization().getStringEx('panel.manage_members.member.status.member.label', 'Member');
       case GroupMemberStatus.pending:
         return Localization().getStringEx('panel.manage_members.member.status.pending.label', 'Pending');
       case GroupMemberStatus.rejected:
@@ -537,6 +539,10 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   bool get _isAdmin {
     return _group?.currentMember?.isAdmin ?? false;
+  }
+
+  bool get _isResearchProject {
+    return _group?.researchProject == true;
   }
 }
 
@@ -602,6 +608,7 @@ class _GroupMemberCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? memberStatus = (group?.researchProject == true) ? researchParticipantStatusToDisplayString(member?.status) : groupMemberStatusToDisplayString(member?.status);
     return GestureDetector(
       onTap: ()=>_onTapMemberCard(context),
       child: Container(
@@ -641,7 +648,7 @@ class _GroupMemberCard extends StatelessWidget {
                             borderRadius: BorderRadius.all(Radius.circular(2)),
                           ),
                           child: Center(
-                            child: Text(groupMemberStatusToDisplayString(member!.status)!.toUpperCase(),
+                            child: Text(memberStatus?.toUpperCase() ?? '',
                               style: Styles().textStyles?.getTextStyle('widget.heading.small')
                             ),
                           ),
