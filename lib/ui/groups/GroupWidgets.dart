@@ -821,7 +821,7 @@ class _GroupCardState extends State<GroupCard> {
   @override
   Widget build(BuildContext context) {
     String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), [StringUtils.ensureNotEmpty((_groupStats?.pendingCount ?? 0).toString())]);
-    String? groupCategory = StringUtils.ensureNotEmpty(widget.group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
+    String groupCategory = (widget.group?.researchProject == true) ? '' : StringUtils.ensureNotEmpty(widget.group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
     return GestureDetector(onTap: () => _onTapCard(context), child:
       Padding(padding: widget.margin, child:
         Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
@@ -832,7 +832,7 @@ class _GroupCardState extends State<GroupCard> {
               Row(children:[
                 Expanded(child:
                   Column(children:[
-                    Row(children: [
+                    groupCategory.isNotEmpty ? Row(children: [
                       Expanded(child:
                         Text(groupCategory,
                           overflow: TextOverflow.ellipsis,
@@ -840,7 +840,7 @@ class _GroupCardState extends State<GroupCard> {
                           style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat")
                         )
                       ),
-                    ]),
+                    ]) : Container(),
                     Row(children: [
                       Expanded(child:
                         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
