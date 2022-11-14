@@ -98,14 +98,20 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
   Widget _buildHealthScreenerSectionWidget(bool canTakeScreener) {
     Widget content;
-    if (Auth2().isLoggedIn) {
+    if (Auth2().isOidcLoggedIn) {
       if (canTakeScreener) {
         if (StringUtils.isNotEmpty(Config().healthScreenerSurveyID)) {
           content = Column(children: [
             Text(
               Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.details.title',
-                  'Feeling sick? Use the Illinois Health Screener to help you find the right resources'),
+                  'Not feeling well? Use the Illinois Health Screener to help you find the right resources'),
               style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
+            ),
+            SizedBox(height: 8),
+            Text(
+              Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.details.text',
+                  'Your screening results are confidential unless you choose to share them'),
+              style: Styles().textStyles?.getTextStyle('widget.detail.small'),
             ),
             SizedBox(height: 16),
             RoundedButton(
@@ -139,7 +145,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
       //TODO: Build standardized widget for logged out warning and actions
       content = HomeMessageCard(
         title: Localization().getStringEx("common.message.logged_out", "You are not logged in"),
-        message: Localization().getStringEx("panel.wellness.sections.health_screener.label.screener.logged_out.text", "You need to be logged in to access the Illinois Health Screener."),);
+        message: Localization().getStringEx("panel.wellness.sections.health_screener.label.screener.logged_out.text", "You need to be logged in with your NetID to access the Illinois Health Screener."),);
     }
 
     return HomeSlantWidget(
