@@ -2027,6 +2027,7 @@
 	"panel.manage_members.header.member.title": "成員",
 	"panel.manage_members.label.requests": "请求",
 	"panel.manage_members.label.members": "成员",
+	"panel.manage_members.label.admins": "管理員",
 	"panel.manage_members.button.review_request.title": "审查请求",
 	"panel.manage_members.button.review_request.hint": "",
 	"panel.manage_members.label.filter_by": "筛选依据",

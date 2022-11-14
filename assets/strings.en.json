@@ -2038,6 +2038,7 @@
     "panel.manage_members.header.member.title": "Members",
     "panel.manage_members.label.requests": "Requests",
     "panel.manage_members.label.members": "Members",
+    "panel.manage_members.label.admins": "Admins",
     "panel.manage_members.button.review_request.title": "Review Request",
     "panel.manage_members.button.review_request.hint": "",
     "panel.manage_members.label.filter_by": "Filter by",

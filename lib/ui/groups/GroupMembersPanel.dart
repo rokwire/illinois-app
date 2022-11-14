@@ -70,13 +70,18 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   @override
   void initState() {
     super.initState();
+    
     NotificationService().subscribe(this, [
       Groups.notifyGroupMembershipApproved, 
       Groups.notifyGroupMembershipRejected,
       Groups.notifyGroupMembershipRemoved
     ]);
+    
     _scrollController = ScrollController();
     _scrollController!.addListener(_scrollListener);
+
+    _group = widget.group;
+
     // First try to load pending members if the user is admin.
     if (widget.group?.currentUserIsAdmin ?? false) {
       _selectedMemberStatus = GroupMemberStatus.pending;
@@ -97,11 +102,20 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   ///
   void _buildSortedMemberStatusList() {
     _sortedMemberStatusList = [GroupMemberStatus.admin];
-    // Do not allow users that are not members to see who is member
-    if (_group?.currentUserIsMember ?? false) {
-      _sortedMemberStatusList?.addAll([GroupMemberStatus.member]);
-    } else if (_group?.currentUserIsAdmin ?? false) {
+
+    if (_group?.currentUserIsAdmin == true) {
       _sortedMemberStatusList?.addAll([GroupMemberStatus.member, GroupMemberStatus.pending, GroupMemberStatus.rejected]);
+    }
+    else if (_group?.currentUserIsMember == true) {
+      if (_group?.researchGroup != true) {
+        _sortedMemberStatusList?.addAll([GroupMemberStatus.member]);
+      }
+    }
+    else {
+      // Do not allow users that are not members to see who is member
+    }
+    if ((_selectedMemberStatus == null) && (_sortedMemberStatusList?.length == 1)) {
+      _selectedMemberStatus = _sortedMemberStatusList?.first;
     }
     _sortedMemberStatusList?.sort((s1, s2) => s1.toString().compareTo(s2.toString()));
   }
@@ -242,23 +256,18 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     }
 
     return Column(children: <Widget>[
-      Container(
-          child: SectionRibbonHeader(
-              title: (_selectedMemberStatus == GroupMemberStatus.pending)
-                  ? Localization().getStringEx("panel.manage_members.label.requests", "Requests")
-                  : Localization().getStringEx("panel.manage_members.label.members", "Members"),
-              titleIconAsset: 'images/icon-member.png')),
+      SectionRibbonHeader(title: _getSectionHeading(), titleIconAsset: 'images/icon-member.png'),
       _buildMembersSearch(),
-      Padding(
-          padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-          child: RibbonButton(
+        Visibility(visible: 1 < CollectionUtils.length(_sortedMemberStatusList), child:
+          Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
+            RibbonButton(
               textColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
               borderRadius: BorderRadius.all(Radius.circular(5)),
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-              rightIconAsset: (_statusValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+              rightIconAsset: _statusValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png',
               label: _memberStatusToString(_selectedMemberStatus),
-              onTap: _onTapRibbonButton)),
+              onTap: _onTapRibbonButton))),
       Stack(children: [
         Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child: contentWidget),
         _buildStatusValuesContainer()
@@ -407,7 +416,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   Widget _buildStatusValuesWidget() {
     List<Widget> widgetList = <Widget>[];
     widgetList.add(Container(color: Styles().colors!.fillColorSecondary, height: 2));
-    if (_selectedMemberStatus != null) {
+    if ((_selectedMemberStatus != null) && (1 < CollectionUtils.length(_sortedMemberStatusList))) {
       widgetList.add(_buildStatusItem(null));
     }
     if (CollectionUtils.isNotEmpty(_sortedMemberStatusList)) {
@@ -432,7 +441,9 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   void _onTapRibbonButton() {
     Analytics().logSelect(target: 'Toggle Dropdown');
-    _changeMemberStatusValuesVisibility();
+    if (1 < CollectionUtils.length(_sortedMemberStatusList)) {
+      _changeMemberStatusValuesVisibility();
+    }
   }
 
   void _onTapStatusItem(GroupMemberStatus? status) {
@@ -460,6 +471,21 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   void _updateState() {
     if (mounted) {
       setState(() {});
+    }
+  }
+
+  String _getSectionHeading() {
+    switch (_selectedMemberStatus) {
+      case GroupMemberStatus.admin:
+        return Localization().getStringEx("panel.manage_members.label.admins", "Admins");
+      case GroupMemberStatus.member:
+        return Localization().getStringEx("panel.manage_members.label.members", "Members");
+      case GroupMemberStatus.pending:
+        return Localization().getStringEx("panel.manage_members.label.requests", "Requests");
+      case GroupMemberStatus.rejected:
+        return Localization().getStringEx("panel.manage_members.label.members", "Members");
+      default: // All
+        return Localization().getStringEx("panel.manage_members.label.members", "Members");
     }
   }
 
