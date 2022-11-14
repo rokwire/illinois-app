@@ -127,13 +127,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               ],)
                             ),
                             
-                            Container(height: 1, color: Styles().colors!.surfaceAccent,),
-                            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                              _buildSectionTitle("Research", "images/icon-gear.png"),
-                            ),
-                            _buildResearchOptionLayout(),
                             Visibility(visible: _isResearchProject, child:
                               Column(children: [
+                                Container(height: 1, color: Styles().colors!.surfaceAccent,),
+                                Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+                                  _buildSectionTitle("Research", "images/icon-gear.png"),
+                                ),
+                                //_buildResearchOptionLayout(),
                                 _buildResearchOpenLayout(),
                                 _buildResearchDescriptionField(),
                                 _buildResearchAudienceLayout(),
@@ -841,7 +841,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   // Research 
   
-  Widget _buildResearchOptionLayout() {
+  /*Widget _buildResearchOptionLayout() {
     return Container(
         padding: EdgeInsets.only(left: 16, right: 16, top: 8),
         child: _buildSwitch(
@@ -858,14 +858,14 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         });
       }
     }
-  }
+  }*/
 
   Widget _buildResearchOpenLayout() {
     return Container(
         padding: EdgeInsets.only(left: 16, right: 16, top: 8),
         child: _buildSwitch(
-            title: "Is the research project open?",
-            value: _group?.researchOpen,
+            title: "Is recruitment closed?",
+            value: _group?.researchOpen == false,
             onTap: _onTapResearchOpen));
   }
 
@@ -873,7 +873,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     if (_group != null) {
       if (mounted) {
         setState(() {
-          _group?.researchOpen = !(_group?.researchOpen ?? false);
+          _group?.researchOpen = (_group?.researchOpen != true);
         });
       }
     }
