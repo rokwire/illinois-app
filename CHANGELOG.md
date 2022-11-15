@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+## [4.2.19] - 2022-11-15
+### Added
+- Initialize research confirmation flag in Group Create/Settings panels, require user consent before requesting to join research project that requires confirmation [#2531](https://github.com/rokwire/illinois-app/issues/2531).
+
 ## [4.2.18] - 2022-11-14
 ### Added
 - Implement "Group by Group notifications" - override member's default notification preferences per group [#2525](https://github.com/rokwire/illinois-app/issues/2525).

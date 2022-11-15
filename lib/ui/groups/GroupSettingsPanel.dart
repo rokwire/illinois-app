@@ -135,6 +135,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                                 ),
                                 //_buildResearchOptionLayout(),
                                 _buildResearchOpenLayout(),
+                                _buildResearchConfirmationLayout(),
                                 _buildResearchDescriptionField(),
                                 _buildResearchAudienceLayout(),
                               ])
@@ -874,6 +875,25 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       if (mounted) {
         setState(() {
           _group?.researchOpen = (_group?.researchOpen != true);
+        });
+      }
+    }
+  }
+
+  Widget _buildResearchConfirmationLayout() {
+    return Container(
+        padding: EdgeInsets.only(left: 16, right: 16, top: 8),
+        child: _buildSwitch(
+            title: "Requires confirmation",
+            value: (_group?.researchConfirmation == true),
+            onTap: _onTapResearchConfirmation));
+  }
+
+  void _onTapResearchConfirmation() {
+    if (_group != null) {
+      if (mounted) {
+        setState(() {
+          _group?.researchConfirmation = (_group?.researchConfirmation != true);
         });
       }
     }
