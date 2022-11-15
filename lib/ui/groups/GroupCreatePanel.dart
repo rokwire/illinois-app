@@ -162,6 +162,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           //_buildResearchOptionLayout(),
                           //_buildResearchOpenLayout(),
                           _buildResearchDescriptionField(),
+                          _buildResearchConfirmationLayout(),
                           _buildResearchAudienceLayout(),
                         ])
                       ),
@@ -370,6 +371,26 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         ),
       ),
     );
+  }
+  //
+  //Research Confirmation
+  Widget _buildResearchConfirmationLayout() {
+    return Container(
+        padding: EdgeInsets.only(left: 16, right: 16, top: 8),
+        child: _buildSwitch(
+            title: "Requires confirmation",
+            value: (_group?.researchConfirmation == true),
+            onTap: _onTapResearchConfirmation));
+  }
+
+  void _onTapResearchConfirmation() {
+    if (_group != null) {
+      if (mounted) {
+        setState(() {
+          _group?.researchConfirmation = (_group?.researchConfirmation != true);
+        });
+      }
+    }
   }
   //
   //Category
