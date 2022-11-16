@@ -19,6 +19,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 
 class SkillsSelfEvaluationSkillDescriptionPanel extends StatefulWidget {
+  //TODO: pass in class that defines content to be displayed
   final String title;
   final String code;
 
