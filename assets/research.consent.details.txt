@@ -1,0 +1,48 @@
+[Insert Study Title]
+
+(DELETE BEFORE SUBMISSION: The first paragraph below is a the "Key Information," which should be a concise and focused presentation of the key information most likely to help a potential participant or their legally authorized representative understand why they might or might not want to participate in the research. Please note that key information will vary from study to study, so this template language may not be an appropriate way to present key information for all studies.)
+
+You are being asked to participate in a voluntary research study. The purpose of this study is to [briefly insert purpose here]. Participating in this study will involve [briefly describe research procedures here] and your participation will last [duration]. Risks related to this research include [briefly describe risks and/or reasons a person should not participate]; benefits related to this research include [briefly describe benefits]. The alternative to participating in this study is to [provide alternative procedure or treatment, if any].
+
+Principal Investigator Name and Title: 
+Department and Institution:
+Contact Information:
+Sponsor (if applicable): 
+
+What procedures are involved? 
+The study procedures are [insert protocol-specific text]. 
+
+This research will be performed at [insert protocol-specific text]. You will need to participate [insert number] times over the next [period of time]. Each survey/activity will last [duration].
+
+Will my study-related information be kept confidential?
+Select 1 of the 3 statements that is most applicable for your research.
+
+Option 1:
+We will use all reasonable efforts to keep your personal information confidential, but we cannot guarantee absolute confidentiality. When this research is discussed or published, no one will know that you were in the study. But, when required by law or university policy, identifying information may be seen or copied by: a) The Institutional Review Board that approves research studies; b) The Office for Protection of Research Subjects and other university departments that oversee human subjects research; c) University and state auditors responsible for oversight of research; d) [if research is federally funded] Federal regulatory agencies such as the Office of Human Research Protections in the Department of Health and Human Services; or e) [Funder’s Name], the funder of this research.
+
+Option 2:
+Faculty, students, and staff who may see your information will maintain confidentiality to the extent of laws and university policies. Personal identifiers will not be published or presented.
+
+Option 3:
+Faculty, staff, students, and others with permission or authority to see your study information will maintain its confidentiality to the extent permitted and required by laws and university policies. The names or personal identifiers of participants will not be published or presented.
+
+Will I be reimbursed for any expenses or paid for my participation in this research?
+You will not be offered payment for being in this study. OR
+[Insert protocol-specific text].
+
+Can I withdraw or be removed from the study?
+If you decide to participate, you are free to withdraw your consent and discontinue participation at any time. Your participation in this research is voluntary. Your decision whether or not to participate, or to withdraw after beginning participation, will not affect your current or future dealings with the University of Illinois at Urbana-Champaign. 
+
+The researchers also have the right to stop your participation in this study without your consent if they believe it is in your best interests, you were to object to any future changes that may be made in the study plan, and/or [insert protocol-specific text].
+
+Will data collected from me be used for any other research?
+Select 1 of the 2 statements that is most applicable for your research.
+Your de-identified information could be used for future research without additional informed consent.
+OR
+Your information and/or biospecimens will not be used or distributed for future use, even if identifiers are removed. 
+
+Who should I contact if I have questions?
+Contact the researchers [insert names and titles] at [insert phone numbers] or [email addresses] if you have any questions about this study or your part in it, or if you have concerns or complaints about the research.
+
+What are my rights as a research subject?
+If you have any questions about your rights as a research subject, including concerns, complaints, or to offer input, you may call the Office for the Protection of Research Subjects (OPRS) at 217-333-2670 or e-mail OPRS at irb@illinois.edu. If you would like to complete a brief survey to provide OPRS feedback about your experiences as a research participant, please follow the link here or through a link on the OPRS website: https://oprs.research.illinois.edu/. You will have the option to provide feedback or concerns anonymously or you may provide your name and contact information for follow-up purposes. 
