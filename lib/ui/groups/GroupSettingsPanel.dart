@@ -54,7 +54,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   final _groupTitleController = TextEditingController();
   final _groupDescriptionController = TextEditingController();
   final _linkController = TextEditingController();
-  final _groupResearchDescriptionController = TextEditingController();
+  final _researchConsentDetailsController = TextEditingController();
   final _authManGroupNameController = TextEditingController();
 
   final List<GroupPrivacy>? _groupPrivacyOptions = GroupPrivacy.values;
@@ -71,7 +71,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
     _groupTitleController.text = _group?.title ?? '';
     _groupDescriptionController.text = _group?.description ?? '';
-    _groupResearchDescriptionController.text = _group?.researchDescription ?? '';
+    _researchConsentDetailsController.text = _group?.researchConsentDetails ?? '';
     _linkController.text = _group?.webURL ?? '';
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
 
@@ -83,7 +83,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   void dispose() {
     _groupTitleController.dispose();
     _groupDescriptionController.dispose();
-    _groupResearchDescriptionController.dispose();
+    _researchConsentDetailsController.dispose();
     _linkController.dispose();
     _authManGroupNameController.dispose();
     super.dispose();
@@ -136,7 +136,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                                 //_buildResearchOptionLayout(),
                                 _buildResearchOpenLayout(),
                                 _buildResearchConfirmationLayout(),
-                                _buildResearchDescriptionField(),
+                                _buildResearchConsentDetailsField(),
                                 _buildResearchAudienceLayout(),
                               ])
                             ),
@@ -456,8 +456,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             builder: (context) => WebPanel(url: _linkController.text)));
   }
   //
-  //Research Description
-  Widget _buildResearchDescriptionField() {
+  //Research Consent Details
+  Widget _buildResearchConsentDetailsField() {
     String? title = "Consent details";
     String? description = "Lorem ipsum dolor sit amet? Consectetur adipiscing elit? Sed fermentum ante est, sed dignissim lectus rutrum id?";
     String? fieldTitle = "CONSENT DETAILS FIELD";
@@ -473,11 +473,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
               Expanded(child:
                   Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
                     TextField(
-                        controller: _groupResearchDescriptionController,
+                        controller: _researchConsentDetailsController,
                         maxLines: 15,
                         decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                         style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
-                        onChanged: (text) => _group?.researchDescription = text,
+                        onChanged: (text) => _group?.researchConsentDetails = text,
                     )
                   ),
                 )
@@ -1060,7 +1060,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     }
     else {
       _group?.researchOpen = null;
-      _group?.researchDescription = null;
+      _group?.researchConsentDetails = null;
+      _group?.researchConfirmation = null;
       _group?.researchProfile = null;
     }
 
