@@ -43,7 +43,7 @@
 			"browse.recent": ["recent_items"],
 			"browse.state_farm_center": ["parking", "wayfinding", "create_stadium_poll"],
 			"browse.wallet": ["illini_cash_card", "add_illini_cash", "meal_plan_card", "bus_pass_card", "illini_id_card", "library_card"],
-			"browse.wellness": ["wellness_resources", "wellness_rings", "wellness_todo", "my_appointments", "wellness_tips", "wellness_symptom_screener"],
+			"browse.wellness": ["wellness_resources", "wellness_rings", "wellness_todo", "my_appointments", "wellness_tips", "wellness_health_screener"],
 	
 			"settings": ["connect", "connected", "link", "linked", "feedback"],
 			"settings.connect": ["netid", "phone_or_email"],
@@ -59,7 +59,7 @@
 	
 			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "due_date_catalog", "my_illini", "skills_self_evaluation"],
 
-			"wellness.symptom_screener": ["take_screener"],
+			"wellness.health_screener": ["take_screener"],
 
 			"explore.list": ["events", "dining"],
 			"explore.map":  ["events", "dining", "laundry", "student_courses", "buildings", "state_farm_wayfinding", "appointments"],
@@ -93,7 +93,7 @@
 	
 				"onboarding.sport_prefs"                  : ["fan"],
 
-				"wellness.symptom_screener.take_screener" : ["student"]
+				"wellness.health_screener.take_screener" : ["student"]
 			},
 			"groups": {
 				"home.twitter.account.canvas"            : ["${config.settings.groups.canvas}", "AND", ["NOT", "${config.settings.groups.gies}"]],

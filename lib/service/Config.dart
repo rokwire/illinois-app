@@ -197,7 +197,7 @@ class Config extends rokwire.Config {
   bool get allowGroupsAuthmanSync    => JsonUtils.boolValue(settings['allowGroupsAuthmanSync']) ?? false;
   bool get showGroupPostReactions    => JsonUtils.boolValue(settings['showGroupPostReactions']) ?? false;
 
-  String? get symptomSurveyID        => JsonUtils.stringValue(settings['symptom_survey_id']);
+  String? get healthScreenerSurveyID => JsonUtils.stringValue(settings['health_screener_survey_id']);
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;

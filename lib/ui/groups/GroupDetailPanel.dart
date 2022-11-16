@@ -111,6 +111,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   bool               _pollsLoading = false;
 
   bool               _memberAttendLoading = false;
+  bool               _researchProjectConsent = false;
 
   String?            _postId;
 
@@ -1004,7 +1005,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildAbout() {
     String description = _group?.description ?? '';
-    String researchDescription = _group?.researchDescription ?? '';
+    String researchConsentDetails = _group?.researchConsentDetails ?? '';
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 4), child:
@@ -1013,11 +1014,11 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
           trimLinesCount: 4,
           readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
-        researchDescription.isNotEmpty ?
+        researchConsentDetails.isNotEmpty ?
           Padding(padding: EdgeInsets.only(top: 8), child:
-            ExpandableText(researchDescription,
+            ExpandableText(researchConsentDetails,
               textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
-              trimLinesCount: 4,
+              trimLinesCount: 12,
               readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
           ) : Container()
       ],),);
@@ -1139,48 +1140,75 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildMembershipRequest() {
-    return
-      Auth2().isOidcLoggedIn && _group!.currentUserCanJoin
-          ? Container(color: Colors.white,
-              child: Padding(padding: EdgeInsets.all(16),
-                  child: RoundedButton(label: _isResearchProject ? "Request to participate" : Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
-                    backgroundColor: Styles().colors!.white,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    fontFamily: Styles().fontFamilies!.bold,
-                    fontSize: 16,
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                    borderColor: Styles().colors!.fillColorSecondary,
-                    borderWidth: 2,
-                    onTap:() { _onMembershipRequest();  }
+    if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin) {
+      bool showConsent = (_group?.researchProject == true) && StringUtils.isNotEmpty(_group?.researchConsentStatement);
+      bool requestToJoinEnabled = (_group?.researchProject != true) || StringUtils.isEmpty(_group?.researchConsentStatement) || _researchProjectConsent;
+      return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
+        Padding(padding: EdgeInsets.zero, child:
+          Column(children: [
+            Visibility(visible: showConsent, child:
+              Row(children: [
+                InkWell(onTap: _onResearchProjectConsent, child:
+                  Padding(padding: EdgeInsets.all(16), child:
+                    Image.asset(_researchProjectConsent ? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
                   ),
+                ),
+                Expanded(child:
+                  Padding(padding: EdgeInsets.only(right: 16, top: 12, bottom: 12), child:
+                    Text(_group?.researchConsentStatement ?? '', style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
+                  ),
+                ),
+              ]),
+            ),
+            Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
+              RoundedButton(label: _isResearchProject ? "Request to participate" : Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
+                backgroundColor: Styles().colors!.white,
+                textColor: requestToJoinEnabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+                fontFamily: Styles().fontFamilies!.bold,
+                fontSize: 16,
+                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                borderColor: requestToJoinEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                borderWidth: 2,
+                onTap:() { _onMembershipRequest();  }
               ),
-            )
-          : Container();
+            ),
+          ],),
+        ),
+      );
+    }
+    else {
+      return Container();
+    }
+  }
+
+  void _onResearchProjectConsent() {
+    setState(() {
+      _researchProjectConsent = !_researchProjectConsent;
+    });
   }
 
   Widget _buildCancelMembershipRequest() {
-    return
-      Auth2().isOidcLoggedIn && _group!.currentUserIsPendingMember
-          ? Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(color: Colors.white,
-                  child: Padding(padding: EdgeInsets.all(16),
-                    child: RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
-                        backgroundColor: Styles().colors!.white,
-                        textColor: Styles().colors!.fillColorPrimary,
-                        fontFamily: Styles().fontFamilies!.bold,
-                        fontSize: 16,
-                        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                        borderColor: Styles().colors!.fillColorSecondary,
-                        borderWidth: 2,
-                        onTap:() { _onCancelMembershipRequest();  }
-                    ),
-                  )),
-              _confirmationLoading ? CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), ) : Container(),
-            ],
-          )
-          : Container();
+    if (Auth2().isOidcLoggedIn && _group!.currentUserIsPendingMember) {
+      return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
+        Padding(padding: EdgeInsets.all(16), child:
+          RoundedButton(label: Localization().getStringEx("panel.group_detail.button.cancel_request.title",  'Cancel Request'),
+            backgroundColor: Styles().colors!.white,
+            textColor: Styles().colors!.fillColorPrimary,
+            fontFamily: Styles().fontFamilies!.bold,
+            fontSize: 16,
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+            borderColor: Styles().colors!.fillColorSecondary,
+            borderWidth: 2,
+            progress: _confirmationLoading,
+            onTap:() { _onCancelMembershipRequest();  }
+          ),
+        )
+      );
+    }
+    else {
+      return Container();
+    }
+      
   }
 
   Widget _buildConfirmationDialog({String? confirmationTextMsg,
