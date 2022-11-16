@@ -474,7 +474,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
                     TextField(
                         controller: _groupResearchDescriptionController,
-                        maxLines: 5,
+                        maxLines: 15,
                         decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                         style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
                         onChanged: (text) => _group?.researchDescription = text,

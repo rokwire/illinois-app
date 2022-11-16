@@ -56,18 +56,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool _groupCategoeriesLoading = false;
   bool _creating = false;
 
-  bool get _canSave {
-    return StringUtils.isNotEmpty(_group?.title) &&
-        StringUtils.isNotEmpty(_group?.category) &&
-        (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName)));
-  }
-
-  bool get _loading => _groupCategoeriesLoading;
-
   @override
   void initState() {
     _initGroup();
     _initCategories();
+    _initResearchDescription();
     super.initState();
   }
 
@@ -109,6 +102,27 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       });
     });
   }
+
+  Future<void> _initResearchDescription() async {
+    if (_group?.researchProject == true) {
+      String? currentLocale = Localization().currentLocale?.languageCode;
+      String? defaultLocale = Localization().defaultLocale?.languageCode;
+      String? researchDescription;
+      if ((researchDescription == null) && (currentLocale != null)) {
+        researchDescription = await AppBundle.loadString('assets/research.consent.$currentLocale.txt');
+      }
+      if ((researchDescription == null) && (defaultLocale != null) && (defaultLocale != currentLocale)) {
+        researchDescription = await AppBundle.loadString('assets/research.consent.$defaultLocale.txt');
+      }
+      if (researchDescription == null) {
+        researchDescription = await AppBundle.loadString('assets/research.consent.txt');
+      }
+      if (researchDescription != null) {
+        _groupResearchDescriptionController.text = researchDescription;
+      }
+    }
+  }
+
 
   //
 
@@ -358,7 +372,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                   Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
                     TextField(
                         controller: _groupResearchDescriptionController,
-                        maxLines: 5,
+                        maxLines: 12,
                         decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                         style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
                         onChanged: (text) => _group?.researchDescription = text,
@@ -1060,4 +1074,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return _group?.privacy == GroupPrivacy.public;
   }
 
+  bool get _canSave {
+    return StringUtils.isNotEmpty(_group?.title) &&
+        StringUtils.isNotEmpty(_group?.category) &&
+        (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName)));
+  }
+
+  bool get _loading => _groupCategoeriesLoading;
 }
