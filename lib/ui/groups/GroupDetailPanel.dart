@@ -1141,8 +1141,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildMembershipRequest() {
     if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin) {
-      bool showConsent = (_group?.researchProject == true) && (_group?.researchConfirmation == true);
-      bool requestToJoinEnabled = (_group?.researchProject != true) || (_group?.researchConfirmation != true) || _researchProjectConsent;
+      bool showConsent = (_group?.researchProject == true) && StringUtils.isNotEmpty(_group?.researchConsentStatement);
+      bool requestToJoinEnabled = (_group?.researchProject != true) || StringUtils.isEmpty(_group?.researchConsentStatement) || _researchProjectConsent;
       return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
         Padding(padding: EdgeInsets.zero, child:
           Column(children: [
@@ -1155,7 +1155,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 ),
                 Expanded(child:
                   Padding(padding: EdgeInsets.only(right: 16, top: 12, bottom: 12), child:
-                    Text('I consent to participate in this study and have read all the information provided.', style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
+                    Text(_group?.researchConsentStatement ?? '', style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
                   ),
                 ),
               ]),
