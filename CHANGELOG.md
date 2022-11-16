@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Research Project updates [#2533](https://github.com/rokwire/illinois-app/issues/2533).
+- Make the MTD route lines thicker [#2536](https://github.com/rokwire/illinois-app/issues/2536).
 
 ## [4.2.19] - 2022-11-15
 ### Added
