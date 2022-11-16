@@ -78,28 +78,11 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
 
     return Scaffold(
         appBar: RootHeaderBar(title: Localization().getStringEx('panel.academics.header.title', 'Academics')),
-        body: 
-        _expandContent ? Stack(children: [
-          _contentWidget,
-          Padding(padding: EdgeInsets.only(top: 68), child:_buildContentValuesContainer()),
-          Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-            Container(
-              height: 52,
-              child: RibbonButton(
-                textColor: Styles().colors!.fillColorSecondary,
-                backgroundColor: Styles().colors!.white,
-                borderRadius: BorderRadius.all(Radius.circular(5)),
-                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-                label: _getContentLabel(_selectedContent),
-                onTap: _onTapRibbonButton
-              ),
-            ),
-          ),
-        ]) : 
-        Column(children: <Widget>[
-          Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-            RibbonButton(
+        body: Column(children: <Widget>[
+          Container(
+            color: _skillsSelfEvaluationSelected ? Styles().colors?.fillColorPrimaryVariant : Styles().colors?.background,
+            padding: EdgeInsets.only(left: 16, top: 16, right: 16), 
+            child: RibbonButton(
               textColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
               borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -111,7 +94,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
           ),
           Expanded(child:
             Stack(children: [
-              Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16,), child:
+              _skillsSelfEvaluationSelected ? _contentWidget : Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16,), child:
                 _contentWidget
               ),
               _buildContentValuesContainer()
@@ -329,7 +312,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     }
   }
   
-  bool get _expandContent => _selectedContent == AcademicsContent.skills_self_evaluation;
+  bool get _skillsSelfEvaluationSelected => _selectedContent == AcademicsContent.skills_self_evaluation;
 
   bool _isCheckListCompleted(String contentKey) {
     int stepsCount = CheckList(contentKey).progressSteps?.length ?? 0;
