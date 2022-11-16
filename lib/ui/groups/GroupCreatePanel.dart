@@ -45,7 +45,7 @@ class GroupCreatePanel extends StatefulWidget {
 class _GroupCreatePanelState extends State<GroupCreatePanel> {
   final _groupTitleController = TextEditingController();
   final _groupDescriptionController = TextEditingController();
-  final _groupResearchDescriptionController = TextEditingController();
+  final _researchConsentDetailsController = TextEditingController();
   final _authManGroupNameController = TextEditingController();
 
   Group? _group;
@@ -60,7 +60,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void initState() {
     _initGroup();
     _initCategories();
-    _initResearchDescription();
+    _initResearchConsentDetails();
     super.initState();
   }
 
@@ -68,7 +68,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   void dispose() {
     _groupTitleController.dispose();
     _groupDescriptionController.dispose();
-    _groupResearchDescriptionController.dispose();
+    _researchConsentDetailsController.dispose();
     _authManGroupNameController.dispose();
     super.dispose();
   }
@@ -84,7 +84,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
     _groupTitleController.text = _group?.title ?? '';
     _groupDescriptionController.text = _group?.description ?? '';
-    _groupResearchDescriptionController.text = _group?.researchDescription ?? '';
+    _researchConsentDetailsController.text = _group?.researchConsentDetails ?? '';
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
   }
 
@@ -103,22 +103,22 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     });
   }
 
-  Future<void> _initResearchDescription() async {
+  Future<void> _initResearchConsentDetails() async {
     if (_group?.researchProject == true) {
       String? currentLocale = Localization().currentLocale?.languageCode;
       String? defaultLocale = Localization().defaultLocale?.languageCode;
-      String? researchDescription;
-      if ((researchDescription == null) && (currentLocale != null)) {
-        researchDescription = await AppBundle.loadString('assets/research.consent.$currentLocale.txt');
+      String? consentDetails;
+      if ((consentDetails == null) && (currentLocale != null)) {
+        consentDetails = await AppBundle.loadString('assets/research.consent.details.$currentLocale.txt');
       }
-      if ((researchDescription == null) && (defaultLocale != null) && (defaultLocale != currentLocale)) {
-        researchDescription = await AppBundle.loadString('assets/research.consent.$defaultLocale.txt');
+      if ((consentDetails == null) && (defaultLocale != null) && (defaultLocale != currentLocale)) {
+        consentDetails = await AppBundle.loadString('assets/research.consent.details.$defaultLocale.txt');
       }
-      if (researchDescription == null) {
-        researchDescription = await AppBundle.loadString('assets/research.consent.txt');
+      if (consentDetails == null) {
+        consentDetails = await AppBundle.loadString('assets/research.consent.details.txt');
       }
-      if (researchDescription != null) {
-        _groupResearchDescriptionController.text = researchDescription;
+      if (consentDetails != null) {
+        _group?.researchConsentDetails = _researchConsentDetailsController.text = consentDetails;
       }
     }
   }
@@ -175,7 +175,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           //_buildTitle("Research", "images/icon-gear.png"),
                           //_buildResearchOptionLayout(),
                           //_buildResearchOpenLayout(),
-                          _buildResearchDescriptionField(),
+                          _buildResearchConsentDetailsField(),
                           _buildResearchConfirmationLayout(),
                           _buildResearchAudienceLayout(),
                         ])
@@ -297,7 +297,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 excludeSemantics: true,
                 child: TextField(
                   controller: _groupTitleController,
-                  onChanged: onNameChanged,
+                  onChanged: (text) => _group?.title = text,
                   maxLines: 1,
                   decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
                   style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
@@ -337,10 +337,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                     textField: true,
                     excludeSemantics: true,
                     child: TextField(
-                      onChanged: (text){
-                        if(_group!=null)
-                          _group!.description = text;
-                      },
+                      onChanged: (text) => _group?.description = text,
                       controller: _groupDescriptionController,
                       maxLines: 5,
                       decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
@@ -355,7 +352,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
   //
   //Research Description
-  Widget _buildResearchDescriptionField() {
+  Widget _buildResearchConsentDetailsField() {
     String? title = "CONSENT DETAILS";
     String? description = "Lorem ipsum dolor sit amet? Consectetur adipiscing elit? Sed fermentum ante est, sed dignissim lectus rutrum id?";
     String? fieldTitle = "CONSENT DETAILS FIELD";
@@ -371,11 +368,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               Expanded(child:
                   Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
                     TextField(
-                        controller: _groupResearchDescriptionController,
-                        maxLines: 12,
+                        controller: _researchConsentDetailsController,
+                        maxLines: 15,
                         decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                         style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
-                        onChanged: (text) => _group?.researchDescription = text,
+                        onChanged: (text) => _group?.researchConsentDetails = text,
                     )
                   ),
                 )
@@ -829,11 +826,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   void _onAuthManGroupNameChanged(String name) {
-    if (_group != null) {
-      _group!.authManGroupName = name;
-    }
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _group?.authManGroupName = name;
+      });
     }
   }
 
@@ -933,7 +929,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       }
       else {
         _group?.researchOpen = null;
-        _group?.researchDescription = null;
+        _group?.researchConsentDetails = null;
+        _group?.researchConfirmation = null;
         _group?.researchProfile = null;
       }
 
@@ -1048,10 +1045,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             ])
           ])),
     );
-  }
-
-  void onNameChanged(String name){
-    _group!.title = name.trim();
   }
 
   bool get _isManagedGroupAdmin {
