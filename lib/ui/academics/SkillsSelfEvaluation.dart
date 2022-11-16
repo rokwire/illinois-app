@@ -24,6 +24,7 @@ import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 
 
@@ -36,42 +37,38 @@ class SkillsSelfEvaluation extends StatefulWidget {
 }
 
 class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
-  //TODO: The completion of the UI for this widget will be addressed by #2513
   @override
   Widget build(BuildContext context) {
     return SectionSlantHeader(
         header: _buildHeader(),
         slantColor: Styles().colors?.gradientColorPrimary,
         backgroundColor: Styles().colors?.background,
-        // children: _buildContent(),
-        // childrenPadding: const EdgeInsets.only(top: 240),
+        children: _buildInfoAndSettings(),
+        childrenPadding: const EdgeInsets.only(top: 496),
       );
-    // return Column(children: <Widget>[
-    //   Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-    //     RibbonButton(
-    //       label: 'Get Started',
-    //       onTap: _onTapStartEvaluation
-    //     ),
-    //   ),
-    //   Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-    //     RibbonButton(
-    //       label: 'Results',
-    //       onTap: _onTapResults
-    //     ),
-    //   ),
-    // ]);
   }
 
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.only(top: 100, bottom: 32),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      child: Padding(padding: EdgeInsets.only(left: 24, right: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: TextStyle(fontFamily: "ProximaNovaExtraBold", fontSize: 36.0, color: Styles().colors?.surface), textAlign: TextAlign.left,),
-          IconButton(icon: Image.asset('images/tab-more.png', color: Styles().colors?.surface), onPressed: _onTapShowBottomSheet,),
+          IconButton(
+            icon: Image.asset('images/tab-more.png', color: Styles().colors?.surface),
+            onPressed: _onTapShowBottomSheet,
+            padding: EdgeInsets.zero,
+          ),
         ]),
         Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '5 Minutes'), style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorSecondary), textAlign: TextAlign.left,),
-      ]),
+        Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
+        Padding(padding: EdgeInsets.only(top: 64), child: RoundedButton(
+          label: Localization().getStringEx("panel.skills_self_evaluation.get_started.button.label", 'Get Started'),
+          textColor: Styles().colors?.fillColorPrimaryVariant,
+          backgroundColor: Styles().colors?.surface,
+          onTap: _onTapStartEvaluation
+        )),
+      ]),),
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
         gradient: LinearGradient(
@@ -84,6 +81,38 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
         )
       ),
     );
+  }
+
+  Widget _buildDescription() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(Localization().getStringEx("panel.skills_self_evaluation.get_started.description.title", 'Identify your strengths related to:'), style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.surface),),
+      Padding(padding: EdgeInsets.only(top: 8), child: Text(
+        Localization().getStringEx("panel.skills_self_evaluation.get_started.description.list", '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
+        style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.surface),
+      ))
+    ]);
+  }
+
+  List<Widget> _buildInfoAndSettings() {
+    return <Widget>[
+      RibbonButton(
+        leftIconAsset: "images/icon-info-orange.png",
+        label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label", "View past results"),
+        textColor: Styles().colors?.fillColorPrimaryVariant,
+        backgroundColor: Colors.transparent,
+        // onTap: _onTapResults,
+      ),
+      RibbonButton(
+        leftIconAsset: "images/icon-settings.png",
+        label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label", "Where do my results go?"),
+        textColor: Styles().colors?.fillColorPrimaryVariant,
+        backgroundColor: Colors.transparent,
+        // onTap: () {
+        //   Navigator.of(context).pop();
+        //   _onTapCreatePost();
+        // }
+      ),
+    ];
   }
 
   void _onTapShowBottomSheet() {
@@ -147,14 +176,18 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
   }
 
   void _onTapStartEvaluation() {
-    dynamic academicUiComponents = FlexUI()['academics'];
-    if (academicUiComponents is Iterable<String>) {
-      if (Config().bessiSurveyID != null && Auth2().isOidcLoggedIn && academicUiComponents.contains('skills_self_evaluation')) {
-        // You need to be signed in with your NetID to access Assessments.\nSet your privacy level to 4 or 5. Then, sign in with your NetID under Settings.
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _onTapResults,)));
-      }
-    } 
-  }
+    // dynamic academicUiComponents = FlexUI()['academics'];
+    // if (academicUiComponents is Iterable<String>) {
+    //   if (Config().bessiSurveyID != null && Auth2().isOidcLoggedIn && academicUiComponents.contains('skills_self_evaluation')) {
+    //     // You need to be signed in with your NetID to access Assessments.\nSet your privacy level to 4 or 5. Then, sign in with your NetID under Settings.
+    //     Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _onTapResults,)));
+    //   }
+    // }
+    if (Config().bessiSurveyID != null && Auth2().isOidcLoggedIn) {
+      // You need to be signed in with your NetID to access Assessments.\nSet your privacy level to 4 or 5. Then, sign in with your NetID under Settings.
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _onTapResults,)));
+    }
+}
 
   void _onTapResults() {
     Navigator.of(context).pop();
