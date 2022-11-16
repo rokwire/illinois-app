@@ -35,7 +35,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum WellnessContent { dailyTips, rings, todo, appointments, symptomScreener, podcast, resources, struggling }
+enum WellnessContent { dailyTips, rings, todo, appointments, healthScreener, podcast, resources, struggling }
 
 class WellnessHomePanel extends StatefulWidget {
   final WellnessContent? content;
@@ -177,7 +177,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         return WellnessToDoHomeContentWidget();
       case WellnessContent.appointments:
         return WellnessAppointmentsHomeContentWidget();
-      case WellnessContent.symptomScreener:
+      case WellnessContent.healthScreener:
         return WellnessHealthScreenerHomeWidget(_contentScrollController);
       case WellnessContent.resources:
         return WellnessResourcesContentWidget();
@@ -232,8 +232,8 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
         return _loadContentString('panel.wellness.section.todo.label', 'To-Do List');
       case WellnessContent.appointments:
         return _loadContentString('panel.wellness.section.appointments.label', 'MyMcKinley Appointments');
-      case WellnessContent.symptomScreener:
-        return _loadContentString('panel.wellness.section.symptom_screener.label', 'Illinois Health Screener');
+      case WellnessContent.healthScreener:
+        return _loadContentString('panel.wellness.section.screener.label', 'Illinois Health Screener');
       case WellnessContent.resources:
         return _loadContentString('panel.wellness.section.resources.label', 'Wellness Resources', language: language);
       case WellnessContent.podcast:

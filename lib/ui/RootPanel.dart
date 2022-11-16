@@ -474,7 +474,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
 
   void _onLocalNotification(dynamic param) {
     if (param is ActionData) {
-      ActionBuilder.getAction(context, param, dismissContext: context)?.call();
+      ActionBuilder.getAction(context, param)?.call();
     }
     /*else if (param is NotificationResponse) {
       // TBD
