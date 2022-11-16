@@ -46,6 +46,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   final _groupTitleController = TextEditingController();
   final _groupDescriptionController = TextEditingController();
   final _researchConsentDetailsController = TextEditingController();
+  final _researchConsentStatementController = TextEditingController();
   final _authManGroupNameController = TextEditingController();
 
   Group? _group;
@@ -55,6 +56,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   bool _groupCategoeriesLoading = false;
   bool _creating = false;
+  bool _researchRequiresConsentConfirmation = false;
 
   @override
   void initState() {
@@ -69,6 +71,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _groupTitleController.dispose();
     _groupDescriptionController.dispose();
     _researchConsentDetailsController.dispose();
+    _researchConsentStatementController.dispose();
     _authManGroupNameController.dispose();
     super.dispose();
   }
@@ -86,6 +89,15 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _groupDescriptionController.text = _group?.description ?? '';
     _researchConsentDetailsController.text = _group?.researchConsentDetails ?? '';
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
+
+    _researchRequiresConsentConfirmation = StringUtils.isNotEmpty(_group?.researchConsentStatement);
+
+    if (StringUtils.isNotEmpty(_group?.researchConsentStatement)) {
+      _researchConsentStatementController.text = _group!.researchConsentStatement!;
+    }
+    else {
+      _group?.researchConsentStatement = _researchConsentStatementController.text = 'I have read and I understand the consent details. I certify that I am 18 years old or older. By clicking the "Request to participate" button, I indicate my willingness to voluntarily take part in this study.';
+    }
   }
 
   void _initCategories(){
@@ -297,7 +309,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 excludeSemantics: true,
                 child: TextField(
                   controller: _groupTitleController,
-                  onChanged: (text) => _group?.title = text,
+                  onChanged: (text) => setState((){_group?.title = text; }) ,
                   maxLines: 1,
                   decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
                   style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
@@ -354,53 +366,76 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //Research Description
   Widget _buildResearchConsentDetailsField() {
     String? title = "CONSENT DETAILS";
-    String? description = "Lorem ipsum dolor sit amet? Consectetur adipiscing elit? Sed fermentum ante est, sed dignissim lectus rutrum id?";
     String? fieldTitle = "CONSENT DETAILS FIELD";
     String? fieldHint = "";
 
     return Visibility(visible: _isResearchProject, child:
       Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          _buildSectionTitle(title, description),
-          Container(height: 5,),
+          _buildSectionTitle(title, null),
           Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white), child:
             Row(children: [
               Expanded(child:
-                  Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
-                    TextField(
-                        controller: _researchConsentDetailsController,
-                        maxLines: 15,
-                        decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
-                        style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
-                        onChanged: (text) => _group?.researchConsentDetails = text,
-                    )
-                  ),
-                )
-              ])
-            ),
-          ],
-        ),
+                Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
+                  TextField(
+                      controller: _researchConsentDetailsController,
+                      maxLines: 15,
+                      decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
+                      style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                      onChanged: (text) => _group?.researchConsentDetails = text,
+                  )
+                ),
+              )
+            ])
+          ),
+        ],),
       ),
     );
   }
   //
   //Research Confirmation
   Widget _buildResearchConfirmationLayout() {
-    return Container(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 8),
-        child: _buildSwitch(
-            title: "Requires confirmation",
-            value: (_group?.researchConfirmation == true),
-            onTap: _onTapResearchConfirmation));
+    String? title = "PARTICIPANT CONSENT";
+    String? fieldTitle = "PARTICIPANT CONSENT FIELD";
+    String? fieldHint = "";
+
+    return Container(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+      Column(children: [
+        _buildSwitch(
+          title: "Requires confirmation",
+          value: _researchRequiresConsentConfirmation,
+          onTap: _onTapResearchConfirmation
+        ),
+        Visibility(visible: _researchRequiresConsentConfirmation, child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            _buildSectionTitle(title, null),
+            Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white), child:
+              Row(children: [
+                Expanded(child:
+                  Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
+                    TextField(
+                        controller: _researchConsentStatementController,
+                        maxLines: 5,
+                        decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
+                        style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                        onChanged: (text) => setState(() { _group?.researchConsentStatement = text; }),
+                    )
+                  ),
+                )
+              ])
+            ),
+          ],),
+        ),
+
+      ],)
+    );
   }
 
   void _onTapResearchConfirmation() {
-    if (_group != null) {
-      if (mounted) {
-        setState(() {
-          _group?.researchConfirmation = (_group?.researchConfirmation != true);
-        });
-      }
+    if (mounted) {
+      setState(() {
+        _researchRequiresConsentConfirmation = !_researchRequiresConsentConfirmation;
+      });
     }
   }
   //
@@ -732,7 +767,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }*/
 
   Widget _buildResearchAudienceLayout() {
-    int questionsCount = researchProfileQuestionsCount;
+    int questionsCount = _researchProfileQuestionsCount;
     String questionsDescription = (0 < questionsCount) ?
       sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format","%s Question(s)"), [questionsCount.toString()]) :
       Localization().getStringEx("panel.groups_settings.membership.button.question.description.default","No question");
@@ -751,11 +786,15 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     );
   }
 
-  int get researchProfileQuestionsCount {
+  int get _researchProfileQuestionsCount {
     int count = 0;
     _group?.researchProfile?.forEach((String key, dynamic value) {
       if (value is Map) {
-        count += value.length;
+        value.forEach((key, value) {
+          if ((value is List) && value.isNotEmpty) {
+            count++;
+          }
+        });
       }
     });
     return count;
@@ -930,13 +969,18 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
       else {
         _group?.researchOpen = null;
         _group?.researchConsentDetails = null;
-        _group?.researchConfirmation = null;
+        _group?.researchConsentStatement = null;
         _group?.researchProfile = null;
       }
 
       // if the group is not authman then clear authman group name
       if (_group?.authManEnabled != true) {
         _group?.authManGroupName = null;
+      }
+
+      // if the group is not research or if it does not require confirmation then clear consent statement text
+      if ((_group?.researchProject != true) || (_researchRequiresConsentConfirmation != true)) {
+        _group?.researchConsentStatement = null;
       }
 
       Groups().createGroup(_group).then((GroupError? error) {
@@ -1070,7 +1114,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   bool get _canSave {
     return StringUtils.isNotEmpty(_group?.title) &&
         StringUtils.isNotEmpty(_group?.category) &&
-        (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName)));
+        (!(_group?.authManEnabled ?? false) || (StringUtils.isNotEmpty(_group?.authManGroupName))) &&
+        ((_group?.researchProject != true) || !_researchRequiresConsentConfirmation || StringUtils.isNotEmpty(_group?.researchConsentStatement)) &&
+        ((_group?.researchProject != true) || (_researchProfileQuestionsCount > 0));
   }
 
   bool get _loading => _groupCategoeriesLoading;
