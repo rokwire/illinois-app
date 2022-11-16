@@ -40,6 +40,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
 
   static String get notifyToken                  => rokwire.FirebaseMessaging.notifyToken;
   static String get notifyForegroundMessage      => rokwire.FirebaseMessaging.notifyForegroundMessage;
+  static String get notifyGroupsNotification     => rokwire.FirebaseMessaging.notifyGroupsNotification;
 
   static const String notifyPopupMessage                   = "edu.illinois.rokwire.firebase.messaging.message.popup";
   static const String notifyScoreMessage                   = "edu.illinois.rokwire.firebase.messaging.message.score";
@@ -50,7 +51,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyAthleticsGameStarted           = "edu.illinois.rokwire.firebase.messaging.athletics_game.started";
   static const String notifyAthleticsNewsUpdated           = "edu.illinois.rokwire.firebase.messaging.athletics.news.updated";
   static const String notifySettingUpdated                 = "edu.illinois.rokwire.firebase.messaging.setting.updated";
-  static const String notifyGroupsNotification             = "edu.illinois.rokwire.firebase.messaging.groups.updated";
   static const String notifyGroupPostNotification          = "edu.illinois.rokwire.firebase.messaging.group.posts.updated";
   static const String notifyHomeNotification               = "edu.illinois.rokwire.firebase.messaging.home";
   static const String notifyInboxNotification              = "edu.illinois.rokwire.firebase.messaging.inbox";
