@@ -116,14 +116,14 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         itemBuilder: (BuildContext context, int index) {
           String section = _responseSections.elementAt(index);
           String title = _responses[0].survey.constants[section].toString();
-          num? mostRecentScore = _responses[0].survey.stats?.scores[section];
+          num? mostRecentScore = _responses[0].survey.stats?.percentages[section];
           if (mostRecentScore != null) {
-            mostRecentScore = (mostRecentScore*100/45).round();
+            mostRecentScore = (mostRecentScore*100).round();
           }
           num? comparisonScore;
           try {
-            comparisonScore = _responses.firstWhere((element) => element.dateTaken.isAtSameMomentAs(_selectedComparisonDate)).survey.stats?.scores[section];
-            comparisonScore = (comparisonScore!*100/45).round();
+            comparisonScore = _responses.firstWhere((element) => element.dateTaken.isAtSameMomentAs(_selectedComparisonDate)).survey.stats?.percentages[section];
+            comparisonScore = (comparisonScore!*100).round();
           } catch (e) {
             debugPrint(e.toString());
           }
@@ -133,11 +133,9 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
               child: InkWell(
                 onTap: () => _showScoreDescription(title, section),
                 child: Padding(padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16), child: Row(children: [
-                  Flexible(flex: 5, fit: FlexFit.tight, child: Padding(padding: const EdgeInsets.only(right: 16.0), child: 
-                    Text(title, style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant)))
-                  ),
-                  Flexible(flex: 3, fit: FlexFit.tight, child: Text(mostRecentScore?.toString() ?? "--", style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 36.0, color: Styles().colors?.fillColorSecondary))),
-                  Flexible(flex: 2, fit: FlexFit.tight, child: Text(comparisonScore?.toString() ?? "--", style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 36.0, color: Styles().colors?.mediumGray))),
+                  Flexible(flex: 4, fit: FlexFit.tight, child: Text(title, style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant))),
+                  Flexible(flex: 3, fit: FlexFit.tight, child: Text(mostRecentScore?.toString() ?? "--", style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 36.0, color: Styles().colors?.fillColorSecondary), textAlign: TextAlign.center,)),
+                  Flexible(flex: 3, fit: FlexFit.tight, child: Text(comparisonScore?.toString() ?? "--", style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 36.0, color: Styles().colors?.mediumGray), textAlign: TextAlign.center)),
                   Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Image.asset('images/chevron-right.png', color: Styles().colors?.fillColorSecondary))),
                 ],)),
               )
