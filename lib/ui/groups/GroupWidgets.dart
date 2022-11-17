@@ -1001,18 +1001,36 @@ class _GroupCardState extends State<GroupCard> {
   Widget _buildMembersCount() {
     String membersLabel;
     int count = _groupStats?.activeMembersCount ?? 0;
-    if (count == 0) {
-      membersLabel = _isResearchProject ? "No participants" : "No members";
+    if (!_isResearchProject) {
+      if (count == 0) {
+        membersLabel = "No members";
+      }
+      else if (count == 1) {
+        membersLabel = "1 member";
+      }
+      else {
+        membersLabel = sprintf("%s members", [count]);
+      }
     }
-    else if (count == 1) {
-      membersLabel = _isResearchProject ? "1 participant" : "1 member";
+    else if (widget.group?.currentUserIsAdmin ?? false) {
+      if (count == 0) {
+        membersLabel = "No participants";
+      }
+      else if (count == 1) {
+        membersLabel = "1 participant";
+      }
+      else {
+        membersLabel = sprintf("%s participants", [count]);
+      }
     }
     else {
-      membersLabel = sprintf(_isResearchProject ? "%s participants" : "%s members", [count]);
+      membersLabel = "";
     }
-    return Container(
-        child: Text(membersLabel,
-            style: Styles().textStyles?.getTextStyle("widget.card.detail.small_variant")));
+    return Visibility(visible: StringUtils.isNotEmpty(membersLabel), child:
+      Text(membersLabel, style:
+        Styles().textStyles?.getTextStyle("widget.card.detail.small_variant")
+      ),
+    );
   }
 
    void _loadGroupStats() {
