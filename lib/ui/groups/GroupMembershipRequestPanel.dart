@@ -25,6 +25,7 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class GroupMembershipRequestPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final Group? group;
@@ -44,7 +45,9 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
   late List<GroupMembershipQuestion> _questions;
   late List<FocusNode> _focusNodes;
   late List<TextEditingController> _controllers;
-  bool? _submitting;
+  bool _submitting = false;
+  bool _researchProjectConsent = false;
+  final double outerPadding = 16;
 
   @override
   void initState() {
@@ -77,32 +80,30 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
 
     content.addAll(_buildQuestions());
 
+    content.add(_buildResearchProjectSubmit());
+
     return Scaffold(
       appBar: HeaderBar(
         title: Localization().getStringEx("panel.membership_request.label.request.title", 'Membership Questions'),
         leadingAsset: 'images/icon-circle-close.png',
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(padding: EdgeInsets.all(32),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: content,),
-              ),
-            ),
+      body: Column(children: <Widget>[
+        Expanded(child:
+          SingleChildScrollView(child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: content,),
           ),
-          _buildSubmit(),
-        ],
-      ),
+        ),
+        _buildSubmit(),
+      ],),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: uiuc.TabBar(),
     );
   }
 
   Widget _buildHeading() {
-    return Text(Localization().getStringEx("panel.membership_request.label.description", 'This group asks you to answer the following question(s) for membership consideration.'), style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949)));
+    return Padding(padding: EdgeInsets.only(left: outerPadding, right: outerPadding, top: outerPadding), child:
+      Text(Localization().getStringEx("panel.membership_request.label.description", 'This group asks you to answer the following question(s) for membership consideration.'), style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949))),
+    );
   }
 
   List<Widget> _buildQuestions() {
@@ -114,7 +115,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
   }
 
   Widget _buildQuestion({required String question, TextEditingController? controller, FocusNode? focusNode}) {
-    return Padding(padding: EdgeInsets.symmetric(vertical:16),
+    return Padding(padding: EdgeInsets.symmetric(horizontal: outerPadding, vertical: 16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Text(question, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
         Padding(padding: EdgeInsets.only(top: 8),
@@ -131,36 +132,72 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
   }
 
   Widget _buildSubmit() {
-    return Container(color: Colors.white,
-      child: Padding(padding: EdgeInsets.all(16),
-        child: Stack(children: <Widget>[
-          Row(children: <Widget>[
-            Expanded(child: Container(),),
-            RoundedButton(label: Localization().getStringEx("panel.membership_request.button.submit.title", 'Submit request'),
-              backgroundColor: Styles().colors!.white,
-              textColor: Styles().colors!.fillColorPrimary,
-              fontFamily: Styles().fontFamilies!.bold,
-              fontSize: 16,
-              borderColor: Styles().colors!.fillColorSecondary,
-              borderWidth: 2,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              contentWeight: 0.0,
-              onTap:() { _onSubmit();  }
-            ),
-            Expanded(child: Container(),),
-          ],),
-          Visibility(visible: (_submitting == true), child:
-            Center(child:
-              Padding(padding: EdgeInsets.only(top: 10.5), child:
-               Container(width: 21, height:21, child:
-                  CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary), strokeWidth: 2,)
+    if (widget.group?.researchProject != true) {
+      return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
+        Padding(padding: EdgeInsets.all(16), child:
+          RoundedButton(label: Localization().getStringEx("panel.membership_request.button.submit.title", 'Submit request'),
+            backgroundColor: Styles().colors!.white,
+            textColor: Styles().colors!.fillColorPrimary,
+            fontFamily: Styles().fontFamilies!.bold,
+            fontSize: 16,
+            borderColor: Styles().colors!.fillColorSecondary,
+            borderWidth: 2,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            progress: (_submitting == true),
+            onTap:() { _onSubmit();  }
+          ),
+        ),
+      );
+    }
+    else {
+      return Container();
+    }
+  }
+
+  Widget _buildResearchProjectSubmit() {
+    if (widget.group?.researchProject == true) {
+      bool showConsent = StringUtils.isNotEmpty(widget.group?.researchConsentStatement);
+      bool requestToJoinEnabled = StringUtils.isEmpty(widget.group?.researchConsentStatement) || _researchProjectConsent;
+      return Padding(padding: EdgeInsets.zero, child:
+        Column(children: [
+          Visibility(visible: showConsent, child:
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              InkWell(onTap: _onResearchProjectConsent, child:
+                Padding(padding: EdgeInsets.only(left: outerPadding, right: 8, top: 16, bottom: 16), child:
+                  Image.asset(_researchProjectConsent ? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
                 ),
               ),
+              Expanded(child:
+                Padding(padding: EdgeInsets.only(right: 16, top: 16, bottom: 16), child:
+                  Text(widget.group?.researchConsentStatement ?? '', style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
+                ),
+              ),
+            ]),
+          ),
+          Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
+            RoundedButton(label: "Request to participate",
+              backgroundColor: Styles().colors!.white,
+              textColor: requestToJoinEnabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+              fontFamily: Styles().fontFamilies!.bold,
+              fontSize: 16,
+              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              borderColor: requestToJoinEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+              borderWidth: 2,
+              onTap:() { _onSubmit();  }
             ),
           ),
         ],),
-      ),
-    );
+      );
+    }
+    else {
+      return Container();
+    }
+  }
+
+  void _onResearchProjectConsent() {
+    setState(() {
+      _researchProjectConsent = !_researchProjectConsent;
+    });
   }
 
   void _onSubmit() {

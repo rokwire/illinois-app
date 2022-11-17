@@ -1160,13 +1160,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   Widget _buildResearchProjectMembershipRequest() {
     if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject == true)) {
-      bool showConsent = StringUtils.isNotEmpty(_group?.researchConsentStatement);
-      bool requestToJoinEnabled = StringUtils.isEmpty(_group?.researchConsentStatement) || _researchProjectConsent;
+      bool showConsent = StringUtils.isNotEmpty(_group?.researchConsentStatement) && CollectionUtils.isEmpty(_group?.questions);
+      bool requestToJoinEnabled = CollectionUtils.isNotEmpty(_group?.questions) || StringUtils.isEmpty(_group?.researchConsentStatement) || _researchProjectConsent;
       return Padding(padding: EdgeInsets.only(top: 16), child:
-        Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
+        Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: showConsent ? 1 : 0))), child:
           Column(children: [
             Visibility(visible: showConsent, child:
-              Row(children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 InkWell(onTap: _onResearchProjectConsent, child:
                   Padding(padding: EdgeInsets.all(16), child:
                     Image.asset(_researchProjectConsent ? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
@@ -1180,7 +1180,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               ]),
             ),
             Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
-              RoundedButton(label: _isResearchProject ? "Request to participate" : Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
+              RoundedButton(label: CollectionUtils.isEmpty(_group?.questions) ? "Request to participate" : "Continue",
                 backgroundColor: Styles().colors!.white,
                 textColor: requestToJoinEnabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                 fontFamily: Styles().fontFamilies!.bold,
@@ -1640,12 +1640,27 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onMembershipRequest() {
-    Analytics().logSelect(target: "Request to join", attributes: _group?.analyticsAttributes);
+    String target;
+    if (_group?.researchProject != true) {
+      target = "Request to join";
+    }
+    else if (CollectionUtils.isEmpty(_group?.questions)) {
+      target = "Request to participate";
+    }
+    else {
+      target = "Continue";
+    }
+    Analytics().logSelect(target: target, attributes: _group?.analyticsAttributes);
+    
     if (CollectionUtils.isNotEmpty(_group?.questions)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
+      _loadMembershipRequestPanel();
     } else {
       _requestMembership();
     }
+  }
+
+  void _loadMembershipRequestPanel() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
   }
 
   void _requestMembership() {
