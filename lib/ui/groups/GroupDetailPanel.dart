@@ -642,19 +642,35 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     String members;
     int membersCount = _groupStats?.activeMembersCount ?? 0;
-    if (membersCount == 0) {
-      members = _isResearchProject ? "No Current Participants" : Localization().getStringEx("panel.group_detail.members.count.empty", "No Current Members");
+    if (!_isResearchProject) {
+      if (membersCount == 0) {
+        members = Localization().getStringEx("panel.group_detail.members.count.empty", "No Current Members");
+      }
+      else if (membersCount == 1) {
+        members = Localization().getStringEx("panel.group_detail.members.count.one", "1 Current Member");
+      }
+      else {
+        members = sprintf(Localization().getStringEx("panel.group_detail.members.count.format", "%s Current Members"), [membersCount]);
+      }
     }
-    else if (membersCount == 1) {
-      members = _isResearchProject ? "1 Current Participant" : Localization().getStringEx("panel.group_detail.members.count.one", "1 Current Member");
+    else if (_isAdmin) {
+      if (membersCount == 0) {
+        members = "No Current Participants";
+      }
+      else if (membersCount == 1) {
+        members = "1 Current Participant";
+      }
+      else {
+        members = sprintf("%s Current Participants", [membersCount]);
+      }
     }
     else {
-      members = sprintf(_isResearchProject ? "%s Current Participants" : Localization().getStringEx("panel.group_detail.members.count.format", "%s Current Members"), [membersCount]);
+      members = "";
     }
 
     int pendingCount = _groupStats?.pendingCount ?? 0;
     String pendingMembers;
-    if (_group!.currentUserIsAdmin && pendingCount > 0) {
+    if (_isAdmin && (pendingCount > 0)) {
       if (pendingCount > 1) {
         pendingMembers = sprintf(_isResearchProject ? "%s Pending Participants" : Localization().getStringEx("panel.group_detail.pending_members.count.format", "%s Pending Members"), [pendingCount]);
       }
@@ -668,7 +684,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     int attendedCount = _groupStats?.attendedCount ?? 0;
     String? attendedMembers;
-    if (_group!.currentUserIsAdmin && (_group!.attendanceGroup == true)) {
+    if (_isAdmin && (_group!.attendanceGroup == true)) {
       if (attendedCount == 0) {
         attendedMembers = Localization().getStringEx("panel.group_detail.attended_members.count.empty", "No Members Attended");
       } else if (attendedCount == 1) {
@@ -762,10 +778,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Text(_group?.title ?? '',  style:  Styles().textStyles?.getTextStyle('panel.group.title.lage'),),
               ),
               
-              GestureDetector(onTap: () => { if (_isMember) {_onTapMembers()} }, child:
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                  Container(decoration: (_isMember ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
-                    Text(members, style:  Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
+              Visibility(visible: StringUtils.isNotEmpty(members), child:
+                GestureDetector(onTap: () => { if (_isMember) {_onTapMembers()} }, child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+                    Container(decoration: (_isMember ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
+                      Text(members, style:  Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
+                    ),
                   ),
                 ),
               ),
