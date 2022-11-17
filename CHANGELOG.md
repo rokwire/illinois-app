@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Research Project updates [#2540](https://github.com/rokwire/illinois-app/issues/2540).
+- Check card's expiration date [#2542](https://github.com/rokwire/illinois-app/issues/2542).
 
 ## [4.2.20] - 2022-11-16
 ### Changed
