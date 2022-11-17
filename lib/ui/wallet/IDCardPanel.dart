@@ -32,6 +32,7 @@ import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:sprintf/sprintf.dart';
 
 class IDCardPanel extends StatefulWidget {
   IDCardPanel();
@@ -40,16 +41,40 @@ class IDCardPanel extends StatefulWidget {
     if (!Auth2().isOidcLoggedIn) {
       AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.logged_out.illini_id', 'You need to be logged in with your NetID to access Illini ID. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
     }
-    else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
-      AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.no_card.illini_id', 'You need a valid Illini Identity card to access Illini ID.'));
-    }
     else {
-      showModalBottomSheet(context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-        builder: (context) => IDCardPanel());
+      DateTime? expirationDateTimeUtc = Auth2().authCard?.expirationDateTimeUtc;
+      if (StringUtils.isEmpty(Auth2().authCard?.cardNumber) || (expirationDateTimeUtc == null)) {
+        AppAlert.showMessage(context, Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active i-card. Please visit the ID Center.'));
+      }
+      else {
+        String? warning;
+        DateTime nowUtc = DateTime.now().toUtc();
+        int expirationDays = expirationDateTimeUtc.difference(nowUtc).inDays;
+        if (nowUtc.isAfter(expirationDateTimeUtc)) {
+          warning = sprintf(Localization().getStringEx('panel.browse.label.expired_card.illini_id', 'No Illini ID information. Your i-card expired on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
+        }
+        else if ((0 < expirationDays) && (expirationDays < 30)) {
+          warning = sprintf(Localization().getStringEx('panel.browse.label.expiring_card.illini_id','Your ID will expire on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
+        }
+
+        if (warning != null) {
+          AppAlert.showMessage(context, warning).then((_) {
+            _present(context);
+          });
+        }
+        else {
+          _present(context);
+        }
+      }
     }
+  }
+
+  static void _present(BuildContext context) {
+    showModalBottomSheet(context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+      builder: (context) => IDCardPanel());
   }
 
   _IDCardPanelState createState() => _IDCardPanelState();
@@ -230,6 +255,10 @@ class _IDCardPanelState extends State<IDCardPanel>
     double qrCodeImageSize = _buildingAccessIconSize + buildingAccessStatusHeight - 2;
     bool hasQrCode = (0 < (_userQRCodeContent?.length ?? 0));
 
+    DateTime? expirationDateTimeUtc = Auth2().authCard?.expirationDateTimeUtc;
+    bool cardExpired = (expirationDateTimeUtc != null) && DateTime.now().toUtc().isAfter(expirationDateTimeUtc);
+    bool showQRCode = !cardExpired;
+
     if (_loadingBuildingAccess) {
       buildingAccessIcon = Container(width: _buildingAccessIconSize, height: _buildingAccessIconSize, child:
         Align(alignment: Alignment.center, child: 
@@ -311,7 +340,9 @@ class _IDCardPanelState extends State<IDCardPanel>
         Visibility(visible: hasQrCode, child: Column(children: [
           Text(Auth2().authCard!.cardNumber ?? '', style: Styles().textStyles?.getTextStyle("panel.id_card.detail.title.small")),
           Container(height: 8),
-          QrImage(data: _userQRCodeContent ?? "", size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ),
+          showQRCode ?
+            QrImage(data: _userQRCodeContent ?? "", size: qrCodeImageSize, padding: const EdgeInsets.all(0), version: QrVersions.auto, ) :
+            Container(width: qrCodeImageSize, height: qrCodeImageSize, color: Colors.transparent,),
         ],),),
 
         Visibility(visible: hasQrCode && hasBuildingAccess, child:
