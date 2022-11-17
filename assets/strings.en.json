@@ -230,7 +230,7 @@
     "panel.browse.label.logged_out.inbox": "You need to be logged in with your NetID to access Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 
     "panel.browse.label.no_card.bus_pass": "You need a valid Illini Identity card to access MTD Bus Pass.",
-    "panel.browse.label.no_card.illini_id": "You need a valid Illini Identity card to access Illini ID.",
+    "panel.browse.label.no_card.illini_id": "No Illini ID information. You do not have an active i-card. Please visit the ID Center.",
 
     "panel.browse.label.no_rights.create_stadium_poll": "You have no rights to create a Stadium Poll.",
 
