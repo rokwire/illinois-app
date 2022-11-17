@@ -605,7 +605,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content.add(_buildAbout());
       content.add(_buildPrivacyDescription());
       content.add(_buildAdmins());
-      if (_isPublic) {
+      if (_isPublic && CollectionUtils.isNotEmpty(_groupEvents)) {
         content.add(_buildEvents());
       }
       content.add(_buildResearchProjectMembershipRequest());
