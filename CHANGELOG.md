@@ -5,9 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.2.21] - 2022-11-17
+### Changed
+- Research Project updates [#2540](https://github.com/rokwire/illinois-app/issues/2540).
+- Check card's expiration date [#2542](https://github.com/rokwire/illinois-app/issues/2542).
+
+## [4.2.20] - 2022-11-16
 ### Changed
 - Research Project updates [#2533](https://github.com/rokwire/illinois-app/issues/2533).
 - Make the MTD route lines thicker [#2536](https://github.com/rokwire/illinois-app/issues/2536).
+
+###Added
+- Show global group notification setting in Group by Group panel [#2538](https://github.com/rokwire/illinois-app/issues/2538).
 
 ## [4.2.19] - 2022-11-15
 ### Added
