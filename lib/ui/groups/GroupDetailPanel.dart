@@ -1021,8 +1021,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     String researchConsentDetails = _group?.researchConsentDetails ?? '';
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(padding: EdgeInsets.only(bottom: 4), child:
-          Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'), ),),
+        Visibility(visible: !_isResearchProject, child:
+          Padding(padding: EdgeInsets.only(bottom: 4), child:
+            Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'), ),),),
         ExpandableText(description,
           textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
           trimLinesCount: 4,
