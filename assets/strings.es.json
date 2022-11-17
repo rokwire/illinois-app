@@ -230,6 +230,8 @@
 
     "panel.browse.label.no_card.bus_pass": "Necesita una tarjeta de identidad Illini válida para acceder a MTD Bus Pass.",
     "panel.browse.label.no_card.illini_id": "No hay información de identificación de Illini. No tienes una i-card activa. Por favor visite el Centro de Identificación.",
+    "panel.browse.label.expired_card.illini_id": "No hay información de identificación de Illini. Su i-card expiró el %s. Por favor visite el Centro de Identificación.",
+    "panel.browse.label.expiring_card.illini_id":"Su ID caducará el %s. Por favor visite el Centro de Identificación.",
 
     "panel.browse.label.no_rights.create_stadium_poll": "No tienes derechos para crear una encuesta de estadio.",
 

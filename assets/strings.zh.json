@@ -230,6 +230,8 @@
 
 	"panel.browse.label.no_card.bus_pass": "您需要有效的 Illini 身份證才能使用 MTD Bus Pass。",
 	"panel.browse.label.no_card.illini_id": "沒有伊利尼 ID 信息。 您沒有有效的 i-card。 請訪問 ID 中心。",
+	"panel.browse.label.expired_card.illini_id": "沒有伊利尼 ID 信息。 您的 i-card 已於 %s 過期。 請訪問 ID 中心。",
+	"panel.browse.label.expiring_card.illini_id":"您的 ID 將於 %s 過期。 請訪問 ID 中心。",
 
 	"panel.browse.label.no_rights.create_stadium_poll": "您無權創建體育場投票。",
 
