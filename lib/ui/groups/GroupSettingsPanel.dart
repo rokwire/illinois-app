@@ -907,7 +907,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                         maxLines: 5,
                         decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                         style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
-                        onChanged: (text) => _group?.researchConsentStatement = text,
                     )
                   ),
                 )
@@ -1072,8 +1071,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       return;
     }
 
-    if ((_group?.researchProject == true) || (_researchRequiresConsentConfirmation == true) && StringUtils.isEmpty(_group?.researchConsentStatement)) {
+    if ((_group?.researchProject == true) && _researchRequiresConsentConfirmation && _researchConsentStatementController.text.isEmpty) {
       AppAlert.showDialogResult(context, 'Please enter participant consent text.');
+      return;
+    }
+    else {
+      _group?.researchConsentStatement = ((_group?.researchProject == true) && _researchRequiresConsentConfirmation && _researchConsentStatementController.text.isNotEmpty) ? _researchConsentStatementController.text : null;
+
     }
 
     Analytics().logSelect(target: 'Update Settings');
