@@ -608,23 +608,18 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (_isPublic) {
         content.add(_buildEvents());
       }
+      content.add(_buildResearchProjectMembershipRequest());
     }
 
-    return
-        Column(children: <Widget>[
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: content,
-              ),
-            ),
-          ),
-          _buildMembershipRequest(),
-          _buildCancelMembershipRequest(),
-        ],
-      );
+    return Column(children: <Widget>[
+      Expanded(child:
+        SingleChildScrollView(scrollDirection: Axis.vertical, child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: content,),
+        ),
+      ),
+      _buildMembershipRequest(),
+      _buildCancelMembershipRequest(),
+    ],);
   }
 
   Widget _buildImageHeader(){
@@ -1142,11 +1137,33 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildMembershipRequest() {
-    if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin) {
-      bool showConsent = (_group?.researchProject == true) && StringUtils.isNotEmpty(_group?.researchConsentStatement);
-      bool requestToJoinEnabled = (_group?.researchProject != true) || StringUtils.isEmpty(_group?.researchConsentStatement) || _researchProjectConsent;
+    if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject != true)) {
       return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
-        Padding(padding: EdgeInsets.zero, child:
+        Padding(padding: EdgeInsets.all(16), child:
+          RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
+            backgroundColor: Styles().colors!.white,
+            textColor: Styles().colors!.fillColorPrimary,
+            fontFamily: Styles().fontFamilies!.bold,
+            fontSize: 16,
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+            borderColor: Styles().colors!.fillColorSecondary,
+            borderWidth: 2,
+            onTap:() { _onMembershipRequest();  }
+          ),
+        ),
+      );
+    }
+    else {
+      return Container();
+    }
+  }
+
+  Widget _buildResearchProjectMembershipRequest() {
+    if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject == true)) {
+      bool showConsent = StringUtils.isNotEmpty(_group?.researchConsentStatement);
+      bool requestToJoinEnabled = StringUtils.isEmpty(_group?.researchConsentStatement) || _researchProjectConsent;
+      return Padding(padding: EdgeInsets.only(top: 16), child:
+        Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
           Column(children: [
             Visibility(visible: showConsent, child:
               Row(children: [
