@@ -1095,12 +1095,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildPolicyButton() {
-    return Semantics(button: true, excludeSemantics: true,
-      label: Localization().getStringEx('panel.group_detail.button.policy.label', 'Policy'),
-      hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
-      child: InkWell(onTap: _onPolicy, child:
-        Padding(padding: EdgeInsets.all(16), child:
-          Image.asset('images/icon-info-orange.png')
+    return Visibility(visible: (_isResearchProject != true), child:
+      Semantics(button: true, excludeSemantics: true,
+        label: Localization().getStringEx('panel.group_detail.button.policy.label', 'Policy'),
+        hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
+        child: InkWell(onTap: _onPolicy, child:
+          Padding(padding: EdgeInsets.all(16), child:
+            Image.asset('images/icon-info-orange.png')
+          ),
         ),
       ),
     );
