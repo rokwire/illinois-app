@@ -339,6 +339,13 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
 
   @override
   Widget build(BuildContext context) {
+    String? message;
+    if (!Auth2().isOidcLoggedIn) {
+      message = Localization().getStringEx('panel.browse.label.logged_out.illini_id.short', 'You need to be logged in with your NetID to access MTD Bus Pass.');
+    }
+    else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber) || (Auth2().authCard?.expirationDateTimeUtc == null)) {
+      message = Localization().getStringEx('panel.browse.label.no_card.bus_pass', 'You need a valid Illini Identity card to access MTD Bus Pass.');
+    }
     return GestureDetector(onTap: _onTap, child:
       Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
         ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
@@ -360,14 +367,12 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Opacity(opacity: (Auth2().authCard != null) ? 1 : 0, child:
-                          VerticalTitleValueSection(
-                            title: Auth2().authCard?.role ?? '',
-                            titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 24, color: Styles().colors?.fillColorPrimary),
-                            value: StringUtils.isNotEmpty(Auth2().authCard?.expirationDate) ? sprintf(Localization().getStringEx('widget.home.wallet.bus_pass.label.card_expires.text', 'Expires: %s'), [Auth2().authCard?.expirationDate ?? '']) : '',
-                            valueTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary),
-                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          ),
+                        VerticalTitleValueSection(
+                          title: (message != null) ? message : Auth2().authCard?.role ?? '',
+                          titleTextStyle: (message != null) ? TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary) : TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 24, color: Styles().colors?.fillColorPrimary),
+                          value: (message != null) ? null : StringUtils.isNotEmpty(Auth2().authCard?.expirationDate) ? sprintf(Localization().getStringEx('widget.home.wallet.bus_pass.label.card_expires.text', 'Expires: %s'), [Auth2().authCard?.expirationDate ?? '']) : '',
+                          valueTextStyle: (message != null) ? null : TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary),
+                          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                       ),
                     ]),
@@ -426,6 +431,14 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
 
   @override
   Widget build(BuildContext context) {
+    String? message;
+    if (!Auth2().isOidcLoggedIn) {
+      message = Localization().getStringEx('panel.browse.label.logged_out.illini_id.short', 'You need to be logged in with your NetID to access Illini ID.');
+    }
+    else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber) || (Auth2().authCard?.expirationDateTimeUtc == null)) {
+      message = Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active i-card. Please visit the ID Center.');
+    }
+
     return GestureDetector(onTap: _onTap, child:
       Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
         ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
@@ -447,12 +460,11 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
                   Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Opacity(opacity: (Auth2().authCard != null) ? 1 : 0, child:
-                          VerticalTitleValueSection(
-                            title: StringUtils.isNotEmpty(Auth2().authCard?.fullName) ? Auth2().authCard?.fullName : Auth2().fullName,
-                            value: Auth2().authCard?.uin ?? '',
-                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          ),
+                        VerticalTitleValueSection(
+                          title: (message != null) ? message : StringUtils.isNotEmpty(Auth2().authCard?.fullName) ? Auth2().authCard?.fullName : Auth2().fullName,
+                          titleTextStyle: (message != null) ? TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary) : null,
+                          value: (message != null) ? null : Auth2().authCard?.uin,
+                          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                       ),
                     ]),

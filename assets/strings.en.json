@@ -225,7 +225,9 @@
     "panel.browse.label.logged_out.illini_cash": "You need to be logged in with your NetID to access Illini Cash. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
     "panel.browse.label.logged_out.meal_plan": "You need to be logged in with your NetID to access University Housing Meal Plan. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
     "panel.browse.label.logged_out.bus_pass": "You need to be logged in with your NetID to access MTD Bus Pass. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
+    "panel.browse.label.logged_out.bus_pass.short": "You need to be logged in with your NetID to access MTD Bus Pass.",
     "panel.browse.label.logged_out.illini_id": "You need to be logged in with your NetID to access Illini ID. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
+    "panel.browse.label.logged_out.illini_id.short": "You need to be logged in with your NetID to access Illini ID.",
     "panel.browse.label.logged_out.create_stadium_poll": "You need to be logged in with your NetID to create a Stadium Poll. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
     "panel.browse.label.logged_out.inbox": "You need to be logged in with your NetID to access Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 

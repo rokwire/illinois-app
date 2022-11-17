@@ -224,7 +224,9 @@
     "panel.browse.label.logged_out.illini_cash": "Debe iniciar sesión con su NetID para acceder a Illini Cash. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
     "panel.browse.label.logged_out.meal_plan": "Debe iniciar sesión con su NetID para acceder al Plan de comidas de alojamiento universitario. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
     "panel.browse.label.logged_out.bus_pass": "Debe iniciar sesión con su NetID para acceder a MTD Bus Pass. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
+    "panel.browse.label.logged_out.bus_pass.short": "Debe iniciar sesión con su NetID para acceder a MTD Bus Pass.",
     "panel.browse.label.logged_out.illini_id": "Debe iniciar sesión con su NetID para acceder a Illini ID. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
+    "panel.browse.label.logged_out.illini_id.short": "Debe iniciar sesión con su NetID para acceder a Illini ID.",
     "panel.browse.label.logged_out.create_stadium_poll": "Debe iniciar sesión con su NetID para crear una encuesta de estadio. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
     "panel.browse.label.logged_out.inbox": "Debe iniciar sesión con su NetID para acceder a las notificaciones. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
 
