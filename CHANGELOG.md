@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.2.21] - 2022-11-17
 ### Changed
 - Research Project updates [#2540](https://github.com/rokwire/illinois-app/issues/2540).
 - Check card's expiration date [#2542](https://github.com/rokwire/illinois-app/issues/2542).
