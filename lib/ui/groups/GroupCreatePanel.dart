@@ -211,7 +211,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       ])),
                       
                       Visibility(visible: !_isAuthManGroup, child: Padding(padding: EdgeInsets.only(top: 20), child: Column(children: [
-                        _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
+                        _buildTitle(_isResearchProject ? 'Participation' : Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
                         _buildMembershipLayout(),
                       ],),),),
                       
@@ -667,17 +667,16 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         ? (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_create.questions.existing.label", "Question(s)"))
         : Localization().getStringEx("panel.groups_create.questions.missing.label", "No questions");
 
-    return Container(
-      color: Styles().colors!.background,
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Column(children: <Widget>[
+    return Container(color: Styles().colors!.background, padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(children: <Widget>[
         Container(height: 12),
-        Semantics(
-            explicitChildNodes: true,
-            child: _buildMembershipButton(
-                title: Localization().getStringEx("panel.groups_create.membership.questions.title", "Membership Questions"),
-                description: questionsDescription,
-                onTap: _onTapQuestions)),
+        Semantics(explicitChildNodes: true, child:
+          _buildMembershipButton(
+            title: _isResearchProject ? 'Recruitment Questions' : Localization().getStringEx("panel.groups_create.membership.questions.title", "Membership Questions"),
+            description: questionsDescription,
+            onTap: _onTapQuestions
+          )
+        ),
         Container(height: 20),
       ]),
     );
@@ -718,10 +717,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     if (_group!.questions == null) {
       _group!.questions = [];
     }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _group!.questions))).then((dynamic questions) {
-      if (questions is List<GroupMembershipQuestion>) {
-        _group!.questions = questions;
-      }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(group: _group))).then((_) {
       setState(() {});
     });
   }

@@ -805,10 +805,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     if (_group!.questions == null) {
       _group!.questions = [];
     }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _group!.questions,))).then((dynamic questions){
-      if(questions is List<GroupMembershipQuestion>){
-        _group!.questions = questions;
-      }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(group: _group,))).then((_){
       setState(() {});
     });
   }
