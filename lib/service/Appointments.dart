@@ -90,7 +90,6 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
     }
     String? url;
     url = "${Config().appointmentsUrl}/services/appointments";
-    url = "https://api-dev.rokwire.illinois.edu/appointments/services/appointments"; //TBD add Appointments URL to the config
     http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;

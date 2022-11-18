@@ -1126,6 +1126,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (CollectionUtils.isEmpty(_groupAdmins)) {
       return Container();
     }
+    
     List<Widget> content = [];
     content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
     for (Member? officer in _groupAdmins!) {
@@ -1135,6 +1136,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content.add(_OfficerCard(groupMember: officer));
     }
     content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
+
+    String headingText = _isResearchProject ? 'Principle Investigator(s)' : Localization().getStringEx("panel.group_detail.label.admins", 'Admins');
+
     return Stack(children: [
       Container(
           height: 112,
@@ -1148,7 +1152,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(
                 padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                child: Text(Localization().getStringEx("panel.group_detail.label.admins", 'Admins'),
+                child: Text(headingText,
                     style:   Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))),
             SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: content))
           ]))

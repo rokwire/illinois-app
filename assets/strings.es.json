@@ -2108,7 +2108,7 @@
     "panel.member_detail.button.back.title": "Back",
     "panel.member_detail.dialog.button.remove.title": "Remove",
 
-    "panel.membership_questions.label.title": "Membership Question",
+    "panel.membership_questions.label.title": "Membership Questions",
     "panel.membership_questions.label.edit": "Edit Questions",
     "panel.membership_questions.label.description": "Learn more about people who want to join your group by asking them some questions. Only the admins of your group will see the answers.",
     "panel.membership_questions.button.add_question.title": "Add Question",
