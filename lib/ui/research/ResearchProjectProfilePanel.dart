@@ -6,9 +6,11 @@ import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 class ResearchProjectProfilePanel extends StatefulWidget  {
   final Map<String, dynamic>? profile;
@@ -16,8 +18,7 @@ class ResearchProjectProfilePanel extends StatefulWidget  {
   ResearchProjectProfilePanel({this.profile});
 
   @override
-  State<ResearchProjectProfilePanel> createState() =>
-      _ResearchProjectProfilePanelState();
+  State<ResearchProjectProfilePanel> createState() => _ResearchProjectProfilePanelState();
 }
 
 class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePanel> {
@@ -25,6 +26,10 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
   bool _loading = false;
   Questionnaire? _questionnaire;
   Map<String, LinkedHashSet<String>> _selection = <String, LinkedHashSet<String>>{};
+
+  int? _targetAudienceCount;
+  bool _shouldUpdateTargetAudienceCount = false;
+  bool _updatingTargetAudienceCount = false;
 
   final double _hPadding = 24;
 
@@ -45,6 +50,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
             }
           }
         });
+        _updateTargetAudienceCount();
       }
     });
     super.initState();
@@ -89,23 +95,55 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       contentList.addAll(questions);
     }
 
+    String headingText, submitText;
+    if (_targetAudienceCount == null) {
+      headingText = 'Create project target audience by selecting the answers that these users have chosen targeting unknown number of potential participants.';
+      submitText = 'Target unknown potential participants';
+    }
+    else if (_targetAudienceCount == 0) {
+      headingText = 'Create project target audience by selecting the answers that these users have chosen targeting no potential participants.';
+      submitText = 'Target no potential participants';
+    }
+    else if (_targetAudienceCount == 1) {
+      headingText = 'Create project target audience by selecting the answers that these users have chosen targeting 1 potential participant.';
+      submitText = 'Target 1 potential participant';
+    }
+    else {
+      headingText = sprintf('Create project target audience by selecting the answers that these users have chosen targeting %s potential participants.', [_targetAudienceCount]);
+      submitText = sprintf('Target %s potential participants', [_targetAudienceCount]);
+    }
+
     return Column(children: <Widget>[
-      Container(color: Styles().colors?.white, child:
-        Padding(padding: EdgeInsets.all(_hPadding), child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children:<Widget>[
-            Row(children: <Widget>[
-              Expanded(child:
-                Text('Select Answers',
-                  style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary),),
+      Stack(children: [
+        Container(color: Styles().colors?.white, child:
+          Padding(padding: EdgeInsets.all(_hPadding), child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children:<Widget>[
+              Row(children: <Widget>[
+                Expanded(child:
+                  Text('Select Answers',
+                    style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary),),
+                ),
+              ],),
+              Padding(padding: EdgeInsets.only(top: 8), child:
+                Text(headingText,
+                  style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textSurfaceAccent)),
               ),
-            ],),
-            Padding(padding: EdgeInsets.only(top: 8), child:
-              Text('Create project target audience by selecting the answers that these users have chosen.',
-                style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textSurfaceAccent)),
-            ),
-          ]),
+            ]),
+          ),
         ),
-      ),
+        Visibility(visible: _updatingTargetAudienceCount, child:
+          Positioned(child:
+            Align(alignment: Alignment.topRight, child:
+              Padding(padding: EdgeInsets.only(top: 16, right: 16), child:
+                SizedBox(width: 16, height: 16, child:
+                  CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 1, )
+                )
+              )
+            )
+          ),
+        ),
+
+      ],),
       Container(height: 1, color: Styles().colors?.surfaceAccent,),
 
       Expanded(child:
@@ -121,7 +159,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
         Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 24, bottom: 12,), child:
           SafeArea(child: 
           RoundedButton(
-            label: 'Submit',
+            label: submitText,
             hint: '',
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             borderColor: Styles().colors?.fillColorSecondary,
@@ -237,30 +275,67 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
     String? answerId = answer.id;
     String? questionId = question.id;
     if ((questionId != null) && (answerId != null)) {
-      LinkedHashSet<String> selectedAnswers = _selection[questionId] ?? (_selection[questionId] = LinkedHashSet<String>());
       setState(() {
-        if (selectedAnswers.contains(answerId)) {
+        LinkedHashSet<String>? selectedAnswers = _selection[questionId];
+        if ((selectedAnswers != null) && selectedAnswers.contains(answerId)) {
           selectedAnswers.remove(answerId);
+          if (selectedAnswers.isEmpty) {
+            _selection.remove(questionId);
+          }
         }
         else {
+          selectedAnswers ??= (_selection[questionId] = LinkedHashSet<String>());
           selectedAnswers.add(answerId);
         }
       });
+      _updateTargetAudienceCount();
     }
   }
 
   void _onSubmit() {
     Analytics().logSelect(target: 'Submit');
-    Navigator.of(context).pop({
-       (_questionnaire?.id ?? '') : JsonUtils.mapOfStringToLinkedHashSetOfStringsJsonValue(_selection)
-    });
+    Navigator.of(context).pop(_projectProfile);
   }
+
+  Map<String, dynamic> get _projectProfile => {
+    (_questionnaire?.id ?? '') : JsonUtils.mapOfStringToLinkedHashSetOfStringsJsonValue(_selection)
+  };
 
   String _questionnaireString(String? key, { String? languageCode }) => _questionnaire?.stringValue(key, languageCode: languageCode) ?? key ?? '';
 
   String _displayQuestionTitle(Question question, { int? index, String? languageCode }) {
     String title = _questionnaireString(question.title, languageCode: languageCode);
     return ((index != null) && title.isNotEmpty) ? "$index. $title" : title;
+  }
+
+  void _updateTargetAudienceCount() {
+    if (_updatingTargetAudienceCount) {
+      _shouldUpdateTargetAudienceCount = true;
+    }
+    else {
+      setState(() {
+        _shouldUpdateTargetAudienceCount = false;
+      });
+      _updatingTargetAudienceCount = true;
+      Groups().loadResearchProjectTragetAudienceCount(_projectProfile).then((int? count) {
+        if (mounted) {
+          if ((count != null) && (_targetAudienceCount != count)) {
+            setState(() {
+              _targetAudienceCount = count;
+            });
+          }
+          
+          _updatingTargetAudienceCount = false;
+          if (_shouldUpdateTargetAudienceCount) {
+            _updateTargetAudienceCount();
+          }
+          else {
+            setState(() {});
+          }
+        }
+
+      });
+    }
   }
 
   Widget _buildLoading() {
