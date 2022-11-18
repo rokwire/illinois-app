@@ -730,6 +730,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Membership
   Widget _buildMembershipLayout(){
+    String sectionTitle = _isResearchProject ? "Participation" : Localization().getStringEx("panel.groups_settings.membership.title", "Membership");
+    String buttonTitle = _isResearchProject ? "Recruitment Questions" : Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions");
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount) ?
       sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format","%s Question(s)"), [questionsCount.toString()]) :
@@ -740,11 +742,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column( children: <Widget>[
-          _buildSectionTitle( Localization().getStringEx("panel.groups_settings.membership.title", "Membership"),"images/icon-member.png"),
+          _buildSectionTitle(sectionTitle, "images/icon-member.png"),
           Container(height: 12,),
           Semantics(
             explicitChildNodes: true,
-            child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions"),
+            child:_buildMembershipButton(
+              title: buttonTitle,
               description: questionsDescription,
               onTap: _onTapMembershipQuestion)),
           Container(height: 20,),
@@ -802,13 +805,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       return;
     }
     Analytics().logSelect(target: "Membership Question");
-    if (_group!.questions == null) {
-      _group!.questions = [];
-    }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _group!.questions,))).then((dynamic questions){
-      if(questions is List<GroupMembershipQuestion>){
-        _group!.questions = questions;
-      }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(group: _group,))).then((_){
       setState(() {});
     });
   }
