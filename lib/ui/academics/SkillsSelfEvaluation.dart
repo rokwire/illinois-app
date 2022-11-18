@@ -54,7 +54,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
       padding: EdgeInsets.only(top: 32, bottom: 32),
       child: Padding(padding: EdgeInsets.only(left: 24, right: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: TextStyle(fontFamily: "ProximaNovaExtraBold", fontSize: 36.0, color: Styles().colors?.surface), textAlign: TextAlign.left,),
+          Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: TextStyle(fontFamily: "ProximaNovaExtraBold", fontSize: 28.0, color: Styles().colors?.surface), textAlign: TextAlign.left,)),
           IconButton(
             icon: Image.asset('images/tab-more.png', color: Styles().colors?.surface),
             onPressed: _onTapShowBottomSheet,
