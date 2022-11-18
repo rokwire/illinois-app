@@ -662,6 +662,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   // Membership Questions
   Widget _buildMembershipLayout() {
+    String buttonTitle = _isResearchProject ? "Recruitment Questions" : Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions");
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount)
         ? (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_create.questions.existing.label", "Question(s)"))
@@ -672,7 +673,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         Container(height: 12),
         Semantics(explicitChildNodes: true, child:
           _buildMembershipButton(
-            title: _isResearchProject ? 'Recruitment Questions' : Localization().getStringEx("panel.groups_create.membership.questions.title", "Membership Questions"),
+            title: buttonTitle,
             description: questionsDescription,
             onTap: _onTapQuestions
           )
@@ -714,9 +715,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void _onTapQuestions() {
     Analytics().logSelect(target: "Membership Questions");
-    if (_group!.questions == null) {
-      _group!.questions = [];
-    }
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(group: _group))).then((_) {
       setState(() {});
     });
