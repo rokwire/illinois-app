@@ -137,8 +137,11 @@
     "panel.home.connect.not_logged_in.phone_or_email.title": "Continue",
     "panel.home.edit.favorites.header.title": "Current Favorites",
     "panel.home.edit.favorites.header.description": "Tap, <b>hold</b>, and drag an item to reorder your favorites. To remove an item from Favorites, tap the star.",
+    "panel.home.edit.favorites.unstar.link.button": "Unstar All",
+    "panel.home.edit.favorites.confirmation.dialog.msg": "Are you sure you want to REMOVE all items from your favorites? Items can always be added back later.",
     "panel.home.edit.unused.header.title": "Other Items to Favorite",
     "panel.home.edit.unused.header.description": "Tap the star to add any below items to Favorites.",
+    "panel.home.edit.unused.star.link.button": "Star All",
     "panel.label.offline.phone_or_email": "Feature not available when offline.",
 
     "panel.browse.label.title": "Browse",
@@ -592,7 +595,8 @@
 
     "panel.onboarding.roles.label.title":"Who Are You?",
     "panel.onboarding.roles.label.title.hint":"Header 1",
-    "panel.onboarding.roles.label.description":"Select all that apply",
+    "panel.onboarding.roles.label.description":"Please check all that apply to create a personalized experience for you",
+    "panel.onboarding.roles.label.description2", "I am a...",
     "panel.onboarding.roles.button.student.title":"University Student",
     "panel.onboarding.roles.button.student.hint":"",
     "panel.onboarding.roles.button.fan.title":"Athletics Fan",
@@ -695,7 +699,8 @@
     
     "panel.onboarding2.roles.label.title": "Who Are You?",
     "panel.onboarding2.roles.label.title.hint": "Header 1",
-    "panel.onboarding2.roles.label.description": "Select all that apply to help us understand who you are.",
+    "panel.onboarding2.roles.label.description": "Please check all that apply to create a personalized experience for you",
+    "panel.onboarding2.roles.label.description2": "I am a...",
     "panel.onboarding2.roles.button.student.title": "University Student",
     "panel.onboarding2.roles.button.student.hint": "",
     "panel.onboarding2.roles.button.fan.title": "Athletics Fan",

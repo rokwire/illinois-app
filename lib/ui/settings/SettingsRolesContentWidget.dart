@@ -57,19 +57,26 @@ class _SettingsRolesContentWidgetState extends State<SettingsRolesContentWidget>
     return Container(
           color: Styles().colors!.background,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
                 child: Padding(
-                  padding: EdgeInsets.only(top: 16),
+                  padding: EdgeInsets.only(top: 16, left: 4, right: 4),
                   child: Text(
-                    Localization().getStringEx('panel.onboarding.roles.label.description', 'Select all that apply'),
-                    style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
+                    Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
+                    style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 16, top: 8, right: 8, bottom: 0),
+                padding: EdgeInsets.only(top: 10,  left: 4, right: 4),
+                child: Text(
+                    Localization().getStringEx('panel.onboarding.roles.label.description2', 'I am a...'),
+                    style: Styles().textStyles?.getTextStyle("widget.title.medium.extra_fat")
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 0, top: 8, right: 8, bottom: 0),
                 child: RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton),
               ),
             ],

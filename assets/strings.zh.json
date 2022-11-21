@@ -137,8 +137,11 @@
 	"panel.home.connect.not_logged_in.phone_or_email.title": "Continue",
 	"panel.home.edit.favorites.header.title": "當前收藏夾",
 	"panel.home.edit.favorites.header.description": "點按、<b>按住</b>並拖動項目以重新排列您的收藏夾。 要從收藏夾中刪除項目，請點按星標。",
+	"panel.home.edit.favorites.unstar.link.button": "全部取消星標",
+    "panel.home.edit.favorites.confirmation.dialog.msg": "您確定要從收藏夾中刪除所有項目嗎？ 項目總是可以在以後添加回來。",
 	"panel.home.edit.unused.header.title": "其他要收藏的項目",
 	"panel.home.edit.unused.header.description": "點擊星號可將以下任何項目添加到收藏夾。",
+	"panel.home.edit.unused.star.link.button": "全明星",
 	"panel.label.offline.phone_or_email": "離線時功能不可用。",
 
 	"panel.browse.label.title":"浏览",
@@ -591,7 +594,8 @@
 
 	"panel.onboarding.roles.label.title":"你是",
 	"panel.onboarding.roles.label.title.hint":"标题1",
-	"panel.onboarding.roles.label.description":"选择所有适用项",
+	"panel.onboarding.roles.label.description":"Please check all that apply to create a personalized experience for you",
+	"panel.onboarding.roles.label.description2", "I am a...",
 	"panel.onboarding.roles.button.student.title":"大学生",
 	"panel.onboarding.roles.button.student.hint":"",
 	"panel.onboarding.roles.button.fan.title":"田径迷",
@@ -694,7 +698,8 @@
 
 	"panel.onboarding2.roles.label.title": "Who Are You?",
 	"panel.onboarding2.roles.label.title.hint": "Header 1",
-	"panel.onboarding2.roles.label.description": "Select all that apply to help us understand who you are.",
+	"panel.onboarding2.roles.label.description": "Please check all that apply to create a personalized experience for you",
+	"panel.onboarding2.roles.label.description2": "I am a...",
 	"panel.onboarding2.roles.button.student.title": "University Student",
 	"panel.onboarding2.roles.button.student.hint": "",
 	"panel.onboarding2.roles.button.fan.title": "Athletics Fan",

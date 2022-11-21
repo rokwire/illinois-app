@@ -137,8 +137,11 @@
     "panel.home.connect.not_logged_in.phone_or_email.title": "Continue",
     "panel.home.edit.favorites.header.title": "Favoritos actuales",
     "panel.home.edit.favorites.header.description": "Toque, <b>mantenga presionado</b> y arrastre un elemento para reordenar sus favoritos. Para eliminar un elemento de Favoritos, toque la estrella.",
+    "panel.home.edit.favorites.unstar.link.button": "Desmarcar todo",
+    "panel.home.edit.favorites.confirmation.dialog.msg": "¿Está seguro de que desea ELIMINAR todos los elementos de sus favoritos? Los artículos siempre se pueden volver a agregar más tarde.",
     "panel.home.edit.unused.header.title": "Otros artículos a favoritos",
     "panel.home.edit.unused.header.description": "Toque la estrella para agregar cualquiera de los siguientes elementos a Favoritos.",
+    "panel.home.edit.unused.star.link.button": "Estrella todo",
     "panel.label.offline.phone_or_email": "Característica no disponible cuando está fuera de línea.",
 
     "panel.browse.label.title": "Vistazo",
@@ -591,7 +594,8 @@
 
     "panel.onboarding.roles.label.title":"Quién eres",
     "panel.onboarding.roles.label.title.hint":"Encabezado 1",
-    "panel.onboarding.roles.label.description":"Seleccione todos los que correspondan",
+    "panel.onboarding.roles.label.description":"Please check all that apply to create a personalized experience for you",
+    "panel.onboarding.roles.label.description2", "I am a...",
     "panel.onboarding.roles.button.student.title":"Estudiante universitario",
     "panel.onboarding.roles.button.student.hint":"",
     "panel.onboarding.roles.button.fan.title":"Fanático del atletismo",
@@ -694,7 +698,8 @@
 
     "panel.onboarding2.roles.label.title": "Who Are You?",
     "panel.onboarding2.roles.label.title.hint": "Header 1",
-    "panel.onboarding2.roles.label.description": "Select all that apply to help us understand who you are.",
+    "panel.onboarding2.roles.label.description": "Please check all that apply to create a personalized experience for you",
+    "panel.onboarding2.roles.label.description2": "I am a...",
     "panel.onboarding2.roles.button.student.title": "University Student",
     "panel.onboarding2.roles.button.student.hint": "",
     "panel.onboarding2.roles.button.fan.title": "Athletics Fan",

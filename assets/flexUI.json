@@ -69,7 +69,7 @@
 			"calendar": ["settings"],
 			"calendar.settings": ["add", "prompt"],
 			
-			"roles": ["student", "employee", "parent", "fan", "alumni", "visitor", "resident"],
+			"roles": ["student", "employee", "parent", "fan", "alumni", "visitor"],
 			
 			"onboarding":["get_started", "video_tutorials", "privacy_statement", "privacy", "notifications_auth", "location_auth", "roles", "login_netid", "login_phone", "verify_phone", "confirm_phone", "sport_prefs", "research_questionnaire"],
 	
@@ -251,8 +251,8 @@
 			"rules": {
 				"roles" : {
 					"home.student": ["student"],
-					"home.elderly": [["employee", "OR", "parent", "OR", "alumni", "OR", "visitor", "OR", "resident"], "AND", ["NOT", "student"]],
-					"home.fan": ["fan", "AND", ["NOT", ["student", "OR", "employee", "OR", "parent", "OR", "alumni", "OR", "visitor", "OR", "resident"]]]
+					"home.elderly": [["employee", "OR", "parent", "OR", "alumni", "OR", "visitor"], "AND", ["NOT", "student"]],
+					"home.fan": ["fan", "AND", ["NOT", ["student", "OR", "employee", "OR", "parent", "OR", "alumni", "OR", "visitor", "OR"]]]
 				},
 				"groups": {
 					"home.gies_oncampus": ["${config.settings.groups.gies}"],
