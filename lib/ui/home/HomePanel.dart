@@ -1067,32 +1067,38 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
 
 // _HomeHeaderBar
 
-class _HomeHeaderBar extends RootHeaderBar {
+class _HomeHeaderBar extends StatefulWidget implements PreferredSizeWidget {
 
   final void Function()? onEditDone;
+  final String? title;
   
-  _HomeHeaderBar({Key? key, String? title, this.onEditDone}) :
-    super(key: key, title: title);
+  _HomeHeaderBar({Key? key, this.title, this.onEditDone}) : super(key: key);
 
   bool get editing => (onEditDone != null);
 
+  // PreferredSizeWidget
   @override
-  List<Widget> buildHeaderActions(BuildContext context) {
-    return editing ? <Widget>[ buildHeaderEditDoneButton(context), ] : super.buildHeaderActions(context);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  @override
+  _HomeHeaderBarState createState() => _HomeHeaderBarState();
+}
+
+class _HomeHeaderBarState extends State<_HomeHeaderBar> {
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.editing) {
+      return HeaderBar(title: widget.title, onLeading: _onBack);
+    } else {
+      return RootHeaderBar(key: widget.key, title: widget.title);
+    }
   }
 
-  Widget buildHeaderEditDoneButton(BuildContext context) {
-    return Semantics(label: Localization().getStringEx('headerbar.save.title', 'Save'), hint: Localization().getStringEx('headerbar.save.hint', ''), button: true, excludeSemantics: true, child:
-      TextButton(onPressed: () => onTapEditDone(context), child:
-        Text(Localization().getStringEx('headerbar.save.title', 'Save'), style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
-      )
-    );
-  }
-
-  void onTapEditDone(BuildContext context) {
+  void _onBack() {
     Analytics().logSelect(target: 'Customize Done', source: 'HomePanel');
-    if (onEditDone != null) {
-      onEditDone!();
+    if (widget.onEditDone != null) {
+      widget.onEditDone!();
     }
   }
 }
