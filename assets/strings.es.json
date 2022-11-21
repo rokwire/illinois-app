@@ -594,6 +594,7 @@
     "panel.onboarding.roles.label.title":"Quién eres",
     "panel.onboarding.roles.label.title.hint":"Encabezado 1",
     "panel.onboarding.roles.label.description":"Please check all that apply to create a personalized experience for you",
+    "panel.onboarding.roles.label.description2", "I am a...",
     "panel.onboarding.roles.button.student.title":"Estudiante universitario",
     "panel.onboarding.roles.button.student.hint":"",
     "panel.onboarding.roles.button.fan.title":"Fanático del atletismo",
@@ -696,7 +697,8 @@
 
     "panel.onboarding2.roles.label.title": "Who Are You?",
     "panel.onboarding2.roles.label.title.hint": "Header 1",
-    "panel.onboarding2.roles.label.description": "Select all that apply to help us understand who you are.",
+    "panel.onboarding2.roles.label.description": "Please check all that apply to create a personalized experience for you",
+    "panel.onboarding2.roles.label.description2": "I am a...",
     "panel.onboarding2.roles.button.student.title": "University Student",
     "panel.onboarding2.roles.button.student.hint": "",
     "panel.onboarding2.roles.button.fan.title": "Athletics Fan",

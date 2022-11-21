@@ -61,7 +61,7 @@ class _SettingsRolesContentWidgetState extends State<SettingsRolesContentWidget>
             children: <Widget>[
               Container(
                 child: Padding(
-                  padding: EdgeInsets.only(top: 16),
+                  padding: EdgeInsets.only(top: 16, left: 4, right: 4),
                   child: Text(
                     Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
                     style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
@@ -69,9 +69,9 @@ class _SettingsRolesContentWidgetState extends State<SettingsRolesContentWidget>
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 10),
+                padding: EdgeInsets.only(top: 10,  left: 4, right: 4),
                 child: Text(
-                    Localization().getStringEx('panel.onboarding.roles.label.description2', 'I am a...'), //TBD Localize
+                    Localization().getStringEx('panel.onboarding.roles.label.description2', 'I am a...'),
                     style: Styles().textStyles?.getTextStyle("widget.title.medium.extra_fat")
                 ),
               ),
