@@ -137,8 +137,11 @@
 	"panel.home.connect.not_logged_in.phone_or_email.title": "Continue",
 	"panel.home.edit.favorites.header.title": "當前收藏夾",
 	"panel.home.edit.favorites.header.description": "點按、<b>按住</b>並拖動項目以重新排列您的收藏夾。 要從收藏夾中刪除項目，請點按星標。",
+	"panel.home.edit.favorites.unstar.link.button": "全部取消星標",
+    "panel.home.edit.favorites.confirmation.dialog.msg": "您確定要從收藏夾中刪除所有項目嗎？ 項目總是可以在以後添加回來。",
 	"panel.home.edit.unused.header.title": "其他要收藏的項目",
 	"panel.home.edit.unused.header.description": "點擊星號可將以下任何項目添加到收藏夾。",
+	"panel.home.edit.unused.star.link.button": "全明星",
 	"panel.label.offline.phone_or_email": "離線時功能不可用。",
 
 	"panel.browse.label.title":"浏览",

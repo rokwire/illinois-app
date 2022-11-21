@@ -80,6 +80,7 @@ import 'package:illinois/ui/home/HomeVoterRegistrationWidget.dart';
 import 'package:illinois/ui/home/HomeSuggestedEventsWidget.dart';
 import 'package:illinois/ui/widgets/FlexContent.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -592,6 +593,8 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       widgets.add(_buildEditingHeader(
         favoriteId: _favoritesHeaderId, dropAnchorAlignment: CrossAxisAlignment.end,
         title: Localization().getStringEx('panel.home.edit.favorites.header.title', 'Current Favorites'),
+        linkButtonTitle: Localization().getStringEx('panel.home.edit.favorites.unstar.link.button', 'Unstar All'),
+        onTapLinkButton: CollectionUtils.isNotEmpty(homeFavorites) ? () => _onTapUnstarAll(homeFavorites.toList()) : null,
         description: Localization().getStringEx('panel.home.edit.favorites.header.description', 'Tap, <b>hold</b>, and drag an item to reorder your favorites. To remove an item from Favorites, tap the star.'),
       ));
        
@@ -610,12 +613,6 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     List<String>? fullContent = JsonUtils.listStringsValue(FlexUI()['home']);
     if (fullContent != null) {
 
-      widgets.add(_buildEditingHeader(
-        favoriteId: _unfavoritesHeaderId, dropAnchorAlignment: null,
-        title: Localization().getStringEx('panel.home.edit.unused.header.title', 'Other Items to Favorite'),
-        description: Localization().getStringEx('panel.home.edit.unused.header.description', 'Tap the star to add any below items to Favorites.'),
-      ));
-
       List<Map<String, dynamic>> unusedList = <Map<String, dynamic>>[];
 
       for (String code in fullContent) {
@@ -633,6 +630,15 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return title1.compareTo(title2);
       });
 
+
+      widgets.add(_buildEditingHeader(
+        favoriteId: _unfavoritesHeaderId, dropAnchorAlignment: null,
+        title: Localization().getStringEx('panel.home.edit.unused.header.title', 'Other Items to Favorite'),
+        linkButtonTitle: Localization().getStringEx('panel.home.edit.unused.star.link.button', 'Star All'),
+        onTapLinkButton: CollectionUtils.isNotEmpty(unusedList) ? () => _onTapStarAll(unusedList) : null,
+        description: Localization().getStringEx('panel.home.edit.unused.header.description', 'Tap the star to add any below items to Favorites.'),
+      ));
+
       int position = 0;
       for (Map<String, dynamic> entry in unusedList) {
         String? code = JsonUtils.stringValue(entry['code']);
@@ -649,17 +655,22 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     return widgets;
   }
 
-  Widget _buildEditingHeader({String? title, String? description, String? favoriteId, CrossAxisAlignment? dropAnchorAlignment}) {
+  Widget _buildEditingHeader({String? title, String? description, String? linkButtonTitle, void Function()? onTapLinkButton, String? favoriteId, CrossAxisAlignment? dropAnchorAlignment}) {
     return HomeDropTargetWidget(favoriteId: favoriteId, dragAndDropHost: this, dropAnchorAlignment: dropAnchorAlignment, childBuilder: (BuildContext context, { bool? dropTarget, CrossAxisAlignment? dropAnchorAlignment }) {
       return Column(children: [
           Container(height: 2, color: ((dropTarget == true) && (dropAnchorAlignment == CrossAxisAlignment.start)) ? Styles().colors?.fillColorSecondary : Colors.transparent,),
-          Row(children: [
-            Expanded(child:
-              Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-                Text(title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontSize: 22, fontFamily: Styles().fontFamilies?.extraBold),),
-              ),
-            )
-          ],),
+          Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+              Text(title ?? '', style: TextStyle(color: Styles().colors?.fillColorPrimary, fontSize: 22, fontFamily: Styles().fontFamilies?.extraBold),),
+            ),
+            Expanded(child: Container()),
+            Visibility(visible: (onTapLinkButton != null), child: InkWell(onTap: onTapLinkButton, child: 
+              Padding(padding: EdgeInsets.only(left: 5, top: 5, bottom: 5, right: 16), child: Text(StringUtils.ensureNotEmpty(linkButtonTitle), style: 
+                TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.accentColor3, 
+                  decoration: TextDecoration.underline, decorationStyle: TextDecorationStyle.solid, decorationThickness: 1, decorationColor: Styles().colors!.accentColor3),
+              ))
+            ))
+          ],)),
           Row(children: [
             Expanded(child:
               Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
@@ -822,6 +833,88 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
       if (uri != null) {
         launchUrl(uri);
       }
+    }
+  }
+
+  void _onTapUnstarAll(List<String>? favorites) {
+    Analytics().logSelect(source: 'Customize', target: 'Unstar All');
+    _showUnstarConfirmationDialog(favorites);
+  }
+
+  void _showUnstarConfirmationDialog(List<String>? favorites) {
+    AppAlert.showCustomDialog(
+        context: context,
+        contentPadding: EdgeInsets.all(0),
+        contentWidget: Container(
+            height: 250,
+            decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(15.0)),
+            child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
+              Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
+                    Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                            Localization().getStringEx('panel.home.edit.favorites.confirmation.dialog.msg',
+                                'Are you sure you want to REMOVE all items from your favorites? Items can always be added back later.'),
+                            textAlign: TextAlign.center,
+                            style:  Styles().textStyles?.getTextStyle("widget.detail.small"))),
+                    Padding(padding: EdgeInsets.only(top: 40), child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      Expanded(child: RoundedButton(label: Localization().getStringEx('dialog.no.title', 'No'), borderColor: Styles().colors!.fillColorPrimary, onTap: _dismissUnstarConfirmationDialog)),
+                      Container(width: 16),
+                      Expanded(child: RoundedButton(label: Localization().getStringEx('dialog.yes.title', 'Yes'), borderColor: Styles().colors!.fillColorSecondary, onTap: () {
+                        _dismissUnstarConfirmationDialog();
+                        _unstarAvailableFavorites(favorites);
+                      } ))
+                    ]))
+                  ])),
+              Align(
+                  alignment: Alignment.topRight,
+                  child: GestureDetector(
+                      onTap: _dismissUnstarConfirmationDialog,
+                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png', color: Colors.black))))
+            ])));
+  }
+
+  void _dismissUnstarConfirmationDialog() {
+    Navigator.of(context).pop();
+  }
+
+  void _unstarAvailableFavorites(List<String>? favorites) {
+    if (CollectionUtils.isNotEmpty(favorites)) {
+      for (String code in favorites!) {
+        _setFavorite(code: code, value: false);
+      }
+    }
+  }
+
+  void _onTapStarAll(List<Map<String, dynamic>>? notFavorites) {
+    Analytics().logSelect(source: 'Customize', target: 'Star All');
+    if (CollectionUtils.isNotEmpty(notFavorites)) {
+      for (Map<String, dynamic>? entry in notFavorites!.reversed) {
+        if (entry != null) {
+          String? code = entry['code'];
+          if (StringUtils.isNotEmpty(code)) {
+            _setFavorite(code: code!, value: true);
+          }
+        }
+      }
+    }
+  }
+
+  void _setFavorite({required String code, required bool value}) {
+    HomeFavorite favorite = HomeFavorite(code);
+    List<String>? avalableSectionFavorites = JsonUtils.listStringsValue(FlexUI()['home.${favorite.id}']);
+    if (avalableSectionFavorites != null) {
+      List<Favorite> favorites = <Favorite>[favorite];
+      for (String sectionEntry in avalableSectionFavorites) {
+        favorites.add(HomeFavorite(sectionEntry, category: favorite.id));
+      }
+      Auth2().prefs?.setListFavorite(favorites, value);
+      HomeFavorite.log(favorites, value);
+    } else {
+      Auth2().prefs?.setFavorite(favorite, value);
+      HomeFavorite.log(favorite, value);
     }
   }
 
