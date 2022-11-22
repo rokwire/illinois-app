@@ -116,6 +116,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     }
 
     private void init() {
+        initValuesFromArguments();
         initMarkerView();
         initMapView();
         initMapStyleOptions();
@@ -130,7 +131,6 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     }
 
     private void initMarkerView() {
-        acknowledgeValuesFromArgs();
         iconGenerator = new IconGenerator(activity);
         iconGenerator.setBackground(activity.getDrawable(R.color.transparent));
         LayoutInflater inflater = (activity != null) ? (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) : null;
@@ -161,7 +161,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         relocateMyLocationButton();
     }
 
-    private void acknowledgeValuesFromArgs() {
+    private void initValuesFromArguments() {
         boolean myLocationEnabled = false;
         if (args instanceof Map) {
             Map<String, Object> jsonArgs = (Map) args;
