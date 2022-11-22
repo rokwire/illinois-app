@@ -54,6 +54,9 @@ class RoleGridButton extends TileToggleButton {
     onTap: (BuildContext context, TileToggleButton button) => _handleTap(context, button, onTap),
   );
 
+  @protected Widget get defaultIconWidget =>  Container(constraints: BoxConstraints(minHeight: 40), child: super.defaultIconWidget);
+  @protected Widget get displayTitleWidget =>  Container(constraints: BoxConstraints(minHeight: 50), child: super.displayTitleWidget);
+
   static RoleGridButton? fromRole(UserRole? role, { bool? selected, double? sortOrder, void Function(RoleGridButton)? onTap }) {
     if (role == UserRole.student) {
       return RoleGridButton(
