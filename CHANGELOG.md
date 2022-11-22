@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - The default in research groups for the consent checkbox in researh projects should be true [#2550](https://github.com/rokwire/illinois-app/issues/2550).
+- Group auto join checkbox available for all groups (except research) [#2558](https://github.com/rokwire/illinois-app/issues/2558).
 ### Fixed
 - Fixed language assets JSON [#2552](https://github.com/rokwire/illinois-app/issues/2552).
 - RoleGridButton: set min height for Icon and Title [#2555](https://github.com/rokwire/illinois-app/issues/2555).

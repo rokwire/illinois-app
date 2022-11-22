@@ -216,7 +216,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                         _buildMembershipLayout(),
                       ],),),),
                       
-                      Visibility(visible: _isManagedGroupAdmin && !_isResearchProject, child:
+                      Visibility(visible: !_isResearchProject, child:
                         Padding(padding: EdgeInsets.only(top: 8), child:
                           _buildCanAutojoinLayout(),
                         )
