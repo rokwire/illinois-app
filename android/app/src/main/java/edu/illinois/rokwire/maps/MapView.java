@@ -19,6 +19,8 @@ package edu.illinois.rokwire.maps;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewParent;
@@ -32,6 +34,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
@@ -47,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import edu.illinois.rokwire.Constants;
 import edu.illinois.rokwire.MainActivity;
 import edu.illinois.rokwire.R;
@@ -60,6 +64,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     private Activity activity;
     private com.google.android.gms.maps.MapView googleMapView;
     private GoogleMap googleMap;
+    private MapStyleOptions mapStyleOptions;
     private List<Object> explores;
     private List<Marker> markers;
 
@@ -113,6 +118,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     private void init() {
         initMarkerView();
         initMapView();
+        initMapStyleOptions();
     }
 
     private void initMapView() {
@@ -132,11 +138,21 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         markerGroupLayoutView = (inflater != null) ? inflater.inflate(R.layout.marker_group_layout, null) : null;
     }
 
+    private void initMapStyleOptions() {
+        try {
+            mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.mapstyle_nopoi);
+        } catch (Resources.NotFoundException e) {
+            Log.e("MapView", "Failed to load map style options from resources. Stacktrace:");
+            e.printStackTrace();
+        }
+    }
+
     @Override
-    public void onMapReady(GoogleMap map) {
+    public void onMapReady(@NonNull GoogleMap map) {
         onResume();
         googleMap = map;
         enableMyLocation(enableLocationValue);
+        googleMap.setMapStyle(mapStyleOptions);
         googleMap.setOnMarkerClickListener(this::onMarkerClicked);
         googleMap.setOnMapClickListener(this::onMapClick);
         googleMap.setOnCameraIdleListener(this::updateMarkers);
