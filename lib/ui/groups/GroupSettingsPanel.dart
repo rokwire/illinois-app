@@ -169,7 +169,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               _buildMembershipLayout()
                             ),
                             
-                            Visibility(visible: _canViewManagedSettings  && !_isResearchProject, child:
+                            Visibility(visible:!_isResearchProject, child:
                               Padding(padding: EdgeInsets.only(top: 8), child:
                                 _buildCanAutoJoinLayout(),
                               )
