@@ -90,7 +90,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _researchConsentDetailsController.text = _group?.researchConsentDetails ?? '';
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
 
-    _researchRequiresConsentConfirmation = StringUtils.isNotEmpty(_group?.researchConsentStatement);
+    // #2550: we need consent checkbox selected by default
+    _researchRequiresConsentConfirmation = true; // StringUtils.isNotEmpty(_group?.researchConsentStatement)
 
     if (StringUtils.isNotEmpty(_group?.researchConsentStatement)) {
       _researchConsentStatementController.text = _group!.researchConsentStatement!;
