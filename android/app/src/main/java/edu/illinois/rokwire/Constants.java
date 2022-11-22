@@ -37,7 +37,6 @@ public class Constants {
     public static final float DEFAULT_CAMERA_ZOOM = 17.0f;
     static final float FIRST_THRESHOLD_MARKER_ZOOM = 16.0f;
     static final float SECOND_THRESHOLD_MARKER_ZOOM = 16.89f;
-    static final int MARKER_TITLE_MAX_SYMBOLS_NUMBER = 15;
     public static final double EXPLORE_LOCATION_THRESHOLD_DISTANCE = 200.0; //meters
     static final int SELECT_LOCATION_ACTIVITY_RESULT_CODE = 2;
     public static final String LOCATION_PICKER_DATA_FORMAT = "{\"location\":{\"latitude\":%f,\"longitude\":%f}}";
