@@ -175,7 +175,6 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
   }
 
   _buildGlobalNotificationsInfo(){
-    // bool groupNotificationsEnabled = FirebaseMessaging().notifyGroupUpdates == true;
     bool groupPostNotificationsEnabled = FirebaseMessaging().notifyGroupPostUpdates == true;
     bool groupEventsNotificationsEnabled = FirebaseMessaging().notifyGroupEventsUpdates == true;
     bool groupInvitationsNotificationsEnabled = FirebaseMessaging().notifyGroupInvitationsUpdates == true;
@@ -192,36 +191,33 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
           )
         )
     ],));
-
-    // widgets.add(ToggleRibbonButton(
-    //     borderRadius: BorderRadius.zero,
-    //     label: Localization().getStringEx("panel.settings.notifications.group_updates", "Group Updates"),
-    //     toggled: groupNotificationsEnabled,
-    //     textStyle: groupNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
-    // ));
     widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       ToggleRibbonButton(
           toggled: groupPostNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.posts.label", "Posts"),
+          hint: "disabled",
           textStyle: groupPostNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       ),
       ToggleRibbonButton(
           toggled: groupEventsNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.event.label", "Event"),
+          hint: "disabled",
           textStyle: groupEventsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       ),
       ToggleRibbonButton(
           toggled: groupInvitationsNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.invitations.label", "Invitations"),
-          textStyle: groupInvitationsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
+          textStyle: groupInvitationsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled"),
+          hint: "disabled"
       ),
       ToggleRibbonButton(
           toggled:  groupPollsNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.polls.label", "Polls"),
+          hint: "disabled",
           textStyle: groupPollsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       )
     ]))))]));
