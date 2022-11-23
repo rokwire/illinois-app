@@ -5,13 +5,14 @@
 	"questions": [{
 		"id":"q01",
 		"title":"How old are you?",
+		"hint":"Age",
 		"description_prefix":null,
 		"description_suffix":null,
 		"min_answers":1,
 		"max_answers":1,
 		"answers": [
-			{"id":"a01", "title":"Under 18 (I will NOT be 18 years old by January 16, 2023)"},
-			{"id":"a02", "title":"Under 18 (I will be 18 years old by January 16, 2023)"},
+			{"id":"a01", "title":"Under 18 (I will NOT be 18 years old by January 16, 2023)", "hint":"Under 18"},
+			{"id":"a02", "title":"Under 18 (I will be 18 years old by January 16, 2023)", "hint":"Under 18"},
 			{"id":"a03", "title":"18"},
 			{"id":"a04", "title":"19"},
 			{"id":"a05", "title":"20"},
@@ -22,11 +23,12 @@
 			{"id":"a10", "title":"31-35"},
 			{"id":"a11", "title":"36-40"},
 			{"id":"a12", "title":"41 or older"},
-			{"id":"a13", "title":"I'd rather not answer"}
+			{"id":"a13", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
 		"id":"q02",
 		"title":"Are you currently located within the United States?",
+		"hint":"Located in US",
 		"description_prefix":null,
 		"description_suffix":null,
 		"min_answers":1,
@@ -34,11 +36,12 @@
 		"answers": [
 			{"id":"a01", "title":"Yes"},
 			{"id":"a02", "title":"No"},
-			{"id":"a03", "title":"I'd rather not answer"}
+			{"id":"a03", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
 		"id":"q03",
 		"title":"What is your gender?",
+		"hint":"Gender",
 		"description_prefix":null,
 		"description_suffix":null,
 		"min_answers":1,
@@ -46,14 +49,15 @@
 		"answers": [
 			{"id":"a01", "title":"Female"},
 			{"id":"a02", "title":"Male"},
-			{"id":"a03", "title":"Transgender female (MTF)"},
-			{"id":"a04", "title":"Transgender male (FTM)"},
+			{"id":"a03", "title":"Transgender female (MTF)", "hint":"Transgender female"},
+			{"id":"a04", "title":"Transgender male (FTM)", "hint":"Transgender male"},
 			{"id":"a05", "title":"Other"},
-			{"id":"a06", "title":"I'd rather not answer"}
+			{"id":"a06", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
 		"id":"q04",
 		"title":"What is your sexual orientation?",
+		"hint":"Sexual Orientation",
 		"description_prefix":null,
 		"description_suffix":null,
 		"min_answers":1,
@@ -65,28 +69,30 @@
 			{"id":"a04", "title":"Pansexual"},
 			{"id":"a05", "title":"Asexual"},
 			{"id":"a06", "title":"Other"},
-			{"id":"a07", "title":"I'd rather not answer"}
+			{"id":"a07", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
 		"id":"q05",
 		"title":"What is your year in college?",
+		"hint":"Year",
 		"description_prefix":null,
 		"description_suffix":null,
 		"min_answers":1,
 		"max_answers":1,
 		"answers": [
-			{"id":"a01", "title":"Freshman or first-year student"},
+			{"id":"a01", "title":"Freshman or first-year student", "hint":"Freshman"},
 			{"id":"a02", "title":"Sophomore"},
 			{"id":"a03", "title":"Junior"},
 			{"id":"a04", "title":"Senior"},
-			{"id":"a05", "title":"Graduate student"},
-			{"id":"a06", "title":"Other (e.g. non-degree student)"},
-			{"id":"a07", "title":"I am not a student"},
-			{"id":"a08", "title":"I'd rather not answer"}
+			{"id":"a05", "title":"Graduate student", "hint":"Graduate"},
+			{"id":"a06", "title":"Other (e.g. non-degree student)", "hint":"Other"},
+			{"id":"a07", "title":"I am not a student", "hint":"Not a student"},
+			{"id":"a08", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
 		"id":"q06",
 		"title":"What is your ethnic background?",
+		"hint":"Ethnic Background",
 		"description_prefix":null,
 		"description_suffix":null,
 		"min_answers":1,
@@ -95,11 +101,12 @@
 			{"id":"a01", "title":"Hispanic or Latino"},
 			{"id":"a02", "title":"Not Hispanic or Latino"},
 			{"id":"a03", "title":"Unknown"},
-			{"id":"a04", "title":"I'd rather not answer"}
+			{"id":"a04", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
 		"id":"q07",
 		"title":"What is your racial background?",
+		"hint":"Racial Background",
 		"description_prefix":null,
 		"description_suffix":null,
 		"min_answers":1,
@@ -109,15 +116,16 @@
 			{"id":"a02", "title":"Alaska Native"},
 			{"id":"a03", "title":"Asian"},
 			{"id":"a04", "title":"Black or African American"},
-			{"id":"a05", "title":"Native Hawaiian or Other Pacific Islander"},
+			{"id":"a05", "title":"Native Hawaiian or Other Pacific Islander", "hint":"Hawaiian or Pacific Islander"},
 			{"id":"a06", "title":"White"},
-			{"id":"a07", "title":"Other or multiracial"},
+			{"id":"a07", "title":"Other or multiracial", "hint":"Other"},
 			{"id":"a08", "title":"Unknown"},
-			{"id":"a09", "title":"I'd rather not answer"}
+			{"id":"a09", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
 		"id":"q08",
 		"title":"Which of the following best describes your racial or ethnic ancestry?",
+		"hint":"Ethnic Ancestry",
 		"description_prefix":null,
 		"description_suffix":null,
 		"min_answers":1,
@@ -149,33 +157,35 @@
 			{"id":"a24", "title":"Italian"},
 			{"id":"a25", "title":"French"},
 			{"id":"a26", "title":"Polish"},
-			{"id":"a27", "title":"None of the above"},
-			{"id":"a28", "title":"I'd rather not answer"}
+			{"id":"a27", "title":"None of the above", "hint":"Other"},
+			{"id":"a28", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
 		"id":"q09",
 		"title":"How long have you lived in the U.S?",
+		"hint":"Lived in US",
 		"description_prefix":null,
 		"description_suffix":null,
 		"min_answers":1,
 		"max_answers":1,
 		"answers": [
-			{"id":"a01", "title":"Less than a year"},
-			{"id":"a02", "title":"More than 1 year but less than 2 years"},
-			{"id":"a03", "title":"More than 2 years but less than 3 years"},
-			{"id":"a04", "title":"More than 3 years but less than 4 years"},
-			{"id":"a05", "title":"More than 4 years but less than 5 years"},
-			{"id":"a06", "title":"More than 5 years but less than 7 years"},
-			{"id":"a07", "title":"More than 7 years but less than 9 years"},
-			{"id":"a08", "title":"More than 9 years but less than 12 years"},
-			{"id":"a09", "title":"More than 12 years but less than 15 years"},
-			{"id":"a10", "title":"More than 15 years but less than 20 years"},
-			{"id":"a11", "title":"More than 20 years"},
-			{"id":"a12", "title":"I'd rather not answer"}
+			{"id":"a01", "title":"Less than a year", "hint":"1 year"},
+			{"id":"a02", "title":"More than 1 year but less than 2 years", "hint":"1-2 years"},
+			{"id":"a03", "title":"More than 2 years but less than 3 years", "hint":"2-3 years"},
+			{"id":"a04", "title":"More than 3 years but less than 4 years", "hint":"3-4 years"},
+			{"id":"a05", "title":"More than 4 years but less than 5 years", "hint":"4-5 years"},
+			{"id":"a06", "title":"More than 5 years but less than 7 years", "hint":"5-7 years"},
+			{"id":"a07", "title":"More than 7 years but less than 9 years", "hint":"7-9 years"},
+			{"id":"a08", "title":"More than 9 years but less than 12 years", "hint":"9-12 years"},
+			{"id":"a09", "title":"More than 12 years but less than 15 years", "hint":"12-15 years"},
+			{"id":"a10", "title":"More than 15 years but less than 20 years", "hint":"15-20 years"},
+			{"id":"a11", "title":"More than 20 years", "hint":"20+ years"},
+			{"id":"a12", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
 		"id":"q10",
 		"title":"Are you an international student or an exchange student from a country outside the US?",
+		"hint":"International/Exchange Student",
 		"description_prefix":null,
 		"description_suffix":null,
 		"min_answers":1,
@@ -183,8 +193,8 @@
 		"answers": [
 			{"id":"a01", "title":"Yes"},
 			{"id":"a02", "title":"No"},
-			{"id":"a03", "title":"I am not a student"},
-			{"id":"a04", "title":"I'd rather not answer"}
+			{"id":"a03", "title":"I am not a student", "hint":"Not a student"},
+			{"id":"a04", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	}],
 	"strings":{

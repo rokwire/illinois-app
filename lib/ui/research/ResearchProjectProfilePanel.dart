@@ -113,18 +113,18 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       submitText = sprintf('Target %s potential participants', [_targetAudienceCount]);
     }
 
+    String profileDescription = _profileDescription;
+
     return Column(children: <Widget>[
       Stack(children: [
         Container(color: Styles().colors?.white, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children:<Widget>[
-              Row(children: <Widget>[
-                Expanded(child:
-                  Text('Select Answers',
-                    style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary),),
-                ),
-              ],),
-              Padding(padding: EdgeInsets.only(top: 4), child:
+              Padding(padding: EdgeInsets.zero, child:
+                Text('Select Answers',
+                  style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary),),
+              ),
+              Padding(padding: EdgeInsets.zero, child:
                 Text('Create a target audience by selecting answers that potential participants have chosen.',
                   style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.textSurfaceAccent)),
               ),
@@ -132,11 +132,16 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
                 Text(headingInfo,
                   style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 14, color: Styles().colors?.fillColorPrimary)),
               ),
+              Padding(padding: EdgeInsets.only(right: 12), child:
+                Text(profileDescription, maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 12, color: Styles().colors?.textSurfaceAccent)
+                ),
+              ),
             ]),
           ),
         ),
         Visibility(visible: _updatingTargetAudienceCount, child:
-          Positioned(child:
+          Positioned.fill(child:
             Align(alignment: Alignment.topRight, child:
               Padding(padding: EdgeInsets.only(top: 16, right: 16), child:
                 SizedBox(width: 16, height: 16, child:
@@ -146,6 +151,18 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
             )
           ),
         ),
+        Visibility(visible: profileDescription.isNotEmpty, child:
+          Positioned.fill(child:
+            Align(alignment: Alignment.bottomRight, child:
+              InkWell(onTap: _onDescriptionInfo, child:
+                Padding(padding: EdgeInsets.only(left: 8, right: 12, top: 8, bottom: 12), child:
+                  Image.asset('images/icon-eye.png', excludeFromSemantics: true,)
+                )
+              ),
+            ),
+          ),
+        ),
+
 
       ],),
       Container(height: 1, color: Styles().colors?.surfaceAccent,),
@@ -202,7 +219,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       ));
     }
 
-    String descriptionPrefix = _questionnaireString(question.descriptionPrefix);
+    String descriptionPrefix = _questionnaireStringEx(question.descriptionPrefix);
     if (descriptionPrefix.isNotEmpty) {
       contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, top: 2), child:
         Row(children: [
@@ -220,7 +237,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       ));
     }
 
-    String descriptionSuffix = _questionnaireString(question.descriptionSuffix);
+    String descriptionSuffix = _questionnaireStringEx(question.descriptionSuffix);
     if (descriptionSuffix.isNotEmpty) {
       contentList.add(Padding(padding: EdgeInsets.only(left: _hPadding, right: _hPadding, bottom: 16), child:
         Row(children: [
@@ -253,7 +270,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
   Widget _buildAnswer(Answer answer, { required Question question }) {
     LinkedHashSet<String>? selectedAnswers = _selection[question.id];
     bool selected = selectedAnswers?.contains(answer.id) ?? false;
-    String title = _questionnaireString(answer.title);
+    String title = _questionnaireStringEx(answer.title);
     return Padding(padding: EdgeInsets.only(left: _hPadding - 12, right: _hPadding), child:
       Row(children: [
         InkWell(onTap: () => _onAnswer(answer, question: question), child:
@@ -272,8 +289,8 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
   void _onAnswer(Answer answer, { required Question question }) {
 
-    String answerTitle = _questionnaireString(answer.title, languageCode: 'en');
-    String? questionTitle = _questionnaireString(question.title, languageCode: 'en');
+    String answerTitle = _questionnaireStringEx(answer.title, languageCode: 'en');
+    String questionTitle = _questionnaireStringEx(question.title, languageCode: 'en');
     Analytics().logSelect(target: '$questionTitle => $answerTitle');
 
     String? answerId = answer.id;
@@ -301,15 +318,86 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
     Navigator.of(context).pop(_projectProfile);
   }
 
+  void _onDescriptionInfo() {
+    showDialog(context: context, builder: (context) {
+        return AlertDialog(
+          contentPadding: EdgeInsets.all(16),
+          alignment: Alignment.topCenter,
+          insetPadding: EdgeInsets.symmetric(horizontal: 42.0, vertical: 84.0),
+          content: _profileDescriptionPopupContent,
+        );
+      },
+    );
+  }
+
   Map<String, dynamic> get _projectProfile => {
     (_questionnaire?.id ?? '') : JsonUtils.mapOfStringToLinkedHashSetOfStringsJsonValue(_selection)
   };
 
-  String _questionnaireString(String? key, { String? languageCode }) => _questionnaire?.stringValue(key, languageCode: languageCode) ?? key ?? '';
+  String? _questionnaireString(String? key, { String? languageCode}) => _questionnaire?.stringValue(key, languageCode: languageCode) ?? key;
+  String _questionnaireStringEx(String? key, { String? languageCode}) => _questionnaireString(key, languageCode: languageCode) ?? '';
 
   String _displayQuestionTitle(Question question, { int? index, String? languageCode }) {
-    String title = _questionnaireString(question.title, languageCode: languageCode);
+    String title = _questionnaireStringEx(question.title, languageCode: languageCode);
     return ((index != null) && title.isNotEmpty) ? "$index. $title" : title;
+  }
+
+  String get _profileDescription {
+    String description = '';
+    List<Question>? questions = _questionnaire?.questions;
+    if (questions != null) {
+      for (Question question in questions) {
+        String? questionHint = _questionnaireString(question.displayHint);
+        List<Answer>? answers = question.answers;
+        LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+        if ((questionHint != null) && questionHint.isNotEmpty && (answers != null) && answers.isNotEmpty && (selectedAnswers != null) && selectedAnswers.isNotEmpty) {
+          List<String> answerHints = <String>[];
+          for (Answer answer in answers) {
+            String? answerHint = _questionnaireString(answer.displayHint);
+            if ((answerHint != null) && selectedAnswers.contains(answer.id) && !answerHints.contains(answerHint)) {
+              answerHints.add(answerHint);
+            }
+          }
+          if (answerHints.isNotEmpty) {
+            if (description.isNotEmpty) {
+              description += '; ';
+            }
+            description += "$questionHint: ${answerHints.join(', ')}";
+          }
+        }
+      }
+    }
+    return description;
+  }
+
+  Widget get _profileDescriptionPopupContent {
+    List<Widget> contentList = <Widget>[];
+    List<Question>? questions = _questionnaire?.questions;
+    if (questions != null) {
+      for (Question question in questions) {
+        String? questionHint = _questionnaireString(question.displayHint);
+        List<Answer>? answers = question.answers;
+        LinkedHashSet<String>? selectedAnswers = _selection[question.id];
+        if ((questionHint != null) && questionHint.isNotEmpty && (answers != null) && answers.isNotEmpty && (selectedAnswers != null) && selectedAnswers.isNotEmpty) {
+          List<String> answerHints = <String>[];
+          for (Answer answer in answers) {
+            String? answerHint = _questionnaireString(answer.displayHint);
+            if ((answerHint != null) && selectedAnswers.contains(answer.id) && !answerHints.contains(answerHint)) {
+              answerHints.add(answerHint);
+            }
+          }
+          if (answerHints.isNotEmpty) {
+            contentList.add(RichText(text:
+              TextSpan(style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary), children: <TextSpan>[
+                TextSpan(text: "$questionHint: ", style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
+                TextSpan(text: answerHints.join(', '), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
+              ]),
+            ));
+          }
+        }
+      }
+    }
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: contentList,);
   }
 
   void _updateTargetAudienceCount() {
