@@ -264,7 +264,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
 
   Widget _buildDisabledContentLayer() {
     return Padding(padding: EdgeInsets.only(top: 12), child:
-      BlockSemantics(child:
+      Semantics(excludeSemantics: true,  child:
         GestureDetector(onTap: (){ _onFilter(null); }, child:
           Container(color: Color(0x99000000))
         ),
@@ -284,7 +284,8 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     }
 
     return Padding(padding: EdgeInsets.only(top: 6, left: 16, right: 16, bottom: 32), child:
-      Container(decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.circular(5.0)), child: 
+     Semantics(container:true, child:
+      Container(decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.circular(5.0)), child:
         Padding(padding: EdgeInsets.only(top: 2), child:
           Container(color: Colors.white, child:
             ListView.separated(
@@ -303,6 +304,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
           ),
         )
       )
+     )
     );
   }
 
