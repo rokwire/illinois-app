@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/web_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SkillsSelfEvaluationInfoPanel extends StatefulWidget {
   final Map<String, dynamic> content;
@@ -40,7 +43,7 @@ class _SkillsSelfEvaluationInfoPanelState extends State<SkillsSelfEvaluationInfo
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'),),
-      body: _buildContent(),
+      body: Padding(padding: const EdgeInsets.all(16.0), child: _buildContent()),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: null,
     );
@@ -56,21 +59,67 @@ class _SkillsSelfEvaluationInfoPanelState extends State<SkillsSelfEvaluationInfo
       )));
 
       if (section.body != null) {
+        RegExp regExp = RegExp(r"%{(.*?)}");
+        Iterable<Match> matches = regExp.allMatches(section.body!);
         contentWidgets.add(Text(
-          section.body!,
+          CollectionUtils.isNotEmpty(matches) ? section.body!.substring(0, matches.elementAt(0).start) : section.body!,
           style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
           textAlign: TextAlign.start,
         ));
+
+        for (int i = 0; i < matches.length; i++) {
+          Match match = matches.elementAt(i);
+          String? key = match.group(1);
+          List<String>? parts = key?.split(".");
+
+          if (CollectionUtils.isNotEmpty(parts)) {
+            switch (parts![0]) {
+              case "links":
+                dynamic linkData = MapPathKey.entry(_content.links, parts.sublist(1).join('.'));
+                if (linkData is SkillsSelfEvaluationInfoLink) {
+                  contentWidgets.add(InkWell(onTap: () => _onTapLink(linkData.url, linkData.internal), child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: linkData.text,
+                          style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary),
+                        ),
+                        WidgetSpan(
+                          child: linkData.icon != null ? Padding(padding: const EdgeInsets.only(left: 4.0), child: Image.asset(linkData.icon!)) : Container(),
+                        ),
+                      ],
+                    ),
+                  )));
+                }
+            }
+          }
+
+          contentWidgets.add(Text(
+            section.body!.substring(match.end, (i+1 < matches.length) ? matches.elementAt(i+1).start : null),
+            style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+            textAlign: TextAlign.start,
+          ));
+        }
+        contentWidgets.add(Container(height: 16.0));
       }
       if (CollectionUtils.isNotEmpty(section.subsections)) {
         contentWidgets.add(_buildContent(sections: section.subsections));
       }
-      
-      //TODO: interpolate body string (e.g., for links), fix padding
     }
     return Container(
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: contentWidgets),
     );
+  }
+
+  void _onTapLink(String url, bool internal) {
+    if (internal == true || (internal != false && UrlUtils.launchInternal(url))) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+    } else {
+      Uri? parsedUri = Uri.tryParse(url);
+      if (parsedUri != null) {
+        launchUrl(parsedUri, mode: LaunchMode.externalApplication);
+      }
+    }
   }
 }
 
@@ -89,7 +138,7 @@ class SkillsSelfEvaluationInfoContent {
     if (linksJson != null) {
       links = <String, SkillsSelfEvaluationInfoLink>{};
       for (MapEntry<String, dynamic> item in linksJson.entries) {
-        if (item is Map<String, dynamic>) {
+        if (item.value is Map<String, dynamic>) {
           links[item.key] = SkillsSelfEvaluationInfoLink.fromJson(item.value);
         }
       }
@@ -144,8 +193,9 @@ class SkillsSelfEvaluationInfoLink {
   final String text;
   final String? icon;
   final String url;
+  final bool internal;
 
-  SkillsSelfEvaluationInfoLink({required this.type, required this.text, this.icon, required this.url});
+  SkillsSelfEvaluationInfoLink({required this.type, required this.text, this.icon, required this.url, this.internal = false});
 
   factory SkillsSelfEvaluationInfoLink.fromJson(Map<String, dynamic> json) {
     return SkillsSelfEvaluationInfoLink(
@@ -153,6 +203,7 @@ class SkillsSelfEvaluationInfoLink {
       text: JsonUtils.stringValue(json['text']) ?? '',
       icon: JsonUtils.stringValue(json['icon']),
       url: JsonUtils.stringValue(json['url']) ?? '',
+      internal: JsonUtils.boolValue(json['internal']) ?? false,
     );
   }
 }
