@@ -25,6 +25,11 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class RoleGridButton extends TileToggleButton {
+  static final double  minimumTitleRowsCount = 2;
+  static final double  fontSizeHeightFactor = 1.2;
+
+  final double scaleFactor;
+
   RoleGridButton({
     required String title,
     required String hint,
@@ -36,6 +41,7 @@ class RoleGridButton extends TileToggleButton {
     dynamic data,
     double? sortOrder,
     void Function(RoleGridButton)? onTap,
+    this.scaleFactor = 1.0,
   }) : super(
     title: title,
     hint: hint,
@@ -55,9 +61,11 @@ class RoleGridButton extends TileToggleButton {
   );
 
   @protected Widget get defaultIconWidget =>  Container(constraints: BoxConstraints(minHeight: 40), child: super.defaultIconWidget);
-  @protected Widget get displayTitleWidget =>  Container(constraints: BoxConstraints(minHeight: 50), child: super.displayTitleWidget);
+  @protected Widget get displayTitleWidget =>  Container(constraints: BoxConstraints(minHeight: _titleMinHeight), child: super.displayTitleWidget);
+  double get _titleMinHeight => (minimumTitleRowsCount * titleFontSize * fontSizeHeightFactor * scaleFactor) ;
 
-  static RoleGridButton? fromRole(UserRole? role, { bool? selected, double? sortOrder, void Function(RoleGridButton)? onTap }) {
+
+  static RoleGridButton? fromRole(UserRole? role, { bool? selected, double? sortOrder, double? scaleFactor, void Function(RoleGridButton)? onTap }) {
     if (role == UserRole.student) {
       return RoleGridButton(
         title: Localization().getStringEx('panel.onboarding2.roles.button.student.title', 'University Student'),
@@ -69,6 +77,7 @@ class RoleGridButton extends TileToggleButton {
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
+        scaleFactor: scaleFactor ?? 1,
       );
     }
     else if (role == UserRole.visitor) {
@@ -82,6 +91,7 @@ class RoleGridButton extends TileToggleButton {
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
+        scaleFactor: scaleFactor ?? 1,
       );
     }
     else if (role == UserRole.fan) {
@@ -95,6 +105,7 @@ class RoleGridButton extends TileToggleButton {
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
+        scaleFactor: scaleFactor ?? 1,
       );
     }
     else if (role == UserRole.employee) {
@@ -108,6 +119,7 @@ class RoleGridButton extends TileToggleButton {
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
+        scaleFactor: scaleFactor ?? 1,
       );
     }
     else if (role == UserRole.alumni) {
@@ -121,6 +133,7 @@ class RoleGridButton extends TileToggleButton {
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
+        scaleFactor: scaleFactor ?? 1,
       );
     }
     else if (role == UserRole.parent) {
@@ -134,6 +147,7 @@ class RoleGridButton extends TileToggleButton {
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
+        scaleFactor: scaleFactor ?? 1,
       );
     }
 
@@ -149,6 +163,7 @@ class RoleGridButton extends TileToggleButton {
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
+        scaleFactor: scaleFactor ?? 1,
       );
     }
     else {
@@ -156,7 +171,7 @@ class RoleGridButton extends TileToggleButton {
     }
   }
 
-  static Widget gridFromFlexUI({ Set<UserRole>? selectedRoles, double gridSpacing = 5, void Function(RoleGridButton)? onTap }) {
+  static Widget gridFromFlexUI({ Set<UserRole>? selectedRoles, double gridSpacing = 5, void Function(RoleGridButton)? onTap, double? scaleFactor }) {
     List<Widget> roleButtons1 = <Widget>[], roleButtons2 = <Widget>[];
     List<String> codes = JsonUtils.listStringsValue(FlexUI()['roles']) ?? [];
     int index = 1;
@@ -167,6 +182,7 @@ class RoleGridButton extends TileToggleButton {
       RoleGridButton? button = RoleGridButton.fromRole(role,
         selected: selected,
         sortOrder: index.toDouble(),
+        scaleFactor: scaleFactor,
         onTap: onTap
       );
 

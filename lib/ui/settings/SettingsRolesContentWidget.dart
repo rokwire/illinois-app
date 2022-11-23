@@ -77,7 +77,7 @@ class _SettingsRolesContentWidgetState extends State<SettingsRolesContentWidget>
               ),
               Padding(
                 padding: EdgeInsets.only(left: 0, top: 8, right: 8, bottom: 0),
-                child: RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton),
+                child: RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, scaleFactor: MediaQuery.of(context).textScaleFactor,),
               ),
             ],
           ),
