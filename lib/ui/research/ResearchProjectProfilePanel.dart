@@ -97,7 +97,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
     String headingInfo, submitText;
     if (_targetAudienceCount == null) {
-      headingInfo = 'Evaluating potential participants...';
+      headingInfo = _updatingTargetAudienceCount ? 'Evaluating potential participants...' : 'Potential participants evaluation failed.';
       submitText = 'Save';
     }
     else if (_targetAudienceCount == 0) {
