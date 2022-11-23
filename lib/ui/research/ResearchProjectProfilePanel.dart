@@ -95,28 +95,28 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       contentList.addAll(questions);
     }
 
-    String headingText, submitText;
+    String headingInfo, submitText;
     if (_targetAudienceCount == null) {
-      headingText = 'Create project target audience by selecting the answers that these users have chosen targeting unknown number of potential participants.';
-      submitText = 'Target unknown potential participants';
+      headingInfo = 'Evaluating potential participants...';
+      submitText = 'Save';
     }
     else if (_targetAudienceCount == 0) {
-      headingText = 'Create project target audience by selecting the answers that these users have chosen targeting no potential participants.';
+      headingInfo = 'Currently targeting no potential participants.';
       submitText = 'Target no potential participants';
     }
     else if (_targetAudienceCount == 1) {
-      headingText = 'Create project target audience by selecting the answers that these users have chosen targeting 1 potential participant.';
+      headingInfo = 'Currently targeting 1 potential participant.';
       submitText = 'Target 1 potential participant';
     }
     else {
-      headingText = sprintf('Create project target audience by selecting the answers that these users have chosen targeting %s potential participants.', [_targetAudienceCount]);
+      headingInfo = sprintf('Currently targeting %s potential participants.', [_targetAudienceCount]);
       submitText = sprintf('Target %s potential participants', [_targetAudienceCount]);
     }
 
     return Column(children: <Widget>[
       Stack(children: [
         Container(color: Styles().colors?.white, child:
-          Padding(padding: EdgeInsets.all(_hPadding), child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children:<Widget>[
               Row(children: <Widget>[
                 Expanded(child:
@@ -124,9 +124,13 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
                     style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary),),
                 ),
               ],),
-              Padding(padding: EdgeInsets.only(top: 8), child:
-                Text(headingText,
-                  style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textSurfaceAccent)),
+              Padding(padding: EdgeInsets.only(top: 4), child:
+                Text('Create a target audience by selecting answers that potential participants have chosen.',
+                  style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.textSurfaceAccent)),
+              ),
+              Padding(padding: EdgeInsets.only(top: 4), child:
+                Text(headingInfo,
+                  style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 14, color: Styles().colors?.fillColorPrimary)),
               ),
             ]),
           ),
