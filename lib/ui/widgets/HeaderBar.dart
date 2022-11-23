@@ -297,7 +297,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
 
   Widget buildHeaderNotificationsButton(BuildContext context) {
     int unreadMsgsCount = Inbox().unreadMessagesCount;
-    return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.notifications.hint', ''), button: true, excludeSemantics: true, child:
+    return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), /*hint: Localization().getStringEx('headerbar.notifications.hint', ''),*/ hint: "$unreadMsgsCount Unread Messages" /*TBD localize*/, button: true, excludeSemantics: true, child:
 //    IconButton(icon: Image.asset('images/notifications-white.png', excludeFromSemantics: true), onPressed: () => onTapNotifications(context))
       InkWell(onTap: () => onTapNotifications(context), child:
         Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 2), child:
