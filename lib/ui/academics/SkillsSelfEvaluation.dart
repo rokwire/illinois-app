@@ -16,11 +16,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Polls.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/polls.dart' as polls;
-import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
@@ -38,6 +38,14 @@ class SkillsSelfEvaluation extends StatefulWidget {
 }
 
 class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
+  Map<String, Map<String, dynamic>>? _contentItems;
+
+  @override
+  void initState() {
+    _loadContentItems();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SectionSlantHeader(
@@ -113,6 +121,12 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
     ];
   }
 
+  void _loadContentItems() {
+    Polls().loadContentItems(categories: ["Skills Self-Evaluation"]).then((content) {
+      _contentItems = content;
+    });
+  }
+
   void _onTapShowBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -137,25 +151,25 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
                 rightIconAsset: "images/chevron-right.png",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label", "Where do my results go?"),
                 textColor: Styles().colors?.fillColorPrimaryVariant,
-                // onTap: () => _onTapShowInfo("where_results_go"),
+                onTap: () => _onTapShowInfo("where_results_go"),
               ),
               RibbonButton(
                 rightIconAsset: "images/chevron-right.png",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.how_results_determined.label", "How are my results determined?"),
                 textColor: Styles().colors?.fillColorPrimaryVariant,
-                // onTap: () => _onTapShowInfo("how_results_determined"),
+                onTap: () => _onTapShowInfo("how_results_determined"),
               ),
               RibbonButton(
                 rightIconAsset: "images/chevron-right.png",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.why_skills_matter.label", "Why do these skills matter?"),
                 textColor: Styles().colors?.fillColorPrimaryVariant,
-                // onTap: () => _onTapShowInfo("why_skills_matter"),
+                onTap: () => _onTapShowInfo("why_skills_matter"),
               ),
               RibbonButton(
                 rightIconAsset: "images/chevron-right.png",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.who_created_assessment.label", "Who created this assessment?"),
                 textColor: Styles().colors?.fillColorPrimaryVariant,
-                // onTap: () => _onTapShowInfo("who_created_assessment"),
+                onTap: () => _onTapShowInfo("who_created_assessment"),
               ),
             ]));
       });
@@ -169,10 +183,15 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _onTapResults,)));
       }
     }
-}
+  }
 
   void _onTapResults() {
     Navigator.of(context).pop();
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel()));
   }
+
+  void _onTapShowInfo(String key) {
+    Navigator.of(context).pop();
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationInfoPanel(content: _contentItems?[key] ?? {})));
+  } 
 }
