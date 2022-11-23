@@ -835,8 +835,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     return Container(
         padding: EdgeInsets.only(left: 16, right: 16, top: 8),
         child: _buildSwitch(
-            title: "Is recruitment closed?",
-            value: _group?.researchOpen == false,
+            title: "Currently recruiting participants",
+            value: _group?.researchOpen == true,
             onTap: _onTapResearchOpen));
   }
 
@@ -888,7 +888,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     return Container(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
       Column(children: [
         _buildSwitch(
-          title: "Requires confirmation",
+          title: "Require participant consent",
           value: _researchRequiresConsentConfirmation,
           onTap: _onTapResearchConfirmation
         ),
