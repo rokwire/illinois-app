@@ -45,11 +45,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -359,7 +357,6 @@ public class Utils {
                 ImageView iconImageView = markerLayoutView.findViewById(R.id.markerIconView);
                 iconImageView.setImageResource(iconResource);
                 iconGenerator.setContentView(markerLayoutView);
-                markerIcon = iconGenerator.makeIcon();
             } else {
                 TextView markerTitleView = markerGroupLayoutView.findViewById(R.id.markerGroupTitleView);
                 markerTitleView.setText(markerTitle);
@@ -374,12 +371,23 @@ public class Utils {
                     gradientDrawable.setColor(ContextCompat.getColor(context, exploreGroupColor));
                 }
                 iconGenerator.setContentView(markerGroupLayoutView);
-                markerIcon = iconGenerator.makeIcon();
             }
+            markerIcon = iconGenerator.makeIcon();
             if (markerIcon != null) {
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(markerIcon));
             }
             return markerOptions;
+        }
+
+        public static boolean shouldUpdateMarkerView(float currentZoom, float previousZoom) {
+            if (currentZoom == previousZoom) {
+                return false;
+            }
+            float minZoom = Math.min(currentZoom, previousZoom);
+            float maxZoom = Math.max(currentZoom, previousZoom);
+            boolean crossedFirstThreshold = ((minZoom <= Constants.FIRST_THRESHOLD_MARKER_ZOOM) && (Constants.FIRST_THRESHOLD_MARKER_ZOOM < maxZoom));
+            boolean crossedSecondThreshold = ((minZoom <= Constants.SECOND_THRESHOLD_MARKER_ZOOM) && (Constants.SECOND_THRESHOLD_MARKER_ZOOM < maxZoom));
+            return crossedFirstThreshold || crossedSecondThreshold;
         }
 
         public static void updateCustomMarkerAppearance(Context context, Marker marker,
@@ -400,10 +408,9 @@ public class Utils {
                     View textFrameView = markerLayoutView.findViewById(R.id.markerTextFrame);
                     textFrameView.setVisibility(textVisibility);
                     if (passedFirstThreshold) {
-                        String shortTitle = Utils.Explore.optExploreMarkerShortTitle(marker);
                         TextView markerTitleView = markerLayoutView.findViewById(R.id.markerTitleView);
                         String markerTitle = marker.getTitle();
-                        markerTitleView.setText(shortTitle != null ? shortTitle : markerTitle);
+                        markerTitleView.setText(markerTitle);
                         TextView markerSnippetView = markerLayoutView.findViewById(R.id.markerSnippetView);
                         markerSnippetView.setVisibility(GONE);
                     }
@@ -425,8 +432,7 @@ public class Utils {
                 if (singleExploreMarker) {
                     TextView markerTitleView = markerLayoutView.findViewById(R.id.markerTitleView);
                     String markerTitle = marker.getTitle();
-                    String shortTitle = Utils.Explore.optExploreMarkerShortTitle(marker);
-                    markerTitleView.setText(passedSecondThreshold ? markerTitle : shortTitle);
+                    markerTitleView.setText(markerTitle);
                     TextView markerSnippetView = markerLayoutView.findViewById(R.id.markerSnippetView);
                     String snippetText = marker.getSnippet();
                     boolean showSnippet = !Utils.Str.isEmpty(snippetText) && passedSecondThreshold;
@@ -458,12 +464,9 @@ public class Utils {
 
         public static JSONObject constructMarkerTagJson(Context context, String markerTitle, Object markerRawData) {
             boolean singleExploreMarker = (markerRawData instanceof HashMap);
-            String shortTitle = (markerTitle != null && markerTitle.length() > Constants.MARKER_TITLE_MAX_SYMBOLS_NUMBER) ?
-                    String.format("%s...", markerTitle.substring(0, 15)) : markerTitle;
             JSONObject markerTagJson = new JSONObject();
             try {
                 markerTagJson.put("title", markerTitle);
-                markerTagJson.put("short_title", shortTitle);
                 markerTagJson.put("raw_data", markerRawData);
                 markerTagJson.put("single_explore", singleExploreMarker);
                 if (!singleExploreMarker) {
@@ -479,11 +482,6 @@ public class Utils {
         public static Object optExploreMarkerRawData(Marker marker) {
             JSONObject markerTagJson = optMarkerTagJson(marker);
             return (markerTagJson != null) ? markerTagJson.opt("raw_data") : null;
-        }
-
-        private static String optExploreMarkerShortTitle(Marker marker) {
-            JSONObject markerTagJson = optMarkerTagJson(marker);
-            return (markerTagJson != null) ? markerTagJson.optString("short_title", null) : null;
         }
 
         private static String optExploreMarkerDescrLabel(Marker marker) {
