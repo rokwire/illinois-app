@@ -119,7 +119,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
         enabled: _toggleButtonEnabled,
         borderRadius: BorderRadius.zero,
         label: Localization().getStringEx(
-            "panel.group_member_notifications.override_notifications.label", "Override my notification preferences for this group"),
+            "panel.group_member_notifications.override_notifications.label", "Use these notification preferences for this group"),
         toggled: memberPreferences?.overridePreferences ?? false,
         onTap: _toggleButtonEnabled ? _onToggleOverrideNotificationPreferences : null,
         textStyle: _toggleButtonEnabled
@@ -187,7 +187,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
           child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               color: Colors.white,
-              child: Text(Localization().getStringEx('panel.group_member_notifications.member.info.heading.msg', 'Global Group Notification Settings'), //TBD localize
+              child: Text(Localization().getStringEx('panel.group_member_notifications.member.info.heading.msg', 'Current group notification preferences'), //TBD localize
                   style: Styles().textStyles?.getTextStyle("widget.title.regular")),
           )
         )
