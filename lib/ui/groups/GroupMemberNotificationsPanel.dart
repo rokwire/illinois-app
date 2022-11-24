@@ -175,7 +175,6 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
   }
 
   _buildGlobalNotificationsInfo(){
-    // bool groupNotificationsEnabled = FirebaseMessaging().notifyGroupUpdates == true;
     bool groupPostNotificationsEnabled = FirebaseMessaging().notifyGroupPostUpdates == true;
     bool groupEventsNotificationsEnabled = FirebaseMessaging().notifyGroupEventsUpdates == true;
     bool groupInvitationsNotificationsEnabled = FirebaseMessaging().notifyGroupInvitationsUpdates == true;
@@ -196,26 +195,21 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
     widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _DisabledToggleButton(
           toggled: groupPostNotificationsEnabled,
-          borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.posts.label", "Posts"),
           textStyle: groupPostNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
-
       ),
       _DisabledToggleButton(
           toggled: groupEventsNotificationsEnabled,
-          borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.event.label", "Event"),
           textStyle: groupEventsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       ),
       _DisabledToggleButton(
           toggled: groupInvitationsNotificationsEnabled,
-          borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.invitations.label", "Invitations"),
           textStyle: groupInvitationsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       ),
       _DisabledToggleButton(
           toggled:  groupPollsNotificationsEnabled,
-          borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.group_updates.polls.label", "Polls"),
           textStyle: groupPollsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       )
@@ -373,17 +367,15 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
 
 class _DisabledToggleButton extends ToggleRibbonButton{
   static Map<bool, Widget> _rightIcons= {
-    true: Styles().images?.getImage("images/green-check-mark.png", excludeFromSemantics: true, size: 24) ?? Container(),
-    false: Styles().images?.getImage("images/icon-x-orange.png", excludeFromSemantics: true, size: 24) ?? Container(),
+    true: Styles().images?.getImage("images/green-check-mark.png", excludeFromSemantics: true, size: 20) ?? Container(),
+    false: Styles().images?.getImage("images/icon-x-orange.png", excludeFromSemantics: true, size: 20) ?? Container(),
   };
 
   _DisabledToggleButton( {String? label,
       bool? toggled,
       void Function()? onTap,
-      BoxBorder? border,
-      BorderRadius? borderRadius,
       TextStyle? textStyle,})
-      : super(label: label, toggled: (toggled == true), onTap: onTap, border: border, borderRadius: borderRadius, textStyle: textStyle, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),rightIcons: _rightIcons);
+      : super(label: label, toggled: (toggled == true), onTap: onTap, textStyle: textStyle, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),rightIcons: _rightIcons);
 }
 
 class _EnabledToggleButton extends ToggleRibbonButton {
