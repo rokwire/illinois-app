@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Group Notification Settings panel: update styling [#2538](https://github.com/rokwire/illinois-app/issues/2538).
 ### Added
 - Android: implement map POIs appearance to be like in iOS [#2554](https://github.com/rokwire/illinois-app/issues/2554).
+### Fixed
+- Show proper error message when WPGU radio failed to initialize [#2568](https://github.com/rokwire/illinois-app/issues/2568).
 
 ## [4.2.25] - 2022-11-23
 ### Changed
