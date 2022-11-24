@@ -403,7 +403,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Container(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
       Column(children: [
         _buildSwitch(
-          title: "Requires confirmation",
+          title: "Require participant consent",
           value: _researchRequiresConsentConfirmation,
           onTap: _onTapResearchConfirmation
         ),
@@ -747,7 +747,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         padding: EdgeInsets.only(left: 16, right: 16, top: 8),
         child: _buildSwitch(
             title: "Is the research project open?",
-            value: _group?.researchOpen,
+            value: _group?.researchOpen == true,
             onTap: _onTapResearchOpen));
   }
 
