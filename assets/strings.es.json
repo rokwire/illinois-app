@@ -2642,7 +2642,8 @@
     "widget.home.radio.button.pause.title": "Pausa",
     "widget.home.radio.button.play.title": "SINTONIZAR",
     "widget.home.radio.button.initalize.title": "Inicializando",
-    "widget.home.radio.button.fail.title": "No disponible",
+    "widget.home.radio.button.not_available.title": "No disponible",
+    "widget.home.radio.button.fail.title": "Inicialización falló",
     "widget.home.radio.button.add_radio.hint": "",
 
     "widget.home.prompt.add.favorite": "¿Estás segura de que quieres AÑADIR este favorito?",

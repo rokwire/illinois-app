@@ -127,7 +127,10 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
       buttonTitle = Localization().getStringEx('widget.home.radio.button.initalize.title', 'Initializing');
     }
     else if (!WPGUFMRadio().isEnabled) {
-      buttonTitle = Localization().getStringEx('widget.home.radio.button.fail.title', 'Not Available');
+      buttonTitle = Localization().getStringEx('widget.home.radio.button.not_available.title', 'Not Available');
+    }
+    else {
+      buttonTitle = Localization().getStringEx('widget.home.radio.button.fail.title', 'Initialization failed');
     }
 
     return GestureDetector(onTap: _onTapPlayPause, child:

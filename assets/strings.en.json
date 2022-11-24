@@ -2645,7 +2645,8 @@
     "widget.home.radio.button.pause.title": "Pause",
     "widget.home.radio.button.play.title": "TUNE IN",
     "widget.home.radio.button.initalize.title": "Initializing",
-    "widget.home.radio.button.fail.title": "Not Available",
+    "widget.home.radio.button.not_available.title": "Not Available",
+    "widget.home.radio.button.fail.title": "Initialization failed",
     "widget.home.radio.button.add_radio.hint": "",
 
     "widget.home.prompt.add.favorite": "Are you sure you want to ADD this favorite?",
