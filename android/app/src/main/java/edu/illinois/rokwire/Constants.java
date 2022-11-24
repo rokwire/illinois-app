@@ -37,6 +37,7 @@ public class Constants {
     public static final float DEFAULT_CAMERA_ZOOM = 17.0f;
     public static final float MAP_NO_POI_THRESHOLD_ZOOM = 17.0f;
     public static final float MAP_THRESHOLD_ZOOM_UPDATE_STEP = 0.3f;
+    public static final float MAP_MAX_ZOOM_LEVEL_FOR_THRESHOLD = 16f;
     public static final float FIRST_THRESHOLD_MARKER_ZOOM = 17.0f;
     public static final float SECOND_THRESHOLD_MARKER_ZOOM = 18.00f;
     public static final int SELECT_LOCATION_ACTIVITY_RESULT_CODE = 2;

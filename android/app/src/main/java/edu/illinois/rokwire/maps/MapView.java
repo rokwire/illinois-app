@@ -318,10 +318,10 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
 
     private void updateMarkers() {
         float currentCameraZoom = googleMap.getCameraPosition().zoom;
-        boolean updateMarkerInfo = (currentCameraZoom != cameraZoom);
-        if (markers != null && !markers.isEmpty()) {
-            for (Marker marker : markers) {
-                if (updateMarkerInfo) {
+        boolean updateMarkerInfo = Utils.Explore.shouldUpdateMarkerView(currentCameraZoom, cameraZoom);
+        if (updateMarkerInfo) {
+            if (markers != null && !markers.isEmpty()) {
+                for (Marker marker : markers) {
                     boolean singleExploreMarker = Utils.Explore.optSingleExploreMarker(marker);
                     Utils.Explore.updateCustomMarkerAppearance(getContext(), marker, singleExploreMarker, currentCameraZoom, cameraZoom, markerLayoutView, markerGroupLayoutView, iconGenerator);
                 }
@@ -385,11 +385,13 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     private void onCameraIdle() {
         CameraPosition cameraPosition = googleMap.getCameraPosition();
         float zoomDelta = Math.abs(cameraZoom - cameraPosition.zoom);
-        if (zoomDelta > Constants.MAP_THRESHOLD_ZOOM_UPDATE_STEP) {
+        boolean zoomDeltaPassed = (zoomDelta > Constants.MAP_THRESHOLD_ZOOM_UPDATE_STEP);
+        // Prevent building explores (respectively markers) for zoom level that is above our max zoom level
+        boolean maxZoomLevelNotReached = (cameraPosition.zoom < Constants.MAP_MAX_ZOOM_LEVEL_FOR_THRESHOLD);
+        if (zoomDeltaPassed && maxZoomLevelNotReached) {
             buildDisplayExplores();
         } else {
             updateMarkers();
-
         }
         updateMapStyle();
     }
@@ -444,7 +446,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             1000000, 800000, 600000, 200000, 100000,    // zoom 0 - 4
             100000,  80000,  60000,  20000,  10000,     // zoom 5 - 9
             5000,    1000,   500,    200,    100,       // zoom 10 - 14
-            50,      0                                  // zoom 15 - 16
+            50,      0                                  // zoom 15 - 16 (max zoom level)
         };
 
         int zoomIndex = Math.round(zoom);

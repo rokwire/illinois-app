@@ -357,7 +357,6 @@ public class Utils {
                 ImageView iconImageView = markerLayoutView.findViewById(R.id.markerIconView);
                 iconImageView.setImageResource(iconResource);
                 iconGenerator.setContentView(markerLayoutView);
-                markerIcon = iconGenerator.makeIcon();
             } else {
                 TextView markerTitleView = markerGroupLayoutView.findViewById(R.id.markerGroupTitleView);
                 markerTitleView.setText(markerTitle);
@@ -372,12 +371,23 @@ public class Utils {
                     gradientDrawable.setColor(ContextCompat.getColor(context, exploreGroupColor));
                 }
                 iconGenerator.setContentView(markerGroupLayoutView);
-                markerIcon = iconGenerator.makeIcon();
             }
+            markerIcon = iconGenerator.makeIcon();
             if (markerIcon != null) {
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(markerIcon));
             }
             return markerOptions;
+        }
+
+        public static boolean shouldUpdateMarkerView(float currentZoom, float previousZoom) {
+            if (currentZoom == previousZoom) {
+                return false;
+            }
+            float minZoom = Math.min(currentZoom, previousZoom);
+            float maxZoom = Math.max(currentZoom, previousZoom);
+            boolean crossedFirstThreshold = ((minZoom <= Constants.FIRST_THRESHOLD_MARKER_ZOOM) && (Constants.FIRST_THRESHOLD_MARKER_ZOOM < maxZoom));
+            boolean crossedSecondThreshold = ((minZoom <= Constants.SECOND_THRESHOLD_MARKER_ZOOM) && (Constants.SECOND_THRESHOLD_MARKER_ZOOM < maxZoom));
+            return crossedFirstThreshold || crossedSecondThreshold;
         }
 
         public static void updateCustomMarkerAppearance(Context context, Marker marker,
