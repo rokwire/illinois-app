@@ -35,10 +35,11 @@ public class Constants {
     //Maps
     public static final LatLng DEFAULT_INITIAL_CAMERA_POSITION = new LatLng(40.102116, -88.227129); //Illinois University: Center of Campus //(40.096230, -88.235899); // State Farm Center
     public static final float DEFAULT_CAMERA_ZOOM = 17.0f;
-    static final float FIRST_THRESHOLD_MARKER_ZOOM = 16.0f;
-    static final float SECOND_THRESHOLD_MARKER_ZOOM = 16.89f;
-    public static final double EXPLORE_LOCATION_THRESHOLD_DISTANCE = 200.0; //meters
-    static final int SELECT_LOCATION_ACTIVITY_RESULT_CODE = 2;
+    public static final float MAP_NO_POI_THRESHOLD_ZOOM = 17.0f;
+    public static final float MAP_THRESHOLD_ZOOM_UPDATE_STEP = 0.3f;
+    public static final float FIRST_THRESHOLD_MARKER_ZOOM = 17.0f;
+    public static final float SECOND_THRESHOLD_MARKER_ZOOM = 18.00f;
+    public static final int SELECT_LOCATION_ACTIVITY_RESULT_CODE = 2;
     public static final String LOCATION_PICKER_DATA_FORMAT = "{\"location\":{\"latitude\":%f,\"longitude\":%f}}";
     public static final float INDOORS_BUILDING_ZOOM = 17.0f;
     public static final String ANALYTICS_ROUTE_LOCATION_FORMAT = "{\"latitude\":%f,\"longitude\":%f}";
@@ -47,5 +48,4 @@ public class Constants {
     // Shared Prefs
     static final String DEFAULT_SHARED_PREFS_FILE_NAME = "default_shared_prefs";
     static final String SECURE_SHARED_PREFS_FILE_NAME = "secure_shared_prefs";
-    static final String LOCATION_PERMISSIONS_REQUESTED_KEY = "location_permissions_requested";
 }
