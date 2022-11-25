@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Implement "Mark all as read" [#2570](https://github.com/rokwire/illinois-app/issues/2570).
 
 ## [4.2.26] - 2022-11-24
 ### Changed

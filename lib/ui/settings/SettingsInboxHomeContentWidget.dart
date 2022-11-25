@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -10,6 +11,7 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
@@ -62,6 +64,8 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   bool _isEditMode = false;
   Set<String> _selectedMessageIds = Set<String>();
 
+  bool _loadingMarkAllAsRead = false;
+
   @override
   void initState() {
     super.initState();
@@ -99,7 +103,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
         child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[_buildBanner(), _buildFilters(), Expanded(child: _buildContent())]));
+            children: <Widget>[_buildBanner(), _buildAdditionalButtons(),  _buildFilters(), Expanded(child: _buildContent())]));
   }
 
   // Messages
@@ -231,7 +235,44 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
       ));
   }
 
+  //Buttons
+  Widget _buildAdditionalButtons() {
+    List<Widget> buttons = [];
+    if (widget.unread == true) {
+        buttons.add(_buildReadAllButton());
+    }
 
+    return Container(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: buttons,
+        ));
+  }
+
+  Widget _buildReadAllButton(){
+      return Container(
+        child: UnderlinedButton(
+          title: Localization().getStringEx("panel.inbox.label.mark_all_as_read", "Mark all as read"),//TBD localize
+          padding: EdgeInsets.symmetric(vertical: 8),
+          progress: _loadingMarkAllAsRead,
+          onTap: () {
+            Log.d("Mark All as read Called");
+            setState(() {_loadingMarkAllAsRead = true;});
+            Inbox().markAllMessagesAsRead().then((success) {
+              setState(() {_loadingMarkAllAsRead = false;});
+              if(success == true){
+                _refreshMessages();
+              } else if(success == false){
+                Log.d("Failed to mark all messages as read");
+                AppToast.show("Failed to mark all messages as read");
+              }
+            });
+          },
+        ),
+      );
+  }
   // Filters
 
   Widget _buildFilters() {
@@ -611,7 +652,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     Navigator.pop(context);
   }
 
-  Future<void> _onPullToRefresh() async {
+  Future<void> _refreshMessages() async{
     int limit = max(_messages.length, _messagesPageSize);
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
     List<InboxMessage>? messages = await Inbox().loadMessages(muted: widget.muted, unread: widget.unread, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
@@ -628,6 +669,10 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
         _contentList = _buildContentList();
       });
     }
+  }
+
+  Future<void> _onPullToRefresh() async {
+    _refreshMessages();
   }
 
   bool get _isAllMessagesSelected {
