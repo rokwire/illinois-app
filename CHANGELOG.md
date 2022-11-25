@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Implement "Mark all as read" [#2570](https://github.com/rokwire/illinois-app/issues/2570).
+- Add Delete group button in Settings panel [#2572](https://github.com/rokwire/illinois-app/issues/2572).
 
 ## [4.2.26] - 2022-11-24
 ### Changed
