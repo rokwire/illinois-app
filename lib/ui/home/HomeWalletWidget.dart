@@ -326,6 +326,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
   @override
   void initState() {
     NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
       Auth2.notifyCardChanged
     ]);
     super.initState();
@@ -337,11 +338,21 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
     super.dispose();
   }
 
+  // NotificationsListener
+
+  void onNotification(String name, dynamic param) {
+    if ((name == Auth2.notifyLoginChanged) || (name == Auth2.notifyCardChanged)) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String? message;
     if (!Auth2().isOidcLoggedIn) {
-      message = Localization().getStringEx('panel.browse.label.logged_out.illini_id.short', 'You need to be logged in with your NetID to access MTD Bus Pass.');
+      message = Localization().getStringEx('panel.browse.label.logged_out.bus_pass.short', 'You need to be logged in with your NetID to access MTD Bus Pass.');
     }
     else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber) || (Auth2().authCard?.expirationDateTimeUtc == null)) {
       message = Localization().getStringEx('panel.browse.label.no_card.bus_pass', 'You need a valid Illini Identity card to access MTD Bus Pass.');
@@ -390,16 +401,6 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
     Analytics().logSelect(target: 'Bus Pass', source: widget.runtimeType.toString());
     MTDBusPassPanel.present(context);
   }
-
-  // NotificationsListener
-
-  void onNotification(String name, dynamic param) {
-    if (name == Auth2.notifyCardChanged) {
-      if (mounted) {
-        setState(() {});
-      }
-    }
-  }
 }
 
 // HomeIlliniIdWalletWidget
@@ -418,6 +419,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
   @override
   void initState() {
     NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
       Auth2.notifyCardChanged,
     ]);
     super.initState();
@@ -427,6 +429,16 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
   void dispose() {
     NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  // NotificationsListener
+
+  void onNotification(String name, dynamic param) {
+    if ((name == Auth2.notifyLoginChanged) || (name == Auth2.notifyCardChanged)) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   @override
@@ -482,16 +494,6 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
     Analytics().logSelect(target: 'Illini ID', source: widget.runtimeType.toString());
      IDCardPanel.present(context);
   }
-
-  // NotificationsListener
-
-  void onNotification(String name, dynamic param) {
-    if (name == Auth2.notifyCardChanged) {
-      if (mounted) {
-        setState(() {});
-      }
-    }
-  }
 }
 
 // HomeLibraryCardWalletWidget
@@ -513,6 +515,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
   @override
   void initState() {
     NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
       Auth2.notifyCardChanged,
     ]);
     _loadLibraryBarcode();
@@ -525,8 +528,24 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
     super.dispose();
   }
 
+  // NotificationsListener
+
+  void onNotification(String name, dynamic param) {
+    if ((name == Auth2.notifyLoginChanged) || (name == Auth2.notifyCardChanged)) {
+      _updateLibraryBarcode();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    String? message;
+    if (!Auth2().isOidcLoggedIn) {
+      message = Localization().getStringEx('panel.browse.label.logged_out.library_card.short', 'You need to be logged in with your NetID to access Library Card.');
+    }
+    else if (StringUtils.isEmpty(Auth2().authCard?.libraryNumber)) {
+      message = Localization().getStringEx('panel.browse.label.no_card.library_card', 'You need a valid Illini Identity card to access Library Card.');
+    }
+
     return GestureDetector(onTap: _onTap, child:
       Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), child:
         ClipRRect(borderRadius: BorderRadius.all(Radius.circular(6)), child:
@@ -545,22 +564,30 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
                 Container(color: Styles().colors!.white, child:
-                  Padding(padding: EdgeInsets.only(top: 16, right: 16, bottom: 16, left: 16), child:
+                  Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors?.fillColorSecondary ?? Colors.transparent, width: 3))), child:
-                          Padding(padding: EdgeInsets.only(left: 10, top: 4, bottom: 4), child:
-                            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                              Container(height: 50, decoration: BoxDecoration(
-                                shape: BoxShape.rectangle,
-                                image: (_libraryBarcode != null) ? DecorationImage(fit: BoxFit.fill, image:_libraryBarcode! ,) : null,    
-                              )),
-                              Padding(padding: EdgeInsets.only(top: 4), child:
-                                Row(children: [Expanded(child: Text(Auth2().authCard?.libraryNumber ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary)))]),
-                              )
-                            ],),
-                          )
-                        )
+                        (message != null) ?
+                          VerticalTitleValueSection(
+                            title: message,
+                            titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+                            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          ) :
+                          Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 8, bottom: 8), child:
+                            Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors?.fillColorSecondary ?? Colors.transparent, width: 3))), child:
+                              Padding(padding: EdgeInsets.only(left: 10), child:
+                                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                                  Container(height: 50, decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    image: (_libraryBarcode != null) ? DecorationImage(fit: BoxFit.fill, image:_libraryBarcode! ,) : null,    
+                                  )),
+                                  Padding(padding: EdgeInsets.only(top: 8), child:
+                                    Row(children: [Expanded(child: Text(Auth2().authCard?.libraryNumber ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary), textAlign: TextAlign.center,))]),
+                                  )
+                                ],),
+                              ),
+                            ),
+                          ),
                       ),
                     ]),
                   ),
@@ -581,7 +608,7 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
     String? libraryCode = Auth2().authCard?.libraryNumber;
     if (0 < (libraryCode?.length ?? 0)) {
       NativeCommunicator().getBarcodeImageData({
-        'content': Auth2().authCard?.libraryNumber,
+        'content': libraryCode,
         'format': 'codabar',
         'width': 161 * 3,
         'height': 50
@@ -606,14 +633,6 @@ class _HomeLibraryCardWalletWidgetState extends State<HomeLibraryCardWalletWidge
         ((_libraryCode != null) && (_libraryCode != libraryCode)))
     {
       _loadLibraryBarcode();
-    }
-  }
-
-  // NotificationsListener
-
-  void onNotification(String name, dynamic param) {
-    if (name == Auth2.notifyCardChanged) {
-      _updateLibraryBarcode();
     }
   }
 }

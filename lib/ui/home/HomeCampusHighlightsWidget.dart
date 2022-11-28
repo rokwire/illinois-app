@@ -54,8 +54,8 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
       Config.notifyConfigChanged,
       Guide.notifyChanged,
       Auth2UserPrefs.notifyRolesChanged,
-      AppLivecycle.notifyStateChanged,
       Auth2.notifyCardChanged,
+      AppLivecycle.notifyStateChanged,
     ]);
 
     if (widget.updateController != null) {

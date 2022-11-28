@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Do not send iCard analytics data when processing logout [#2519](https://github.com/rokwire/illinois-app/issues/2519).
+
 ## [4.2.27] - 2022-11-25
 ### Added
 - Implement "Mark all as read" [#2570](https://github.com/rokwire/illinois-app/issues/2570).
