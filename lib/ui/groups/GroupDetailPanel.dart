@@ -605,26 +605,21 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content.add(_buildAbout());
       content.add(_buildPrivacyDescription());
       content.add(_buildAdmins());
-      if (_isPublic) {
+      if (_isPublic && CollectionUtils.isNotEmpty(_groupEvents)) {
         content.add(_buildEvents());
       }
+      content.add(_buildResearchProjectMembershipRequest());
     }
 
-    return
-        Column(children: <Widget>[
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: content,
-              ),
-            ),
-          ),
-          _buildMembershipRequest(),
-          _buildCancelMembershipRequest(),
-        ],
-      );
+    return Column(children: <Widget>[
+      Expanded(child:
+        SingleChildScrollView(scrollDirection: Axis.vertical, child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: content,),
+        ),
+      ),
+      _buildMembershipRequest(),
+      _buildCancelMembershipRequest(),
+    ],);
   }
 
   Widget _buildImageHeader(){
@@ -647,19 +642,35 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     String members;
     int membersCount = _groupStats?.activeMembersCount ?? 0;
-    if (membersCount == 0) {
-      members = _isResearchProject ? "No Current Participants" : Localization().getStringEx("panel.group_detail.members.count.empty", "No Current Members");
+    if (!_isResearchProject) {
+      if (membersCount == 0) {
+        members = Localization().getStringEx("panel.group_detail.members.count.empty", "No Current Members");
+      }
+      else if (membersCount == 1) {
+        members = Localization().getStringEx("panel.group_detail.members.count.one", "1 Current Member");
+      }
+      else {
+        members = sprintf(Localization().getStringEx("panel.group_detail.members.count.format", "%s Current Members"), [membersCount]);
+      }
     }
-    else if (membersCount == 1) {
-      members = _isResearchProject ? "1 Current Participant" : Localization().getStringEx("panel.group_detail.members.count.one", "1 Current Member");
+    else if (_isAdmin) {
+      if (membersCount == 0) {
+        members = "No Current Participants";
+      }
+      else if (membersCount == 1) {
+        members = "1 Current Participant";
+      }
+      else {
+        members = sprintf("%s Current Participants", [membersCount]);
+      }
     }
     else {
-      members = sprintf(_isResearchProject ? "%s Current Participants" : Localization().getStringEx("panel.group_detail.members.count.format", "%s Current Members"), [membersCount]);
+      members = "";
     }
 
     int pendingCount = _groupStats?.pendingCount ?? 0;
     String pendingMembers;
-    if (_group!.currentUserIsAdmin && pendingCount > 0) {
+    if (_isAdmin && (pendingCount > 0)) {
       if (pendingCount > 1) {
         pendingMembers = sprintf(_isResearchProject ? "%s Pending Participants" : Localization().getStringEx("panel.group_detail.pending_members.count.format", "%s Pending Members"), [pendingCount]);
       }
@@ -673,7 +684,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     int attendedCount = _groupStats?.attendedCount ?? 0;
     String? attendedMembers;
-    if (_group!.currentUserIsAdmin && (_group!.attendanceGroup == true)) {
+    if (_isAdmin && (_group!.attendanceGroup == true)) {
       if (attendedCount == 0) {
         attendedMembers = Localization().getStringEx("panel.group_detail.attended_members.count.empty", "No Members Attended");
       } else if (attendedCount == 1) {
@@ -767,10 +778,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Text(_group?.title ?? '',  style:  Styles().textStyles?.getTextStyle('panel.group.title.lage'),),
               ),
               
-              GestureDetector(onTap: () => { if (_isMember) {_onTapMembers()} }, child:
-                Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                  Container(decoration: (_isMember ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
-                    Text(members, style:  Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
+              Visibility(visible: StringUtils.isNotEmpty(members), child:
+                GestureDetector(onTap: () => { if (_isMember) {_onTapMembers()} }, child:
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
+                    Container(decoration: (_isMember ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
+                      Text(members, style:  Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
+                    ),
                   ),
                 ),
               ),
@@ -1008,8 +1021,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     String researchConsentDetails = _group?.researchConsentDetails ?? '';
     return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(padding: EdgeInsets.only(bottom: 4), child:
-          Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'), ),),
+        Visibility(visible: !_isResearchProject, child:
+          Padding(padding: EdgeInsets.only(bottom: 4), child:
+            Text( Localization().getStringEx("panel.group_detail.label.about_us",  'About us'), style: Styles().textStyles?.getTextStyle('panel.group.detail.fat'), ),),),
         ExpandableText(description,
           textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
           trimLinesCount: 4,
@@ -1095,12 +1109,14 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildPolicyButton() {
-    return Semantics(button: true, excludeSemantics: true,
-      label: Localization().getStringEx('panel.group_detail.button.policy.label', 'Policy'),
-      hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
-      child: InkWell(onTap: _onPolicy, child:
-        Padding(padding: EdgeInsets.all(16), child:
-          Image.asset('images/icon-info-orange.png')
+    return Visibility(visible: (_isResearchProject != true), child:
+      Semantics(button: true, excludeSemantics: true,
+        label: Localization().getStringEx('panel.group_detail.button.policy.label', 'Policy'),
+        hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
+        child: InkWell(onTap: _onPolicy, child:
+          Padding(padding: EdgeInsets.all(16), child:
+            Image.asset('images/icon-info-orange.png')
+          ),
         ),
       ),
     );
@@ -1110,6 +1126,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (CollectionUtils.isEmpty(_groupAdmins)) {
       return Container();
     }
+    
     List<Widget> content = [];
     content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
     for (Member? officer in _groupAdmins!) {
@@ -1119,6 +1136,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       content.add(_OfficerCard(groupMember: officer));
     }
     content.add(Padding(padding: EdgeInsets.only(left: 16), child: Container()));
+
+    String headingText = _isResearchProject ? 'Principle Investigator(s)' : Localization().getStringEx("panel.group_detail.label.admins", 'Admins');
+
     return Stack(children: [
       Container(
           height: 112,
@@ -1132,7 +1152,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
             Padding(
                 padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                child: Text(Localization().getStringEx("panel.group_detail.label.admins", 'Admins'),
+                child: Text(headingText,
                     style:   Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))),
             SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: content))
           ]))
@@ -1140,14 +1160,36 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   Widget _buildMembershipRequest() {
-    if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin) {
-      bool showConsent = (_group?.researchProject == true) && StringUtils.isNotEmpty(_group?.researchConsentStatement);
-      bool requestToJoinEnabled = (_group?.researchProject != true) || StringUtils.isEmpty(_group?.researchConsentStatement) || _researchProjectConsent;
+    if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject != true)) {
       return Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1))), child:
-        Padding(padding: EdgeInsets.zero, child:
+        Padding(padding: EdgeInsets.all(16), child:
+          RoundedButton(label: Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
+            backgroundColor: Styles().colors!.white,
+            textColor: Styles().colors!.fillColorPrimary,
+            fontFamily: Styles().fontFamilies!.bold,
+            fontSize: 16,
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+            borderColor: Styles().colors!.fillColorSecondary,
+            borderWidth: 2,
+            onTap:() { _onMembershipRequest();  }
+          ),
+        ),
+      );
+    }
+    else {
+      return Container();
+    }
+  }
+
+  Widget _buildResearchProjectMembershipRequest() {
+    if (Auth2().isOidcLoggedIn && _group!.currentUserCanJoin && (_group?.researchProject == true)) {
+      bool showConsent = StringUtils.isNotEmpty(_group?.researchConsentStatement) && CollectionUtils.isEmpty(_group?.questions);
+      bool requestToJoinEnabled = CollectionUtils.isNotEmpty(_group?.questions) || StringUtils.isEmpty(_group?.researchConsentStatement) || _researchProjectConsent;
+      return Padding(padding: EdgeInsets.only(top: 16), child:
+        Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Styles().colors!.surfaceAccent!, width: showConsent ? 1 : 0))), child:
           Column(children: [
             Visibility(visible: showConsent, child:
-              Row(children: [
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 InkWell(onTap: _onResearchProjectConsent, child:
                   Padding(padding: EdgeInsets.all(16), child:
                     Image.asset(_researchProjectConsent ? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
@@ -1161,7 +1203,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               ]),
             ),
             Padding(padding: EdgeInsets.only(left: 16, right: 16, top: showConsent ? 0 : 16, bottom: 16), child:
-              RoundedButton(label: _isResearchProject ? "Request to participate" : Localization().getStringEx("panel.group_detail.button.request_to_join.title",  'Request to join'),
+              RoundedButton(label: CollectionUtils.isEmpty(_group?.questions) ? "Request to participate" : "Continue",
                 backgroundColor: Styles().colors!.white,
                 textColor: requestToJoinEnabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                 fontFamily: Styles().fontFamilies!.bold,
@@ -1470,7 +1512,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   void _onTapSettings(){
     Analytics().logSelect(target: "Group Settings", attributes: _group?.analyticsAttributes);
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupSettingsPanel(group: _group,))).then((exit){
+      if(exit == true){
+        Navigator.of(context).pop();
+      }
+    }
+    );
   }
 
   void _onTapPromote() {
@@ -1621,12 +1668,27 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onMembershipRequest() {
-    Analytics().logSelect(target: "Request to join", attributes: _group?.analyticsAttributes);
+    String target;
+    if (_group?.researchProject != true) {
+      target = "Request to join";
+    }
+    else if (CollectionUtils.isEmpty(_group?.questions)) {
+      target = "Request to participate";
+    }
+    else {
+      target = "Continue";
+    }
+    Analytics().logSelect(target: target, attributes: _group?.analyticsAttributes);
+    
     if (CollectionUtils.isNotEmpty(_group?.questions)) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
+      _loadMembershipRequestPanel();
     } else {
       _requestMembership();
     }
+  }
+
+  void _loadMembershipRequestPanel() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipRequestPanel(group: _group)));
   }
 
   void _requestMembership() {

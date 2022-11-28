@@ -157,104 +157,74 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
   }
 
   Widget _buildApproval(){
-    return
-      Container(
-        color: Styles().colors!.white,
-        padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(height: 28,),
-            Row(children: [
-              Image.asset("images/user-check.png"),
-              Container(width: 8,),
-              Text(Localization().getStringEx("panel.pending_member_detail.label.approval", "Member Approval"),
-                style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.bold,
-                    fontSize: 16,
-                    color: Styles().colors!.fillColorPrimary
-                ),
-              ),
-            ],),
-            Container(height: 21,),
+    return Container(color: Styles().colors!.white, padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Container(height: 28,),
+        Row(children: [
+          Image.asset("images/user-check.png"),
+          Container(width: 8,),
+          Text(_isResearchProject ? "Participant Approval" : Localization().getStringEx("panel.pending_member_detail.label.approval", "Member Approval"), style:
+            TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+          ),
+        ],),
+        Container(height: 21,),
+        ToggleRibbonButton(
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Styles().colors!.fillColorPrimary!),
+          label: Localization().getStringEx("panel.pending_member_detail.button.approve.text", "Approve "),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          toggled: _approved,
+          onTap: () {
+            Analytics().logSelect(target: 'Aprove');
+            setState(() {
+              _approved = !_approved;
+              _denied = !_approved;
+            });
+          }
+        ),
+        Container(height: 21,),
+        Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors!.fillColorPrimary!),), child:
+          Column(children: [
             ToggleRibbonButton(
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Styles().colors!.fillColorPrimary!),
-                label: Localization().getStringEx("panel.pending_member_detail.button.approve.text", "Approve "),
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                toggled: _approved,
-                onTap: () {
-                  Analytics().logSelect(target: 'Aprove');
-                  setState(() {
-                    _approved = !_approved;
-                    _denied = !_approved;
-                  });
-                }
+              label: Localization().getStringEx("panel.pending_member_detail.button.deny.text", "Deny"),
+              borderRadius: BorderRadius.circular(4),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              toggled: _denied,
+              onTap: () {
+                Analytics().logSelect(target: 'Deny');
+                setState(() {
+                  _denied = !_denied;
+                  _approved = !_denied;
+                });
+              }
             ),
-            Container(height: 21,),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Styles().colors!.fillColorPrimary!),
-              ),
-              child: Column(
-                children: [
-                  ToggleRibbonButton(
-                      label: Localization().getStringEx("panel.pending_member_detail.button.deny.text", "Deny"),
-                      borderRadius: BorderRadius.circular(4),
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      toggled: _denied,
-                      onTap: () {
-                        Analytics().logSelect(target: 'Deny');
-                        setState(() {
-                          _denied = !_denied;
-                          _approved = !_denied;
-                        });
-                      }
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 13),
-                    child:
-                    Text(Localization().getStringEx("panel.pending_member_detail.deny.description", "If you choose not to accept this person, please provide a reason."),
-                      style: TextStyle(
-                          fontFamily: Styles().fontFamilies!.regular,
-                          fontSize: 14,
-                          color: Styles().colors!.textSurface
-                      ),
-                  )),
-                  Container(height: 8,),
-                  Container(
-                    height: 114,
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: Styles().colors!.fillColorPrimary!),
-                      ),
-                      child:
-                      Row(children: [
-                        Expanded(child: TextField(
-                          controller: _reasonController,
-                          decoration: InputDecoration(
-                              border: InputBorder.none),
-                          style: TextStyle(
-                              color: Styles().colors!.fillColorPrimary,
-                              fontSize: 16,
-                              fontFamily: Styles().fontFamilies!.regular),
-                          onChanged: (text){setState(() {});},
-                          minLines: 4,
-                          maxLines: 999,
-                        ))
-                      ],)
-                  )),
-                  Container(height: 13,)
-                ],
+            Container(padding: EdgeInsets.symmetric(horizontal: 13), child:
+              Text(Localization().getStringEx("panel.pending_member_detail.deny.description", "If you choose not to accept this person, please provide a reason."), style:
+                TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface),
               )
-            )
-          ],
-          )
-      );
+            ),
+            Container(height: 8,),
+            Container(height: 114, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12), child:
+              Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), border: Border.all(color: Styles().colors!.fillColorPrimary!), ), child:
+                Row(children: [
+                  Expanded(child:
+                    TextField(
+                      controller: _reasonController,
+                      decoration: InputDecoration(border: InputBorder.none),
+                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                      onChanged: (text){setState(() {});},
+                      minLines: 4,
+                      maxLines: 999,
+                    ),
+                  ),
+                ],)
+              ),
+            ),
+            Container(height: 13,)
+          ],)
+        )
+      ],)
+    );
   }
 
   Widget _buildBottomButtons(BuildContext context){
@@ -312,19 +282,22 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
     return _approved || (_denied && _reasonController.text.isNotEmpty);
   }
 
-  String? get _continueButtonText{
-      if(_approved){
-        return Localization().getStringEx("panel.pending_member_detail.button.approve_member.title", "Approve Member");
-      }
+  bool get _isResearchProject => (widget.group?.researchProject == true);
 
-      if(_denied){
-        if(_reasonController.text.isNotEmpty) {
-          return Localization().getStringEx("panel.pending_member_detail.button.deny_member.title", "Deny Member");
-        } else {
-          return Localization().getStringEx("panel.pending_member_detail.button.deny_reason.title", "Provide Deny Reason");
-        }
+  String? get _continueButtonText{
+    if (_approved) {
+      return _isResearchProject ? 'Approve Participant' : Localization().getStringEx("panel.pending_member_detail.button.approve_member.title", "Approve Member");
+    }
+
+    if (_denied) {
+      if (_reasonController.text.isNotEmpty) {
+        return _isResearchProject ? 'Deny Participant' : Localization().getStringEx("panel.pending_member_detail.button.deny_member.title", "Deny Member");
+      } else {
+        return Localization().getStringEx("panel.pending_member_detail.button.deny_reason.title", "Provide Deny Reason");
       }
-      return Localization().getStringEx("panel.pending_member_detail.button.selection.title", "Make Selection Above");
+    }
+    
+    return Localization().getStringEx("panel.pending_member_detail.button.selection.title", "Make Selection Above");
   }
 }
 

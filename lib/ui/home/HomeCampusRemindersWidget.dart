@@ -24,10 +24,8 @@ import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
-import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
@@ -68,9 +66,7 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
     NotificationService().subscribe(this, [
       Config.notifyConfigChanged,
       Guide.notifyChanged,
-      Auth2UserPrefs.notifyRolesChanged,
       AppLivecycle.notifyStateChanged,
-      Auth2.notifyCardChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -101,12 +97,6 @@ class _HomeCampusRemindersWidgetState extends State<HomeCampusRemindersWidget> i
       }
     }
     else if (name == Guide.notifyChanged) {
-      _updateReminderItems();
-    }
-    else if (name == Auth2UserPrefs.notifyRolesChanged) {
-      _updateReminderItems();
-    }
-    else if (name == Auth2.notifyCardChanged) {
       _updateReminderItems();
     }
     else if (name == AppLivecycle.notifyStateChanged) {

@@ -5,9 +5,56 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Do not send iCard analytics data when processing logout [#2519](https://github.com/rokwire/illinois-app/issues/2519).
+
+## [4.2.27] - 2022-11-25
+### Added
+- Implement "Mark all as read" [#2570](https://github.com/rokwire/illinois-app/issues/2570).
+- Add Delete group button in Settings panel [#2572](https://github.com/rokwire/illinois-app/issues/2572).
+
+## [4.2.26] - 2022-11-24
+### Changed
+- Group Notification Settings panel: update styling [#2538](https://github.com/rokwire/illinois-app/issues/2538).
+### Added
+- Android: implement map POIs appearance to be like in iOS [#2554](https://github.com/rokwire/illinois-app/issues/2554).
+### Fixed
+- Show proper error message when WPGU radio failed to initialize [#2568](https://github.com/rokwire/illinois-app/issues/2568).
+
+## [4.2.25] - 2022-11-23
+### Changed
+- Research Project updates [#2563](https://github.com/rokwire/illinois-app/issues/2563).
+
+## [4.2.24] - 2022-11-22
+### Changed
+- The default in research groups for the consent checkbox in researh projects should be true [#2550](https://github.com/rokwire/illinois-app/issues/2550).
+- Group auto join checkbox available for all groups (except research) [#2558](https://github.com/rokwire/illinois-app/issues/2558).
+### Fixed
+- Fixed language assets JSON [#2552](https://github.com/rokwire/illinois-app/issues/2552).
+- RoleGridButton: set min height for Icon and Title [#2555](https://github.com/rokwire/illinois-app/issues/2555).
+
+## [4.2.23] - 2022-11-21
+### Changed
+- UI updates in "Customize" view of Favorites panel [#2546](https://github.com/rokwire/illinois-app/issues/2546).
+- Updated User Roles panel [#2547](https://github.com/rokwire/illinois-app/issues/2547).
+
+## [4.2.22] - 2022-11-18
+### Changed
+- Research Project updates [#2544](https://github.com/rokwire/illinois-app/issues/2544).
+- Load research questionnaire from content service.
+
+## [4.2.21] - 2022-11-17
+### Changed
+- Research Project updates [#2540](https://github.com/rokwire/illinois-app/issues/2540).
+- Check card's expiration date [#2542](https://github.com/rokwire/illinois-app/issues/2542).
+
+## [4.2.20] - 2022-11-16
 ### Changed
 - Research Project updates [#2533](https://github.com/rokwire/illinois-app/issues/2533).
 - Make the MTD route lines thicker [#2536](https://github.com/rokwire/illinois-app/issues/2536).
+
+###Added
+- Show global group notification setting in Group by Group panel [#2538](https://github.com/rokwire/illinois-app/issues/2538).
 
 ## [4.2.19] - 2022-11-15
 ### Added

@@ -90,7 +90,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _researchConsentDetailsController.text = _group?.researchConsentDetails ?? '';
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
 
-    _researchRequiresConsentConfirmation = StringUtils.isNotEmpty(_group?.researchConsentStatement);
+    // #2550: we need consent checkbox selected by default
+    _researchRequiresConsentConfirmation = true; // StringUtils.isNotEmpty(_group?.researchConsentStatement)
 
     if (StringUtils.isNotEmpty(_group?.researchConsentStatement)) {
       _researchConsentStatementController.text = _group!.researchConsentStatement!;
@@ -211,11 +212,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       ])),
                       
                       Visibility(visible: !_isAuthManGroup, child: Padding(padding: EdgeInsets.only(top: 20), child: Column(children: [
-                        _buildTitle(Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
+                        _buildTitle(_isResearchProject ? 'Participation' : Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
                         _buildMembershipLayout(),
                       ],),),),
                       
-                      Visibility(visible: _isManagedGroupAdmin && !_isResearchProject, child:
+                      Visibility(visible: !_isResearchProject, child:
                         Padding(padding: EdgeInsets.only(top: 8), child:
                           _buildCanAutojoinLayout(),
                         )
@@ -365,8 +366,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   //
   //Research Description
   Widget _buildResearchConsentDetailsField() {
-    String? title = "CONSENT DETAILS";
-    String? fieldTitle = "CONSENT DETAILS FIELD";
+    String? title = "PROJECT DETAILS";
+    String? fieldTitle = "PROJECT DETAILS FIELD";
     String? fieldHint = "";
 
     return Visibility(visible: _isResearchProject, child:
@@ -402,7 +403,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     return Container(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
       Column(children: [
         _buildSwitch(
-          title: "Requires confirmation",
+          title: "Require participant consent",
           value: _researchRequiresConsentConfirmation,
           onTap: _onTapResearchConfirmation
         ),
@@ -662,22 +663,22 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   // Membership Questions
   Widget _buildMembershipLayout() {
+    String buttonTitle = _isResearchProject ? "Recruitment Questions" : Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions");
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount)
         ? (questionsCount.toString() + " " + Localization().getStringEx("panel.groups_create.questions.existing.label", "Question(s)"))
         : Localization().getStringEx("panel.groups_create.questions.missing.label", "No questions");
 
-    return Container(
-      color: Styles().colors!.background,
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Column(children: <Widget>[
+    return Container(color: Styles().colors!.background, padding: EdgeInsets.symmetric(horizontal: 16), child:
+      Column(children: <Widget>[
         Container(height: 12),
-        Semantics(
-            explicitChildNodes: true,
-            child: _buildMembershipButton(
-                title: Localization().getStringEx("panel.groups_create.membership.questions.title", "Membership Questions"),
-                description: questionsDescription,
-                onTap: _onTapQuestions)),
+        Semantics(explicitChildNodes: true, child:
+          _buildMembershipButton(
+            title: buttonTitle,
+            description: questionsDescription,
+            onTap: _onTapQuestions
+          )
+        ),
         Container(height: 20),
       ]),
     );
@@ -715,13 +716,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   void _onTapQuestions() {
     Analytics().logSelect(target: "Membership Questions");
-    if (_group!.questions == null) {
-      _group!.questions = [];
-    }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _group!.questions))).then((dynamic questions) {
-      if (questions is List<GroupMembershipQuestion>) {
-        _group!.questions = questions;
-      }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(group: _group))).then((_) {
       setState(() {});
     });
   }
@@ -752,7 +747,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         padding: EdgeInsets.only(left: 16, right: 16, top: 8),
         child: _buildSwitch(
             title: "Is the research project open?",
-            value: _group?.researchOpen,
+            value: _group?.researchOpen == true,
             onTap: _onTapResearchOpen));
   }
 

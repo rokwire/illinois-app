@@ -63,6 +63,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   bool _nameIsValid = true;
   bool _loading = false;
+  bool _deleting = false;
   bool _researchRequiresConsentConfirmation = false;
 
   Group? _group; // edit settings here until submit
@@ -169,7 +170,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               _buildMembershipLayout()
                             ),
                             
-                            Visibility(visible: _canViewManagedSettings  && !_isResearchProject, child:
+                            Visibility(visible:!_isResearchProject, child:
                               Padding(padding: EdgeInsets.only(top: 8), child:
                                 _buildCanAutoJoinLayout(),
                               )
@@ -730,6 +731,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //
   //Membership
   Widget _buildMembershipLayout(){
+    String sectionTitle = _isResearchProject ? "Participation" : Localization().getStringEx("panel.groups_settings.membership.title", "Membership");
+    String buttonTitle = _isResearchProject ? "Recruitment Questions" : Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions");
     int questionsCount = _group?.questions?.length ?? 0;
     String questionsDescription = (0 < questionsCount) ?
       sprintf(Localization().getStringEx("panel.groups_settings.tags.label.question.format","%s Question(s)"), [questionsCount.toString()]) :
@@ -740,11 +743,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column( children: <Widget>[
-          _buildSectionTitle( Localization().getStringEx("panel.groups_settings.membership.title", "Membership"),"images/icon-member.png"),
+          _buildSectionTitle(sectionTitle, "images/icon-member.png"),
           Container(height: 12,),
           Semantics(
             explicitChildNodes: true,
-            child:_buildMembershipButton(title: Localization().getStringEx("panel.groups_settings.membership.button.question.title","Membership Questions"),
+            child:_buildMembershipButton(
+              title: buttonTitle,
               description: questionsDescription,
               onTap: _onTapMembershipQuestion)),
           Container(height: 20,),
@@ -802,13 +806,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       return;
     }
     Analytics().logSelect(target: "Membership Question");
-    if (_group!.questions == null) {
-      _group!.questions = [];
-    }
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(questions: _group!.questions,))).then((dynamic questions){
-      if(questions is List<GroupMembershipQuestion>){
-        _group!.questions = questions;
-      }
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembershipQuestionsPanel(group: _group,))).then((_){
       setState(() {});
     });
   }
@@ -838,8 +836,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     return Container(
         padding: EdgeInsets.only(left: 16, right: 16, top: 8),
         child: _buildSwitch(
-            title: "Is recruitment closed?",
-            value: _group?.researchOpen == false,
+            title: "Currently recruiting participants",
+            value: _group?.researchOpen == true,
             onTap: _onTapResearchOpen));
   }
 
@@ -854,8 +852,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   Widget _buildResearchConsentDetailsField() {
-    String? title = "CONSENT DETAILS";
-    String? fieldTitle = "CONSENT DETAILS FIELD";
+    String? title = "PROJECT DETAILS";
+    String? fieldTitle = "PROJECT DETAILS FIELD";
     String? fieldHint = "";
 
     return Visibility(visible: _isResearchProject, child:
@@ -891,7 +889,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     return Container(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
       Column(children: [
         _buildSwitch(
-          title: "Requires confirmation",
+          title: "Require participant consent",
           value: _researchRequiresConsentConfirmation,
           onTap: _onTapResearchConfirmation
         ),
@@ -907,7 +905,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                         maxLines: 5,
                         decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                         style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
-                        onChanged: (text) => _group?.researchConsentStatement = text,
                     )
                   ),
                 )
@@ -1053,15 +1050,31 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Center(
         child:
         Stack(children: <Widget>[
-          RoundedButton(
-            label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
-            backgroundColor: Colors.white,
-            borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-            textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-            progress: _loading,
-            enabled: _canUpdate,
-            onTap: _onUpdateTap,
-          ),
+           Row(children: [
+            Expanded(
+              child: RoundedButton(
+                label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
+                backgroundColor: Colors.white,
+                borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+                progress: _loading,
+                enabled: _canUpdate,
+                onTap: _onUpdateTap,
+              ),
+            ),
+            Container(width: 16,),
+            Expanded(
+              child: RoundedButton(
+                label: Localization().getStringEx("panel.groups_settings.button.delete.title", "Delete this  group"),//TBD localize
+                backgroundColor: Colors.white,
+                borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+                progress: _deleting,
+                enabled: _canUpdate,
+                onTap: _onDeleteTap,
+              ),
+            ),
+          ],)
         ],),
       )
       ,),);
@@ -1072,8 +1085,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       return;
     }
 
-    if ((_group?.researchProject == true) || (_researchRequiresConsentConfirmation == true) && StringUtils.isEmpty(_group?.researchConsentStatement)) {
+    if ((_group?.researchProject == true) && _researchRequiresConsentConfirmation && _researchConsentStatementController.text.isEmpty) {
       AppAlert.showDialogResult(context, 'Please enter participant consent text.');
+      return;
+    }
+    else {
+      _group?.researchConsentStatement = ((_group?.researchProject == true) && _researchRequiresConsentConfirmation && _researchConsentStatementController.text.isNotEmpty) ? _researchConsentStatementController.text : null;
+
     }
 
     Analytics().logSelect(target: 'Update Settings');
@@ -1124,6 +1142,35 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           }
           AppAlert.showDialogResult(context, message);
         }
+      }
+    });
+  }
+
+  void _onDeleteTap(){
+    if (_deleting) {
+      return;
+    }
+
+    if ((_group?.researchProject == true) && _researchRequiresConsentConfirmation && _researchConsentStatementController.text.isEmpty) {
+      AppAlert.showDialogResult(context, 'Please enter participant consent text.');
+      return;
+    }
+    else {
+      _group?.researchConsentStatement = ((_group?.researchProject == true) && _researchRequiresConsentConfirmation && _researchConsentStatementController.text.isNotEmpty) ? _researchConsentStatementController.text : null;
+
+    }
+
+    Analytics().logSelect(target: 'Deleting group');
+    setState(() {
+      _deleting = true;
+    });
+    
+    Groups().deleteGroup(widget.group?.id).then((success){
+      setState(() {
+        _deleting = false;
+      });
+      if(success){
+        Navigator.of(context).pop(true);
       }
     });
   }
