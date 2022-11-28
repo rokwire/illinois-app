@@ -63,6 +63,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   bool _nameIsValid = true;
   bool _loading = false;
+  bool _deleting = false;
   bool _researchRequiresConsentConfirmation = false;
 
   Group? _group; // edit settings here until submit
@@ -169,7 +170,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               _buildMembershipLayout()
                             ),
                             
-                            Visibility(visible: _canViewManagedSettings  && !_isResearchProject, child:
+                            Visibility(visible:!_isResearchProject, child:
                               Padding(padding: EdgeInsets.only(top: 8), child:
                                 _buildCanAutoJoinLayout(),
                               )
@@ -835,8 +836,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     return Container(
         padding: EdgeInsets.only(left: 16, right: 16, top: 8),
         child: _buildSwitch(
-            title: "Is recruitment closed?",
-            value: _group?.researchOpen == false,
+            title: "Currently recruiting participants",
+            value: _group?.researchOpen == true,
             onTap: _onTapResearchOpen));
   }
 
@@ -888,7 +889,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     return Container(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
       Column(children: [
         _buildSwitch(
-          title: "Requires confirmation",
+          title: "Require participant consent",
           value: _researchRequiresConsentConfirmation,
           onTap: _onTapResearchConfirmation
         ),
@@ -1049,15 +1050,31 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
       child: Center(
         child:
         Stack(children: <Widget>[
-          RoundedButton(
-            label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
-            backgroundColor: Colors.white,
-            borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-            textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-            progress: _loading,
-            enabled: _canUpdate,
-            onTap: _onUpdateTap,
-          ),
+           Row(children: [
+            Expanded(
+              child: RoundedButton(
+                label: Localization().getStringEx("panel.groups_settings.button.update.title", "Update Settings"),
+                backgroundColor: Colors.white,
+                borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+                progress: _loading,
+                enabled: _canUpdate,
+                onTap: _onUpdateTap,
+              ),
+            ),
+            Container(width: 16,),
+            Expanded(
+              child: RoundedButton(
+                label: Localization().getStringEx("panel.groups_settings.button.delete.title", "Delete this  group"),//TBD localize
+                backgroundColor: Colors.white,
+                borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
+                textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
+                progress: _deleting,
+                enabled: _canUpdate,
+                onTap: _onDeleteTap,
+              ),
+            ),
+          ],)
         ],),
       )
       ,),);
@@ -1125,6 +1142,35 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           }
           AppAlert.showDialogResult(context, message);
         }
+      }
+    });
+  }
+
+  void _onDeleteTap(){
+    if (_deleting) {
+      return;
+    }
+
+    if ((_group?.researchProject == true) && _researchRequiresConsentConfirmation && _researchConsentStatementController.text.isEmpty) {
+      AppAlert.showDialogResult(context, 'Please enter participant consent text.');
+      return;
+    }
+    else {
+      _group?.researchConsentStatement = ((_group?.researchProject == true) && _researchRequiresConsentConfirmation && _researchConsentStatementController.text.isNotEmpty) ? _researchConsentStatementController.text : null;
+
+    }
+
+    Analytics().logSelect(target: 'Deleting group');
+    setState(() {
+      _deleting = true;
+    });
+    
+    Groups().deleteGroup(widget.group?.id).then((success){
+      setState(() {
+        _deleting = false;
+      });
+      if(success){
+        Navigator.of(context).pop(true);
       }
     });
   }

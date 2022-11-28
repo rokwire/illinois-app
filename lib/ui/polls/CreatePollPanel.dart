@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -540,58 +541,5 @@ class _PollOptionViewState extends State<PollOptionView> {
 
   _getCounterText() {
     return sprintf(counterFormat, [widget.textController?.text.length, widget.maxLength]);
-  }
-}
-
-class UnderlinedButton extends StatelessWidget {
-  final Function? onTap;
-  final String? title;
-  final String? hint;
-  final double fontSize;
-  final EdgeInsets padding;
-  final String? fontFamily;
-  final bool progress;
-
-  const UnderlinedButton(
-      {Key? key, this.onTap, this.title, this.hint, this.fontSize = 16, this.padding = const EdgeInsets
-          .symmetric(vertical: 20), this.fontFamily, this.progress = false}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-        label: title,
-        hint: hint,
-        button: true,
-        excludeSemantics: true,
-        child: GestureDetector(
-          onTap: () {
-            if (onTap != null) {
-              onTap!();
-            }
-          },
-          child: Stack(
-            children: [
-            Align(alignment: Alignment.center,
-            child:
-            Padding(
-                  padding: padding,
-                  child: Container(
-                      decoration: BoxDecoration(
-                          border: Border(bottom: BorderSide(
-                            color: Styles().colors!.fillColorSecondary!,
-                            width: 1,),)
-                      ),
-                      padding: EdgeInsets.only(bottom: 2),
-                      child: Text(
-                        title!,
-                        style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline")?.copyWith(fontSize: fontSize, fontFamily: fontFamily ?? Styles().fontFamilies!.medium),
-                      )))),
-              progress ?
-              Align(alignment: Alignment.center,
-                    child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorSecondary!), )
-              ) : Container(),
-            ],
-          )
-        ));
   }
 }

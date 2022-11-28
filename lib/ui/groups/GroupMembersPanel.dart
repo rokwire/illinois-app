@@ -67,6 +67,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
 
   String? _searchTextValue;
   TextEditingController _searchEditingController = TextEditingController();
+  late FocusNode _searchFocus;
 
   @override
   void initState() {
@@ -78,7 +79,8 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       Groups.notifyGroupMembershipRemoved,
       FirebaseMessaging.notifyGroupsNotification,
     ]);
-    
+
+    _searchFocus = FocusNode();
     _scrollController = ScrollController();
     _scrollController!.addListener(_scrollListener);
 
@@ -97,6 +99,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
   void dispose() {
     super.dispose();
     NotificationService().unsubscribe(this);
+    _searchFocus.dispose();
   }
 
   ///
@@ -316,6 +319,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
                     onChanged: (text) => _onSearchTextChanged(text),
                     onSubmitted: (_) => _onTapSearch(),
                     autofocus: false,
+                    focusNode: _searchFocus,
                     cursorColor: Styles().colors!.fillColorSecondary,
                     keyboardType: TextInputType.text,
                     style:  Styles().textStyles?.getTextStyle('widget.group.members.search'),
@@ -384,6 +388,11 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       // Do not try to search when drop down values are visible.
       return;
     }
+
+    if(!_searchFocus.hasFocus){
+      FocusScope.of(context).requestFocus(_searchFocus);
+    }
+
     String? initialSearchTextValue = _searchTextValue;
     _searchTextValue = _searchEditingController.text.toString();
     String? currentSearchTextValue = _searchTextValue;
@@ -398,6 +407,11 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
       // Do not try to clear search when drop down values are visible.
       return;
     }
+
+    if(_searchFocus.hasFocus){
+      _searchFocus.unfocus();
+    }
+
     if (StringUtils.isNotEmpty(_searchTextValue)) {
       _searchEditingController.text = "";
       _searchTextValue = "";

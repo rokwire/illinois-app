@@ -20,6 +20,7 @@ class Questionnaires /* with Service */ {
   // Implementation
 
   Future<Questionnaire?> loadResearch() async {
+    //TMP: return Questionnaire.fromJson(JsonUtils.decodeMap(await AppBundle.loadString('assets/questionnaire.demographics.json')));
     if (Config().contentUrl != null) {
       Response? response = await Network().get("${Config().contentUrl}/content_items", body: JsonUtils.encode({'categories': ['research_questionnaire']}), auth: Auth2());
       List<dynamic>? responseList = (response?.statusCode == 200) ? JsonUtils.decodeList(response?.body)  : null;

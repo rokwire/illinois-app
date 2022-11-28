@@ -104,7 +104,10 @@ class _IDCardPanelState extends State<IDCardPanel>
   @override
   void initState() {
     super.initState();
-    NotificationService().subscribe(this, Auth2.notifyCardChanged);
+    NotificationService().subscribe(this, [
+      Auth2.notifyCardChanged,
+      FlexUI.notifyChanged,
+    ]);
     
     _animationController = AnimationController(duration: Duration(milliseconds: 1500), lowerBound: 0, upperBound: 2 * math.pi, animationBehavior: AnimationBehavior.preserve, vsync: this)
     ..addListener(() {
@@ -192,6 +195,12 @@ class _IDCardPanelState extends State<IDCardPanel>
           });
         }
       });
+    }
+    else if (name == FlexUI.notifyChanged) {
+        if (mounted) {
+          setState(() {
+          });
+        }
     }
   }
   
