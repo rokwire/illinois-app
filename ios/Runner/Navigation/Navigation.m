@@ -288,6 +288,7 @@
 	_distance         = [NavIntVal createFromJsonData:[jsonData inaDictForKey:@"distance"]];
 	_polyline         = [NavPolyline createFromJsonData:[jsonData inaDictForKey:@"polyline"]];
 	_maneuver         = [jsonData inaStringForKey:@"maneuver"];
+	_steps            = [NavRouteStep createListFromJsonList:[jsonData inaArrayForKey:@"steps"]];
 }
 
 + (NSArray<NavRouteStep*>*)createListFromJsonList:(NSArray*)jsonList {
@@ -299,6 +300,148 @@
 				NavRouteStep* value = [NavRouteStep createFromJsonData:dict];
 				if (value != nil) {
 					[result addObject:value];
+				}
+			}
+		}
+	}
+	return result;
+}
+
+@end
+
+//////////////////////////////////////////////
+// NavTransitDetails
+
+@implementation NavTransitDetails
+
+- (instancetype)initWithJsonData:(NSDictionary*)jsonData {
+	if(self = [self init]) {
+		[self applyJsonData:jsonData];
+	}
+	return self;
+}
+
++ (instancetype)createFromJsonData:(NSDictionary*)jsonData {
+	return (jsonData != nil) ? [[NavTransitDetails alloc] initWithJsonData:jsonData] : nil;
+}
+
+- (void)applyJsonData:(NSDictionary*)jsonData {
+	_arrivalStop    = [NavTransitStop createFromJsonData:[jsonData inaDictForKey:@"arrival_stop"]];
+	_arrivalTime    = [NavTimeVal createFromJsonData:[jsonData inaDictForKey:@"arrival_time"]];
+	_departureStop  = [NavTransitStop createFromJsonData:[jsonData inaDictForKey:@"departure_stop"]];
+	_departureTime  = [NavTimeVal createFromJsonData:[jsonData inaDictForKey:@"departure_time"]];
+	_line           = [NavTransitLine createFromJsonData:[jsonData inaDictForKey:@"line"]];
+	_headsign       = [jsonData inaStringForKey:@"headsign"];
+	_numStops       = [jsonData inaIntegerForKey:@"num_stops"];
+}
+
+@end
+
+//////////////////////////////////////////////
+// NavTransitStop
+
+@implementation NavTransitStop
+
+- (instancetype)initWithJsonData:(NSDictionary*)jsonData {
+	if(self = [self init]) {
+		[self applyJsonData:jsonData];
+	}
+	return self;
+}
+
++ (instancetype)createFromJsonData:(NSDictionary*)jsonData {
+	return (jsonData != nil) ? [[NavTransitStop alloc] initWithJsonData:jsonData] : nil;
+}
+
+- (void)applyJsonData:(NSDictionary*)jsonData {
+	_name       = [jsonData inaStringForKey:@"name"];
+	_location   = [NavCoord createFromJsonData:[jsonData inaDictForKey:@"location"]];
+}
+
+@end
+
+//////////////////////////////////////////////
+// NavTransitLine
+
+@implementation NavTransitLine
+
+- (instancetype)initWithJsonData:(NSDictionary*)jsonData {
+	if(self = [self init]) {
+		[self applyJsonData:jsonData];
+	}
+	return self;
+}
+
++ (instancetype)createFromJsonData:(NSDictionary*)jsonData {
+	return (jsonData != nil) ? [[NavTransitLine alloc] initWithJsonData:jsonData] : nil;
+}
+
+- (void)applyJsonData:(NSDictionary*)jsonData {
+	_name       = [jsonData inaStringForKey:@"name"];
+	_shortName  = [jsonData inaStringForKey:@"short_name"];
+	_color      = [jsonData inaStringForKey:@"color"];
+	_textColor  = [jsonData inaStringForKey:@"text_color"];
+	_vehicle    = [NavTransitVehicle createFromJsonData:[jsonData inaDictForKey:@"vehicle"]];
+	_agencies   = [NavTransitAgency createListFromJsonList:[jsonData inaArrayForKey:@"agencies"]];
+}
+
+@end
+
+//////////////////////////////////////////////
+// NavTransitVehicle
+
+@implementation NavTransitVehicle
+
+- (instancetype)initWithJsonData:(NSDictionary*)jsonData {
+	if(self = [self init]) {
+		[self applyJsonData:jsonData];
+	}
+	return self;
+}
+
++ (instancetype)createFromJsonData:(NSDictionary*)jsonData {
+	return (jsonData != nil) ? [[NavTransitVehicle alloc] initWithJsonData:jsonData] : nil;
+}
+
+- (void)applyJsonData:(NSDictionary*)jsonData {
+	_name       = [jsonData inaStringForKey:@"name"];
+	_icon       = [jsonData inaStringForKey:@"icon"];
+	_type       = [jsonData inaStringForKey:@"type"];
+}
+
+@end
+
+//////////////////////////////////////////////
+// NavTransitAgency
+
+@implementation NavTransitAgency
+
+- (instancetype)initWithJsonData:(NSDictionary*)jsonData {
+	if(self = [self init]) {
+		[self applyJsonData:jsonData];
+	}
+	return self;
+}
+
++ (instancetype)createFromJsonData:(NSDictionary*)jsonData {
+	return (jsonData != nil) ? [[NavTransitAgency alloc] initWithJsonData:jsonData] : nil;
+}
+
+- (void)applyJsonData:(NSDictionary*)jsonData {
+	_name       = [jsonData inaStringForKey:@"name"];
+	_phone      = [jsonData inaStringForKey:@"phone"];
+	_url        = [jsonData inaStringForKey:@"url"];
+}
+
++ (NSArray<NavTransitAgency*>*)createListFromJsonList:(NSArray*)jsonList {
+	NSMutableArray<NavTransitAgency*>* result = nil;
+	if (jsonList != nil) {
+		result = [[NSMutableArray<NavTransitAgency*> alloc] init];
+		for (NSDictionary *dict in jsonList) {
+			if ([dict isKindOfClass:[NSDictionary class]]) {
+				NavTransitAgency* value = [NavTransitAgency createFromJsonData:dict];
+				if (value != nil) {
+					[result addObject: value];
 				}
 			}
 		}
@@ -463,4 +606,19 @@ NSString* kNavTravelModeTransit   = @"transit";
 
 @end
 
+//////////////////////////////////////////////
+// NavTimeVal
 
+@implementation NavTimeVal
+
++ (instancetype)createFromJsonData:(NSDictionary*)jsonData {
+	return (jsonData != nil) ? [[NavTimeVal alloc] initWithJsonData:jsonData] : nil;
+}
+
+- (void)applyJsonData:(NSDictionary*)jsonData {
+	[super applyJsonData:jsonData];
+	
+	_timeZone  = [jsonData inaStringForKey:@"time_zone"];
+}
+
+@end
