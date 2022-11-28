@@ -43,7 +43,7 @@ class _SkillsSelfEvaluationInfoPanelState extends State<SkillsSelfEvaluationInfo
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'),),
-      body: Padding(padding: const EdgeInsets.all(16.0), child: _buildContent()),
+      body: SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(16.0), child: _buildContent())),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: null,
     );
@@ -52,12 +52,23 @@ class _SkillsSelfEvaluationInfoPanelState extends State<SkillsSelfEvaluationInfo
   Widget _buildContent({List<SkillsSelfEvaluationInfoSection>? sections}) {
     List<Widget> contentWidgets = [];
     for (SkillsSelfEvaluationInfoSection section in sections ?? _content.sections ?? []) {
-      contentWidgets.add(Padding(padding: const EdgeInsets.only(bottom: 16), child: Text(
+      Widget titleWidget = Text(
         section.title,
         style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
         textAlign: TextAlign.start,
-      )));
+      );
 
+      if (section.subtitle != null) {
+        contentWidgets.add(titleWidget);
+        contentWidgets.add(Padding(padding: const EdgeInsets.only(bottom: 16), child: Text(
+          section.subtitle!,
+          style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+          textAlign: TextAlign.start,
+        )));
+      } else {
+        contentWidgets.add(Padding(padding: const EdgeInsets.only(bottom: 16), child: titleWidget));
+      }
+      
       if (section.body != null) {
         RegExp regExp = RegExp(r"%{(.*?)}");
         Iterable<Match> matches = regExp.allMatches(section.body!);
@@ -106,6 +117,7 @@ class _SkillsSelfEvaluationInfoPanelState extends State<SkillsSelfEvaluationInfo
         contentWidgets.add(_buildContent(sections: section.subsections));
       }
     }
+    
     return Container(
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: contentWidgets),
     );
