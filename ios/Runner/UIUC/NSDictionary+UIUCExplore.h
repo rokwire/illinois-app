@@ -51,6 +51,7 @@ UIUCExploreType UIUCExploreTypeFromString(NSString* value);
 @property (nonatomic, readonly) CLLocationCoordinate2D uiucLocationCoordinate;
 @property (nonatomic, readonly) NSArray* uiucExplorePolygon;
 @property (nonatomic, readonly) int uiucExploreLocationFloor;
+@property (nonatomic, readonly) bool uiucSupportsDisplayModes;
 
 + (NSDictionary*)uiucExploreFromGroup:(NSArray*)explores;
 

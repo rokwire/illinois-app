@@ -180,7 +180,6 @@
 
 - (NSArray*)uiucExplorePolygon {
 	return [self inaArrayForKey:@"polygon"];
-
 }
 
 - (CLLocationCoordinate2D)uiucExploreLocationCoordinate {
@@ -202,6 +201,10 @@
 - (int)uiucExploreLocationFloor {
 	NSDictionary *location = self.uiucExploreLocation;
 	return [location inaIntForKey:@"floor"];
+}
+
+- (bool)uiucSupportsDisplayModes {
+	return (self.uiucExploreType != UIUCExploreType_MTDStop);
 }
 
 + (NSDictionary*)uiucExploreFromGroup:(NSArray*)explores {
@@ -268,7 +271,6 @@
 	}
 	return nil;
 }
-
 
 @end
 

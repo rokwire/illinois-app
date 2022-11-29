@@ -375,7 +375,8 @@
 	
 	MapMarkerDisplayMode displayMode = self.markerDisplayMode;
 	for (GMSMarker *marker in markers) {
-		if ((MapMarkerDisplayMode_Plain < displayMode) && [_mapView.projection containsCoordinate:marker.position]) {
+		NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
+		if (explore.uiucSupportsDisplayModes && (MapMarkerDisplayMode_Plain < displayMode) && [_mapView.projection containsCoordinate:marker.position]) {
 			MapMarkerView2 *markerView = [[MapMarkerView2 alloc] initWithIcon:marker.icon iconAnchor:marker.groundAnchor title:marker.title descr:marker.snippet displayMode:displayMode];
 			marker.iconView = markerView;
 			marker.groundAnchor = markerView.anchor;
@@ -428,20 +429,22 @@
 
 	MapMarkerDisplayMode displayMode = self.markerDisplayMode;
 	for (GMSMarker *marker in _markers) {
-		//NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
-		BOOL markerVisible = [_mapView.projection containsCoordinate:marker.position];
-		MapMarkerView2 *markerView = [marker.iconView isKindOfClass:[MapMarkerView2 class]] ? ((MapMarkerView2*)marker.iconView) : nil;
-		if ((MapMarkerDisplayMode_Plain < displayMode) && markerVisible && (markerView == nil)) {
-			markerView = [[MapMarkerView2 alloc] initWithIcon:marker.icon iconAnchor:marker.groundAnchor title:marker.title descr:marker.snippet displayMode:displayMode];
-			marker.iconView = markerView;
-			marker.groundAnchor = markerView.anchor;
-		}
-		else if (((displayMode == MapMarkerDisplayMode_Plain) || !markerVisible) && (markerView != nil)) {
-			marker.groundAnchor = markerView.iconAnchor;
-			marker.icon = nil;
-		}
-		else if (markerView != nil) {
-			markerView.displayMode = displayMode;
+		NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
+		if (explore.uiucSupportsDisplayModes) {
+			BOOL markerVisible = [_mapView.projection containsCoordinate:marker.position];
+			MapMarkerView2 *markerView = [marker.iconView isKindOfClass:[MapMarkerView2 class]] ? ((MapMarkerView2*)marker.iconView) : nil;
+			if ((MapMarkerDisplayMode_Plain < displayMode) && markerVisible && (markerView == nil)) {
+				markerView = [[MapMarkerView2 alloc] initWithIcon:marker.icon iconAnchor:marker.groundAnchor title:marker.title descr:marker.snippet displayMode:displayMode];
+				marker.iconView = markerView;
+				marker.groundAnchor = markerView.anchor;
+			}
+			else if (((displayMode == MapMarkerDisplayMode_Plain) || !markerVisible) && (markerView != nil)) {
+				marker.groundAnchor = markerView.iconAnchor;
+				marker.icon = nil;
+			}
+			else if (markerView != nil) {
+				markerView.displayMode = displayMode;
+			}
 		}
 	}
 }
