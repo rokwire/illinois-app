@@ -70,7 +70,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
-enum ExploreItem { Events, Dining, Laundry, Buildings, StudentCourse, StateFarmWayfinding, Appointments }
+enum ExploreItem { Events, Dining, Laundry, Buildings, MTDStops, StudentCourse, Appointments, StateFarmWayfinding }
 
 enum EventsDisplayType {single, multiple, all}
 
@@ -85,14 +85,14 @@ class _ExploreSortKey extends OrdinalSortKey {
 
 class ExplorePanel extends StatefulWidget {
 
-  final ExploreItem initialItem;
-  final EventsDisplayType eventsDisplayType;
+  final ExploreItem? initialItem;
+  final EventsDisplayType? eventsDisplayType;
   final ExploreFilter? initialFilter;
   final ListMapDisplayType mapDisplayType;
   final bool rootTabDisplay;
   final String? browseGroupId;
 
-  ExplorePanel({this.initialItem = ExploreItem.Events, this.eventsDisplayType = EventsDisplayType.single, this.initialFilter, this.mapDisplayType = ListMapDisplayType.List, this.rootTabDisplay = false, this.browseGroupId });
+  ExplorePanel({this.initialItem, this.eventsDisplayType, this.initialFilter, this.mapDisplayType = ListMapDisplayType.List, this.rootTabDisplay = false, this.browseGroupId });
 
   static Future<void> presentDetailPanel(BuildContext context, {String? eventId}) async {
     List<Event>? events = (eventId != null) ? await Events().loadEventsByIds([eventId]) : null;
@@ -181,10 +181,11 @@ class ExplorePanelState extends State<ExplorePanel>
     ]);
 
 
-    _selectedItem = widget.initialItem;
-    _selectedEventsDisplayType = widget.eventsDisplayType;
+    _displayType = widget.mapDisplayType;
+    _mapAllowed = (_displayType == ListMapDisplayType.Map);
+    _selectedItem = widget.initialItem ?? _defaultExploreItem ?? ExploreItem.Events;
+    _selectedEventsDisplayType = widget.eventsDisplayType ?? EventsDisplayType.single;
     _studentCourseTerms = StudentCourses().terms;
-    _selectDisplayType(widget.mapDisplayType);
     _initFilters();
 
     _mapExploreBarAnimationController = AnimationController (duration: Duration(milliseconds: 200), lowerBound: -MapBarHeight, upperBound: 0, vsync: this)
@@ -217,19 +218,6 @@ class ExplorePanelState extends State<ExplorePanel>
   @override
   bool get wantKeepAlive => true;
 
-  bool get _hasDiningSpecials{
-    return _diningSpecials != null && _diningSpecials!.isNotEmpty;
-  }
-
-  int get _exploresCount{
-    int exploresCount = (_displayExplores != null) ? _displayExplores!.length : 0;
-
-    if(_hasDiningSpecials){
-      exploresCount++;
-    }
-    return exploresCount;
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -244,6 +232,35 @@ class ExplorePanelState extends State<ExplorePanel>
         bottomNavigationBar: widget.rootTabDisplay ? null : uiuc.TabBar());
   }
 
+
+  bool get _hasDiningSpecials{
+    return _diningSpecials != null && _diningSpecials!.isNotEmpty;
+  }
+
+  int get _exploresCount{
+    int exploresCount = (_displayExplores != null) ? _displayExplores!.length : 0;
+
+    if(_hasDiningSpecials){
+      exploresCount++;
+    }
+    return exploresCount;
+  }
+
+  ExploreItem? get _defaultExploreItem {
+    switch(_displayType) {
+      case ListMapDisplayType.List: return exploreItemFromString(Storage().selectedListExploreItem);
+      case ListMapDisplayType.Map: return exploreItemFromString(Storage().selectedMapExploreItem);
+      default: return null;
+    }
+  }
+
+  set _defaultExploreItem(ExploreItem? value) {
+    switch(_displayType) {
+      case ListMapDisplayType.List: Storage().selectedListExploreItem = exploreItemToString(value); break;
+      case ListMapDisplayType.Map: Storage().selectedMapExploreItem = exploreItemToString(value); break;
+      default: break;
+    }
+  }
 
   void _initExploreItems() {
     if (FlexUI().isLocationServicesAvailable) {
@@ -284,14 +301,17 @@ class ExplorePanelState extends State<ExplorePanel>
         else if (code == 'buildings') {
           exploreItems.add(ExploreItem.Buildings);
         }
+        else if (code == 'mtd_stops') {
+          exploreItems.add(ExploreItem.MTDStops);
+        }
         else if (code == 'student_courses') {
           exploreItems.add(ExploreItem.StudentCourse);
         }
-        else if (code == 'state_farm_wayfinding') {
-          exploreItems.add(ExploreItem.StateFarmWayfinding);
-        }
         else if (code == 'appointments') {
           exploreItems.add(ExploreItem.Appointments);
+        }
+        else if (code == 'state_farm_wayfinding') {
+          exploreItems.add(ExploreItem.StateFarmWayfinding);
         }
       }
     }
@@ -488,17 +508,21 @@ class ExplorePanelState extends State<ExplorePanel>
           task = _loadBuildings();
           break;
 
+        case ExploreItem.MTDStops:
+          task = _loadMTDStops();
+          break;
+
         case ExploreItem.StudentCourse:
           task = _loadStudentCourse(selectedFilterList);
+          break;
+
+        case ExploreItem.Appointments:
+          task = _loadAppointments();
           break;
 
         case ExploreItem.StateFarmWayfinding:
           _clearExploresFromMap();
           _viewStateFarmPoi();
-          break;
-
-        case ExploreItem.Appointments:
-          task = _loadAppointments();
           break;
 
         default:
@@ -580,6 +604,25 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Future<List<Explore>?> _loadBuildings() async {
     return await Gateway().loadBuildings();
+  }
+
+  Future<List<Explore>?> _loadMTDStops() async {
+    List<Explore> result = <Explore>[];
+    _collectBusStops(result, stops: MTD().stops?.stops);
+    return result;
+  }
+
+  void _collectBusStops(List<Explore> result, { List<MTDStop>? stops }) {
+    if (stops != null) {
+      for(MTDStop stop in stops) {
+        if (stop.hasLocation) {
+          result.add(stop);
+        }
+        if (stop.points != null) {
+          _collectBusStops(result, stops: stop.points);
+        }
+      }
+    }
   }
 
   Future<List<Explore>?> _loadStudentCourse(List<ExploreFilter>? selectedFilterList) async {
@@ -1057,6 +1100,7 @@ class ExplorePanelState extends State<ExplorePanel>
   void _onTapExploreItem(ExploreItem item) {
     Analytics().logSelect(target: _exploreItemName(item));
     selectItem(item);
+    _defaultExploreItem = item; //Store last user selection
     _changeExploreItemsDropDownValuesVisibility();
   }
 
@@ -1205,7 +1249,15 @@ class ExplorePanelState extends State<ExplorePanel>
     String? detailsHint = Localization().getStringEx('panel.explore.button.details.hint', '');
     Widget? descriptionWidget;
 
-    if (_selectedMapExplore is Explore) {
+    if (_selectedMapExplore is MTDStop) {
+      title = (_selectedMapExplore as MTDStop).name;
+      description = (_selectedMapExplore as MTDStop).code;
+      exploreColor = Styles().colors?.mtdColor;
+      detailsLabel = 'Bus Schedule';
+      detailsHint = '';
+      descriptionWidget = _buildStopDescription();
+    }
+    else if (_selectedMapExplore is Explore) {
       title = _selectedMapExplore?.exploreTitle;
       description = _selectedMapExplore.exploreLocation?.description;
       exploreColor = _exploreColor(_selectedMapExplore) ?? Colors.white;
@@ -1216,14 +1268,6 @@ class ExplorePanelState extends State<ExplorePanel>
       Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
       description = explore?.exploreLocation?.description ?? "";
       exploreColor = _exploreColor(explore) ?? Styles().colors?.fillColorSecondary;
-    }
-    else if (_selectedMapExplore is MTDStop) {
-      title = (_selectedMapExplore as MTDStop).name;
-      description = (_selectedMapExplore as MTDStop).code;
-      exploreColor = Styles().colors?.mtdColor;
-      detailsLabel = 'Bus Schedule';
-      detailsHint = '';
-      descriptionWidget = _buildStopDescription();
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
@@ -1381,6 +1425,9 @@ class ExplorePanelState extends State<ExplorePanel>
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
               AppointmentDetailPanel(appointment: explore)));
         }
+        else if (explore is MTDStop) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: explore, routes: _selectedMapStopRoutes,)));
+        }
         else {
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
             ExploreDetailPanel(explore: explore,initialLocationData: _locationData,)));
@@ -1388,9 +1435,6 @@ class ExplorePanelState extends State<ExplorePanel>
       }
       else if (explore is List<Explore>) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: explore)));
-      }
-      else if (explore is MTDStop) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: explore, routes: _selectedMapStopRoutes,)));
       }
   }
 
@@ -1437,8 +1481,9 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining: message = Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.'); break;
       case ExploreItem.Laundry: message = Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.'); break;
       case ExploreItem.Buildings: message = Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.'); break;
+      case ExploreItem.MTDStops: message = Localization().getStringEx('panel.explore.state.online.empty.bus_stops', 'No bus stop locations available.'); break;
       case ExploreItem.StudentCourse: message = Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses available.'); break;
-      default:                 message =  ''; break;
+      default:  message =  ''; break;
     }
     return SingleChildScrollView(child:
       Center(child:
@@ -1458,6 +1503,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining:              message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
       case ExploreItem.Laundry:             message = Localization().getStringEx('panel.explore.state.offline.empty.laundry', 'No laundry locations available while offline.'); break;
       case ExploreItem.Buildings:           message = Localization().getStringEx('panel.explore.state.offline.empty.buildings', 'No building locations available while offline.'); break;
+      case ExploreItem.MTDStops:            message = Localization().getStringEx('panel.explore.state.offline.empty.bus_stops', 'No bus stop locations available while offline.'); break;
       case ExploreItem.StudentCourse:       message = Localization().getStringEx('panel.explore.state.offline.empty.student_course', 'No student courses available while offline.'); break;
       case ExploreItem.StateFarmWayfinding: message = Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.'); break;
       default:                              message =  ''; break;
@@ -1480,16 +1526,17 @@ class ExplorePanelState extends State<ExplorePanel>
         child: BlockSemantics(child:Container(color: Color(0x99000000))));
   }
 
-  void _selectDisplayType (ListMapDisplayType displayType) {
+  /*void _selectDisplayType(ListMapDisplayType displayType) {
     Analytics().logSelect(target: displayType.toString());
     if (_displayType != displayType) {
       _refresh((){
         _displayType = displayType;
         _mapAllowed = (_displayType == ListMapDisplayType.Map) || (_mapAllowed == true);
         _enableMap(_displayType == ListMapDisplayType.Map);
+        Analytics().logMapDisplay(action: (_displayType == ListMapDisplayType.Map) ? Analytics.LogMapDisplayShowActionName : Analytics.LogMapDisplayHideActionName);
       });
     }
-  }
+  }*/
 
   Widget _buildFilterValuesContainer() {
 
@@ -1683,9 +1730,10 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
       case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry');
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.bus_stops.title', 'MTD Bus');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.title', 'MyMcKinley In-Person Appointments');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
     }
   }
@@ -1696,9 +1744,10 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.hint', '');
       case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.hint', '');
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.hint', '');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.bus_stops.hint', '');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.hint', '');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.hint', '');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
       default:                              return null;
     }
   }
@@ -1709,9 +1758,10 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.header.dining.title', 'Residence Hall Dining');
       case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.header.laundry.title', 'Laundry');
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.header.buildings.title', 'Campus Buildings');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.header.bus_stops.title', 'MTD Bus');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.header.student_course.title', 'My Courses');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.header.appointments.title', 'MyMcKinley In-Person Appointments');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
     }
   }
@@ -1754,7 +1804,9 @@ class ExplorePanelState extends State<ExplorePanel>
   void _placeExploresOnMap() {
     if (_nativeMapController != null)   {
       _nativeMapController!.placePOIs(_displayExplores, options: <String, dynamic>{
-        MapController.HideBuildingLabelsParams : (_selectedItem == ExploreItem.Buildings) ? true : null
+        MapController.HideBuildingLabelsParams : (_selectedItem == ExploreItem.Buildings) ? true : null,
+        MapController.HideBusStopPOIsParams : (_selectedItem == ExploreItem.MTDStops) ? true : null,
+        MapController.ShowMarkerPopupsParams: (_selectedItem != ExploreItem.MTDStops) ? true : false,
       });
     }
   }
@@ -1768,7 +1820,6 @@ class ExplorePanelState extends State<ExplorePanel>
   void _enableMap(bool enable) {
     if (_nativeMapController != null) {
       _nativeMapController!.enable(enable);
-      Analytics().logMapDisplay(action: enable ? Analytics.LogMapDisplayShowActionName : Analytics.LogMapDisplayHideActionName);
     }
   }
 
@@ -1942,6 +1993,9 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 }
 
+////////////////////
+// ExploreFilter
+
 class ExploreFilter {
   ExploreFilterType type;
   Set<int> selectedIndexes;
@@ -1955,5 +2009,53 @@ class ExploreFilter {
       return -1;
     }
     return selectedIndexes.first;
+  }
+}
+
+////////////////////
+// ExploreItem
+
+
+ExploreItem? exploreItemFromString(String? value) {
+  if (value == 'events') {
+    return ExploreItem.Events;
+  }
+  else if (value == 'dining') {
+    return ExploreItem.Dining;
+  }
+  else if (value == 'laundry') {
+    return ExploreItem.Laundry;
+  }
+  else if (value == 'buildings') {
+    return ExploreItem.Buildings;
+  }
+  else if (value == 'mtdStops') {
+    return ExploreItem.MTDStops;
+  }
+  else if (value == 'studentCourse') {
+    return ExploreItem.StudentCourse;
+  }
+  else if (value == 'appointments') {
+    return ExploreItem.Appointments;
+  }
+  else if (value == 'stateFarmWayfinding') {
+    return ExploreItem.StateFarmWayfinding;
+  }
+  else {
+    return null;
+  }
+}
+
+String? exploreItemToString(ExploreItem? value) {
+  switch(value) {
+    case ExploreItem.Events: return 'events';
+    case ExploreItem.Dining: return 'dining';
+    case ExploreItem.Laundry: return 'laundry';
+    case ExploreItem.Buildings: return 'buildings';
+    case ExploreItem.MTDStops: return 'mtdStops';
+    case ExploreItem.StudentCourse: return 'studentCourse';
+    case ExploreItem.Appointments: return 'appointments';
+    case ExploreItem.StateFarmWayfinding: return 'stateFarmWayfinding';
+    default: return null;
   }
 }
