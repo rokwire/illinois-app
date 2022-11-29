@@ -14,7 +14,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/ui/academics/SkillsSelfEvaluationSkillDescriptionPanel.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -24,8 +25,9 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SkillsSelfEvaluationResultsPanel extends StatefulWidget {
+  final Map<String, SkillsSelfEvaluationContent> content;
 
-  SkillsSelfEvaluationResultsPanel();
+  SkillsSelfEvaluationResultsPanel({required this.content});
 
   @override
   _SkillsSelfEvaluationResultsPanelState createState() => _SkillsSelfEvaluationResultsPanelState();
@@ -33,6 +35,7 @@ class SkillsSelfEvaluationResultsPanel extends StatefulWidget {
 
 class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationResultsPanel> {
   List<SurveyResponse> _responses = [];
+  SurveyResponse? _latestResponse;
   Set<String> _responseSections = {};
   DateTime? _selectedComparisonDate;
 
@@ -90,7 +93,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         Divider(color: Styles().colors?.surface, thickness: 2),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface),)),
-          Flexible(flex: 3, fit: FlexFit.tight, child: Text(_responses.isNotEmpty ? DateTimeUtils.localDateTimeToString(_responses[0].dateTaken, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', textAlign: TextAlign.center, style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface),)),
+          Flexible(flex: 3, fit: FlexFit.tight, child: Text(_latestResponse != null ? DateTimeUtils.localDateTimeToString(_latestResponse!.dateTaken, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', textAlign: TextAlign.center, style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface),)),
           Flexible(flex: 3, fit: FlexFit.tight, child: DropdownButtonHideUnderline(child:
             DropdownButton<DateTime?>(
               icon: Image.asset('images/icon-down.png', color: Styles().colors?.surface),
@@ -108,7 +111,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   List<Widget> _buildContent() {
-    return CollectionUtils.isNotEmpty(_responses) ? <Widget>[
+    return _latestResponse != null ? <Widget>[
       ListView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -116,8 +119,8 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         itemCount: _responseSections.length,
         itemBuilder: (BuildContext context, int index) {
           String section = _responseSections.elementAt(index);
-          String title = _responses[0].survey.constants[section].toString();
-          num? mostRecentScore = _responses[0].survey.stats?.percentages[section];
+          String title = _latestResponse!.survey.constants[section].toString();
+          num? mostRecentScore = _latestResponse!.survey.stats?.percentages[section];
           if (mostRecentScore != null) {
             mostRecentScore = (mostRecentScore*100).round();
           }
@@ -132,7 +135,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
             child: Card(
               child: InkWell(
-                onTap: () => _showScoreDescription(title, section),
+                onTap: () => _showScoreDescription(section),
                 child: Padding(padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16), child: Row(children: [
                   Flexible(flex: 5, fit: FlexFit.tight, child: Text(title, style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant))),
                   Flexible(flex: 3, fit: FlexFit.tight, child: Text(mostRecentScore?.toString() ?? "--", style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 36.0, color: Styles().colors?.fillColorSecondary), textAlign: TextAlign.center,)),
@@ -174,19 +177,13 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     return items;
   }
 
-  List<Widget> _buildSelectedResponseDateWidget(BuildContext context) {
-    return List.generate(_responses.length + 1, 
-      (index) => index > 0 ? 
-        Text(DateTimeUtils.localDateTimeToString(_responses[index-1].dateTaken, format: 'MM/dd/yy h:mma') ?? '', style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface,)) :
-        Text('NONE', style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface,),),
-    );
-  }
-
   void _loadResults() {
     Polls().loadSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
       if (CollectionUtils.isNotEmpty(responses)) {
         _responses = responses!;
         _responses.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
+        _latestResponse = _responses[0];
+
         _responseSections.clear();
         for (SurveyResponse response in responses) {
           _responseSections.addAll(response.survey.stats?.scores.keys ?? []);
@@ -204,11 +201,13 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     setState(() {
       _selectedComparisonDate = value;
     });
-    //TODO: set scores in card widgets based on value section scores
   }
 
-  void _showScoreDescription(String title, String section) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationSkillDescriptionPanel(title: title, code: section)));
+  void _showScoreDescription(String section) {
+    if (_latestResponse?.survey.resultData is Map<String, dynamic>) {
+      String skillDefinition = _latestResponse!.survey.resultData['${section}_results'] ?? '';
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsDetailPanel(content: widget.content[section], skillDefinition: skillDefinition)));
+    }
   }
 
   void _onTapClearAllScores() {

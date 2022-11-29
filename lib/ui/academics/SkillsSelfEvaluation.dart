@@ -38,7 +38,7 @@ class SkillsSelfEvaluation extends StatefulWidget {
 }
 
 class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
-  Map<String, Map<String, dynamic>>? _contentItems;
+  Map<String, SkillsSelfEvaluationContent> _contentItems = {};
 
   @override
   void initState() {
@@ -109,21 +109,26 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
         label: Localization().getStringEx("panel.skills_self_evaluation.get_started.body.info.description", "Your results will be saved for you to revisit or compare to future results."),
         textColor: Styles().colors?.fillColorPrimaryVariant,
         backgroundColor: Colors.transparent,
-        // onTap: _onTapResults,
+        // TODO: onTap: _onTapResults,
       ),
       RibbonButton(
         leftIconAsset: "images/icon-settings.png",
-        label: Localization().getStringEx("panel.skills_self_evaluation.get_started.body.settings.decription", "Don’t Save My Results"),
+        label: Localization().getStringEx("panel.skills_self_evaluation.get_started.body.settings.decription", "Don't Save My Results"),
         textColor: Styles().colors?.fillColorPrimaryVariant,
         backgroundColor: Colors.transparent,
-        // onTap: _onTapResults,
+        // TODO: onTap: _onTapResults,
       ),
     ];
   }
 
   void _loadContentItems() {
     Polls().loadContentItems(categories: ["Skills Self-Evaluation"]).then((content) {
-      _contentItems = content;
+      if (content?.isNotEmpty ?? false) {
+        _contentItems.clear();
+        for (MapEntry<String, Map<String, dynamic>> item in content?.entries ?? []) {
+          _contentItems[item.key] = SkillsSelfEvaluationContent.fromJson(item.value);
+        }
+      }
     });
   }
 
@@ -187,11 +192,116 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
 
   void _onTapResults() {
     Navigator.of(context).pop();
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel()));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(content: _contentItems)));
   }
 
   void _onTapShowInfo(String key) {
     Navigator.of(context).pop();
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationInfoPanel(content: _contentItems?[key] ?? {})));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationInfoPanel(content: _contentItems[key])));
   } 
+}
+
+class SkillsSelfEvaluationContent {
+  final String id;
+  final String category;
+  final String key;
+  final SkillsSelfEvaluationHeader? header;
+  final List<SkillsSelfEvaluationSection>? sections;
+  final Map<String, SkillsSelfEvaluationLink>? links;
+
+  SkillsSelfEvaluationContent({required this.id, required this.category, required this.key, this.header, this.sections, this.links});
+
+  factory SkillsSelfEvaluationContent.fromJson(Map<String, dynamic> json) {
+    Map<String, SkillsSelfEvaluationLink>? links;
+    Map<String, dynamic>? linksJson = JsonUtils.mapValue(json['links']);
+    if (linksJson != null) {
+      links = <String, SkillsSelfEvaluationLink>{};
+      for (MapEntry<String, dynamic> item in linksJson.entries) {
+        if (item.value is Map<String, dynamic>) {
+          links[item.key] = SkillsSelfEvaluationLink.fromJson(item.value);
+        }
+      }
+    }
+
+    return SkillsSelfEvaluationContent(
+      id: JsonUtils.stringValue(json['id']) ?? '',
+      category: JsonUtils.stringValue(json['category']) ?? '',
+      key: JsonUtils.stringValue(json['key']) ?? '',
+      header: SkillsSelfEvaluationHeader.fromJson(json['header']),
+      sections: SkillsSelfEvaluationSection.listFromJson(JsonUtils.listValue(json['sections'])),
+      links: links,
+    );
+  }
+}
+
+class SkillsSelfEvaluationHeader {
+  final String title;
+  final String? moreInfo;
+
+  SkillsSelfEvaluationHeader({required this.title, this.moreInfo});
+
+  factory SkillsSelfEvaluationHeader.fromJson(Map<String, dynamic> json) {
+    return SkillsSelfEvaluationHeader(
+      title: JsonUtils.stringValue(json['title']) ?? '',
+      moreInfo: JsonUtils.stringValue(json['moreInfo']),
+    );
+  }
+}
+
+class SkillsSelfEvaluationSection {
+  final String type;
+  final String title;
+  final String? subtitle;
+  final String? body;
+  final List<SkillsSelfEvaluationSection>? subsections;
+
+  SkillsSelfEvaluationSection({required this.type, required this.title, this.subtitle, this.body, this.subsections});
+
+  factory SkillsSelfEvaluationSection.fromJson(Map<String, dynamic> json) {
+    return SkillsSelfEvaluationSection(
+      type: JsonUtils.stringValue(json['type']) ?? '',
+      title: JsonUtils.stringValue(json['title']) ?? '',
+      subtitle: JsonUtils.stringValue(json['subtitle']),
+      body: JsonUtils.stringValue(json['body']),
+      subsections: SkillsSelfEvaluationSection.listFromJson(JsonUtils.listValue(json['subsections'])),
+    );
+  }
+
+  static List<SkillsSelfEvaluationSection>? listFromJson(List<dynamic>? json) {
+    if (json != null) {
+      List<SkillsSelfEvaluationSection> sections = [];
+      for (dynamic item in json) {
+        if (item is Map<String, dynamic>) {
+          sections.add(SkillsSelfEvaluationSection.fromJson(item));
+        }
+      }
+      return sections;
+    }
+
+    return null;
+  }
+}
+
+class SkillsSelfEvaluationLink {
+  final String type;
+  final String text;
+  final String? icon;
+  final String? url;
+  final String? panel;
+  final Map<String, dynamic>? params;
+
+  SkillsSelfEvaluationLink({required this.type, required this.text, this.icon, this.url, this.panel, this.params});
+
+  factory SkillsSelfEvaluationLink.fromJson(Map<String, dynamic> json) {
+    return SkillsSelfEvaluationLink(
+      type: JsonUtils.stringValue(json['type']) ?? '',
+      text: JsonUtils.stringValue(json['text']) ?? '',
+      icon: JsonUtils.stringValue(json['icon']),
+      url: JsonUtils.stringValue(json['url']),
+      panel: JsonUtils.stringValue(json['panel']),
+      params: JsonUtils.mapValue(json['params']),
+    );
+  }
+
+  bool get internal => params != null ? params!['internal'] ?? false : false;
 }

@@ -13,34 +13,38 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 
-class SkillsSelfEvaluationSkillDescriptionPanel extends StatefulWidget {
-  //TODO: pass in class that defines content to be displayed
-  final String title;
-  final String code;
+class SkillsSelfEvaluationResultsDetailPanel extends StatefulWidget {
+  final SkillsSelfEvaluationContent? content;
+  final String skillDefinition;
 
-  SkillsSelfEvaluationSkillDescriptionPanel({required this.title, required this.code});
+  SkillsSelfEvaluationResultsDetailPanel({required this.content, required this.skillDefinition});
 
   @override
-  _SkillsSelfEvaluationSkillDescriptionPanelState createState() => _SkillsSelfEvaluationSkillDescriptionPanelState();
+  _SkillsSelfEvaluationResultsDetailPanelState createState() => _SkillsSelfEvaluationResultsDetailPanelState();
 }
 
-class _SkillsSelfEvaluationSkillDescriptionPanelState extends State<SkillsSelfEvaluationSkillDescriptionPanel> {
+class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvaluationResultsDetailPanel> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'),),
-      body: SectionSlantHeader(
+      body: widget.content != null ? SectionSlantHeader(
         header: _buildHeader(),
         slantColor: Styles().colors?.gradientColorPrimary,
         backgroundColor: Styles().colors?.background,
         // children: _buildContent(),
         // childrenPadding: const EdgeInsets.only(top: 240),
-      ),
+      ) : Padding(padding: const EdgeInsets.all(24.0), child: Text(
+        Localization().getStringEx("panel.skills_self_evaluation.results_detail.missing_content", "There is no detailed results content for this skill."),
+        style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 20.0, color: Styles().colors?.fillColorPrimaryVariant),
+        textAlign: TextAlign.center,
+      )),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: null,
     );
@@ -50,7 +54,7 @@ class _SkillsSelfEvaluationSkillDescriptionPanelState extends State<SkillsSelfEv
   return Container(
     padding: EdgeInsets.only(top: 100, bottom: 32),
     child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      Text(widget.title, style: TextStyle(fontFamily: "ProximaNovaExtraBold", fontSize: 36.0, color: Styles().colors?.surface), textAlign: TextAlign.center,),
+      Text(widget.content!.header?.title ?? '', style: TextStyle(fontFamily: "ProximaNovaExtraBold", fontSize: 36.0, color: Styles().colors?.surface), textAlign: TextAlign.center,),
       // Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.description', 'Skills Domain Score'), style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.surface), textAlign: TextAlign.center,),
     ]),
     decoration: BoxDecoration(
