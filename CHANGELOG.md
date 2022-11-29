@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added "MTD Bus" category in Map [#2516](https://github.com/rokwire/illinois-app/issues/2516).
+- Add new video "Favorites Tutorial" [#2581] (https://github.com/rokwire/illinois-app/issues/2581).
 ### Changed
 - Remember last selected category in Map [#2583](https://github.com/rokwire/illinois-app/issues/2583).
 
