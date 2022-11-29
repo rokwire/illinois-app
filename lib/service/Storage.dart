@@ -366,4 +366,12 @@ class Storage extends rokwire.Storage {
   String? get selectedCourseTermId => getStringWithName(selectedCourseTermIdKey);
   set selectedCourseTermId(String? value) => setStringWithName(selectedCourseTermIdKey, value);
 
+  // Explore
+  String get selectedListExploreItemKey => 'edu.illinois.rokwire.explore.list.selected.item';
+  String? get selectedListExploreItem => getStringWithName(selectedListExploreItemKey);
+  set selectedListExploreItem(String? value) => setStringWithName(selectedListExploreItemKey, value);
+
+  String get selectedMapExploreItemKey => 'edu.illinois.rokwire.explore.map.selected.item';
+  String? get selectedMapExploreItem => getStringWithName(selectedMapExploreItemKey);
+  set selectedMapExploreItem(String? value) => setStringWithName(selectedMapExploreItemKey, value);
 }
