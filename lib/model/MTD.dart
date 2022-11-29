@@ -2,13 +2,14 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Location.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 ///////////////////////////
 // MTDStop
 
-class MTDStop {
+class MTDStop with Explore {
   final String? id;
   final String? name;
   final String? code;
@@ -150,6 +151,35 @@ class MTDStop {
     
     return true;
   }
+
+  // ExploreJsonHandler
+
+  static bool canJson(Map<String, dynamic>? json) {
+    return (json != null) &&
+      (json['stop_id'] != null) &&
+      (json['stop_name'] != null) &&
+      (json['code'] != null) &&
+      (json['stop_lat'] != null) &&
+      (json['stop_lon'] != null);
+  }
+
+  bool get hasLocation => (latitude != null) && (longitude != null);
+
+  // Explore implementation
+
+  @override String? get exploreId => id;
+  @override String get exploreTitle => name ?? '';
+  @override String? get exploreSubTitle => code ?? '';
+  @override String? get exploreShortDescription => null;
+  @override String? get exploreLongDescription => null;
+  @override DateTime? get exploreStartDateUtc => null;
+  @override String? get exploreImageURL => null;
+  @override String? get explorePlaceId => null;
+  @override ExploreLocation? get exploreLocation => ExploreLocation(
+    building : name,
+    latitude : latitude,
+    longitude : longitude,
+  );
 }
 
 ///////////////////////////

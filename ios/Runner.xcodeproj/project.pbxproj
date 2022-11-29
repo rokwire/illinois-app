@@ -39,23 +39,14 @@
 		261784BC28C8ED6A009172BB /* travel-mode-drive@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30F022E5DD7900547FE1 /* travel-mode-drive@2x.png */; };
 		261784BD28C8ED6A009172BB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		261784BF28C8ED6A009172BB /* travel-mode-bicycle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EF22E5DD7900547FE1 /* travel-mode-bicycle@2x.png */; };
-		261784C028C8ED6A009172BB /* maps-icon-marker-pin-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B532306E8000026240A /* maps-icon-marker-pin-40@2x.png */; };
-		261784C128C8ED6A009172BB /* maps-icon-marker-circle-30@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 269F83E322D73E7400CC11A4 /* maps-icon-marker-circle-30@2x.png */; };
 		261784C228C8ED6A009172BB /* travel-mode-walk@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30ED22E5DD7900547FE1 /* travel-mode-walk@2x.png */; };
-		261784C328C8ED6A009172BB /* maps-icon-marker-pin-30@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B512306E8000026240A /* maps-icon-marker-pin-30@2x.png */; };
 		261784C428C8ED6A009172BB /* button-icon-nav-refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F647E22DF15F700A85AFD /* button-icon-nav-refresh.png */; };
 		261784C528C8ED6A009172BB /* button-icon-nav-location.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F648022DF200300A85AFD /* button-icon-nav-location.png */; };
-		261784C628C8ED6A009172BB /* maps-icon-marker-circle-10@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 269F83E222D73E7400CC11A4 /* maps-icon-marker-circle-10@2x.png */; };
 		261784C728C8ED6A009172BB /* maps-icon-marker-origin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */; };
-		261784C828C8ED6A009172BB /* maps-icon-marker-circle-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 269F83E522D73E7400CC11A4 /* maps-icon-marker-circle-40@2x.png */; };
 		261784C928C8ED6A009172BB /* button-icon-nav-prev.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170E922DDFB6500299773 /* button-icon-nav-prev.png */; };
 		261784CA28C8ED6A009172BB /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
-		261784CB28C8ED6A009172BB /* maps-icon-marker-circle-20@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 269F83E422D73E7400CC11A4 /* maps-icon-marker-circle-20@2x.png */; };
-		261784CC28C8ED6A009172BB /* maps-icon-marker-pin-20@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B502306E8000026240A /* maps-icon-marker-pin-20@2x.png */; };
-		261784CD28C8ED6A009172BB /* maps-icon-marker-pin-50@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B582306EB190026240A /* maps-icon-marker-pin-50@2x.png */; };
 		261784CE28C8ED6A009172BB /* button-icon-nav-clear.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170EA22DDFB6500299773 /* button-icon-nav-clear.png */; };
 		261784CF28C8ED6A009172BB /* travel-mode-transit@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EE22E5DD7900547FE1 /* travel-mode-transit@2x.png */; };
-		261784D028C8ED6A009172BB /* maps-icon-marker-pin-10@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B522306E8000026240A /* maps-icon-marker-pin-10@2x.png */; };
 		261784D128C8ED6A009172BB /* travel-mode-unknown@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30F522E5E47600547FE1 /* travel-mode-unknown@2x.png */; };
 		261784D228C8ED6A009172BB /* button-icon-nav-next.png in Resources */ = {isa = PBXBuildFile; fileRef = 26A170E822DDFB6500299773 /* button-icon-nav-next.png */; };
 		261784D428C8ED6A009172BB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -64,8 +55,12 @@
 		2626D94E22DCB80000F6BC2F /* MapMarkerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2626D94D22DCB80000F6BC2F /* MapMarkerView.m */; };
 		264C99E828B3DA150089848F /* maps-icon-marker-origin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */; };
 		266DC99628ACD972007F51EA /* MapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 266DC99528ACD972007F51EA /* MapController.m */; };
-		268115412915449500945B3B /* mapstyle-nopoi.json in Resources */ = {isa = PBXBuildFile; fileRef = 268115402915449500945B3B /* mapstyle-nopoi.json */; };
-		268115422915449500945B3B /* mapstyle-nopoi.json in Resources */ = {isa = PBXBuildFile; fileRef = 268115402915449500945B3B /* mapstyle-nopoi.json */; };
+		26729A0F2936008F006DD4D2 /* maps-icon-marker-bus@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26729A0E2936008F006DD4D2 /* maps-icon-marker-bus@3x.png */; };
+		26729A102936008F006DD4D2 /* maps-icon-marker-bus@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26729A0E2936008F006DD4D2 /* maps-icon-marker-bus@3x.png */; };
+		26729A1929363FE8006DD4D2 /* mapstyle-nostops.json in Resources */ = {isa = PBXBuildFile; fileRef = 26729A1829363FE8006DD4D2 /* mapstyle-nostops.json */; };
+		26729A1A29363FE8006DD4D2 /* mapstyle-nostops.json in Resources */ = {isa = PBXBuildFile; fileRef = 26729A1829363FE8006DD4D2 /* mapstyle-nostops.json */; };
+		268115412915449500945B3B /* mapstyle-nopois.json in Resources */ = {isa = PBXBuildFile; fileRef = 268115402915449500945B3B /* mapstyle-nopois.json */; };
+		268115422915449500945B3B /* mapstyle-nopois.json in Resources */ = {isa = PBXBuildFile; fileRef = 268115402915449500945B3B /* mapstyle-nopois.json */; };
 		268F30F122E5DD7900547FE1 /* travel-mode-walk@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30ED22E5DD7900547FE1 /* travel-mode-walk@2x.png */; };
 		268F30F222E5DD7900547FE1 /* travel-mode-transit@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EE22E5DD7900547FE1 /* travel-mode-transit@2x.png */; };
 		268F30F322E5DD7900547FE1 /* travel-mode-bicycle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F30EF22E5DD7900547FE1 /* travel-mode-bicycle@2x.png */; };
@@ -76,19 +71,10 @@
 		268F647D22DF09D900A85AFD /* NSArray+InaTypedValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 268F647B22DF09D900A85AFD /* NSArray+InaTypedValue.m */; };
 		268F647F22DF15F700A85AFD /* button-icon-nav-refresh.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F647E22DF15F700A85AFD /* button-icon-nav-refresh.png */; };
 		268F648122DF200300A85AFD /* button-icon-nav-location.png in Resources */ = {isa = PBXBuildFile; fileRef = 268F648022DF200300A85AFD /* button-icon-nav-location.png */; };
-		26962B542306E8000026240A /* maps-icon-marker-pin-20@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B502306E8000026240A /* maps-icon-marker-pin-20@2x.png */; };
-		26962B552306E8000026240A /* maps-icon-marker-pin-30@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B512306E8000026240A /* maps-icon-marker-pin-30@2x.png */; };
-		26962B562306E8000026240A /* maps-icon-marker-pin-10@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B522306E8000026240A /* maps-icon-marker-pin-10@2x.png */; };
-		26962B572306E8000026240A /* maps-icon-marker-pin-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B532306E8000026240A /* maps-icon-marker-pin-40@2x.png */; };
-		26962B592306EB190026240A /* maps-icon-marker-pin-50@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 26962B582306EB190026240A /* maps-icon-marker-pin-50@2x.png */; };
 		2696995D22C38B4000B3290E /* AppKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 2696995922C38B4000B3290E /* AppKeys.m */; };
 		2696995E22C38B4000B3290E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2696995A22C38B4000B3290E /* AppDelegate.m */; };
 		2696996022C38C1D00B3290E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2696995F22C38C1D00B3290E /* main.m */; };
 		2696998022C3A14A00B3290E /* MapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2696997F22C3A14A00B3290E /* MapView.m */; };
-		269F83E622D73E7400CC11A4 /* maps-icon-marker-circle-10@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 269F83E222D73E7400CC11A4 /* maps-icon-marker-circle-10@2x.png */; };
-		269F83E722D73E7400CC11A4 /* maps-icon-marker-circle-30@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 269F83E322D73E7400CC11A4 /* maps-icon-marker-circle-30@2x.png */; };
-		269F83E822D73E7400CC11A4 /* maps-icon-marker-circle-20@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 269F83E422D73E7400CC11A4 /* maps-icon-marker-circle-20@2x.png */; };
-		269F83E922D73E7400CC11A4 /* maps-icon-marker-circle-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 269F83E522D73E7400CC11A4 /* maps-icon-marker-circle-40@2x.png */; };
 		269F83EE22D73EB400CC11A4 /* NSDate+UIUCUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 269F83EA22D73EB400CC11A4 /* NSDate+UIUCUtils.m */; };
 		269F83EF22D73EB400CC11A4 /* UIColor+InaParse.m in Sources */ = {isa = PBXBuildFile; fileRef = 269F83EC22D73EB400CC11A4 /* UIColor+InaParse.m */; };
 		269F83F222D744E200CC11A4 /* CGGeometry+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 269F83F122D744E200CC11A4 /* CGGeometry+InaUtils.m */; };
@@ -172,7 +158,9 @@
 		26695108D663C5F02B96B5EB /* Pods-Runner.debug-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-illinoisdev.xcconfig"; sourceTree = "<group>"; };
 		266DC99428ACD972007F51EA /* MapController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapController.h; sourceTree = "<group>"; };
 		266DC99528ACD972007F51EA /* MapController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapController.m; sourceTree = "<group>"; };
-		268115402915449500945B3B /* mapstyle-nopoi.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "mapstyle-nopoi.json"; sourceTree = "<group>"; };
+		26729A0E2936008F006DD4D2 /* maps-icon-marker-bus@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-bus@3x.png"; sourceTree = "<group>"; };
+		26729A1829363FE8006DD4D2 /* mapstyle-nostops.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "mapstyle-nostops.json"; sourceTree = "<group>"; };
+		268115402915449500945B3B /* mapstyle-nopois.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "mapstyle-nopois.json"; sourceTree = "<group>"; };
 		268F30ED22E5DD7900547FE1 /* travel-mode-walk@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "travel-mode-walk@2x.png"; sourceTree = "<group>"; };
 		268F30EE22E5DD7900547FE1 /* travel-mode-transit@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "travel-mode-transit@2x.png"; sourceTree = "<group>"; };
 		268F30EF22E5DD7900547FE1 /* travel-mode-bicycle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "travel-mode-bicycle@2x.png"; sourceTree = "<group>"; };
@@ -187,11 +175,6 @@
 		268F647E22DF15F700A85AFD /* button-icon-nav-refresh.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-icon-nav-refresh.png"; sourceTree = "<group>"; };
 		268F648022DF200300A85AFD /* button-icon-nav-location.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-icon-nav-location.png"; sourceTree = "<group>"; };
 		26962B482306BA2F0026240A /* InaSymbols.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InaSymbols.h; sourceTree = "<group>"; };
-		26962B502306E8000026240A /* maps-icon-marker-pin-20@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-pin-20@2x.png"; sourceTree = "<group>"; };
-		26962B512306E8000026240A /* maps-icon-marker-pin-30@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-pin-30@2x.png"; sourceTree = "<group>"; };
-		26962B522306E8000026240A /* maps-icon-marker-pin-10@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-pin-10@2x.png"; sourceTree = "<group>"; };
-		26962B532306E8000026240A /* maps-icon-marker-pin-40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-pin-40@2x.png"; sourceTree = "<group>"; };
-		26962B582306EB190026240A /* maps-icon-marker-pin-50@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-pin-50@2x.png"; sourceTree = "<group>"; };
 		2696995922C38B4000B3290E /* AppKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppKeys.m; sourceTree = "<group>"; };
 		2696995A22C38B4000B3290E /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		2696995B22C38B4000B3290E /* AppKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppKeys.h; sourceTree = "<group>"; };
@@ -199,10 +182,6 @@
 		2696995F22C38C1D00B3290E /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2696997E22C3A14A00B3290E /* MapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapView.h; sourceTree = "<group>"; };
 		2696997F22C3A14A00B3290E /* MapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapView.m; sourceTree = "<group>"; };
-		269F83E222D73E7400CC11A4 /* maps-icon-marker-circle-10@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-circle-10@2x.png"; sourceTree = "<group>"; };
-		269F83E322D73E7400CC11A4 /* maps-icon-marker-circle-30@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-circle-30@2x.png"; sourceTree = "<group>"; };
-		269F83E422D73E7400CC11A4 /* maps-icon-marker-circle-20@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-circle-20@2x.png"; sourceTree = "<group>"; };
-		269F83E522D73E7400CC11A4 /* maps-icon-marker-circle-40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "maps-icon-marker-circle-40@2x.png"; sourceTree = "<group>"; };
 		269F83EA22D73EB400CC11A4 /* NSDate+UIUCUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+UIUCUtils.m"; sourceTree = "<group>"; };
 		269F83EB22D73EB400CC11A4 /* UIColor+InaParse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+InaParse.h"; sourceTree = "<group>"; };
 		269F83EC22D73EB400CC11A4 /* UIColor+InaParse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+InaParse.m"; sourceTree = "<group>"; };
@@ -328,7 +307,8 @@
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
 				B6BDCD39242CCF5F002F7364 /* Localizable.strings */,
-				268115402915449500945B3B /* mapstyle-nopoi.json */,
+				268115402915449500945B3B /* mapstyle-nopois.json */,
+				26729A1829363FE8006DD4D2 /* mapstyle-nostops.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -346,16 +326,8 @@
 				26A170E822DDFB6500299773 /* button-icon-nav-next.png */,
 				26A170E922DDFB6500299773 /* button-icon-nav-prev.png */,
 				268F647E22DF15F700A85AFD /* button-icon-nav-refresh.png */,
-				269F83E222D73E7400CC11A4 /* maps-icon-marker-circle-10@2x.png */,
-				269F83E422D73E7400CC11A4 /* maps-icon-marker-circle-20@2x.png */,
-				269F83E322D73E7400CC11A4 /* maps-icon-marker-circle-30@2x.png */,
-				269F83E522D73E7400CC11A4 /* maps-icon-marker-circle-40@2x.png */,
-				26962B522306E8000026240A /* maps-icon-marker-pin-10@2x.png */,
-				26962B502306E8000026240A /* maps-icon-marker-pin-20@2x.png */,
-				26962B512306E8000026240A /* maps-icon-marker-pin-30@2x.png */,
-				26962B532306E8000026240A /* maps-icon-marker-pin-40@2x.png */,
-				26962B582306EB190026240A /* maps-icon-marker-pin-50@2x.png */,
 				264C99E728B3DA150089848F /* maps-icon-marker-origin@2x.png */,
+				26729A0E2936008F006DD4D2 /* maps-icon-marker-bus@3x.png */,
 			);
 			path = Images;
 			sourceTree = "<group>";
@@ -693,28 +665,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				261784BC28C8ED6A009172BB /* travel-mode-drive@2x.png in Resources */,
+				26729A1A29363FE8006DD4D2 /* mapstyle-nostops.json in Resources */,
 				261784BD28C8ED6A009172BB /* LaunchScreen.storyboard in Resources */,
 				261784BF28C8ED6A009172BB /* travel-mode-bicycle@2x.png in Resources */,
-				261784C028C8ED6A009172BB /* maps-icon-marker-pin-40@2x.png in Resources */,
-				261784C128C8ED6A009172BB /* maps-icon-marker-circle-30@2x.png in Resources */,
 				261784C228C8ED6A009172BB /* travel-mode-walk@2x.png in Resources */,
-				261784C328C8ED6A009172BB /* maps-icon-marker-pin-30@2x.png in Resources */,
 				261784C428C8ED6A009172BB /* button-icon-nav-refresh.png in Resources */,
 				261784C528C8ED6A009172BB /* button-icon-nav-location.png in Resources */,
-				261784C628C8ED6A009172BB /* maps-icon-marker-circle-10@2x.png in Resources */,
 				261784C728C8ED6A009172BB /* maps-icon-marker-origin@2x.png in Resources */,
-				261784C828C8ED6A009172BB /* maps-icon-marker-circle-40@2x.png in Resources */,
 				261784C928C8ED6A009172BB /* button-icon-nav-prev.png in Resources */,
 				261784CA28C8ED6A009172BB /* AppFrameworkInfo.plist in Resources */,
-				261784CB28C8ED6A009172BB /* maps-icon-marker-circle-20@2x.png in Resources */,
-				268115422915449500945B3B /* mapstyle-nopoi.json in Resources */,
-				261784CC28C8ED6A009172BB /* maps-icon-marker-pin-20@2x.png in Resources */,
-				261784CD28C8ED6A009172BB /* maps-icon-marker-pin-50@2x.png in Resources */,
+				268115422915449500945B3B /* mapstyle-nopois.json in Resources */,
 				261784CE28C8ED6A009172BB /* button-icon-nav-clear.png in Resources */,
 				261784CF28C8ED6A009172BB /* travel-mode-transit@2x.png in Resources */,
-				261784D028C8ED6A009172BB /* maps-icon-marker-pin-10@2x.png in Resources */,
 				261784D128C8ED6A009172BB /* travel-mode-unknown@2x.png in Resources */,
 				261784D228C8ED6A009172BB /* button-icon-nav-next.png in Resources */,
+				26729A102936008F006DD4D2 /* maps-icon-marker-bus@3x.png in Resources */,
 				261784D428C8ED6A009172BB /* Main.storyboard in Resources */,
 				26AAA20728CA34C200BE694B /* Assets.xcassets in Resources */,
 				261784D628C8ED6A009172BB /* Localizable.strings in Resources */,
@@ -726,28 +691,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				268F30F422E5DD7900547FE1 /* travel-mode-drive@2x.png in Resources */,
+				26729A1929363FE8006DD4D2 /* mapstyle-nostops.json in Resources */,
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				268F30F322E5DD7900547FE1 /* travel-mode-bicycle@2x.png in Resources */,
-				26962B572306E8000026240A /* maps-icon-marker-pin-40@2x.png in Resources */,
-				269F83E722D73E7400CC11A4 /* maps-icon-marker-circle-30@2x.png in Resources */,
 				268F30F122E5DD7900547FE1 /* travel-mode-walk@2x.png in Resources */,
-				26962B552306E8000026240A /* maps-icon-marker-pin-30@2x.png in Resources */,
 				268F647F22DF15F700A85AFD /* button-icon-nav-refresh.png in Resources */,
 				268F648122DF200300A85AFD /* button-icon-nav-location.png in Resources */,
-				269F83E622D73E7400CC11A4 /* maps-icon-marker-circle-10@2x.png in Resources */,
 				264C99E828B3DA150089848F /* maps-icon-marker-origin@2x.png in Resources */,
-				269F83E922D73E7400CC11A4 /* maps-icon-marker-circle-40@2x.png in Resources */,
 				26A170EC22DDFB6500299773 /* button-icon-nav-prev.png in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
-				269F83E822D73E7400CC11A4 /* maps-icon-marker-circle-20@2x.png in Resources */,
-				268115412915449500945B3B /* mapstyle-nopoi.json in Resources */,
-				26962B542306E8000026240A /* maps-icon-marker-pin-20@2x.png in Resources */,
-				26962B592306EB190026240A /* maps-icon-marker-pin-50@2x.png in Resources */,
+				268115412915449500945B3B /* mapstyle-nopois.json in Resources */,
 				26A170ED22DDFB6500299773 /* button-icon-nav-clear.png in Resources */,
 				268F30F222E5DD7900547FE1 /* travel-mode-transit@2x.png in Resources */,
-				26962B562306E8000026240A /* maps-icon-marker-pin-10@2x.png in Resources */,
 				268F30F622E5E47600547FE1 /* travel-mode-unknown@2x.png in Resources */,
 				26A170EB22DDFB6500299773 /* button-icon-nav-next.png in Resources */,
+				26729A0F2936008F006DD4D2 /* maps-icon-marker-bus@3x.png in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
 				B6BDCD37242CCF5F002F7364 /* Localizable.strings in Resources */,

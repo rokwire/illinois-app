@@ -68,6 +68,8 @@ class MapController {
 
   static const String LocationThresoldDistanceParam = 'LocationThresoldDistance';
   static const String HideBuildingLabelsParams = 'HideBuildingLabels';
+  static const String HideBusStopPOIsParams = 'HideBusStopPOIs';
+  static const String ShowMarkerPopupsParams = 'ShowMarkerPopus';
 
   late MethodChannel _channel;
   int? _mapId;
