@@ -62,7 +62,7 @@
 			"wellness.health_screener": ["take_screener"],
 
 			"explore.list": ["events", "dining"],
-			"explore.map":  ["events", "dining", "laundry", "student_courses", "buildings", "state_farm_wayfinding", "appointments"],
+			"explore.map":  ["events", "dining", "laundry", "student_courses", "buildings", "mtd_stops", "appointments", "state_farm_wayfinding"],
 	
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 	

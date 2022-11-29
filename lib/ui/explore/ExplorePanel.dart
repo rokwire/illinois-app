@@ -70,7 +70,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
-enum ExploreItem { Events, Dining, Laundry, Buildings, StudentCourse, StateFarmWayfinding, Appointments }
+enum ExploreItem { Events, Dining, Laundry, Buildings, MTDStops, StudentCourse, Appointments, StateFarmWayfinding }
 
 enum EventsDisplayType {single, multiple, all}
 
@@ -284,14 +284,17 @@ class ExplorePanelState extends State<ExplorePanel>
         else if (code == 'buildings') {
           exploreItems.add(ExploreItem.Buildings);
         }
+        else if (code == 'mtd_stops') {
+          exploreItems.add(ExploreItem.MTDStops);
+        }
         else if (code == 'student_courses') {
           exploreItems.add(ExploreItem.StudentCourse);
         }
-        else if (code == 'state_farm_wayfinding') {
-          exploreItems.add(ExploreItem.StateFarmWayfinding);
-        }
         else if (code == 'appointments') {
           exploreItems.add(ExploreItem.Appointments);
+        }
+        else if (code == 'state_farm_wayfinding') {
+          exploreItems.add(ExploreItem.StateFarmWayfinding);
         }
       }
     }
@@ -488,17 +491,21 @@ class ExplorePanelState extends State<ExplorePanel>
           task = _loadBuildings();
           break;
 
+        case ExploreItem.MTDStops:
+          task = _loadMTDStops();
+          break;
+
         case ExploreItem.StudentCourse:
           task = _loadStudentCourse(selectedFilterList);
+          break;
+
+        case ExploreItem.Appointments:
+          task = _loadAppointments();
           break;
 
         case ExploreItem.StateFarmWayfinding:
           _clearExploresFromMap();
           _viewStateFarmPoi();
-          break;
-
-        case ExploreItem.Appointments:
-          task = _loadAppointments();
           break;
 
         default:
@@ -580,6 +587,25 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Future<List<Explore>?> _loadBuildings() async {
     return await Gateway().loadBuildings();
+  }
+
+  Future<List<Explore>?> _loadMTDStops() async {
+    List<Explore> result = <Explore>[];
+    _collectBusStops(result, stops: MTD().stops?.stops);
+    return result;
+  }
+
+  void _collectBusStops(List<Explore> result, { List<MTDStop>? stops }) {
+    if (stops != null) {
+      for(MTDStop stop in stops) {
+        if (stop.hasLocation) {
+          result.add(stop);
+        }
+        if (stop.points != null) {
+          _collectBusStops(result, stops: stop.points);
+        }
+      }
+    }
   }
 
   Future<List<Explore>?> _loadStudentCourse(List<ExploreFilter>? selectedFilterList) async {
@@ -1205,7 +1231,15 @@ class ExplorePanelState extends State<ExplorePanel>
     String? detailsHint = Localization().getStringEx('panel.explore.button.details.hint', '');
     Widget? descriptionWidget;
 
-    if (_selectedMapExplore is Explore) {
+    if (_selectedMapExplore is MTDStop) {
+      title = (_selectedMapExplore as MTDStop).name;
+      description = (_selectedMapExplore as MTDStop).code;
+      exploreColor = Styles().colors?.mtdColor;
+      detailsLabel = 'Bus Schedule';
+      detailsHint = '';
+      descriptionWidget = _buildStopDescription();
+    }
+    else if (_selectedMapExplore is Explore) {
       title = _selectedMapExplore?.exploreTitle;
       description = _selectedMapExplore.exploreLocation?.description;
       exploreColor = _exploreColor(_selectedMapExplore) ?? Colors.white;
@@ -1216,14 +1250,6 @@ class ExplorePanelState extends State<ExplorePanel>
       Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
       description = explore?.exploreLocation?.description ?? "";
       exploreColor = _exploreColor(explore) ?? Styles().colors?.fillColorSecondary;
-    }
-    else if (_selectedMapExplore is MTDStop) {
-      title = (_selectedMapExplore as MTDStop).name;
-      description = (_selectedMapExplore as MTDStop).code;
-      exploreColor = Styles().colors?.mtdColor;
-      detailsLabel = 'Bus Schedule';
-      detailsHint = '';
-      descriptionWidget = _buildStopDescription();
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
@@ -1381,6 +1407,9 @@ class ExplorePanelState extends State<ExplorePanel>
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
               AppointmentDetailPanel(appointment: explore)));
         }
+        else if (explore is MTDStop) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: explore, routes: _selectedMapStopRoutes,)));
+        }
         else {
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
             ExploreDetailPanel(explore: explore,initialLocationData: _locationData,)));
@@ -1388,9 +1417,6 @@ class ExplorePanelState extends State<ExplorePanel>
       }
       else if (explore is List<Explore>) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: explore)));
-      }
-      else if (explore is MTDStop) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: explore, routes: _selectedMapStopRoutes,)));
       }
   }
 
@@ -1437,8 +1463,9 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining: message = Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.'); break;
       case ExploreItem.Laundry: message = Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.'); break;
       case ExploreItem.Buildings: message = Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.'); break;
+      case ExploreItem.MTDStops: message = Localization().getStringEx('panel.explore.state.online.empty.bus_stops', 'No bus stop locations available.'); break;
       case ExploreItem.StudentCourse: message = Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses available.'); break;
-      default:                 message =  ''; break;
+      default:  message =  ''; break;
     }
     return SingleChildScrollView(child:
       Center(child:
@@ -1458,6 +1485,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining:              message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
       case ExploreItem.Laundry:             message = Localization().getStringEx('panel.explore.state.offline.empty.laundry', 'No laundry locations available while offline.'); break;
       case ExploreItem.Buildings:           message = Localization().getStringEx('panel.explore.state.offline.empty.buildings', 'No building locations available while offline.'); break;
+      case ExploreItem.MTDStops:            message = Localization().getStringEx('panel.explore.state.offline.empty.bus_stops', 'No bus stop locations available while offline.'); break;
       case ExploreItem.StudentCourse:       message = Localization().getStringEx('panel.explore.state.offline.empty.student_course', 'No student courses available while offline.'); break;
       case ExploreItem.StateFarmWayfinding: message = Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.'); break;
       default:                              message =  ''; break;
@@ -1683,9 +1711,10 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
       case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry');
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.bus_stops.title', 'MTD Bus');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.title', 'MyMcKinley In-Person Appointments');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
     }
   }
@@ -1696,9 +1725,10 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.hint', '');
       case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.hint', '');
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.hint', '');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.bus_stops.hint', '');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.hint', '');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.hint', '');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
       default:                              return null;
     }
   }
@@ -1709,9 +1739,10 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.header.dining.title', 'Residence Hall Dining');
       case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.header.laundry.title', 'Laundry');
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.header.buildings.title', 'Campus Buildings');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.header.bus_stops.title', 'MTD Bus');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.header.student_course.title', 'My Courses');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.header.appointments.title', 'MyMcKinley In-Person Appointments');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
     }
   }
@@ -1754,7 +1785,9 @@ class ExplorePanelState extends State<ExplorePanel>
   void _placeExploresOnMap() {
     if (_nativeMapController != null)   {
       _nativeMapController!.placePOIs(_displayExplores, options: <String, dynamic>{
-        MapController.HideBuildingLabelsParams : (_selectedItem == ExploreItem.Buildings) ? true : null
+        MapController.HideBuildingLabelsParams : (_selectedItem == ExploreItem.Buildings) ? true : null,
+        MapController.HideBusStopPOIsParams : (_selectedItem == ExploreItem.MTDStops) ? true : null,
+        MapController.ShowMarkerPopupsParams: (_selectedItem != ExploreItem.MTDStops) ? true : false,
       });
     }
   }
