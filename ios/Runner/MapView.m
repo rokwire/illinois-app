@@ -141,6 +141,7 @@
 
 - (NSArray*)buildExplores:(NSArray*)rawExplores thresoldDistance:(double)thresoldDistance {
 	
+	NSLog(@"Building Explores...");
 	NSMutableArray *mappedExploreGroups = [[NSMutableArray alloc] init];
 	
 	for (NSDictionary *explore in rawExplores) {
@@ -184,6 +185,7 @@
 		}
 	}
 
+	NSLog(@"Building Explores Finished");
 	return resultExplores;
 }
 
@@ -326,6 +328,10 @@
 		NSInteger exploresCount = explore.uiucExplores.count;
 		if (1 < exploresCount) {
 			markerIcon = [MapMarkerView2 groupMarkerImageWithHexColor:explore.uiucExploreMarkerHexColor count:exploresCount];
+			markerAnchor = CGPointMake(0.5, 0.5);
+		}
+		else if (explore.uiucExploreType == UIUCExploreType_MTDStop) {
+			markerIcon = [UIImage imageNamed:@"maps-icon-marker-bus.png"];
 			markerAnchor = CGPointMake(0.5, 0.5);
 		}
 		else {
