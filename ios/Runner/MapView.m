@@ -44,11 +44,17 @@
 	NSDictionary* _poi;
 	NSMutableSet* _markers;
 	GMSMapStyle*  _mapStyleNoPoi;
+	GMSMapStyle*  _mapStyleNoBusStop;
 	float         _currentZoom;
 	bool          _didFirstLayout;
 	bool          _enabled;
+	NSOperation*  _buildeExploresOperation;
 }
 @property (nonatomic, readonly) GMSMapView*     mapView;
+@property (nonatomic) NSArray*      explores;
+@property (nonatomic) NSArray*      displayExplores;
+@property (nonatomic) NSMutableSet* markers;
+@property (nonatomic) NSOperation*  buildeExploresOperation;
 @end
 
 @implementation MapView
@@ -70,8 +76,11 @@
 		_markers = [[NSMutableSet alloc] init];
 		_enabled = true;
 
-	  NSURL *noPoiUrl = [NSBundle.mainBundle URLForResource:@"mapstyle-nopoi" withExtension:@"json"];
+	  NSURL *noPoiUrl = [NSBundle.mainBundle URLForResource:@"mapstyle-nopois" withExtension:@"json"];
 		_mapStyleNoPoi = [GMSMapStyle styleWithContentsOfFileURL:noPoiUrl	 error:NULL];
+		
+	  NSURL *noBusStopUrl = [NSBundle.mainBundle URLForResource:@"mapstyle-nostops" withExtension:@"json"];
+		_mapStyleNoBusStop = [GMSMapStyle styleWithContentsOfFileURL:noBusStopUrl	 error:NULL];
 	}
 	return self;
 }
@@ -129,22 +138,56 @@
 	if (_didFirstLayout) {
 		NSNumber *debugThresoldDistance = [_exploreOptions inaNumberForKey:@"LocationThresoldDistance"];
 		double thresoldDistance = (debugThresoldDistance != nil) ? debugThresoldDistance.doubleValue : self.automaticThresoldDistance;
-		[self buildDisplayExploresForThresoldDistance:thresoldDistance];
+		[self buildDisplayExploresAsyncForThresoldDistance:thresoldDistance];
 	}
 }
 
 - (void)buildDisplayExploresForThresoldDistance:(double)thresoldDistance {
 	NSLog(@"ThresoldDistance: %@", @(thresoldDistance));
 	_displayExplores = [self buildExplores:_explores thresoldDistance:thresoldDistance];
-	[self buildMarkers];
+	[self applyMarkers:[self buildMarkersFromExplores:_displayExplores]];
 }
 
+- (void)buildDisplayExploresAsyncForThresoldDistance:(double)thresoldDistance {
+	if (_buildeExploresOperation != nil) {
+		[_buildeExploresOperation cancel];
+	}
+	
+	NSBlockOperation* operation = [[NSBlockOperation alloc] init];
+	__weak typeof(self) weakSelf = self;
+	__weak NSBlockOperation* weakOperation = operation;
+	[operation addExecutionBlock:^(){
+		NSArray* displayExplores = [weakSelf buildExplores:weakSelf.explores thresoldDistance:thresoldDistance operation:weakOperation];
+		NSArray* markers = [weakSelf buildMarkersFromExplores:displayExplores operation:weakOperation];
+		if (!weakOperation.cancelled && ![weakSelf.displayExplores isEqualToArray:displayExplores]) {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
+					weakSelf.displayExplores = displayExplores;
+					[weakSelf applyMarkers:markers];
+					weakSelf.buildeExploresOperation = nil;
+				}
+			});
+		}
+	}];
+
+	_buildeExploresOperation = operation;
+	[AppDelegate.sharedInstance.backgroundOperationQueue addOperation:_buildeExploresOperation];
+}
+
+
 - (NSArray*)buildExplores:(NSArray*)rawExplores thresoldDistance:(double)thresoldDistance {
+	return [self buildExplores:rawExplores thresoldDistance:thresoldDistance operation:nil];
+}
+
+- (NSArray*)buildExplores:(NSArray*)rawExplores thresoldDistance:(double)thresoldDistance operation:(NSOperation*)operation {
 	
 	NSMutableArray *mappedExploreGroups = [[NSMutableArray alloc] init];
 	
 	for (NSDictionary *explore in rawExplores) {
-		if ([explore isKindOfClass:[NSDictionary class]]) {
+		if (operation.cancelled) {
+			break;
+		}
+		else if ([explore isKindOfClass:[NSDictionary class]]) {
 			int exploreFloor = explore.uiucExploreLocationFloor;
 			CLLocationCoordinate2D exploreCoord = explore.uiucExploreLocationCoordinate;
 			if (CLLocationCoordinate2DIsValid(exploreCoord)) {
@@ -152,7 +195,9 @@
 				bool exploreMapped = false;
 				for (NSMutableArray *mappedExpoloreGroup in mappedExploreGroups) {
 					for (NSDictionary *mappedExplore in mappedExpoloreGroup) {
-						
+						if (operation.cancelled) {
+							break;
+						}
 						double distance = CLLocationCoordinate2DInaDistance(exploreCoord, mappedExplore.uiucExploreLocationCoordinate);
 						if ((distance <= thresoldDistance) && (exploreFloor == mappedExplore.uiucExploreLocationFloor)) {
 							[mappedExpoloreGroup addObject:explore];
@@ -160,12 +205,12 @@
 							break;
 						}
 					}
-					if (exploreMapped) {
+					if (exploreMapped || operation.cancelled) {
 						break;
 					}
 				}
 				
-				if (!exploreMapped) {
+				if (!exploreMapped && !operation.cancelled) {
 					NSMutableArray *mappedExpoloreGroup = [[NSMutableArray alloc] initWithObjects:explore, nil];
 					[mappedExploreGroups addObject:mappedExpoloreGroup];
 				}
@@ -173,14 +218,22 @@
 		}
 	}
 	
-	NSMutableArray *resultExplores = [[NSMutableArray alloc] init];
-	for (NSMutableArray *mappedExpoloreGroup in mappedExploreGroups) {
-		NSDictionary *anExplore = mappedExpoloreGroup.firstObject;
-		if (mappedExpoloreGroup.count == 1) {
-			[resultExplores addObject:anExplore];
-		}
-		else {
-			[resultExplores addObject:[NSDictionary uiucExploreFromGroup:mappedExpoloreGroup]];
+	NSMutableArray *resultExplores = nil;
+	if (!operation.cancelled) {
+		resultExplores = [[NSMutableArray alloc] init];
+		for (NSMutableArray *mappedExpoloreGroup in mappedExploreGroups) {
+			if (operation.cancelled) {
+				break;
+			}
+			else {
+				NSDictionary *anExplore = mappedExpoloreGroup.firstObject;
+				if (mappedExpoloreGroup.count == 1) {
+					[resultExplores addObject:anExplore];
+				}
+				else {
+					[resultExplores addObject:[NSDictionary uiucExploreFromGroup:mappedExpoloreGroup]];
+				}
+			}
 		}
 	}
 
@@ -296,21 +349,46 @@
 
 #pragma mark Display
 
-- (void)buildMarkers {
+- (NSArray*)buildMarkersFromExplores:(NSArray*)explores {
+	return [self buildMarkersFromExplores:explores operation:nil];
+}
+
+- (NSArray*)buildMarkersFromExplores:(NSArray*)explores operation:(NSOperation*)operation {
+
+	NSMutableArray *markers = [[NSMutableArray alloc] initWithCapacity:explores.count];
+	for (NSDictionary *explore in explores) {
+		if (operation.cancelled) {
+			break;
+		}
+		else if ([explore isKindOfClass:[NSDictionary class]]) {
+			GMSMarker *marker = [self markerFromExplore: explore];
+			if (marker != nil) {
+				[markers addObject:marker];
+			}
+		}
+	}
+	return markers;
+}
+
+- (void)applyMarkers:(NSArray*)markers {
 
 	for (GMSMarker *marker in _markers) {
 		marker.map = nil;
 	}
 	[_markers removeAllObjects];
 	
-	for (NSDictionary *explore in _displayExplores) {
-		if ([explore isKindOfClass:[NSDictionary class]]) {
-			GMSMarker *marker = [self markerFromExplore: explore];
-			if (marker != nil) {
-				marker.map = _mapView;
-				[_markers addObject:marker];
-			}
+	MapMarkerDisplayMode displayMode = self.markerDisplayMode;
+	bool showMarkerPopups = (_exploreOptions != nil) ? [_exploreOptions inaBoolForKey:@"ShowMarkerPopus" defaults:true] : true;
+	for (GMSMarker *marker in markers) {
+		//NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
+		if (showMarkerPopups && (MapMarkerDisplayMode_Plain < displayMode) && [_mapView.projection containsCoordinate:marker.position]) {
+			MapMarkerView2 *markerView = [[MapMarkerView2 alloc] initWithIcon:marker.icon iconAnchor:marker.groundAnchor title:marker.title descr:marker.snippet displayMode:displayMode];
+			marker.iconView = markerView;
+			marker.groundAnchor = markerView.anchor;
 		}
+
+		marker.map = _mapView;
+		[_markers addObject:marker];
 	}
 }
 
@@ -328,6 +406,10 @@
 			markerIcon = [MapMarkerView2 groupMarkerImageWithHexColor:explore.uiucExploreMarkerHexColor count:exploresCount];
 			markerAnchor = CGPointMake(0.5, 0.5);
 		}
+		else if (explore.uiucExploreType == UIUCExploreType_MTDStop) {
+			markerIcon = [UIImage imageNamed:@"maps-icon-marker-bus"];
+			markerAnchor = CGPointMake(0.5, 0.5);
+		}
 		else {
 			markerIcon = [MapMarkerView2 markerImageWithHexColor:explore.uiucExploreMarkerHexColor];
 			markerAnchor = CGPointMake(0.5, 1);
@@ -340,13 +422,6 @@
 		marker.title = markerTitle;
 		marker.snippet = markerSnippet;
 
-		MapMarkerDisplayMode displayMode = self.markerDisplayMode;
-		if ((MapMarkerDisplayMode_Plain < displayMode) && [_mapView.projection containsCoordinate:exploreCoordinate]) {
-			MapMarkerView2 *markerView = [[MapMarkerView2 alloc] initWithIcon:markerIcon iconAnchor:markerAnchor title:markerTitle descr:markerSnippet displayMode:displayMode];
-			marker.iconView = markerView;
-			marker.groundAnchor = markerView.anchor;
-		}
-
 		marker.zIndex = 1;
 		marker.userData = @{ @"explore" : explore };
 		return marker;
@@ -357,22 +432,25 @@
 
 - (void)updateMarkersDisplayMode {
 
-	MapMarkerDisplayMode displayMode = self.markerDisplayMode;
-	for (GMSMarker *marker in _markers) {
-		//NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
-		BOOL markerVisible = [_mapView.projection containsCoordinate:marker.position];
-		MapMarkerView2 *markerView = [marker.iconView isKindOfClass:[MapMarkerView2 class]] ? ((MapMarkerView2*)marker.iconView) : nil;
-		if ((MapMarkerDisplayMode_Plain < displayMode) && markerVisible && (markerView == nil)) {
-			markerView = [[MapMarkerView2 alloc] initWithIcon:marker.icon iconAnchor:marker.groundAnchor title:marker.title descr:marker.snippet displayMode:displayMode];
-			marker.iconView = markerView;
-			marker.groundAnchor = markerView.anchor;
-		}
-		else if (((displayMode == MapMarkerDisplayMode_Plain) || !markerVisible) && (markerView != nil)) {
-			marker.groundAnchor = markerView.iconAnchor;
-			marker.icon = nil;
-		}
-		else if (markerView != nil) {
-			markerView.displayMode = displayMode;
+	bool showMarkerPopups = (_exploreOptions != nil) ? [_exploreOptions inaBoolForKey:@"ShowMarkerPopus" defaults:true] : true;
+	if (showMarkerPopups) {
+		MapMarkerDisplayMode displayMode = self.markerDisplayMode;
+		for (GMSMarker *marker in _markers) {
+			//NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
+			BOOL markerVisible = [_mapView.projection containsCoordinate:marker.position];
+			MapMarkerView2 *markerView = [marker.iconView isKindOfClass:[MapMarkerView2 class]] ? ((MapMarkerView2*)marker.iconView) : nil;
+			if ((MapMarkerDisplayMode_Plain < displayMode) && markerVisible && (markerView == nil)) {
+				markerView = [[MapMarkerView2 alloc] initWithIcon:marker.icon iconAnchor:marker.groundAnchor title:marker.title descr:marker.snippet displayMode:displayMode];
+				marker.iconView = markerView;
+				marker.groundAnchor = markerView.anchor;
+			}
+			else if (((displayMode == MapMarkerDisplayMode_Plain) || !markerVisible) && (markerView != nil)) {
+				marker.groundAnchor = markerView.iconAnchor;
+				marker.icon = nil;
+			}
+			else if (markerView != nil) {
+				markerView.displayMode = displayMode;
+			}
 		}
 	}
 }
@@ -382,12 +460,17 @@
 }
 
 - (void)updateMapStyle {
-	NSNumber *hideBuildingLabels = [_exploreOptions inaNumberForKey:@"HideBuildingLabels"];
-	if ([hideBuildingLabels boolValue]) {
-		GMSMapStyle *mapStyle = (kNoPoiThresoldZoom <= _mapView.camera.zoom) ? _mapStyleNoPoi : nil;
-		if (_mapView.mapStyle != mapStyle) {
-			_mapView.mapStyle = mapStyle;
-		}
+	GMSMapStyle *mapStyle = _mapView.mapStyle;
+
+	if ([_exploreOptions inaBoolForKey:@"HideBuildingLabels"]) {
+		mapStyle = (kNoPoiThresoldZoom <= _mapView.camera.zoom) ? _mapStyleNoPoi : nil;
+	}
+	else if ([_exploreOptions inaBoolForKey:@"HideBusStopPOIs"]) {
+		mapStyle = _mapStyleNoBusStop;
+	}
+
+	if (_mapView.mapStyle != mapStyle) {
+		_mapView.mapStyle = mapStyle;
 	}
 }
 

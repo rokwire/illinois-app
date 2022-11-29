@@ -180,7 +180,6 @@
 
 - (NSArray*)uiucExplorePolygon {
 	return [self inaArrayForKey:@"polygon"];
-
 }
 
 - (CLLocationCoordinate2D)uiucExploreLocationCoordinate {
@@ -268,7 +267,6 @@
 	}
 	return nil;
 }
-
 
 @end
 
