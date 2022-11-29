@@ -24,8 +24,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class SkillsSelfEvaluationInfoPanel extends StatefulWidget {
   final SkillsSelfEvaluationContent? content;
+  final Map<String, dynamic>? params;
 
-  SkillsSelfEvaluationInfoPanel({required this.content});
+  SkillsSelfEvaluationInfoPanel({required this.content, this.params});
 
   @override
   _SkillsSelfEvaluationInfoPanelState createState() => _SkillsSelfEvaluationInfoPanelState();
@@ -96,14 +97,26 @@ class _SkillsSelfEvaluationInfoPanelState extends State<SkillsSelfEvaluationInfo
                     ),
                   )));
                 }
+                break;
+              case "widget":
+                dynamic widgetData = MapPathKey.entry(widget.params, parts.sublist(1).join('.'));
+                if (widgetData is String) {
+                  contentWidgets.add(Text(
+                    widgetData,
+                    style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant,),
+                  ));
+                }
+                break;
             }
           }
 
-          contentWidgets.add(Text(
-            section.body!.substring(match.end, (i+1 < matches.length) ? matches.elementAt(i+1).start : null),
-            style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
-            textAlign: TextAlign.start,
-          ));
+          if (match.end < section.body!.length) {
+            contentWidgets.add(Text(
+              section.body!.substring(match.end, (i+1 < matches.length) ? matches.elementAt(i+1).start : null),
+              style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+              textAlign: TextAlign.start,
+            ));
+          }
         }
         contentWidgets.add(Container(height: 16.0));
       }

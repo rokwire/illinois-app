@@ -206,7 +206,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   void _showScoreDescription(String section) {
     if (_latestResponse?.survey.resultData is Map<String, dynamic>) {
       String skillDefinition = _latestResponse!.survey.resultData['${section}_results'] ?? '';
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsDetailPanel(content: widget.content[section], skillDefinition: skillDefinition)));
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsDetailPanel(content: widget.content[section], params: {'skill_definition': skillDefinition})));
     }
   }
 

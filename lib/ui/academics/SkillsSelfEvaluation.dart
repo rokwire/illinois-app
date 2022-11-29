@@ -227,7 +227,7 @@ class SkillsSelfEvaluationContent {
       id: JsonUtils.stringValue(json['id']) ?? '',
       category: JsonUtils.stringValue(json['category']) ?? '',
       key: JsonUtils.stringValue(json['key']) ?? '',
-      header: SkillsSelfEvaluationHeader.fromJson(json['header']),
+      header: JsonUtils.mapOrNull((json) => SkillsSelfEvaluationHeader.fromJson(json), json['header']),
       sections: SkillsSelfEvaluationSection.listFromJson(JsonUtils.listValue(json['sections'])),
       links: links,
     );
@@ -243,7 +243,7 @@ class SkillsSelfEvaluationHeader {
   factory SkillsSelfEvaluationHeader.fromJson(Map<String, dynamic> json) {
     return SkillsSelfEvaluationHeader(
       title: JsonUtils.stringValue(json['title']) ?? '',
-      moreInfo: JsonUtils.stringValue(json['moreInfo']),
+      moreInfo: JsonUtils.stringValue(json['more_info']),
     );
   }
 }
@@ -253,16 +253,18 @@ class SkillsSelfEvaluationSection {
   final String title;
   final String? subtitle;
   final String? body;
+  final Map<String, dynamic>? params;
   final List<SkillsSelfEvaluationSection>? subsections;
 
-  SkillsSelfEvaluationSection({required this.type, required this.title, this.subtitle, this.body, this.subsections});
+  SkillsSelfEvaluationSection({required this.type, required this.title, this.subtitle, this.body, this.params, this.subsections});
 
   factory SkillsSelfEvaluationSection.fromJson(Map<String, dynamic> json) {
     return SkillsSelfEvaluationSection(
-      type: JsonUtils.stringValue(json['type']) ?? '',
+      type: JsonUtils.stringValue(json['type']) ?? 'text',
       title: JsonUtils.stringValue(json['title']) ?? '',
       subtitle: JsonUtils.stringValue(json['subtitle']),
       body: JsonUtils.stringValue(json['body']),
+      params: JsonUtils.mapValue(json['params']),
       subsections: SkillsSelfEvaluationSection.listFromJson(JsonUtils.listValue(json['subsections'])),
     );
   }
