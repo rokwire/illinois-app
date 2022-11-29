@@ -1231,7 +1231,15 @@ class ExplorePanelState extends State<ExplorePanel>
     String? detailsHint = Localization().getStringEx('panel.explore.button.details.hint', '');
     Widget? descriptionWidget;
 
-    if (_selectedMapExplore is Explore) {
+    if (_selectedMapExplore is MTDStop) {
+      title = (_selectedMapExplore as MTDStop).name;
+      description = (_selectedMapExplore as MTDStop).code;
+      exploreColor = Styles().colors?.mtdColor;
+      detailsLabel = 'Bus Schedule';
+      detailsHint = '';
+      descriptionWidget = _buildStopDescription();
+    }
+    else if (_selectedMapExplore is Explore) {
       title = _selectedMapExplore?.exploreTitle;
       description = _selectedMapExplore.exploreLocation?.description;
       exploreColor = _exploreColor(_selectedMapExplore) ?? Colors.white;
@@ -1242,14 +1250,6 @@ class ExplorePanelState extends State<ExplorePanel>
       Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
       description = explore?.exploreLocation?.description ?? "";
       exploreColor = _exploreColor(explore) ?? Styles().colors?.fillColorSecondary;
-    }
-    else if (_selectedMapExplore is MTDStop) {
-      title = (_selectedMapExplore as MTDStop).name;
-      description = (_selectedMapExplore as MTDStop).code;
-      exploreColor = Styles().colors?.mtdColor;
-      detailsLabel = 'Bus Schedule';
-      detailsHint = '';
-      descriptionWidget = _buildStopDescription();
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
@@ -1407,6 +1407,9 @@ class ExplorePanelState extends State<ExplorePanel>
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
               AppointmentDetailPanel(appointment: explore)));
         }
+        else if (explore is MTDStop) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: explore, routes: _selectedMapStopRoutes,)));
+        }
         else {
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
             ExploreDetailPanel(explore: explore,initialLocationData: _locationData,)));
@@ -1414,9 +1417,6 @@ class ExplorePanelState extends State<ExplorePanel>
       }
       else if (explore is List<Explore>) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreListPanel(explores: explore)));
-      }
-      else if (explore is MTDStop) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: explore, routes: _selectedMapStopRoutes,)));
       }
   }
 
