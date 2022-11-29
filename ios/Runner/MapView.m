@@ -47,8 +47,13 @@
 	float         _currentZoom;
 	bool          _didFirstLayout;
 	bool          _enabled;
+	NSOperation*  _buildeExploresOperation;
 }
 @property (nonatomic, readonly) GMSMapView*     mapView;
+@property (nonatomic) NSArray*      explores;
+@property (nonatomic) NSArray*      displayExplores;
+@property (nonatomic) NSMutableSet* markers;
+@property (nonatomic) NSOperation*  buildeExploresOperation;
 @end
 
 @implementation MapView
@@ -129,23 +134,56 @@
 	if (_didFirstLayout) {
 		NSNumber *debugThresoldDistance = [_exploreOptions inaNumberForKey:@"LocationThresoldDistance"];
 		double thresoldDistance = (debugThresoldDistance != nil) ? debugThresoldDistance.doubleValue : self.automaticThresoldDistance;
-		[self buildDisplayExploresForThresoldDistance:thresoldDistance];
+		[self buildDisplayExploresAsyncForThresoldDistance:thresoldDistance];
 	}
 }
 
 - (void)buildDisplayExploresForThresoldDistance:(double)thresoldDistance {
 	NSLog(@"ThresoldDistance: %@", @(thresoldDistance));
 	_displayExplores = [self buildExplores:_explores thresoldDistance:thresoldDistance];
-	[self buildMarkers];
+	[self applyMarkers:[self buildMarkersFromExplores:_displayExplores]];
 }
 
-- (NSArray*)buildExplores:(NSArray*)rawExplores thresoldDistance:(double)thresoldDistance {
+- (void)buildDisplayExploresAsyncForThresoldDistance:(double)thresoldDistance {
+	if (_buildeExploresOperation != nil) {
+		[_buildeExploresOperation cancel];
+	}
 	
-	NSLog(@"Building Explores...");
+	NSBlockOperation* operation = [[NSBlockOperation alloc] init];
+	__weak typeof(self) weakSelf = self;
+	__weak NSBlockOperation* weakOperation = operation;
+	[operation addExecutionBlock:^(){
+		NSArray* displayExplores = [weakSelf buildExplores:weakSelf.explores thresoldDistance:thresoldDistance operation:weakOperation];
+		NSArray* markers = [weakSelf buildMarkersFromExplores:displayExplores operation:weakOperation];
+		if (!weakOperation.cancelled) {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
+					weakSelf.displayExplores = displayExplores;
+					[weakSelf applyMarkers:markers];
+					weakSelf.buildeExploresOperation = nil;
+				}
+			});
+		}
+	}];
+
+	_buildeExploresOperation = operation;
+	[AppDelegate.sharedInstance.backgroundOperationQueue addOperation:_buildeExploresOperation];
+}
+
+
+- (NSArray*)buildExplores:(NSArray*)rawExplores thresoldDistance:(double)thresoldDistance {
+	return [self buildExplores:rawExplores thresoldDistance:thresoldDistance operation:nil];
+}
+
+- (NSArray*)buildExplores:(NSArray*)rawExplores thresoldDistance:(double)thresoldDistance operation:(NSOperation*)operation {
+	
 	NSMutableArray *mappedExploreGroups = [[NSMutableArray alloc] init];
 	
 	for (NSDictionary *explore in rawExplores) {
-		if ([explore isKindOfClass:[NSDictionary class]]) {
+		if (operation.cancelled) {
+			break;
+		}
+		else if ([explore isKindOfClass:[NSDictionary class]]) {
 			int exploreFloor = explore.uiucExploreLocationFloor;
 			CLLocationCoordinate2D exploreCoord = explore.uiucExploreLocationCoordinate;
 			if (CLLocationCoordinate2DIsValid(exploreCoord)) {
@@ -153,7 +191,9 @@
 				bool exploreMapped = false;
 				for (NSMutableArray *mappedExpoloreGroup in mappedExploreGroups) {
 					for (NSDictionary *mappedExplore in mappedExpoloreGroup) {
-						
+						if (operation.cancelled) {
+							break;
+						}
 						double distance = CLLocationCoordinate2DInaDistance(exploreCoord, mappedExplore.uiucExploreLocationCoordinate);
 						if ((distance <= thresoldDistance) && (exploreFloor == mappedExplore.uiucExploreLocationFloor)) {
 							[mappedExpoloreGroup addObject:explore];
@@ -161,12 +201,12 @@
 							break;
 						}
 					}
-					if (exploreMapped) {
+					if (exploreMapped || operation.cancelled) {
 						break;
 					}
 				}
 				
-				if (!exploreMapped) {
+				if (!exploreMapped && !operation.cancelled) {
 					NSMutableArray *mappedExpoloreGroup = [[NSMutableArray alloc] initWithObjects:explore, nil];
 					[mappedExploreGroups addObject:mappedExpoloreGroup];
 				}
@@ -174,18 +214,25 @@
 		}
 	}
 	
-	NSMutableArray *resultExplores = [[NSMutableArray alloc] init];
-	for (NSMutableArray *mappedExpoloreGroup in mappedExploreGroups) {
-		NSDictionary *anExplore = mappedExpoloreGroup.firstObject;
-		if (mappedExpoloreGroup.count == 1) {
-			[resultExplores addObject:anExplore];
-		}
-		else {
-			[resultExplores addObject:[NSDictionary uiucExploreFromGroup:mappedExpoloreGroup]];
+	NSMutableArray *resultExplores = nil;
+	if (!operation.cancelled) {
+		resultExplores = [[NSMutableArray alloc] init];
+		for (NSMutableArray *mappedExpoloreGroup in mappedExploreGroups) {
+			if (operation.cancelled) {
+				break;
+			}
+			else {
+				NSDictionary *anExplore = mappedExpoloreGroup.firstObject;
+				if (mappedExpoloreGroup.count == 1) {
+					[resultExplores addObject:anExplore];
+				}
+				else {
+					[resultExplores addObject:[NSDictionary uiucExploreFromGroup:mappedExpoloreGroup]];
+				}
+			}
 		}
 	}
 
-	NSLog(@"Building Explores Finished");
 	return resultExplores;
 }
 
@@ -298,21 +345,44 @@
 
 #pragma mark Display
 
-- (void)buildMarkers {
+- (NSArray*)buildMarkersFromExplores:(NSArray*)explores {
+	return [self buildMarkersFromExplores:explores operation:nil];
+}
+
+- (NSArray*)buildMarkersFromExplores:(NSArray*)explores operation:(NSOperation*)operation {
+
+	NSMutableArray *markers = [[NSMutableArray alloc] initWithCapacity:explores.count];
+	for (NSDictionary *explore in explores) {
+		if (operation.cancelled) {
+			break;
+		}
+		else if ([explore isKindOfClass:[NSDictionary class]]) {
+			GMSMarker *marker = [self markerFromExplore: explore];
+			if (marker != nil) {
+				[markers addObject:marker];
+			}
+		}
+	}
+	return markers;
+}
+
+- (void)applyMarkers:(NSArray*)markers {
 
 	for (GMSMarker *marker in _markers) {
 		marker.map = nil;
 	}
 	[_markers removeAllObjects];
 	
-	for (NSDictionary *explore in _displayExplores) {
-		if ([explore isKindOfClass:[NSDictionary class]]) {
-			GMSMarker *marker = [self markerFromExplore: explore];
-			if (marker != nil) {
-				marker.map = _mapView;
-				[_markers addObject:marker];
-			}
+	MapMarkerDisplayMode displayMode = self.markerDisplayMode;
+	for (GMSMarker *marker in markers) {
+		if ((MapMarkerDisplayMode_Plain < displayMode) && [_mapView.projection containsCoordinate:marker.position]) {
+			MapMarkerView2 *markerView = [[MapMarkerView2 alloc] initWithIcon:marker.icon iconAnchor:marker.groundAnchor title:marker.title descr:marker.snippet displayMode:displayMode];
+			marker.iconView = markerView;
+			marker.groundAnchor = markerView.anchor;
 		}
+
+		marker.map = _mapView;
+		[_markers addObject:marker];
 	}
 }
 
@@ -345,13 +415,6 @@
 		marker.groundAnchor = markerAnchor;
 		marker.title = markerTitle;
 		marker.snippet = markerSnippet;
-
-		MapMarkerDisplayMode displayMode = self.markerDisplayMode;
-		if ((MapMarkerDisplayMode_Plain < displayMode) && [_mapView.projection containsCoordinate:exploreCoordinate]) {
-			MapMarkerView2 *markerView = [[MapMarkerView2 alloc] initWithIcon:markerIcon iconAnchor:markerAnchor title:markerTitle descr:markerSnippet displayMode:displayMode];
-			marker.iconView = markerView;
-			marker.groundAnchor = markerView.anchor;
-		}
 
 		marker.zIndex = 1;
 		marker.userData = @{ @"explore" : explore };
