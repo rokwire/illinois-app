@@ -159,7 +159,7 @@
 	[operation addExecutionBlock:^(){
 		NSArray* displayExplores = [weakSelf buildExplores:weakSelf.explores thresoldDistance:thresoldDistance operation:weakOperation];
 		NSArray* markers = [weakSelf buildMarkersFromExplores:displayExplores operation:weakOperation];
-		if (!weakOperation.cancelled) {
+		if (!weakOperation.cancelled && ![weakSelf.displayExplores isEqualToArray:displayExplores]) {
 			dispatch_async(dispatch_get_main_queue(), ^{
 				if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
 					weakSelf.displayExplores = displayExplores;
