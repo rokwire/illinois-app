@@ -44,6 +44,7 @@
 	NSDictionary* _poi;
 	NSMutableSet* _markers;
 	GMSMapStyle*  _mapStyleNoPoi;
+	GMSMapStyle*  _mapStyleNoBusStop;
 	float         _currentZoom;
 	bool          _didFirstLayout;
 	bool          _enabled;
@@ -75,8 +76,11 @@
 		_markers = [[NSMutableSet alloc] init];
 		_enabled = true;
 
-	  NSURL *noPoiUrl = [NSBundle.mainBundle URLForResource:@"mapstyle-nopoi" withExtension:@"json"];
+	  NSURL *noPoiUrl = [NSBundle.mainBundle URLForResource:@"mapstyle-nopois" withExtension:@"json"];
 		_mapStyleNoPoi = [GMSMapStyle styleWithContentsOfFileURL:noPoiUrl	 error:NULL];
+		
+	  NSURL *noBusStopUrl = [NSBundle.mainBundle URLForResource:@"mapstyle-nostops" withExtension:@"json"];
+		_mapStyleNoBusStop = [GMSMapStyle styleWithContentsOfFileURL:noBusStopUrl	 error:NULL];
 	}
 	return self;
 }
@@ -374,9 +378,10 @@
 	[_markers removeAllObjects];
 	
 	MapMarkerDisplayMode displayMode = self.markerDisplayMode;
+	bool showMarkerPopups = (_exploreOptions != nil) ? [_exploreOptions inaBoolForKey:@"ShowMarkerPopus" defaults:true] : true;
 	for (GMSMarker *marker in markers) {
-		NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
-		if (explore.uiucSupportsDisplayModes && (MapMarkerDisplayMode_Plain < displayMode) && [_mapView.projection containsCoordinate:marker.position]) {
+		//NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
+		if (showMarkerPopups && (MapMarkerDisplayMode_Plain < displayMode) && [_mapView.projection containsCoordinate:marker.position]) {
 			MapMarkerView2 *markerView = [[MapMarkerView2 alloc] initWithIcon:marker.icon iconAnchor:marker.groundAnchor title:marker.title descr:marker.snippet displayMode:displayMode];
 			marker.iconView = markerView;
 			marker.groundAnchor = markerView.anchor;
@@ -427,10 +432,11 @@
 
 - (void)updateMarkersDisplayMode {
 
-	MapMarkerDisplayMode displayMode = self.markerDisplayMode;
-	for (GMSMarker *marker in _markers) {
-		NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
-		if (explore.uiucSupportsDisplayModes) {
+	bool showMarkerPopups = (_exploreOptions != nil) ? [_exploreOptions inaBoolForKey:@"ShowMarkerPopus" defaults:true] : true;
+	if (showMarkerPopups) {
+		MapMarkerDisplayMode displayMode = self.markerDisplayMode;
+		for (GMSMarker *marker in _markers) {
+			//NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
 			BOOL markerVisible = [_mapView.projection containsCoordinate:marker.position];
 			MapMarkerView2 *markerView = [marker.iconView isKindOfClass:[MapMarkerView2 class]] ? ((MapMarkerView2*)marker.iconView) : nil;
 			if ((MapMarkerDisplayMode_Plain < displayMode) && markerVisible && (markerView == nil)) {
@@ -454,12 +460,17 @@
 }
 
 - (void)updateMapStyle {
-	NSNumber *hideBuildingLabels = [_exploreOptions inaNumberForKey:@"HideBuildingLabels"];
-	if ([hideBuildingLabels boolValue]) {
-		GMSMapStyle *mapStyle = (kNoPoiThresoldZoom <= _mapView.camera.zoom) ? _mapStyleNoPoi : nil;
-		if (_mapView.mapStyle != mapStyle) {
-			_mapView.mapStyle = mapStyle;
-		}
+	GMSMapStyle *mapStyle = _mapView.mapStyle;
+
+	if ([_exploreOptions inaBoolForKey:@"HideBuildingLabels"]) {
+		mapStyle = (kNoPoiThresoldZoom <= _mapView.camera.zoom) ? _mapStyleNoPoi : nil;
+	}
+	else if ([_exploreOptions inaBoolForKey:@"HideBusStopPOIs"]) {
+		mapStyle = _mapStyleNoBusStop;
+	}
+
+	if (_mapView.mapStyle != mapStyle) {
+		_mapView.mapStyle = mapStyle;
 	}
 }
 

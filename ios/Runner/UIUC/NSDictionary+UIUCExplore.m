@@ -203,10 +203,6 @@
 	return [location inaIntForKey:@"floor"];
 }
 
-- (bool)uiucSupportsDisplayModes {
-	return (self.uiucExploreType != UIUCExploreType_MTDStop);
-}
-
 + (NSDictionary*)uiucExploreFromGroup:(NSArray*)explores {
 	if ((explores != nil) && (1 < explores.count)) {
 		
