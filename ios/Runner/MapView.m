@@ -407,7 +407,7 @@
 			markerAnchor = CGPointMake(0.5, 0.5);
 		}
 		else if (explore.uiucExploreType == UIUCExploreType_MTDStop) {
-			markerIcon = [UIImage imageNamed:@"maps-icon-marker-bus.png"];
+			markerIcon = [UIImage imageNamed:@"maps-icon-marker-bus"];
 			markerAnchor = CGPointMake(0.5, 0.5);
 		}
 		else {
