@@ -7,7 +7,6 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/MTD.dart';
-import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -222,11 +221,10 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
 
 
   void _onTapSearch() {
-    Analytics().logSelect(target: "Search Research Projects");
+    Analytics().logSelect(target: "Search MTD Stop");
     setState(() {
       _contentTypesDropdownExpanded = false;
     });
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel(researchProject: true,)));
   }
 
   // Content Widget
