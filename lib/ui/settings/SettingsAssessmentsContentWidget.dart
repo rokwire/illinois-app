@@ -18,11 +18,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
+import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
+import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 
 class SettingsAssessmentsContentWidget extends StatefulWidget {
@@ -91,7 +94,7 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
           if (bessiCode == 'save') {
             contentList.add(ToggleRibbonButton(
                 label: Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_results.label', 'Save my results to compare to future results'),
-                toggled: Storage().assessmentsSaveResultsMap?['bessi'] ?? false,
+                toggled: Storage().assessmentsSaveResultsMap?['bessi'] ?? Auth2().privacyMatch(4),
                 border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
                 borderRadius: BorderRadius.all(Radius.circular(4)),
                 onTap: _onSaveBessi));
@@ -111,10 +114,44 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
 
   void _onSaveBessi() {
     Analytics().logSelect(target: 'Save skills self-evaluation results');
-    setState(() {
-      Map<String, bool> assessmentsSaveResultsMap = Storage().assessmentsSaveResultsMap ?? {};
-      assessmentsSaveResultsMap['bessi'] = !(assessmentsSaveResultsMap['bessi'] ?? false);
-      Storage().assessmentsSaveResultsMap = assessmentsSaveResultsMap;
-    });
+    if (Auth2().privacyMatch(4)) {
+      setState(() {
+        Map<String, bool> assessmentsSaveResultsMap = Storage().assessmentsSaveResultsMap ?? {};
+        assessmentsSaveResultsMap['bessi'] = !(assessmentsSaveResultsMap['bessi'] ?? false);
+        Storage().assessmentsSaveResultsMap = assessmentsSaveResultsMap;
+      });
+    } else {
+      Widget infoTextWidget = RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: Localization().getStringEx('panel.skills_self_evaluation.get_started.auth_dialog.prefix', 'You need to be signed in with your NetID to access Assessments.\n'),
+              style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+            ),
+            WidgetSpan(
+              child: InkWell(onTap: _onTapPrivacyLevel, child: Text(
+                Localization().getStringEx('panel.skills_self_evaluation.get_started.auth_dialog.privacy', 'Set your privacy level to 4 or 5.'),
+                style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary),
+              )),
+            ),
+            TextSpan(
+              text: Localization().getStringEx('panel.skills_self_evaluation.get_started.auth_dialog.suffix', ' Then, sign in with your NetID under Settings.'),
+              style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+            ),
+          ],
+        ),
+      );
+      showDialog(context: context, builder: (_) => InfoPopup(
+        backColor: Styles().colors?.surface,
+        padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
+        alignment: Alignment.center,
+        infoTextWidget: infoTextWidget,
+        closeIcon: Image.asset('images/close-orange-small.png'),
+      ),);
+    }
+  }
+
+  void _onTapPrivacyLevel() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
   }
 }

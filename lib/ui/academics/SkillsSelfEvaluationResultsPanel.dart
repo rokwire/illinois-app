@@ -149,28 +149,33 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
               )
             ));
       }),
-      Padding(padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 32), child: Text(
-        Localization().getStringEx('panel.skills_self_evaluation.results.student_average.description', 'Student Average = Average score among approximately 750 students at Colby College and the University of Illinois.'),
-        style: TextStyle(
-          fontFamily: "ProximaNovaRegular", 
-          fontSize: 16.0, 
-          color: Styles().colors?.fillColorPrimaryVariant,
-        )
+      Padding(padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 32), child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: Localization().getStringEx('panel.skills_self_evaluation.results.student_average.term', 'Student Average'),
+              style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+            ),
+            TextSpan(
+              text: Localization().getStringEx('panel.skills_self_evaluation.results.student_average.description', ' = Average score among approximately 750 students at Colby College and the University of Illinois.'),
+              style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+            ),
+          ],
+        ),
       ),),
-      Padding(padding: const EdgeInsets.only(bottom: 32), child: GestureDetector(onTap: _onTapClearAllScores, child:
-        Text("Clear All Scores", style: TextStyle(
-          fontFamily: "ProximaNovaBold", 
-          fontSize: 16.0, 
-          color: Styles().colors?.fillColorPrimaryVariant,
-          decoration: TextDecoration.underline,
-          decorationColor: Styles().colors?.fillColorSecondary
-        )
-      ),)),
+      // Padding(padding: const EdgeInsets.only(bottom: 32), child: GestureDetector(onTap: _onTapClearAllScores, child:
+      //   Text("Clear All Scores", style: TextStyle(
+      //     fontFamily: "ProximaNovaBold", 
+      //     fontSize: 16.0, 
+      //     color: Styles().colors?.fillColorPrimaryVariant,
+      //     decoration: TextDecoration.underline,
+      //     decorationColor: Styles().colors?.fillColorSecondary
+      //   )
+      // ),)),
     ] : [];
   }
 
   List<DropdownMenuItem<DateTime?>> _buildResponseDateDropDownItems() {
-    //TODO: add student average option?
     List<DropdownMenuItem<DateTime?>> items = <DropdownMenuItem<DateTime?>>[
       DropdownMenuItem<DateTime?>(
         value: null,
@@ -226,8 +231,8 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     }
   }
 
-  void _onTapClearAllScores() {
-    //TODO: call Polls BB API to clear all responses for survey type "bessi" after confirming
-  }
+  // void _onTapClearAllScores() {
+  //   //TODO: call Polls BB API to clear all responses for survey type "bessi" after confirming
+  // }
 }
 
