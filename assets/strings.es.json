@@ -1276,6 +1276,7 @@
     "panel.settings.home.settings.sections.food_filter.label": "Mi filtro de comida",
     "panel.settings.home.settings.sections.sports.label": "Mis equipos deportivos",
     "panel.settings.home.settings.sections.calendar.label": "Configuración de mi calendario",
+    "panel.settings.home.settings.sections.appointments.label": "Mis citas de McKinley",
     "panel.settings.home.settings.sections.favorites.label": "Mis favoritas",
 
     "panel.settings.home.connect.not_logged_in.title":"Inicia sesión en {{app_title}}",
@@ -1365,6 +1366,9 @@
     "panel.settings.home.calendar.research.questionnaire.title": "Formulario de interés de investigación",
     "panel.settings.home.calendar.research.prompt.title": "Confirme que ya no desea participar en Research at Illinois. Toda la información completada en su cuestionario será eliminada.",
 
+    "panel.settings.home.appointments.description.format": "Mostrar citas en la aplicación {{app_title}} para:",
+    "panel.settings.home.appointments.mckinley.label": "MyMcKinley",
+
     "panel.settings.privacy_center.label.title":"Centro de privacidad",
     "panel.settings.privacy_center.label.description":"Personalice sus preferencias de privacidad y datos.",
     "panel.settings.privacy_center.label.finish_setup":"Finalizar configuración",
@@ -1380,7 +1384,7 @@
     "panel.settings.privacy_center.label.delete_message.description2":"Permanentemente ",
     "panel.settings.privacy_center.label.delete_message.description3":"borre toda su información. No podrá recuperar sus datos después de haberlos eliminado. Estás seguro de que quieres continuar?",
     "panel.settings.privacy_center.button.forget_info.title": "Olvidar mi información",
-    "panel.settings.privacy_center.label.delete_message.description.groups": " Has contribuido a Grupos. ¿Desea eliminar todas esas entradas (publicaciones, respuestas y eventos) o dejarlas para que otros las vean?",
+    "panel.settings.privacy_center.label.delete_message.description.groups": " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, reactions and events) or leave them for others to see.",
     "panel.settings.privacy_center.delete_account.contributions.delete.msg": "Por favor, borre todas mis contribuciones.",
 
     "panel.settings.verify_identity.label.title":"Verifica tu identidad",
