@@ -149,33 +149,19 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         SliverToutHeaderBar(flexImageUrl: _appointment!.imageUrl, flexRightToLeftTriangleColor: Colors.white),
         SliverList(
             delegate: SliverChildListDelegate([
-          Stack(children: <Widget>[
-            Container(
-                child: Column(children: <Widget>[
-              Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                _buildHeading(),
-                Column(children: <Widget>[
-                  Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 0),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                                padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
-                                color: Colors.white,
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[_buildTitle(), _buildDetails()])),
-                            Container(
-                                padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
-                                child: Column(children: [_buildCancelDescription()]))
-                          ]))
-                ])
-              ])
-            ]))
-          ])
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 0),
+              child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Container(
+                    padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
+                    color: Colors.white,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[_buildTitle(), _buildDetails()])),
+                Container(
+                    padding: EdgeInsets.symmetric(horizontal: _horizontalPadding), child: Column(children: [_buildCancelDescription()]))
+              ]))
         ], addSemanticIndexes: false))
       ])))
     ]);
@@ -220,10 +206,34 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget _buildTitle() {
+    bool isFavorite = Auth2().isFavorite(_appointment);
+    bool starVisible = Auth2().canFavorite && _appointment!.isUpcoming;
     return Padding(
         padding: EdgeInsets.only(bottom: 8),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          Expanded(child: Text(_appointment!.title!, style: TextStyle(fontSize: 24, color: Styles().colors!.fillColorPrimary)))
+          Expanded(
+              child: Text(_appointment!.title!,
+                  maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 22, color: Styles().colors!.fillColorPrimary))),
+          Visibility(
+              visible: starVisible,
+              child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    Analytics().logSelect(target: "Favorite: ${_appointment!.title}");
+                    Auth2().prefs?.toggleFavorite(widget.appointment);
+                  },
+                  child: Container(
+                      padding: EdgeInsets.only(left: 8, top: 16, bottom: 12),
+                      child: Semantics(
+                          label: isFavorite
+                              ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+                              : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+                          hint: isFavorite
+                              ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+                              : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+                          button: true,
+                          child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png',
+                              excludeFromSemantics: true)))))
         ]));
   }
 
@@ -296,8 +306,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     String? locationTextValue;
     if (StringUtils.isNotEmpty(longDisplayLocation)) {
       locationTextValue = longDisplayLocation;
-    }
-    else if (StringUtils.isNotEmpty(locationTitle)) {
+    } else if (StringUtils.isNotEmpty(locationTitle)) {
       if (locationTextValue != null) {
         locationTextValue += ', $locationTitle';
       } else {
@@ -464,18 +473,15 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     descriptionHtml = descriptionHtml.replaceAll(phoneMacro, Config().saferMcKinleyPhone ?? '');
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
-        child: Html(
-            data: descriptionHtml,
-            onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url),
-            style: {
-              "body": Style(
-                  color: Styles().colors!.textSurface,
-                  fontFamily: Styles().fontFamilies!.medium,
-                  fontSize: FontSize(16),
-                  padding: EdgeInsets.zero,
-                  margin: EdgeInsets.zero),
-              "a": Style(color: Styles().colors?.textSurface)
-            }));
+        child: Html(data: descriptionHtml, onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url), style: {
+          "body": Style(
+              color: Styles().colors!.textSurface,
+              fontFamily: Styles().fontFamilies!.medium,
+              fontSize: FontSize(16),
+              padding: EdgeInsets.zero,
+              margin: EdgeInsets.zero),
+          "a": Style(color: Styles().colors?.textSurface)
+        }));
   }
 
   void _onLocationDetailTapped() {
