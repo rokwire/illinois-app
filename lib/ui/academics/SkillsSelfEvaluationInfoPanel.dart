@@ -67,11 +67,20 @@ class _SkillsSelfEvaluationInfoPanelState extends State<SkillsSelfEvaluationInfo
       if (section.body != null) {
         RegExp regExp = RegExp(r"%{(.*?)}");
         Iterable<Match> matches = regExp.allMatches(section.body!);
-        contentWidgets.add(Text(
-          CollectionUtils.isNotEmpty(matches) ? section.body!.substring(0, matches.elementAt(0).start) : section.body!,
-          style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
-          textAlign: TextAlign.start,
-        ));
+        
+        if (CollectionUtils.isEmpty(matches)) {
+          contentWidgets.add(Text(
+            section.body!,
+            style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+            textAlign: TextAlign.start,
+          ));
+        } else if (matches.elementAt(0).start > 0) {
+          contentWidgets.add(Text(
+            section.body!.substring(0, matches.elementAt(0).start),
+            style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+            textAlign: TextAlign.start,
+          ));
+        }
 
         for (int i = 0; i < matches.length; i++) {
           Match match = matches.elementAt(i);

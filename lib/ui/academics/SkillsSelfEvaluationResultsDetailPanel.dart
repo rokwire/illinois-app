@@ -16,9 +16,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
+import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/panels/web_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -39,18 +42,18 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'),),
-      body: widget.content != null ? SectionSlantHeader(
+      body: SingleChildScrollView(child: widget.content != null ? SectionSlantHeader(
         header: widget.content!.header != null ? _buildHeader() : null,
         slantColor: Styles().colors?.gradientColorPrimary,
         backgroundColor: Styles().colors?.background,
         children: _buildContent(),
-        childrenPadding: const EdgeInsets.only(top: 240),
+        childrenPadding: const EdgeInsets.only(top: 240, left: 24, right: 24),
         childrenAlignment: CrossAxisAlignment.start,
       ) : Padding(padding: const EdgeInsets.all(24.0), child: Text(
         Localization().getStringEx("panel.skills_self_evaluation.results_detail.missing_content", "There is no detailed results content for this skill."),
         style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 20.0, color: Styles().colors?.fillColorPrimaryVariant),
         textAlign: TextAlign.center,
-      )),
+      ))),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: null,
     );
@@ -60,7 +63,7 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
     return Container(
       padding: EdgeInsets.only(top: 100, bottom: 32),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Padding(padding: const EdgeInsets.only(bottom: 16), child: Text(widget.content!.header!.title, style: TextStyle(fontFamily: "ProximaNovaExtraBold", fontSize: 36.0, color: Styles().colors?.surface), textAlign: TextAlign.center,)),
+        Padding(padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16), child: Text(widget.content!.header!.title, style: TextStyle(fontFamily: "ProximaNovaExtraBold", fontSize: 36.0, color: Styles().colors?.surface), textAlign: TextAlign.center,)),
         Visibility(visible: widget.content!.header!.moreInfo != null, child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Text(widget.content!.header!.moreInfo ?? '', 
@@ -103,68 +106,125 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
         contentWidgets.add(Padding(padding: const EdgeInsets.only(bottom: 16), child: titleWidget));
       }
       
-      if (section.body != null) {
-        RegExp regExp = RegExp(r"%{(.*?)}");
-        Iterable<Match> matches = regExp.allMatches(section.body!);
-        contentWidgets.add(Text(
-          CollectionUtils.isNotEmpty(matches) ? section.body!.substring(0, matches.elementAt(0).start) : section.body!,
-          style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
-          textAlign: TextAlign.start,
-        ));
+      switch (section.type) {
+        case "text":
+          if (section.body != null) {
+            RegExp regExp = RegExp(r"%{(.*?)}");
+            Iterable<Match> matches = regExp.allMatches(section.body!);
 
-        for (int i = 0; i < matches.length; i++) {
-          Match match = matches.elementAt(i);
-          String? key = match.group(1);
-          List<String>? parts = key?.split(".");
-
-          if (CollectionUtils.isNotEmpty(parts)) {
-            switch (parts![0]) {
-              case "links":
-                dynamic linkData = MapPathKey.entry(widget.content?.links, parts.sublist(1).join('.'));
-                if (linkData is SkillsSelfEvaluationLink) {
-                  contentWidgets.add(InkWell(onTap: () => _onTapLink(linkData), child: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: linkData.text,
-                          style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary),
-                        ),
-                        WidgetSpan(
-                          child: linkData.icon != null ? Padding(padding: const EdgeInsets.only(left: 4.0), child: Image.asset(linkData.icon!)) : Container(),
-                        ),
-                      ],
-                    ),
-                  )));
-                }
-                break;
-              case "widget":
-                dynamic widgetData = MapPathKey.entry(widget.params, parts.sublist(1).join('.'));
-                if (widgetData is String) {
-                  contentWidgets.add(Text(
-                    widgetData,
-                    style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant,),
-                  ));
-                }
-                break;
+            if (CollectionUtils.isEmpty(matches)) {
+              contentWidgets.add(Text(
+                section.body!,
+                style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+                textAlign: TextAlign.start,
+              ));
+            } else if (matches.elementAt(0).start > 0) {
+              contentWidgets.add(Text(
+                section.body!.substring(0, matches.elementAt(0).start),
+                style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+                textAlign: TextAlign.start,
+              ));
             }
-          }
 
-          if (match.end < section.body!.length) {
-            contentWidgets.add(Text(
-              section.body!.substring(match.end, (i+1 < matches.length) ? matches.elementAt(i+1).start : null),
-              style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
-              textAlign: TextAlign.start,
-            ));
+            for (int i = 0; i < matches.length; i++) {
+              Match match = matches.elementAt(i);
+              String? key = match.group(1);
+              List<String>? parts = key?.split(".");
+
+              if (CollectionUtils.isNotEmpty(parts)) {
+                switch (parts![0]) {
+                  case "links":
+                    dynamic linkData = MapPathKey.entry(widget.content?.links, parts.sublist(1).join('.'));
+                    if (linkData is SkillsSelfEvaluationLink) {
+                      contentWidgets.add(InkWell(onTap: () => _onTapLink(linkData), child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: linkData.text,
+                              style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary),
+                            ),
+                            WidgetSpan(
+                              child: linkData.icon != null ? Padding(padding: const EdgeInsets.only(left: 4.0), child: Image.asset(linkData.icon!)) : Container(),
+                            ),
+                          ],
+                        ),
+                      )));
+                    }
+                    break;
+                  case "widget":
+                    dynamic widgetData = MapPathKey.entry(widget.params, parts.sublist(1).join('.'));
+                    if (widgetData is String) {
+                      contentWidgets.add(Text(
+                        widgetData,
+                        style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant,),
+                      ));
+                    }
+                    break;
+                }
+              }
+
+              if (match.end < section.body!.length) {
+                contentWidgets.add(Text(
+                  section.body!.substring(match.end, (i+1 < matches.length) ? matches.elementAt(i+1).start : null),
+                  style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+                  textAlign: TextAlign.start,
+                ));
+              }
+            }
+            contentWidgets.add(Container(height: 16.0));
           }
-        }
-        contentWidgets.add(Container(height: 16.0));
-      }
-      if (CollectionUtils.isNotEmpty(section.subsections)) {
-        contentWidgets.addAll(_buildContent(sections: section.subsections));
+          if (CollectionUtils.isNotEmpty(section.subsections)) {
+            contentWidgets.addAll(_buildContent(sections: section.subsections));
+          }
+          break;
+        case "video":
+          contentWidgets.add(Padding(padding: const EdgeInsets.only(bottom: 24.0, left: 24.0, right: 24.0), child: _buildVideoWidget(section.body ?? '', section.params ?? {})));
+          break;
       }
     }
     
     return contentWidgets;
+  }
+
+  Widget _buildVideoWidget(String title, Map<String, dynamic> params) {
+    String? imageUrl = JsonUtils.stringValue(params['image_url']);
+    final Widget emptyImagePlaceholder = Container(height: 102);
+    return Container(
+        decoration: BoxDecoration(
+            color: Styles().colors?.white,
+            boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
+        child: Stack(children: [
+          GestureDetector(
+              onTap: () => _onTapVideo(params),
+              child: Semantics(
+                  button: true,
+                  child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Padding(
+                            padding: EdgeInsets.only(bottom: 16),
+                            child: Text(title,
+                                style: TextStyle(
+                                    fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary))),
+                        Stack(alignment: Alignment.center, children: [
+                          StringUtils.isNotEmpty(imageUrl)
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: ModalImageHolder(child: Image.network(imageUrl!,
+                                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                    return (loadingProgress == null) ? child : emptyImagePlaceholder;
+                                  })))
+                              : emptyImagePlaceholder,
+                          VideoPlayButton()
+                        ])
+                      ])))),
+          Container(color: Styles().colors?.accentColor3, height: 4)
+        ]));
+  }
+
+  void _onTapVideo(Map<String, dynamic> params) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: params)));
   }
 
   void _onTapLink(SkillsSelfEvaluationLink link) {

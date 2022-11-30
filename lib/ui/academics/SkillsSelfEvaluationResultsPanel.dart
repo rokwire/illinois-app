@@ -126,8 +126,12 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           }
           num? comparisonScore;
           try {
-            comparisonScore = _responses.firstWhere((element) => element.dateTaken.isAtSameMomentAs(_selectedComparisonDate ?? DateTime(0))).survey.stats?.percentages[section];
-            comparisonScore = (comparisonScore!*100).round();
+            if (_selectedComparisonDate?.isAtSameMomentAs(DateTime(0)) ?? false) {
+              comparisonScore = _latestResponse!.survey.constants["${section}_student_average"];
+            } else {
+              comparisonScore = _responses.firstWhere((element) => element.dateTaken.isAtSameMomentAs(_selectedComparisonDate ?? DateTime(0))).survey.stats?.percentages[section];
+              comparisonScore = (comparisonScore!*100).round();
+            }
           } catch (e) {
             debugPrint(e.toString());
           }
@@ -145,7 +149,15 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
               )
             ));
       }),
-      Padding(padding: const EdgeInsets.only(top: 16, bottom: 32), child: GestureDetector(onTap: _onTapClearAllScores, child:
+      Padding(padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 32), child: Text(
+        Localization().getStringEx('panel.skills_self_evaluation.results.student_average.description', 'Student Average = Average score among approximately 750 students at Colby College and the University of Illinois.'),
+        style: TextStyle(
+          fontFamily: "ProximaNovaRegular", 
+          fontSize: 16.0, 
+          color: Styles().colors?.fillColorPrimaryVariant,
+        )
+      ),),
+      Padding(padding: const EdgeInsets.only(bottom: 32), child: GestureDetector(onTap: _onTapClearAllScores, child:
         Text("Clear All Scores", style: TextStyle(
           fontFamily: "ProximaNovaBold", 
           fontSize: 16.0, 
@@ -163,7 +175,11 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       DropdownMenuItem<DateTime?>(
         value: null,
         child: Text('NONE', style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface,), textAlign: TextAlign.center,),
-      )
+      ),
+      DropdownMenuItem<DateTime?>(
+        value: DateTime(0),
+        child: Text('STU. AVG.', style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface,), textAlign: TextAlign.center,),
+      ),
     ];
     if (CollectionUtils.isNotEmpty(_responses)) {
       for (SurveyResponse response in _responses) {
