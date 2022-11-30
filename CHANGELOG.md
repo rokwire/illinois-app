@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Always show "Recent Past Appointments" label [#2600](https://github.com/rokwire/illinois-app/issues/2600).
 ### Added
 - Add appointments settings [#2598](https://github.com/rokwire/illinois-app/issues/2598).
+- Added MTD in Home & Browse panel, created MTDStopsHonePanel. In progress. [#2516](https://github.com/rokwire/illinois-app/issues/2516).
 
 ## [4.2.29] - 2022-11-29
 ### Added
