@@ -23,6 +23,7 @@ import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -340,6 +341,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     }
 
     String typeLabel = Appointment.typeToDisplayString(type)!;
+    String? meetingUrl = _appointment!.onlineDetails?.url;
     String? meetingId = _appointment!.onlineDetails?.meetingId;
     String? meetingPasscode = _appointment!.onlineDetails?.meetingPasscode;
     return Padding(
@@ -356,29 +358,49 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                     child: Text(typeLabel,
                         style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
               ]),
-              Container(height: 4),
+              Visibility(
+                  visible: StringUtils.isNotEmpty(meetingUrl),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Container(height: 4),
+                    Container(
+                        padding: EdgeInsets.only(left: 28),
+                        child: Container(
+                            padding: EdgeInsets.only(bottom: 2),
+                            child: LinkButton(
+                              padding: EdgeInsets.zero,
+                              title: meetingUrl,
+                              hint: '',
+                              fontSize: 16,
+                              onTap: () => _launchUrl(meetingUrl),
+                            )))
+                  ])),
               Visibility(
                   visible: StringUtils.isNotEmpty(meetingId),
-                  child: Container(
-                      padding: EdgeInsets.only(left: 28),
-                      child: Container(
-                          padding: EdgeInsets.only(bottom: 2),
-                          child: Text(
-                              Localization().getStringEx('panel.appointment.detail.meeting.id.label', 'Meeting ID:') + ' $meetingId',
-                              style: TextStyle(
-                                  fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground))))),
-              Container(height: 4),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Container(height: 4),
+                    Container(
+                        padding: EdgeInsets.only(left: 28),
+                        child: Container(
+                            padding: EdgeInsets.only(bottom: 2),
+                            child: Text(
+                                Localization().getStringEx('panel.appointment.detail.meeting.id.label', 'Meeting ID:') + ' $meetingId',
+                                style: TextStyle(
+                                    fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground))))
+                  ])),
               Visibility(
                   visible: StringUtils.isNotEmpty(meetingPasscode),
-                  child: Container(
-                      padding: EdgeInsets.only(left: 28),
-                      child: Container(
-                          padding: EdgeInsets.only(bottom: 2),
-                          child: Text(
-                              Localization().getStringEx('panel.appointment.detail.meeting.passcode.label', 'Passcode:') +
-                                  ' $meetingPasscode',
-                              style: TextStyle(
-                                  fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))))
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Container(height: 4),
+                    Container(
+                        padding: EdgeInsets.only(left: 28),
+                        child: Container(
+                            padding: EdgeInsets.only(bottom: 2),
+                            child: Text(
+                                Localization().getStringEx('panel.appointment.detail.meeting.passcode.label', 'Passcode:') +
+                                    ' $meetingPasscode',
+                                style: TextStyle(
+                                    fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground))))
+                  ]))
             ]));
   }
 
