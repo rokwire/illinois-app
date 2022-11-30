@@ -1375,7 +1375,7 @@
     "panel.settings.privacy_center.label.delete_message.description2":"Permanently ",
     "panel.settings.privacy_center.label.delete_message.description3":"delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?",
     "panel.settings.privacy_center.button.forget_info.title": "Forget My Information",
-    "panel.settings.privacy_center.label.delete_message.description.groups": " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, and events) or leave them for others to see.",
+    "panel.settings.privacy_center.label.delete_message.description.groups": " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, reactions and events) or leave them for others to see.",
     "panel.settings.privacy_center.delete_account.contributions.delete.msg":"Please delete all my contributions.",
 
     "panel.settings.verify_identity.label.title":"Verify your Identity",
@@ -2662,7 +2662,6 @@
     "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this item from your favorites?",
 
     "widget.home.welcome.text.title": "Welcome to {{app_title}} {{app_version}}",
-    "widget.home.welcome.text.description": "New in this version: personalize the {{app_title}} app content you want front and center in Favorites. Change or reorder your favorites by tapping on Customize, or add or remove content by tapping \u2606.",
     "widget.home.welcome.button.close.label": "Close",
 
     "widget.home.athletics_news.text.title": "Athletics News",

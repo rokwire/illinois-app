@@ -5,8 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Show video in favorites welcome widget [#2590](https://github.com/rokwire/illinois-app/issues/2590).
+- Update delete account message [#2593](https://github.com/rokwire/illinois-app/issues/2593).
+- Show online details url in Appointment Detail Panel [#2592](https://github.com/rokwire/illinois-app/issues/2592).
+- Show relevant tout image in Appointment Detail Panel [#2596](https://github.com/rokwire/illinois-app/issues/2596).
+
+## [4.2.29] - 2022-11-29
 ### Added
-- Added "MTD Bus" catgory in Map [#2516](https://github.com/rokwire/illinois-app/issues/2516).
+- Added "MTD Bus" category in Map [#2516](https://github.com/rokwire/illinois-app/issues/2516).
+- Add new video "Favorites Tutorial" [#2581] (https://github.com/rokwire/illinois-app/issues/2581).
+### Changed
+- Remember last selected category in Map [#2583](https://github.com/rokwire/illinois-app/issues/2583).
 
 ## [4.2.28] - 2022-11-28
 ### Fixed

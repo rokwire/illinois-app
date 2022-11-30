@@ -85,14 +85,14 @@ class _ExploreSortKey extends OrdinalSortKey {
 
 class ExplorePanel extends StatefulWidget {
 
-  final ExploreItem initialItem;
-  final EventsDisplayType eventsDisplayType;
+  final ExploreItem? initialItem;
+  final EventsDisplayType? eventsDisplayType;
   final ExploreFilter? initialFilter;
   final ListMapDisplayType mapDisplayType;
   final bool rootTabDisplay;
   final String? browseGroupId;
 
-  ExplorePanel({this.initialItem = ExploreItem.Events, this.eventsDisplayType = EventsDisplayType.single, this.initialFilter, this.mapDisplayType = ListMapDisplayType.List, this.rootTabDisplay = false, this.browseGroupId });
+  ExplorePanel({this.initialItem, this.eventsDisplayType, this.initialFilter, this.mapDisplayType = ListMapDisplayType.List, this.rootTabDisplay = false, this.browseGroupId });
 
   static Future<void> presentDetailPanel(BuildContext context, {String? eventId}) async {
     List<Event>? events = (eventId != null) ? await Events().loadEventsByIds([eventId]) : null;
@@ -181,10 +181,11 @@ class ExplorePanelState extends State<ExplorePanel>
     ]);
 
 
-    _selectedItem = widget.initialItem;
-    _selectedEventsDisplayType = widget.eventsDisplayType;
+    _displayType = widget.mapDisplayType;
+    _mapAllowed = (_displayType == ListMapDisplayType.Map);
+    _selectedItem = widget.initialItem ?? _defaultExploreItem ?? ExploreItem.Events;
+    _selectedEventsDisplayType = widget.eventsDisplayType ?? EventsDisplayType.single;
     _studentCourseTerms = StudentCourses().terms;
-    _selectDisplayType(widget.mapDisplayType);
     _initFilters();
 
     _mapExploreBarAnimationController = AnimationController (duration: Duration(milliseconds: 200), lowerBound: -MapBarHeight, upperBound: 0, vsync: this)
@@ -217,19 +218,6 @@ class ExplorePanelState extends State<ExplorePanel>
   @override
   bool get wantKeepAlive => true;
 
-  bool get _hasDiningSpecials{
-    return _diningSpecials != null && _diningSpecials!.isNotEmpty;
-  }
-
-  int get _exploresCount{
-    int exploresCount = (_displayExplores != null) ? _displayExplores!.length : 0;
-
-    if(_hasDiningSpecials){
-      exploresCount++;
-    }
-    return exploresCount;
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -244,6 +232,35 @@ class ExplorePanelState extends State<ExplorePanel>
         bottomNavigationBar: widget.rootTabDisplay ? null : uiuc.TabBar());
   }
 
+
+  bool get _hasDiningSpecials{
+    return _diningSpecials != null && _diningSpecials!.isNotEmpty;
+  }
+
+  int get _exploresCount{
+    int exploresCount = (_displayExplores != null) ? _displayExplores!.length : 0;
+
+    if(_hasDiningSpecials){
+      exploresCount++;
+    }
+    return exploresCount;
+  }
+
+  ExploreItem? get _defaultExploreItem {
+    switch(_displayType) {
+      case ListMapDisplayType.List: return exploreItemFromString(Storage().selectedListExploreItem);
+      case ListMapDisplayType.Map: return exploreItemFromString(Storage().selectedMapExploreItem);
+      default: return null;
+    }
+  }
+
+  set _defaultExploreItem(ExploreItem? value) {
+    switch(_displayType) {
+      case ListMapDisplayType.List: Storage().selectedListExploreItem = exploreItemToString(value); break;
+      case ListMapDisplayType.Map: Storage().selectedMapExploreItem = exploreItemToString(value); break;
+      default: break;
+    }
+  }
 
   void _initExploreItems() {
     if (FlexUI().isLocationServicesAvailable) {
@@ -1083,6 +1100,7 @@ class ExplorePanelState extends State<ExplorePanel>
   void _onTapExploreItem(ExploreItem item) {
     Analytics().logSelect(target: _exploreItemName(item));
     selectItem(item);
+    _defaultExploreItem = item; //Store last user selection
     _changeExploreItemsDropDownValuesVisibility();
   }
 
@@ -1508,16 +1526,17 @@ class ExplorePanelState extends State<ExplorePanel>
         child: BlockSemantics(child:Container(color: Color(0x99000000))));
   }
 
-  void _selectDisplayType (ListMapDisplayType displayType) {
+  /*void _selectDisplayType(ListMapDisplayType displayType) {
     Analytics().logSelect(target: displayType.toString());
     if (_displayType != displayType) {
       _refresh((){
         _displayType = displayType;
         _mapAllowed = (_displayType == ListMapDisplayType.Map) || (_mapAllowed == true);
         _enableMap(_displayType == ListMapDisplayType.Map);
+        Analytics().logMapDisplay(action: (_displayType == ListMapDisplayType.Map) ? Analytics.LogMapDisplayShowActionName : Analytics.LogMapDisplayHideActionName);
       });
     }
-  }
+  }*/
 
   Widget _buildFilterValuesContainer() {
 
@@ -1801,7 +1820,6 @@ class ExplorePanelState extends State<ExplorePanel>
   void _enableMap(bool enable) {
     if (_nativeMapController != null) {
       _nativeMapController!.enable(enable);
-      Analytics().logMapDisplay(action: enable ? Analytics.LogMapDisplayShowActionName : Analytics.LogMapDisplayHideActionName);
     }
   }
 
@@ -1975,6 +1993,9 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 }
 
+////////////////////
+// ExploreFilter
+
 class ExploreFilter {
   ExploreFilterType type;
   Set<int> selectedIndexes;
@@ -1988,5 +2009,53 @@ class ExploreFilter {
       return -1;
     }
     return selectedIndexes.first;
+  }
+}
+
+////////////////////
+// ExploreItem
+
+
+ExploreItem? exploreItemFromString(String? value) {
+  if (value == 'events') {
+    return ExploreItem.Events;
+  }
+  else if (value == 'dining') {
+    return ExploreItem.Dining;
+  }
+  else if (value == 'laundry') {
+    return ExploreItem.Laundry;
+  }
+  else if (value == 'buildings') {
+    return ExploreItem.Buildings;
+  }
+  else if (value == 'mtdStops') {
+    return ExploreItem.MTDStops;
+  }
+  else if (value == 'studentCourse') {
+    return ExploreItem.StudentCourse;
+  }
+  else if (value == 'appointments') {
+    return ExploreItem.Appointments;
+  }
+  else if (value == 'stateFarmWayfinding') {
+    return ExploreItem.StateFarmWayfinding;
+  }
+  else {
+    return null;
+  }
+}
+
+String? exploreItemToString(ExploreItem? value) {
+  switch(value) {
+    case ExploreItem.Events: return 'events';
+    case ExploreItem.Dining: return 'dining';
+    case ExploreItem.Laundry: return 'laundry';
+    case ExploreItem.Buildings: return 'buildings';
+    case ExploreItem.MTDStops: return 'mtdStops';
+    case ExploreItem.StudentCourse: return 'studentCourse';
+    case ExploreItem.Appointments: return 'appointments';
+    case ExploreItem.StateFarmWayfinding: return 'stateFarmWayfinding';
+    default: return null;
   }
 }

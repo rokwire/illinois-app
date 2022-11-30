@@ -1374,7 +1374,7 @@
     "panel.settings.privacy_center.label.delete_message.description2":"Permanentemente ",
     "panel.settings.privacy_center.label.delete_message.description3":"borre toda su información. No podrá recuperar sus datos después de haberlos eliminado. Estás seguro de que quieres continuar?",
     "panel.settings.privacy_center.button.forget_info.title": "Olvidar mi información",
-    "panel.settings.privacy_center.label.delete_message.description.groups": " Has contribuido a Grupos. ¿Desea eliminar todas esas entradas (publicaciones, respuestas y eventos) o dejarlas para que otros las vean?",
+    "panel.settings.privacy_center.label.delete_message.description.groups": " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, reactions and events) or leave them for others to see.",
     "panel.settings.privacy_center.delete_account.contributions.delete.msg": "Por favor, borre todas mis contribuciones.",
 
     "panel.settings.verify_identity.label.title":"Verifica tu identidad",
@@ -2659,7 +2659,6 @@
     "widget.home.prompt.remove.favorite": "¿Estás segura de que deseas ELIMINAR este artículo de tus favoritos?",
 
     "widget.home.welcome.text.title": "Bienvenido a {{app_title}} {{app_version}}",
-    "widget.home.welcome.text.description": "Nuevo en esta versión: personalice el contenido de la aplicación de {{app_title}} que desea al frente y al centro en Favoritos. Cambie o reordene sus favoritos tocando Personalizar, o agregue o elimine contenido tocando \u2606.",
     "widget.home.welcome.button.close.label": "Cerca",
 
     "widget.home.athletics_news.text.title": "Noticias de atletismo",
