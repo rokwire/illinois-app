@@ -1269,6 +1269,7 @@
     "panel.settings.home.settings.sections.food_filter.label": "Mi filtro de comida",
     "panel.settings.home.settings.sections.sports.label": "Mis equipos deportivos",
     "panel.settings.home.settings.sections.calendar.label": "Configuración de mi calendario",
+    "panel.settings.home.settings.sections.appointments.label": "Mis citas de McKinley",
     "panel.settings.home.settings.sections.favorites.label": "Mis favoritas",
 
     "panel.settings.home.connect.not_logged_in.title":"Inicia sesión en {{app_title}}",
@@ -1357,6 +1358,9 @@
     "panel.settings.home.calendar.research.title": "Investigación en Illinois",
     "panel.settings.home.calendar.research.questionnaire.title": "Formulario de interés de investigación",
     "panel.settings.home.calendar.research.prompt.title": "Confirme que ya no desea participar en Research at Illinois. Toda la información completada en su cuestionario será eliminada.",
+
+    "panel.settings.home.appointments.description.format": "Mostrar citas en la aplicación {{app_title}} para:",
+    "panel.settings.home.appointments.mckinley.label": "MyMcKinley",
 
     "panel.settings.privacy_center.label.title":"Centro de privacidad",
     "panel.settings.privacy_center.label.description":"Personalice sus preferencias de privacidad y datos.",

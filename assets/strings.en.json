@@ -1270,6 +1270,7 @@
     "panel.settings.home.settings.sections.food_filter.label": "My Food Filter",
     "panel.settings.home.settings.sections.sports.label": "My Sports Teams",
     "panel.settings.home.settings.sections.calendar.label": "My Calendar Settings",
+    "panel.settings.home.settings.sections.appointments.label": "MyMcKinley Appointments",
     "panel.settings.home.settings.sections.favorites.label": "My Favorites",
 
     "panel.settings.home.connect.not_logged_in.title":"Sign in to {{app_title}}",
@@ -1358,6 +1359,9 @@
     "panel.settings.home.calendar.research.toggle.title": "Participate in research",
     "panel.settings.home.calendar.research.questionnaire.title": "Research interest form",
     "panel.settings.home.calendar.research.prompt.title": "Please confirm that you wish to no longer participate in Research at Illinois. All information filled out in your questionnaire will be deleted.",
+
+    "panel.settings.home.appointments.description.format": "Display appointments in the {{app_title}} app for:",
+    "panel.settings.home.appointments.mckinley.label": "MyMcKinley",
 
     "panel.settings.privacy_center.label.title":"Privacy Center",
     "panel.settings.privacy_center.label.description":"Personalize your privacy and data preferences.",
