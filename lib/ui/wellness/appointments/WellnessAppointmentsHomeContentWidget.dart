@@ -119,27 +119,27 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildPastAppointments() {
+    List<Widget> pastAppointmentsWidgetList = <Widget>[];
+    pastAppointmentsWidgetList.add(Padding(
+        padding: EdgeInsets.only(top: 16),
+        child: Semantics(
+            header: true,
+            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+              Expanded(
+                  child: Text(
+                      Localization()
+                          .getStringEx('panel.wellness.appointments.home.past_appointments.header.label', 'Recent Past Appointments'),
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: Styles().colors!.blackTransparent06, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)))
+            ]))));
     if (CollectionUtils.isEmpty(_pastAppointments)) {
-      return _buildEmptyPastAppointments();
+      pastAppointmentsWidgetList.add(_buildEmptyPastAppointments());
     } else {
-      List<Widget> pastAppointmentsWidgetList = <Widget>[];
-      pastAppointmentsWidgetList.add(Padding(
-          padding: EdgeInsets.symmetric(vertical: 16),
-          child: Semantics(
-              header: true,
-              child:Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Expanded(
-                child: Text(
-                    Localization()
-                        .getStringEx('panel.wellness.appointments.home.past_appointments.header.label', 'Recent Past Appointments'),
-                    textAlign: TextAlign.left,
-                    style:
-                        TextStyle(color: Styles().colors!.blackTransparent06, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)))
-          ]))));
       pastAppointmentsWidgetList.addAll(_buildAppointmentsWidgetList(_pastAppointments));
       pastAppointmentsWidgetList.add(_buildPastAppointmentsDescription());
-      return Column(children: pastAppointmentsWidgetList);
     }
+    return Column(children: pastAppointmentsWidgetList);
   }
 
   Widget _buildEmptyPastAppointments() {
@@ -180,7 +180,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     if (CollectionUtils.isNotEmpty(appointments)) {
       for (int i = 0; i < appointments!.length; i++) {
         Appointment appointment = appointments[i];
-        widgets.add(Padding(padding: EdgeInsets.only(top: (i == 0 ? 0 : 16)), child: AppointmentCard(appointment: appointment)));
+        widgets.add(Padding(padding: EdgeInsets.only(top: 16), child: AppointmentCard(appointment: appointment)));
       }
     }
     return widgets;
