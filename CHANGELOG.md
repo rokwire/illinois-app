@@ -5,12 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Add BESSI Survey [#2491](https://github.com/rokwire/illinois-app/issues/2491)
+
+## [4.2.30] - 2022-11-30
 ### Changed
 - Show video in favorites welcome widget [#2590](https://github.com/rokwire/illinois-app/issues/2590).
 - Update delete account message [#2593](https://github.com/rokwire/illinois-app/issues/2593).
 - Show online details url in Appointment Detail Panel [#2592](https://github.com/rokwire/illinois-app/issues/2592).
 - Show relevant tout image in Appointment Detail Panel [#2596](https://github.com/rokwire/illinois-app/issues/2596).
-- Add BESSI Survey [#2491](https://github.com/rokwire/illinois-app/issues/2491)
+- Always show "Recent Past Appointments" label [#2600](https://github.com/rokwire/illinois-app/issues/2600).
+### Added
+- Add appointments settings [#2598](https://github.com/rokwire/illinois-app/issues/2598).
+- Added MTD in Home & Browse panel, created MTDStopsHonePanel. In progress. [#2516](https://github.com/rokwire/illinois-app/issues/2516).
 
 ## [4.2.29] - 2022-11-29
 ### Added

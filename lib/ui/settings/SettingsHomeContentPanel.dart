@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/settings/SettingsAppointmentsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsAssessmentsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
@@ -193,6 +194,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return AthleticsTeamsWidget();
       case SettingsContent.calendar:
         return SettingsCalendarContentWidget();
+      case SettingsContent.appointments:
+        return SettingsAppointmentsContentWidget();
       case SettingsContent.favorites:
         return Container();
       case SettingsContent.assessments:
@@ -220,6 +223,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
       case SettingsContent.calendar:
         return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'My Calendar Settings');
+      case SettingsContent.appointments:
+        return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'MyMcKinley Appointments');
       case SettingsContent.favorites:
         return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'My Favorites');
       case SettingsContent.assessments:
@@ -228,7 +233,7 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
   }
 }
 
-enum SettingsContent { sections, interests, food_filters, sports, calendar, favorites, assessments }
+enum SettingsContent { sections, interests, food_filters, sports, calendar, appointments, favorites, assessments }
 
 class _DebugContainer extends StatefulWidget implements PreferredSizeWidget {
   final Widget _child;

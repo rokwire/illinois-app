@@ -10,6 +10,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -19,6 +20,7 @@ import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Laundries.dart';
+import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
@@ -60,6 +62,7 @@ class HomeFavoritesWidget extends StatefulWidget {
       case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.athletics', 'My Athletics Events');
       case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.news', 'My Athletics News');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.laundry', 'My Laundry');
+      case MTDStop.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.mtd_stops', 'My MTD Stops');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.campus_guide', 'My Campus Guide');
     }
     return null;
@@ -76,6 +79,7 @@ class HomeFavoritesWidget extends StatefulWidget {
       case Game.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.athletics", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Athletics Events</b></a> for quick access here."); break;
       case News.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.news", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Athletics News</b></a> for quick access here."); break;
       case LaundryRoom.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.laundry", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Laundry Locations</b></a> for quick access here."); break;
+      case MTDStop.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.mtd_stops", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>MTD Stops</b></a> for quick access here."); break;
       case GuideFavorite.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.campus_guide", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Campus Guide</b></a> for quick access here."); break;
     }
     return (message != null) ? message.replaceAll(localUrlMacro, '$localScheme://${key.toLowerCase()}') : null;
@@ -88,6 +92,7 @@ class HomeFavoritesWidget extends StatefulWidget {
       case Game.favoriteKeyName: return Styles().colors?.fillColorPrimary;
       case News.favoriteKeyName: return Styles().colors?.fillColorPrimary;
       case LaundryRoom.favoriteKeyName: return Styles().colors?.accentColor2;
+      case MTDStop.favoriteKeyName: return Styles().colors?.accentColor3;
       case GuideFavorite.favoriteKeyName: return Styles().colors?.accentColor3;
     }
     return null;
@@ -398,6 +403,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         case Game.favoriteKeyName: return _loadFavoriteGames(favoriteIds);
         case News.favoriteKeyName: return _loadFavoriteNews(favoriteIds);
         case LaundryRoom.favoriteKeyName: return _loadFavoriteLaundries(favoriteIds);
+        case MTDStop.favoriteKeyName: return _loadFavoriteMTDStops(favoriteIds);
         case GuideFavorite.favoriteKeyName: return _loadFavoriteGuideItems(favoriteIds);
       }
     }
@@ -418,6 +424,9 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   Future<List<Favorite>?> _loadFavoriteLaundries(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList((await Laundries().loadSchoolRooms())?.rooms, favoriteIds) : null;
+
+  Future<List<Favorite>?> _loadFavoriteMTDStops(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? ListUtils.reversed(MTD().stopsByIds(favoriteIds)) : null;
 
   Future<List<Favorite>?> _loadFavoriteGuideItems(LinkedHashSet<String>? favoriteIds) async {
     List<Favorite>? guideItems;

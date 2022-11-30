@@ -38,6 +38,7 @@ import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
+import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
@@ -498,6 +499,9 @@ class _BrowseEntry extends StatelessWidget {
       case "laundry.laundry":                 _onTapLaundry(context); break;
       case "laundry.my_laundry":              _onTapMyLaundry(context); break;
 
+      case "mtd.all_mtd_stops":              _onTapMTDStops(context); break;
+      case "mtd.my_mtd_stops":               _onTapMyMTDStops(context); break;
+
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
       case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
@@ -542,6 +546,7 @@ class _BrowseEntry extends StatelessWidget {
       case "my.canvas_courses":              _onTapCanvasCourses(context); break;
       case "my.my_groups":                   _onTapMyGroups(context); break;
       case "my.my_laundry":                  _onTapMyLaundry(context); break;
+      case "my.my_mtd_stops":                _onTapMyMTDStops(context); break;
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
       case "my.my_appointments":             _onTapMyAppointments(context); break;
 
@@ -828,6 +833,11 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
   }
 
+  void _onTapMTDStops(BuildContext context) {
+    Analytics().logSelect(target: "All MTD Stops");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all,)));
+  }
+
   void _onTapIlliniCash(BuildContext context) {
     Analytics().logSelect(target: "Illini Cash");
     SettingsIlliniCashPanel.present(context);
@@ -945,6 +955,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapMyLaundry(BuildContext context) {
     Analytics().logSelect(target: "My Laundry");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [LaundryRoom.favoriteKeyName]); } ));
+  }
+
+  void _onTapMyMTDStops(BuildContext context) {
+    Analytics().logSelect(target: "My MTD Stops");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.my,)));
   }
 
   void _onTapMyCampusGuide(BuildContext context) {
