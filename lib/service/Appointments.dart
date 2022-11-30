@@ -84,8 +84,8 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   }
 
   Future<List<Appointment>?> loadBBAppointments() async {
-    if (!isEnabled) {
-      Log.w('Failed to load wellness todo items. Missing wellness url.');
+    if (StringUtils.isNotEmpty(Config().appointmentsUrl)) {
+      Log.w('Failed to appointments. Missing appointments url.');
       return null;
     }
     String? url;
@@ -97,7 +97,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
       List<Appointment>? items = Appointment.listFromJson(JsonUtils.decodeList(responseString));
       return items;
     } else {
-      Log.w('Failed to load Appointments items. Response:\n$responseCode: $responseString');
+      Log.w('Failed to load Appointments. Response:\n$responseCode: $responseString');
       return null;
     }
   }
@@ -192,8 +192,6 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
       }
     }
   }
-
-  bool get isEnabled => StringUtils.isNotEmpty(Config().wellnessUrl);
 
   // NotificationsListener
   @override
