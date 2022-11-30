@@ -1,7 +1,10 @@
+import 'dart:collection';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Location.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -9,7 +12,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 ///////////////////////////
 // MTDStop
 
-class MTDStop with Explore {
+class MTDStop with Explore implements Favorite {
   final String? id;
   final String? name;
   final String? code;
@@ -110,11 +113,11 @@ class MTDStop with Explore {
     return nearestStop;
   }
 
-  static List<MTDStop>? stopInList(List<MTDStop>? stops, { String? name, LatLng? location, double locationThresholdDistance = 1 /* in meters */ }) {
+  static List<MTDStop>? stopsInList(List<MTDStop>? stops, { String? name, LatLng? location, double locationThresholdDistance = 1 /* in meters */ }) {
     List<MTDStop>? result;
     if (stops != null) {
       for (MTDStop stop in stops) {
-        List<MTDStop>? pointsResult = stopInList(stop.points, name: name, location: location, locationThresholdDistance: locationThresholdDistance);
+        List<MTDStop>? pointsResult = stopsInList(stop.points, name: name, location: location, locationThresholdDistance: locationThresholdDistance);
         if ((pointsResult != null) && pointsResult.isNotEmpty) {
           if (result != null) {
             result.addAll(pointsResult);
@@ -152,6 +155,45 @@ class MTDStop with Explore {
     return true;
   }
 
+  // List Retrieval
+
+  static List<MTDStop>? stopsInList2(List<MTDStop>? stops, { LinkedHashSet<String>? stopIds }) {
+    if ((stops != null) && (stopIds != null)) {
+      Map<String, MTDStop> stopsMap = <String, MTDStop>{};
+      _mapStops(stopsMap, stops: stops, stopIds: stopIds);
+
+      List<MTDStop> result = <MTDStop>[];
+      if (stopsMap.isNotEmpty) {
+        for (String stopId in stopIds) {
+          MTDStop? stop = stopsMap[stopId];
+          if (stop != null) {
+            result.add(stop);
+          }
+        }
+      }
+      
+      return result;
+    }
+    return null;
+  }
+
+  static void _mapStops(Map<String, MTDStop> stopsMap, { List<MTDStop>? stops, Set<String>? stopIds}) {
+    if ((stops != null) && (stopIds != null)) {
+      for(MTDStop stop in stops) {
+        String? stopId = stop.id;
+        if ((stopId != null) && stopIds.contains(stopId)) {
+          stopsMap[stopId] = stop;
+        }
+        if (stop.points != null) {
+          _mapStops(stopsMap, stops: stop.points, stopIds: stopIds);
+        }
+      }
+    }
+  }
+
+
+
+
   // ExploreJsonHandler
 
   static bool canJson(Map<String, dynamic>? json) {
@@ -180,6 +222,11 @@ class MTDStop with Explore {
     latitude : latitude,
     longitude : longitude,
   );
+
+  // Favorite implementation
+  static const String favoriteKeyName = "mtdBusStopIds";
+  @override String get favoriteKey => favoriteKeyName;
+  @override String? get favoriteId => id;
 }
 
 ///////////////////////////
@@ -221,7 +268,7 @@ class MTDStops {
   // Operations
 
   MTDStop? findStop({ String? name, LatLng? location, double locationThresholdDistance = 10 /* in meters */ }) {
-    List<MTDStop>? result = MTDStop.stopInList(stops, name: name, location: location, locationThresholdDistance: locationThresholdDistance);
+    List<MTDStop>? result = MTDStop.stopsInList(stops, name: name, location: location, locationThresholdDistance: locationThresholdDistance);
     if ((result != null) && result.isNotEmpty) {
       MTDStop? nearestStop = (1 < result.length) ? MTDStop.nearestStopInList(result, location: location) : null;
       return nearestStop ?? result.first;
