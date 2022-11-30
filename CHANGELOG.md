@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.2.30] - 2022-11-30
 ### Changed
 - Show video in favorites welcome widget [#2590](https://github.com/rokwire/illinois-app/issues/2590).
 - Update delete account message [#2593](https://github.com/rokwire/illinois-app/issues/2593).
