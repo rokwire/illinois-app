@@ -2657,7 +2657,6 @@
 	"widget.home.prompt.remove.favorite": "您確定要從收藏夾中刪除此項目嗎？",
 
 	"widget.home.welcome.text.title": "“歡迎來到{{app_title}} {{app_version}}",
-	"widget.home.welcome.text.description": "此版本中的新功能：個性化您想要在收藏夾中置頂和居中的{{app_title}}應用內容。 點擊自定義更改或重新排序您的收藏夾，或點擊 \u2606 添加或刪除內容。",
 	"widget.home.welcome.button.close.label": "關",
 
 	"widget.home.athletics_news.text.title": "田徑新聞",

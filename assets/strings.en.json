@@ -2661,7 +2661,6 @@
     "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this item from your favorites?",
 
     "widget.home.welcome.text.title": "Welcome to {{app_title}} {{app_version}}",
-    "widget.home.welcome.text.description": "New in this version: personalize the {{app_title}} app content you want front and center in Favorites. Change or reorder your favorites by tapping on Customize, or add or remove content by tapping \u2606.",
     "widget.home.welcome.button.close.label": "Close",
 
     "widget.home.athletics_news.text.title": "Athletics News",

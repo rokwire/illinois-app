@@ -1011,6 +1011,7 @@
 			}
 		],
 		"onboarding": { "dev": "video.tutorial.4.0", "test": "video.tutorial.4.0", "production": "video.tutorial.4.0" },
+		"welcome": { "dev": "favorites.tutorial.4.2", "test": "favorites.tutorial.4.2", "production": "favorites.tutorial.4.2" },
 		"strings": {
 			"en": {
 				"video.tutorial.4.0": "Application overview",

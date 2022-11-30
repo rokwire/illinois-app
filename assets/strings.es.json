@@ -2658,7 +2658,6 @@
     "widget.home.prompt.remove.favorite": "¿Estás segura de que deseas ELIMINAR este artículo de tus favoritos?",
 
     "widget.home.welcome.text.title": "Bienvenido a {{app_title}} {{app_version}}",
-    "widget.home.welcome.text.description": "Nuevo en esta versión: personalice el contenido de la aplicación de {{app_title}} que desea al frente y al centro en Favoritos. Cambie o reordene sus favoritos tocando Personalizar, o agregue o elimine contenido tocando \u2606.",
     "widget.home.welcome.button.close.label": "Cerca",
 
     "widget.home.athletics_news.text.title": "Noticias de atletismo",
