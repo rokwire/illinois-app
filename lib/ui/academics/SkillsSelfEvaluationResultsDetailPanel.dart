@@ -47,7 +47,7 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
         slantColor: Styles().colors?.gradientColorPrimary,
         backgroundColor: Styles().colors?.background,
         children: _buildContent(),
-        childrenPadding: const EdgeInsets.only(top: 240, left: 24, right: 24),
+        childrenPadding: const EdgeInsets.only(top: 240, left: 24, right: 24, bottom: 24),
         childrenAlignment: CrossAxisAlignment.start,
       ) : Padding(padding: const EdgeInsets.all(24.0), child: Text(
         Localization().getStringEx("panel.skills_self_evaluation.results_detail.missing_content", "There is no detailed results content for this skill."),
@@ -178,7 +178,7 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
           }
           break;
         case "video":
-          contentWidgets.add(Padding(padding: const EdgeInsets.only(bottom: 24.0, left: 24.0, right: 24.0), child: _buildVideoWidget(section.body ?? '', section.params ?? {})));
+          contentWidgets.add(Padding(padding: const EdgeInsets.only(bottom: 24.0, left: 24.0, right: 24.0), child: _buildVideoWidget(section.params ?? {})));
           break;
       }
     }
@@ -186,8 +186,9 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
     return contentWidgets;
   }
 
-  Widget _buildVideoWidget(String title, Map<String, dynamic> params) {
+  Widget _buildVideoWidget(Map<String, dynamic> params) {
     String? imageUrl = JsonUtils.stringValue(params['image_url']);
+    String? title = JsonUtils.stringValue(params['title']);
     final Widget emptyImagePlaceholder = Container(height: 102);
     return Container(
         decoration: BoxDecoration(
@@ -204,7 +205,7 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Padding(
                             padding: EdgeInsets.only(bottom: 16),
-                            child: Text(title,
+                            child: Text(title ?? '',
                                 style: TextStyle(
                                     fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary))),
                         Stack(alignment: Alignment.center, children: [

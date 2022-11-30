@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/settings/SettingsAssessmentsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
@@ -194,6 +195,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return SettingsCalendarContentWidget();
       case SettingsContent.favorites:
         return Container();
+      case SettingsContent.assessments:
+        return SettingsAssessmentsContentWidget();
     }
   }
 
@@ -219,11 +222,13 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'My Calendar Settings');
       case SettingsContent.favorites:
         return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'My Favorites');
+      case SettingsContent.assessments:
+        return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments');
     }
   }
 }
 
-enum SettingsContent { sections, interests, food_filters, sports, calendar, favorites }
+enum SettingsContent { sections, interests, food_filters, sports, calendar, favorites, assessments }
 
 class _DebugContainer extends StatefulWidget implements PreferredSizeWidget {
   final Widget _child;

@@ -19,6 +19,7 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -109,14 +110,14 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
         label: Localization().getStringEx("panel.skills_self_evaluation.get_started.body.info.description", "Your results will be saved for you to revisit or compare to future results."),
         textColor: Styles().colors?.fillColorPrimaryVariant,
         backgroundColor: Colors.transparent,
-        // TODO: onTap: _onTapResults,
+        // TODO: onTap: ,
       ),
       RibbonButton(
         leftIconAsset: "images/icon-settings.png",
         label: Localization().getStringEx("panel.skills_self_evaluation.get_started.body.settings.decription", "Don't Save My Results"),
         textColor: Styles().colors?.fillColorPrimaryVariant,
         backgroundColor: Colors.transparent,
-        // TODO: onTap: _onTapResults,
+        onTap: _onTapSettings,
       ),
     ];
   }
@@ -188,6 +189,10 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _onTapResults,)));
       }
     }
+  }
+
+  void _onTapSettings() {
+    SettingsHomeContentPanel.present(context, content: SettingsContent.assessments);
   }
 
   void _onTapResults() {

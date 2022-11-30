@@ -66,6 +66,10 @@
 	
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 	
+			"assessments": ["settings"],
+			"assessments.settings": ["skills_self_evaluation"],
+			"assessments.settings.skills_self_evaluation": ["save"],
+
 			"calendar": ["settings"],
 			"calendar.settings": ["add", "prompt"],
 			
