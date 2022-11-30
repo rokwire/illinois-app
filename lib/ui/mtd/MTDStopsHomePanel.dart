@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:illinois/model/Location.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/groups/GroupSearchPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
@@ -11,6 +14,7 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/styles.dart';
@@ -36,21 +40,41 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   List<MTDStop>? _stops;
   Set<String> _expanded = <String>{};
 
+  Position? _currentPosition;
+  LocationServicesStatus? _locationServicesStatus;
+  bool _processingLocation = false;
+
   @override
   void initState() {
     NotificationService().subscribe(this, [
       MTD.notifyStopsChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
+      LocationServices.notifyStatusChanged,
     ]);
+    
     if (widget.contentType != null) {
       _selectedContentType = widget.contentType;
     }
     else {
       _selectedContentType = CollectionUtils.isNotEmpty(Auth2().account?.prefs?.getFavorites(MTDStop.favoriteKeyName)) ? MTDStopsContentType.my : MTDStopsContentType.all;
     }
-
-    _stops = _contentList;
     
+    _processingLocation = true;
+    _loadLocationServicesStatus().then((LocationServicesStatus? locationServicesStatus) {
+      _locationServicesStatus = locationServicesStatus;
+      _loadPosition().then((Position? position) {
+        _currentPosition = position;
+        if (mounted) {
+          setState(() {
+            _processingLocation = false;
+            _stops = _contentList;
+          });
+        }
+      });
+    });
+
+
+
     super.initState();
   }
 
@@ -69,6 +93,9 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
           _stops = _contentList;
         });
       }
+    }
+    else if (name == LocationServices.notifyStatusChanged) {
+      _onLocationServicesStatusChanged(param);
     }
   }
  
@@ -91,9 +118,10 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
         Stack(children: [
           Column(children: [
             Expanded(child: 
-              RefreshIndicator(onRefresh: _onPullToRefresh, child:
+              _processingLocation ? _buildLoading() :
+                RefreshIndicator(onRefresh: _onPullToRefresh, child:
                 _buildContent()
-              ),
+                ),
             ),
           ],),
           _buildContentTypesDropdownContainer()
@@ -221,10 +249,17 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
         stop: ListUtils.entry(_stops, index),
         expanded: _expanded,
         onExpand: () => _onExpandStop(ListUtils.entry(_stops, index)),
+        currentPosition: _currentPosition,
       ),
       separatorBuilder: (context, index) => Container(),
       itemCount: _stops?.length ?? 0,
       padding: EdgeInsets.symmetric(horizontal: 16),
+    );
+  }
+
+  Widget _buildLoading() {
+    return Align(alignment: Alignment.center, child:
+      CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3, ),
     );
   }
 
@@ -264,10 +299,29 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   }
 
   List<MTDStop>? get _contentList {
-    switch(_selectedContentType) {
-      case MTDStopsContentType.all: return MTD().stops?.stops;
-      case MTDStopsContentType.my:  return ListUtils.reversed(MTD().stopsByIds(Auth2().account?.prefs?.getFavorites(MTDStop.favoriteKeyName)));
-      default: return null;
+    if (_selectedContentType == MTDStopsContentType.all) {
+      List<MTDStop>? stops = ListUtils.from(MTD().stops?.stops);
+      if ((stops != null) && (_currentPosition != null)) {
+        stops.sort((MTDStop stop1, MTDStop stop2) {
+          LatLng? position1 = stop1.anyPosition;
+          LatLng? position2 = stop2.anyPosition;
+          if ((position1 != null) && position1.isValid && (position2 != null) && position2.isValid) {
+            double distance1 = Geolocator.distanceBetween(position1.latitude!, position1.longitude!, _currentPosition!.latitude, _currentPosition!.longitude);
+            double distance2 = Geolocator.distanceBetween(position2.latitude!, position2.longitude!, _currentPosition!.latitude, _currentPosition!.longitude);
+            return distance1.compareTo(distance2);
+          }
+          else {
+            return 0;
+          }
+        });
+      }
+      return stops;
+    }
+    else if (_selectedContentType == MTDStopsContentType.my) {
+      return ListUtils.reversed(MTD().stopsByIds(Auth2().account?.prefs?.getFavorites(MTDStop.favoriteKeyName)));
+    }
+    else {
+      return null;
     }
   }
 
@@ -279,14 +333,44 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       });
     }
   }
+
+  Future<LocationServicesStatus?> _loadLocationServicesStatus() async {
+    LocationServicesStatus? locationServicesStatus;
+    if (FlexUI().isLocationServicesAvailable) {
+      locationServicesStatus = await LocationServices().status;
+      if (locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
+        locationServicesStatus = await LocationServices().requestPermission();
+      }
+    }
+    return locationServicesStatus;
+  }
+
+  Future<Position?> _loadPosition() async {
+    return (_locationServicesStatus == LocationServicesStatus.permissionAllowed) ? await LocationServices().location : null;
+  }
+
+  void _onLocationServicesStatusChanged(LocationServicesStatus? status) {
+    if (FlexUI().isLocationServicesAvailable && !_processingLocation) {
+      _locationServicesStatus = status;
+      _loadPosition().then((Position? position) {
+        _currentPosition = position;
+        if (mounted) {
+          setState(() {
+            _stops = _contentList;
+          });
+        }
+      });
+    }
+  }
 }
 
 class _MTDStopCard extends StatelessWidget {
   final MTDStop? stop;
   final Set<String>? expanded;
   final void Function()? onExpand;
+  final Position? currentPosition;
 
-  _MTDStopCard({Key? key, this.stop, this.expanded, this.onExpand}) : super(key: key);
+  _MTDStopCard({Key? key, this.stop, this.expanded, this.onExpand, this.currentPosition }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -297,13 +381,34 @@ class _MTDStopCard extends StatelessWidget {
   }
 
   Widget _buildHeading(BuildContext context) {
-    String? description;
+    String description = '';
     TextStyle titleStyle;
     EdgeInsetsGeometry titlePadding, favoritePadding;
     if (CollectionUtils.isNotEmpty(stop?.points)) {
+
+      if (StringUtils.isNotEmpty(stop?.code)) {
+        description = stop!.code!;
+      }
+
+      String? distance = distanceText;
+      if (StringUtils.isNotEmpty(distance)) {
+        if (description.isNotEmpty) {
+          description += ", $distance";
+        }
+        else {
+          description = distance!;
+        }
+      }
+
       int stopPointsCount = stop?.points?.length ?? 0;
       String pointsDescription = (1 < stopPointsCount) ? "$stopPointsCount stop points" : "$stopPointsCount stop point";
-      description = StringUtils.isNotEmpty(stop?.code) ? "${stop?.code} ($pointsDescription)" : pointsDescription;
+      if (description.isNotEmpty) {
+        description += " ($pointsDescription)";
+      }
+      else {
+        description = pointsDescription;
+      }
+
       titleStyle = TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary);
       titlePadding = EdgeInsets.only(top: 12);
       favoritePadding = EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8);
@@ -335,19 +440,19 @@ class _MTDStopCard extends StatelessWidget {
               ),
             ],),
             
-            Visibility(visible: StringUtils.isNotEmpty(description), child:
+            Visibility(visible: description.isNotEmpty, child:
               InkWell(onTap: _onTapExpand, child:
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Expanded(child:
-                    Padding(padding: EdgeInsets.only(top: 4), child:
-                      Text(description ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface))
+                    Padding(padding: EdgeInsets.only(top: 4, bottom: 8), child:
+                      Text(description, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface), maxLines: 1, overflow: TextOverflow.ellipsis,)
                     )
                   ),
                   Semantics(
                     label: _isExpanded ? Localization().getStringEx('panel.browse.section.status.colapse.title', 'Colapse') : Localization().getStringEx('panel.browse.section.status.expand.title', 'Expand'),
                     hint: _isExpanded ? Localization().getStringEx('panel.browse.section.status.colapse.hint', 'Tap to colapse section content') : Localization().getStringEx('panel.browse.section.status.expand.hint', 'Tap to expand section content'),
                     button: true, child:
-                        Container(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 16), child:
+                        Container(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 16), child:
                           SizedBox(width: 18, height: 18, child:
                             Center(child:
                               _isExpanded ?
@@ -374,12 +479,23 @@ class _MTDStopCard extends StatelessWidget {
             stop: stop,
             expanded: expanded,
             onExpand: onExpand,
+            currentPosition: currentPosition,
           ));
         }
       }
       return entriesList.isNotEmpty ? Padding(padding: EdgeInsets.only(left: 16), child:
         Column(children: entriesList,)
       ) : Container();
+  }
+
+  String? get distanceText {
+    LatLng? stopPosition = stop?.anyPosition;
+    if ((currentPosition != null) && (stopPosition != null) && stopPosition.isValid) {
+      double distanceInMeters = Geolocator.distanceBetween(stopPosition.latitude!, stopPosition.longitude!, currentPosition!.latitude, currentPosition!.longitude);
+      double distanceInMiles = distanceInMeters / 1609.344;
+      return distanceInMiles.toStringAsFixed(1) + " mi away";
+    }
+    return null;
   }
 
   void _onTapStop(BuildContext context) {

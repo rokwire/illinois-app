@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -191,7 +192,55 @@ class MTDStop with Explore implements Favorite {
     }
   }
 
+  // Center location
 
+  LatLng? get position => ((latitude != null) && (longitude != null)) ? LatLng(latitude: latitude, longitude: longitude) : null;
+
+  LatLng? get anyPosition => position ?? (CollectionUtils.isNotEmpty(points) ? points?.first.anyPosition : null);
+
+  LatLng? get centerPoint {
+    double pi = math.pi / 180;
+    double xpi = 180 / math.pi;
+    double x = 0, y = 0, z = 0;
+    int total = 0;
+    LatLng? position;
+
+    if (points != null) {
+      for (MTDStop stop in points!) {
+        LatLng? stopPosition = stop.position ?? stop.centerPoint;
+        double? stopLatitude = stopPosition?.latitude;
+        double? stopLongitude = stopPosition?.longitude;
+        if ((stopLatitude != null) && (stopLongitude != null)) {
+          double latitude = stopLatitude * pi;
+          double longitude = stopLongitude * pi;
+          double c1 = math.cos(latitude);
+          x = x + c1 * math.cos(longitude);
+          y = y + c1 * math.sin(longitude);
+          z = z + math.sin(latitude);
+          position = stopPosition;
+          total++;
+        }
+      }
+    }
+
+    if (total == 0) {
+      return null;
+    }
+    else if (total == 1) {
+      return position;
+    }
+    else {
+      x = x / total;
+      y = y / total;
+      z = z / total;
+
+      double centralLongitude = math.atan2(y, x);
+      double centralSquareRoot = math.sqrt(x * x + y * y);
+      double centralLatitude = math.atan2(z, centralSquareRoot);
+
+      return LatLng(latitude: centralLatitude * xpi, longitude: centralLongitude * xpi);
+    }
+  }
 
 
   // ExploreJsonHandler
@@ -200,9 +249,7 @@ class MTDStop with Explore implements Favorite {
     return (json != null) &&
       (json['stop_id'] != null) &&
       (json['stop_name'] != null) &&
-      (json['code'] != null) &&
-      (json['stop_lat'] != null) &&
-      (json['stop_lon'] != null);
+      (json['code'] != null);
   }
 
   bool get hasLocation => (latitude != null) && (longitude != null);
