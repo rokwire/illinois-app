@@ -142,11 +142,25 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget _buildAppointmentContent() {
+    AppointmentType? type = _appointment!.type;
+    String? toutImageUrl;
+    switch (type) {
+      case AppointmentType.in_person:
+        toutImageUrl = 'images/appointment-detail-inperson-tout.png';
+        break;
+      case AppointmentType.online:
+        toutImageUrl = 'images/appointment-detail-online-tout.jpg';
+        break;
+      default:
+        toutImageUrl = _appointment!.imageUrl!;
+        break;
+    }
+
     return Column(children: <Widget>[
       Expanded(
           child: Container(
               child: CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
-        SliverToutHeaderBar(flexImageUrl: _appointment!.imageUrl, flexRightToLeftTriangleColor: Colors.white),
+        SliverToutHeaderBar(flexImageUrl: toutImageUrl, flexRightToLeftTriangleColor: Colors.white),
         SliverList(
             delegate: SliverChildListDelegate([
           Padding(
