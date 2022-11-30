@@ -1373,7 +1373,7 @@
 	"panel.settings.privacy_center.label.delete_message.description2":"永远 ",
 	"panel.settings.privacy_center.label.delete_message.description3":"删除所有信息。删除数据后，您将无法恢复数据。确定要继续吗?",
 	"panel.settings.privacy_center.button.forget_info.title": "忘记我的信息",
-    "panel.settings.privacy_center.label.delete_message.description.groups": " 您為群組做出了貢獻。 您希望刪除所有這些條目（帖子、回復和事件）還是讓其他人看到。",
+    "panel.settings.privacy_center.label.delete_message.description.groups": " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, reactions and events) or leave them for others to see.",
     "panel.settings.privacy_center.delete_account.contributions.delete.msg": "請刪除我所有的貢獻。",
 
 	"panel.settings.verify_identity.label.title":"验证你的身份",

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Show video in favorites welcome widget [#2590](https://github.com/rokwire/illinois-app/issues/2590).
+- Update delete account message [#2593](https://github.com/rokwire/illinois-app/issues/2593).
 
 ## [4.2.29] - 2022-11-29
 ### Added
