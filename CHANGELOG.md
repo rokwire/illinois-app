@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update delete account message [#2593](https://github.com/rokwire/illinois-app/issues/2593).
 - Show online details url in Appointment Detail Panel [#2592](https://github.com/rokwire/illinois-app/issues/2592).
 - Show relevant tout image in Appointment Detail Panel [#2596](https://github.com/rokwire/illinois-app/issues/2596).
+### Added
+- Add appointments settings [#2598](https://github.com/rokwire/illinois-app/issues/2598).
 
 ## [4.2.29] - 2022-11-29
 ### Added

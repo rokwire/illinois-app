@@ -1269,6 +1269,7 @@
 	"panel.settings.home.settings.sections.food_filter.label": "我的食物過濾器",
 	"panel.settings.home.settings.sections.sports.label": "我的運動隊",
 	"panel.settings.home.settings.sections.calendar.label": "我的日曆設置",
+	"panel.settings.home.settings.sections.appointments.label": "我的麥金萊約會",
 	"panel.settings.home.settings.sections.favorites.label": "我最喜愛的",
 
 	"panel.settings.home.connect.not_logged_in.title":"登錄{{app_title}}",
@@ -1357,6 +1358,9 @@
 	"panel.settings.home.calendar.research.toggle.title": "參與研究",
 	"panel.settings.home.calendar.research.questionnaire.title": "研究興趣表",
 	"panel.settings.home.calendar.research.prompt.title": "請確認您希望不再參與伊利諾伊州的研究。 您在問卷中填寫的所有信息都將被刪除。",
+
+    "panel.settings.home.appointments.description.format": "在 {{app_title}} 應用程序中顯示約會：",
+    "panel.settings.home.appointments.mckinley.label": "我的麥金萊",
 
 	"panel.settings.privacy_center.label.title":"隐私中心",
 	"panel.settings.privacy_center.label.description":"个性化您的隐私和数据偏好.",
