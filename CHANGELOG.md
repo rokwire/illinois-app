@@ -6,8 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Add BESSI Survey [#2491](https://github.com/rokwire/illinois-app/issues/2491)
-
+- Add BESSI Survey [#2491](https://github.com/rokwire/illinois-app/issues/2491).
+- Switch on/off displaying appointments [#2606](https://github.com/rokwire/illinois-app/issues/2606).
 ### Fixed
 - Remove ModalImageDialog from Video widgets[#2608](https://github.com/rokwire/illinois-app/issues/2608).
 
