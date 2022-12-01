@@ -2588,7 +2588,8 @@
 
 	"widget.home.research_projects.my.label.header.title":"我的研究項目",
 	"widget.home.research_projects.open.label.header.title":"開放研究項目",
-	"widget.home.research_projects.my.text.empty.description": "您尚未創建任何研究項目。",
+	"widget.home.research_projects.my.text.empty.admin.description": "您尚未創建任何研究項目。",
+	"widget.home.research_projects.my.html.empty.user.description": "您目前沒有參與任何研究項目。 <a href='{{open_projects_url}}'>查看與您的<a href='{{questionnaire_url}}'>研究興趣表</a>匹配的當前研究</a>以選擇加入並成為研究的一部分招聘池。",
 	"widget.home.research_projects.all.text.empty.description": "未能加載研究項目。",
 	"widget.home.research_projects.message.offline":"研究項目在離線時不可用。",
 	"widget.home.research_projects.message.logged_out":"您需要登錄才能訪問研究項目。",
