@@ -181,7 +181,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     ]);
   }
 
-  Widget _buildHeading() {
+  /*Widget _buildHeading() {
     // String? category = _appointment!.category;
     bool isFavorite = Auth2().isFavorite(_appointment);
     bool starVisible = Auth2().canFavorite && _appointment!.isUpcoming;
@@ -217,7 +217,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                                   child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png',
                                       excludeFromSemantics: true)))))))
         ]));
-  }
+  }*/
 
   Widget _buildTitle() {
     bool isFavorite = Auth2().isFavorite(_appointment);
