@@ -94,7 +94,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
           ),
           Expanded(child:
             Stack(children: [
-              _skillsSelfEvaluationSelected ? _contentWidget : Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16,), child:
+              Padding(padding: _skillsSelfEvaluationSelected ? EdgeInsets.zero : EdgeInsets.only(top: 16, left: 16, right: 16,), child:
                 _contentWidget
               ),
               _buildContentValuesContainer()
