@@ -21,6 +21,8 @@ import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/popups/popup_message.dart';
+import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -163,15 +165,15 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           ],
         ),
       ),),
-      // Padding(padding: const EdgeInsets.only(bottom: 32), child: GestureDetector(onTap: _onTapClearAllScores, child:
-      //   Text("Clear All Scores", style: TextStyle(
-      //     fontFamily: "ProximaNovaBold", 
-      //     fontSize: 16.0, 
-      //     color: Styles().colors?.fillColorPrimaryVariant,
-      //     decoration: TextDecoration.underline,
-      //     decorationColor: Styles().colors?.fillColorSecondary
-      //   )
-      // ),)),
+      Padding(padding: const EdgeInsets.only(bottom: 32), child: GestureDetector(onTap: _onTapClearAllScores, child:
+        Text("Clear All Scores", style: TextStyle(
+          fontFamily: "ProximaNovaBold", 
+          fontSize: 16.0, 
+          color: Styles().colors?.fillColorPrimaryVariant,
+          decoration: TextDecoration.underline,
+          decorationColor: Styles().colors?.fillColorSecondary
+        )
+      ),)),
     ] : [];
   }
 
@@ -227,14 +229,53 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   void _showScoreDescription(String section) {
-    if (_latestResponse?.survey.resultData is Map<String, dynamic>) {
-      String skillDefinition = _latestResponse!.survey.resultData['${section}_results'] ?? '';
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsDetailPanel(content: widget.content[section], params: {'skill_definition': skillDefinition})));
-    }
+    String skillDefinition = _latestResponse?.survey.resultData is Map<String, dynamic> ? _latestResponse!.survey.resultData['${section}_results'] ?? '' : 
+      Localization().getStringEx('panel.skills_self_evaluation.results.empty.message', 'No results yet.');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsDetailPanel(content: widget.content[section], params: {'skill_definition': skillDefinition})));
   }
 
-  // void _onTapClearAllScores() {
-  //   //TODO: call Polls BB API to clear all responses for survey type "bessi" after confirming
-  // }
+  void _onTapClearAllScores() {
+    List<Widget> buttons = [
+      Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: RoundedButton(
+        label: Localization().getStringEx('dialog.no.title', 'No'),
+        borderColor: Styles().colors?.fillColorPrimaryVariant,
+        backgroundColor: Styles().colors?.surface,
+        textStyle: Styles().textStyles?.getTextStyle('widget.detail.large.fat'),
+        onTap: _onTapDismissDeleteScores,
+      )),
+      Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: RoundedButton(
+        label: Localization().getStringEx('dialog.yes.title', 'Yes'),
+        borderColor: Styles().colors?.fillColorSecondary,
+        backgroundColor: Styles().colors?.surface,
+        textStyle: Styles().textStyles?.getTextStyle('widget.detail.large.fat'),
+        onTap: _onTapConfirmDeleteScores,
+      )),
+    ];
+
+    ActionsMessage.show(
+      context: context,
+      titleBarColor: Styles().colors?.surface,
+      message: Localization().getStringEx('panel.skills_self_evaluation.results.delete_scores.message', 'Are you sure you want to delete all of your scores?'),
+      messageTextStyle: Styles().textStyles?.getTextStyle('widget.description.medium'),
+      messagePadding: const EdgeInsets.only(left: 32, right: 32, top: 8, bottom: 32),
+      messageTextAlign: TextAlign.center,
+      buttons: buttons,
+      buttonsPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
+      closeButtonIcon: Image.asset('images/close-orange-small.png'),
+    );
+  }
+
+  void _onTapDismissDeleteScores() {
+    Navigator.of(context).pop();
+  }
+
+  void _onTapConfirmDeleteScores() {
+    Navigator.of(context).pop();
+    Polls().deleteSurveyResponses(surveyTypes: ["bessi"]).then((success) {
+      if (success && mounted) {
+        setState(() {});
+      }
+    });
+  }
 }
 
