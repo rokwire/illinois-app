@@ -33,7 +33,6 @@ import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeVideoTutorialsWidget extends StatefulWidget {
@@ -233,10 +232,10 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
                           StringUtils.isNotEmpty(imageUrl)
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(4),
-                                  child: ModalImageHolder(child: Image.network(imageUrl!,
+                                  child: Image.network(imageUrl!,
                                       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                                     return (loadingProgress == null) ? child : emptyImagePlaceholder;
-                                  })))
+                                  }))
                               : emptyImagePlaceholder,
                           VideoPlayButton()
                         ])
