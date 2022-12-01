@@ -983,6 +983,7 @@
     "panel.explore.map.popup.title.format":"%d %s",
 
     "panel.explore.missing.appointments.msg":"You currently have no upcoming in-person appointments linked within {{app_title}} app.",
+    "panel.explore.hide.appointments.msg":"There is nothing to display as you have chosen not to display any past or future appointments.",
 
     "panel.explore_list.header.title":"Explore",
 
@@ -1866,6 +1867,9 @@
     "panel.wellness.appointments.home.past.list.empty.msg": "You don't have recent past appointments linked within the Illinois app.",
     "panel.wellness.appointments.home.past_appointments.header.label": "Recent Past Appointments",
     "panel.wellness.appointments.home.past_appointments.footer.description": "<a href='{{mckinley_url}}'>Visit {{mckinley_url_label}} to view a full history of past appointments.</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>",
+    "panel.wellness.appointments.home.display.nothing.msg": "There is nothing to display as you have chosen not to display any past or future appointments.",
+    "panel.wellness.appointments.home.display.settings.on.label": "Display My Appointments",
+    "panel.wellness.appointments.home.display.settings.off.label": "Don't Display My Appointments",
 
     "panel.wellness.home.header.title": "Wellness",
     "panel.wellness.home.eight_dimensions.header.title": "8 Dimensions of Wellness",
@@ -2824,6 +2828,7 @@
     
     "widget.home.appointments.my.label.header.title": "MyMcKinley Appointments",
     "widget.home.appointments.my.text.empty.description": "You currently have no upcoming appointments linked within the {{app_title}} app.",
+    "widget.home.appointments.my.text.display.nothing.msg": "There is nothing to display as you have chosen not to display any past or future appointments.",
     "widget.home.appointments.my.button.all.title": "View All",
     "widget.home.appointments.my.button.all": "Tap to view all appointments",
 
