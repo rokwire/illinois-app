@@ -49,7 +49,7 @@ class SettingsHomeContentPanel extends StatefulWidget {
 
   static void present(BuildContext context, {SettingsContent? content}) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
-      MediaQueryData mediaQuery = MediaQuery.of(context);
+      MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
       double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
       showModalBottomSheet(
         context: context,
@@ -69,8 +69,8 @@ class SettingsHomeContentPanel extends StatefulWidget {
         settings: RouteSettings(name: routeName),
         pageBuilder: (context, animation1, animation2) => SettingsHomeContentPanel._(content: content),
         transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero)
-      );*/
+        reverseTransitionDuration: Duration.zero
+      ));*/
     }
   }
 }
@@ -99,7 +99,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
       ),
       body: _buildPage(),
       backgroundColor: Styles().colors!.background,
-      bottomNavigationBar: uiuc.TabBar());
+      bottomNavigationBar: uiuc.TabBar()
+    );
   }*/
 
   Widget _buildSheet(BuildContext context) {
