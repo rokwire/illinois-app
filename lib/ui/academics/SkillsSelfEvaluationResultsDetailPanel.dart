@@ -27,26 +27,21 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SkillsSelfEvaluationResultsDetailPanel extends StatefulWidget {
+class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
   final SkillsSelfEvaluationContent? content;
   final Map<String, dynamic>? params;
 
   SkillsSelfEvaluationResultsDetailPanel({required this.content, this.params});
 
   @override
-  _SkillsSelfEvaluationResultsDetailPanelState createState() => _SkillsSelfEvaluationResultsDetailPanelState();
-}
-
-class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvaluationResultsDetailPanel> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'),),
-      body: SingleChildScrollView(child: widget.content != null ? SectionSlantHeader(
-        header: widget.content!.header != null ? _buildHeader() : null,
+      body: SingleChildScrollView(child: content != null ? SectionSlantHeader(
+        header: content!.header != null ? _buildHeader() : null,
         slantColor: Styles().colors?.gradientColorPrimary,
         backgroundColor: Styles().colors?.background,
-        children: _buildContent(),
+        children: _buildContent(context),
         childrenPadding: const EdgeInsets.only(top: 240, left: 24, right: 24, bottom: 24),
         childrenAlignment: CrossAxisAlignment.start,
       ) : Padding(padding: const EdgeInsets.all(24.0), child: Text(
@@ -63,10 +58,10 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
     return Container(
       padding: EdgeInsets.only(top: 100, bottom: 32),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Padding(padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16), child: Text(widget.content!.header!.title, style: TextStyle(fontFamily: "ProximaNovaExtraBold", fontSize: 36.0, color: Styles().colors?.surface), textAlign: TextAlign.center,)),
-        Visibility(visible: widget.content!.header!.moreInfo != null, child: Padding(
+        Padding(padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16), child: Text(content!.header!.title, style: TextStyle(fontFamily: "ProximaNovaExtraBold", fontSize: 36.0, color: Styles().colors?.surface), textAlign: TextAlign.center,)),
+        Visibility(visible: content!.header!.moreInfo != null, child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
-          child: Text(widget.content!.header!.moreInfo ?? '', 
+          child: Text(content!.header!.moreInfo ?? '', 
             style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.surface), 
             textAlign: TextAlign.center,
           )
@@ -86,9 +81,9 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
     );
   }
 
-  List<Widget> _buildContent({List<SkillsSelfEvaluationSection>? sections}) {
+  List<Widget> _buildContent(BuildContext context, {List<SkillsSelfEvaluationSection>? sections}) {
     List<Widget> contentWidgets = [];
-    for (SkillsSelfEvaluationSection section in sections ?? widget.content?.sections ?? []) {
+    for (SkillsSelfEvaluationSection section in sections ?? content?.sections ?? []) {
       Widget titleWidget = Text(
         section.title,
         style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
@@ -134,9 +129,9 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
               if (CollectionUtils.isNotEmpty(parts)) {
                 switch (parts![0]) {
                   case "links":
-                    dynamic linkData = MapPathKey.entry(widget.content?.links, parts.sublist(1).join('.'));
+                    dynamic linkData = MapPathKey.entry(content?.links, parts.sublist(1).join('.'));
                     if (linkData is SkillsSelfEvaluationLink) {
-                      contentWidgets.add(InkWell(onTap: () => _onTapLink(linkData), child: RichText(
+                      contentWidgets.add(InkWell(onTap: () => _onTapLink(context, linkData), child: RichText(
                         text: TextSpan(
                           children: [
                             TextSpan(
@@ -152,7 +147,7 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
                     }
                     break;
                   case "widget":
-                    dynamic widgetData = MapPathKey.entry(widget.params, parts.sublist(1).join('.'));
+                    dynamic widgetData = MapPathKey.entry(params, parts.sublist(1).join('.'));
                     if (widgetData is String) {
                       contentWidgets.add(Text(
                         widgetData,
@@ -174,11 +169,11 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
             contentWidgets.add(Container(height: 16.0));
           }
           if (CollectionUtils.isNotEmpty(section.subsections)) {
-            contentWidgets.addAll(_buildContent(sections: section.subsections));
+            contentWidgets.addAll(_buildContent(context, sections: section.subsections));
           }
           break;
         case "video":
-          contentWidgets.add(Padding(padding: const EdgeInsets.only(bottom: 24.0, left: 24.0, right: 24.0), child: _buildVideoWidget(section.params ?? {})));
+          contentWidgets.add(Padding(padding: const EdgeInsets.only(bottom: 24.0, left: 24.0, right: 24.0), child: _buildVideoWidget(context, section.params ?? {})));
           break;
       }
     }
@@ -186,7 +181,7 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
     return contentWidgets;
   }
 
-  Widget _buildVideoWidget(Map<String, dynamic> params) {
+  Widget _buildVideoWidget(BuildContext context, Map<String, dynamic> params) {
     String? imageUrl = JsonUtils.stringValue(params['image_url']);
     String? title = JsonUtils.stringValue(params['title']);
     final Widget emptyImagePlaceholder = Container(height: 102);
@@ -197,7 +192,7 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
         child: Stack(children: [
           GestureDetector(
-              onTap: () => _onTapVideo(params),
+              onTap: () => _onTapVideo(context, params),
               child: Semantics(
                   button: true,
                   child: Padding(
@@ -224,11 +219,11 @@ class _SkillsSelfEvaluationResultsDetailPanelState extends State<SkillsSelfEvalu
         ]));
   }
 
-  void _onTapVideo(Map<String, dynamic> params) {
+  void _onTapVideo(BuildContext context, Map<String, dynamic> params) {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: params)));
   }
 
-  void _onTapLink(SkillsSelfEvaluationLink link) {
+  void _onTapLink(BuildContext context, SkillsSelfEvaluationLink link) {
     switch (link.type) {
       case "web":
         if (link.internal && UrlUtils.launchInternal(link.url)) {

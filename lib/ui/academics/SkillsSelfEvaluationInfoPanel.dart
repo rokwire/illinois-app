@@ -22,31 +22,25 @@ import 'package:rokwire_plugin/ui/panels/web_panel.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SkillsSelfEvaluationInfoPanel extends StatefulWidget {
+class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
   final SkillsSelfEvaluationContent? content;
   final Map<String, dynamic>? params;
 
   SkillsSelfEvaluationInfoPanel({required this.content, this.params});
 
   @override
-  _SkillsSelfEvaluationInfoPanelState createState() => _SkillsSelfEvaluationInfoPanelState();
-}
-
-class _SkillsSelfEvaluationInfoPanelState extends State<SkillsSelfEvaluationInfoPanel> {
-  
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'),),
-      body: SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(24.0), child: _buildContent())),
+      body: SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(24.0), child: _buildContent(context))),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: null,
     );
   }
 
-  Widget _buildContent({List<SkillsSelfEvaluationSection>? sections}) {
+  Widget _buildContent(BuildContext context, {List<SkillsSelfEvaluationSection>? sections}) {
     List<Widget> contentWidgets = [];
-    for (SkillsSelfEvaluationSection section in sections ?? widget.content?.sections ?? []) {
+    for (SkillsSelfEvaluationSection section in sections ?? content?.sections ?? []) {
       Widget titleWidget = Text(
         section.title,
         style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
@@ -90,9 +84,9 @@ class _SkillsSelfEvaluationInfoPanelState extends State<SkillsSelfEvaluationInfo
           if (CollectionUtils.isNotEmpty(parts)) {
             switch (parts![0]) {
               case "links":
-                dynamic linkData = MapPathKey.entry(widget.content?.links, parts.sublist(1).join('.'));
+                dynamic linkData = MapPathKey.entry(content?.links, parts.sublist(1).join('.'));
                 if (linkData is SkillsSelfEvaluationLink) {
-                  contentWidgets.add(InkWell(onTap: () => _onTapLink(linkData), child: RichText(
+                  contentWidgets.add(InkWell(onTap: () => _onTapLink(context, linkData), child: RichText(
                     text: TextSpan(
                       children: [
                         TextSpan(
@@ -108,7 +102,7 @@ class _SkillsSelfEvaluationInfoPanelState extends State<SkillsSelfEvaluationInfo
                 }
                 break;
               case "widget":
-                dynamic widgetData = MapPathKey.entry(widget.params, parts.sublist(1).join('.'));
+                dynamic widgetData = MapPathKey.entry(params, parts.sublist(1).join('.'));
                 if (widgetData is String) {
                   contentWidgets.add(Text(
                     widgetData,
@@ -130,7 +124,7 @@ class _SkillsSelfEvaluationInfoPanelState extends State<SkillsSelfEvaluationInfo
         contentWidgets.add(Container(height: 16.0));
       }
       if (CollectionUtils.isNotEmpty(section.subsections)) {
-        contentWidgets.add(_buildContent(sections: section.subsections));
+        contentWidgets.add(_buildContent(context, sections: section.subsections));
       }
     }
     
@@ -139,7 +133,7 @@ class _SkillsSelfEvaluationInfoPanelState extends State<SkillsSelfEvaluationInfo
     );
   }
 
-  void _onTapLink(SkillsSelfEvaluationLink link) {
+  void _onTapLink(BuildContext context, SkillsSelfEvaluationLink link) {
     if (link.internal && UrlUtils.launchInternal(link.url)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: link.url)));
     } else if (link.url != null) {
