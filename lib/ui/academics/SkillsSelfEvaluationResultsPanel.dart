@@ -209,7 +209,9 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         for (SurveyResponse response in responses) {
           _responseSections.addAll(response.survey.stats?.scores.keys ?? []);
         }
-        setState(() {});
+        if (mounted) {
+          setState(() {});
+        }
       }
     });
   }

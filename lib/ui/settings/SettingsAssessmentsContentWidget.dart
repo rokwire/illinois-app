@@ -52,7 +52,9 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
   @override
   void onNotification(String name, dynamic param) {
     if ((name == AppLivecycle.notifyStateChanged) && (param == AppLifecycleState.resumed)) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
