@@ -37,6 +37,8 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
+enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments }
+
 class SettingsHomeContentPanel extends StatefulWidget {
   static final String routeName = 'settings_home_content_panel';
   
@@ -232,8 +234,6 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
     }
   }
 }
-
-enum SettingsContent { sections, interests, food_filters, sports, calendar, appointments, favorites, assessments }
 
 class _DebugContainer extends StatefulWidget implements PreferredSizeWidget {
   final Widget _child;
