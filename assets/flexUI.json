@@ -59,7 +59,7 @@
 			"settings.linked.phone": ["info", "remove", "verify"],
 			"settings.linked.email": ["info", "remove", "verify"],
 	
-			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "due_date_catalog", "my_illini"],
+			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "skills_self_evaluation", "due_date_catalog", "my_illini"],
 
 			"wellness.health_screener": ["take_screener"],
 
@@ -68,6 +68,10 @@
 	
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 	
+			"assessments": ["settings"],
+			"assessments.settings": ["skills_self_evaluation"],
+			"assessments.settings.skills_self_evaluation": ["save"],
+
 			"calendar": ["settings"],
 			"calendar.settings": ["add", "prompt"],
 			

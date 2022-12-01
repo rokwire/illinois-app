@@ -21,6 +21,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/settings/SettingsAppointmentsContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsAssessmentsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
@@ -35,6 +36,8 @@ import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+
+enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments }
 
 class SettingsHomeContentPanel extends StatefulWidget {
   static final String routeName = 'settings_home_content_panel';
@@ -197,6 +200,8 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return SettingsAppointmentsContentWidget();
       case SettingsContent.favorites:
         return Container();
+      case SettingsContent.assessments:
+        return SettingsAssessmentsContentWidget();
     }
   }
 
@@ -224,11 +229,11 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'MyMcKinley Appointments');
       case SettingsContent.favorites:
         return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'My Favorites');
+      case SettingsContent.assessments:
+        return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments');
     }
   }
 }
-
-enum SettingsContent { sections, interests, food_filters, sports, calendar, appointments, favorites }
 
 class _DebugContainer extends StatefulWidget implements PreferredSizeWidget {
   final Widget _child;

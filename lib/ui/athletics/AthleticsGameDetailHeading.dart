@@ -848,7 +848,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return _hasExtraData()! ? _createRichContent(width, height) : _createLiteContent(width, height);
+    return _hasExtraData() == true ? _createRichContent(width, height) : _createLiteContent(width, height);
   }
 
   bool? _hasExtraData() {
