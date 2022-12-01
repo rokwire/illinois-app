@@ -242,7 +242,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().healthScreenerSurveyID, tabBar: uiuc.TabBar(), onComplete: _onCompleteSymptomScreener)));
   }
 
-  void _onCompleteSymptomScreener() {
+  void _onCompleteSymptomScreener(SurveyResponse? response) {
     Navigator.of(context).pop();
   }
 

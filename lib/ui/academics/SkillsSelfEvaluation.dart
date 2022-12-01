@@ -22,6 +22,7 @@ import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -153,7 +154,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
                 rightIconAsset: "images/chevron-right.png",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label", "View past results"),
                 textColor: Styles().colors?.fillColorPrimaryVariant,
-                onTap: _onTapResults,
+                onTap: () => _onTapResults(null),
               ),
               RibbonButton(
                 rightIconAsset: "images/chevron-right.png",
@@ -224,9 +225,9 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
     SettingsHomeContentPanel.present(context, content: SettingsContent.assessments);
   }
 
-  void _onTapResults() {
+  void _onTapResults(SurveyResponse? response) {
     Navigator.of(context).pop();
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(content: _contentItems)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(content: _contentItems, latestResponse: response)));
   }
 
   void _onTapShowInfo(String key) {
@@ -246,8 +247,9 @@ class SkillsSelfEvaluationContent {
   final SkillsSelfEvaluationHeader? header;
   final List<SkillsSelfEvaluationSection>? sections;
   final Map<String, SkillsSelfEvaluationLink>? links;
+  final Map<String, dynamic>? data;
 
-  SkillsSelfEvaluationContent({required this.id, required this.category, required this.key, this.header, this.sections, this.links});
+  SkillsSelfEvaluationContent({required this.id, required this.category, required this.key, this.header, this.sections, this.links, this.data});
 
   factory SkillsSelfEvaluationContent.fromJson(Map<String, dynamic> json) {
     Map<String, SkillsSelfEvaluationLink>? links;
@@ -268,6 +270,7 @@ class SkillsSelfEvaluationContent {
       header: JsonUtils.mapOrNull((json) => SkillsSelfEvaluationHeader.fromJson(json), json['header']),
       sections: SkillsSelfEvaluationSection.listFromJson(JsonUtils.listValue(json['sections'])),
       links: links,
+      data: JsonUtils.mapValue(json['data']),
     );
   }
 }
