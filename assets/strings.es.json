@@ -982,6 +982,7 @@
     "panel.explore.map.popup.title.format":"%d %s",
 
     "panel.explore.missing.appointments.msg":"Actualmente no tiene próximas citas en persona vinculadas dentro de la aplicación {{app_title}}.",
+    "panel.explore.hide.appointments.msg":"No hay nada que mostrar ya que ha elegido no mostrar citas pasadas o futuras.",
 
     "panel.explore_list.header.title":"Explorar",
 

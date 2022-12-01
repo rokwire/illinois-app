@@ -549,15 +549,23 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   void _applyExplores(List<Explore>? explores) {
-      _refresh(() {
-        _loadingTask = null;
-        _loadingProgress = null;
-        _displayExplores = explores;
-        _placeExploresOnMap();
-        if ((_selectedItem == ExploreItem.Appointments) && CollectionUtils.isEmpty(_displayExplores)) {
-          _showMissingAppointmentsPopup();
+    _refresh(() {
+      _loadingTask = null;
+      _loadingProgress = null;
+      _displayExplores = explores;
+      _placeExploresOnMap();
+      if (_selectedItem == ExploreItem.Appointments) {
+        if (Storage().appointmentsCanDisplay != true) {
+          _showMissingAppointmentsPopup(Localization().getStringEx('panel.explore.hide.appointments.msg',
+              'There is nothing to display as you have chosen not to display any past or future appointments.'));
+        } else if (CollectionUtils.isEmpty(_displayExplores)) {
+          _showMissingAppointmentsPopup(Localization()
+              .getStringEx('panel.explore.missing.appointments.msg',
+                  'You currently have no upcoming in-person appointments linked within {{app_title}} app.')
+              .replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
         }
-      });
+      }
+    });
   }
 
   Future<List<Explore>> _loadEvents(List<ExploreFilter>? selectedFilterList) async {
@@ -634,7 +642,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return Appointments().loadAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
   }
 
-  void _showMissingAppointmentsPopup() {
+  void _showMissingAppointmentsPopup(String missingAppointmentsText) {
     AppAlert.showCustomDialog(
         context: context,
         contentPadding: EdgeInsets.all(0),
@@ -648,15 +656,13 @@ class ExplorePanelState extends State<ExplorePanel>
                     Image.asset('images/block-i-orange.png'),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
-                        child: Text(
-                            Localization().getStringEx('panel.explore.missing.appointments.msg',
-                                'You currently have no upcoming in-person appointments linked within {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+                        child: Text(missingAppointmentsText,
                             textAlign: TextAlign.center,
                             style: Styles().textStyles?.getTextStyle("widget.detail.small")))
                   ])),
               Align(
                   alignment: Alignment.topRight,
-                  child: GestureDetector(
+                  child: InkWell(
                       onTap: () {
                         Analytics().logSelect(target: 'Close missing appointments popup');
                         Navigator.of(context).pop();

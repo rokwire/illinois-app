@@ -982,6 +982,7 @@
 	"panel.explore.map.popup.title.format":"%d %s",
 
 	"panel.explore.missing.appointments.msg":"您目前沒有在 {{app_title}} 應用中鏈接的即將到來的面對面約會。",
+    "panel.explore.hide.appointments.msg":"沒有可顯示的內容，因為您選擇不顯示任何過去或未來的約會。",
 
 	"panel.explore_list.header.title":"探索",
 
