@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add BESSI Survey [#2491](https://github.com/rokwire/illinois-app/issues/2491)
 
+### Fixed
+- Remove ModalImageDialog from Video widgets[#2608](https://github.com/rokwire/illinois-app/issues/2608).
+
 ## [4.2.30] - 2022-11-30
 ### Changed
 - Show video in favorites welcome widget [#2590](https://github.com/rokwire/illinois-app/issues/2590).
