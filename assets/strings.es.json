@@ -1865,6 +1865,9 @@
     "panel.wellness.appointments.home.past.list.empty.msg": "No tiene citas pasadas recientes vinculadas dentro de la aplicación de Illinois.",
     "panel.wellness.appointments.home.past_appointments.header.label": "Citas pasadas recientes",
     "panel.wellness.appointments.home.past_appointments.footer.description": "<a href='{{mckinley url}}'>Visite {{mckinley_url_label}} para ver un historial completo de citas anteriores.</a>&nbsp;<img src='asset:{{external_links icon}}' alt= ''/>",
+    "panel.wellness.appointments.home.display.nothing.msg": "No hay nada que mostrar ya que ha elegido no mostrar citas pasadas o futuras.",
+    "panel.wellness.appointments.home.display.settings.on.label": "Mostrar mis citas",
+    "panel.wellness.appointments.home.display.settings.off.label": "No mostrar mis citas",
 
     "panel.wellness.home.header.title": "Bienestar",
     "panel.wellness.home.eight_dimensions.header.title": "8 dimensiones de bienestar",

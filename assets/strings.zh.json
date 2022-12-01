@@ -1866,6 +1866,9 @@
 	"panel.wellness.appointments.home.past.list.empty.msg": "您沒有在伊利諾伊應用程序中鏈接最近的過去約會。",
 	"panel.wellness.appointments.home.past_appointments.header.label": "最近過去的約會",
 	"panel.wellness.appointments.home.past_appointments.footer.description": "<a href='{{mckinley url}}'>訪問 {{mckinley_url_label}} 以查看過去約會的完整歷史記錄。</a>&nbsp;<img src='asset:{{external_links icon}}' alt= ''/>",
+    "panel.wellness.appointments.home.display.nothing.msg": "沒有可顯示的內容，因為您選擇不顯示任何過去或未來的約會。",
+    "panel.wellness.appointments.home.display.settings.on.label": "顯示我的約會",
+    "panel.wellness.appointments.home.display.settings.off.label": "不要顯示我的約會",
 
 	"panel.wellness.home.header.title": "養生",
 	"panel.wellness.home.eight_dimensions.header.title": "8健康維度",
