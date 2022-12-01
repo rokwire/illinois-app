@@ -17,6 +17,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Storage.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
@@ -40,14 +42,15 @@ class _SettingsAppointmentsContentWidgetState extends State<SettingsAppointments
         Expanded(
             child: Text(
                 Localization()
-                    .getStringEx('panel.settings.home.appointments.description.format', 'Display appointments in the {{app_title}} app for:')
+                    .getStringEx(
+                        'panel.settings.home.appointments.description.format', 'Display appointments in the {{app_title}} app for:')
                     .replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
                 style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")))
       ]),
       Container(height: 4),
       ToggleRibbonButton(
           label: Localization().getStringEx('panel.settings.home.appointments.mckinley.label', 'MyMcKinley'),
-          toggled: true, //TBD: hook when we know what to do this button
+          toggled: Storage().appointmentsCanDisplay ?? false,
           border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(4)),
           onTap: _onToggleMcKinley)
@@ -55,7 +58,9 @@ class _SettingsAppointmentsContentWidgetState extends State<SettingsAppointments
   }
 
   void _onToggleMcKinley() {
-    Analytics().logSelect(target: 'MyMcKinley');
-    //TBD: hook when we know what to do this button
+    Analytics().logSelect(target: 'MyMcKinley appointment settings');
+    setStateIfMounted(() {
+      Storage().appointmentsCanDisplay = !(Storage().appointmentsCanDisplay ?? false);
+    });
   }
 }
