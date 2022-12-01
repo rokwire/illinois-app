@@ -12,7 +12,6 @@ import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeWelcomeWidget extends StatefulWidget {
@@ -123,11 +122,10 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
                     child: StringUtils.isNotEmpty(imageUrl)
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(4),
-                            child: ModalImageHolder(
                                 child: Image.network(imageUrl!,
                                     loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                               return (loadingProgress == null) ? child : emptyImagePlaceholder;
-                            })))
+                            }))
                         : emptyImagePlaceholder),
                 Column(children: [
                   Text(StringUtils.ensureNotEmpty(title), style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1.1),),
