@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Switch on/off displaying appointments [#2606](https://github.com/rokwire/illinois-app/issues/2606).
 ### Fixed
 - Remove ModalImageDialog from Video widgets[#2608](https://github.com/rokwire/illinois-app/issues/2608).
+### Changed
+- Display Profile, Notifications and Settings panels as modal bottom sheet [#2607](https://github.com/rokwire/illinois-app/issues/2607).
 
 ## [4.2.30] - 2022-11-30
 ### Changed
