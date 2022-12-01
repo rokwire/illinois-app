@@ -2827,6 +2827,7 @@
     
     "widget.home.appointments.my.label.header.title": "MyMcKinley Appointments",
     "widget.home.appointments.my.text.empty.description": "You currently have no upcoming appointments linked within the {{app_title}} app.",
+    "widget.home.appointments.my.text.display.nothing.msg": "There is nothing to display as you have chosen not to display any past or future appointments.",
     "widget.home.appointments.my.button.all.title": "View All",
     "widget.home.appointments.my.button.all": "Tap to view all appointments",
 

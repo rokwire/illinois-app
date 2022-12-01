@@ -21,6 +21,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -62,7 +63,7 @@ class _HomeAppointmentsWidgetState extends State<HomeAppointmentsWidget> impleme
   void initState() {
     super.initState();
 
-    NotificationService().subscribe(this, [Auth2.notifyLoginChanged, AppLivecycle.notifyStateChanged]);
+    NotificationService().subscribe(this, [Auth2.notifyLoginChanged, AppLivecycle.notifyStateChanged, Storage.notifySettingChanged]);
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
@@ -82,23 +83,27 @@ class _HomeAppointmentsWidgetState extends State<HomeAppointmentsWidget> impleme
   }
 
   void _loadAppointments() {
-    Appointments().loadAppointments(onlyUpcoming: true).then((appointments) {
-      setStateIfMounted(() {
-        _appointments = appointments;
+    if (_canDisplayAppointments) {
+      Appointments().loadAppointments(onlyUpcoming: true).then((appointments) {
+        setStateIfMounted(() {
+          _appointments = appointments;
+        });
       });
-    });
+    }
   }
 
   void _updateAppointments() {
-    Appointments().loadAppointments(onlyUpcoming: true).then((appointments) {
-      if (mounted && !DeepCollectionEquality().equals(_appointments, appointments)) {
-        setState(() {
-          _appointments = appointments;
-          _pageViewKey = UniqueKey();
-          _pageController = null;
-        });
-      }
-    });
+    if (_canDisplayAppointments) {
+      Appointments().loadAppointments(onlyUpcoming: true).then((appointments) {
+        if (mounted && !DeepCollectionEquality().equals(_appointments, appointments)) {
+          setState(() {
+            _appointments = appointments;
+            _pageViewKey = UniqueKey();
+            _pageController = null;
+          });
+        }
+      });
+    }
   }
 
   @override
@@ -107,10 +112,20 @@ class _HomeAppointmentsWidgetState extends State<HomeAppointmentsWidget> impleme
         favoriteId: widget.favoriteId,
         title: HomeAppointmentsWidget.title,
         titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true),
-        child: _haveAppointments ? _buildContent() : _buildEmpty());
+        child: _buildContent());
   }
 
   Widget _buildContent() {
+    if (!_canDisplayAppointments) {
+      return _buildDisplayNothingContent();
+    } else if (_haveAppointments) {
+      return _buildAppointmentsContent();
+    } else {
+      return _buildEmpty();
+    }
+  }
+
+  Widget _buildAppointmentsContent() {
     List<Widget> pages = <Widget>[];
     if (CollectionUtils.isNotEmpty(_appointments)) {
       for (Appointment? appointment in _appointments!) {
@@ -147,12 +162,26 @@ class _HomeAppointmentsWidgetState extends State<HomeAppointmentsWidget> impleme
             'You currently have no upcoming appointments linked within the {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
   }
 
+  Widget _buildDisplayNothingContent() {
+    return HomeMessageCard(
+        message: Localization().getStringEx('widget.home.appointments.my.text.display.nothing.msg',
+            'There is nothing to display as you have chosen not to display any past or future appointments.'));
+  }
+
   @override
   void onNotification(String name, param) {
     if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
       _loadAppointments();
+    } else if (name == Storage.notifySettingChanged) {
+      if (param == Storage().appointmentsDisplayEnabledKey) {
+        if (Storage().appointmentsCanDisplay == true) {
+          _loadAppointments();
+        } else {
+          setStateIfMounted(() {});
+        }
+      }
     }
   }
 
@@ -167,6 +196,10 @@ class _HomeAppointmentsWidgetState extends State<HomeAppointmentsWidget> impleme
         }
       }
     }
+  }
+
+  bool get _canDisplayAppointments {
+    return Storage().appointmentsCanDisplay ?? false;
   }
 
   bool get _haveAppointments {

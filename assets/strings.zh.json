@@ -2823,6 +2823,7 @@
 
 	"widget.home.appointments.my.label.header.title": "我的麥金利約會",
 	"widget.home.appointments.my.text.empty.description": "您目前沒有在 {{app_title}} 應用中鏈接的即將到來的約會。",
+    "widget.home.appointments.my.text.display.nothing.msg": "沒有可顯示的內容，因為您選擇不顯示任何過去或未來的約會。",
 	"widget.home.appointments.my.button.all.title": "查看全部",
 	"widget.home.appointments.my.button.all": "點擊查看所有約會",
 

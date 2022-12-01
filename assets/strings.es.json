@@ -2824,6 +2824,7 @@
     
     "widget.home.appointments.my.label.header.title": "Mis citas de McKinley",
     "widget.home.appointments.my.text.empty.description": "Actualmente no tiene citas próximas vinculadas dentro de la aplicación {{app_title}}.",
+    "widget.home.appointments.my.text.display.nothing.msg": "No hay nada que mostrar ya que ha elegido no mostrar citas pasadas o futuras.",
     "widget.home.appointments.my.button.all.title": "Ver todo",
     "widget.home.appointments.my.button.all": "Toque para ver todas las citas",
 
