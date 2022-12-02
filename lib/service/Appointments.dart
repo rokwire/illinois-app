@@ -84,7 +84,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   }
 
   Future<List<Appointment>?> loadBBAppointments() async {
-    if (StringUtils.isNotEmpty(Config().appointmentsUrl)) {
+    if (StringUtils.isEmpty(Config().appointmentsUrl)) {
       Log.w('Failed to appointments. Missing appointments url.');
       return null;
     }
