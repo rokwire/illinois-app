@@ -14,12 +14,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/polls.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
@@ -27,16 +27,16 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SkillsSelfEvaluationResultsPanel extends StatefulWidget {
-  final Map<String, SkillsSelfEvaluationContent> content;
   final SurveyResponse? latestResponse;
 
-  SkillsSelfEvaluationResultsPanel({required this.content, this.latestResponse});
+  SkillsSelfEvaluationResultsPanel({this.latestResponse});
 
   @override
   _SkillsSelfEvaluationResultsPanelState createState() => _SkillsSelfEvaluationResultsPanelState();
 }
 
 class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationResultsPanel> {
+  Map<String, SkillsSelfEvaluationContent> _resultsContentItems = {};
   List<SurveyResponse> _responses = [];
   SurveyResponse? _latestResponse;
   DateTime? _selectedComparisonDate;
@@ -46,6 +46,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     _latestResponse = widget.latestResponse;
 
     _loadResults();
+    _loadContentItems();
     super.initState();
   }
 
@@ -115,7 +116,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   List<Widget> _buildContent() {
-    Iterable<String> responseSections = widget.content['section_score_titles']?.data?.keys ?? [];
+    Iterable<String> responseSections = _resultsContentItems['section_score_titles']?.data?.keys ?? [];
     return [
       ListView.builder(
         shrinkWrap: true,
@@ -124,7 +125,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         itemCount: responseSections.length,
         itemBuilder: (BuildContext context, int index) {
           String section = responseSections.elementAt(index);
-          String title = widget.content['section_score_titles']?.data?[section].toString() ?? '';
+          String title = _resultsContentItems['section_score_titles']?.data?[section].toString() ?? '';
           num? mostRecentScore = _latestResponse?.survey.stats?.percentages[section];
           if (mostRecentScore != null) {
             mostRecentScore = (mostRecentScore*100).round();
@@ -132,7 +133,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           num? comparisonScore;
           try {
             if (_selectedComparisonDate?.isAtSameMomentAs(DateTime(0)) ?? false) {
-              dynamic studentAverage = widget.content['student_averages']?.data?[section];
+              dynamic studentAverage = _resultsContentItems['student_averages']?.data?[section];
               if (studentAverage is num) {
                 comparisonScore = studentAverage;
               }
@@ -225,8 +226,24 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     });
   }
 
+  void _loadContentItems() {
+    Polls().loadContentItems(categories: ["Skills Self-Evaluation Results"]).then((content) {
+      if (content?.isNotEmpty ?? false) {
+        _resultsContentItems.clear();
+        for (MapEntry<String, Map<String, dynamic>> item in content?.entries ?? []) {
+          _resultsContentItems[item.key] = SkillsSelfEvaluationContent.fromJson(item.value);
+        }
+
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    });
+  }
+
   Future<void> _onPullToRefresh() async {
     _loadResults();
+    _loadContentItems();
   }
 
   void _onResponseDateDropDownChanged(DateTime? value) {
@@ -238,7 +255,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   void _showScoreDescription(String section) {
     String skillDefinition = _latestResponse?.survey.resultData is Map<String, dynamic> ? _latestResponse!.survey.resultData['${section}_results'] ?? '' : 
       Localization().getStringEx('panel.skills_self_evaluation.results.empty.message', 'No results yet.');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsDetailPanel(content: widget.content[section], params: {'skill_definition': skillDefinition})));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsDetailPanel(content: _resultsContentItems[section], params: {'skill_definition': skillDefinition})));
   }
 
   void _onTapClearAllScores() {

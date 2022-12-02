@@ -42,7 +42,7 @@ class SkillsSelfEvaluation extends StatefulWidget {
 }
 
 class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
-  Map<String, SkillsSelfEvaluationContent> _contentItems = {};
+  Map<String, SkillsSelfEvaluationContent> _infoContentItems = {};
 
   @override
   void initState() {
@@ -126,11 +126,11 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
   }
 
   void _loadContentItems() {
-    Polls().loadContentItems(categories: ["Skills Self-Evaluation"]).then((content) {
+    Polls().loadContentItems(categories: ["Skills Self-Evaluation Info"]).then((content) {
       if (content?.isNotEmpty ?? false) {
-        _contentItems.clear();
+        _infoContentItems.clear();
         for (MapEntry<String, Map<String, dynamic>> item in content?.entries ?? []) {
-          _contentItems[item.key] = SkillsSelfEvaluationContent.fromJson(item.value);
+          _infoContentItems[item.key] = SkillsSelfEvaluationContent.fromJson(item.value);
         }
       }
     });
@@ -227,12 +227,12 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
 
   void _onTapResults(SurveyResponse? response) {
     Navigator.of(context).pop();
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(content: _contentItems, latestResponse: response)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(latestResponse: response)));
   }
 
   void _onTapShowInfo(String key) {
     Navigator.of(context).pop();
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationInfoPanel(content: _contentItems[key])));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationInfoPanel(content: _infoContentItems[key])));
   }
 
   void _onTapPrivacyLevel() {
