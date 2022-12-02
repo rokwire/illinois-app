@@ -166,7 +166,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
                 rightIconAsset: "images/chevron-right.png",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label", "View past results"),
                 textColor: Styles().colors?.fillColorPrimaryVariant,
-                onTap: () => _onTapResults(null),
+                onTap: _onTapResults,
               ),
               RibbonButton(
                 rightIconAsset: "images/chevron-right.png",
@@ -200,7 +200,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
     List<String>? academicUiComponents = JsonUtils.stringListValue(FlexUI()['academics']);
     if (academicUiComponents?.contains('skills_self_evaluation') == true) {
       if (Config().bessiSurveyID != null && Auth2().isOidcLoggedIn && Auth2().privacyMatch(4)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _onTapResults,)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults,)));
       } else {
         Widget infoTextWidget = Text.rich(
           TextSpan(
@@ -255,8 +255,12 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
     SettingsHomeContentPanel.present(context, content: SettingsContent.assessments);
   }
 
-  void _onTapResults(SurveyResponse? response) {
+  void _onTapResults() {
     Navigator.of(context).pop();
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel()));
+  }
+
+  void _gotoResults(SurveyResponse? response) {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(latestResponse: response)));
   }
 
