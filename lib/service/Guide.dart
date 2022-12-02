@@ -29,6 +29,7 @@ class Guide with Service implements NotificationsListener {
 
   static const String campusGuide = "For students";
   static const String campusReminderContentType = "campus-reminder";
+  static const String campusSafetyResourceContentType = "campus-safety-resource";
 
   static const String _cacheFileName = "guide.json";
 
@@ -236,7 +237,7 @@ class Guide with Service implements NotificationsListener {
     return JsonUtils.stringValue(entryValue(entry, '_id'));
   }
 
-  String? entryTitle(Map<String, dynamic>? entry, { bool stripHtmlTags = true }) {
+  String? entryTitle(Map<String, dynamic>? entry, { bool? stripHtmlTags }) {
     String? result = JsonUtils.stringValue(entryValue(entry, 'title')) ?? JsonUtils.stringValue(entryValue(entry, 'list_title')) ?? JsonUtils.stringValue(entryValue(entry, 'detail_title'));
     return ((result != null) && (stripHtmlTags == true)) ? StringUtils.stripHtmlTags(result) : result;
     // Bidi.stripHtmlIfNeeded(result);
@@ -256,6 +257,10 @@ class Guide with Service implements NotificationsListener {
 
   bool isEntryReminder(Map<String, dynamic>? entry) {
     return JsonUtils.stringValue(entryValue(entry, 'content_type')) == campusReminderContentType;
+  }
+
+  bool isEntrySafetyResource(Map<String, dynamic>? entry) {
+    return JsonUtils.stringValue(entryValue(entry, 'content_type')) == campusSafetyResourceContentType;
   }
 
   // Returns the date in:
@@ -319,6 +324,26 @@ class Guide with Service implements NotificationsListener {
       });
 
       return remindersList;
+    }
+    return null;
+  }
+
+  List<Map<String, dynamic>>? get safetyResourcesList {
+    if (_contentList != null) {
+
+      List<Map<String, dynamic>> safetyResourcesList = <Map<String, dynamic>>[];
+      for (dynamic entry in _contentList!) {
+        Map<String, dynamic>? guideEntry = JsonUtils.mapValue(entry);
+        if (isEntrySafetyResource(guideEntry)) {
+          safetyResourcesList.add(guideEntry!);
+        }
+      }
+
+      safetyResourcesList.sort((Map<String, dynamic> entry1, Map<String, dynamic> entry2) {
+        return SortUtils.compare(Guide().entryListTitle(entry1, stripHtmlTags: true), Guide().entryListTitle(entry2, stripHtmlTags: true));
+      });
+
+      return safetyResourcesList;
     }
     return null;
   }

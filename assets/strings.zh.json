@@ -327,7 +327,8 @@
 	"panel.browse.entry.safer.my_mckinley.title": "麥金利",
 	"panel.browse.entry.safer.wellness_answer_center.title": "解答中心",
 
-	"panel.browse.entry.campus_guide.campus_highlights.title": "校園安全資源",
+	"panel.browse.entry.campus_guide.campus_highlights.title": "校園指南亮點",
+	"panel.browse.entry.campus_guide.campus_safety_resources.title": "校園安全資源",
 	"panel.browse.entry.campus_guide.campus_guide.title": "完整的校園指南",
 	"panel.browse.entry.campus_guide.my_campus_guide.title": "我的校園指南",
 
@@ -2356,8 +2357,11 @@
 	"panel.inbox.label.time.last_month": "上個月",
 
 	"panel.guide_list.label.highlights.heading": "Campus Guide",
-	"panel.guide_list.label.highlights.empty": "沒有有效的校園安全資源。",
-	"panel.guide_list.label.highlights.section": "安全資源",
+
+	"panel.guide_list.label.highlights.section": "校園亮點",
+	"panel.guide_list.label.highlights.empty": "沒有活躍的校園亮點。",
+	"panel.guide_list.label.campus_safety_resources.empty": "沒有有效的校園安全資源。",
+	"panel.guide_list.label.campus_safety_resources.section": "安全資源",
 	"panel.guide_list.label.campus_reminders.section": "校園提醒",
 	"panel.guide_list.label.campus_reminders.empty": "沒有有效的校園提醒。",
 	"panel.guide_list.label.content.empty": "空的指南內容",

@@ -328,7 +328,8 @@
     "panel.browse.entry.safer.my_mckinley.title": "MyMcKinley",
     "panel.browse.entry.safer.wellness_answer_center.title": "Answer Center",
 
-    "panel.browse.entry.campus_guide.campus_highlights.title": "Campus Safety Resources",
+    "panel.browse.entry.campus_guide.campus_highlights.title": "Campus Guide Highlights",
+    "panel.browse.entry.campus_guide.campus_safety_resources.title": "Campus Safety Resources",
     "panel.browse.entry.campus_guide.campus_guide.title": "Complete Campus Guide",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "My Campus Guide",
 
@@ -2360,8 +2361,10 @@
 
     "panel.guide_list.label.highlights.heading": "Campus Guide",
 
-    "panel.guide_list.label.highlights.section": "Safety Resources",
-    "panel.guide_list.label.highlights.empty": "There are no active Campus Safety Resources.",
+    "panel.guide_list.label.highlights.section": "Campus Highlights",
+    "panel.guide_list.label.highlights.empty": "There are no active Campus Hightlights.",
+    "panel.guide_list.label.campus_safety_resources.section": "Safety Resources",
+    "panel.guide_list.label.campus_safety_resources.empty": "There are no active Campus Safety Resources.",
     "panel.guide_list.label.campus_reminders.section": "Campus Reminders",
     "panel.guide_list.label.campus_reminders.empty": "There are no active Campus Reminders.",
     "panel.guide_list.label.content.empty": "Empty guide content",
