@@ -6,9 +6,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnaireAcknowledgementPanel.dart';
+import 'package:illinois/ui/onboarding2/Onboarding2ResearchQuestionnairePanel.dart';
 import 'package:illinois/ui/research/ResearchProjectsHomePanel.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
@@ -55,6 +58,12 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
   PageController? _pageController;
   Key _pageViewKey = UniqueKey();
   final double _pageSpacing = 16;
+
+  static const String localScheme = 'local';
+  static const String openProjectsHost = 'open_projects';
+  static const String openProjectsUrlMacro = '{{open_projects_url}}';
+  static const String questionnaireHost = 'questionnaire';
+  static const String questionnaireUrlMacro = '{{questionnaire_url}}';
 
   @override
   void initState() {
@@ -205,14 +214,65 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
   }
 
   Widget _buildEmpty() {
-    String message;
-    switch(widget.contentType) {
-      case ResearchProjectsContentType.my: message = Localization().getStringEx('widget.home.research_projects.my.text.empty.description', 'You have not created any research projects yet.'); break;
-      case ResearchProjectsContentType.open: message = Localization().getStringEx('widget.home.research_projects.all.text.empty.description', 'Failed to load research projects.'); break;
+    if (widget.contentType == ResearchProjectsContentType.open) {
+      return HomeMessageCard(message: Localization().getStringEx('widget.home.research_projects.all.text.empty.description', 'Failed to load research projects.'));
     }
-    return HomeMessageCard(message: message,);
+    else if (widget.contentType == ResearchProjectsContentType.my) {
+      if (Auth2().account?.isResearchProjectAdmin ?? false) {
+        return HomeMessageCard(message: Localization().getStringEx('widget.home.research_projects.my.text.empty.admin.description', 'You have not created any research projects yet.'));
+      }
+      else {
+        String message = Localization().getStringEx("widget.home.research_projects.my.html.empty.user.description", "You are currently not participating in any research projects. <a href='{{open_projects_url}}'>View current studies</a> that match your <a href='{{questionnaire_url}}'>Research Interest Form</a> to opt in and become part of the study’s recruitment pool.")
+          .replaceAll(openProjectsUrlMacro, '$localScheme://$openProjectsHost')
+          .replaceAll(questionnaireUrlMacro, '$localScheme://$questionnaireHost');
+
+        return HomeMessageHtmlCard(message: message, onTapLink: _onMessageLink,);
+      }
+    }
+    else {
+      return Container();
+    }
   }
 
+  void _onMessageLink(String? url) {
+    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+    if (uri?.scheme == localScheme) {
+      if (uri?.host.toLowerCase() == openProjectsHost.toLowerCase()) {
+        _onOpenResearchProjectsLink();
+      }
+      else if (uri?.host.toLowerCase() == questionnaireHost.toLowerCase()) {
+        _onResearchQuestionnaireLink();
+      }
+    }
+  }
+
+  void _onOpenResearchProjectsLink() {
+    Analytics().logSelect(target: "View Open Research Projects", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => ResearchProjectsHomePanel(contentType: ResearchProjectsContentType.open,)));
+  }
+
+  void _onResearchQuestionnaireLink() {
+    Analytics().logSelect(target: "View Research Interests Form", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {
+      "onContinueAction": () {
+        _didResearchQuestionnaire();
+      }
+    },)));
+  }
+
+  void _didResearchQuestionnaire() {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnaireAcknowledgementPanel(onboardingContext: {
+      "onContinueAction": () {
+        Questionnaires().participateInResearch = true;
+        _didAcknowledgeResearchQuestionnaire();
+      }
+    },)));
+  }
+
+  void _didAcknowledgeResearchQuestionnaire() {
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
+  }
 
   @override
   void onNotification(String name, param) {
