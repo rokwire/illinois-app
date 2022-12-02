@@ -397,7 +397,21 @@
     "panel.onboarding2.video_tutorial.cc.enabled": {"font_family": "ProximaNovaBold", "size": 18.0, "color": "white"},
     "panel.onboarding2.video_tutorial.cc.disabled": {"font_family": "ProximaNovaBold", "size": 18.0, "color": "disabledTextColorTwo"},
     "panel.onboarding2.video_tutorial.caption.text": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "white"},
-    "panel.onboarding2.video_tutorial.message.empty": {"font_family": "ProximaNovaBold", "size": 20.0, "color": "white"}
+    "panel.onboarding2.video_tutorial.message.empty": {"font_family": "ProximaNovaBold", "size": 20.0, "color": "white"},
+
+    "panel.skills_self_evaluation.get_started.header": {"font_family": "ProximaNovaExtraBold", "size": 28.0, "color": "surface"},
+    "panel.skills_self_evaluation.results.header": {"font_family": "ProximaNovaExtraBold", "size": 36.0, "color": "surface"},
+    "panel.skills_self_evaluation.results.table.header": {"font_family": "ProximaNovaRegular", "size": 12.0, "color": "surface"},
+    "panel.skills_self_evaluation.get_started.time.description":  {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorSecondary"},
+    "panel.skills_self_evaluation.header.description": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "surface"},
+    "panel.skills_self_evaluation.auth_dialog.text": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimaryVariant"},
+    "panel.skills_self_evaluation.auth_dialog.link": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
+    "panel.skills_self_evaluation.content.title":  {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimaryVariant"},
+    "panel.skills_self_evaluation.content.body":  {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimaryVariant"},
+    "panel.skills_self_evaluation.content.link":  {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
+    "panel.skills_self_evaluation.content.link.fat":  {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
+    "panel.skills_self_evaluation.results.score.current": {"font_family": "ProximaNovaBold", "size": 36.0, "color": "fillColorSecondary"},
+    "panel.skills_self_evaluation.results.score.past": {"font_family": "ProximaNovaBold", "size": 36.0, "color": "mediumGray"}
   },
   "images": {
     "circle-xmark": {"src": "0xf057", "type": "fa.icon", "size": 18.0, "color": "surface"}

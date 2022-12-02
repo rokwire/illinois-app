@@ -72,9 +72,9 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     return Container(
       padding: EdgeInsets.only(top: 40),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text(Localization().getStringEx('panel.skills_self_evaluation.results.section.title', 'Results'), style: TextStyle(fontFamily: "ProximaNovaExtraBold", fontSize: 36.0, color: Styles().colors?.surface), textAlign: TextAlign.center,),
-        Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.description', 'Skills Domain Score'), style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.surface), textAlign: TextAlign.center,),
-        Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.scale', '(0-100)'), style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.surface), textAlign: TextAlign.center,),
+        Text(Localization().getStringEx('panel.skills_self_evaluation.results.section.title', 'Results'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.header'), textAlign: TextAlign.center,),
+        Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.description', 'Skills Domain Score'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
+        Text(Localization().getStringEx('panel.skills_self_evaluation.results.score.scale', '(0-100)'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'), textAlign: TextAlign.center,),
         _buildScoresHeader(),
       ]),
       decoration: BoxDecoration(
@@ -97,13 +97,13 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       children: [
         Divider(color: Styles().colors?.surface, thickness: 2),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface),)),
-          Flexible(flex: 3, fit: FlexFit.tight, child: Text(_latestResponse != null ? DateTimeUtils.localDateTimeToString(_latestResponse!.dateTaken, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', textAlign: TextAlign.center, style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface),)),
+          Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
+          Flexible(flex: 3, fit: FlexFit.tight, child: Text(_latestResponse != null ? DateTimeUtils.localDateTimeToString(_latestResponse!.dateTaken, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
           Flexible(flex: 3, fit: FlexFit.tight, child: DropdownButtonHideUnderline(child:
             DropdownButton<DateTime?>(
               icon: Image.asset('images/icon-down.png', color: Styles().colors?.surface),
               isExpanded: true,
-              style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface,),
+              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
               items: _buildResponseDateDropDownItems(),
               value: _selectedComparisonDate,
               onChanged: _onResponseDateDropDownChanged,
@@ -150,9 +150,9 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
               child: InkWell(
                 onTap: () => _showScoreDescription(section),
                 child: Padding(padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16), child: Row(children: [
-                  Flexible(flex: 5, fit: FlexFit.tight, child: Text(title, style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant))),
-                  Flexible(flex: 3, fit: FlexFit.tight, child: Text(mostRecentScore?.toString() ?? "--", style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 36.0, color: Styles().colors?.fillColorSecondary), textAlign: TextAlign.center,)),
-                  Flexible(flex: 3, fit: FlexFit.tight, child: Text(comparisonScore?.toString() ?? "--", style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 36.0, color: Styles().colors?.mediumGray), textAlign: TextAlign.center)),
+                  Flexible(flex: 5, fit: FlexFit.tight, child: Text(title, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))),
+                  Flexible(flex: 3, fit: FlexFit.tight, child: Text(mostRecentScore?.toString() ?? "--", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)),
+                  Flexible(flex: 3, fit: FlexFit.tight, child: Text(comparisonScore?.toString() ?? "--", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.past'), textAlign: TextAlign.center)),
                   Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Image.asset('images/chevron-right.png', color: Styles().colors?.fillColorSecondary))),
                 ],)),
               )
@@ -163,23 +163,17 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           children: [
             TextSpan(
               text: Localization().getStringEx('panel.skills_self_evaluation.results.student_average.term', 'Student Average'),
-              style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
             ),
             TextSpan(
               text: Localization().getStringEx('panel.skills_self_evaluation.results.student_average.description', ' = Average score among approximately 750 students at Colby College and the University of Illinois.'),
-              style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
             ),
           ],
         ),
       ),),
       Padding(padding: const EdgeInsets.only(bottom: 32), child: GestureDetector(onTap: _onTapClearAllScores, child:
-        Text("Clear All Scores", style: TextStyle(
-          fontFamily: "ProximaNovaBold", 
-          fontSize: 16.0, 
-          color: Styles().colors?.fillColorPrimaryVariant,
-          decoration: TextDecoration.underline,
-          decorationColor: Styles().colors?.fillColorSecondary
-        )
+        Text("Clear All Scores", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
       ),)),
     ];
   }
@@ -188,11 +182,11 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     List<DropdownMenuItem<DateTime?>> items = <DropdownMenuItem<DateTime?>>[
       DropdownMenuItem<DateTime?>(
         value: null,
-        child: Text('NONE', style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface,), textAlign: TextAlign.center,),
+        child: Text('NONE', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,),
       ),
       DropdownMenuItem<DateTime?>(
         value: DateTime(0),
-        child: Text('STU. AVG.', style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface,), textAlign: TextAlign.center,),
+        child: Text('STU. AVG.', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,),
       ),
     ];
     
@@ -200,7 +194,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       String dateString = DateTimeUtils.localDateTimeToString(response.dateTaken, format: 'MM/dd/yy h:mma') ?? '';
       items.add(DropdownMenuItem<DateTime>(
         value: response.dateTaken,
-        child: Text(dateString, style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 12.0, color: Styles().colors?.surface,), textAlign: TextAlign.center,),
+        child: Text(dateString, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,),
       ));
     }
     return items;

@@ -127,18 +127,18 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
         text: TextSpan(
           children: [
             TextSpan(
-              text: Localization().getStringEx('panel.skills_self_evaluation.get_started.auth_dialog.prefix', 'You need to be signed in with your NetID to access Assessments.\n'),
-              style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+              text: Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.prefix', 'You need to be signed in with your NetID to access Assessments.\n'),
+              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
             ),
             WidgetSpan(
               child: InkWell(onTap: _onTapPrivacyLevel, child: Text(
-                Localization().getStringEx('panel.skills_self_evaluation.get_started.auth_dialog.privacy', 'Set your privacy level to 4 or 5.'),
-                style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary),
+                Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.privacy', 'Set your privacy level to 4 or 5.'),
+                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.link'),
               )),
             ),
             TextSpan(
-              text: Localization().getStringEx('panel.skills_self_evaluation.get_started.auth_dialog.suffix', ' Then, sign in with your NetID under Settings.'),
-              style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+              text: Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.suffix', ' Then, sign in with your NetID under Settings.'),
+              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
             ),
           ],
         ),

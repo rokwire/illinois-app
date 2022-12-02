@@ -66,14 +66,14 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
       padding: EdgeInsets.only(top: 32, bottom: 32),
       child: Padding(padding: EdgeInsets.only(left: 24, right: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: TextStyle(fontFamily: "ProximaNovaExtraBold", fontSize: 28.0, color: Styles().colors?.surface), textAlign: TextAlign.left,)),
+          Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,)),
           IconButton(
             icon: Image.asset('images/tab-more.png', color: Styles().colors?.surface),
             onPressed: _onTapShowBottomSheet,
             padding: EdgeInsets.zero,
           ),
         ]),
-        Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '5 Minutes'), style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorSecondary), textAlign: TextAlign.left,),
+        Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '5 Minutes'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
         Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
         Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
           label: Localization().getStringEx("panel.skills_self_evaluation.get_started.button.label", 'Get Started'),
@@ -98,10 +98,10 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
 
   Widget _buildDescription() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(Localization().getStringEx("panel.skills_self_evaluation.get_started.description.title", 'Identify your strengths related to:'), style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.surface),),
+      Text(Localization().getStringEx("panel.skills_self_evaluation.get_started.description.title", 'Identify your strengths related to:'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.description'),),
       Padding(padding: EdgeInsets.only(top: 8), child: Text(
         Localization().getStringEx("panel.skills_self_evaluation.get_started.description.list", '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
-        style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.surface),
+        style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'),
       ))
     ]);
   }
@@ -194,18 +194,18 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
           text: TextSpan(
             children: [
               TextSpan(
-                text: Localization().getStringEx('panel.skills_self_evaluation.get_started.auth_dialog.prefix', 'You need to be signed in with your NetID to access Assessments.\n'),
-                style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+                text: Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.prefix', 'You need to be signed in with your NetID to access Assessments.\n'),
+                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
               ),
               WidgetSpan(
                 child: InkWell(onTap: _onTapPrivacyLevel, child: Text(
-                  Localization().getStringEx('panel.skills_self_evaluation.get_started.auth_dialog.privacy', 'Set your privacy level to 4 or 5.'),
-                  style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary),
+                  Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.privacy', 'Set your privacy level to 4 or 5.'),
+                  style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.link'),
                 )),
               ),
               TextSpan(
-                text: Localization().getStringEx('panel.skills_self_evaluation.get_started.auth_dialog.suffix', ' Then, sign in with your NetID under Settings.'),
-                style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+                text: Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.suffix', ' Then, sign in with your NetID under Settings.'),
+                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
               ),
             ],
           ),

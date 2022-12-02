@@ -31,7 +31,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'),),
+      appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.info.header.title', 'Skills Self-Evaluation'),),
       body: SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(24.0), child: _buildContent(context))),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: null,
@@ -43,7 +43,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
     for (SkillsSelfEvaluationSection section in sections ?? content?.sections ?? []) {
       Widget titleWidget = Text(
         section.title,
-        style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+        style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
         textAlign: TextAlign.start,
       );
 
@@ -51,7 +51,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
         contentWidgets.add(titleWidget);
         contentWidgets.add(Padding(padding: const EdgeInsets.only(bottom: 16), child: Text(
           section.subtitle!,
-          style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+          style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
           textAlign: TextAlign.start,
         )));
       } else {
@@ -65,13 +65,13 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
         if (CollectionUtils.isEmpty(matches)) {
           contentWidgets.add(Text(
             section.body!,
-            style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
             textAlign: TextAlign.start,
           ));
         } else if (matches.elementAt(0).start > 0) {
           contentWidgets.add(Text(
             section.body!.substring(0, matches.elementAt(0).start),
-            style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
             textAlign: TextAlign.start,
           ));
         }
@@ -91,7 +91,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: linkData.text,
-                          style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary),
+                          style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link'),
                         ),
                         WidgetSpan(
                           child: linkData.icon != null ? Padding(padding: const EdgeInsets.only(left: 4.0), child: Image.asset(linkData.icon!)) : Container(),
@@ -106,7 +106,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
                 if (widgetData is String) {
                   contentWidgets.add(Text(
                     widgetData,
-                    style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant,),
+                    style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
                   ));
                 }
                 break;
@@ -116,7 +116,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
           if (match.end < section.body!.length) {
             contentWidgets.add(Text(
               section.body!.substring(match.end, (i+1 < matches.length) ? matches.elementAt(i+1).start : null),
-              style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
               textAlign: TextAlign.start,
             ));
           }
