@@ -2572,6 +2572,11 @@
 	"widget.home.campus_reminders.button.all.title": "查看全部",
 	"widget.home.campus_reminders.button.all.hint": "點按即可查看所有提醒",
 
+	"widget.home.campus_safety_resources.label.campus_safety_resources": "校園安全資源",
+	"widget.home.campus_safety_resources.text.empty.description": "點按<a href='{{local_url}}'><b>校園安全資源</b></a>中項目上的 \u2606 可在此處快速訪問。",
+	"widget.home.campus_safety_resources.button.all.title": "查看全部",
+	"widget.home.campus_safety_resources.button.all.hint": "點擊查看所有安全資源",
+
 	"widget.home.suggested_events.label.events_for_you":"建議的事件",
 	"widget.home.suggested_events.label.events_for_you.sub_title":"从您的兴趣出发",
 	"widget.home.suggested_events.text.empty.description": "沒有可用的建議事件。",

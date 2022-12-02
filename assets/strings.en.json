@@ -2575,6 +2575,11 @@
     "widget.home.campus_reminders.button.all.title": "View All",
     "widget.home.campus_reminders.button.all.hint": "Tap to view all reminders",
 
+    "widget.home.campus_safety_resources.label.campus_safety_resources": "Campus Safety Resources",
+    "widget.home.campus_safety_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Safety Resources</b></a> for quick access here.",
+    "widget.home.campus_safety_resources.button.all.title": "View All",
+	"widget.home.campus_safety_resources.button.all.hint": "Tap to view all safety resources",
+
     "widget.home.suggested_events.label.events_for_you":"Suggested Events",
     "widget.home.suggested_events.label.events_for_you.sub_title":"Curated from your interests",
     "widget.home.suggested_events.text.empty.description": "There are no suggested events available.",
