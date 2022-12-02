@@ -17,8 +17,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideEntryCard extends StatefulWidget {
+  final String favoriteKey;
   final Map<String, dynamic>? guideEntry;
-  GuideEntryCard(this.guideEntry);
+  GuideEntryCard(this.guideEntry, { this.favoriteKey = GuideFavorite.favoriteKeyName });
 
   _GuideEntryCardState createState() => _GuideEntryCardState();
 }
@@ -34,7 +35,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
       Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
     ]);
-    _isFavorite = Auth2().isFavorite(GuideFavorite(id: guideEntryId));
+    _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: guideEntryId));
   }
 
   @override
@@ -49,7 +50,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() {
-        _isFavorite = Auth2().isFavorite(GuideFavorite(id: guideEntryId));
+        _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: guideEntryId));
       });
     }
     else if (name == FlexUI.notifyChanged) {
@@ -128,12 +129,12 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
   void _onTapFavorite() {
     String? title = Guide().entryTitle(widget.guideEntry, stripHtmlTags: true);
     Analytics().logSelect(target: "Favorite: $title");
-    Auth2().prefs?.toggleFavorite(GuideFavorite(id: guideEntryId));
+    Auth2().prefs?.toggleFavorite(FavoriteItem(key:widget.favoriteKey, id: guideEntryId));
   }
 
   void _onTapEntry() {
     Analytics().logSelect(target: "Guide Entry: $guideEntryId");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: guideEntryId,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: guideEntryId, favoriteKey: widget.favoriteKey,)));
   }
 
   String? get guideEntryId {
