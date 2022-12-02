@@ -503,6 +503,7 @@ class _BrowseEntry extends StatelessWidget {
       case "mtd.my_mtd_stops":               _onTapMyMTDStops(context); break;
 
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
+      case "campus_guide.campus_safety_resources": _onTapCampusSafetyResources(context); break;
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
       case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
 
@@ -782,8 +783,18 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: 'Campus Highlights');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
       contentList: Guide().promotedList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Safety Resources'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Safety Resources."),
+      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Campus Highlights'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Hightlights."),
+    )));
+  }
+
+  void _onTapCampusSafetyResources(BuildContext context) {
+    Analytics().logSelect(target: 'Campus Safety Resources');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
+      contentList: Guide().safetyResourcesList,
+      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
+      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
     )));
   }
 

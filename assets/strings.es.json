@@ -327,7 +327,8 @@
     "panel.browse.entry.safer.my_mckinley.title": "MiMcKinley",
     "panel.browse.entry.safer.wellness_answer_center.title": "Centro de respuestas",
 
-    "panel.browse.entry.campus_guide.campus_highlights.title": "Recursos de seguridad del campus",
+    "panel.browse.entry.campus_guide.campus_highlights.title": "Puntos destacados de la guía del campus",
+    "panel.browse.entry.campus_guide.campus_safety_resources.title": "Recursos de seguridad del campus",
     "panel.browse.entry.campus_guide.campus_guide.title": "Guía Completa del Campus",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "Guía de mi campus",
 
@@ -2357,8 +2358,11 @@
     "panel.inbox.label.time.last_month": "El mes pasado",
 
     "panel.guide_list.label.highlights.heading": "Campus Guide",
-    "panel.guide_list.label.highlights.empty": "No hay recursos de seguridad en el campus activos.",
-    "panel.guide_list.label.highlights.section": "Recursos de seguridad",
+
+    "panel.guide_list.label.highlights.section": "Puntos destacados del campus",
+    "panel.guide_list.label.highlights.empty": "No hay Destacados del Campus activos.",
+    "panel.guide_list.label.campus_safety_resources.empty": "No hay recursos de seguridad en el campus activos.",
+    "panel.guide_list.label.campus_safety_resources.section": "Recursos de seguridad",
     "panel.guide_list.label.campus_reminders.section": "Recordatorios del campus",
     "panel.guide_list.label.campus_reminders.empty": "No hay recordatorios de campus activos.",
     "panel.guide_list.label.content.empty": "Contenido de la guía vacía",
@@ -2564,10 +2568,15 @@
     "widget.voter.rv_alert.vote_early.text": "Estás en el %s y puedes votar temprano",
     "widget.voter.rv_alert.vote_now.text": "Estás en el %s y puedes votar ahora.",
 
-    "widget.home.campus_reminders.label.campus_reminders": "Recordatorios de Campus",
+    "widget.home.campus_reminders.label.title": "Recordatorios de Campus",
     "widget.home.campus_reminders.text.empty.description": "No hay recordatorios de campus activos.",
     "widget.home.campus_reminders.button.all.title": "Ver todo",
     "widget.home.campus_reminders.button.all.hint": "Toca para ver todos los recordatorios",
+
+    "widget.home.campus_safety_resources.label.campus_safety_resources": "Recursos de seguridad del campus",
+    "widget.home.campus_safety_resources.text.empty.description": "Toque \u2606 en los elementos de <a href='{{local_url}}'><b>Recursos de seguridad del campus</b></a> para acceder rápidamente aquí.",
+    "widget.home.campus_safety_resources.button.all.title": "Ver todo",
+	"widget.home.campus_safety_resources.button.all.hint": "Toque para ver todos los recursos de seguridad",
 
     "widget.home.suggested_events.label.events_for_you":"Eventos sugeridos",
     "widget.home.suggested_events.label.events_for_you.sub_title":"Curada por tus intereses",
