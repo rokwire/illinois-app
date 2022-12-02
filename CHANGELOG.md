@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Implemented Campus Safety Resources [#2618](https://github.com/rokwire/illinois-app/issues/2618).
 
-## [4.2.31] - 2022-12-01
+## [4.2.32] - 2022-12-02
 ### Added
 - Add BESSI Survey [#2491](https://github.com/rokwire/illinois-app/issues/2491).
 - Switch on/off displaying appointments [#2606](https://github.com/rokwire/illinois-app/issues/2606).
