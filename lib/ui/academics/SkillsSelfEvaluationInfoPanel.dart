@@ -86,8 +86,8 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
               case "links":
                 dynamic linkData = MapPathKey.entry(content?.links, parts.sublist(1).join('.'));
                 if (linkData is SkillsSelfEvaluationLink) {
-                  contentWidgets.add(InkWell(onTap: () => _onTapLink(context, linkData), child: RichText(
-                    text: TextSpan(
+                  contentWidgets.add(InkWell(onTap: () => _onTapLink(context, linkData), child: Text.rich(
+                    TextSpan(
                       children: [
                         TextSpan(
                           text: linkData.text,

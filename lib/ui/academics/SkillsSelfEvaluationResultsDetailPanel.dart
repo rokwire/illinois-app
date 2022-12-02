@@ -131,8 +131,8 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
                   case "links":
                     dynamic linkData = MapPathKey.entry(content?.links, parts.sublist(1).join('.'));
                     if (linkData is SkillsSelfEvaluationLink) {
-                      contentWidgets.add(InkWell(onTap: () => _onTapLink(context, linkData), child: RichText(
-                        text: TextSpan(
+                      contentWidgets.add(InkWell(onTap: () => _onTapLink(context, linkData), child: Text.rich(
+                        TextSpan(
                           children: [
                             TextSpan(
                               text: linkData.text,
@@ -205,10 +205,10 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
                           StringUtils.isNotEmpty(imageUrl)
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(4),
-                                  child: ModalImageHolder(child: Image.network(imageUrl!,
+                                  child: Image.network(imageUrl!,
                                       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                                     return (loadingProgress == null) ? child : emptyImagePlaceholder;
-                                  })))
+                                  }))
                               : emptyImagePlaceholder,
                           VideoPlayButton()
                         ])

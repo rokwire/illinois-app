@@ -158,8 +158,8 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
               )
             ));
       }),
-      Padding(padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 32), child: RichText(
-        text: TextSpan(
+      Padding(padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 32), child: Text.rich(
+        TextSpan(
           children: [
             TextSpan(
               text: Localization().getStringEx('panel.skills_self_evaluation.results.student_average.term', 'Student Average'),
@@ -279,7 +279,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       messageTextAlign: TextAlign.center,
       buttons: buttons,
       buttonsPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
-      closeButtonIcon: Image.asset('images/close-orange-small.png'),
+      closeButtonIcon: Image.asset('images/close-orange-small.png', color: Styles().colors?.fillColorPrimaryVariant),
     );
   }
 
