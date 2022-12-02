@@ -844,7 +844,7 @@ class _GroupCardState extends State<GroupCard> {
                     Row(children: [
                       Expanded(child:
                         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style:  Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"))
+                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
                         )
                       )
                     ]),

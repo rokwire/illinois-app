@@ -112,47 +112,11 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-            container: true,
-            child: Column(children: <Widget>[
-              _buildHeader(),
-              Stack(children: <Widget>[_buildSlant(), _buildContent()])
-            ]));
-  }
-
-  Widget _buildHeader() {
-    return Semantics(
-        child: Padding(
-            padding: EdgeInsets.zero,
-            child: Container(
-                color: Styles().colors!.fillColorPrimary,
-                child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  HomeTitleIcon(image: Image.asset('images/campus-tools.png')),
-                  Expanded(
-                      child: Padding(
-                          padding: EdgeInsets.only(top: 14),
-                          child: Semantics(
-                              label: HomeDailyIlliniWidget.title,
-                              header: true,
-                              excludeSemantics: true,
-                              child: Text(HomeDailyIlliniWidget.title,
-                                  style: TextStyle(
-                                      color: Styles().colors?.textColorPrimary,
-                                      fontFamily: Styles().fontFamilies?.extraBold,
-                                      fontSize: 20))))),
-                  HomeFavoriteButton(favorite: HomeFavorite(widget.favoriteId), style: FavoriteIconStyle.SlantHeader, prompt: true)
-                ]))));
-  }
-
-  Widget _buildSlant() {
-    return Column(children: <Widget>[
-      Container(color: Styles().colors!.fillColorPrimary, height: 45),
-      Container(
-          color: Styles().colors!.fillColorPrimary,
-          child: CustomPaint(
-              painter: TrianglePainter(painterColor: Styles().colors!.background, horzDir: TriangleHorzDirection.rightToLeft),
-              child: Container(height: 65)))
-    ]);
+    return HomeSlantWidget(favoriteId: widget.favoriteId,
+      title: HomeDailyIlliniWidget.title,
+      titleIcon: Image.asset('images/campus-tools.png'),
+      child: _buildContent(),
+    );
   }
 
   Widget _buildContent() {
@@ -344,8 +308,8 @@ class _DailyIlliniItemWidget extends StatelessWidget {
                     boxShadow: [
                       BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))
                     ],
-                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
-                clipBehavior: Clip.none,
+                    borderRadius: BorderRadius.all(Radius.circular(4))),
+                clipBehavior: Clip.hardEdge,
                 child: Column(children: <Widget>[
                   Column(children: [
                     _buildImage(),
@@ -361,10 +325,9 @@ class _DailyIlliniItemWidget extends StatelessWidget {
                       
                     ]),
                     Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        child: Text(StringUtils.ensureNotEmpty(illiniItem?.title),
-                            style: TextStyle(
-                                color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium, fontSize: 16)))
+                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                        child: Text(StringUtils.ensureNotEmpty(illiniItem?.title), textAlign: TextAlign.center,
+                            style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')))
                   ]),
                   Padding(
                       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),

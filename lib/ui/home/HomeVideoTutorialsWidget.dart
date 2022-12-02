@@ -168,7 +168,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
         if (video != null) {
           pages.add(Padding(
               key: _contentKeys[JsonUtils.stringValue(video['id']) ?? ''] ??= GlobalKey(),
-              padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 2),
+              padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
               child: _buildVideoEntry(video)));
         }
       }
@@ -226,8 +226,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
                         Padding(
                             padding: EdgeInsets.only(bottom: 16),
                             child: Text(StringUtils.ensureNotEmpty(videoTitle),
-                                style: TextStyle(
-                                    fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary))),
+                                style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))),
                         Stack(alignment: Alignment.center, children: [
                           StringUtils.isNotEmpty(imageUrl)
                               ? ClipRRect(

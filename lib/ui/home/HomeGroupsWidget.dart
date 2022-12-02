@@ -131,12 +131,11 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
 
 
   Widget _buildContent() {
-
     List<Widget> pages = <Widget>[];
     if(_groups?.isNotEmpty ?? false) {
       for (Group? group in _groups!) {
         if ((group != null) && group.isVisible) {
-          pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
+          pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
             Semantics(
               // excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),
              child: GroupCard(group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),

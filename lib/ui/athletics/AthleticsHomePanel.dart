@@ -647,7 +647,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                     ],),
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), child:
-                    Text(widget.game.title, style: Styles().textStyles?.getTextStyle('widget.athletics.card.title.large.fat')),
+                    Text(widget.game.title, style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')),
                   ),
                   _athleticsDetails(),
                   Visibility(visible: showDescription, child:

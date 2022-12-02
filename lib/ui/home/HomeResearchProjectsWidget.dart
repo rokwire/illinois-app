@@ -160,7 +160,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
     if(_researchProjects?.isNotEmpty ?? false) {
       for (Group? researchProject in _researchProjects!) {
         if ((researchProject != null) && researchProject.isVisible) {
-          pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
+          pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
             Semantics(
               // excludeSemantics: !(_pageController?.page == _researchProjects?.indexOf(researchProject)),
              child: GroupCard(group: researchProject, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),

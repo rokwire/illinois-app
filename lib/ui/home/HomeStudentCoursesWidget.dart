@@ -143,7 +143,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
                   Semantics(label: HomeStudentCoursesWidget.title, header: true, excludeSemantics: true, child:
-                    Text(HomeStudentCoursesWidget.title, style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                    Text(HomeStudentCoursesWidget.title, style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
                   )
                 )
               ),

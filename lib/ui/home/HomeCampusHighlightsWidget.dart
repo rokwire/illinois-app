@@ -125,7 +125,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         Map<String, dynamic>? promotedItem = JsonUtils.mapValue(_promotedItems![index]);
-        pages.add(Padding(key: _contentKeys[Guide().entryId(promotedItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 2), child:
+        pages.add(Padding(key: _contentKeys[Guide().entryId(promotedItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8), child:
           GuideEntryCard(promotedItem)
         ));
       }
