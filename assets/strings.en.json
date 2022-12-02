@@ -328,7 +328,8 @@
     "panel.browse.entry.safer.my_mckinley.title": "MyMcKinley",
     "panel.browse.entry.safer.wellness_answer_center.title": "Answer Center",
 
-    "panel.browse.entry.campus_guide.campus_highlights.title": "Campus Safety Resources",
+    "panel.browse.entry.campus_guide.campus_highlights.title": "Campus Guide Highlights",
+    "panel.browse.entry.campus_guide.campus_safety_resources.title": "Campus Safety Resources",
     "panel.browse.entry.campus_guide.campus_guide.title": "Complete Campus Guide",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "My Campus Guide",
 
@@ -2364,8 +2365,10 @@
 
     "panel.guide_list.label.highlights.heading": "Campus Guide",
 
-    "panel.guide_list.label.highlights.section": "Safety Resources",
-    "panel.guide_list.label.highlights.empty": "There are no active Campus Safety Resources.",
+    "panel.guide_list.label.highlights.section": "Campus Highlights",
+    "panel.guide_list.label.highlights.empty": "There are no active Campus Hightlights.",
+    "panel.guide_list.label.campus_safety_resources.section": "Safety Resources",
+    "panel.guide_list.label.campus_safety_resources.empty": "There are no active Campus Safety Resources.",
     "panel.guide_list.label.campus_reminders.section": "Campus Reminders",
     "panel.guide_list.label.campus_reminders.empty": "There are no active Campus Reminders.",
     "panel.guide_list.label.content.empty": "Empty guide content",
@@ -2606,6 +2609,11 @@
     "widget.home.campus_reminders.text.empty.description": "There are no active Campus Reminders.",
     "widget.home.campus_reminders.button.all.title": "View All",
     "widget.home.campus_reminders.button.all.hint": "Tap to view all reminders",
+
+    "widget.home.campus_safety_resources.label.campus_safety_resources": "Campus Safety Resources",
+    "widget.home.campus_safety_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Safety Resources</b></a> for quick access here.",
+    "widget.home.campus_safety_resources.button.all.title": "View All",
+	"widget.home.campus_safety_resources.button.all.hint": "Tap to view all safety resources",
 
     "widget.home.suggested_events.label.events_for_you":"Suggested Events",
     "widget.home.suggested_events.label.events_for_you.sub_title":"Curated from your interests",
