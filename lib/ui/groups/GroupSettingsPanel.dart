@@ -1067,7 +1067,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             Container(width: 16,),
             Expanded(
               child: RoundedButton(
-                label: Localization().getStringEx("panel.groups_settings.button.delete.title", "Delete this  group"),//TBD localize
+                label: _isResearchProject ?
+                  Localization().getStringEx("panel.groups_settings.button.delete.group.title", "Delete this Project") : //TBD localize
+                  Localization().getStringEx("panel.groups_settings.button.delete.project.title", "Delete this Group"),  //TBD localize
                 backgroundColor: Colors.white,
                 borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
                 textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
