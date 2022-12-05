@@ -25,9 +25,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 
 class MTDStopDeparturesPanel extends StatefulWidget  {
   final MTDStop stop;
-  final List<MTDRoute>? routes;
 
-  MTDStopDeparturesPanel({required this.stop, this.routes });
+  MTDStopDeparturesPanel({required this.stop });
 
   @override
   State<MTDStopDeparturesPanel> createState() => _MTDStopDeparturesPanelState();
@@ -35,28 +34,11 @@ class MTDStopDeparturesPanel extends StatefulWidget  {
 
 class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
 
-  List<MTDRoute>? _routes;
-  bool _loadingRoutes = false;
   List<MTDDeparture>? _departures;
   bool _loadingDepartures = false;
 
   @override
   void initState() {
-    if (widget.routes != null) {
-      _routes = widget.routes;
-    }
-    else if (widget.stop.id != null) {
-      _loadingRoutes = true;
-      MTD().getRoutes(stopId: widget.stop.id!).then((List<MTDRoute>? routes) {
-        if (mounted) {
-          setState(() {
-            _loadingRoutes = false;
-            _routes = routes;
-          });
-        }
-      });
-    }
-
     if (widget.stop.id != null) {
       _loadingDepartures = true;
       MTD().getDepartures(stopId: widget.stop.id!, previewTime: 1440).then((List<MTDDeparture>? departures) {
@@ -83,14 +65,14 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
 
   Widget _buildBody() {
     return Column(children: <Widget>[
-      _buildRoutes(),
+      //_buildRoutes(),
       Expanded(child:
         _buildDepartures(),
       ),
     ]);
   }
 
-  Widget _buildRoutes() {
+  /*Widget _buildRoutes() {
     Widget contentWidget;
     if (_loadingRoutes) {
       contentWidget = Center(child:
@@ -130,7 +112,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
         Expanded(child: contentWidget),
       ],),
     );
-  }
+  }*/
 
   Widget _buildDepartures() {
     if (_loadingDepartures) {
@@ -143,30 +125,16 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
       return _buildDeparturesError('No bus schedule available.');
     }
     else {
-      return SingleChildScrollView(scrollDirection: Axis.vertical, child:
-          Column(children: _buildDeparturesList(),)
-        );
+      return ListView.separated(
+        itemBuilder: (context, index) => _buildDeparture(ListUtils.entry(_departures, index)!),
+        separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
+        itemCount: _departures?.length ?? 0,
+        padding: EdgeInsets.zero,
+      );
     }
-  }
-
-  List<Widget> _buildDeparturesList() {
-    List<Widget> contentList = <Widget>[];
-    if (_departures != null) {
-      for (MTDDeparture departure in _departures!) {
-        contentList.add(_buildDeparture(departure));
-      }
-    }
-    return contentList;
   }
 
   Widget _buildDeparture(MTDDeparture departure) {
-    
-    String? status;
-    if (departure.isScheduled ?? false) {
-      DateTime? scheduledTime = departure.scheduledTime;
-      String? scheduledTimeString = (scheduledTime != null) ? DateFormat('h:mma').format(scheduledTime).toLowerCase() : null;
-      status = (scheduledTimeString != null) ? 'Scheduled: $scheduledTimeString' : 'Scheduled';
-    }
     
     String? expectedTimeString1, expectedTimeString2;
     int expectedMins = departure.expectedMins ?? -1;
@@ -174,50 +142,56 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
       expectedTimeString1 = 'Now';
     }
     else if (expectedMins == 1) {
-      expectedTimeString1 = '1 min';
+      expectedTimeString1 = '1';
+      expectedTimeString2 = 'min';
     }
     else if ((1 < expectedMins) && (expectedMins < 60)) {
-      expectedTimeString1 = '$expectedMins mins';
+      expectedTimeString1 = '$expectedMins';
+      expectedTimeString2 = 'mins';
     }
     else {
       DateTime? expectedTime = departure.expectedTime;
       expectedTimeString1 = (expectedTime != null) ? DateFormat('h:mm').format(expectedTime) : null;
       expectedTimeString2 = (expectedTime != null) ? DateFormat('a').format(expectedTime) : null;
     }
+
+    String? desciption = StringUtils.isNotEmpty(departure.trip?.headsign) ? 'To ${departure.trip?.headsign}' : '';
     
     return InkWell(onTap: () => _onDeparture(departure), child: Container(
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Padding(padding: EdgeInsets.only(right: 6), child:
-            Image.asset('images/icon-bus-solid.png', color: Styles().colors?.fillColorPrimary,),
-          ),
-          (departure.route != null) ? Padding(padding: EdgeInsets.only(right: 6), child: _buildRoute(departure.route!)) : Container(),
-          Expanded(child:
-            Text(departure.trip?.headsign ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),)
-          ),
-          Text(expectedTimeString1 ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),)
-        ],),
-        Row(children: [
-          Expanded(child:
-            Text(status ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),)
-          ),
-          Text(expectedTimeString2 ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),),
-        ]),
-      ],),
+      child: Row(children: [
+        Container(width: 48, height: 48,
+          decoration: BoxDecoration(
+            color: departure.route?.color,
+            border: Border.all(color: Styles().colors!.surfaceAccentTransparent15!, width: 1),
+            shape: BoxShape.circle),
+          child: Center(child:
+            Text(departure.route?.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 20, color: departure.route?.textColor,))
+          )
+        ),
+        Expanded(child:
+          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+            Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(departure.headsign ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),),
+                Text(desciption, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),)
+            ],)
+          )
+        ),
+        Column(mainAxisSize: MainAxisSize.min, children: [
+          Text(expectedTimeString1 ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 24, color: Styles().colors?.fillColorPrimary,),),
+          Text(expectedTimeString2 ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),),
+        ],)
+      ],)
     ),);
   }
 
-  Widget _buildRoute(MTDRoute route) {
+  /*Widget _buildRoute(MTDRoute route) {
     return Container(decoration: BoxDecoration(color: route.color, border: Border.all(color: route.textColor ?? Colors.transparent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2), child:
         Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 12, color: route.textColor,)),
       )
     );
-  }
+  }*/
 
   Widget _buildDeparturesLoading() {
     return Row(children: [
