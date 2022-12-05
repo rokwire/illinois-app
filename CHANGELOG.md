@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Research Projects updates [#2626](https://github.com/rokwire/illinois-app/issues/2626).
 - Optimize video tutorial entry UI [#2635](https://github.com/rokwire/illinois-app/issues/2635).
 - MTDStopDeparturesPanel reworked [#2633](https://github.com/rokwire/illinois-app/issues/2633).
+- Updated thresoldDistanceByZoom map in iOS, show debug label with current zoom and threshold distance [#2633](https://github.com/rokwire/illinois-app/issues/2633).
 ### Added
 - New video tutorial "Creating a New Group" [#2631](https://github.com/rokwire/illinois-app/issues/2631).
 
