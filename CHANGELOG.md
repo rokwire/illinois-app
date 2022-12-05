@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Blank screen on tapping Daily Illini item [#2627](https://github.com/rokwire/illinois-app/issues/2627).
+- GMSMarker creation in iOS Map view [#2516](https://github.com/rokwire/illinois-app/issues/2516).
 ### Changed
 - Research Projects updates [#2626](https://github.com/rokwire/illinois-app/issues/2626).
 
