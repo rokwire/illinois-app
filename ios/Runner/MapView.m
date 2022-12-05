@@ -24,6 +24,7 @@
 #import "MapMarkerView.h"
 
 #import "NSDictionary+InaTypedValue.h"
+#import "NSArray+InaTypedValue.h"
 #import "CLLocationCoordinate2D+InaUtils.h"
 #import "CGGeometry+InaUtils.h"
 #import "NSString+InaJson.h"
@@ -49,12 +50,19 @@
 	bool          _didFirstLayout;
 	bool          _enabled;
 	NSOperation*  _buildeExploresOperation;
+	NSMutableDictionary<NSString*, UIImage*>* _markersImageCache;
 }
 @property (nonatomic, readonly) GMSMapView*     mapView;
 @property (nonatomic) NSArray*      explores;
 @property (nonatomic) NSArray*      displayExplores;
 @property (nonatomic) NSMutableSet* markers;
 @property (nonatomic) NSOperation*  buildeExploresOperation;
+@end
+
+@interface MapViewMarkerData : NSObject
+@property (nonatomic) UIImage* image;
+@property (nonatomic) CGPoint  anchor;
+- (instancetype)initWithImage:image anchor:(CGPoint)anchor;
 @end
 
 @implementation MapView
@@ -74,6 +82,7 @@
 		[self addSubview:_mapView];
 
 		_markers = [[NSMutableSet alloc] init];
+		_markersImageCache = [[NSMutableDictionary alloc] init];
 		_enabled = true;
 
 	  NSURL *noPoiUrl = [NSBundle.mainBundle URLForResource:@"mapstyle-nopois" withExtension:@"json"];
@@ -158,15 +167,23 @@
 	__weak NSBlockOperation* weakOperation = operation;
 	[operation addExecutionBlock:^(){
 		NSArray* displayExplores = [weakSelf buildExplores:weakSelf.explores thresoldDistance:thresoldDistance operation:weakOperation];
-		NSArray* markers = [weakSelf buildMarkersFromExplores:displayExplores operation:weakOperation];
 		if (!weakOperation.cancelled && ![weakSelf.displayExplores isEqualToArray:displayExplores]) {
-			dispatch_async(dispatch_get_main_queue(), ^{
-				if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
-					weakSelf.displayExplores = displayExplores;
-					[weakSelf applyMarkers:markers];
-					weakSelf.buildeExploresOperation = nil;
-				}
-			});
+			NSDictionary<NSNumber*, MapViewMarkerData*>* markerDataMap = [weakSelf buildMarkerDataFromExplores:displayExplores operation:weakOperation];
+			if (!weakOperation.cancelled) {
+				dispatch_async(dispatch_get_main_queue(), ^{
+					if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
+						weakSelf.displayExplores = displayExplores;
+						[weakSelf applyMarkers: [weakSelf buildMarkersFromExplores:displayExplores markerDataMap:markerDataMap]];
+						weakSelf.buildeExploresOperation = nil;
+					}
+				});
+			}
+			else if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
+				weakSelf.buildeExploresOperation = nil;
+			}
+		}
+		else if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
+			weakSelf.buildeExploresOperation = nil;
 		}
 	}];
 
@@ -349,22 +366,38 @@
 
 #pragma mark Display
 
-- (NSArray*)buildMarkersFromExplores:(NSArray*)explores {
-	return [self buildMarkersFromExplores:explores operation:nil];
-}
+//_markersImageCache
 
-- (NSArray*)buildMarkersFromExplores:(NSArray*)explores operation:(NSOperation*)operation {
-
-	NSMutableArray *markers = [[NSMutableArray alloc] initWithCapacity:explores.count];
-	for (NSDictionary *explore in explores) {
+- (NSDictionary<NSNumber*, MapViewMarkerData*>*)buildMarkerDataFromExplores:(NSArray*)explores operation:(NSOperation*)operation {
+	NSMutableDictionary<NSNumber*, MapViewMarkerData*> *markerDataMap = [[NSMutableDictionary alloc] initWithCapacity:explores.count];
+	for (NSInteger index = 0; index < explores.count; index++) {
 		if (operation.cancelled) {
 			break;
 		}
-		else if ([explore isKindOfClass:[NSDictionary class]]) {
-			GMSMarker *marker = [self markerFromExplore: explore];
-			if (marker != nil) {
-				[markers addObject:marker];
+		else {
+			NSDictionary *explore = [explores inaDictAtIndex:index];
+			MapViewMarkerData *markerData = [self markerDataFromExplore:explore];
+			if (markerData != nil) {
+				[markerDataMap setObject:markerData forKey:@(index)];
 			}
+		}
+	}
+	return operation.cancelled ? nil : markerDataMap;
+}
+
+- (NSArray<GMSMarker*>*)buildMarkersFromExplores:(NSArray*)explores {
+	return [self buildMarkersFromExplores:explores markerDataMap:nil];
+}
+
+- (NSArray<GMSMarker*>*)buildMarkersFromExplores:(NSArray*)explores markerDataMap:(NSDictionary<NSNumber*, MapViewMarkerData*>*) markerDataMap {
+
+	NSMutableArray<GMSMarker*> *markers = [[NSMutableArray alloc] initWithCapacity:explores.count];
+	for (NSInteger index = 0; index < explores.count; index++) {
+		NSDictionary *explore = [explores inaDictAtIndex:index];
+		MapViewMarkerData *markerData = [markerDataMap objectForKey:@(index)];
+		GMSMarker *marker = [self markerFromExplore:explore markerData:markerData];
+		if (marker != nil) {
+			[markers addObject:marker];
 		}
 	}
 	return markers;
@@ -392,35 +425,43 @@
 	}
 }
 
-- (GMSMarker*)markerFromExplore:(NSDictionary*)explore {
-	CLLocationCoordinate2D exploreCoordinate = explore.uiucExploreLocationCoordinate;
+- (MapViewMarkerData*)markerDataFromExplore:(NSDictionary*)explore {
+		UIImage *markerIcon;
+		CGPoint markerAnchor;
+		if (explore != nil) {
+			NSInteger exploresCount = explore.uiucExplores.count;
+			if (1 < exploresCount) {
+				markerIcon = [MapMarkerView2 groupMarkerImageWithHexColor:explore.uiucExploreMarkerHexColor count:exploresCount imageCache:_markersImageCache];
+				markerAnchor = CGPointMake(0.5, 0.5);
+			}
+			else if (explore.uiucExploreType == UIUCExploreType_MTDStop) {
+				markerIcon = [UIImage imageNamed:@"maps-icon-marker-bus"];
+				markerAnchor = CGPointMake(0.5, 0.5);
+			}
+			else {
+				markerIcon = [MapMarkerView2 markerImageWithHexColor:explore.uiucExploreMarkerHexColor];
+				markerAnchor = CGPointMake(0.5, 1);
+			}
+			return [[MapViewMarkerData alloc] initWithImage:markerIcon anchor:markerAnchor];
+		}
+		return nil;
+}
+
+- (GMSMarker*)markerFromExplore:(NSDictionary*)explore markerData:(MapViewMarkerData*)markerData {
+	CLLocationCoordinate2D exploreCoordinate = (explore != nil) ? explore.uiucExploreLocationCoordinate : kCLLocationCoordinate2DInvalid;
 	if (CLLocationCoordinate2DIsValid(exploreCoordinate)) {
+
+		if (markerData == nil) {
+			markerData = [self markerDataFromExplore:explore];
+		}
 
 		GMSMarker *marker = [[GMSMarker alloc] init];
 		marker.position = CLLocationCoordinate2DMake(exploreCoordinate.latitude, exploreCoordinate.longitude);
-		
-		UIImage *markerIcon;
-		CGPoint markerAnchor;
-		NSInteger exploresCount = explore.uiucExplores.count;
-		if (1 < exploresCount) {
-			markerIcon = [MapMarkerView2 groupMarkerImageWithHexColor:explore.uiucExploreMarkerHexColor count:exploresCount];
-			markerAnchor = CGPointMake(0.5, 0.5);
-		}
-		else if (explore.uiucExploreType == UIUCExploreType_MTDStop) {
-			markerIcon = [UIImage imageNamed:@"maps-icon-marker-bus"];
-			markerAnchor = CGPointMake(0.5, 0.5);
-		}
-		else {
-			markerIcon = [MapMarkerView2 markerImageWithHexColor:explore.uiucExploreMarkerHexColor];
-			markerAnchor = CGPointMake(0.5, 1);
-		}
-		NSString *markerTitle = explore.uiucExploreTitle;
-		NSString *markerSnippet = explore.uiucExploreDescription;
-		
-		marker.icon = markerIcon;
-		marker.groundAnchor = markerAnchor;
-		marker.title = markerTitle;
-		marker.snippet = markerSnippet;
+
+		marker.icon = markerData.image;
+		marker.groundAnchor = markerData.anchor;
+		marker.title = explore.uiucExploreTitle;
+		marker.snippet = explore.uiucExploreDescription;
 
 		marker.zIndex = 1;
 		marker.userData = @{ @"explore" : explore };
@@ -630,3 +671,14 @@
 @end
 
 
+@implementation MapViewMarkerData
+
+- (instancetype)initWithImage:image anchor:(CGPoint)anchor {
+	if (self = [super init]) {
+		_image = image;
+		_anchor = anchor;
+	}
+	return self;
+}
+
+@end
