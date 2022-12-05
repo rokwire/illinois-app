@@ -21,7 +21,6 @@ import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/panels/web_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -36,7 +35,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'),),
+      appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results_detail.header.title', 'Skills Self-Evaluation'),),
       body: SingleChildScrollView(child: content != null ? SectionSlantHeader(
         header: content!.header != null ? _buildHeader() : null,
         slantColor: Styles().colors?.gradientColorPrimary,
@@ -46,7 +45,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
         childrenAlignment: CrossAxisAlignment.start,
       ) : Padding(padding: const EdgeInsets.all(24.0), child: Text(
         Localization().getStringEx("panel.skills_self_evaluation.results_detail.missing_content", "There is no detailed results content for this skill."),
-        style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 20.0, color: Styles().colors?.fillColorPrimaryVariant),
+        style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
         textAlign: TextAlign.center,
       ))),
       backgroundColor: Styles().colors?.background,
@@ -58,11 +57,11 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(top: 100, bottom: 32),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Padding(padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16), child: Text(content!.header!.title, style: TextStyle(fontFamily: "ProximaNovaExtraBold", fontSize: 36.0, color: Styles().colors?.surface), textAlign: TextAlign.center,)),
+        Padding(padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16), child: Text(content!.header!.title, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.header'), textAlign: TextAlign.center,)),
         Visibility(visible: content!.header!.moreInfo != null, child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Text(content!.header!.moreInfo ?? '', 
-            style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.surface), 
+            style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'), 
             textAlign: TextAlign.center,
           )
         )),
@@ -86,7 +85,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
     for (SkillsSelfEvaluationSection section in sections ?? content?.sections ?? []) {
       Widget titleWidget = Text(
         section.title,
-        style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+        style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
         textAlign: TextAlign.start,
       );
 
@@ -94,7 +93,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
         contentWidgets.add(titleWidget);
         contentWidgets.add(Padding(padding: const EdgeInsets.only(bottom: 16), child: Text(
           section.subtitle!,
-          style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+          style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
           textAlign: TextAlign.start,
         )));
       } else {
@@ -110,13 +109,13 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
             if (CollectionUtils.isEmpty(matches)) {
               contentWidgets.add(Text(
                 section.body!,
-                style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
                 textAlign: TextAlign.start,
               ));
             } else if (matches.elementAt(0).start > 0) {
               contentWidgets.add(Text(
                 section.body!.substring(0, matches.elementAt(0).start),
-                style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
                 textAlign: TextAlign.start,
               ));
             }
@@ -131,12 +130,12 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
                   case "links":
                     dynamic linkData = MapPathKey.entry(content?.links, parts.sublist(1).join('.'));
                     if (linkData is SkillsSelfEvaluationLink) {
-                      contentWidgets.add(InkWell(onTap: () => _onTapLink(context, linkData), child: RichText(
-                        text: TextSpan(
+                      contentWidgets.add(InkWell(onTap: () => _onTapLink(context, linkData), child: Text.rich(
+                        TextSpan(
                           children: [
                             TextSpan(
                               text: linkData.text,
-                              style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary),
+                              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link'),
                             ),
                             WidgetSpan(
                               child: linkData.icon != null ? Padding(padding: const EdgeInsets.only(left: 4.0), child: Image.asset(linkData.icon!)) : Container(),
@@ -151,7 +150,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
                     if (widgetData is String) {
                       contentWidgets.add(Text(
                         widgetData,
-                        style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant,),
+                        style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
                       ));
                     }
                     break;
@@ -161,7 +160,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
               if (match.end < section.body!.length) {
                 contentWidgets.add(Text(
                   section.body!.substring(match.end, (i+1 < matches.length) ? matches.elementAt(i+1).start : null),
-                  style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+                  style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
                   textAlign: TextAlign.start,
                 ));
               }
@@ -200,17 +199,15 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Padding(
                             padding: EdgeInsets.only(bottom: 16),
-                            child: Text(title ?? '',
-                                style: TextStyle(
-                                    fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary))),
+                            child: Text(title ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))),
                         Stack(alignment: Alignment.center, children: [
                           StringUtils.isNotEmpty(imageUrl)
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(4),
-                                  child: ModalImageHolder(child: Image.network(imageUrl!,
+                                  child: Image.network(imageUrl!,
                                       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                                     return (loadingProgress == null) ? child : emptyImagePlaceholder;
-                                  })))
+                                  }))
                               : emptyImagePlaceholder,
                           VideoPlayButton()
                         ])

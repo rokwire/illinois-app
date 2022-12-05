@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Make proper check for missing appointments url [#2614](https://github.com/rokwire/illinois-app/issues/2614).
 - Standardize favorite widget text styles [#2584](https://github.com/rokwire/illinois-app/issues/2584)
+- BESSI cleanup [#2612](https://github.com/rokwire/illinois-app/issues/2612)
 ### Changed
 - Implemented Campus Safety Resources [#2618](https://github.com/rokwire/illinois-app/issues/2618).
 
