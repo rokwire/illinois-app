@@ -109,6 +109,10 @@ class MTD with Service implements ExploreJsonHandler, NotificationsListener {
     return MTDStop.stopsInList2(_stops?.stops, stopIds: stopIds);
   }
 
+  MTDStop? stopById(String? stopId) {
+    return MTDStop.stopInList(_stops?.stops, stopId: stopId);
+  }
+
   Future<void> refreshStops() => _updateStops();
 
   File _getStopsCacheFile() => File(join(_appDocDir.path, _mtdStopsName));

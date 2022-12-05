@@ -192,6 +192,28 @@ class MTDStop with Explore implements Favorite {
     }
   }
 
+  static MTDStop? stopInList(List<MTDStop>? stops, { String? stopId }) {
+    return _mapStop(stops: stops, stopId: stopId);
+  }
+
+  static MTDStop? _mapStop({ List<MTDStop>? stops, String? stopId}) {
+    if ((stops != null) && (stopId != null)) {
+      for(MTDStop stop in stops) {
+        String? stopEntryId = stop.id;
+        if ((stopEntryId != null) && (stopId == stopEntryId)) {
+          return stop;
+        }
+        if (stop.points != null) {
+          MTDStop? result = _mapStop(stops: stop.points, stopId: stopId);
+          if (result != null) {
+            return result;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   // Center location
 
   LatLng? get position => ((latitude != null) && (longitude != null)) ? LatLng(latitude: latitude, longitude: longitude) : null;

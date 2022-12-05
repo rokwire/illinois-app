@@ -1432,7 +1432,7 @@ class ExplorePanelState extends State<ExplorePanel>
               AppointmentDetailPanel(appointment: explore)));
         }
         else if (explore is MTDStop) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: explore, routes: _selectedMapStopRoutes,)));
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: explore,)));
         }
         else {
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
