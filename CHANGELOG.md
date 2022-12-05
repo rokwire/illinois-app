@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Blank screen on tapping Daily Illini item [#2627](https://github.com/rokwire/illinois-app/issues/2627).
 ### Changed
 - Research Projects updates [#2626](https://github.com/rokwire/illinois-app/issues/2626).
+### Added
+- New video tutorial "Creating a New Group" [#2631](https://github.com/rokwire/illinois-app/issues/2631).
 
 ## [4.2.32] - 2022-12-02
 ### Fixed
