@@ -91,7 +91,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
 
     // #2550: we need consent checkbox selected by default
-    _researchRequiresConsentConfirmation = true; // StringUtils.isNotEmpty(_group?.researchConsentStatement)
+    // #2626: Hide consent checkbox and edit control. Default it to false...
+    _researchRequiresConsentConfirmation = StringUtils.isNotEmpty(_group?.researchConsentStatement);
 
     if (StringUtils.isNotEmpty(_group?.researchConsentStatement)) {
       _researchConsentStatementController.text = _group!.researchConsentStatement!;
@@ -189,7 +190,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           //_buildResearchOptionLayout(),
                           //_buildResearchOpenLayout(),
                           _buildResearchConsentDetailsField(),
-                          _buildResearchConfirmationLayout(),
+                          // #2626: Hide consent checkbox and edit control.
+                          // _buildResearchConfirmationLayout(),
                           _buildResearchAudienceLayout(),
                         ])
                       ),
@@ -394,8 +396,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     );
   }
   //
-  //Research Confirmation
-  Widget _buildResearchConfirmationLayout() {
+  // Research Confirmation
+  // #2626: Hide consent checkbox and edit control.
+  /* Widget _buildResearchConfirmationLayout() {
     String? title = "PARTICIPANT CONSENT";
     String? fieldTitle = "PARTICIPANT CONSENT FIELD";
     String? fieldHint = "";
@@ -438,7 +441,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         _researchRequiresConsentConfirmation = !_researchRequiresConsentConfirmation;
       });
     }
-  }
+  }*/
+
   //
   //Category
   Widget _buildCategoryDropDown() {

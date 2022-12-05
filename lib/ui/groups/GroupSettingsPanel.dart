@@ -142,7 +142,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                                 ),
                                 //_buildResearchOptionLayout(),
                                 _buildResearchConsentDetailsField(),
-                                _buildResearchConfirmationLayout(),
+                                // #2626: Hide consent checkbox and edit control.
+                                // _buildResearchConfirmationLayout(),
                                 _buildResearchOpenLayout(),
                                 _buildResearchAudienceLayout(),
                               ])
@@ -881,7 +882,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     );
   }
 
-  Widget _buildResearchConfirmationLayout() {
+  // #2626: Hide consent checkbox and edit control.
+  /* Widget _buildResearchConfirmationLayout() {
     String? title = "PARTICIPANT CONSENT";
     String? fieldTitle = "PARTICIPANT CONSENT FIELD";
     String? fieldHint = "";
@@ -922,7 +924,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         _researchRequiresConsentConfirmation = !_researchRequiresConsentConfirmation;
       });
     }
-  }
+  }*/
 
   Widget _buildResearchAudienceLayout() {
     int questionsCount = _researchProfileQuestionsCount;
