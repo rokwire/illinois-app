@@ -58,9 +58,10 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         child: SectionSlantHeader(
           header: _buildHeader(),
           slantColor: Styles().colors?.gradientColorPrimary,
+          slantPainterHeadingHeight: 0,
           backgroundColor: Styles().colors?.background,
           children: _buildContent(),
-          childrenPadding: const EdgeInsets.only(top: 180),
+          childrenPadding: EdgeInsets.zero,
         ),
       )),
       backgroundColor: Styles().colors?.background,
@@ -92,7 +93,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   Widget _buildScoresHeader() {
-    return Padding(padding: const EdgeInsets.only(top: 40, left: 28, right: 28, bottom: 32), child: Column(
+    return Padding(padding: const EdgeInsets.only(top: 40, left: 28, right: 28), child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Divider(color: Styles().colors?.surface, thickness: 2),

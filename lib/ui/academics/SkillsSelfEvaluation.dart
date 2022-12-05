@@ -64,9 +64,11 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
     return SectionSlantHeader(
         header: _buildHeader(),
         slantColor: Styles().colors?.gradientColorPrimary,
+        slantPainterHeadingHeight: 0,
         backgroundColor: Styles().colors?.background,
         children: _buildInfoAndSettings(),
-        childrenPadding: const EdgeInsets.only(top: 416),
+        childrenPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        allowOverlap: false,
       );
   }
 
@@ -122,7 +124,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         leftIconAsset: "images/icon-info-orange.png",
         label: saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.description", "Your results will be saved for you to revisit or compare to future results.") :
                 Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
-        textColor: Styles().colors?.fillColorPrimaryVariant,
+        textStyle: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
         backgroundColor: Colors.transparent,
         onTap: _onTapSavedResultsInfo,
       ),
@@ -130,7 +132,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         leftIconAsset: "images/icon-settings.png",
         label: saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.label", "Don't Save My Results") :
                 Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.label", "Save My Results"),
-        textColor: Styles().colors?.fillColorPrimaryVariant,
+        textStyle: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
         backgroundColor: Colors.transparent,
         onTap: _onTapSettings,
       ),
@@ -277,7 +279,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Storage.notifySettingChanged && mounted) {
+    if (name == Storage.notifySettingChanged && param == Storage().assessmentsEnableSaveKey && mounted) {
       setState(() {});
     }
   }
