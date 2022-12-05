@@ -22,8 +22,11 @@ import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
+import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:rokwire_plugin/service/storage.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
@@ -40,13 +43,20 @@ class SkillsSelfEvaluation extends StatefulWidget {
   _SkillsSelfEvaluationState createState() => _SkillsSelfEvaluationState();
 }
 
-class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
-  Map<String, SkillsSelfEvaluationContent> _contentItems = {};
+class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements NotificationsListener {
+  Map<String, SkillsSelfEvaluationContent> _infoContentItems = {};
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [Storage.notifySettingChanged]);
     _loadContentItems();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
   }
 
   @override
@@ -65,14 +75,14 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
       padding: EdgeInsets.only(top: 32, bottom: 32),
       child: Padding(padding: EdgeInsets.only(left: 24, right: 8), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: TextStyle(fontFamily: "ProximaNovaExtraBold", fontSize: 28.0, color: Styles().colors?.surface), textAlign: TextAlign.left,)),
+          Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,)),
           IconButton(
             icon: Image.asset('images/tab-more.png', color: Styles().colors?.surface),
             onPressed: _onTapShowBottomSheet,
             padding: EdgeInsets.zero,
           ),
         ]),
-        Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '5 Minutes'), style: TextStyle(fontFamily: "ProximaNovaBold", fontSize: 16.0, color: Styles().colors?.fillColorSecondary), textAlign: TextAlign.left,),
+        Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.time.description', '5 Minutes'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.time.description'), textAlign: TextAlign.left,),
         Padding(padding: EdgeInsets.only(top: 24), child: _buildDescription()),
         Padding(padding: EdgeInsets.only(top: 64, left: 64, right: 80), child: RoundedButton(
           label: Localization().getStringEx("panel.skills_self_evaluation.get_started.button.label", 'Get Started'),
@@ -97,26 +107,29 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
 
   Widget _buildDescription() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(Localization().getStringEx("panel.skills_self_evaluation.get_started.description.title", 'Identify your strengths related to:'), style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.surface),),
+      Text(Localization().getStringEx("panel.skills_self_evaluation.get_started.description.title", 'Identify your strengths related to:'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'),),
       Padding(padding: EdgeInsets.only(top: 8), child: Text(
         Localization().getStringEx("panel.skills_self_evaluation.get_started.description.list", '\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience'),
-        style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.surface),
+        style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.header.description'),
       ))
     ]);
   }
 
   List<Widget> _buildInfoAndSettings() {
+    bool saveEnabled = Storage().assessmentsSaveResultsMap?['bessi'] != false;
     return <Widget>[
       RibbonButton(
         leftIconAsset: "images/icon-info-orange.png",
-        label: Localization().getStringEx("panel.skills_self_evaluation.get_started.body.info.description", "Your results will be saved for you to revisit or compare to future results."),
+        label: saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.description", "Your results will be saved for you to revisit or compare to future results.") :
+                Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
         textColor: Styles().colors?.fillColorPrimaryVariant,
         backgroundColor: Colors.transparent,
-        // TODO: onTap: ,
+        onTap: _onTapSavedResultsInfo,
       ),
       RibbonButton(
         leftIconAsset: "images/icon-settings.png",
-        label: Localization().getStringEx("panel.skills_self_evaluation.get_started.body.settings.decription", "Don't Save My Results"),
+        label: saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.label", "Don't Save My Results") :
+                Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.label", "Save My Results"),
         textColor: Styles().colors?.fillColorPrimaryVariant,
         backgroundColor: Colors.transparent,
         onTap: _onTapSettings,
@@ -125,11 +138,11 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
   }
 
   void _loadContentItems() {
-    Polls().loadContentItems(categories: ["Skills Self-Evaluation"]).then((content) {
+    Polls().loadContentItems(categories: ["Skills Self-Evaluation Info"]).then((content) {
       if (content?.isNotEmpty ?? false) {
-        _contentItems.clear();
+        _infoContentItems.clear();
         for (MapEntry<String, Map<String, dynamic>> item in content?.entries ?? []) {
-          _contentItems[item.key] = SkillsSelfEvaluationContent.fromJson(item.value);
+          _infoContentItems[item.key] = SkillsSelfEvaluationContent.fromJson(item.value);
         }
       }
     });
@@ -187,24 +200,24 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
     List<String>? academicUiComponents = JsonUtils.stringListValue(FlexUI()['academics']);
     if (academicUiComponents?.contains('skills_self_evaluation') == true) {
       if (Config().bessiSurveyID != null && Auth2().isOidcLoggedIn && Auth2().privacyMatch(4)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _onTapResults,)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults,)));
       } else {
-        Widget infoTextWidget = RichText(
-          text: TextSpan(
+        Widget infoTextWidget = Text.rich(
+          TextSpan(
             children: [
               TextSpan(
-                text: Localization().getStringEx('panel.skills_self_evaluation.get_started.auth_dialog.prefix', 'You need to be signed in with your NetID to access Assessments.\n'),
-                style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+                text: Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.prefix', 'You need to be signed in with your NetID to access Assessments.\n'),
+                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
               ),
               WidgetSpan(
                 child: InkWell(onTap: _onTapPrivacyLevel, child: Text(
-                  Localization().getStringEx('panel.skills_self_evaluation.get_started.auth_dialog.privacy', 'Set your privacy level to 4 or 5.'),
-                  style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary),
+                  Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.privacy', 'Set your privacy level to 4 or 5.'),
+                  style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.link'),
                 )),
               ),
               TextSpan(
-                text: Localization().getStringEx('panel.skills_self_evaluation.get_started.auth_dialog.suffix', ' Then, sign in with your NetID under Settings.'),
-                style: TextStyle(fontFamily: "ProximaNovaRegular", fontSize: 16.0, color: Styles().colors?.fillColorPrimaryVariant),
+                text: Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.suffix', ' Then, sign in with your NetID under Settings.'),
+                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
               ),
             ],
           ),
@@ -214,10 +227,28 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
           padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
           alignment: Alignment.center,
           infoTextWidget: infoTextWidget,
-          closeIcon: Image.asset('images/close-orange-small.png'),
+          closeIcon: Image.asset('images/close-orange-small.png', color: Styles().colors?.fillColorPrimaryVariant),
         ),);
       }
     }
+  }
+
+  void _onTapSavedResultsInfo() {
+    bool saveEnabled = Storage().assessmentsSaveResultsMap?['bessi'] != false;
+    Widget textWidget = Text(
+      saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.dialog",
+        "Your results will be saved for you to compare to future results.\n\nNo data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.") :
+          Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
+      style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
+      textAlign: TextAlign.center,
+    );
+    showDialog(context: context, builder: (_) => InfoPopup(
+      backColor: Styles().colors?.surface,
+      padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
+      alignment: Alignment.center,
+      infoTextWidget: textWidget,
+      closeIcon: Image.asset('images/close-orange-small.png', color: Styles().colors?.fillColorPrimaryVariant),
+    ),);
   }
 
   void _onTapSettings() {
@@ -226,16 +257,29 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> {
 
   void _onTapResults() {
     Navigator.of(context).pop();
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(content: _contentItems)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel()));
+  }
+
+  void _gotoResults(SurveyResponse? response) {
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationResultsPanel(latestResponse: response)));
   }
 
   void _onTapShowInfo(String key) {
     Navigator.of(context).pop();
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationInfoPanel(content: _contentItems[key])));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationInfoPanel(content: _infoContentItems[key])));
   }
 
   void _onTapPrivacyLevel() {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
+  }
+
+  // NotificationsListener
+
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Storage.notifySettingChanged && mounted) {
+      setState(() {});
+    }
   }
 }
 
@@ -246,8 +290,9 @@ class SkillsSelfEvaluationContent {
   final SkillsSelfEvaluationHeader? header;
   final List<SkillsSelfEvaluationSection>? sections;
   final Map<String, SkillsSelfEvaluationLink>? links;
+  final Map<String, dynamic>? data;
 
-  SkillsSelfEvaluationContent({required this.id, required this.category, required this.key, this.header, this.sections, this.links});
+  SkillsSelfEvaluationContent({required this.id, required this.category, required this.key, this.header, this.sections, this.links, this.data});
 
   factory SkillsSelfEvaluationContent.fromJson(Map<String, dynamic> json) {
     Map<String, SkillsSelfEvaluationLink>? links;
@@ -268,6 +313,7 @@ class SkillsSelfEvaluationContent {
       header: JsonUtils.mapOrNull((json) => SkillsSelfEvaluationHeader.fromJson(json), json['header']),
       sections: SkillsSelfEvaluationSection.listFromJson(JsonUtils.listValue(json['sections'])),
       links: links,
+      data: JsonUtils.mapValue(json['data']),
     );
   }
 }
