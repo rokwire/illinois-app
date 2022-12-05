@@ -18,6 +18,7 @@ import 'dart:async';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -209,6 +210,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
   Widget _buildVideoEntry(Map<String, dynamic> video) {
     String? videoTitle = JsonUtils.stringValue(video['title']);
     String? imageUrl = JsonUtils.stringValue(video['image_url']);
+    bool hasImage = StringUtils.isNotEmpty(imageUrl);
     final Widget emptyImagePlaceholder = Container(height: 102);
     return Container(
         decoration: BoxDecoration(
@@ -228,15 +230,18 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
                             child: Text(StringUtils.ensureNotEmpty(videoTitle),
                                 style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))),
                         Stack(alignment: Alignment.center, children: [
-                          StringUtils.isNotEmpty(imageUrl)
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(4),
-                                  child: Image.network(imageUrl!,
-                                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                    return (loadingProgress == null) ? child : emptyImagePlaceholder;
-                                  }))
-                              : emptyImagePlaceholder,
-                          VideoPlayButton()
+                          Container(
+                              foregroundDecoration:
+                                  BoxDecoration(color: hasImage ? Styles().colors!.blackTransparent018 : Colors.transparent),
+                              child: hasImage
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(4),
+                                      child: Image.network(imageUrl!,
+                                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                        return (loadingProgress == null) ? child : emptyImagePlaceholder;
+                                      }))
+                                  : emptyImagePlaceholder),
+                          VideoPlayButton(hasBackground: !hasImage)
                         ])
                       ])))),
           Container(color: Styles().colors?.accentColor3, height: 4)
