@@ -126,6 +126,14 @@ extension GroupExt on Group {
           (settings?.memberPostPreferences?.sendPostReactions == true)
       );
 
+  //Member Info
+  bool get isMemberAllowedToViewMembersInfo => (settings?.memberInfoPreferences?.allowMemberInfo == true) && //If all 5 sub checks for posts are set to false by an admin, this is the same as the admin unchecking/false the main section category, in this case allowMemberInfo/"View Other Members"
+      ((settings?.memberInfoPreferences?.viewMemberNetId == true) ||
+          (settings?.memberInfoPreferences?.viewMemberName == true) ||
+          (settings?.memberInfoPreferences?.viewMemberEmail == true) ||
+          (settings?.memberInfoPreferences?.viewMemberPhone == true)
+      );
+
 }
 
 String? groupMemberStatusToDisplayString(GroupMemberStatus? value) {

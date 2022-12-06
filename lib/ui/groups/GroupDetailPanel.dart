@@ -188,6 +188,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return (_group?.attendanceGroup == true);
   }
 
+  bool get _canViewMembers {
+    return _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -1506,6 +1510,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapMembers(){
+    if(_canViewMembers == false){
+      return; // forbidden
+    }
     Analytics().logSelect(target: "Group Members", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group)));
   }
