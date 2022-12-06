@@ -541,7 +541,7 @@
 			@"longitude" : @(coordinate.longitude),
 		}
 	};
-	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"map.explore.clear" arguments:arguments.inaJsonString];
+	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"map.location.select" arguments:arguments.inaJsonString];
 }
 
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(nonnull GMSMarker *)marker {
