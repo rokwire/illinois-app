@@ -357,11 +357,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildPostEdit() {
-    bool currentUserIsMemberOrAdmin =
-        widget.group?.currentUserIsMemberOrAdmin ?? false;
     return Visibility(
         key: _postEditKey,
-        visible: currentUserIsMemberOrAdmin,
+        visible: _canSendReply,
         child: Padding(
             padding: EdgeInsets.all(_outerPadding),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1004,7 +1002,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   bool get _isReplyVisible {
-    return widget.group?.currentUserIsMemberOrAdmin ?? false;
+    return _canSendReply;
   }
 
   bool get _isReportAbuseVisible {
@@ -1015,11 +1013,10 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     return _mainPostUpdateData!=null;
   }
 
-
   bool get _canSendReply {
-    return (widget.group?.currentUserIsAdmin == true) ||
+    return ((widget.group?.currentUserIsAdmin == true) ||
         (widget.group?.currentUserIsMember == true &&
-            widget.group?.isMemberAllowedToReplyToPost == true);
+            widget.group?.isMemberAllowedToReplyToPost == true));
   }
 
   bool get _canSendReaction {
