@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/MTD.dart';
+import 'package:illinois/model/StudentCourse.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -10,6 +12,8 @@ import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/LaundryRoom.dart';
 import 'package:illinois/ext/Game.dart';
+import 'package:illinois/ext/MTD.dart';
+import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -104,6 +108,9 @@ extension ExploreExt on Explore {
     else if (exploresType == "laundryroom") {
       return Localization().getStringEx('panel.explore.item.laundry.name', 'Laundry');
     }
+    else if (exploresType == "game") {
+      return Localization().getStringEx('panel.explore.item.games.name', 'Games');
+    }
     else if (exploresType == "place") {
       return Localization().getStringEx('panel.explore.item.places.name', 'Places');
     }
@@ -185,6 +192,14 @@ extension ExploreExt on Explore {
     else if (this is Game) {
       return (this as Game).uiColor;
     }
+    else if (this is MTDStop) {
+      return (this as MTDStop).uiColor;
+    }
+    else if (this is StudentCourse) {
+      return (this as StudentCourse).uiColor;
+    }
+    //else if (this is Building) {}
+    //else if (this is Appointment) {}
     else {
       return Styles().colors?.eventColor;
     }
