@@ -173,7 +173,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get _canCreatePost {
-    return _isAdmin || (_isMember && FlexUI().isSharingAvailable);
+    return _isAdmin || (_isMember && _group?.isMemberAllowedToPost == true && FlexUI().isSharingAvailable);
   }
 
   bool get _canCreatePoll {

@@ -115,6 +115,17 @@ extension GroupExt on Group {
     }
     return "";
   }
+
+  //Settings
+  //Post
+  bool get isMemberAllowedToPost => (settings?.memberPostPreferences?.allowSendPost == true) && //If all 5 sub checks for posts are set to false by an admin, this is the same as the admin unchecking/false the main section category, in this case "Member Posts"
+      ((settings?.memberPostPreferences?.sendPostToSpecificMembers == true) ||
+          (settings?.memberPostPreferences?.sendPostToAdmins == true) ||
+          (settings?.memberPostPreferences?.sendPostToAll == true) ||
+          (settings?.memberPostPreferences?.sendPostReplies == true) ||
+          (settings?.memberPostPreferences?.sendPostReactions == true)
+      );
+
 }
 
 String? groupMemberStatusToDisplayString(GroupMemberStatus? value) {
