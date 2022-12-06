@@ -72,8 +72,6 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       });
     });
 
-
-
     super.initState();
   }
 
@@ -86,11 +84,16 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
  // NotificationsListener
   @override
   void onNotification(String name, dynamic param) {
-    if ((name == MTD.notifyStopsChanged) || (name == Auth2UserPrefs.notifyFavoritesChanged)) {
+    if (name == MTD.notifyStopsChanged) {
       if (mounted) {
         setState(() {
           _stops = _contentList;
         });
+      }
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (mounted) {
+        setState(() {});
       }
     }
     else if (name == LocationServices.notifyStatusChanged) {
