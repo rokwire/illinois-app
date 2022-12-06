@@ -17,9 +17,12 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/MTD.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -32,13 +35,17 @@ class MTDStopDeparturesPanel extends StatefulWidget  {
   State<MTDStopDeparturesPanel> createState() => _MTDStopDeparturesPanelState();
 }
 
-class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
+class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> implements NotificationsListener {
 
   List<MTDDeparture>? _departures;
   bool _loadingDepartures = false;
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+    ]);
+
     if (widget.stop.id != null) {
       _loadingDepartures = true;
       MTD().getDepartures(stopId: widget.stop.id!, previewTime: 1440).then((List<MTDDeparture>? departures) {
@@ -54,9 +61,31 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
   }
 
   @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+ // NotificationsListener
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (mounted) {
+        setState(() {
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: widget.stop.name,),
+      appBar: HeaderBar(
+        title: widget.stop.name,
+        actions: [
+          FavoriteButton(favorite: widget.stop, style: FavoriteIconStyle.SlantHeader)
+        ],
+      ),
       body: _buildBody(),
       backgroundColor: Styles().colors?.white,
       bottomNavigationBar: uiuc.TabBar(),

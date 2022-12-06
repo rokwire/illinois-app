@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Updates for plugin survey action and UI changes [#2638](https://github.com/rokwire/illinois-app/issues/2638)
+- Added favorite button to Map target popup & MTD bus schedule panel [#2633](https://github.com/rokwire/illinois-app/issues/2633).
+### Changed
+- Cleaned up processing MTD bus stops in Explore Panel / Map display type [#2633](https://github.com/rokwire/illinois-app/issues/2633).
 
 ## [4.2.33] - 2022-12-05
 ### Fixed

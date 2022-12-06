@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/MTD.dart';
+import 'package:illinois/model/StudentCourse.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:illinois/model/sport/Game.dart';
@@ -10,6 +12,8 @@ import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Dining.dart';
 import 'package:illinois/ext/LaundryRoom.dart';
 import 'package:illinois/ext/Game.dart';
+import 'package:illinois/ext/MTD.dart';
+import 'package:illinois/ext/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -104,14 +108,23 @@ extension ExploreExt on Explore {
     else if (exploresType == "laundryroom") {
       return Localization().getStringEx('panel.explore.item.laundry.name', 'Laundry');
     }
+    else if (exploresType == "game") {
+      return Localization().getStringEx('panel.explore.item.games.name', 'Games');
+    }
     else if (exploresType == "place") {
       return Localization().getStringEx('panel.explore.item.places.name', 'Places');
     }
     else if (exploresType == "building") {
       return Localization().getStringEx('panel.explore.item.buildings.name', 'Buildings');
     }
+    else if (exploresType == "mtdstop") {
+      return Localization().getStringEx('panel.explore.item.mtd_stops.name', 'MTD Stops');
+    }
     else if (exploresType == "studentcourse") {
       return Localization().getStringEx('panel.explore.item.courses.name', 'Courses');
+    }
+    else if (exploresType == "appointment") {
+      return Localization().getStringEx('panel.explore.item.appointments.name', 'Appointments');
     }
     else {
       return Localization().getStringEx('panel.explore.item.unknown.name', 'Explores');
@@ -179,6 +192,14 @@ extension ExploreExt on Explore {
     else if (this is Game) {
       return (this as Game).uiColor;
     }
+    else if (this is MTDStop) {
+      return (this as MTDStop).uiColor;
+    }
+    else if (this is StudentCourse) {
+      return (this as StudentCourse).uiColor;
+    }
+    //else if (this is Building) {}
+    //else if (this is Appointment) {}
     else {
       return Styles().colors?.eventColor;
     }
