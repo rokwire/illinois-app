@@ -927,6 +927,8 @@
     "panel.explore.button.directions.hint":"",
     "panel.explore.button.details.title":"Details",
     "panel.explore.button.details.hint":"View details",
+    "panel.explore.button.bus_schedule.title":"Bus Schedule",
+    "panel.explore.button.bus_schedule.hint":"View bus schedule",
     "panel.explore.label.spcial_offers.title":"Special Offers",
 
     "panel.explore.button.events.display_type.all.label": "All Events",

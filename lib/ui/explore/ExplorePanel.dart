@@ -1252,30 +1252,30 @@ class ExplorePanelState extends State<ExplorePanel>
 
   Widget _buildMapView() {
     String? title, description;
-    Color? exploreColor = Colors.white;
-    String? detailsLabel = Localization().getStringEx('panel.explore.button.details.title', 'Details');
-    String? detailsHint = Localization().getStringEx('panel.explore.button.details.hint', '');
+    String detailsLabel = Localization().getStringEx('panel.explore.button.details.title', 'Details');
+    String detailsHint = Localization().getStringEx('panel.explore.button.details.hint', '');
+    Color? exploreColor;
     Widget? descriptionWidget;
 
-    if (_selectedMapExplore is MTDStop) {
-      title = (_selectedMapExplore as MTDStop).name;
-      description = (_selectedMapExplore as MTDStop).code;
-      exploreColor = Styles().colors?.mtdColor;
-      detailsLabel = 'Bus Schedule';
-      detailsHint = '';
-      descriptionWidget = _buildStopDescription();
-    }
-    else if (_selectedMapExplore is Explore) {
+    if (_selectedMapExplore is Explore) {
       title = _selectedMapExplore?.exploreTitle;
-      description = _selectedMapExplore.exploreLocation?.description;
-      exploreColor = _exploreColor(_selectedMapExplore) ?? Colors.white;
+      description = _selectedMapExplore.exploreLocationDescription;
+      exploreColor = (_selectedMapExplore as Explore).uiColor ?? Styles().colors?.white;
+      if (_selectedMapExplore is MTDStop) {
+        detailsLabel = Localization().getStringEx('panel.explore.button.bus_schedule.title', 'Bus Schedule');
+        detailsHint = Localization().getStringEx('panel.explore.button.bus_schedule.hint', '');
+        descriptionWidget = _buildStopDescription();
+      }
     }
     else if  (_selectedMapExplore is List<Explore>) {
       String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
       title = sprintf(Localization().getStringEx('panel.explore.map.popup.title.format', '%d %s'), [_selectedMapExplore?.length, exploreName]);
       Explore? explore = _selectedMapExplore.isNotEmpty ? _selectedMapExplore.first : null;
       description = explore?.exploreLocation?.description ?? "";
-      exploreColor = _exploreColor(explore) ?? Styles().colors?.fillColorSecondary;
+      exploreColor = explore?.uiColor ?? Styles().colors?.fillColorSecondary;
+    }
+    else {
+      exploreColor = Styles().colors?.white;
     }
 
     double buttonWidth = (MediaQuery.of(context).size.width - (40 + 12)) / 2;
@@ -1310,10 +1310,7 @@ class ExplorePanelState extends State<ExplorePanel>
                         fontSize: 16.0,
                         textColor: Styles().colors!.fillColorPrimary,
                         borderColor: Styles().colors!.fillColorSecondary,
-                        onTap: () {
-                          Analytics().logSelect(target: 'Directions');
-                          _presentMapExploreDirections(context);
-                        }
+                        onTap: _onTapMapExploreDirections
                       ),
                     ),
                     Container(width: 12,),
@@ -1327,10 +1324,7 @@ class ExplorePanelState extends State<ExplorePanel>
                       fontSize: 16.0,
                       textColor: Styles().colors!.fillColorPrimary,
                       borderColor: Styles().colors!.fillColorSecondary,
-                      onTap: () {
-                        Analytics().logSelect(target: 'Details');
-                        _presentMapExploreDetail(context);
-                      }
+                      onTap: _onTapMapExploreDetail,
                     ),
                   ),
                 ],),
@@ -1383,21 +1377,6 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
-  static Color? _exploreColor(Explore? explore) {
-    if (explore is Event) {
-      return explore.uiColor;
-    }
-    else if (explore is Dining) {
-      return explore.uiColor;
-    }
-    else if (explore is LaundryRoom) {
-      return explore.uiColor;
-    }
-    else {
-      return null;
-    }
-  }
-
   void _selectMapExplore(dynamic explore) {
     if (explore != null) {
       _refresh(() { _selectedMapExplore = explore;});
@@ -1412,7 +1391,8 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
-  void _presentMapExploreDirections(BuildContext context) async {
+  void _onTapMapExploreDirections() {
+      Analytics().logSelect(target: 'Directions');
       dynamic explore = _selectedMapExplore;
       _mapExploreBarAnimationController.reverse().then((_){
         _refresh(() { _selectedMapExplore = null;});
@@ -1422,7 +1402,9 @@ class ExplorePanelState extends State<ExplorePanel>
       }
   }
   
-  void _presentMapExploreDetail(BuildContext context) {
+  void _onTapMapExploreDetail() {
+      Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
+
       dynamic explore = _selectedMapExplore;
       _mapExploreBarAnimationController.reverse().then((_){
         _refresh(() { _selectedMapExplore = null;});

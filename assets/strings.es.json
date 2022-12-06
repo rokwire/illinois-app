@@ -926,6 +926,8 @@
     "panel.explore.button.directions.hint":"",
     "panel.explore.button.details.title":"Detalles",
     "panel.explore.button.details.hint":"Ver detalles",
+    "panel.explore.button.bus_schedule.title":"Horario de autobuses",
+    "panel.explore.button.bus_schedule.hint":"Ver horario de autobuses",
     "panel.explore.label.spcial_offers.title":"Ofertas Especiales",
 
     "panel.explore.button.events.display_type.all.label": "Todos los eventos",
