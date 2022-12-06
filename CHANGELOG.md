@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.2.34] - 2022-12-06
 ### Added
 - Updates for plugin survey action and UI changes [#2638](https://github.com/rokwire/illinois-app/issues/2638)
 - Added favorite button to Map target popup & MTD bus schedule panel [#2633](https://github.com/rokwire/illinois-app/issues/2633).
