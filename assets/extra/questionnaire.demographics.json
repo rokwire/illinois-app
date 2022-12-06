@@ -20,10 +20,9 @@
 			{"id":"a07", "title":"22-25"},
 			{"id":"a08", "title":"26-30"},
 			{"id":"a09", "title":"31-35"},
-			{"id":"a10", "title":"31-35"},
-			{"id":"a11", "title":"36-40"},
-			{"id":"a12", "title":"41 or older"},
-			{"id":"a13", "title":"I'd rather not answer", "hint":"NA"}
+			{"id":"a10", "title":"36-40"},
+			{"id":"a11", "title":"41 or older"},
+			{"id":"a12", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
 		"id":"q02",
