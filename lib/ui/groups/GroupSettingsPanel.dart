@@ -81,6 +81,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
     _researchRequiresConsentConfirmation = StringUtils.isNotEmpty(_group?.researchConsentStatement) ;
 
+    if(_group!=null) {
+      _group?.settings ??= GroupSettings.initialDefaultSettings(); //Group back compatibility for older groups without settings -> initit with default settings.Not used. The BB return all false by default
+    }
     _initCategories();
     super.initState();
   }
@@ -186,6 +189,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             Visibility(visible: !_isResearchProject, child:
                               Padding(padding: EdgeInsets.only(top: 8), child:
                                 _buildAttendanceLayout(),
+                              )
+                            ),
+
+                            Visibility(visible: !_isResearchProject, child:
+                              Padding(padding: EdgeInsets.only(top: 8), child:
+                                _buildSettingsLayout(),
                               )
                             ),
 
@@ -1256,6 +1265,18 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             }
           }
       ),
+    );
+  }
+
+  //Settings
+  Widget _buildSettingsLayout() {
+    return GroupMemberSettingsLayout(
+        settings: _group?.settings,
+        onChanged: () {
+          if (mounted) {
+            setState(() {});
+          }
+        }
     );
   }
 
