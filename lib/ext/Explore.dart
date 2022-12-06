@@ -110,8 +110,14 @@ extension ExploreExt on Explore {
     else if (exploresType == "building") {
       return Localization().getStringEx('panel.explore.item.buildings.name', 'Buildings');
     }
+    else if (exploresType == "mtdstop") {
+      return Localization().getStringEx('panel.explore.item.mtd_stops.name', 'MTD Stops');
+    }
     else if (exploresType == "studentcourse") {
       return Localization().getStringEx('panel.explore.item.courses.name', 'Courses');
+    }
+    else if (exploresType == "appointment") {
+      return Localization().getStringEx('panel.explore.item.appointments.name', 'Appointments');
     }
     else {
       return Localization().getStringEx('panel.explore.item.unknown.name', 'Explores');

@@ -1427,16 +1427,15 @@ class ExplorePanelState extends State<ExplorePanel>
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
               AthleticsGameDetailPanel(game: explore)));
         }
-        else if(explore is Appointment) {
-          Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-              AppointmentDetailPanel(appointment: explore)));
-        }
         else if (explore is MTDStop) {
           Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: explore,)));
         }
+        else if(explore is Appointment) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: explore)));
+        }
         else {
           Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-            ExploreDetailPanel(explore: explore,initialLocationData: _locationData,)));
+            ExploreDetailPanel(explore: explore, initialLocationData: _locationData,)));
         }
       }
       else if (explore is List<Explore>) {

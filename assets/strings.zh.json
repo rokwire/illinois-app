@@ -978,7 +978,9 @@
 	"panel.explore.item.laundry.name":"洗衣店",
 	"panel.explore.item.places.name":"地点",
 	"panel.explore.item.buildings.name":"建築物",
+	"panel.explore.item.mtd_stops.name":"MTD 停止",
 	"panel.explore.item.courses.name":"培訓班",
+	"panel.explore.item.appointments.name":"約會",
 	"panel.explore.item.unknown.name":"探索",
 	"panel.explore.map.popup.title.format":"%d %s",
 

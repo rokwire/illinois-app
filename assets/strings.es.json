@@ -978,7 +978,9 @@
     "panel.explore.item.laundry.name":"Ropa sucia",
     "panel.explore.item.places.name":"Lugares",
     "panel.explore.item.buildings.name":"Edificios",
+    "panel.explore.item.mtd_stops.name":"MTD paradas",
     "panel.explore.item.courses.name":"Cursos",
+    "panel.explore.item.appointments.name":"Equipo",
     "panel.explore.item.unknown.name":"Explora",
     "panel.explore.map.popup.title.format":"%d %s",
 
