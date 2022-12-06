@@ -2818,6 +2818,9 @@ class EnabledToggleButton extends ToggleRibbonButton {
 
   @override
   bool get toggled => (enabled == true) && super.toggled;
+
+  @override
+  Widget? get rightIconImage =>Image.asset((toggled) ? 'images/switch-on.png' : 'images/switch-off.png');  //Workaround for blurry images
 }
 
 class GroupMemberSettingsLayout extends StatelessWidget{
