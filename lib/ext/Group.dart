@@ -118,13 +118,25 @@ extension GroupExt on Group {
 
   //Settings
   //Post
-  bool get isMemberAllowedToPost => (settings?.memberPostPreferences?.allowSendPost == true) && //If all 5 sub checks for posts are set to false by an admin, this is the same as the admin unchecking/false the main section category, in this case "Member Posts"
+  bool get isMemberAllowedToPost => /*true ||*//*TMP TODO*//* */(settings?.memberPostPreferences?.allowSendPost == true) && //If all 5 sub checks for posts are set to false by an admin, this is the same as the admin unchecking/false the main section category, in this case "Member Posts"
       ((settings?.memberPostPreferences?.sendPostToSpecificMembers == true) ||
           (settings?.memberPostPreferences?.sendPostToAdmins == true) ||
           (settings?.memberPostPreferences?.sendPostToAll == true) ||
           (settings?.memberPostPreferences?.sendPostReplies == true) ||
           (settings?.memberPostPreferences?.sendPostReactions == true)
       );
+
+  bool get isMemberAllowedToPostToSpecificMembers =>
+      (settings?.memberPostPreferences?.allowSendPost == true) &&
+      (settings?.memberPostPreferences?.sendPostToSpecificMembers == true);
+
+  bool get isMemberAllowedToReplyToPost =>
+      (settings?.memberPostPreferences?.allowSendPost == true) &&
+          (settings?.memberPostPreferences?.sendPostReplies == true);
+
+  bool get isMemberAllowedToSendReactionsToPost =>
+      (settings?.memberPostPreferences?.allowSendPost == true) &&
+          (settings?.memberPostPreferences?.sendPostReactions == true);
 
   //Member Info
   bool get isMemberAllowedToViewMembersInfo => (settings?.memberInfoPreferences?.allowMemberInfo == true) && //If all 5 sub checks for posts are set to false by an admin, this is the same as the admin unchecking/false the main section category, in this case allowMemberInfo/"View Other Members"

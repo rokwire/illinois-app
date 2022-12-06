@@ -1442,17 +1442,19 @@ class GroupPostReaction extends StatelessWidget {
   final String selectedIconPath;
   final String deselectedIconPath;
   final double iconSize;
+  final bool onTapEnabled;
+  final bool onLongPressEnabled;
 
   GroupPostReaction({required this.groupID, required this.post, required this.reaction,
-    this.accountIDs, required this.selectedIconPath, required this.deselectedIconPath, this.iconSize = 18});
+    this.accountIDs, required this.selectedIconPath, required this.deselectedIconPath, this.iconSize = 18, this.onTapEnabled = true, this.onLongPressEnabled = true});
 
   @override
   Widget build(BuildContext context) {
     bool selected = accountIDs?.contains(Auth2().accountId) ?? false;
     return Semantics(button: true, label: reaction,
         child: InkWell(
-            onTap: () => _onTapReaction(groupID, post, reaction),
-            onLongPress: () => _onLongPressReactions(context, accountIDs, groupID),
+            onTap: () => onTapEnabled ? _onTapReaction(groupID, post, reaction) : null,
+            onLongPress: () => onLongPressEnabled ? _onLongPressReactions(context, accountIDs, groupID): null,
             child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
