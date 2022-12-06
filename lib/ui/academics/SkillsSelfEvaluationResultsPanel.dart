@@ -222,7 +222,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   void _loadContentItems() {
-    Polls().loadContentItems(categories: ["Skills Self-Evaluation Results"]).then((content) {
+    Polls().loadContentItems(categories: ["bessi_results"]).then((content) {
       if (content?.isNotEmpty ?? false) {
         _resultsContentItems.clear();
         for (MapEntry<String, Map<String, dynamic>> item in content?.entries ?? []) {

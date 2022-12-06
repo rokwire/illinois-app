@@ -140,7 +140,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   }
 
   void _loadContentItems() {
-    Polls().loadContentItems(categories: ["Skills Self-Evaluation Info"]).then((content) {
+    Polls().loadContentItems(categories: ["bessi_info"]).then((content) {
       if (content?.isNotEmpty ?? false) {
         _infoContentItems.clear();
         for (MapEntry<String, Map<String, dynamic>> item in content?.entries ?? []) {
