@@ -126,6 +126,12 @@ extension GroupExt on Group {
           (settings?.memberPostPreferences?.sendPostReactions == true)
       );
 
+  bool get isMemberAllowedToCreatePost => (settings?.memberPostPreferences?.allowSendPost == true) && //If all the above 3 are set to false then a member will not see a + (create) option for posts as they cannot make a post.
+      ((settings?.memberPostPreferences?.sendPostToSpecificMembers == true) ||
+          (settings?.memberPostPreferences?.sendPostToAdmins == true) ||
+          (settings?.memberPostPreferences?.sendPostToAll == true)
+      );
+
   bool get isMemberAllowedToPostToSpecificMembers =>
       (settings?.memberPostPreferences?.allowSendPost == true) &&
       (settings?.memberPostPreferences?.sendPostToSpecificMembers == true);
