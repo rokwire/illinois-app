@@ -56,11 +56,12 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'),),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: SingleChildScrollView(
         child: SectionSlantHeader(
-          header: _buildHeader(),
+          headerWidget: _buildHeader(),
           slantColor: Styles().colors?.gradientColorPrimary,
+          slantPainterHeadingHeight: 0,
           backgroundColor: Styles().colors?.background,
           children: _buildContent(),
-          childrenPadding: const EdgeInsets.only(top: 180),
+          childrenPadding: EdgeInsets.zero,
         ),
       )),
       backgroundColor: Styles().colors?.background,
@@ -92,7 +93,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   Widget _buildScoresHeader() {
-    return Padding(padding: const EdgeInsets.only(top: 40, left: 28, right: 28, bottom: 32), child: Column(
+    return Padding(padding: const EdgeInsets.only(top: 40, left: 28, right: 28), child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Divider(color: Styles().colors?.surface, thickness: 2),
@@ -221,7 +222,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   void _loadContentItems() {
-    Polls().loadContentItems(categories: ["Skills Self-Evaluation Results"]).then((content) {
+    Polls().loadContentItems(categories: ["bessi_results"]).then((content) {
       if (content?.isNotEmpty ?? false) {
         _resultsContentItems.clear();
         for (MapEntry<String, Map<String, dynamic>> item in content?.entries ?? []) {

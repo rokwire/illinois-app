@@ -37,12 +37,14 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
     return Scaffold(
       appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results_detail.header.title', 'Skills Self-Evaluation'),),
       body: SingleChildScrollView(child: content != null ? SectionSlantHeader(
-        header: content!.header != null ? _buildHeader() : null,
+        headerWidget: content!.header != null ? _buildHeader() : null,
         slantColor: Styles().colors?.gradientColorPrimary,
+        slantPainterHeadingHeight: 0,
         backgroundColor: Styles().colors?.background,
         children: _buildContent(context),
-        childrenPadding: const EdgeInsets.only(top: 240, left: 24, right: 24, bottom: 24),
+        childrenPadding: const EdgeInsets.only(left: 24, right: 24, bottom: 24),
         childrenAlignment: CrossAxisAlignment.start,
+        allowOverlap: false,
       ) : Padding(padding: const EdgeInsets.all(24.0), child: Text(
         Localization().getStringEx("panel.skills_self_evaluation.results_detail.missing_content", "There is no detailed results content for this skill."),
         style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),

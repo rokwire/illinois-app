@@ -101,6 +101,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyAppointmentNotification,
       LocalNotifications.notifyLocalNotificationTapped,
       Alerts.notifyAlert,
+      ActionBuilder.notifyShowPanel,
       Events.notifyEventDetail,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
@@ -151,6 +152,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Alerts.notifyAlert) {
       Alerts.handleNotification(context, param);
+    }
+    else if (name == ActionBuilder.notifyShowPanel) {
+      _showPanel(param);
     }
     else if (name == FirebaseMessaging.notifyForegroundMessage){
       _onFirebaseForegroundMessage(param);
@@ -436,6 +440,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               child: Text(Localization().getStringEx('dialog.no.title', 'No')),
               onPressed: () => Navigator.of(context).pop())
         ]);
+  }
+
+  void _showPanel(Map<String, dynamic> content) {
+    switch (content['panel']) {
+      case "GuideDetailPanel":
+        _onGuideDetail(content);
+    }
   }
 
   void _onFirebaseForegroundMessage(Map<String, dynamic> content) {
