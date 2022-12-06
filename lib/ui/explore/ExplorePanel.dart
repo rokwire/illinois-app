@@ -171,7 +171,7 @@ class ExplorePanelState extends State<ExplorePanel>
       LocationServices.notifyStatusChanged,
       Localization.notifyStringsUpdated,
       NativeCommunicator.notifyMapSelectExplore,
-      NativeCommunicator.notifyMapClearExplore,
+      NativeCommunicator.notifyMapSelectLocation,
       NativeCommunicator.notifyMapSelectPOI,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
@@ -1879,8 +1879,8 @@ class ExplorePanelState extends State<ExplorePanel>
     else if (name == NativeCommunicator.notifyMapSelectExplore) {
       _onNativeMapSelectExplore(param);
     }
-    else if (name == NativeCommunicator.notifyMapClearExplore) {
-      _onNativeMapClearExplore(param);
+    else if (name == NativeCommunicator.notifyMapSelectLocation) {
+      _onNativeMapSelectLocation(param);
     }
     else if (name == NativeCommunicator.notifyMapSelectPOI) {
       _onNativeMapSelectPOI(param);
@@ -1960,7 +1960,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
   
-  void _onNativeMapClearExplore(Map<String, dynamic>? params) {
+  void _onNativeMapSelectLocation(Map<String, dynamic>? params) {
     int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
     if (_nativeMapController!.mapId == mapId) {
       LatLng? location = (params != null) ? LatLng.fromJson(JsonUtils.mapValue(params['location'])) : null;

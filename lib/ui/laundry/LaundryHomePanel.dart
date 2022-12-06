@@ -67,7 +67,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     NotificationService().subscribe(this, [
       LocationServices.notifyStatusChanged,
       NativeCommunicator.notifyMapSelectExplore,
-      NativeCommunicator.notifyMapClearExplore,
+      NativeCommunicator.notifyMapSelectLocation,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       FlexUI.notifyChanged,
     ]);
@@ -113,8 +113,8 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     else if (name == NativeCommunicator.notifyMapSelectExplore) {
       _onNativeMapSelectExplore(param);
     }
-    else if (name == NativeCommunicator.notifyMapClearExplore) {
-      _onNativeMapClearExplore(param);
+    else if (name == NativeCommunicator.notifyMapSelectLocation) {
+      _onNativeMapSelectLocation(param);
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateLocationServicesStatus();
@@ -167,7 +167,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     }
   }
 
-  void _onNativeMapClearExplore(Map<String, dynamic>? params) {
+  void _onNativeMapSelectLocation(Map<String, dynamic>? params) {
     int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
     if (_nativeMapController!.mapId == mapId) {
       _selectMapLaundry(null);
