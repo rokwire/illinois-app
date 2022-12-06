@@ -2847,149 +2847,164 @@ class GroupMemberSettingsLayout extends StatelessWidget{
     bool isGroupInfoAllowed = groupInfoSettings?.allowMemberInfo ?? true; // true by default
 
     //Info
-    preferenceWidgets.add(EnabledToggleButton(
-        enabled: true,
-        borderRadius: BorderRadius.zero,
-        label: Localization().getStringEx("panel.groups_create.settings.enable_member_info.label", "View Other Members"),
-        toggled: isGroupInfoAllowed,
-        onTap: (){_onSettingsTap(
-            changeSetting: (){ settings?.memberInfoPreferences?.allowMemberInfo =  !(settings?.memberInfoPreferences?.allowMemberInfo ?? true);}
-        );},
-        textStyle: isGroupInfoAllowed
-            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
-            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")));
-    preferenceWidgets.add(Row(children: [
-      Expanded(
-          child: Container(
-              color: Styles().colors!.white,
-              child: Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Column(children: [
-                    EnabledToggleButton(
-                        enabled: isGroupInfoAllowed,
-                        borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.groups_create.settings.allow_info_net_id.label", "View University ID (NetID)"), //TBD localize section
-                        toggled: (settings?.memberInfoPreferences?.viewMemberNetId ?? false),
-                        onTap: (){_onSettingsTap(
-                            changeSetting: (){if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberNetId = !(settings?.memberInfoPreferences?.viewMemberNetId ?? false);}}
-                        );},
-                        textStyle: isGroupInfoAllowed
-                            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    EnabledToggleButton(
-                        enabled: isGroupInfoAllowed,
-                        borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.groups_create.settings.allow_view_name.label", "View Name"),
-                        toggled: (settings?.memberInfoPreferences?.viewMemberName ?? false),
-                        onTap: (){
-                          _onSettingsTap(
-                              changeSetting: (){ if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberName =  !(settings?.memberInfoPreferences?.viewMemberName ?? false);}}
-                          );},
-                        textStyle: isGroupInfoAllowed
-                            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    EnabledToggleButton(
-                        enabled: isGroupInfoAllowed,
-                        borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.groups_create.settings.allow_view_email.label", "View Email"),
-                        toggled: (settings?.memberInfoPreferences?.viewMemberEmail ?? false),
-                        onTap: (){_onSettingsTap(
-                            changeSetting: (){  if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberEmail =  !(settings?.memberInfoPreferences?.viewMemberEmail ?? false);}}
-                        );},
-                        textStyle: isGroupInfoAllowed
-                            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    EnabledToggleButton(
-                        enabled: isGroupInfoAllowed,
-                        borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.groups_create.settings.allow_view_phone.label", "View Phone"),
-                        toggled: (settings?.memberInfoPreferences?.viewMemberPhone ?? false),
-                        onTap: (){_onSettingsTap(
-                            changeSetting: (){ if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberPhone =  !(settings?.memberInfoPreferences?.viewMemberPhone ?? false);}}
-                        );},
-                        textStyle: isGroupInfoAllowed
-                            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                  ]))))
-    ]));
+    preferenceWidgets.add(
+        Container(
+          padding: EdgeInsets.all(1),
+          decoration:  BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
+          child: Column(
+            children: [
+              EnabledToggleButton(
+                  enabled: true,
+                  borderRadius: BorderRadius.zero,
+                  label: Localization().getStringEx("panel.groups_create.settings.enable_member_info.label", "View Other Members"),
+                  toggled: isGroupInfoAllowed,
+                  onTap: (){_onSettingsTap(
+                      changeSetting: (){ settings?.memberInfoPreferences?.allowMemberInfo =  !(settings?.memberInfoPreferences?.allowMemberInfo ?? true);}
+                  );},
+                  textStyle: isGroupInfoAllowed
+                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
+                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")),
+              Row(children: [
+                Expanded(
+                    child: Container(
+                        color: Styles().colors!.white,
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Column(children: [
+                              EnabledToggleButton(
+                                  enabled: isGroupInfoAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.settings.allow_info_net_id.label", "View University ID (NetID)"), //TBD localize section
+                                  toggled: (settings?.memberInfoPreferences?.viewMemberNetId ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberNetId = !(settings?.memberInfoPreferences?.viewMemberNetId ?? false);}}
+                                  );},
+                                  textStyle: isGroupInfoAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupInfoAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.settings.allow_view_name.label", "View Name"),
+                                  toggled: (settings?.memberInfoPreferences?.viewMemberName ?? false),
+                                  onTap: (){
+                                    _onSettingsTap(
+                                        changeSetting: (){ if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberName =  !(settings?.memberInfoPreferences?.viewMemberName ?? false);}}
+                                    );},
+                                  textStyle: isGroupInfoAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupInfoAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.settings.allow_view_email.label", "View Email"),
+                                  toggled: (settings?.memberInfoPreferences?.viewMemberEmail ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){  if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberEmail =  !(settings?.memberInfoPreferences?.viewMemberEmail ?? false);}}
+                                  );},
+                                  textStyle: isGroupInfoAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupInfoAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.settings.allow_view_phone.label", "View Phone"),
+                                  toggled: (settings?.memberInfoPreferences?.viewMemberPhone ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberPhone =  !(settings?.memberInfoPreferences?.viewMemberPhone ?? false);}}
+                                  );},
+                                  textStyle: isGroupInfoAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                            ]))))
+              ])
+        ],
+      ),
+    ));
 
     preferenceWidgets.add(Container(height: 8,));
     //Post
-    preferenceWidgets.add(EnabledToggleButton(
-        enabled: true,
-        borderRadius: BorderRadius.zero,
-        label: Localization().getStringEx("panel.groups_create.settings.enable_post.label", "Member Posts"),
-        toggled: isGroupPostAllowed,
-        onTap: (){_onSettingsTap(
-            changeSetting: (){settings?.memberPostPreferences?.allowSendPost =  !(settings?.memberPostPreferences?.allowSendPost ?? true);}
-        );},
-        textStyle: isGroupPostAllowed
-            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
-            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")));
-    preferenceWidgets.add(Row(children: [
-      Expanded(
-          child: Container(
-              color: Styles().colors!.white,
-              child: Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Column(children: [
-                    EnabledToggleButton(
-                        enabled: isGroupPostAllowed,
-                        borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Send posts to specific members"), //TBD localize section
-                        toggled: (settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false),
-                        onTap: (){_onSettingsTap(
-                            changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToSpecificMembers =  !(settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false);}}
-                        );},
-                        textStyle: isGroupPostAllowed
-                            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    EnabledToggleButton(
-                        enabled: isGroupPostAllowed,
-                        borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.groups_create.posts_to_admins.label", "Send posts to admins"),
-                        toggled: (settings?.memberPostPreferences?.sendPostToAdmins ?? false),
-                        onTap: (){_onSettingsTap(
-                            changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAdmins =  !(settings?.memberPostPreferences?.sendPostToAdmins ?? false);}}
-                        );},
-                        textStyle: isGroupPostAllowed
-                            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    EnabledToggleButton(
-                        enabled: isGroupPostAllowed,
-                        borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.groups_create.posts_to_all.label", "Send posts to everyone"),
-                        toggled: (settings?.memberPostPreferences?.sendPostToAll ?? false),
-                        onTap: (){_onSettingsTap(
-                            changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAll =  !(settings?.memberPostPreferences?.sendPostToAll ?? false);}}
-                        );},
-                        textStyle: isGroupPostAllowed
-                            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    EnabledToggleButton(
-                        enabled: isGroupPostAllowed,
-                        borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.groups_create.send_replies.label", "Send replies"),
-                        toggled: (settings?.memberPostPreferences?.sendPostReplies ?? false),
-                        onTap: (){_onSettingsTap(
-                            changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReplies =  !(settings?.memberPostPreferences?.sendPostReplies ?? false);}}
-                        );},
-                        textStyle: isGroupPostAllowed
-                            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    EnabledToggleButton(
-                        enabled: isGroupPostAllowed,
-                        borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Reactions (emojis) to posts"),
-                        toggled: (settings?.memberPostPreferences?.sendPostReactions ?? false),
-                        onTap: (){_onSettingsTap(
-                            changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReactions =  !(settings?.memberPostPreferences?.sendPostReactions ?? false);}}
-                        );},
-                        textStyle: isGroupPostAllowed
-                            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                  ]))))
-    ]));
+    preferenceWidgets.add(Container(
+        padding: EdgeInsets.all(1),
+        decoration:  BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
+        child: Column(
+            children: [
+              EnabledToggleButton(
+                  enabled: true,
+                  borderRadius: BorderRadius.zero,
+                  label: Localization().getStringEx("panel.groups_create.settings.enable_post.label", "Member Posts"),
+                  toggled: isGroupPostAllowed,
+                  onTap: (){_onSettingsTap(
+                      changeSetting: (){settings?.memberPostPreferences?.allowSendPost =  !(settings?.memberPostPreferences?.allowSendPost ?? true);}
+                  );},
+                  textStyle: isGroupPostAllowed
+                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
+                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")),
+              Row(children: [
+                Expanded(
+                    child: Container(
+                        color: Styles().colors!.white,
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Column(children: [
+                              EnabledToggleButton(
+                                  enabled: isGroupPostAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Send posts to specific members"), //TBD localize section
+                                  toggled: (settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToSpecificMembers =  !(settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false);}}
+                                  );},
+                                  textStyle: isGroupPostAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupPostAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_admins.label", "Send posts to admins"),
+                                  toggled: (settings?.memberPostPreferences?.sendPostToAdmins ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAdmins =  !(settings?.memberPostPreferences?.sendPostToAdmins ?? false);}}
+                                  );},
+                                  textStyle: isGroupPostAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupPostAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_all.label", "Send posts to everyone"),
+                                  toggled: (settings?.memberPostPreferences?.sendPostToAll ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAll =  !(settings?.memberPostPreferences?.sendPostToAll ?? false);}}
+                                  );},
+                                  textStyle: isGroupPostAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupPostAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.send_replies.label", "Send replies"),
+                                  toggled: (settings?.memberPostPreferences?.sendPostReplies ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReplies =  !(settings?.memberPostPreferences?.sendPostReplies ?? false);}}
+                                  );},
+                                  textStyle: isGroupPostAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupPostAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Reactions (emojis) to posts"),
+                                  toggled: (settings?.memberPostPreferences?.sendPostReactions ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReactions =  !(settings?.memberPostPreferences?.sendPostReactions ?? false);}}
+                                  );},
+                                  textStyle: isGroupPostAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                            ]))))
+                  ])
+    ])));
 
     return Container(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: preferenceWidgets));
   }

@@ -1270,13 +1270,16 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   //Settings
   Widget _buildSettingsLayout() {
-    return GroupMemberSettingsLayout(
-        settings: _group?.settings,
-        onChanged: () {
-          if (mounted) {
-            setState(() {});
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: GroupMemberSettingsLayout(
+          settings: _group?.settings,
+          onChanged: () {
+            if (mounted) {
+              setState(() {});
+            }
           }
-        }
+      )
     );
   }
 

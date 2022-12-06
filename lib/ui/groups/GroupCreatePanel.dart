@@ -920,13 +920,16 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   //Settings
   Widget _buildSettingsLayout() {
-    return GroupMemberSettingsLayout(
-        settings: _group?.settings,
-        onChanged: () {
-          if (mounted) {
-            setState(() {});
-          }
-        }
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: GroupMemberSettingsLayout(
+            settings: _group?.settings,
+            onChanged: () {
+              if (mounted) {
+                setState(() {});
+              }
+            }
+        )
     );
   }
 
