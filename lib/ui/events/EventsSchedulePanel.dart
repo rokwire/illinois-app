@@ -105,7 +105,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       LocationServices.notifyStatusChanged,
       Localization.notifyStringsUpdated,
       NativeCommunicator.notifyMapSelectExplore,
-      NativeCommunicator.notifyMapClearExplore,
+      NativeCommunicator.notifyMapSelectLocation,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       FlexUI.notifyChanged,
     ]);
@@ -945,8 +945,8 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     else if (name == NativeCommunicator.notifyMapSelectExplore) {
       _onNativeMapSelectExplore(param);
     }
-    else if (name == NativeCommunicator.notifyMapClearExplore) {
-      _onNativeMapClearExplore(param);
+    else if (name == NativeCommunicator.notifyMapSelectLocation) {
+      _onNativeMapSelectLocation(param);
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateLocationServicesStatus();
@@ -993,7 +993,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
   }
 
-  void _onNativeMapClearExplore(Map<String, dynamic>? params) {
+  void _onNativeMapSelectLocation(Map<String, dynamic>? params) {
     int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
     if (_nativeMapController!.mapId == mapId) {
       _selectMapExplore(null);

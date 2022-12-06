@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.gson.Gson;
 import com.google.maps.android.ui.IconGenerator;
 
@@ -159,6 +160,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         googleMap.setOnMarkerClickListener(this::onMarkerClicked);
         googleMap.setOnMapClickListener(this::onMapClick);
         googleMap.setOnCameraIdleListener(this::onCameraIdle);
+        googleMap.setOnPoiClickListener(this::onPOIClicked);
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(Constants.DEFAULT_INITIAL_CAMERA_POSITION, Constants.DEFAULT_CAMERA_ZOOM)));
         showExploresOnMap();
         relocateMyLocationButton();
@@ -375,11 +377,38 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         JSONObject jsonArgs = new JSONObject();
         try {
             jsonArgs.put("mapId", mapId);
+            
+            JSONObject jsonLocation = new JSONObject();
+            jsonLocation.put("latitude", latLng.latitude);
+            jsonLocation.put("longitude", latLng.latitude);
+            jsonArgs.put("location", jsonLocation);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         String methodArguments = jsonArgs.toString();
-        MainActivity.invokeFlutterMethod("map.explore.clear", methodArguments);
+        MainActivity.invokeFlutterMethod("map.location.select", methodArguments);
+    }
+
+    private void onPOIClicked(PointOfInterest poi) {
+        JSONObject jsonArgs = new JSONObject();
+        try {
+            jsonArgs.put("mapId", mapId);
+            
+            JSONObject jsonPOI = new JSONObject();
+            jsonPOI.put("placeID", poi.placeId);
+            jsonPOI.put("name", poi.name);
+
+            JSONObject jsonLocation = new JSONObject();
+            jsonLocation.put("latitude", poi.latLng.latitude);
+            jsonLocation.put("longitude", poi.latLng.latitude);
+            jsonPOI.put("location", jsonLocation);
+            jsonArgs.put("poi", jsonPOI);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String methodArguments = jsonArgs.toString();
+        MainActivity.invokeFlutterMethod("map.location.select", methodArguments);
     }
 
     private void onCameraIdle() {

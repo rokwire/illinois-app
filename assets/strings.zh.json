@@ -926,7 +926,9 @@
 	"panel.explore.button.directions.hint":"",
 	"panel.explore.button.details.title":"详细信息",
 	"panel.explore.button.details.hint":"查看详细信息",
-	"panel.explore.label.spcial_offers.title":"特价销售",
+	"panel.explore.button.bus_schedule.title":"巴士時刻表",
+	"panel.explore.button.bus_schedule.hint":"查看巴士時刻表",
+"panel.explore.label.spcial_offers.title":"特价销售",
 
 	"panel.explore.button.events.display_type.all.label": "所有活動",
 	"panel.explore.button.events.display_type.multiple.label": "Multi-day events",
@@ -976,9 +978,12 @@
 	"panel.explore.item.events.name":"活动",
 	"panel.explore.item.dinings.name":"用餐选项",
 	"panel.explore.item.laundry.name":"洗衣店",
+	"panel.explore.item.games.name":"遊戲",
 	"panel.explore.item.places.name":"地点",
 	"panel.explore.item.buildings.name":"建築物",
+	"panel.explore.item.mtd_stops.name":"MTD 停止",
 	"panel.explore.item.courses.name":"培訓班",
+	"panel.explore.item.appointments.name":"約會",
 	"panel.explore.item.unknown.name":"探索",
 	"panel.explore.map.popup.title.format":"%d %s",
 

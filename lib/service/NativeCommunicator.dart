@@ -27,7 +27,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class NativeCommunicator with Service {
   
   static const String notifyMapSelectExplore  = "edu.illinois.rokwire.nativecommunicator.map.explore.select";
-  static const String notifyMapClearExplore   = "edu.illinois.rokwire.nativecommunicator.map.explore.clear";
+  static const String notifyMapSelectLocation   = "edu.illinois.rokwire.nativecommunicator.map.location.select";
   
   static const String notifyMapRouteStart  = "edu.illinois.rokwire.nativecommunicator.map.route.start";
   static const String notifyMapRouteFinish = "edu.illinois.rokwire.nativecommunicator.map.route.finish";
@@ -233,8 +233,8 @@ class NativeCommunicator with Service {
       case "map.explore.select":
         _notifyMapSelectExplore(call.arguments);
         break;
-      case "map.explore.clear":
-        _notifyMapClearExplore(call.arguments);
+      case "map.location.select":
+        _notifyMapLocationSelect(call.arguments);
         break;
       
       case "map.route.start":
@@ -263,8 +263,8 @@ class NativeCommunicator with Service {
     NotificationService().notify(notifyMapSelectExplore, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
   }
   
-  void _notifyMapClearExplore(dynamic arguments) {
-    NotificationService().notify(notifyMapClearExplore, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
+  void _notifyMapLocationSelect(dynamic arguments) {
+    NotificationService().notify(notifyMapSelectLocation, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
   }
 
   void _notifyMapSelectPOI(dynamic arguments) {

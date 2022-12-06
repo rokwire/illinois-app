@@ -927,6 +927,8 @@
     "panel.explore.button.directions.hint":"",
     "panel.explore.button.details.title":"Details",
     "panel.explore.button.details.hint":"View details",
+    "panel.explore.button.bus_schedule.title":"Bus Schedule",
+    "panel.explore.button.bus_schedule.hint":"View bus schedule",
     "panel.explore.label.spcial_offers.title":"Special Offers",
 
     "panel.explore.button.events.display_type.all.label": "All Events",
@@ -977,9 +979,12 @@
     "panel.explore.item.events.name":"Events",
     "panel.explore.item.dinings.name":"Dining Options",
     "panel.explore.item.laundry.name":"Laundry",
+    "panel.explore.item.games.name":"Games",
     "panel.explore.item.places.name":"Places",
     "panel.explore.item.buildings.name":"Buildings",
+    "panel.explore.item.mtd_stops.name":"MTD Stops",
     "panel.explore.item.courses.name":"Courses",
+    "panel.explore.item.appointments.name":"Appointments",
     "panel.explore.item.unknown.name":"Explores",
     "panel.explore.map.popup.title.format":"%d %s",
 
