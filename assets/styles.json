@@ -411,6 +411,7 @@
     "panel.skills_self_evaluation.auth_dialog.link": {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
     "panel.skills_self_evaluation.content.title":  {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimaryVariant"},
     "panel.skills_self_evaluation.content.body":  {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimaryVariant"},
+    "panel.skills_self_evaluation.content.body.small":  {"font_family": "ProximaNovaRegular", "size": 12.0, "color": "fillColorPrimaryVariant"},
     "panel.skills_self_evaluation.content.link":  {"font_family": "ProximaNovaRegular", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"},
     "panel.skills_self_evaluation.content.link.fat":  {"font_family": "ProximaNovaBold", "size": 16.0, "color": "fillColorPrimaryVariant", "decoration": "underline", "decoration_color":  "fillColorSecondary"}
   },

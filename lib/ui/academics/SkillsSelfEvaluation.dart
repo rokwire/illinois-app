@@ -285,6 +285,36 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   }
 }
 
+class SkillsSelfEvaluationProfile {
+  final String id;
+  final String category;
+  final String key;
+  final Map<String, dynamic> params;
+  final Map<String, num> scores;
+
+  SkillsSelfEvaluationProfile({required this.id, required this.category, required this.key, required this.params, required this.scores});
+
+  factory SkillsSelfEvaluationProfile.fromJson(Map<String, dynamic> json) {
+    Map<String, num> scores = {};
+    Map<String, dynamic>? scoresJson = JsonUtils.mapValue(json['scores']);
+    if (scoresJson != null) {
+      for (MapEntry<String, dynamic> item in scoresJson.entries) {
+        if (item.value is num) {
+          scores[item.key] = item.value;
+        }
+      }
+    }
+
+    return SkillsSelfEvaluationProfile(
+      id: JsonUtils.stringValue(json['id']) ?? '',
+      category: JsonUtils.stringValue(json['category']) ?? '',
+      key: JsonUtils.stringValue(json['key']) ?? '',
+      params: JsonUtils.mapValue(json['params']) ?? {},
+      scores: scores,
+    );
+  }
+}
+
 class SkillsSelfEvaluationContent {
   final String id;
   final String category;
@@ -292,9 +322,9 @@ class SkillsSelfEvaluationContent {
   final SkillsSelfEvaluationHeader? header;
   final List<SkillsSelfEvaluationSection>? sections;
   final Map<String, SkillsSelfEvaluationLink>? links;
-  final Map<String, dynamic>? data;
+  final Map<String, dynamic>? params;
 
-  SkillsSelfEvaluationContent({required this.id, required this.category, required this.key, this.header, this.sections, this.links, this.data});
+  SkillsSelfEvaluationContent({required this.id, required this.category, required this.key, this.header, this.sections, this.links, this.params});
 
   factory SkillsSelfEvaluationContent.fromJson(Map<String, dynamic> json) {
     Map<String, SkillsSelfEvaluationLink>? links;
@@ -315,7 +345,7 @@ class SkillsSelfEvaluationContent {
       header: JsonUtils.mapOrNull((json) => SkillsSelfEvaluationHeader.fromJson(json), json['header']),
       sections: SkillsSelfEvaluationSection.listFromJson(JsonUtils.listValue(json['sections'])),
       links: links,
-      data: JsonUtils.mapValue(json['data']),
+      params: JsonUtils.mapValue(json['params']),
     );
   }
 }

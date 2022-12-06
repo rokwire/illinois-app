@@ -37,9 +37,10 @@ class SkillsSelfEvaluationResultsPanel extends StatefulWidget {
 
 class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationResultsPanel> {
   Map<String, SkillsSelfEvaluationContent> _resultsContentItems = {};
+  List<SkillsSelfEvaluationProfile> _profileContentItems = [];
   List<SurveyResponse> _responses = [];
   SurveyResponse? _latestResponse;
-  DateTime? _selectedComparisonDate;
+  String _comparisonResponseId = 'none';
 
   @override
   void initState() {
@@ -101,12 +102,12 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
           Flexible(flex: 3, fit: FlexFit.tight, child: Text(_latestResponse != null ? DateTimeUtils.localDateTimeToString(_latestResponse!.dateTaken, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
           Flexible(flex: 3, fit: FlexFit.tight, child: DropdownButtonHideUnderline(child:
-            DropdownButton<DateTime?>(
+            DropdownButton<String>(
               icon: Image.asset('images/icon-down.png', color: Styles().colors?.surface),
               isExpanded: true,
               style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
               items: _buildResponseDateDropDownItems(),
-              value: _selectedComparisonDate,
+              value: _comparisonResponseId,
               onChanged: _onResponseDateDropDownChanged,
               dropdownColor: Styles().colors?.textBackground,
             ),
@@ -117,7 +118,22 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   List<Widget> _buildContent() {
-    Iterable<String> responseSections = _resultsContentItems['section_score_titles']?.data?.keys ?? [];
+    Iterable<String> responseSections = _resultsContentItems['section_titles']?.params?.keys ?? [];
+    Map<String, num>? comparisonScores;
+    SkillsSelfEvaluationProfile? selectedProfile;
+    if (_comparisonResponseId != 'none') {
+      try {
+        selectedProfile = _profileContentItems.firstWhere((element) => element.key == _comparisonResponseId);
+        comparisonScores = selectedProfile.scores;
+      } catch (e) {
+        try {
+          comparisonScores = _responses.firstWhere((element) => element.id == _comparisonResponseId).survey.stats?.percentages;
+        } catch (e) {
+          debugPrint(e.toString());
+        }
+      }
+    }
+
     return [
       ListView.builder(
         shrinkWrap: true,
@@ -126,24 +142,14 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
         itemCount: responseSections.length,
         itemBuilder: (BuildContext context, int index) {
           String section = responseSections.elementAt(index);
-          String title = _resultsContentItems['section_score_titles']?.data?[section].toString() ?? '';
+          String title = _resultsContentItems['section_titles']?.params?[section].toString() ?? '';
           num? mostRecentScore = _latestResponse?.survey.stats?.percentages[section];
           if (mostRecentScore != null) {
             mostRecentScore = (mostRecentScore*100).round();
           }
-          num? comparisonScore;
-          try {
-            if (_selectedComparisonDate?.isAtSameMomentAs(DateTime(0)) ?? false) {
-              dynamic studentAverage = _resultsContentItems['student_averages']?.data?[section];
-              if (studentAverage is num) {
-                comparisonScore = studentAverage;
-              }
-            } else {
-              comparisonScore = _responses.firstWhere((element) => element.dateTaken.isAtSameMomentAs(_selectedComparisonDate ?? DateTime(0))).survey.stats?.percentages[section];
-              comparisonScore = (comparisonScore!*100).round();
-            }
-          } catch (e) {
-            debugPrint(e.toString());
+          num? comparisonScore = comparisonScores?[section];
+          if (comparisonScore != null) {
+            comparisonScore = (comparisonScore*100).round();
           }
 
           return Padding(padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
@@ -157,44 +163,55 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
                   Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Image.asset('images/chevron-right.png', color: Styles().colors?.fillColorSecondary))),
                 ],)),
               )
-            ));
+            )
+          );
       }),
-      Padding(padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 32), child: Text.rich(
-        TextSpan(
-          children: [
-            TextSpan(
-              text: Localization().getStringEx('panel.skills_self_evaluation.results.student_average.term', 'Student Average'),
-              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
-            ),
-            TextSpan(
-              text: Localization().getStringEx('panel.skills_self_evaluation.results.student_average.description', ' = Average score among approximately 750 students at Colby College and the University of Illinois.'),
-              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
-            ),
-          ],
-        ),
-      ),),
-      Padding(padding: const EdgeInsets.only(bottom: 32), child: GestureDetector(onTap: _onTapClearAllScores, child:
-        Text("Clear All Scores", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
+      Padding(padding: const EdgeInsets.only(top: 4), child: GestureDetector(onTap: _onTapClearAllScores, child:
+        Text(Localization().getStringEx('panel.skills_self_evaluation.results.more_info.description', '*Tap score cards for more info'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body.small'), textAlign: TextAlign.left,
+      ),)),
+      Visibility(
+        visible: selectedProfile?.params['name'] is String && selectedProfile?.params['definition'] is String,
+        child: Padding(padding: const EdgeInsets.only(top: 32, left: 32, right: 32), child: Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                text: selectedProfile?.params['name'] ?? '',
+                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
+              ),
+              TextSpan(
+                text: ' = ${selectedProfile?.params['definition'] ?? ''}',
+                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+              ),
+            ],
+          ),
+        ),)
+      ),
+      Padding(padding: const EdgeInsets.symmetric(vertical: 32), child: GestureDetector(onTap: _onTapClearAllScores, child:
+        Text(Localization().getStringEx('panel.skills_self_evaluation.results.clear_scores.label', 'Clear All Scores'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
       ),)),
     ];
   }
 
-  List<DropdownMenuItem<DateTime?>> _buildResponseDateDropDownItems() {
-    List<DropdownMenuItem<DateTime?>> items = <DropdownMenuItem<DateTime?>>[
-      DropdownMenuItem<DateTime?>(
-        value: null,
+  List<DropdownMenuItem<String>> _buildResponseDateDropDownItems() {
+    List<DropdownMenuItem<String>> items = [
+      DropdownMenuItem<String>(
+        value: 'none',
         child: Text('NONE', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,),
       ),
-      DropdownMenuItem<DateTime?>(
-        value: DateTime(0),
-        child: Text('STU. AVG.', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,),
-      ),
     ];
+    for (SkillsSelfEvaluationProfile profile in _profileContentItems) {
+      if (profile.params['abbreviation'] is String) {
+        items.add(DropdownMenuItem<String>(
+          value: profile.key,
+          child: Text(profile.params['abbreviation'], style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,),
+        ));
+      }
+    }
     
     for (SurveyResponse response in _responses) {
       String dateString = DateTimeUtils.localDateTimeToString(response.dateTaken, format: 'MM/dd/yy h:mma') ?? '';
-      items.add(DropdownMenuItem<DateTime>(
-        value: response.dateTaken,
+      items.add(DropdownMenuItem<String>(
+        value: response.id,
         child: Text(dateString, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,),
       ));
     }
@@ -222,11 +239,19 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   void _loadContentItems() {
-    Polls().loadContentItems(categories: ["bessi_results"]).then((content) {
+    Polls().loadContentItems(categories: ["bessi_results", "bessi_profile"]).then((content) {
       if (content?.isNotEmpty ?? false) {
         _resultsContentItems.clear();
+        _profileContentItems.clear();
         for (MapEntry<String, Map<String, dynamic>> item in content?.entries ?? []) {
-          _resultsContentItems[item.key] = SkillsSelfEvaluationContent.fromJson(item.value);
+          switch (item.value['category']) {
+            case 'bessi_results': 
+              _resultsContentItems[item.key] = SkillsSelfEvaluationContent.fromJson(item.value);
+              break;
+            case 'bessi_profile':
+              _profileContentItems.add(SkillsSelfEvaluationProfile.fromJson(item.value));
+              break;
+          }
         }
 
         if (mounted) {
@@ -241,9 +266,9 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     _loadContentItems();
   }
 
-  void _onResponseDateDropDownChanged(DateTime? value) {
+  void _onResponseDateDropDownChanged(String? value) {
     setState(() {
-      _selectedComparisonDate = value;
+      _comparisonResponseId = value ?? 'none';
     });
   }
 
