@@ -31,6 +31,7 @@ import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/explore/ExploreSearchPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -173,6 +174,7 @@ class ExplorePanelState extends State<ExplorePanel>
       NativeCommunicator.notifyMapClearExplore,
       NativeCommunicator.notifyMapSelectPOI,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
       FlexUI.notifyChanged,
       Styles.notifyChanged,
       StudentCourses.notifyTermsChanged,
@@ -1284,53 +1286,62 @@ class ExplorePanelState extends State<ExplorePanel>
       ) : Container(),
       Positioned(bottom: _mapExploreBarAnimationController.value, left: 0, right: 0, child:
         Container(height: MapBarHeight, decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: exploreColor!, width: 2, style: BorderStyle.solid), bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1, style: BorderStyle.solid),),), child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-              Text(title ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary, )),
-              (descriptionWidget != null) ?
-              Row(children: <Widget>[
-                Text(description ?? "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
-                descriptionWidget
-              ]) :
-              Text(description ?? "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
-              Container(height: 8,),
-              Row(children: <Widget>[
-                _userLocationEnabled() ? Row(children: <Widget>[
+          Stack(children: [
+            Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Padding(padding: EdgeInsets.only(right: 10), child:
+                  Text(title ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary, )),
+                ),
+                (descriptionWidget != null) ?
+                  Row(children: <Widget>[
+                    Text(description ?? "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
+                    descriptionWidget
+                  ]) :
+                  Text(description ?? "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
+                Container(height: 8,),
+                Row(children: <Widget>[
+                  _userLocationEnabled() ? Row(children: <Widget>[
+                    SizedBox(width: buttonWidth, child:
+                      RoundedButton(
+                        label: Localization().getStringEx('panel.explore.button.directions.title', 'Directions'),
+                        hint: Localization().getStringEx('panel.explore.button.directions.hint', ''),
+                        backgroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        fontSize: 16.0,
+                        textColor: Styles().colors!.fillColorPrimary,
+                        borderColor: Styles().colors!.fillColorSecondary,
+                        onTap: () {
+                          Analytics().logSelect(target: 'Directions');
+                          _presentMapExploreDirections(context);
+                        }
+                      ),
+                    ),
+                    Container(width: 12,),
+                  ]) : Container(),
                   SizedBox(width: buttonWidth, child:
                     RoundedButton(
-                      label: Localization().getStringEx('panel.explore.button.directions.title', 'Directions'),
-                      hint: Localization().getStringEx('panel.explore.button.directions.hint', ''),
+                      label: detailsLabel,
+                      hint: detailsHint,
                       backgroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       fontSize: 16.0,
                       textColor: Styles().colors!.fillColorPrimary,
                       borderColor: Styles().colors!.fillColorSecondary,
                       onTap: () {
-                        Analytics().logSelect(target: 'Directions');
-                        _presentMapExploreDirections(context);
+                        Analytics().logSelect(target: 'Details');
+                        _presentMapExploreDetail(context);
                       }
                     ),
                   ),
-                  Container(width: 12,),
-                ]) : Container(),
-                SizedBox(width: buttonWidth, child:
-                  RoundedButton(
-                    label: detailsLabel,
-                    hint: detailsHint,
-                    backgroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    fontSize: 16.0,
-                    textColor: Styles().colors!.fillColorPrimary,
-                    borderColor: Styles().colors!.fillColorSecondary,
-                    onTap: () {
-                      Analytics().logSelect(target: 'Details');
-                      _presentMapExploreDetail(context);
-                    }
-                  ),
-                ),
-              ],),
-            ]),
-          ),
+                ],),
+              ]),
+            ),
+            (_selectedMapExplore is Favorite) ?
+              Align(alignment: Alignment.topRight, child:
+                FavoriteButton(favorite: (_selectedMapExplore as Favorite), style: FavoriteIconStyle.Button, padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),),
+              ) :
+              Container(),
+          ],),
         ),
       )
     ]);
@@ -1900,6 +1911,9 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateLocationServicesStatus();
+    }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      _refresh(() { });
     }
     else if (name == FlexUI.notifyChanged) {
       _updateLocationServicesStatus();
