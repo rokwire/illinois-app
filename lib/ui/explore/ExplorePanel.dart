@@ -1287,10 +1287,12 @@ class ExplorePanelState extends State<ExplorePanel>
           Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Text(title ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary, )),
+              (descriptionWidget != null) ?
               Row(children: <Widget>[
-                Text((description != null) ? description : "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
-                descriptionWidget ?? Container()
-              ]),
+                Text(description ?? "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
+                descriptionWidget
+              ]) :
+              Text(description ?? "", overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black38,)),
               Container(height: 8,),
               Row(children: <Widget>[
                 _userLocationEnabled() ? Row(children: <Widget>[
@@ -1358,12 +1360,10 @@ class ExplorePanelState extends State<ExplorePanel>
         }
       }
       if (routeWidgets.isNotEmpty) {
-        return Expanded(child:
-          Padding(padding: EdgeInsets.only(left: 8), child:
-            SingleChildScrollView(scrollDirection: Axis.horizontal, child:
-              Row(children: routeWidgets,)
-            ),
-          )
+        return Padding(padding: EdgeInsets.only(left: 8), child:
+          SingleChildScrollView(scrollDirection: Axis.horizontal, child:
+            Row(children: routeWidgets,)
+          ),
         );
       }
       else {
