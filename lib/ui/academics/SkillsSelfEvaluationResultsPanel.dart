@@ -56,7 +56,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'),),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: SingleChildScrollView(
         child: SectionSlantHeader(
-          header: _buildHeader(),
+          headerWidget: _buildHeader(),
           slantColor: Styles().colors?.gradientColorPrimary,
           slantPainterHeadingHeight: 0,
           backgroundColor: Styles().colors?.background,

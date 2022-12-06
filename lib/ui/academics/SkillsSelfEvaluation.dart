@@ -62,7 +62,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   @override
   Widget build(BuildContext context) {
     return SectionSlantHeader(
-        header: _buildHeader(),
+        headerWidget: _buildHeader(),
         slantColor: Styles().colors?.gradientColorPrimary,
         slantPainterHeadingHeight: 0,
         backgroundColor: Styles().colors?.background,
