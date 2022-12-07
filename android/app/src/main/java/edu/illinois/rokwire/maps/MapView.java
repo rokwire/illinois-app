@@ -71,6 +71,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     private HashMap exploreOptions;
     private List<Object> displayExplores;
     private List<Marker> markers;
+    private Marker markMarker;
 
     private IconGenerator iconGenerator;
     private View markerLayoutView;
@@ -194,6 +195,27 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             double longitude = Utils.Map.getValueFromPath(target, "longitude", Constants.DEFAULT_INITIAL_CAMERA_POSITION.longitude);
             double zoom = Utils.Map.getValueFromPath(target, "zoom", Constants.DEFAULT_CAMERA_ZOOM);
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(new LatLng(latitude, longitude), (float) zoom)));
+        }
+    }
+
+    public void markPoi(HashMap explore) {
+        if (mapLayoutPassed) {
+            if (explore != null) {
+                MarkerOptions markerOptions = Utils.Explore.constructMarkerOptions(getContext(), explore, markerLayoutView, markerGroupLayoutView, iconGenerator);
+                if (markerOptions != null) {
+                    if (markMarker != null) {
+                        markMarker.remove();
+                    }
+                    Marker marker = googleMap.addMarker(markerOptions);
+                    JSONObject tagJson = Utils.Explore.constructMarkerTagJson(getContext(), marker.getTitle(), explore);
+                    marker.setTag(tagJson);
+                    markMarker = marker;
+                }
+            }
+            else if (markMarker != null) {
+                markMarker.remove();
+                markMarker = null;
+            }
         }
     }
 
@@ -395,7 +417,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             jsonArgs.put("mapId", mapId);
             
             JSONObject jsonPOI = new JSONObject();
-            jsonPOI.put("placeID", poi.placeId);
+            jsonPOI.put("placeId", poi.placeId);
             jsonPOI.put("name", poi.name);
 
             JSONObject jsonLocation = new JSONObject();
