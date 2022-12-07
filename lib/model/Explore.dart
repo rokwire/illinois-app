@@ -1,4 +1,5 @@
 
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -6,7 +7,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 //////////////////////////////
 /// ExplorePOI
 
-class ExplorePOI with Explore {
+class ExplorePOI with Explore implements Favorite {
   final String? placeId;
   final String? name;
   final ExploreLocation? location;
@@ -76,6 +77,50 @@ class ExplorePOI with Explore {
     (name?.hashCode ?? 0) ^
     (location?.hashCode ?? 0);
 
+  static List<ExplorePOI>? listFromJson(List<dynamic>? jsonList) {
+    List<ExplorePOI>? values;
+    if (jsonList != null) {
+      values = <ExplorePOI>[];
+      for (dynamic jsonEntry in jsonList) {
+        ListUtils.add(values, ExplorePOI.fromJson(JsonUtils.mapValue(jsonEntry)));
+      }
+    }
+    return values;
+  }
+
+  static List<dynamic>? listToJson(List<ExplorePOI>? values) {
+    List<dynamic>? jsonList;
+    if (values != null) {
+      jsonList = <dynamic>[];
+      for (ExplorePOI value in values) {
+        ListUtils.add(jsonList, value.toJson());
+      }
+    }
+    return jsonList;
+  }
+
+  static List<ExplorePOI>? listFromString(Iterable<String>? stringList) {
+    List<ExplorePOI>? values;
+    if (stringList != null) {
+      values = <ExplorePOI>[];
+      for (String stringEntry in stringList) {
+        ListUtils.add(values, ExplorePOI.fromString(stringEntry));
+      }
+    }
+    return values;
+  }
+
+  static List<String>? listToString(List<ExplorePOI>? values) {
+    List<String>? jsonList;
+    if (values != null) {
+      jsonList = <String>[];
+      for (ExplorePOI value in values) {
+        ListUtils.add(jsonList, value.toString());
+      }
+    }
+    return jsonList;
+  }
+
   // Explore
   @override String?   get exploreId               => toString();
   @override String?   get exploreTitle            => StringUtils.isNotEmpty(name) ? name : Localization().getStringEx("panel.explore.item.location.name", "Location");
@@ -95,6 +140,11 @@ class ExplorePOI with Explore {
       json.containsKey('name') &&
       ExploreLocation.canJson(JsonUtils.mapValue(json['location']));
   }
+
+  // Favorite
+  static const String favoriteKeyName = "poiLocations";
+  @override String get favoriteKey => favoriteKeyName;
+  @override String? get favoriteId => exploreId;
 }
 
 class ExplorePOIJsonHandler implements ExploreJsonHandler {

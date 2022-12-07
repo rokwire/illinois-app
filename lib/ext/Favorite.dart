@@ -3,11 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Guide.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
@@ -52,6 +54,9 @@ extension FavoriteExt on Favorite {
     else if (this is InboxMessage) {
       return (this as InboxMessage).subject;
     }
+    else if (this is ExplorePOI) {
+      return (this as ExplorePOI).exploreTitle;
+    }
     else {
       return null;
     }
@@ -75,6 +80,9 @@ extension FavoriteExt on Favorite {
     }
     else if (this is InboxMessage) {
       return (this as InboxMessage).body;
+    }
+    else if (this is ExplorePOI) {
+      return (this as ExplorePOI).exploreLocationDescription;
     }
     else {
       return null;
@@ -108,13 +116,16 @@ extension FavoriteExt on Favorite {
     else if (this is LaundryRoom) {
       return Image.asset('images/icon-online.png', excludeFromSemantics: true, color: favoriteDetailTextColor, colorBlendMode: BlendMode.srcIn,);
     }
+    else if (this is ExplorePOI) {
+      return Image.asset('images/icon-location.png', excludeFromSemantics: true);
+    }
     else {
       return null;
     }
   }
 
   Image? favoriteStarIcon({required bool selected}) {
-    if ((this is Event) || (this is Dining) || (this is LaundryRoom) || (this is InboxMessage)|| (this is MTDStop)) {
+    if ((this is Event) || (this is Dining) || (this is LaundryRoom) || (this is InboxMessage) || (this is MTDStop)|| (this is ExplorePOI)) {
       return Image.asset(selected ? 'images/icon-star-orange.png' : 'images/icon-star-white.png', excludeFromSemantics: true);
     }
     else if ((this is Game) || (this is News) || (this is GuideFavorite)) {
@@ -147,6 +158,9 @@ extension FavoriteExt on Favorite {
     else if (this is InboxMessage) {
       return Styles().colors?.fillColorSecondary;
     }
+    else if (this is ExplorePOI) {
+      return Styles().colors?.accentColor3;
+    }
     else {
       return Styles().colors?.fillColorSecondary;
     }
@@ -173,6 +187,9 @@ extension FavoriteExt on Favorite {
     }
     else if (this is GuideFavorite) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as GuideFavorite).id,)));
+    }
+    else if (this is ExplorePOI) {
+      NativeCommunicator().launchExploreMapDirections(target: (this as ExplorePOI));
     }
     else if (this is InboxMessage) {
       SettingsNotificationsContentPanel.launchMessageDetail(this as InboxMessage);
