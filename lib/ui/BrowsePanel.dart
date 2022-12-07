@@ -649,8 +649,6 @@ class _BrowseEntry extends StatelessWidget {
   bool get _canVideoTutorials => (_videoTutorialsCount > 0);
 
   void _onTapVideoTutorials(BuildContext context) {
-    Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString());
-    
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.video_tutorial', 'Video Tutorial not available while offline.'));
     }
@@ -659,12 +657,14 @@ class _BrowseEntry extends StatelessWidget {
       if (videoTutorials?.length == 1) {
         Video? videoTutorial = videoTutorials?.first;
         if (videoTutorial != null) {
+          Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString(), attributes: videoTutorial.analyticsAttributes);
           Navigator.push(
               context,
               CupertinoPageRoute(
                   settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
         }
       } else {
+        Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString());
         Navigator.push(
             context,
             CupertinoPageRoute(

@@ -225,7 +225,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
   }
 
   void _onTapVideo(BuildContext context, Video video) {
-    Analytics().logSelect(target: 'Video', source: runtimeType.toString());
+    Analytics().logSelect(target: 'Video', source: runtimeType.toString(), attributes: video.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: video)));
   }
 

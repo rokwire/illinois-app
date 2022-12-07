@@ -282,6 +282,9 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAttributeGuideSection           = "guide_section";
   static const String   LogAttributeLocation               = "location";
 
+  // Video Attributes
+  static const String   LogAttributeVideoId                = "video_id";
+  static const String   LogAttributeVideoTitle             = "video_title";
 
   // Data
 

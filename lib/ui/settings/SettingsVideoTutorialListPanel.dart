@@ -81,7 +81,7 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
   }
 
   void _onTapVideoTutorial(Video video) {
-    Analytics().logSelect(target: 'Video Tutorial', source: widget.runtimeType.toString());
+    Analytics().logSelect(target: 'Video Tutorial', source: widget.runtimeType.toString(), attributes: video.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: video)));
   }
 }

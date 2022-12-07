@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -25,6 +26,10 @@ class Video {
   final String? ccUrl;
 
   Video({this.id, this.title, this.videoUrl, this.thumbUrl, this.ccUrl});
+
+  Map<String, dynamic> get analyticsAttributes {
+    return {Analytics.LogAttributeVideoId: id, Analytics.LogAttributeVideoTitle: title};
+  }
 
   static Video? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
