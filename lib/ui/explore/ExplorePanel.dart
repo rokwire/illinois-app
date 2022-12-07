@@ -92,6 +92,8 @@ class _ExploreSortKey extends OrdinalSortKey {
 
 class ExplorePanel extends StatefulWidget {
 
+  static const String notifyMapSelect    = "edu.illinois.rokwire.explore.select";
+
   final ExploreItem? initialItem;
   final EventsDisplayType? eventsDisplayType;
   final ExploreFilter? initialFilter;
@@ -184,6 +186,7 @@ class ExplorePanelState extends State<ExplorePanel>
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
       StudentCourses.notifyCachedCoursesChanged,
+      ExplorePanel.notifyMapSelect,
     ]);
 
 
@@ -1962,6 +1965,15 @@ class ExplorePanelState extends State<ExplorePanel>
     else if (name == StudentCourses.notifyCachedCoursesChanged) {
       if ((param == null) || (StudentCourses().displayTermId == param)) {
         _loadExplores();
+      }
+    }
+    else if (name == ExplorePanel.notifyMapSelect) {
+      if (mounted) {
+        setState(() {
+          _displayType = ListMapDisplayType.Map;
+          _mapAllowed = true;
+          _selectedItem = param;
+        });
       }
     }
   }

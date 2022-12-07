@@ -28,6 +28,7 @@ import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 extension FavoriteExt on Favorite {
@@ -158,9 +159,6 @@ extension FavoriteExt on Favorite {
     else if (this is InboxMessage) {
       return Styles().colors?.fillColorSecondary;
     }
-    else if (this is ExplorePOI) {
-      return Styles().colors?.accentColor3;
-    }
     else {
       return Styles().colors?.fillColorSecondary;
     }
@@ -189,7 +187,9 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: (this as GuideFavorite).id,)));
     }
     else if (this is ExplorePOI) {
-      NativeCommunicator().launchExploreMapDirections(target: (this as ExplorePOI));
+      NativeCommunicator().launchExploreMapDirections(target: (this as ExplorePOI), options: {
+        'travelMode': 'transit'
+      });
     }
     else if (this is InboxMessage) {
       SettingsNotificationsContentPanel.launchMessageDetail(this as InboxMessage);
@@ -216,6 +216,9 @@ extension FavoriteExt on Favorite {
     }
     else if (lowerCaseKey == MTDStop.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all)));
+    }
+    else if (lowerCaseKey == ExplorePOI.favoriteKeyName.toLowerCase()) {
+      NotificationService().notify(ExplorePanel.notifyMapSelect, ExploreItem.MTDStops);
     }
     else if (lowerCaseKey == GuideFavorite.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));

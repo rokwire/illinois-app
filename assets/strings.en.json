@@ -367,6 +367,7 @@
 
     "panel.browse.entry.mtd.all_mtd_stops.title": "All Stops",
     "panel.browse.entry.mtd.my_mtd_stops.title": "My Stops",
+    "panel.browse.entry.mtd.my_mtd_destinations.title": "My Destinations",
 
     "panel.browse.entry.my.my_groups.title": "My Groups",
     "panel.browse.entry.my.canvas_courses.title": "My Gies Canvas Courses",
@@ -378,6 +379,7 @@
     "panel.browse.entry.my.my_news.title": "My Athletics News",
     "panel.browse.entry.my.my_laundry.title": "My Laundry",
     "panel.browse.entry.my.my_mtd_stops.title": "My MTD Stops",
+    "panel.browse.entry.my.my_mtd_destinations.title": "My MTD Destinations",
     "panel.browse.entry.my.my_inbox.title": "My Notifications",
     "panel.browse.entry.my.my_campus_guide.title": "My Campus Guide",
     "panel.browse.entry.my.wellness_resources.title": "My Wellness Resources",
@@ -1178,6 +1180,7 @@
     "panel.saved.label.news": "My Athletics News",
     "panel.saved.label.laundry": "My Laundry",
     "panel.saved.label.mtd_stops": "My MTD Stops",
+    "panel.saved.label.mtd_destinations": "My MTD Destinations",
     "panel.saved.label.campus_guide": "My Campus Guide",
 
     "panel.saved.notifications.label": "Don’t miss an event! Get reminders of upcoming events.",
@@ -2801,6 +2804,7 @@
     "widget.home.favorites.title.news": "My Athletics News",
     "widget.home.favorites.title.laundry": "My Laundry",
     "widget.home.favorites.title.mtd_stops": "My MTD Stops",
+    "widget.home.favorites.title.mtd_destinations": "My MTD Destinations",
     "widget.home.favorites.title.campus_guide": "My Campus Guide",
 
     "widget.home.favorites.message.offline.events": "My Events are not available while offline.",
@@ -2808,6 +2812,8 @@
     "widget.home.favorites.message.offline.athletics": "My Athletics Events are not available while offline.",
     "widget.home.favorites.message.offline.news": "My Athletics News are not available while offline.",
     "widget.home.favorites.message.offline.laundry": "My Laundry are not available while offline.",
+    "widget.home.favorites.message.offline.mtd_stops": "My MTD Stops are not available while offline.",
+    "widget.home.favorites.message.offline.mtd_destinations": "My MTD Destinations are not available while offline.",
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide are not available while offline.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
@@ -2816,6 +2822,7 @@
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
     "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here.",
     "widget.home.favorites.message.empty.mtd_stops": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MTD Stops</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.mtd_destinations": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MTD Destinations</b></a> for quick access here.",
     "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
 
     "widget.home.favorites.all.title": "View All",
@@ -2824,6 +2831,8 @@
     "widget.home.favorites.all.hint.athletics": "Tap to view all favorite athletics events",
     "widget.home.favorites.all.hint.news": "Tap to view all favorite athletics news",
     "widget.home.favorites.all.hint.laundry": "Tap to view all favorite laundries",
+    "widget.home.favorites.all.hint.mtd_stops": "Tap to view all favorite MTD stops",
+    "widget.home.favorites.all.hint.mtd_destinations": "Tap to view all favorite MTD destinations",
     "widget.home.favorites.all.hint.campus_guide": "Tap to view all favorite campus guide articles",
 
 	"widget.home.wellness_resources.header.label": "My Wellness Resources",

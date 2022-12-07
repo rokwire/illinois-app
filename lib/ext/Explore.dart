@@ -21,7 +21,6 @@ import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:geolocator/geolocator.dart' as Core;
-import 'package:rokwire_plugin/utils/utils.dart';
 
 extension ExploreExt on Explore {
 
@@ -217,5 +216,5 @@ extension ExploreExt on Explore {
 }
 
 extension ExplorePOIExt on ExplorePOI {
-  Color? get uiColor => StringUtils.isNotEmpty(placeId) ? Styles().colors?.eventColor : Styles().colors?.mtdColor;
+  Color? get uiColor => Styles().colors?.accentColor3;
 }
