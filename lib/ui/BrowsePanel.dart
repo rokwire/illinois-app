@@ -649,7 +649,7 @@ class _BrowseEntry extends StatelessWidget {
   bool get _canVideoTutorials => (_videoTutorialsCount > 0);
 
   void _onTapVideoTutorials(BuildContext context) {
-    Analytics().logSelect(target: "Video Tutorials");
+    Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString());
     
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.video_tutorial', 'Video Tutorial not available while offline.'));

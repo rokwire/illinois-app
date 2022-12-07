@@ -136,7 +136,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
 
   void _onTapVideo() {
     if (_video != null) {
-      Analytics().logSelect(target: 'Video Tutorial');
+      Analytics().logSelect(target: 'Video Tutorial', source: widget.runtimeType.toString());
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: _video!)));
     }
   }
