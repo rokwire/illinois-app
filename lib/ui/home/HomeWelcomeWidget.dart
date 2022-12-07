@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -30,7 +31,7 @@ class HomeWelcomeWidget extends StatefulWidget {
 }
 
 class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
-  Map<String, dynamic>? _video;
+  Video? _video;
   bool? _visible;
 
   @override
@@ -63,7 +64,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
               Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials['strings']);
               String? videoTitle = Localization().getContentString(strings, videoId);
               video['title'] = videoTitle;
-              _video = video;
+              _video = Video.fromJson(video);
               break;
             }
           }
@@ -108,8 +109,6 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
     if (_video == null) {
       return Container();
     }
-    String? title = JsonUtils.stringValue(_video!['title']);
-    String? imageUrl = JsonUtils.stringValue(_video!['image_url']);
     final Widget emptyImagePlaceholder = Container(height: 102);
     return GestureDetector(
         onTap: _onTapVideo,
@@ -119,16 +118,16 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
               Stack(alignment: Alignment.center, children: [
                 Container(
                     foregroundDecoration: BoxDecoration(color: Styles().colors!.blackTransparent06),
-                    child: StringUtils.isNotEmpty(imageUrl)
+                    child: StringUtils.isNotEmpty(_video!.thumbUrl)
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(4),
-                                child: Image.network(imageUrl!,
+                                child: Image.network(_video!.thumbUrl!,
                                     loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                               return (loadingProgress == null) ? child : emptyImagePlaceholder;
                             }))
                         : emptyImagePlaceholder),
                 Column(children: [
-                  Text(StringUtils.ensureNotEmpty(title), style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1.1),),
+                  Text(StringUtils.ensureNotEmpty(_video!.title), style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1.1),),
                   VideoPlayButton(hasBackground: false)
                 ])
               ])

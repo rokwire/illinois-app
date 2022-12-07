@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -54,7 +55,7 @@ class HomeVideoTutorialsWidget extends StatefulWidget {
 }
 
 class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> implements NotificationsListener {
-  List<dynamic>? _videos;
+  List<Video>? _videos;
   DateTime? _pausedDateTime;
 
   PageController? _pageController;
@@ -118,15 +119,10 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
   void _load() {
     Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
     if (videoTutorials != null) {
-      List<dynamic>? videos = JsonUtils.listValue(videoTutorials['videos']);
-      if (CollectionUtils.isNotEmpty(videos)) {
+      List<dynamic>? videoJsonList = JsonUtils.listValue(videoTutorials['videos']);
+      if (CollectionUtils.isNotEmpty(videoJsonList)) {
         Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials['strings']);
-        for (dynamic video in videos!) {
-          String? videoId = video['id'];
-          String? videoTitle = Localization().getContentString(strings, videoId);
-          video['title'] = videoTitle;
-        }
-        _videos = videos;
+        _videos = Video.listFromJson(jsonList: videoJsonList, contentStrings: strings);
       }
     }
   }
@@ -165,13 +161,11 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
 
     if (_videosCount > 1) {
       for (int index = 0; index < _videosCount; index++) {
-        Map<String, dynamic>? video = JsonUtils.mapValue(_videos![index]);
-        if (video != null) {
-          pages.add(Padding(
-              key: _contentKeys[JsonUtils.stringValue(video['id']) ?? ''] ??= GlobalKey(),
-              padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
-              child: _buildVideoEntry(video)));
-        }
+        Video video = _videos![index];
+        pages.add(Padding(
+            key: _contentKeys[StringUtils.ensureNotEmpty(video.id)] ??= GlobalKey(),
+            padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8),
+            child: _buildVideoEntry(video)));
       }
 
       if (_pageController == null) {
@@ -207,9 +201,9 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
     ]);
   }
 
-  Widget _buildVideoEntry(Map<String, dynamic> video) {
-    String? videoTitle = JsonUtils.stringValue(video['title']);
-    String? imageUrl = JsonUtils.stringValue(video['image_url']);
+  Widget _buildVideoEntry(Video video) {
+    String? videoTitle = video.title;
+    String? imageUrl = video.thumbUrl;
     bool hasImage = StringUtils.isNotEmpty(imageUrl);
     final Widget emptyImagePlaceholder = Container(height: 102);
     return Container(
@@ -259,8 +253,8 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
     return minContentHeight ?? 0;
   }
 
-  void _onTapVideo(Map<String, dynamic> video) {
-    Analytics().logSelect(target: 'Video Tutorial');
+  void _onTapVideo(Video video) {
+    Analytics().logSelect(target: 'Video Tutorial', source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: video)));
   }
 
