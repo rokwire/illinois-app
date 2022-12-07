@@ -22,6 +22,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
@@ -420,6 +421,15 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeFavoritesWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position, favoriteKey: MTDStop.favoriteKeyName, );
       } else {
         return HomeFavoritesWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController, favoriteKey: MTDStop.favoriteKeyName);
+      }
+    }
+    else if (code == 'my_mtd_destinations') {
+      if (title) {
+        return HomeFavoritesWidget.titleFromKey(favoriteKey: ExplorePOI.favoriteKeyName);
+      } else if (handle) {
+        return HomeFavoritesWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position, favoriteKey: ExplorePOI.favoriteKeyName, );
+      } else {
+        return HomeFavoritesWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController, favoriteKey: ExplorePOI.favoriteKeyName);
       }
     }
     else if (code == 'safer') {

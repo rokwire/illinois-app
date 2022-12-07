@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Implemented MTD Destinations [#2633](https://github.com/rokwire/illinois-app/issues/2633).
 - Log events when user plays video [#2650](https://github.com/rokwire/illinois-app/issues/2650).
 
 ## [4.2.34] - 2022-12-06

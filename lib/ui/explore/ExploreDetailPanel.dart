@@ -19,6 +19,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -45,10 +46,7 @@ class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttribu
   ExploreDetailPanel({this.explore, this.initialLocationData, this.browseGroupId});
 
   static Widget? contentPanel({Explore? explore, Position? initialLocationData, String? browseGroupId}) {
-    if (explore is Dining) {
-      return ExploreDiningDetailPanel(dining: explore, initialLocationData: initialLocationData);
-    }
-    else if (explore is Event) {
+    if (explore is Event) {
       if (explore.isGameEvent) {
         return AthleticsGameDetailPanel(gameId: explore.speaker, sportName: explore.registrationLabel,);
       }
@@ -59,8 +57,14 @@ class ExploreDetailPanel extends StatelessWidget implements AnalyticsPageAttribu
         return ExploreEventDetailPanel(event: explore, initialLocationData: initialLocationData, browseGroupId: browseGroupId, );
       }
     }
+    else if (explore is Dining) {
+      return ExploreDiningDetailPanel(dining: explore, initialLocationData: initialLocationData);
+    }
     else if (explore is LaundryRoom) {
       return LaundryRoomDetailPanel(room: explore);
+    }
+    else if (explore is Game) {
+      return AthleticsGameDetailPanel(game: explore);
     }
     else if (explore is Building) {
       return ExploreBuildingDetailPanel(building: explore);

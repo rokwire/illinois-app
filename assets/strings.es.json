@@ -366,6 +366,7 @@
 
     "panel.browse.entry.mtd.laundry.all_mtd_stops": "Todas las paradas",
     "panel.browse.entry.mtd.my_mtd_stops.title": "Mis paradas",
+    "panel.browse.entry.mtd.my_mtd_destinations.title": "Mis destinos",
 
     "panel.browse.entry.my.my_groups.title": "Mis grupos",
     "panel.browse.entry.my.canvas_courses.title": "Mis cursos Gies Canvas",
@@ -377,6 +378,7 @@
     "panel.browse.entry.my.my_news.title": "Mis noticias de atletismo",
     "panel.browse.entry.my.my_laundry.title": "Mi colada",
     "panel.browse.entry.my.my_mtd_stops.title": "Mi MTD se detiene",
+    "panel.browse.entry.my.my_mtd_destinations.title": "Mis destinos MTD",
     "panel.browse.entry.my.my_inbox.title": "Mis Notificaciones",
     "panel.browse.entry.my.my_campus_guide.title": "Guía de mi campus",
     "panel.browse.entry.my.wellness_resources.title": "Mis recursos de bienestar",
@@ -984,11 +986,16 @@
     "panel.explore.item.mtd_stops.name":"MTD paradas",
     "panel.explore.item.courses.name":"Cursos",
     "panel.explore.item.appointments.name":"Equipo",
+    "panel.explore.item.pois.name":"Puntos de interés",
+    "panel.explore.item.poi.name":"Punto de interés",
+    "panel.explore.item.location.name":"Ubicación",
     "panel.explore.item.unknown.name":"Explora",
     "panel.explore.map.popup.title.format":"%d %s",
 
     "panel.explore.missing.appointments.msg":"Actualmente no tiene próximas citas en persona vinculadas dentro de la aplicación {{app_title}}.",
     "panel.explore.hide.appointments.msg":"No hay nada que mostrar ya que ha elegido no mostrar citas pasadas o futuras.",
+    "panel.explore.directions.na.msg":"You need to enable location services in order to get navigation directions.",
+    "panel.explore.details.na.msg":"Details are not available for custom points of interests.",
 
     "panel.explore_list.header.title":"Explorar",
 
@@ -1172,6 +1179,7 @@
     "panel.saved.label.news": "My Athletics News",
     "panel.saved.label.laundry": "My Laundry",
     "panel.saved.label.mtd_stops": "My MTD Stops",
+    "panel.saved.label.mtd_destinations": "My MTD Destinations",
     "panel.saved.label.campus_guide": "My Campus Guide",
 
     "panel.saved.notifications.label": "¡No te pierdas un evento! Reciba recordatorios de los próximos eventos!",
@@ -2794,6 +2802,7 @@
     "widget.home.favorites.title.news": "Mis noticias de atletismo",
     "widget.home.favorites.title.laundry": "Mi Colada",
     "widget.home.favorites.title.mtd_stops": "Mi MTD se detiene",
+    "widget.home.favorites.title.mtd_destinations": "Mis destinos MTD",
     "widget.home.favorites.title.campus_guide": "Guía de Mi Campus",
 
     "widget.home.favorites.message.offline.events": "Mis Eventos no están disponibles sin conexión.",
@@ -2801,6 +2810,8 @@
     "widget.home.favorites.message.offline.athletics": "Mis eventos de atletismo no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.news": "My Athletics News no está disponible sin conexión.",
     "widget.home.favorites.message.offline.laundry": "Mi Lavandería no está disponible sin conexión.",
+    "widget.home.favorites.message.offline.mtd_stops": "Mis paradas MTD no están disponibles sin conexión.",
+    "widget.home.favorites.message.offline.mtd_destinations": "Mis destinos MTD no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide no está disponible sin conexión.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
@@ -2809,6 +2820,7 @@
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
     "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here.",
     "widget.home.favorites.message.empty.mtd_stops": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MTD Stops</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.mtd_destinations": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MTD Destinations</b></a> for quick access here.",
     "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
 
     "widget.home.favorites.all.title": "Ver todo",
@@ -2817,6 +2829,8 @@
     "widget.home.favorites.all.hint.athletics": "Toque para ver todos los eventos de atletismo favoritos",
     "widget.home.favorites.all.hint.news": "Toque para ver todas las noticias de atletismo favoritas",
     "widget.home.favorites.all.hint.laundry": "Toca para ver todas las lavanderías favoritas",
+    "widget.home.favorites.all.hint.mtd_stops": "Toque para ver todas las paradas MTD favoritas",
+    "widget.home.favorites.all.hint.mtd_destinations": "Toque para ver todos los destinos MTD favoritos",
     "widget.home.favorites.all.hint.campus_guide": "Toque para ver todos los artículos favoritos de la guía del campus",
 
 	"widget.home.wellness_resources.header.label": "Mis recursos de bienestar",

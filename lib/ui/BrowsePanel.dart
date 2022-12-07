@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/Video.dart';
@@ -502,6 +503,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "mtd.all_mtd_stops":              _onTapMTDStops(context); break;
       case "mtd.my_mtd_stops":               _onTapMyMTDStops(context); break;
+      case "mtd.my_mtd_destinations":        _onTapMyMTDDestinations(context); break;
 
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
       case "campus_guide.campus_safety_resources": _onTapCampusSafetyResources(context); break;
@@ -549,6 +551,7 @@ class _BrowseEntry extends StatelessWidget {
       case "my.my_groups":                   _onTapMyGroups(context); break;
       case "my.my_laundry":                  _onTapMyLaundry(context); break;
       case "my.my_mtd_stops":                _onTapMyMTDStops(context); break;
+      case "my.my_mtd_destinations":         _onTapMyMTDDestinations(context); break;
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
       case "my.my_appointments":             _onTapMyAppointments(context); break;
 
@@ -967,6 +970,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapMyMTDStops(BuildContext context) {
     Analytics().logSelect(target: "My MTD Stops");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.my,)));
+  }
+
+  void _onTapMyMTDDestinations(BuildContext context) {
+    Analytics().logSelect(target: "My MTD Destinations");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [ExplorePOI.favoriteKeyName]); } ));
   }
 
   void _onTapMyCampusGuide(BuildContext context) {
