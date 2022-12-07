@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:illinois/model/Video.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
@@ -71,14 +72,25 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
         _showCc(true);
         _startCcHidingTimer();
         if (mounted) {
-          _controller!.play(); // Automatically play video after initialization
+          _playVideo();// Automatically play video after initialization
         }
       });
     }
   }
 
   void _disposeVideoPlayer() {
+    _logAnalyticsVideoEvent(event: Analytics.LogAttributeVideoEventStopped);
     _controller?.dispose();
+  }
+
+  void _playVideo() {
+    _logAnalyticsVideoEvent(event: Analytics.LogAttributeVideoEventStarted);
+    _controller!.play();
+  }
+
+  void _pauseVideo() {
+    _logAnalyticsVideoEvent(event: Analytics.LogAttributeVideoEventPaused);
+    _controller!.pause();
   }
 
   Future<ClosedCaptionFile> _loadClosedCaptions() async {
@@ -197,10 +209,10 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
       return;
     }
     if (_isPlaying) {
-      _controller?.pause();
+      _pauseVideo();
       _showCc(true);
     } else {
-      _controller?.play();
+      _playVideo();
       _startCcHidingTimer();
     }
     setState(() {});
@@ -238,6 +250,15 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
         }
       }
     }
+  }
+
+  void _logAnalyticsVideoEvent({required String event}) {
+    Analytics().logVideo(
+        videoId: widget.videoTutorial.id,
+        videoTitle: widget.videoTutorial.title,
+        videoEvent: event,
+        duration: _controller?.value.duration.inSeconds,
+        position: _controller?.value.position.inSeconds);
   }
 
   bool get _isPlaying {
