@@ -926,7 +926,7 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 
 - (NSInteger)buildTravelModeSegments {
 	NSInteger selectedTravelModeIndex = 0;
-	NSString *selectedTravelMode = [[NSUserDefaults standardUserDefaults] inaStringForKey:self.travelModeKey defaults:self.travelModeDefault];
+	NSString *selectedTravelMode = [self.parameters inaStringForKey:@"travelMode"] ?: [[NSUserDefaults standardUserDefaults] inaStringForKey:self.travelModeKey defaults:self.travelModeDefault];
 	for (NSInteger index = 0; index < _nsTravelModes.count; index++) {
 		UIImage *segmentImage = nil;
 		NSString *travelMode = [_nsTravelModes objectAtIndex:index];

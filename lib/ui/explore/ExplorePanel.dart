@@ -1385,7 +1385,7 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _selectMapExplore(dynamic explore) {
     if (explore != null) {
-      _nativeMapController?.markPOI((explore is ExplorePOI) ? explore : null);
+      _nativeMapController?.markPOI(((explore is ExplorePOI) && StringUtils.isEmpty(explore.placeId)) ? explore : null);
       _refresh(() { _selectedMapExplore = explore; });
       _updateSelectedMapStopRoutes();
       _mapExploreBarAnimationController.forward();
@@ -1405,7 +1405,17 @@ class ExplorePanelState extends State<ExplorePanel>
       dynamic explore = _selectedMapExplore;
       _selectMapExplore(null);
       if (explore != null) {
-        NativeCommunicator().launchExploreMapDirections(target: explore);
+        String? travelMode;
+        if (explore is List) {
+          dynamic exploreEntry = (0 < explore.length) ? explore.first : null;
+          travelMode = ((exploreEntry is MTDStop) || (exploreEntry is ExplorePOI)) ? 'transit' : null;
+        }
+        else {
+          travelMode = ((explore is MTDStop) || (explore is ExplorePOI)) ? 'transit' : null;
+        }
+        NativeCommunicator().launchExploreMapDirections(target: explore, options: (travelMode != null) ? {
+          'travelMode': travelMode
+        } : null);
       }
     }
     else {
