@@ -202,7 +202,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
     List<String>? academicUiComponents = JsonUtils.stringListValue(FlexUI()['academics']);
     if (academicUiComponents?.contains('skills_self_evaluation') == true) {
       if (Config().bessiSurveyID != null && Auth2().isOidcLoggedIn && Auth2().privacyMatch(4)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults,)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget())));
       } else {
         Widget infoTextWidget = Text.rich(
           TextSpan(
@@ -255,6 +255,17 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
 
   void _onTapSettings() {
     SettingsHomeContentPanel.present(context, content: SettingsContent.assessments);
+  }
+
+  Widget _buildOfflineWidget() {
+    return Padding(padding: EdgeInsets.all(28), child:
+      Center(child:
+        Text(
+          Localization().getStringEx('panel.skills_self_evaluation.get_started.offline.error.msg', 'Skills Self-Evaluation is not available while offline.'),
+          textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title')
+        )
+      ),
+    );
   }
 
   void _onTapResults() {

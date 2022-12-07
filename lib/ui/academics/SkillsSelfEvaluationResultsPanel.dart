@@ -19,6 +19,7 @@ import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/survey.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
@@ -61,13 +62,27 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           slantColor: Styles().colors?.gradientColorPrimary,
           slantPainterHeadingHeight: 0,
           backgroundColor: Styles().colors?.background,
-          children: _buildContent(),
+          children: Connectivity().isOffline ? _buildOfflineMessage() : _buildContent(),
           childrenPadding: EdgeInsets.zero,
+          allowOverlap: !Connectivity().isOffline,
         ),
       )),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: null,
     );
+  }
+
+  List<Widget> _buildOfflineMessage() {
+    return [
+      Padding(padding: EdgeInsets.all(28), child:
+        Center(child:
+          Text(
+            Localization().getStringEx('panel.skills_self_evaluation.results.offline.error.msg', 'Results not available while offline.'),
+            textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title')
+          )
+        ),
+      ),
+    ];
   }
 
   Widget _buildHeader() {

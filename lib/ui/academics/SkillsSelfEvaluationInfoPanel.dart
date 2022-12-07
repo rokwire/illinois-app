@@ -32,9 +32,20 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.info.header.title', 'Skills Self-Evaluation'),),
-      body: SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(24.0), child: _buildContent(context))),
+      body: SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(24.0), child: content == null ? _buildUnavailableMessage() : _buildContent(context))),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: null,
+    );
+  }
+
+  Widget _buildUnavailableMessage() {
+    return Padding(padding: EdgeInsets.all(28), child:
+      Center(child:
+        Text(
+          Localization().getStringEx('panel.skills_self_evaluation.info.unavailable.error.msg', 'Information content not available.'),
+          textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title')
+        )
+      ),
     );
   }
 

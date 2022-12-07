@@ -46,7 +46,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
         childrenAlignment: CrossAxisAlignment.start,
         allowOverlap: false,
       ) : Padding(padding: const EdgeInsets.all(24.0), child: Text(
-        Localization().getStringEx("panel.skills_self_evaluation.results_detail.missing_content", "There is no detailed results content for this skill."),
+        Localization().getStringEx("panel.skills_self_evaluation.results_detail.unavailable", "Detailed results content for this skill not available."),
         style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
         textAlign: TextAlign.center,
       ))),
