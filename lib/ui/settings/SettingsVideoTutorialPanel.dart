@@ -19,6 +19,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
+import 'package:illinois/model/Video.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
@@ -29,7 +31,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 
 class SettingsVideoTutorialPanel extends StatefulWidget {
-  final Map<String, dynamic> videoTutorial;
+  final Video videoTutorial;
 
   SettingsVideoTutorialPanel({required this.videoTutorial});
 
@@ -60,7 +62,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
   }
 
   void _initVideoPlayer() {
-    String? tutorialUrl = widget.videoTutorial['video_url'];
+    String? tutorialUrl = widget.videoTutorial.videoUrl;
     if (StringUtils.isNotEmpty(tutorialUrl)) {
       _controller = VideoPlayerController.network(tutorialUrl!, closedCaptionFile: _loadClosedCaptions());
       _controller!.addListener(_checkVideoStateChanged);
@@ -70,19 +72,30 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
         _showCc(true);
         _startCcHidingTimer();
         if (mounted) {
-          _controller!.play(); // Automatically play video after initialization
+          _playVideo();// Automatically play video after initialization
         }
       });
     }
   }
 
   void _disposeVideoPlayer() {
+    _logAnalyticsVideoEvent(event: Analytics.LogAttributeVideoEventStopped);
     _controller?.dispose();
+  }
+
+  void _playVideo() {
+    _logAnalyticsVideoEvent(event: Analytics.LogAttributeVideoEventStarted);
+    _controller!.play();
+  }
+
+  void _pauseVideo() {
+    _logAnalyticsVideoEvent(event: Analytics.LogAttributeVideoEventPaused);
+    _controller!.pause();
   }
 
   Future<ClosedCaptionFile> _loadClosedCaptions() async {
     String? fileContents;
-    String? closedCaptionsUrl = widget.videoTutorial['cc_url'];
+    String? closedCaptionsUrl = widget.videoTutorial.ccUrl;
     if (StringUtils.isNotEmpty(closedCaptionsUrl)) {
       Response? response = await Network().get(closedCaptionsUrl);
       int? responseCode = response?.statusCode;
@@ -113,7 +126,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
     return Scaffold(
         backgroundColor: Styles().colors!.blackTransparent06,
         appBar: HeaderBar(
-            title: StringUtils.ensureNotEmpty(widget.videoTutorial['title'],
+            title: StringUtils.ensureNotEmpty(widget.videoTutorial.title,
                 defaultValue: Localization().getStringEx("panel.settings.video_tutorial.header.title", "Video Tutorial"))),
         body: Center(child: _buildVideoContent()));
   }
@@ -196,10 +209,10 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
       return;
     }
     if (_isPlaying) {
-      _controller?.pause();
+      _pauseVideo();
       _showCc(true);
     } else {
-      _controller?.play();
+      _playVideo();
       _startCcHidingTimer();
     }
     setState(() {});
@@ -237,6 +250,15 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
         }
       }
     }
+  }
+
+  void _logAnalyticsVideoEvent({required String event}) {
+    Analytics().logVideo(
+        videoId: widget.videoTutorial.id,
+        videoTitle: widget.videoTutorial.title,
+        videoEvent: event,
+        duration: _controller?.value.duration.inSeconds,
+        position: _controller?.value.position.inSeconds);
   }
 
   bool get _isPlaying {
