@@ -2974,7 +2974,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                               EnabledToggleButton(
                                   enabled: isGroupPostAllowed,
                                   borderRadius: BorderRadius.zero,
-                                  label: Localization().getStringEx("panel.groups_create.posts_to_all.label", "Send posts to everyone"),
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_all.label", "Send posts to all members"),
                                   toggled: (settings?.memberPostPreferences?.sendPostToAll ?? false),
                                   onTap: (){_onSettingsTap(
                                       changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAll =  !(settings?.memberPostPreferences?.sendPostToAll ?? false);}}
