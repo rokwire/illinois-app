@@ -14,6 +14,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Video.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
@@ -183,8 +185,12 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
   }
 
   Widget _buildVideoWidget(BuildContext context, Map<String, dynamic> params) {
-    String? imageUrl = JsonUtils.stringValue(params['image_url']);
-    String? title = JsonUtils.stringValue(params['title']);
+    Video? video = Video.fromJson(params);
+    if (video == null) {
+      return Container();
+    }
+    String? imageUrl = video.thumbUrl;
+    String? title = video.title;
     final Widget emptyImagePlaceholder = Container(height: 102);
     return Container(
         decoration: BoxDecoration(
@@ -193,7 +199,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4))),
         child: Stack(children: [
           GestureDetector(
-              onTap: () => _onTapVideo(context, params),
+              onTap: () => _onTapVideo(context, video),
               child: Semantics(
                   button: true,
                   child: Padding(
@@ -218,8 +224,9 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
         ]));
   }
 
-  void _onTapVideo(BuildContext context, Map<String, dynamic> params) {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: params)));
+  void _onTapVideo(BuildContext context, Video video) {
+    Analytics().logSelect(target: 'Video', source: runtimeType.toString(), attributes: video.analyticsAttributes);
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: video)));
   }
 
   void _onTapLink(BuildContext context, SkillsSelfEvaluationLink link) {

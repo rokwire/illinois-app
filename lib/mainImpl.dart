@@ -25,6 +25,7 @@ import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CheckList.dart';
+import 'package:illinois/service/Explore.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/DeepLink.dart';
@@ -149,6 +150,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     StudentCourses(),
     Appointments(),
     MTD(),
+    Explore(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // Content(),

@@ -6,9 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.2.35] - 2022-12-07
+### Added
+- Implemented MTD Destinations [#2633](https://github.com/rokwire/illinois-app/issues/2633).
+- Log events when user plays video [#2650](https://github.com/rokwire/illinois-app/issues/2650).
+### Added
+- Fixed Test build configurations for iOS.
+
 ## [4.2.34] - 2022-12-06
 ### Added
-- Updates for plugin survey action and UI changes [#2638](https://github.com/rokwire/illinois-app/issues/2638)
+- Updates for plugin survey action and UI changes [#2638](https://github.com/rokwire/illinois-app/issues/2638).
 - Added favorite button to Map target popup & MTD bus schedule panel [#2633](https://github.com/rokwire/illinois-app/issues/2633).
 ### Changed
 - Cleaned up processing MTD bus stops in Explore Panel / Map display type [#2633](https://github.com/rokwire/illinois-app/issues/2633).

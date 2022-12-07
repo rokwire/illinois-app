@@ -5,8 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
+import 'package:illinois/model/Video.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -501,6 +503,7 @@ class _BrowseEntry extends StatelessWidget {
 
       case "mtd.all_mtd_stops":              _onTapMTDStops(context); break;
       case "mtd.my_mtd_stops":               _onTapMyMTDStops(context); break;
+      case "mtd.my_mtd_destinations":        _onTapMyMTDDestinations(context); break;
 
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
       case "campus_guide.campus_safety_resources": _onTapCampusSafetyResources(context); break;
@@ -548,6 +551,7 @@ class _BrowseEntry extends StatelessWidget {
       case "my.my_groups":                   _onTapMyGroups(context); break;
       case "my.my_laundry":                  _onTapMyLaundry(context); break;
       case "my.my_mtd_stops":                _onTapMyMTDStops(context); break;
+      case "my.my_mtd_destinations":         _onTapMyMTDDestinations(context); break;
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
       case "my.my_appointments":             _onTapMyAppointments(context); break;
 
@@ -648,22 +652,22 @@ class _BrowseEntry extends StatelessWidget {
   bool get _canVideoTutorials => (_videoTutorialsCount > 0);
 
   void _onTapVideoTutorials(BuildContext context) {
-    Analytics().logSelect(target: "Video Tutorials");
-    
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.video_tutorial', 'Video Tutorial not available while offline.'));
     }
     else if (_canVideoTutorials) {
-      List<dynamic>? videoTutorials = _getVideoTutorials();
-      if (_videoTutorialsCount == 1) {
-        Map<String, dynamic>? videoTutorial = JsonUtils.mapValue(videoTutorials?.first);
+      List<Video>? videoTutorials = _getVideoTutorials();
+      if (videoTutorials?.length == 1) {
+        Video? videoTutorial = videoTutorials?.first;
         if (videoTutorial != null) {
+          Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString(), attributes: videoTutorial.analyticsAttributes);
           Navigator.push(
               context,
               CupertinoPageRoute(
                   settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
         }
       } else {
+        Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString());
         Navigator.push(
             context,
             CupertinoPageRoute(
@@ -672,7 +676,7 @@ class _BrowseEntry extends StatelessWidget {
     }
   }
 
-  List<dynamic>? _getVideoTutorials() {
+  List<Video>? _getVideoTutorials() {
     Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
     if (videoTutorials == null) {
       return null;
@@ -682,12 +686,7 @@ class _BrowseEntry extends StatelessWidget {
       return null;
     }
     Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials['strings']);
-    for (dynamic video in videos!) {
-      String? videoId = video['id'];
-      String? videoTitle = Localization().getContentString(strings, videoId);
-      video['title'] = videoTitle;
-    }
-    return videos;
+    return Video.listFromJson(jsonList: videos, contentStrings: strings);
   }
 
   bool get _canFeedback => StringUtils.isNotEmpty(Config().feedbackUrl);
@@ -971,6 +970,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapMyMTDStops(BuildContext context) {
     Analytics().logSelect(target: "My MTD Stops");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.my,)));
+  }
+
+  void _onTapMyMTDDestinations(BuildContext context) {
+    Analytics().logSelect(target: "My MTD Destinations");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [ExplorePOI.favoriteKeyName]); } ));
   }
 
   void _onTapMyCampusGuide(BuildContext context) {

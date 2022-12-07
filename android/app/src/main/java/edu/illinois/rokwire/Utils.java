@@ -251,6 +251,10 @@ public class Utils {
                         return optLatLng(buildingMap);
                     }
                 }
+            } else if (exploreType == ExploreType.MTD_STOP) {
+                Object latObj = explore.get("stop_lat");
+                Object lngObj = explore.get("stop_lon");
+                return ((latObj instanceof Double) && (lngObj instanceof Double) && (((double)latObj) != 0.0) && (((double)lngObj) != 0.0)) ? new LatLng((double)latObj, (double)lngObj) : null;
             } else {
                 HashMap location = optLocation(explore);
                 return optLatLng(location);
@@ -529,6 +533,10 @@ public class Utils {
                 return ExploreType.STUDENT_COURSE;
             } else if (singleExplore.get("source_id") != null) {
                 return ExploreType.APPOINTMENT;
+            } else if (singleExplore.get("stop_id") != null) {
+                return ExploreType.MTD_STOP;
+            } else if (singleExplore.containsKey("placeId")) {
+                return ExploreType.POI;
             } else {
                 return ExploreType.UNKNOWN;
             }
@@ -566,6 +574,10 @@ public class Utils {
                 case DINING:
                     colorResource = R.color.mongo;
                     break;
+                case MTD_STOP:
+                case POI:
+                    colorResource = R.color.darkBlueGrey;
+                    break;
                 default:
                     colorResource = R.color.teal;
                     break;
@@ -574,24 +586,31 @@ public class Utils {
         }
 
         private static String getMarkerTitle(MapMarkerViewType mapMarkerViewType, HashMap singleExploreMap, ArrayList groupExploresList) {
-            String markerTitle;
             if (mapMarkerViewType == MapMarkerViewType.SINGLE) {
+                Object markerTitle;
                 ExploreType exporeType = getExploreType(singleExploreMap);
                 if (exporeType == ExploreType.PARKING) {
                     // Json Example:
                     // {"lot_id":"647b7211-9cdf-412b-a682-1fdb68897f86","lot_name":"SFC - E-14 Lot - Illinois","lot_address1":"1800 S. First Street, Champaign, IL 61820","total_spots":"1710","entrance":{"latitude":40.096691,"longitude":-88.238179},"polygon":[{"latitude":40.097938,"longitude":-88.241409},{"latitude":40.09793,"longitude":-88.238657},{"latitude":40.094742,"longitude":-88.238651},{"latitude":40.094733,"longitude":-88.240223},{"latitude":40.095148,"longitude":-88.240245},{"latitude":40.095181,"longitude":-88.24113},{"latitude":40.095636,"longitude":-88.241135},{"latitude":40.095636,"longitude":-88.241393}],"spots_sold":0,"spots_pre_sold":0}
-                    markerTitle = (String) singleExploreMap.get("lot_name");
+                    markerTitle = singleExploreMap.get("lot_name");
                 } else if (exporeType == ExploreType.BUILDING) {
-                    markerTitle = (String) singleExploreMap.get("name");
+                    markerTitle = singleExploreMap.get("name");
                 } else if (exporeType == ExploreType.STUDENT_COURSE) {
-                    markerTitle = (String) singleExploreMap.get("coursetitle");
+                    markerTitle = singleExploreMap.get("coursetitle");
+                } else if (exporeType == ExploreType.MTD_STOP) {
+                    markerTitle = singleExploreMap.get("stop_name");
+                } else if (exporeType == ExploreType.POI) {
+                    markerTitle = singleExploreMap.get("name");
+                    if (markerTitle == null) {
+                        markerTitle = "Location";
+                    }
                 } else {
-                    markerTitle = (String) singleExploreMap.get("title");
+                    markerTitle = singleExploreMap.get("title");
                 }
+                return (markerTitle instanceof String) ? ((String)markerTitle) : null;
             } else {
-                markerTitle = String.valueOf(groupExploresList.size());
+                return String.valueOf(groupExploresList.size());
             }
-            return markerTitle;
         }
 
         private static String getMarkerSnippet(Context context, HashMap exploreMap) {
@@ -612,6 +631,17 @@ public class Utils {
             }
             else if (exporeType == ExploreType.BUILDING) {
                 return (String) exploreMap.get("address1");
+            }
+            else if (exporeType == ExploreType.MTD_STOP) {
+                return (String) exploreMap.get("code");
+            }
+            else if (exporeType == ExploreType.POI) {
+                HashMap locationMap = optLocation(exploreMap); 
+                if (locationMap != null) {
+                    double latitude = Utils.Map.getValueFromPath(locationMap, "latitude", 0.0d);
+                    double longitude = Utils.Map.getValueFromPath(locationMap, "longitude", 0.0d);
+                    return ((latitude != 0.0d) && (longitude != 0.0d)) ? String.format(Locale.getDefault(), "%.6f, %.6f", latitude, longitude) : null;
+                }
             }
             else if (exporeType == ExploreType.STUDENT_COURSE) {
                 String result = "";
@@ -685,6 +715,12 @@ public class Utils {
                         break;
                     case APPOINTMENT:
                         typeSuffix = context.getString(R.string.appointments);
+                        break;
+                    case MTD_STOP:
+                        typeSuffix = "MTD Stops";
+                        break;
+                    case POI:
+                        typeSuffix = "Locations";
                         break;
                     default:
                         typeSuffix = context.getString(R.string.explores);
@@ -1022,6 +1058,6 @@ public class Utils {
     }
 
     public enum ExploreType {
-        EVENT, DINING, LAUNDRY, PARKING, BUILDING, STUDENT_COURSE, APPOINTMENT, UNKNOWN
+        EVENT, DINING, LAUNDRY, PARKING, BUILDING, MTD_STOP, STUDENT_COURSE, APPOINTMENT, POI, UNKNOWN
     }
 }
