@@ -8,6 +8,7 @@ import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
+import 'package:illinois/model/Video.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -651,22 +652,22 @@ class _BrowseEntry extends StatelessWidget {
   bool get _canVideoTutorials => (_videoTutorialsCount > 0);
 
   void _onTapVideoTutorials(BuildContext context) {
-    Analytics().logSelect(target: "Video Tutorials");
-    
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.video_tutorial', 'Video Tutorial not available while offline.'));
     }
     else if (_canVideoTutorials) {
-      List<dynamic>? videoTutorials = _getVideoTutorials();
-      if (_videoTutorialsCount == 1) {
-        Map<String, dynamic>? videoTutorial = JsonUtils.mapValue(videoTutorials?.first);
+      List<Video>? videoTutorials = _getVideoTutorials();
+      if (videoTutorials?.length == 1) {
+        Video? videoTutorial = videoTutorials?.first;
         if (videoTutorial != null) {
+          Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString(), attributes: videoTutorial.analyticsAttributes);
           Navigator.push(
               context,
               CupertinoPageRoute(
                   settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
         }
       } else {
+        Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString());
         Navigator.push(
             context,
             CupertinoPageRoute(
@@ -675,7 +676,7 @@ class _BrowseEntry extends StatelessWidget {
     }
   }
 
-  List<dynamic>? _getVideoTutorials() {
+  List<Video>? _getVideoTutorials() {
     Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
     if (videoTutorials == null) {
       return null;
@@ -685,12 +686,7 @@ class _BrowseEntry extends StatelessWidget {
       return null;
     }
     Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials['strings']);
-    for (dynamic video in videos!) {
-      String? videoId = video['id'];
-      String? videoTitle = Localization().getContentString(strings, videoId);
-      video['title'] = videoTitle;
-    }
-    return videos;
+    return Video.listFromJson(jsonList: videos, contentStrings: strings);
   }
 
   bool get _canFeedback => StringUtils.isNotEmpty(Config().feedbackUrl);

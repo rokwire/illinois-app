@@ -282,6 +282,16 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAttributeGuideSection           = "guide_section";
   static const String   LogAttributeLocation               = "location";
 
+  // Video Attributes
+  static const String   LogVideoEventName                  = "video";
+  static const String   LogAttributeVideoId                = "video_id";
+  static const String   LogAttributeVideoTitle             = "video_title";
+  static const String   LogAttributeVideoDuration          = "video_duration";
+  static const String   LogAttributeVideoPosition          = "video_position";
+  static const String   LogAttributeVideoEvent             = "video_event";
+  static const String   LogAttributeVideoEventStarted      = "started";
+  static const String   LogAttributeVideoEventPaused       = "paused";
+  static const String   LogAttributeVideoEventStopped      = "stopped";
 
   // Data
 
@@ -1008,6 +1018,18 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
         Analytics.LogWellnessRingUnitName: item?.unit,
       }
     );
+  }
+
+  void logVideo({required String videoEvent, String? videoId, String? videoTitle, int? duration, int? position}) {
+    Map<String, dynamic> event = {
+      LogEventName                : LogVideoEventName,
+      LogAttributeVideoId         : videoId,
+      LogAttributeVideoTitle      : videoTitle,
+      LogAttributeVideoEvent      : videoEvent,
+      LogAttributeVideoDuration   : duration,
+      LogAttributeVideoPosition   : position,
+    };
+    logEvent(event);
   }
 
 }
