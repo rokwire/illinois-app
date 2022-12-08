@@ -2558,7 +2558,7 @@
     "panel.appointment.detail.meeting.id.label": "Identificación de la reunión:",
     "panel.appointment.detail.meeting.passcode.label": "Código de acceso:",
     "panel.appointment.detail.instructions.label": "Preparación requerida",
-    "panel.appointment.detail.cancel.description": "Para cancelar una cita, vaya a <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> o llame a (<u>{{mckinley_phone}}</u>) durante el horario comercial. Para evitar el cargo de una cita perdida, debe cancelar su cita al menos dos horas antes de la hora de la cita programada.",
+    "panel.appointment.detail.cancel.description": "<b>Para cancelar una cita,</b> vaya a <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> o llame a (<u>{{mckinley_phone}}</u>) durante el horario comercial. Para evitar el cargo de una cita perdida, debe cancelar su cita al menos dos horas antes de la hora de la cita programada.",
     "panel.appointment.detail.error.msg": "No se pudieron cargar los datos de la cita.",
 
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",

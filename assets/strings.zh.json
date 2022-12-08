@@ -2557,7 +2557,7 @@
 	"panel.appointment.detail.meeting.id.label": "會議編號：",
 	"panel.appointment.detail.meeting.passcode.label": "密碼：",
     "panel.appointment.detail.instructions.label": "需要準備",
-	"panel.appointment.detail.cancel.description": "要取消約會，請轉到 <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> 或 在工作時間致電 (<u>{{mckinley_phone}}</u>)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
+	"panel.appointment.detail.cancel.description": "<b>要取消約會</b>，請轉到 <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> 或 在工作時間致電 (<u>{{mckinley_phone}}</u>)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
 	"panel.appointment.detail.error.msg": "無法加載約會數據。",
 
 	"widget.game_day.label.its_game_day":"这是比赛日！",
