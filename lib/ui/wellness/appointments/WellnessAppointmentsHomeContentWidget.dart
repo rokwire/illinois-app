@@ -126,13 +126,28 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildEmptyUpcomingAppointments() {
+    final String urlLabelMacro = '{{mckinley_url_label}}';
+    final String urlMacro = '{{mckinley_url}}';
+    final String externalLinkIconMacro = '{{external_link_icon}}';
+    final String appTitleMacro = '{{app_title}}';
+    String emptyUpcommingContentHtml = Localization().getStringEx("panel.wellness.appointments.home.upcoming.list.empty.msg",
+        "You currently have no upcoming appointments linked within the Illinois app. New appointments made via <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> may take up to 20 minutes to appear in the {{app_title}} app.");
+    emptyUpcommingContentHtml = emptyUpcommingContentHtml.replaceAll(urlMacro, Config().saferMcKinleyUrl ?? '');
+    emptyUpcommingContentHtml = emptyUpcommingContentHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
+    emptyUpcommingContentHtml = emptyUpcommingContentHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
+    emptyUpcommingContentHtml = emptyUpcommingContentHtml.replaceAll(appTitleMacro, Localization().getStringEx('app.title', 'Illinois'));
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 16),
-        child: Text(
-            Localization().getStringEx('panel.wellness.appointments.home.upcoming.list.empty.msg',
-                'You currently have no upcoming appointments linked within the Illinois app.'),
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular)));
+        child: Html(data: emptyUpcommingContentHtml, onLinkTap: (url, renderContext, attributes, element) => _onTapMcKinleyUrl(url), style: {
+          "body": Style(
+              textAlign: TextAlign.center,
+              color: Styles().colors!.fillColorPrimary,
+              fontFamily: Styles().fontFamilies!.regular,
+              fontSize: FontSize(18),
+              padding: EdgeInsets.zero,
+              margin: EdgeInsets.zero),
+          "a": Style(color: Styles().colors?.fillColorPrimary)
+        }));
   }
 
   Widget _buildPastAppointments() {
