@@ -106,7 +106,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   Future<List<Appointment>?> loadAssetsAppointments() async {
     List<Appointment>? appointments;
     try {
-      appointments = Appointment.listFromJson(JsonUtils.decodeList(await rootBundle.loadString('assets/appointments.json')));
+      appointments = Appointment.listFromJson(JsonUtils.decodeList(await AppBundle.loadString('assets/extra/appointments.json')));
     } catch (e) {
       debugPrint(e.toString());
     }
