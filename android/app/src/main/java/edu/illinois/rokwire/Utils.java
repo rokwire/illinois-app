@@ -531,7 +531,7 @@ public class Utils {
                 return ExploreType.BUILDING;
             } else if (singleExplore.get("coursetitle") != null) {
                 return ExploreType.STUDENT_COURSE;
-            } else if (singleExplore.get("source_id") != null) {
+            } else if ((singleExplore.get("id") != null) && (singleExplore.get("date_time") != null) && (singleExplore.get("type") != null)) {
                 return ExploreType.APPOINTMENT;
             } else if (singleExplore.get("stop_id") != null) {
                 return ExploreType.MTD_STOP;

@@ -550,6 +550,7 @@ class _BrowseEntry extends StatelessWidget {
       case "my.canvas_courses":              _onTapCanvasCourses(context); break;
       case "my.my_groups":                   _onTapMyGroups(context); break;
       case "my.my_laundry":                  _onTapMyLaundry(context); break;
+      case "my.my_research_projects":        _onTapMyResearchProjects(context); break;
       case "my.my_mtd_stops":                _onTapMyMTDStops(context); break;
       case "my.my_mtd_destinations":         _onTapMyMTDDestinations(context); break;
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
