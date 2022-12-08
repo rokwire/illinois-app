@@ -142,19 +142,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget _buildAppointmentContent() {
-    AppointmentType? type = _appointment!.type;
-    String? toutImageUrl;
-    switch (type) {
-      case AppointmentType.in_person:
-        toutImageUrl = 'images/appointment-detail-inperson-tout.png';
-        break;
-      case AppointmentType.online:
-        toutImageUrl = 'images/appointment-detail-online-tout.jpg';
-        break;
-      default:
-        toutImageUrl = _appointment!.imageUrl!;
-        break;
-    }
+    String? toutImageUrl = _appointment?.imageUrlBasedOnCategory;
 
     return Column(children: <Widget>[
       Expanded(
