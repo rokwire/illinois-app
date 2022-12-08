@@ -29,6 +29,7 @@ class Guide with Service implements NotificationsListener {
 
   static const String campusGuide = "For students";
   static const String campusReminderContentType = "campus-reminder";
+  static const String campusSafetyResourceContentType = "campus-safety-resource";
 
   static const String _cacheFileName = "guide.json";
 
@@ -53,8 +54,9 @@ class Guide with Service implements NotificationsListener {
   @override
   void createService() {
     NotificationService().subscribe(this, [
-      DeepLink.notifyUri,
+      Auth2.notifyLoginChanged,
       AppLivecycle.notifyStateChanged,
+      DeepLink.notifyUri,
     ]);
     _guideUriCache = <Uri>[];
   }
@@ -81,6 +83,7 @@ class Guide with Service implements NotificationsListener {
         _contentSource = GuideContentSource.Net;
         Storage().guideContentSource = guideContentSourceToString(_contentSource);
         _saveContentStringToCache(contentString);
+        _initDefaultFavorites();
       }
     }
 
@@ -112,7 +115,9 @@ class Guide with Service implements NotificationsListener {
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == AppLivecycle.notifyStateChanged) {
+    if (name == Auth2.notifyLoginChanged) {
+      _initDefaultFavorites();
+    } else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     } else if (name == DeepLink.notifyUri) {
       _processDeepLinkUri(param);
@@ -183,6 +188,7 @@ class Guide with Service implements NotificationsListener {
         _contentSource = GuideContentSource.Net;
         Storage().guideContentSource = guideContentSourceToString(_contentSource);
         _saveContentStringToCache(contentString);
+        _initDefaultFavorites();
         NotificationService().notify(notifyChanged);
       }
     }
@@ -236,7 +242,7 @@ class Guide with Service implements NotificationsListener {
     return JsonUtils.stringValue(entryValue(entry, '_id'));
   }
 
-  String? entryTitle(Map<String, dynamic>? entry, { bool stripHtmlTags = true }) {
+  String? entryTitle(Map<String, dynamic>? entry, { bool? stripHtmlTags }) {
     String? result = JsonUtils.stringValue(entryValue(entry, 'title')) ?? JsonUtils.stringValue(entryValue(entry, 'list_title')) ?? JsonUtils.stringValue(entryValue(entry, 'detail_title'));
     return ((result != null) && (stripHtmlTags == true)) ? StringUtils.stripHtmlTags(result) : result;
     // Bidi.stripHtmlIfNeeded(result);
@@ -256,6 +262,10 @@ class Guide with Service implements NotificationsListener {
 
   bool isEntryReminder(Map<String, dynamic>? entry) {
     return JsonUtils.stringValue(entryValue(entry, 'content_type')) == campusReminderContentType;
+  }
+
+  bool isEntrySafetyResource(Map<String, dynamic>? entry) {
+    return JsonUtils.stringValue(entryValue(entry, 'content_type')) == campusSafetyResourceContentType;
   }
 
   // Returns the date in:
@@ -319,6 +329,26 @@ class Guide with Service implements NotificationsListener {
       });
 
       return remindersList;
+    }
+    return null;
+  }
+
+  List<Map<String, dynamic>>? get safetyResourcesList {
+    if (_contentList != null) {
+
+      List<Map<String, dynamic>> safetyResourcesList = <Map<String, dynamic>>[];
+      for (dynamic entry in _contentList!) {
+        Map<String, dynamic>? guideEntry = JsonUtils.mapValue(entry);
+        if (isEntrySafetyResource(guideEntry)) {
+          safetyResourcesList.add(guideEntry!);
+        }
+      }
+
+      safetyResourcesList.sort((Map<String, dynamic> entry1, Map<String, dynamic> entry2) {
+        return SortUtils.compare(Guide().entryListTitle(entry1, stripHtmlTags: true), Guide().entryListTitle(entry2, stripHtmlTags: true));
+      });
+
+      return safetyResourcesList;
     }
     return null;
   }
@@ -390,6 +420,38 @@ class Guide with Service implements NotificationsListener {
     return true;
   }
   
+  /////////////////////////
+  // DefaultFavorites
+
+  void _initDefaultFavorites() {
+
+    if (_contentList != null) {
+      Map<String, List<String>> defaultFavorites = <String, List<String>>{};
+      for (dynamic contentEntry in _contentList!) {
+        Map<String, dynamic>? guideEntry = JsonUtils.mapValue(contentEntry);
+        bool? isFavorite = JsonUtils.boolValue(entryValue(guideEntry, 'content_type_favorite'));
+        if (isFavorite == true) {
+          String? guideEntryId = entryId(guideEntry);
+          String? guideEntryContentType = JsonUtils.stringValue(entryValue(guideEntry, 'content_type'));
+          if ((guideEntryId != null) && (guideEntryContentType != null)) {
+            String favoriteKeyName = GuideFavorite.constructFavoriteKeyName(contentType: guideEntryContentType);
+            List<String>? favoriteIds = defaultFavorites[favoriteKeyName];
+            if (favoriteIds != null) {
+              favoriteIds.add(guideEntryId);
+            }
+            else if (Auth2().prefs?.getFavorites(favoriteKeyName) == null) {
+              defaultFavorites[favoriteKeyName] = <String>[guideEntryId];
+            }
+          }
+        }
+      }
+      
+      defaultFavorites.forEach((String key, List<String> ids) {
+        Auth2().prefs?.setFavorites(key, LinkedHashSet<String>.from(ids.reversed));
+      });
+    }
+  }
+
   // Debug
 
   Future<String?> getContentString() async {
@@ -754,15 +816,31 @@ class GuideSection {
 class GuideFavorite implements Favorite {
   
   final String? id;
-  GuideFavorite({this.id});
+  final String? contentType;
+  GuideFavorite({this.id, this.contentType});
 
   bool operator == (o) => o is GuideFavorite && o.id == id;
 
   int get hashCode => (id?.hashCode ?? 0);
 
   static const String favoriteKeyName = "studentGuideIds";
-  @override String get favoriteKey => favoriteKeyName;
+  static String constructFavoriteKeyName({String? contentType}) => (contentType != null) ? "${_favoriteContentTypeKey(contentType)}GuideIds" : favoriteKeyName;
+  @override String get favoriteKey => constructFavoriteKeyName(contentType: contentType);
   @override String? get favoriteId => id;
+
+  static String _favoriteContentTypeKey(String contentType) {
+    String favoriteKey = '';
+    List<String> items = contentType.split('-');
+    for (String item in items) {
+      if (favoriteKey.isEmpty) {
+        favoriteKey = item;
+      }
+      else {
+        favoriteKey += StringUtils.capitalize(item);
+      }
+    }
+    return favoriteKey;
+  }
 }
 
 GuideContentSource? guideContentSourceFromString(String? value) {

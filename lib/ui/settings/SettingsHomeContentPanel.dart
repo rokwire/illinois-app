@@ -20,6 +20,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/athletics/AthleticsTeamsWidget.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
+import 'package:illinois/ui/settings/SettingsAppointmentsContentWidget.dart';
+import 'package:illinois/ui/settings/SettingsAssessmentsContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsCalendarContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsFoodFiltersContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsInterestsContentWidget.dart';
@@ -29,11 +31,11 @@ import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/debug/DebugHomePanel.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+
+enum SettingsContent { sections, interests, food_filters, sports, favorites, assessments, calendar, appointments }
 
 class SettingsHomeContentPanel extends StatefulWidget {
   static final String routeName = 'settings_home_content_panel';
@@ -47,12 +49,28 @@ class SettingsHomeContentPanel extends StatefulWidget {
 
   static void present(BuildContext context, {SettingsContent? content}) {
     if (ModalRoute.of(context)?.settings.name != routeName) {
-      Navigator.push(context, PageRouteBuilder(
+      MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+      double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        useRootNavigator: true,
+        routeSettings: RouteSettings(name: routeName),
+        clipBehavior: Clip.antiAlias,
+        backgroundColor: Styles().colors!.background,
+        constraints: BoxConstraints(maxHeight: height, minHeight: height),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+        builder: (context) {
+          return SettingsHomeContentPanel._(content: content);
+        }
+      );
+      /*Navigator.push(context, PageRouteBuilder(
         settings: RouteSettings(name: routeName),
         pageBuilder: (context, animation1, animation2) => SettingsHomeContentPanel._(content: content),
         transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero)
-      );
+        reverseTransitionDuration: Duration.zero
+      ));*/
     }
   }
 }
@@ -70,35 +88,80 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
 
   @override
   Widget build(BuildContext context) {
+    //return _buildScaffold(context);
+    return _buildSheet(context);
+  }
+
+  /*Widget _buildScaffold(BuildContext context) {
     return Scaffold(
-        appBar: _DebugContainer(
-            child: RootHeaderBar(
-              title: Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'),
-              onSettings: _onTapSettings,
+      appBar: _DebugContainer(child:
+        RootHeaderBar(title: Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'), onSettings: _onTapDebug,),
+      ),
+      body: _buildPage(),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: uiuc.TabBar()
+    );
+  }*/
+
+  Widget _buildSheet(BuildContext context) {
+    // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
+    return Column(children: [
+        Container(color: Styles().colors?.white, child:
+          Row(children: [
+            Expanded(child:
+              _DebugContainer(child:
+                Padding(padding: EdgeInsets.only(left: 16), child:
+                  Text(Localization().getStringEx('panel.settings.home.header.settings.label', 'Settings'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors?.fillColorSecondary),)
+                )
+              ),
+            ),
+            Visibility(visible: (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)), child:
+              InkWell(onTap : _onTapDebug, child:
+                Container(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child: 
+                  Image.asset('images/icon-bug.png', semanticLabel: '', color: Styles().colors?.fillColorSecondary,),
+                ),
+              ),
+            ),
+            Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+              InkWell(onTap : _onTapClose, child:
+                Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child: 
+                  Image.asset('images/close-orange.png', semanticLabel: '',),
+                ),
+              ),
+            ),
+
+          ],),
+        ),
+        Container(color: Styles().colors?.surfaceAccent, height: 1,),
+        Expanded(child:
+          _buildPage(context),
+        )
+      ],);
+  }
+
+  Widget _buildPage(BuildContext context) {
+    return Column(children: <Widget>[
+      Expanded(child:
+        SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child:
+          Container(color: Styles().colors!.background, child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
+                RibbonButton(
+                  textColor: Styles().colors!.fillColorSecondary,
+                  backgroundColor: Styles().colors!.white,
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                  rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+                  label: _getContentLabel(_selectedContent),
+                  onTap: _onTapContentDropdown
+                )
+              ),
+              _buildContent()
+            ]),
           ),
         ),
-        body: Column(children: <Widget>[
-          Expanded(
-              child: SingleChildScrollView(
-                  physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null),
-                  child: Container(
-                      color: Styles().colors!.background,
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Padding(
-                            padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-                            child: RibbonButton(
-                                textColor: Styles().colors!.fillColorSecondary,
-                                backgroundColor: Styles().colors!.white,
-                                borderRadius: BorderRadius.all(Radius.circular(5)),
-                                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                                rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-                                label: _getContentLabel(_selectedContent),
-                                onTap: _onTapContentDropdown)),
-                        _buildContent()
-                      ]))))
-        ]),
-        backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: uiuc.TabBar());
+      ),
+    ]);
   }
 
   Widget _buildContent() {
@@ -192,15 +255,25 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return AthleticsTeamsWidget();
       case SettingsContent.calendar:
         return SettingsCalendarContentWidget();
+      case SettingsContent.appointments:
+        return SettingsAppointmentsContentWidget();
       case SettingsContent.favorites:
         return Container();
+      case SettingsContent.assessments:
+        return SettingsAssessmentsContentWidget();
     }
   }
 
-  void _onTapSettings() {
+  void _onTapDebug() {
+    Analytics().logSelect(target: 'Debug', source: widget.runtimeType.toString());
     if (kDebugMode || (Config().configEnvironment == ConfigEnvironment.dev)) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => DebugHomePanel()));
     }
+  }
+
+  void _onTapClose() {
+    Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
+    Navigator.of(context).pop();
   }
 
   // Utilities
@@ -217,13 +290,15 @@ class _SettingsHomeContentPanelState extends State<SettingsHomeContentPanel> {
         return Localization().getStringEx('panel.settings.home.settings.sections.sports.label', 'My Sports Teams');
       case SettingsContent.calendar:
         return Localization().getStringEx('panel.settings.home.settings.sections.calendar.label', 'My Calendar Settings');
+      case SettingsContent.appointments:
+        return Localization().getStringEx('panel.settings.home.settings.sections.appointments.label', 'MyMcKinley Appointments');
       case SettingsContent.favorites:
         return Localization().getStringEx('panel.settings.home.settings.sections.favorites.label', 'My Favorites');
+      case SettingsContent.assessments:
+        return Localization().getStringEx('panel.settings.home.settings.sections.assessments.label', 'My Assessments');
     }
   }
 }
-
-enum SettingsContent { sections, interests, food_filters, sports, calendar, favorites }
 
 class _DebugContainer extends StatefulWidget implements PreferredSizeWidget {
   final Widget _child;

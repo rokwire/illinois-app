@@ -157,7 +157,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         Game game = _games![index];
-        pages.add(Padding(key: _contentKeys[game.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
+        pages.add(Padding(key: _contentKeys[game.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
           AthleticsCard(game: game, onTap: () => _onTapGame(game), showInterests: true, margin: EdgeInsets.zero,),),
         );
       }
@@ -178,7 +178,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8), child:
         AthleticsCard(game: _games!.first, onTap: () => _onTapGame( _games!.first), showInterests: true, margin: EdgeInsets.zero)
       );
     }

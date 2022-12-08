@@ -120,7 +120,7 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
   Widget _buildContentCard() {
     String? buttonTitle, iconAsset;
     if (WPGUFMRadio().isInitialized) {
-      buttonTitle = WPGUFMRadio().isPlaying ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'TUNE IN');
+      buttonTitle = WPGUFMRadio().isPlaying ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'Tune In');
       iconAsset = WPGUFMRadio().isPlaying ? 'images/button-pause-orange.png' : 'images/button-play-orange.png';
     }
     else if (WPGUFMRadio().isInitializing) {
@@ -154,7 +154,7 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
                                 Padding(padding: EdgeInsets.all(16), child:
                                   Container(decoration: BoxDecoration(border: Border(left: BorderSide(color: Styles().colors!.fillColorSecondary! , width: 3))), child:
                                     Padding(padding: EdgeInsets.only(left: 10), child:
-                                    Row(children: [Expanded(child: Text(buttonTitle, style: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary)))]))))),
+                                    Row(children: [Expanded(child: Text(buttonTitle, style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')))]))))),
                             ],),
                           ),
                         ),

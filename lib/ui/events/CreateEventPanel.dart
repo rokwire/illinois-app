@@ -1697,7 +1697,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           locationSelectionResult.isNotEmpty) {
         Map<String, dynamic>? locationData = locationSelectionResult["location"];
         if (locationData != null) {
-          _location = ExploreLocation.fromJSON(locationData);
+          _location = ExploreLocation.fromJson(locationData);
           _modified = true;
           _populateLocationField();
           setState(() {});

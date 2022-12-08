@@ -17,6 +17,7 @@
 import 'dart:collection';
 import 'package:collection/collection.dart';
 import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/ext/Event.dart';
@@ -33,6 +34,7 @@ enum RecentItemType {
   news,
   laundry,
   guide,
+  mtdStop,
 }
 
 class RecentItem {
@@ -112,6 +114,15 @@ class RecentItem {
           time: null,
           sourceJson: item.toJson()
       );
+    } else if(item is MTDStop) {
+      return RecentItem(
+          type: RecentItemType.mtdStop,
+          id: item.id,
+          title: item.name,
+          descripton: item.code,
+          time: null,
+          sourceJson: item.toJson()
+      );
     }
 
     return null;
@@ -135,6 +146,7 @@ class RecentItem {
       case RecentItemType.game: return Game.fromJson(sourceJson);
       case RecentItemType.news: return News.fromJson(sourceJson);
       case RecentItemType.laundry: return LaundryRoom.fromJson(sourceJson);
+      case RecentItemType.mtdStop: return MTDStop.fromJson(sourceJson);
       case RecentItemType.guide: return sourceJson;
       default: return null;
     }
@@ -148,6 +160,7 @@ class RecentItem {
         case RecentItemType.game:    return FavoriteItem(key: Game.favoriteKeyName, id: id);
         case RecentItemType.news:    return FavoriteItem(key: News.favoriteKeyName, id: id);
         case RecentItemType.laundry: return FavoriteItem(key: LaundryRoom.favoriteKeyName, id: id);
+        case RecentItemType.mtdStop: return FavoriteItem(key: MTDStop.favoriteKeyName, id: id);
         case RecentItemType.guide:   return GuideFavorite(id: id);
         default: return null;
       }
@@ -230,6 +243,9 @@ RecentItemType? recentTypeFromString(String? value){
   else if ("laundry" == value) {
     return RecentItemType.laundry;
   }
+  else if ("mtd_stop" == value) {
+    return RecentItemType.mtdStop;
+  }
   else if ("student_guide" == value) {
     return RecentItemType.guide;
   }
@@ -243,6 +259,7 @@ String? recentTypeToString(RecentItemType? value){
     case RecentItemType.game: return "game";
     case RecentItemType.news: return "news";
     case RecentItemType.laundry: return "laundry";
+    case RecentItemType.mtdStop: return "mtd_stop";
     case RecentItemType.guide: return "student_guide";
     default: return null;
   }

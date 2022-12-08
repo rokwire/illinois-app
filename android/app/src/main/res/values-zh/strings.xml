@@ -31,6 +31,9 @@
     <string name="buildings">建築物</string>
     <string name="student_courses">培訓班</string>
     <string name="appointments">約會</string>
+    <string name="mtd_stops">MTD Stops</string>
+    <string name="locations">Locations</string>
+    <string name="location">Location</string>
     <string name="ok">好</string>
 
     <!-- MapDirectionsActivity -->

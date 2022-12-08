@@ -30,11 +30,11 @@
 #import <GoogleMaps/GoogleMaps.h>
 
 @interface MapExploreMarkerView : MapMarkerView
-- (instancetype)initWithExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode;
+- (instancetype)initWithExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode imageCache:(NSMutableDictionary<NSString*, UIImage*>*)imageCache;
 @end
 
 @interface MapExploresMarkerView : MapMarkerView
-- (instancetype)initWithExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode;
+- (instancetype)initWithExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode imageCache:(NSMutableDictionary<NSString*, UIImage*>*)imageCache;
 @end
 
 /////////////////////////////////
@@ -53,13 +53,17 @@
 }
 
 + (instancetype)createFromExplore:(NSDictionary*)explore {
-	return [self createFromExplore:explore displayMode: MapMarkerDisplayMode_Plain];
+	return [self createFromExplore:explore displayMode:MapMarkerDisplayMode_Plain];
 }
 
 + (instancetype)createFromExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode {
+	return [self createFromExplore:explore displayMode:displayMode imageCache:nil];
+}
+
++ (instancetype)createFromExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode imageCache:(NSMutableDictionary<NSString*, UIImage*>*)imageCache {
 	return (1 < explore.uiucExplores.count) ?
-		[[MapExploresMarkerView alloc] initWithExplore:explore displayMode:displayMode] :
-		[[MapExploreMarkerView alloc] initWithExplore:explore displayMode:displayMode];
+		[[MapExploresMarkerView alloc] initWithExplore:explore displayMode:displayMode imageCache:imageCache] :
+		[[MapExploreMarkerView alloc] initWithExplore:explore displayMode:displayMode imageCache:imageCache];
 }
 
 - (void)setDisplayMode:(MapMarkerDisplayMode)displayMode {
@@ -83,18 +87,18 @@
 }
 
 + (UIImage*)markerImageWithHexColor:(NSString*)hexColor {
+	return [self markerImageWithHexColor:hexColor imageCache:nil];
+}
 
-	static NSMutableDictionary *gMarkerImageMap = nil;
-	if (gMarkerImageMap == nil) {
-		gMarkerImageMap = [[NSMutableDictionary alloc] init];
-	}
-	
-	UIImage *image = [gMarkerImageMap objectForKey:hexColor];
++ (UIImage*)markerImageWithHexColor:(NSString*)hexColor imageCache:(NSMutableDictionary<NSString*, UIImage*>*)imageCache {
+
+	NSString *imageKey = [NSString stringWithFormat:@"marker-%@", hexColor];
+	UIImage *image = [imageCache objectForKey:imageKey];
 	if (image == nil) {
 		UIColor *color = [UIColor inaColorWithHex:hexColor];
 		image = [GMSMarker markerImageWithColor:color];
-		if (image != nil) {
-			[gMarkerImageMap setObject:image forKey:hexColor];
+		if ((image != nil) && (imageCache != nil)) {
+			[imageCache setObject:image forKey:imageKey];
 		}
 	}
 	return image;
@@ -157,11 +161,11 @@ CGSize  const kExploreMarkerViewSize = { 180, kExploreMarkerIconSize2 + kExplore
 	return self;
 }
 
-- (instancetype)initWithExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode {
+- (instancetype)initWithExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode imageCache:(NSMutableDictionary<NSString*, UIImage*>*)imageCache {
 	if (self = [self initWithFrame:CGRectMake(0, 0, kExploreMarkerViewSize.width, kExploreMarkerViewSize.height)]) {
 		self.explore = explore;
 		self.displayMode = displayMode;
-		iconView.image = [self.class markerImageWithHexColor:explore.uiucExploreMarkerHexColor];
+		iconView.image = [self.class markerImageWithHexColor:explore.uiucExploreMarkerHexColor imageCache:imageCache];
 		titleLabel.text = explore.uiucExploreTitle;
 		descrLabel.text = explore.uiucExploreDescription;
 	}
@@ -282,7 +286,7 @@ CGSize  const kExploresMarkerViewSize = { 180, kExploresMarkerIconSize2 + kExplo
 	return self;
 }
 
-- (instancetype)initWithExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode {
+- (instancetype)initWithExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode imageCache:(NSMutableDictionary<NSString*, UIImage*>*)imageCache {
 	if (self = [self initWithFrame:CGRectMake(0, 0, kExploresMarkerViewSize.width, kExploresMarkerViewSize.height)]) {
 		self.explore = explore;
 		self.displayMode = displayMode;
@@ -516,15 +520,15 @@ CGFloat const kMarkerView2Width = 150;
 }
 
 + (UIImage*)markerImageWithHexColor:(NSString*)hexColor {
+	return [self markerImageWithHexColor:hexColor imageCache:nil];
+}
 
-	static NSMutableDictionary *gMarkerImageMap = nil;
-	if (gMarkerImageMap == nil) {
-		gMarkerImageMap = [[NSMutableDictionary alloc] init];
-	}
-	
-	UIImage *image = [gMarkerImageMap objectForKey:hexColor];
++ (UIImage*)markerImageWithHexColor:(NSString*)hexColor imageCache:(NSMutableDictionary<NSString*, UIImage*>*)imageCache {
+
+	NSString *imageKey = [NSString stringWithFormat:@"marker2-%@", hexColor];
+	UIImage *image = (imageCache != nil) ? [imageCache objectForKey:imageKey] : nil;
 	if (image == nil) {
-		UIImage *imageSource = [MapMarkerView markerImageWithHexColor:hexColor];
+		UIImage *imageSource = [MapMarkerView markerImageWithHexColor:hexColor imageCache:imageCache];
 		if (imageSource != nil) {
 			CGSize imageSize = CGSizeMake(kMarkerIconSize, kMarkerIconSize * imageSource.size.height / imageSource.size.width);
 			UIGraphicsBeginImageContextWithOptions(imageSize, NO, 0.0);
@@ -532,8 +536,8 @@ CGFloat const kMarkerView2Width = 150;
 			image = UIGraphicsGetImageFromCurrentImageContext();
 			UIGraphicsEndImageContext();
 			
-			if (image != nil) {
-				[gMarkerImageMap setObject:image forKey:hexColor];
+			if ((image != nil) && (imageCache != nil)) {
+				[imageCache setObject:image forKey:imageKey];
 			}
 		}
 	}
@@ -541,19 +545,18 @@ CGFloat const kMarkerView2Width = 150;
 }
 
 + (UIImage*)groupMarkerImageWithHexColor:(NSString*)hexColor count:(NSInteger)count {
+	return [self groupMarkerImageWithHexColor:hexColor count:count imageCache:nil];
+}
 
-	static NSMutableDictionary *gGroupMarkerImageMap = nil;
-	if (gGroupMarkerImageMap == nil) {
-		gGroupMarkerImageMap = [[NSMutableDictionary alloc] init];
-	}
-	
-	NSString *imageKey = [NSString stringWithFormat:@"%@%@", @(count), hexColor];
-	UIImage *image = [gGroupMarkerImageMap objectForKey:imageKey];
++ (UIImage*)groupMarkerImageWithHexColor:(NSString*)hexColor count:(NSInteger)count imageCache:(NSMutableDictionary<NSString*, UIImage*>*)imageCache {
+
+	NSString *imageKey = [NSString stringWithFormat:@"group2-%@-%@", @(count), hexColor];
+	UIImage *image = (imageCache != nil) ? [imageCache objectForKey:imageKey] : nil;
 	if (image == nil) {
 		UIColor *color = [UIColor inaColorWithHex:hexColor];
 		image = [self createGroupMarkerImageWithColor:color count:count];
 		if (image != nil) {
-			[gGroupMarkerImageMap setObject:image forKey:imageKey];
+			[imageCache setObject:image forKey:imageKey];
 		}
 	}
 	return image;

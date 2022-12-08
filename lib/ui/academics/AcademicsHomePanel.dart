@@ -21,6 +21,7 @@ import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
@@ -78,8 +79,10 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     return Scaffold(
         appBar: RootHeaderBar(title: Localization().getStringEx('panel.academics.header.title', 'Academics')),
         body: Column(children: <Widget>[
-          Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-            RibbonButton(
+          Container(
+            color: _skillsSelfEvaluationSelected ? Styles().colors?.fillColorPrimaryVariant : Styles().colors?.background,
+            padding: EdgeInsets.only(left: 16, top: 16, right: 16), 
+            child: RibbonButton(
               textColor: Styles().colors!.fillColorSecondary,
               backgroundColor: Styles().colors!.white,
               borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -91,7 +94,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
           ),
           Expanded(child:
             Stack(children: [
-              Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16,), child:
+              Padding(padding: _skillsSelfEvaluationSelected ? EdgeInsets.zero : EdgeInsets.only(top: 16, left: 16, right: 16,), child:
                 _contentWidget
               ),
               _buildContentValuesContainer()
@@ -206,6 +209,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContent.due_date_catalog;
     } else if (code == 'my_illini') {
       return AcademicsContent.my_illini;
+    } else if (code == 'skills_self_evaluation') {
+      return AcademicsContent.skills_self_evaluation;
     } else {
       return null;
     }
@@ -285,7 +290,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
           _rawContentWidget
         ),
       );
-}
+  }
 
   Widget get _rawContentWidget {
     // There is no content for AcademicsContent.my_illini and AcademicsContent.due_date_catalog - it is a web url opened in an external browser
@@ -300,10 +305,14 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return CanvasCoursesContentWidget();
       case AcademicsContent.student_courses:
         return StudentCoursesContentWidget();
+      case AcademicsContent.skills_self_evaluation:
+        return SkillsSelfEvaluation();
       default:
         return Container();
     }
   }
+  
+  bool get _skillsSelfEvaluationSelected => _selectedContent == AcademicsContent.skills_self_evaluation;
 
   bool _isCheckListCompleted(String contentKey) {
     int stepsCount = CheckList(contentKey).progressSteps?.length ?? 0;
@@ -329,6 +338,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return Localization().getStringEx('panel.academics.section.due_date_catalog.label', 'Due Date Catalog');
       case AcademicsContent.my_illini:
         return Localization().getStringEx('panel.academics.section.my_illini.label', 'myIllini');
+      case AcademicsContent.skills_self_evaluation:
+        return Localization().getStringEx('panel.academics.section.skills_self_evaluation.label', 'Skills Self-Evaluation');
     }
   }
 
@@ -344,4 +355,4 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 }
 
-enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, student_courses, due_date_catalog, my_illini }
+enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, student_courses, due_date_catalog, my_illini, skills_self_evaluation }

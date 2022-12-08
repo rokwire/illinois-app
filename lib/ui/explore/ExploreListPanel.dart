@@ -118,7 +118,7 @@ class _ExploreListPanelState extends State<ExploreListPanel> {
     Analytics().logSelect(target: explore.exploreTitle);
 
     //show the detail panel
-    Widget? detailPanel = ExploreDetailPanel.contentPanel(explore: explore,initialLocationData: widget.initialLocationData,);
+    Widget? detailPanel = ExploreDetailPanel.contentPanel(explore: explore, initialLocationData: widget.initialLocationData,);
     if (detailPanel != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => detailPanel));
     }

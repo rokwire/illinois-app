@@ -24,6 +24,7 @@
 #import "MapMarkerView.h"
 
 #import "NSDictionary+InaTypedValue.h"
+#import "NSArray+InaTypedValue.h"
 #import "CLLocationCoordinate2D+InaUtils.h"
 #import "CGGeometry+InaUtils.h"
 #import "NSString+InaJson.h"
@@ -41,7 +42,9 @@
 	NSArray*      _explores;
 	NSDictionary* _exploreOptions;
 	NSArray*      _displayExplores;
-	NSDictionary* _poi;
+	NSDictionary* _viewPOI;
+	NSDictionary* _markPOI;
+	GMSMarker*    _markMarker;
 	NSMutableSet* _markers;
 	GMSMapStyle*  _mapStyleNoPoi;
 	GMSMapStyle*  _mapStyleNoBusStop;
@@ -49,12 +52,20 @@
 	bool          _didFirstLayout;
 	bool          _enabled;
 	NSOperation*  _buildeExploresOperation;
+	NSMutableDictionary<NSString*, UIImage*>* _markersImageCache;
+	UILabel*       _debugLabel;
 }
 @property (nonatomic, readonly) GMSMapView*     mapView;
 @property (nonatomic) NSArray*      explores;
 @property (nonatomic) NSArray*      displayExplores;
 @property (nonatomic) NSMutableSet* markers;
 @property (nonatomic) NSOperation*  buildeExploresOperation;
+@end
+
+@interface MapViewMarkerData : NSObject
+@property (nonatomic) UIImage* image;
+@property (nonatomic) CGPoint  anchor;
+- (instancetype)initWithImage:image anchor:(CGPoint)anchor;
 @end
 
 @implementation MapView
@@ -73,7 +84,16 @@
 		//_mapView.settings.indoorPicker = NO;
 		[self addSubview:_mapView];
 
+		_debugLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+		_debugLabel.font = [UIFont boldSystemFontOfSize:14];
+		_debugLabel.textAlignment = NSTextAlignmentLeft;
+		_debugLabel.textColor = [UIColor blackColor];
+		_debugLabel.shadowColor = [UIColor colorWithWhite:1 alpha:0.5];
+		_debugLabel.shadowOffset = CGSizeMake(2, 2);
+		[self addSubview:_debugLabel];
+
 		_markers = [[NSMutableSet alloc] init];
+		_markersImageCache = [[NSMutableDictionary alloc] init];
 		_enabled = true;
 
 	  NSURL *noPoiUrl = [NSBundle.mainBundle URLForResource:@"mapstyle-nopois" withExtension:@"json"];
@@ -96,10 +116,12 @@
 - (void)layoutSubviews {
 	CGSize contentSize = self.frame.size;
 	_mapView.frame = CGRectMake(0, 0, contentSize.width, contentSize.height);
+	_debugLabel.frame = CGRectMake(8, 8, contentSize.width - 16, 16);
 
 	if (!_didFirstLayout) {
 		_didFirstLayout = true;
-		[self acknowledgePOI];
+		[self acknowledgeViewPOI];
+		[self acknowledgeMarkPOI];
 		[self acknowledgeExplores];
 		[self applyEnabled];
 	}
@@ -158,15 +180,23 @@
 	__weak NSBlockOperation* weakOperation = operation;
 	[operation addExecutionBlock:^(){
 		NSArray* displayExplores = [weakSelf buildExplores:weakSelf.explores thresoldDistance:thresoldDistance operation:weakOperation];
-		NSArray* markers = [weakSelf buildMarkersFromExplores:displayExplores operation:weakOperation];
 		if (!weakOperation.cancelled && ![weakSelf.displayExplores isEqualToArray:displayExplores]) {
-			dispatch_async(dispatch_get_main_queue(), ^{
-				if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
-					weakSelf.displayExplores = displayExplores;
-					[weakSelf applyMarkers:markers];
-					weakSelf.buildeExploresOperation = nil;
-				}
-			});
+			NSDictionary<NSNumber*, MapViewMarkerData*>* markerDataMap = [weakSelf buildMarkerDataFromExplores:displayExplores operation:weakOperation];
+			if (!weakOperation.cancelled) {
+				dispatch_async(dispatch_get_main_queue(), ^{
+					if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
+						weakSelf.displayExplores = displayExplores;
+						[weakSelf applyMarkers: [weakSelf buildMarkersFromExplores:displayExplores markerDataMap:markerDataMap]];
+						weakSelf.buildeExploresOperation = nil;
+					}
+				});
+			}
+			else if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
+				weakSelf.buildeExploresOperation = nil;
+			}
+		}
+		else if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
+			weakSelf.buildeExploresOperation = nil;
 		}
 	}];
 
@@ -266,15 +296,18 @@
 	static double const kThresoldDistanceByZoom[] = {
 		1000000, 800000, 600000, 200000, 100000, // zoom 0 - 4
 		 100000,  80000,  60000,  20000,  10000, // zoom 5 - 9
-		   5000,   1000,    500,    200,    100, // zoom 10 - 14
-		     50,      0,                         // zoom 15 - 16
+		   5000,   2000,   1000,    500,    250, // zoom 10 - 14
+		    100,     50,      0                  // zoom 15 - 16
 		
 	};
-	NSInteger zoomIndex = floor(zoom);
+	NSInteger zoomIndex = round(zoom);
 	if ((0 <= zoomIndex) && (zoomIndex < _countof(kThresoldDistanceByZoom))) {
 		double zoomDistance = kThresoldDistanceByZoom[zoomIndex];
 		double nextZoomDistance = ((zoomIndex + 1) < _countof(kThresoldDistanceByZoom)) ? kThresoldDistanceByZoom[zoomIndex + 1] : 0;
-		return zoomDistance - (zoom - (double)zoomIndex) * (zoomDistance - nextZoomDistance);
+		double thresoldDistance = zoomDistance - (zoom - (double)zoomIndex) * (zoomDistance - nextZoomDistance);
+		NSLog(@"thresoldDistanceForZoom: %.2f => %ld", zoom, (NSInteger)floor(thresoldDistance));
+		_debugLabel.text = [NSString stringWithFormat:@"Zoom: %.2f Dist: %ldm", zoom, (NSInteger)floor(thresoldDistance)];
+		return thresoldDistance;
 	}
 	return 0;
 }
@@ -324,47 +357,88 @@
 
 #pragma mark POI
 
-- (void)applyPOI:(NSDictionary*)poi {
-	_poi = poi;
+- (void)applyViewPOI:(NSDictionary*)poi {
+	_viewPOI = poi;
 	
 	if (_didFirstLayout) {
-		[self acknowledgePOI];
+		[self acknowledgeViewPOI];
 	}
 }
 
-- (void)acknowledgePOI {
-	if ((_poi != nil) && _didFirstLayout) {
-		NSNumber *latitude = [_poi inaNumberForKey:@"latitude"];
-		NSNumber *longitude = [_poi inaNumberForKey:@"longitude"];
+- (void)acknowledgeViewPOI {
+	if ((_viewPOI != nil) && _didFirstLayout) {
+		NSNumber *latitude = [_viewPOI inaNumberForKey:@"latitude"];
+		NSNumber *longitude = [_viewPOI inaNumberForKey:@"longitude"];
 		CLLocationCoordinate2D location = ((latitude != nil) && (longitude != nil) && ((longitude.doubleValue != 0.0) || (longitude.doubleValue != 0.0))) ?
 			CLLocationCoordinate2DMake(latitude.doubleValue, longitude.doubleValue) : kInitialCameraLocation;
-		int zoom = [_poi inaIntForKey:@"zoom" defaults:kInitialCameraZoom];
+		int zoom = [_viewPOI inaIntForKey:@"zoom" defaults:kInitialCameraZoom];
 
 		GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:location.latitude longitude:location.longitude zoom:(_currentZoom = zoom)];
 		GMSCameraUpdate *update = [GMSCameraUpdate setCamera:camera];
 		[_mapView moveCamera:update];
-		_poi = nil;
+		_viewPOI = nil;
+	}
+}
+
+- (void)applyMarkPOI:(NSDictionary*)poi {
+	_markPOI = poi;
+	
+	if (_didFirstLayout) {
+		[self acknowledgeMarkPOI];
+	}
+}
+
+- (void)acknowledgeMarkPOI {
+	if (_didFirstLayout) {
+		if (_markPOI != nil) {
+			GMSMarker *marker = [self markerFromExplore:_markPOI markerData:nil];
+			if (marker != nil) {
+				_markMarker.map = nil;
+				_markMarker = marker;
+				_markMarker.map = _mapView;
+			}
+		}
+		else {
+			_markMarker.map = nil;
+			_markMarker = nil;
+		}
 	}
 }
 
 #pragma mark Display
 
-- (NSArray*)buildMarkersFromExplores:(NSArray*)explores {
-	return [self buildMarkersFromExplores:explores operation:nil];
-}
+//_markersImageCache
 
-- (NSArray*)buildMarkersFromExplores:(NSArray*)explores operation:(NSOperation*)operation {
-
-	NSMutableArray *markers = [[NSMutableArray alloc] initWithCapacity:explores.count];
-	for (NSDictionary *explore in explores) {
+- (NSDictionary<NSNumber*, MapViewMarkerData*>*)buildMarkerDataFromExplores:(NSArray*)explores operation:(NSOperation*)operation {
+	NSMutableDictionary<NSNumber*, MapViewMarkerData*> *markerDataMap = [[NSMutableDictionary alloc] initWithCapacity:explores.count];
+	for (NSInteger index = 0; index < explores.count; index++) {
 		if (operation.cancelled) {
 			break;
 		}
-		else if ([explore isKindOfClass:[NSDictionary class]]) {
-			GMSMarker *marker = [self markerFromExplore: explore];
-			if (marker != nil) {
-				[markers addObject:marker];
+		else {
+			NSDictionary *explore = [explores inaDictAtIndex:index];
+			MapViewMarkerData *markerData = [self markerDataFromExplore:explore];
+			if (markerData != nil) {
+				[markerDataMap setObject:markerData forKey:@(index)];
 			}
+		}
+	}
+	return operation.cancelled ? nil : markerDataMap;
+}
+
+- (NSArray<GMSMarker*>*)buildMarkersFromExplores:(NSArray*)explores {
+	return [self buildMarkersFromExplores:explores markerDataMap:nil];
+}
+
+- (NSArray<GMSMarker*>*)buildMarkersFromExplores:(NSArray*)explores markerDataMap:(NSDictionary<NSNumber*, MapViewMarkerData*>*) markerDataMap {
+
+	NSMutableArray<GMSMarker*> *markers = [[NSMutableArray alloc] initWithCapacity:explores.count];
+	for (NSInteger index = 0; index < explores.count; index++) {
+		NSDictionary *explore = [explores inaDictAtIndex:index];
+		MapViewMarkerData *markerData = [markerDataMap objectForKey:@(index)];
+		GMSMarker *marker = [self markerFromExplore:explore markerData:markerData];
+		if (marker != nil) {
+			[markers addObject:marker];
 		}
 	}
 	return markers;
@@ -392,35 +466,43 @@
 	}
 }
 
-- (GMSMarker*)markerFromExplore:(NSDictionary*)explore {
-	CLLocationCoordinate2D exploreCoordinate = explore.uiucExploreLocationCoordinate;
+- (MapViewMarkerData*)markerDataFromExplore:(NSDictionary*)explore {
+		UIImage *markerIcon;
+		CGPoint markerAnchor;
+		if (explore != nil) {
+			NSInteger exploresCount = explore.uiucExplores.count;
+			if (1 < exploresCount) {
+				markerIcon = [MapMarkerView2 groupMarkerImageWithHexColor:explore.uiucExploreMarkerHexColor count:exploresCount imageCache:_markersImageCache];
+				markerAnchor = CGPointMake(0.5, 0.5);
+			}
+			else if (explore.uiucExploreType == UIUCExploreType_MTDStop) {
+				markerIcon = [UIImage imageNamed:@"maps-icon-marker-bus"];
+				markerAnchor = CGPointMake(0.5, 0.5);
+			}
+			else {
+				markerIcon = [MapMarkerView2 markerImageWithHexColor:explore.uiucExploreMarkerHexColor];
+				markerAnchor = CGPointMake(0.5, 1);
+			}
+			return [[MapViewMarkerData alloc] initWithImage:markerIcon anchor:markerAnchor];
+		}
+		return nil;
+}
+
+- (GMSMarker*)markerFromExplore:(NSDictionary*)explore markerData:(MapViewMarkerData*)markerData {
+	CLLocationCoordinate2D exploreCoordinate = (explore != nil) ? explore.uiucExploreLocationCoordinate : kCLLocationCoordinate2DInvalid;
 	if (CLLocationCoordinate2DIsValid(exploreCoordinate)) {
+
+		if (markerData == nil) {
+			markerData = [self markerDataFromExplore:explore];
+		}
 
 		GMSMarker *marker = [[GMSMarker alloc] init];
 		marker.position = CLLocationCoordinate2DMake(exploreCoordinate.latitude, exploreCoordinate.longitude);
-		
-		UIImage *markerIcon;
-		CGPoint markerAnchor;
-		NSInteger exploresCount = explore.uiucExplores.count;
-		if (1 < exploresCount) {
-			markerIcon = [MapMarkerView2 groupMarkerImageWithHexColor:explore.uiucExploreMarkerHexColor count:exploresCount];
-			markerAnchor = CGPointMake(0.5, 0.5);
-		}
-		else if (explore.uiucExploreType == UIUCExploreType_MTDStop) {
-			markerIcon = [UIImage imageNamed:@"maps-icon-marker-bus"];
-			markerAnchor = CGPointMake(0.5, 0.5);
-		}
-		else {
-			markerIcon = [MapMarkerView2 markerImageWithHexColor:explore.uiucExploreMarkerHexColor];
-			markerAnchor = CGPointMake(0.5, 1);
-		}
-		NSString *markerTitle = explore.uiucExploreTitle;
-		NSString *markerSnippet = explore.uiucExploreDescription;
-		
-		marker.icon = markerIcon;
-		marker.groundAnchor = markerAnchor;
-		marker.title = markerTitle;
-		marker.snippet = markerSnippet;
+
+		marker.icon = markerData.image;
+		marker.groundAnchor = markerData.anchor;
+		marker.title = explore.uiucExploreTitle;
+		marker.snippet = explore.uiucExploreDescription;
 
 		marker.zIndex = 1;
 		marker.userData = @{ @"explore" : explore };
@@ -476,20 +558,6 @@
 
 #pragma mark GMSMapViewDelegate
 
-- (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {
-	NSLog(@"didTapAtCoordinate: [%@, %@]",
-		@(round(coordinate.latitude * 1000000) / 1000000),
-		@(round(coordinate.longitude * 1000000) / 1000000));
-	NSDictionary *arguments = @{
-		@"mapId" : @(_mapId),
-		@"location": @{
-			@"latitude" : @(coordinate.latitude),
-			@"longitude" : @(coordinate.longitude),
-		}
-	};
-	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"map.explore.clear" arguments:arguments.inaJsonString];
-}
-
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(nonnull GMSMarker *)marker {
 	NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
 	id exploreParam = explore.uiucExplores ?: explore;
@@ -509,6 +577,18 @@
 	}
 }
 
+- (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {
+	NSLog(@"didTapAtCoordinate: [%.6f, %.6f]", coordinate.latitude, coordinate.longitude);
+	NSDictionary *arguments = @{
+		@"mapId" : @(_mapId),
+		@"location": @{
+			@"latitude" : @(coordinate.latitude),
+			@"longitude" : @(coordinate.longitude),
+		}
+	};
+	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"map.location.select" arguments:arguments.inaJsonString];
+}
+
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
 	NSLog(@"GMSMapViewZoom: %@", @(position.zoom));
 	
@@ -523,14 +603,12 @@
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapPOIWithPlaceID:(NSString *)placeID name:(NSString *)name location:(CLLocationCoordinate2D)location {
-	NSLog(@"didTapPOIWithPlaceID: %@ name: %@ location: [%@, %@]", placeID, name,
-		@(round(location.latitude * 1000000) / 1000000),
-		@(round(location.longitude * 1000000) / 1000000));
+	NSLog(@"didTapPOIWithPlaceID: %@ name: %@ location: [%.6f, %.6f]", placeID, name, location.latitude, location.longitude);
 		
 	NSDictionary *arguments = @{
 		@"mapId" : @(_mapId),
 		@"poi" : @{
-			@"placeID" : placeID ?: [NSNull null],
+			@"placeId" : placeID ?: [NSNull null],
 			@"name" : name ?: [NSNull null],
 			@"location": @{
 				@"latitude" : @(location.latitude),
@@ -611,18 +689,28 @@
 		NSDictionary *optionsJsonMap = [parameters inaDictForKey:@"options"];
 		[_mapView applyExplores:exploresJsonList options:optionsJsonMap];
 		result(@(true));
-	} else if ([[call method] isEqualToString:@"enable"]) {
+	}
+	else if ([[call method] isEqualToString:@"enable"]) {
 		bool enable = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;
 		[_mapView enable:enable];
-	} else if ([[call method] isEqualToString:@"enableMyLocation"]) {
+	}
+	else if ([[call method] isEqualToString:@"enableMyLocation"]) {
 		bool enableMyLocation = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;
 		[_mapView enableMyLocation:enableMyLocation];
-	} else if ([[call method] isEqualToString:@"viewPoi"]) {
+	}
+	else if ([[call method] isEqualToString:@"viewPOI"]) {
 		NSDictionary *parameters = [call.arguments isKindOfClass:[NSDictionary class]] ? call.arguments : nil;
 		NSDictionary *targetJsonMap = [parameters inaDictForKey:@"target"];
-		[_mapView applyPOI:targetJsonMap];
+		[_mapView applyViewPOI:targetJsonMap];
 		result(@(true));
-	} else {
+	}
+	else if ([[call method] isEqualToString:@"markPOI"]) {
+		NSDictionary *parameters = [call.arguments isKindOfClass:[NSDictionary class]] ? call.arguments : nil;
+		NSDictionary *exploreJsonMap = [parameters inaDictForKey:@"explore"];
+		[_mapView applyMarkPOI:exploreJsonMap];
+		result(@(true));
+	}
+	else {
 		result(FlutterMethodNotImplemented);
 	}
 }
@@ -630,3 +718,14 @@
 @end
 
 
+@implementation MapViewMarkerData
+
+- (instancetype)initWithImage:image anchor:(CGPoint)anchor {
+	if (self = [super init]) {
+		_image = image;
+		_anchor = anchor;
+	}
+	return self;
+}
+
+@end

@@ -292,7 +292,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
     return Padding(
         padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
         child: Text(StringUtils.ensureNotEmpty(widget.explore?.exploreTitle),
-            style:  Styles().textStyles?.getTextStyle('widget.explore.card.title.large')));
+            style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')));
   }
 
   Widget _exploreDetails() {

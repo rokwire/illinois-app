@@ -286,7 +286,9 @@
     "panel.browse.section.research_projects.title": "Research at Illinois",
     "panel.browse.section.research_projects.description": "Start your own research projects or discover other projects to participate.",
     "panel.browse.section.laundry.title": "Laundry",
-    "panel.browse.section.laundry.description": "View laundry locations and washer/dryer availability",
+    "panel.browse.section.laundry.description": "View laundry locations and washer/dryer availability.",
+    "panel.browse.section.mtd.title": "MTD",
+    "panel.browse.section.mtd.description": "View MTD stop locations, routes and buses availability.",
     "panel.browse.section.my.title": "My",
     "panel.browse.section.my.description": "Personalized views of everything you are interested in.",
     "panel.browse.section.inbox.title": "Notifications",
@@ -326,7 +328,8 @@
     "panel.browse.entry.safer.my_mckinley.title": "MyMcKinley",
     "panel.browse.entry.safer.wellness_answer_center.title": "Answer Center",
 
-    "panel.browse.entry.campus_guide.campus_highlights.title": "Campus Safety Resources",
+    "panel.browse.entry.campus_guide.campus_highlights.title": "Campus Guide Highlights",
+    "panel.browse.entry.campus_guide.campus_safety_resources.title": "Campus Safety Resources",
     "panel.browse.entry.campus_guide.campus_guide.title": "Complete Campus Guide",
     "panel.browse.entry.campus_guide.my_campus_guide.title": "My Campus Guide",
 
@@ -362,6 +365,10 @@
     "panel.browse.entry.laundry.laundry.title": "Laundry",
     "panel.browse.entry.laundry.my_laundry.title": "My Laundry",
 
+    "panel.browse.entry.mtd.all_mtd_stops.title": "All Stops",
+    "panel.browse.entry.mtd.my_mtd_stops.title": "My Stops",
+    "panel.browse.entry.mtd.my_mtd_destinations.title": "My Destinations",
+
     "panel.browse.entry.my.my_groups.title": "My Groups",
     "panel.browse.entry.my.canvas_courses.title": "My Gies Canvas Courses",
     "panel.browse.entry.my.student_courses.title": "My Courses",
@@ -371,6 +378,8 @@
     "panel.browse.entry.my.my_athletics.title": "My Athletics Events",
     "panel.browse.entry.my.my_news.title": "My Athletics News",
     "panel.browse.entry.my.my_laundry.title": "My Laundry",
+    "panel.browse.entry.my.my_mtd_stops.title": "My MTD Stops",
+    "panel.browse.entry.my.my_mtd_destinations.title": "My MTD Destinations",
     "panel.browse.entry.my.my_inbox.title": "My Notifications",
     "panel.browse.entry.my.my_campus_guide.title": "My Campus Guide",
     "panel.browse.entry.my.wellness_resources.title": "My Wellness Resources",
@@ -422,6 +431,7 @@
     "panel.academics.section.uiuc_checklist.label": "New Student Checklist",
     "panel.academics.section.canvas_courses.label": "My Gies Canvas Courses",
     "panel.academics.section.student_courses.label": "My Courses",
+    "panel.academics.section.skills_self_evaluation.label": "Skills Self-Evaluation",
     "panel.academics.section.due_date_catalog.label": "Due Date Catalog",
     "panel.academics.section.my_illini.label": "myIllini",
     "panel.academics.section.events.offline.msg": "No academic events available while offline.",
@@ -919,6 +929,8 @@
     "panel.explore.button.directions.hint":"",
     "panel.explore.button.details.title":"Details",
     "panel.explore.button.details.hint":"View details",
+    "panel.explore.button.bus_schedule.title":"Bus Schedule",
+    "panel.explore.button.bus_schedule.hint":"View bus schedule",
     "panel.explore.label.spcial_offers.title":"Special Offers",
 
     "panel.explore.button.events.display_type.all.label": "All Events",
@@ -969,13 +981,22 @@
     "panel.explore.item.events.name":"Events",
     "panel.explore.item.dinings.name":"Dining Options",
     "panel.explore.item.laundry.name":"Laundry",
+    "panel.explore.item.games.name":"Games",
     "panel.explore.item.places.name":"Places",
     "panel.explore.item.buildings.name":"Buildings",
+    "panel.explore.item.mtd_stops.name":"MTD Stops",
     "panel.explore.item.courses.name":"Courses",
+    "panel.explore.item.appointments.name":"Appointments",
+    "panel.explore.item.pois.name":"POIs",
+    "panel.explore.item.poi.name":"POI",
+    "panel.explore.item.location.name":"Location",
     "panel.explore.item.unknown.name":"Explores",
     "panel.explore.map.popup.title.format":"%d %s",
 
     "panel.explore.missing.appointments.msg":"You currently have no upcoming in-person appointments linked within {{app_title}} app.",
+    "panel.explore.hide.appointments.msg":"There is nothing to display as you have chosen not to display any past or future appointments.",
+    "panel.explore.directions.na.msg":"You need to enable location services in order to get navigation directions.",
+    "panel.explore.details.na.msg":"Details are not available for custom points of interests.",
 
     "panel.explore_list.header.title":"Explore",
 
@@ -1158,6 +1179,8 @@
     "panel.saved.label.dining": "My Dining Locations",
     "panel.saved.label.news": "My Athletics News",
     "panel.saved.label.laundry": "My Laundry",
+    "panel.saved.label.mtd_stops": "My MTD Stops",
+    "panel.saved.label.mtd_destinations": "My MTD Destinations",
     "panel.saved.label.campus_guide": "My Campus Guide",
 
     "panel.saved.notifications.label": "Don’t miss an event! Get reminders of upcoming events.",
@@ -1270,7 +1293,9 @@
     "panel.settings.home.settings.sections.food_filter.label": "My Food Filter",
     "panel.settings.home.settings.sections.sports.label": "My Sports Teams",
     "panel.settings.home.settings.sections.calendar.label": "My Calendar Settings",
+    "panel.settings.home.settings.sections.appointments.label": "MyMcKinley Appointments",
     "panel.settings.home.settings.sections.favorites.label": "My Favorites",
+    "panel.settings.home.settings.sections.assessments.label": "My Assessments",
 
     "panel.settings.home.connect.not_logged_in.title":"Sign in to {{app_title}}",
     "panel.settings.home.connect.not_logged_in.netid.description.part_1": "Are you a ",
@@ -1359,6 +1384,12 @@
     "panel.settings.home.calendar.research.questionnaire.title": "Research interest form",
     "panel.settings.home.calendar.research.prompt.title": "Please confirm that you wish to no longer participate in Research at Illinois. All information filled out in your questionnaire will be deleted.",
 
+    "panel.settings.home.appointments.description.format": "Display appointments in the {{app_title}} app for:",
+    "panel.settings.home.appointments.mckinley.label": "MyMcKinley",
+
+    "panel.settings.home.assessments.skills_self_evaluation.save_results.label": "Save my results to compare to future results",
+    "panel.settings.home.assessments.skills_self_evaluation.save_progress.description": "Progress on an evaluation that you started will be saved automatically until you cancel or complete it.",
+
     "panel.settings.privacy_center.label.title":"Privacy Center",
     "panel.settings.privacy_center.label.description":"Personalize your privacy and data preferences.",
     "panel.settings.privacy_center.label.finish_setup":"Finish setup",
@@ -1374,7 +1405,7 @@
     "panel.settings.privacy_center.label.delete_message.description2":"Permanently ",
     "panel.settings.privacy_center.label.delete_message.description3":"delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?",
     "panel.settings.privacy_center.button.forget_info.title": "Forget My Information",
-    "panel.settings.privacy_center.label.delete_message.description.groups": " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, and events) or leave them for others to see.",
+    "panel.settings.privacy_center.label.delete_message.description.groups": " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, reactions and events) or leave them for others to see.",
     "panel.settings.privacy_center.delete_account.contributions.delete.msg":"Please delete all my contributions.",
 
     "panel.settings.verify_identity.label.title":"Verify your Identity",
@@ -1854,6 +1885,9 @@
     "panel.wellness.appointments.home.past.list.empty.msg": "You don't have recent past appointments linked within the Illinois app.",
     "panel.wellness.appointments.home.past_appointments.header.label": "Recent Past Appointments",
     "panel.wellness.appointments.home.past_appointments.footer.description": "<a href='{{mckinley_url}}'>Visit {{mckinley_url_label}} to view a full history of past appointments.</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>",
+    "panel.wellness.appointments.home.display.nothing.msg": "There is nothing to display as you have chosen not to display any past or future appointments.",
+    "panel.wellness.appointments.home.display.settings.on.label": "Display My Appointments",
+    "panel.wellness.appointments.home.display.settings.off.label": "Don't Display My Appointments",
 
     "panel.wellness.home.header.title": "Wellness",
     "panel.wellness.home.eight_dimensions.header.title": "8 Dimensions of Wellness",
@@ -2321,6 +2355,15 @@
 	"panel.research_projects.home.status.empty.open.text": "There are no opened research projects at the moment.",
 	"panel.research_projects.home.status.empty.my.text": "You have not created and do not participate in any research projects.",
 
+    "panel.mtd_stops.home.header_bar.title": "MTD Stops",
+    "panel.mtd_stops.home.content_type.all.title": "All Stops",
+    "panel.mtd_stops.home.content_type.my.title": "My Stops",
+	"panel.mtd_stops.home.dropdown.search.title": "Search Stop",
+	"panel.mtd_stops.home.status.error.all.text": "Failed to load bus stops.",
+	"panel.mtd_stops.home.status.error.my.text": "Failed to load your bus stops.",
+	"panel.mtd_stops.home.status.empty.all.text": "There are no bus stops available.",
+	"panel.mtd_stops.home.status.empty.my.text": "You have not saved any stop yet.",
+
     "panel.guide_categories.label.heading": "Campus Guide",
     "panel.guide_categories.label.content.empty": "Empty guide content",
 
@@ -2335,8 +2378,10 @@
 
     "panel.guide_list.label.highlights.heading": "Campus Guide",
 
-    "panel.guide_list.label.highlights.section": "Safety Resources",
-    "panel.guide_list.label.highlights.empty": "There are no active Campus Safety Resources.",
+    "panel.guide_list.label.highlights.section": "Campus Highlights",
+    "panel.guide_list.label.highlights.empty": "There are no active Campus Hightlights.",
+    "panel.guide_list.label.campus_safety_resources.section": "Safety Resources",
+    "panel.guide_list.label.campus_safety_resources.empty": "There are no active Campus Safety Resources.",
     "panel.guide_list.label.campus_reminders.section": "Campus Reminders",
     "panel.guide_list.label.campus_reminders.empty": "There are no active Campus Reminders.",
     "panel.guide_list.label.content.empty": "Empty guide content",
@@ -2392,6 +2437,37 @@
     "panel.student_courses.load.failed.error.msg": "It appears you have no courses registered for the selected term.",
     "panel.student_courses.load.offline.error.msg": "My Courses not available while offline.",
     "panel.student_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
+
+    "panel.skills_self_evaluation.get_started.section.title": "Skills Self-Evaluation",
+    "panel.skills_self_evaluation.get_started.time.description": "5 Minutes",
+    "panel.skills_self_evaluation.get_started.button.label": "Get Started",
+    "panel.skills_self_evaluation.get_started.description.title": "Identify your strengths related to:",
+    "panel.skills_self_evaluation.get_started.description.list": "\t\t\u2022 self-management\n\t\t\u2022 innovation\n\t\t\u2022 cooperation\n\t\t\u2022 social engagement\n\t\t\u2022 emotional resilience",
+    "panel.skills_self_evaluation.get_started.body.save.description": "Your results will be saved for you to compare to future results.",
+    "panel.skills_self_evaluation.get_started.body.dont_save.description": "Your results will not be saved for you to compare to future results.",
+    "panel.skills_self_evaluation.get_started.body.save.dialog": "Your results will be saved for you to compare to future results.\n\nNo data from this assessment will be shared with other people or systems or stored outside of your Illinois app account.",
+    "panel.skills_self_evaluation.get_started.body.dont_save.label": "Don't Save My Results",
+    "panel.skills_self_evaluation.get_started.body.save.label": "Save My Results",
+    "panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label": "View past results",
+    "panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label": "Where do my results go?",
+    "panel.skills_self_evaluation.get_started.bottom_sheet.how_results_determined.label": "How are my results determined?",
+    "panel.skills_self_evaluation.get_started.bottom_sheet.why_skills_matter.label": "Why do these skills matter?",
+    "panel.skills_self_evaluation.get_started.bottom_sheet.who_created_assessment.label": "Who created this assessment?",
+    "panel.skills_self_evaluation.info.header.title": "Skills Self-Evaluation",
+    "panel.skills_self_evaluation.results.header.title": "Skills Self-Evaluation",
+    "panel.skills_self_evaluation.results.section.title": "Results",
+    "panel.skills_self_evaluation.results.score.description": "Skills Domain Score",
+    "panel.skills_self_evaluation.results.score.scale": "(0-100)",
+    "panel.skills_self_evaluation.results.skills.title": "SKILLS",
+    "panel.skills_self_evaluation.results.student_average.term": "Student Average",
+    "panel.skills_self_evaluation.results.student_average.description": " = Average score among approximately 750 students at Colby College and the University of Illinois.",
+    "panel.skills_self_evaluation.results.empty.message": "No results yet.",
+    "panel.skills_self_evaluation.results.delete_scores.message": "Are you sure you want to delete all of your scores?",
+    "panel.skills_self_evaluation.results_detail.header.title": "Skills Self-Evaluation",
+    "panel.skills_self_evaluation.results_detail.missing_content": "There is no detailed results content for this skill.",
+    "panel.skills_self_evaluation.auth_dialog.prefix": "You need to be signed in with your NetID to access Assessments.\n",
+    "panel.skills_self_evaluation.auth_dialog.privacy": "Set your privacy level to 4 or 5.",
+    "panel.skills_self_evaluation.auth_dialog.suffix": " Then, sign in with your NetID under Settings.",
 
     "panel.home_canvas_course.header.title": "Course",
     "panel.home_canvas_course.load.failed.error.msg": "Failed to load course. Please, try again later.",
@@ -2483,7 +2559,8 @@
 
     "panel.appointment.detail.meeting.id.label": "Meeting ID:",
     "panel.appointment.detail.meeting.passcode.label": "Passcode:",
-    "panel.appointment.detail.cancel.description": "To cancel an appointment, go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call (<u>{{mckinley_phone}}</u>) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
+    "panel.appointment.detail.instructions.label": "Required prep",
+    "panel.appointment.detail.cancel.description": "<b>To cancel an appointment,</b> go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call (<u>{{mckinley_phone}}</u>) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
     "panel.appointment.detail.error.msg": "Failed to load appointment data.",
 
     "widget.game_day.label.its_game_day":"It's Game Day!",
@@ -2547,6 +2624,11 @@
     "widget.home.campus_reminders.button.all.title": "View All",
     "widget.home.campus_reminders.button.all.hint": "Tap to view all reminders",
 
+    "widget.home.campus_safety_resources.label.campus_safety_resources": "Campus Safety Resources",
+    "widget.home.campus_safety_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Safety Resources</b></a> for quick access here.",
+    "widget.home.campus_safety_resources.button.all.title": "View All",
+	"widget.home.campus_safety_resources.button.all.hint": "Tap to view all safety resources",
+
     "widget.home.suggested_events.label.events_for_you":"Suggested Events",
     "widget.home.suggested_events.label.events_for_you.sub_title":"Curated from your interests",
     "widget.home.suggested_events.text.empty.description": "There are no suggested events available.",
@@ -2567,7 +2649,8 @@
 
     "widget.home.research_projects.my.label.header.title":"My Research Projects",
     "widget.home.research_projects.open.label.header.title":"Open Research Projects",
-	"widget.home.research_projects.my.text.empty.description": "You have not created any research projects yet.",
+	"widget.home.research_projects.my.text.empty.admin.description": "You have not created any research projects yet.",
+	"widget.home.research_projects.my.html.empty.user.description": "You are currently not participating in any research projects. <a href='{{open_projects_url}}'>View current studies</a> that match your <a href='{{questionnaire_url}}'>Research Interest Form</a> to opt in and become part of the study’s recruitment pool.",
 	"widget.home.research_projects.all.text.empty.description": "Failed to load research projects.",
     "widget.home.research_projects.message.offline":"Research Projects are not available while offline.",
     "widget.home.research_projects.message.logged_out":"You need to be logged in to access Research Projects.",
@@ -2651,7 +2734,7 @@
     "widget.home.radio.title": "WPGU 107.1 FM",
     "widget.home.radio.disabled.message": "WPGU 107.1 FM is not enabled.",
     "widget.home.radio.button.pause.title": "Pause",
-    "widget.home.radio.button.play.title": "TUNE IN",
+    "widget.home.radio.button.play.title": "Tune In",
     "widget.home.radio.button.initalize.title": "Initializing",
     "widget.home.radio.button.not_available.title": "Not Available",
     "widget.home.radio.button.fail.title": "Initialization failed",
@@ -2661,7 +2744,6 @@
     "widget.home.prompt.remove.favorite": "Are you sure you want to REMOVE this item from your favorites?",
 
     "widget.home.welcome.text.title": "Welcome to {{app_title}} {{app_version}}",
-    "widget.home.welcome.text.description": "New in this version: personalize the {{app_title}} app content you want front and center in Favorites. Change or reorder your favorites by tapping on Customize, or add or remove content by tapping \u2606.",
     "widget.home.welcome.button.close.label": "Close",
 
     "widget.home.athletics_news.text.title": "Athletics News",
@@ -2722,6 +2804,8 @@
     "widget.home.favorites.title.athletics": "My Athletics Events",
     "widget.home.favorites.title.news": "My Athletics News",
     "widget.home.favorites.title.laundry": "My Laundry",
+    "widget.home.favorites.title.mtd_stops": "My MTD Stops",
+    "widget.home.favorites.title.mtd_destinations": "My MTD Destinations",
     "widget.home.favorites.title.campus_guide": "My Campus Guide",
 
     "widget.home.favorites.message.offline.events": "My Events are not available while offline.",
@@ -2729,6 +2813,8 @@
     "widget.home.favorites.message.offline.athletics": "My Athletics Events are not available while offline.",
     "widget.home.favorites.message.offline.news": "My Athletics News are not available while offline.",
     "widget.home.favorites.message.offline.laundry": "My Laundry are not available while offline.",
+    "widget.home.favorites.message.offline.mtd_stops": "My MTD Stops are not available while offline.",
+    "widget.home.favorites.message.offline.mtd_destinations": "My MTD Destinations are not available while offline.",
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide are not available while offline.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
@@ -2736,6 +2822,8 @@
     "widget.home.favorites.message.empty.athletics": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics Events</b></a> for quick access here.",
     "widget.home.favorites.message.empty.news": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Athletics News</b></a> for quick access here.",
     "widget.home.favorites.message.empty.laundry": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Laundry Locations</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.mtd_stops": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MTD Stops</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.mtd_destinations": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MTD Destinations</b></a> for quick access here.",
     "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
 
     "widget.home.favorites.all.title": "View All",
@@ -2744,6 +2832,8 @@
     "widget.home.favorites.all.hint.athletics": "Tap to view all favorite athletics events",
     "widget.home.favorites.all.hint.news": "Tap to view all favorite athletics news",
     "widget.home.favorites.all.hint.laundry": "Tap to view all favorite laundries",
+    "widget.home.favorites.all.hint.mtd_stops": "Tap to view all favorite MTD stops",
+    "widget.home.favorites.all.hint.mtd_destinations": "Tap to view all favorite MTD destinations",
     "widget.home.favorites.all.hint.campus_guide": "Tap to view all favorite campus guide articles",
 
 	"widget.home.wellness_resources.header.label": "My Wellness Resources",
@@ -2802,6 +2892,7 @@
     
     "widget.home.appointments.my.label.header.title": "MyMcKinley Appointments",
     "widget.home.appointments.my.text.empty.description": "You currently have no upcoming appointments linked within the {{app_title}} app.",
+    "widget.home.appointments.my.text.display.nothing.msg": "There is nothing to display as you have chosen not to display any past or future appointments.",
     "widget.home.appointments.my.button.all.title": "View All",
     "widget.home.appointments.my.button.all": "Tap to view all appointments",
 

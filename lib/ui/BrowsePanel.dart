@@ -5,8 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
+import 'package:illinois/model/Video.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -38,6 +40,7 @@ import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
+import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
@@ -498,7 +501,12 @@ class _BrowseEntry extends StatelessWidget {
       case "laundry.laundry":                 _onTapLaundry(context); break;
       case "laundry.my_laundry":              _onTapMyLaundry(context); break;
 
+      case "mtd.all_mtd_stops":              _onTapMTDStops(context); break;
+      case "mtd.my_mtd_stops":               _onTapMyMTDStops(context); break;
+      case "mtd.my_mtd_destinations":        _onTapMyMTDDestinations(context); break;
+
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
+      case "campus_guide.campus_safety_resources": _onTapCampusSafetyResources(context); break;
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
       case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
 
@@ -542,6 +550,9 @@ class _BrowseEntry extends StatelessWidget {
       case "my.canvas_courses":              _onTapCanvasCourses(context); break;
       case "my.my_groups":                   _onTapMyGroups(context); break;
       case "my.my_laundry":                  _onTapMyLaundry(context); break;
+      case "my.my_research_projects":        _onTapMyResearchProjects(context); break;
+      case "my.my_mtd_stops":                _onTapMyMTDStops(context); break;
+      case "my.my_mtd_destinations":         _onTapMyMTDDestinations(context); break;
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
       case "my.my_appointments":             _onTapMyAppointments(context); break;
 
@@ -642,22 +653,22 @@ class _BrowseEntry extends StatelessWidget {
   bool get _canVideoTutorials => (_videoTutorialsCount > 0);
 
   void _onTapVideoTutorials(BuildContext context) {
-    Analytics().logSelect(target: "Video Tutorials");
-    
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.video_tutorial', 'Video Tutorial not available while offline.'));
     }
     else if (_canVideoTutorials) {
-      List<dynamic>? videoTutorials = _getVideoTutorials();
-      if (_videoTutorialsCount == 1) {
-        Map<String, dynamic>? videoTutorial = JsonUtils.mapValue(videoTutorials?.first);
+      List<Video>? videoTutorials = _getVideoTutorials();
+      if (videoTutorials?.length == 1) {
+        Video? videoTutorial = videoTutorials?.first;
         if (videoTutorial != null) {
+          Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString(), attributes: videoTutorial.analyticsAttributes);
           Navigator.push(
               context,
               CupertinoPageRoute(
                   settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
         }
       } else {
+        Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString());
         Navigator.push(
             context,
             CupertinoPageRoute(
@@ -666,7 +677,7 @@ class _BrowseEntry extends StatelessWidget {
     }
   }
 
-  List<dynamic>? _getVideoTutorials() {
+  List<Video>? _getVideoTutorials() {
     Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
     if (videoTutorials == null) {
       return null;
@@ -676,12 +687,7 @@ class _BrowseEntry extends StatelessWidget {
       return null;
     }
     Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials['strings']);
-    for (dynamic video in videos!) {
-      String? videoId = video['id'];
-      String? videoTitle = Localization().getContentString(strings, videoId);
-      video['title'] = videoTitle;
-    }
-    return videos;
+    return Video.listFromJson(jsonList: videos, contentStrings: strings);
   }
 
   bool get _canFeedback => StringUtils.isNotEmpty(Config().feedbackUrl);
@@ -777,8 +783,18 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: 'Campus Highlights');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
       contentList: Guide().promotedList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Safety Resources'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Safety Resources."),
+      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Campus Highlights'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Hightlights."),
+    )));
+  }
+
+  void _onTapCampusSafetyResources(BuildContext context) {
+    Analytics().logSelect(target: 'Campus Safety Resources');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
+      contentList: Guide().safetyResourcesList,
+      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
+      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
     )));
   }
 
@@ -826,6 +842,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapLaundry(BuildContext context) {
     Analytics().logSelect(target: "Laundry");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
+  }
+
+  void _onTapMTDStops(BuildContext context) {
+    Analytics().logSelect(target: "All MTD Stops");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all,)));
   }
 
   void _onTapIlliniCash(BuildContext context) {
@@ -945,6 +966,16 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapMyLaundry(BuildContext context) {
     Analytics().logSelect(target: "My Laundry");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [LaundryRoom.favoriteKeyName]); } ));
+  }
+
+  void _onTapMyMTDStops(BuildContext context) {
+    Analytics().logSelect(target: "My MTD Stops");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.my,)));
+  }
+
+  void _onTapMyMTDDestinations(BuildContext context) {
+    Analytics().logSelect(target: "My MTD Destinations");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [ExplorePOI.favoriteKeyName]); } ));
   }
 
   void _onTapMyCampusGuide(BuildContext context) {

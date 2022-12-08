@@ -22,7 +22,9 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -33,6 +35,7 @@ import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
 import 'package:illinois/ui/home/HomeAppointmentsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
+import 'package:illinois/ui/home/HomeCampusSafetyResourcesWidget.dart';
 import 'package:illinois/ui/home/HomeCanvasCoursesWidget.dart';
 import 'package:illinois/ui/home/HomeCheckListWidget.dart';
 import 'package:illinois/ui/home/HomeDailyIlliniWidget.dart';
@@ -276,6 +279,15 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeCampusHighlightsWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
       }
     }
+    else if (code == 'campus_safety_resources') {
+      if (title) {
+        return HomeCampusSafetyResourcesWidget.title;
+      } else if (handle) {
+        return HomeCampusSafetyResourcesWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position,);
+      } else {
+        return HomeCampusSafetyResourcesWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
+      }
+    }
     else if (code == 'twitter') {
       if (title) {
         return HomeTwitterWidget.title;
@@ -400,6 +412,24 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
         return HomeAppointmentsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
       } else {
         return HomeAppointmentsWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
+      }
+    }
+    else if (code == 'my_mtd_stops') {
+      if (title) {
+        return HomeFavoritesWidget.titleFromKey(favoriteKey: MTDStop.favoriteKeyName);
+      } else if (handle) {
+        return HomeFavoritesWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position, favoriteKey: MTDStop.favoriteKeyName, );
+      } else {
+        return HomeFavoritesWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController, favoriteKey: MTDStop.favoriteKeyName);
+      }
+    }
+    else if (code == 'my_mtd_destinations') {
+      if (title) {
+        return HomeFavoritesWidget.titleFromKey(favoriteKey: ExplorePOI.favoriteKeyName);
+      } else if (handle) {
+        return HomeFavoritesWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position, favoriteKey: ExplorePOI.favoriteKeyName, );
+      } else {
+        return HomeFavoritesWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController, favoriteKey: ExplorePOI.favoriteKeyName);
       }
     }
     else if (code == 'safer') {

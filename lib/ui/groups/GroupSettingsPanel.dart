@@ -142,7 +142,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                                 ),
                                 //_buildResearchOptionLayout(),
                                 _buildResearchConsentDetailsField(),
-                                _buildResearchConfirmationLayout(),
+                                // #2626: Hide consent checkbox and edit control.
+                                // _buildResearchConfirmationLayout(),
                                 _buildResearchOpenLayout(),
                                 _buildResearchAudienceLayout(),
                               ])
@@ -881,7 +882,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     );
   }
 
-  Widget _buildResearchConfirmationLayout() {
+  // #2626: Hide consent checkbox and edit control.
+  /* Widget _buildResearchConfirmationLayout() {
     String? title = "PARTICIPANT CONSENT";
     String? fieldTitle = "PARTICIPANT CONSENT FIELD";
     String? fieldHint = "";
@@ -922,7 +924,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         _researchRequiresConsentConfirmation = !_researchRequiresConsentConfirmation;
       });
     }
-  }
+  }*/
 
   Widget _buildResearchAudienceLayout() {
     int questionsCount = _researchProfileQuestionsCount;
@@ -1065,7 +1067,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             Container(width: 16,),
             Expanded(
               child: RoundedButton(
-                label: Localization().getStringEx("panel.groups_settings.button.delete.title", "Delete this  group"),//TBD localize
+                label: _isResearchProject ?
+                  Localization().getStringEx("panel.groups_settings.button.delete.group.title", "Delete this Project") : //TBD localize
+                  Localization().getStringEx("panel.groups_settings.button.delete.project.title", "Delete this Group"),  //TBD localize
                 backgroundColor: Colors.white,
                 borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
                 textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,

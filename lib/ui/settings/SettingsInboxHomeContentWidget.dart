@@ -21,7 +21,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class SettingsInboxHomeContentWidget extends StatefulWidget {
   final bool? muted;
   final bool? unread;
-  SettingsInboxHomeContentWidget({Key? key, this.muted, this.unread}) : super(key: key);
+  final void Function()? onTapBanner;
+  SettingsInboxHomeContentWidget({Key? key, this.muted, this.unread, this.onTapBanner}) : super(key: key);
 
   _SettingsInboxHomeContentWidgetState createState() => _SettingsInboxHomeContentWidgetState();
 }
@@ -210,9 +211,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     Visibility(
       visible: _showBanner,
       child:GestureDetector(
-        onTap: (){
-          SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.preferences);
-        },
+        onTap: _onTapBanner,
         child:Container(
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
           color: Styles().colors?.saferLocationWaitTimeColorYellow ?? Colors.amberAccent,
@@ -812,6 +811,15 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
 
   bool get _showBanner{
     return FirebaseMessaging().notificationsPaused ?? false;
+  }
+
+  void _onTapBanner() {
+    if (widget.onTapBanner != null) {
+      widget.onTapBanner!();
+    }
+    else {
+      // SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.preferences);
+    }
   }
 }
 

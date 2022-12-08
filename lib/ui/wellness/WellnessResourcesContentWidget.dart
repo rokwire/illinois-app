@@ -280,7 +280,7 @@ class WellnessRegularResourceButton extends StatelessWidget {
         FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(vertical: 17), child:
-            Text(label ?? '', style: Styles().textStyles?.getTextStyle("panel.wellness.resource.button.title.regular"))
+            Text(label ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
           ),
         ),
         hasExternalLink ? Padding(padding: EdgeInsets.only(left: 8, top: 18, bottom: 18), child:

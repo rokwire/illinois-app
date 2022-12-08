@@ -22,7 +22,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Favorite.dart';
+import 'package:illinois/model/Explore.dart';
+import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
@@ -63,6 +66,8 @@ class SavedPanel extends StatefulWidget {
     Game.favoriteKeyName,
     News.favoriteKeyName,
     LaundryRoom.favoriteKeyName,
+    MTDStop.favoriteKeyName,
+    ExplorePOI.favoriteKeyName,
     GuideFavorite.favoriteKeyName,
   ];
 
@@ -330,6 +335,8 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case Game.favoriteKeyName: return _loadFavoriteGames;
       case News.favoriteKeyName: return _loadFavoriteNews;
       case LaundryRoom.favoriteKeyName: return _laundryAvailable ? _loadFavoriteLaundries : _loadNOP;
+      case MTDStop.favoriteKeyName: return _loadFavoriteMTDStops;
+      case ExplorePOI.favoriteKeyName: return _loadFavoriteMTDDestinations;
       case GuideFavorite.favoriteKeyName: return _loadFavoriteGuideItems;
     }
     return _loadNOP;
@@ -348,6 +355,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
 
   Future<List<Favorite>?> _loadFavoriteNews(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Sports().loadNews(null, 0), favoriteIds) : null;
+
+  Future<List<Favorite>?> _loadFavoriteMTDStops(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? ListUtils.reversed(MTD().stopsByIds(favoriteIds)) : null;
+
+  Future<List<Favorite>?> _loadFavoriteMTDDestinations(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? ListUtils.reversed(ExplorePOI.listFromString(favoriteIds)) : null;
 
   Future<List<Favorite>?> _loadFavoriteLaundries(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList((await Laundries().loadSchoolRooms())?.rooms, favoriteIds) : null;
@@ -417,6 +430,8 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Athletics Events');
       case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My Athletics News');
       case LaundryRoom.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
+      case MTDStop.favoriteKeyName:       return Localization().getStringEx('panel.saved.label.mtd_stops', 'My MTD Stops');
+      case ExplorePOI.favoriteKeyName:    return Localization().getStringEx('panel.saved.label.mtd_destinations', 'My MTD Destinations');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
     }
     return null;
@@ -429,6 +444,8 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case Game.favoriteKeyName:          return 'images/icon-calendar.png';
       case News.favoriteKeyName:          return 'images/icon-news.png';
       case LaundryRoom.favoriteKeyName:   return 'images/icon-news.png';
+      case MTDStop.favoriteKeyName:       return 'images/icon-location.png';
+      case ExplorePOI.favoriteKeyName:    return 'images/icon-location.png';
       case GuideFavorite.favoriteKeyName: return 'images/icon-news.png';
     }
     return null;
@@ -667,6 +684,7 @@ class _SavedItem extends StatelessWidget {
     Analytics().logSelect(target: favorite.favoriteTitle);
     favorite.favoriteLaunchDetail(context);
   }
+
   void _onTapCompositeEvent(BuildContext context) {
     Analytics().logSelect(target: favorite.favoriteTitle);
     if (_favoriteEvent?.isComposite ?? false) {

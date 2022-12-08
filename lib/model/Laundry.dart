@@ -69,7 +69,7 @@ class LaundryRoom with Explore implements Favorite {
             id: JsonUtils.stringValue(json['ID'] ?? json['id']),
             name: JsonUtils.stringValue(json['Name'] ?? json['title']),
             status: roomStatusFromString(JsonUtils.stringValue(json['Status'] ?? json['status'])),
-            location: ExploreLocation.fromJSON(JsonUtils.mapValue(json['Location'] ?? json['location'])))
+            location: ExploreLocation.fromJson(JsonUtils.mapValue(json['Location'] ?? json['location'])))
         : null;
   }
 
@@ -89,7 +89,7 @@ class LaundryRoom with Explore implements Favorite {
             id: JsonUtils.stringValue(json['id']),
             name: JsonUtils.stringValue(json['title']),
             status: roomStatusFromString(JsonUtils.stringValue(json['status'])),
-            location: ExploreLocation.fromJSON(JsonUtils.mapValue(json['location'])))
+            location: ExploreLocation.fromJson(JsonUtils.mapValue(json['location'])))
         : null;
   }
 
@@ -165,7 +165,7 @@ class LaundryRoomAppliance {
             type: applianceTypeFromString(JsonUtils.stringValue(json['ApplianceType'])),
             avgCycleTimeinMins: JsonUtils.intValue(json['AverageCycleTime']),
             timeRemainingInMins: JsonUtils.intValue(json['TimeRemaining']),
-            location: ExploreLocation.fromJSON(JsonUtils.mapValue(json['Location'])))
+            location: ExploreLocation.fromJson(JsonUtils.mapValue(json['Location'])))
         : null;
   }
 

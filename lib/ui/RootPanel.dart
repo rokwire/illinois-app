@@ -101,6 +101,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       FirebaseMessaging.notifyAppointmentNotification,
       LocalNotifications.notifyLocalNotificationTapped,
       Alerts.notifyAlert,
+      ActionBuilder.notifyShowPanel,
       Events.notifyEventDetail,
       Sports.notifyGameDetail,
       Groups.notifyGroupDetail,
@@ -117,6 +118,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifyCustomize,
+      ExplorePanel.notifyMapSelect,
     ]);
 
     _tabs = _getTabs();
@@ -151,6 +153,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     }
     else if (name == Alerts.notifyAlert) {
       Alerts.handleNotification(context, param);
+    }
+    else if (name == ActionBuilder.notifyShowPanel) {
+      _showPanel(param);
     }
     else if (name == FirebaseMessaging.notifyForegroundMessage){
       _onFirebaseForegroundMessage(param);
@@ -231,6 +236,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == HomePanel.notifyCustomize) {
       _onSelectHome();
     }
+    else if (name == ExplorePanel.notifyMapSelect) {
+      _onSelectMaps();
+    }
     else if (name == uiuc.TabBar.notifySelectionChanged) {
       _onTabSelectionChanged(param);
     }
@@ -248,6 +256,14 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     if (mounted && (homeIndex != null)) {
       Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
       _selectTab(homeIndex);
+    }
+  }
+
+  void _onSelectMaps() {
+    int? mapsIndex = _getIndexByRootTab(RootTab.Maps);
+    if (mounted && (mapsIndex != null)) {
+      Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+      _selectTab(mapsIndex);
     }
   }
 
@@ -436,6 +452,13 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
               child: Text(Localization().getStringEx('dialog.no.title', 'No')),
               onPressed: () => Navigator.of(context).pop())
         ]);
+  }
+
+  void _showPanel(Map<String, dynamic> content) {
+    switch (content['panel']) {
+      case "GuideDetailPanel":
+        _onGuideDetail(content);
+    }
   }
 
   void _onFirebaseForegroundMessage(Map<String, dynamic> content) {

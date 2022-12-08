@@ -31,6 +31,7 @@ typedef NS_ENUM(NSInteger, UIUCExploreType) {
 	UIUCExploreType_MTDStop,
 	UIUCExploreType_StudentCourse,
 	UIUCExploreType_Appointment,
+	UIUCExploreType_POI,
 	UIUCExploreType_Explores,
 };
 

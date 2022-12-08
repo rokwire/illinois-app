@@ -5,8 +5,73 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Updated research projects questionnaire [#2669](https://github.com/rokwire/illinois-app/issues/2669).
+### Fixed
+- Show appointment instructions in detail panel [#2653](https://github.com/rokwire/illinois-app/issues/2653).
+- Fixed navigation from Browse / My / My Research Projects [#2656](https://github.com/rokwire/illinois-app/issues/2656).
+- Fixed appointment detection in app native sides [#2664](https://github.com/rokwire/illinois-app/issues/2664).
+- Show appointment location detail in underlined link style [#2665](https://github.com/rokwire/illinois-app/issues/2665).
+
+## [4.2.35] - 2022-12-07
+### Added
+- Implemented MTD Destinations [#2633](https://github.com/rokwire/illinois-app/issues/2633).
+- Log events when user plays video [#2650](https://github.com/rokwire/illinois-app/issues/2650).
+### Fixed
+- Fixed Test build configurations for iOS.
+
+## [4.2.34] - 2022-12-06
+### Added
+- Updates for plugin survey action and UI changes [#2638](https://github.com/rokwire/illinois-app/issues/2638).
+- Added favorite button to Map target popup & MTD bus schedule panel [#2633](https://github.com/rokwire/illinois-app/issues/2633).
+### Changed
+- Cleaned up processing MTD bus stops in Explore Panel / Map display type [#2633](https://github.com/rokwire/illinois-app/issues/2633).
+
+## [4.2.33] - 2022-12-05
+### Fixed
+- Blank screen on tapping Daily Illini item [#2627](https://github.com/rokwire/illinois-app/issues/2627).
+- GMSMarker creation in iOS Map view [#2516](https://github.com/rokwire/illinois-app/issues/2516).
+### Changed
+- Research Projects updates [#2626](https://github.com/rokwire/illinois-app/issues/2626).
+- Optimize video tutorial entry UI [#2635](https://github.com/rokwire/illinois-app/issues/2635).
+- MTDStopDeparturesPanel reworked [#2633](https://github.com/rokwire/illinois-app/issues/2633).
+- Updated thresoldDistanceByZoom map in iOS, show debug label with current zoom and threshold distance [#2633](https://github.com/rokwire/illinois-app/issues/2633).
+### Added
+- New video tutorial "Creating a New Group" [#2631](https://github.com/rokwire/illinois-app/issues/2631).
+
+## [4.2.32] - 2022-12-02
+### Fixed
+- Make proper check for missing appointments url [#2614](https://github.com/rokwire/illinois-app/issues/2614).
+- Standardize favorite widget text styles [#2584](https://github.com/rokwire/illinois-app/issues/2584)
+- BESSI cleanup [#2612](https://github.com/rokwire/illinois-app/issues/2612)
+### Changed
+- Implemented Campus Safety Resources [#2618](https://github.com/rokwire/illinois-app/issues/2618).
+
+## [4.2.31] - 2022-12-01
+### Added
+- Add BESSI Survey [#2491](https://github.com/rokwire/illinois-app/issues/2491).
+- Switch on/off displaying appointments [#2606](https://github.com/rokwire/illinois-app/issues/2606).
+### Fixed
+- Remove ModalImageDialog from Video widgets[#2608](https://github.com/rokwire/illinois-app/issues/2608).
+### Changed
+- Display Profile, Notifications and Settings panels as modal bottom sheet [#2607](https://github.com/rokwire/illinois-app/issues/2607).
+- Update My Research Participation empty message depending on user privilege [#2588](https://github.com/rokwire/illinois-app/issues/2588).
+
+## [4.2.30] - 2022-11-30
+### Changed
+- Show video in favorites welcome widget [#2590](https://github.com/rokwire/illinois-app/issues/2590).
+- Update delete account message [#2593](https://github.com/rokwire/illinois-app/issues/2593).
+- Show online details url in Appointment Detail Panel [#2592](https://github.com/rokwire/illinois-app/issues/2592).
+- Show relevant tout image in Appointment Detail Panel [#2596](https://github.com/rokwire/illinois-app/issues/2596).
+- Always show "Recent Past Appointments" label [#2600](https://github.com/rokwire/illinois-app/issues/2600).
+### Added
+- Add appointments settings [#2598](https://github.com/rokwire/illinois-app/issues/2598).
+- Added MTD in Home & Browse panel, created MTDStopsHonePanel. In progress. [#2516](https://github.com/rokwire/illinois-app/issues/2516).
+
+## [4.2.29] - 2022-11-29
 ### Added
 - Added "MTD Bus" category in Map [#2516](https://github.com/rokwire/illinois-app/issues/2516).
+- Add new video "Favorites Tutorial" [#2581] (https://github.com/rokwire/illinois-app/issues/2581).
 ### Changed
 - Remember last selected category in Map [#2583](https://github.com/rokwire/illinois-app/issues/2583).
 

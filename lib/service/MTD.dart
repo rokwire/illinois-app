@@ -1,5 +1,6 @@
 
 
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -18,7 +19,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class MTD with Service implements ExploreJsonHandler, NotificationsListener {
 
   static const String notifyStopsChanged = 'edu.illinois.rokwire.mtd.stops.changed';
-  static const String notifyRoutesChanged = 'edu.illinois.rokwire.mtd.routes.changed';
   static const String _mtdStopsName = "mtdStops.json";
 
   late Directory _appDocDir;
@@ -104,6 +104,16 @@ class MTD with Service implements ExploreJsonHandler, NotificationsListener {
   // Stops
 
   MTDStops? get stops => _stops;
+
+  List<MTDStop>? stopsByIds(LinkedHashSet<String>? stopIds) {
+    return MTDStop.stopsInList2(_stops?.stops, stopIds: stopIds);
+  }
+
+  MTDStop? stopById(String? stopId) {
+    return MTDStop.stopInList(_stops?.stops, stopId: stopId);
+  }
+
+  Future<void> refreshStops() => _updateStops();
 
   File _getStopsCacheFile() => File(join(_appDocDir.path, _mtdStopsName));
 

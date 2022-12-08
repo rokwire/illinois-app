@@ -21,10 +21,14 @@ import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -36,19 +40,22 @@ class WellnessAppointmentsHomeContentWidget extends StatefulWidget {
   State<WellnessAppointmentsHomeContentWidget> createState() => _WellnessAppointmentsHomeContentWidgetState();
 }
 
-class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointmentsHomeContentWidget> {
+class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointmentsHomeContentWidget> implements NotificationsListener {
   List<Appointment>? _upcomingAppointments;
   List<Appointment>? _pastAppointments;
+  late bool _appointmentsCanDisplay;
   bool _loading = false;
 
   @override
   void initState() {
+    NotificationService().subscribe(this, [Storage.notifySettingChanged]);
+    _initAppointments();
     super.initState();
-    _loadAppointments();
   }
 
   @override
   void dispose() {
+    NotificationService().unsubscribe(this);
     super.dispose();
   }
 
@@ -58,14 +65,23 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildContent() {
-    if (_loading) {
-      return _buildLoadingContent();
-    } else {
+    if (!_appointmentsCanDisplay) {
       return Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [_buildRescheduleDescription(), _buildUpcomingAppointments(), _buildPastAppointments()]));
+              children: [_buildRescheduleDescription(), _buildNothingToDisplayMsg(), _buildDisplayAppointmentsSettings()]));
+    } else if (_loading) {
+      return _buildLoadingContent();
+    } else {
+      return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _buildRescheduleDescription(),
+            _buildUpcomingAppointments(),
+            _buildPastAppointments(),
+            _buildDisplayAppointmentsSettings()
+          ]));
     }
   }
 
@@ -79,25 +95,26 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildRescheduleDescription() {
-    String? label =  Localization().getStringEx('panel.wellness.appointments.home.reschedule_appointment.label', 'Need to cancel or reschedule?');
+    String? label =
+        Localization().getStringEx('panel.wellness.appointments.home.reschedule_appointment.label', 'Need to cancel or reschedule?');
     return Semantics(
         label: label,
         button: true,
-        child:InkWell(
-        child: Padding(
-            padding: EdgeInsets.only(bottom: 16),
-            child: Text(
-                label,
-                style: TextStyle(
-                    fontSize: 18,
-                    color: Styles().colors!.fillColorPrimary,
-                    fontFamily: Styles().fontFamilies!.regular,
-                    decoration: TextDecoration.underline,
-                    decorationThickness: 1,
-                    decorationColor: Styles().colors!.fillColorPrimary),
+        child: InkWell(
+            child: Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: Text(
+                  label,
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Styles().colors!.fillColorPrimary,
+                      fontFamily: Styles().fontFamilies!.regular,
+                      decoration: TextDecoration.underline,
+                      decorationThickness: 1,
+                      decorationColor: Styles().colors!.fillColorPrimary),
                   semanticsLabel: "",
-            )),
-        onTap: _showRescheduleAppointmentPopup));
+                )),
+            onTap: _showRescheduleAppointmentPopup));
   }
 
   Widget _buildUpcomingAppointments() {
@@ -119,27 +136,27 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildPastAppointments() {
+    List<Widget> pastAppointmentsWidgetList = <Widget>[];
+    pastAppointmentsWidgetList.add(Padding(
+        padding: EdgeInsets.only(top: 16),
+        child: Semantics(
+            header: true,
+            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+              Expanded(
+                  child: Text(
+                      Localization()
+                          .getStringEx('panel.wellness.appointments.home.past_appointments.header.label', 'Recent Past Appointments'),
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: Styles().colors!.blackTransparent06, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)))
+            ]))));
     if (CollectionUtils.isEmpty(_pastAppointments)) {
-      return _buildEmptyPastAppointments();
+      pastAppointmentsWidgetList.add(_buildEmptyPastAppointments());
     } else {
-      List<Widget> pastAppointmentsWidgetList = <Widget>[];
-      pastAppointmentsWidgetList.add(Padding(
-          padding: EdgeInsets.symmetric(vertical: 16),
-          child: Semantics(
-              header: true,
-              child:Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Expanded(
-                child: Text(
-                    Localization()
-                        .getStringEx('panel.wellness.appointments.home.past_appointments.header.label', 'Recent Past Appointments'),
-                    textAlign: TextAlign.left,
-                    style:
-                        TextStyle(color: Styles().colors!.blackTransparent06, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)))
-          ]))));
       pastAppointmentsWidgetList.addAll(_buildAppointmentsWidgetList(_pastAppointments));
       pastAppointmentsWidgetList.add(_buildPastAppointmentsDescription());
-      return Column(children: pastAppointmentsWidgetList);
     }
+    return Column(children: pastAppointmentsWidgetList);
   }
 
   Widget _buildEmptyPastAppointments() {
@@ -180,10 +197,34 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     if (CollectionUtils.isNotEmpty(appointments)) {
       for (int i = 0; i < appointments!.length; i++) {
         Appointment appointment = appointments[i];
-        widgets.add(Padding(padding: EdgeInsets.only(top: (i == 0 ? 0 : 16)), child: AppointmentCard(appointment: appointment)));
+        widgets.add(Padding(padding: EdgeInsets.only(top: 16), child: AppointmentCard(appointment: appointment)));
       }
     }
     return widgets;
+  }
+
+  Widget _buildNothingToDisplayMsg() {
+    return Padding(
+        padding: EdgeInsets.only(bottom: 16),
+        child: Text(
+            Localization().getStringEx('panel.wellness.appointments.home.display.nothing.msg',
+                'There is nothing to display as you have chosen not to display any past or future appointments.'),
+            textAlign: TextAlign.start,
+            style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.medium)));
+  }
+
+  Widget _buildDisplayAppointmentsSettings() {
+    String buttonTitle = _appointmentsCanDisplay
+        ? Localization().getStringEx('panel.wellness.appointments.home.display.settings.off.label', "Don't Display My Appointments")
+        : Localization().getStringEx('panel.wellness.appointments.home.display.settings.on.label', 'Display My Appointments');
+    return Padding(
+        padding: EdgeInsets.only(bottom: 16),
+        child: InkWell(
+            onTap: _onTapDisplaySettings,
+            child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
+              Padding(padding: EdgeInsets.only(right: 5), child: Image.asset('images/icon-settings.png')),
+              LinkButton(title: buttonTitle, padding: EdgeInsets.zero)
+            ])));
   }
 
   void _showRescheduleAppointmentPopup() {
@@ -210,16 +251,18 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
                     Image.asset('images/block-i-orange.png'),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
-                        child:
-                            Html(data: rescheduleContentHtml, onLinkTap: (url, renderContext, attributes, element) => _onTapMcKinleyUrl(url), style: {
-                          "body": Style(
-                              color: Styles().colors!.fillColorPrimary,
-                              fontFamily: Styles().fontFamilies!.regular,
-                              fontSize: FontSize(14),
-                              padding: EdgeInsets.zero,
-                              margin: EdgeInsets.zero),
-                          "a": Style(color: Styles().colors?.fillColorPrimary)
-                        }))
+                        child: Html(
+                            data: rescheduleContentHtml,
+                            onLinkTap: (url, renderContext, attributes, element) => _onTapMcKinleyUrl(url),
+                            style: {
+                              "body": Style(
+                                  color: Styles().colors!.fillColorPrimary,
+                                  fontFamily: Styles().fontFamilies!.regular,
+                                  fontSize: FontSize(14),
+                                  padding: EdgeInsets.zero,
+                                  margin: EdgeInsets.zero),
+                              "a": Style(color: Styles().colors?.fillColorPrimary)
+                            }))
                   ])),
               Align(
                   alignment: Alignment.topRight,
@@ -248,29 +291,54 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     }
   }
 
+  void _onTapDisplaySettings() {
+    Analytics().logSelect(target: 'Appointments display settings');
+    SettingsHomeContentPanel.present(context, content: SettingsContent.appointments);
+  }
+
+  void _initAppointments() {
+    _appointmentsCanDisplay = Storage().appointmentsCanDisplay ?? false;
+    if (_appointmentsCanDisplay) {
+      _loadAppointments();
+    } else {
+      setStateIfMounted(() {});
+    }
+  }
+
   void _loadAppointments() {
-    _setLoading(true);
-    Appointments().loadAppointments().then((appointments) {
-      if (CollectionUtils.isNotEmpty(appointments)) {
-        _upcomingAppointments = <Appointment>[];
-        _pastAppointments = <Appointment>[];
-        for (Appointment appointment in appointments!) {
-          if (appointment.isUpcoming) {
-            _upcomingAppointments!.add(appointment);
-          } else {
-            _pastAppointments!.add(appointment);
+    if (_appointmentsCanDisplay) {
+      _setLoading(true);
+      Appointments().loadAppointments().then((appointments) {
+        if (CollectionUtils.isNotEmpty(appointments)) {
+          _upcomingAppointments = <Appointment>[];
+          _pastAppointments = <Appointment>[];
+          for (Appointment appointment in appointments!) {
+            if (appointment.isUpcoming) {
+              _upcomingAppointments!.add(appointment);
+            } else {
+              _pastAppointments!.add(appointment);
+            }
           }
+        } else {
+          _upcomingAppointments = _pastAppointments = null;
         }
-      } else {
-        _upcomingAppointments = _pastAppointments = null;
-      }
-      _setLoading(false);
-    });
+        _setLoading(false);
+      });
+    }
   }
 
   void _setLoading(bool loading) {
-    setState(() {
+    setStateIfMounted(() {
       _loading = loading;
     });
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Storage.notifySettingChanged) {
+      if (param == Storage().appointmentsDisplayEnabledKey) {
+        _initAppointments();
+      }
+    }
   }
 }

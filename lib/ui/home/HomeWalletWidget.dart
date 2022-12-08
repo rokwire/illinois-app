@@ -380,7 +380,7 @@ class _HomeBusPassWalletWidgetState extends State<HomeBusPassWalletWidget> imple
                       Expanded(child:
                         VerticalTitleValueSection(
                           title: (message != null) ? message : Auth2().authCard?.role ?? '',
-                          titleTextStyle: (message != null) ? TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary) : TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 24, color: Styles().colors?.fillColorPrimary),
+                          titleTextStyle: (message != null) ? TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary) : Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),
                           value: (message != null) ? null : StringUtils.isNotEmpty(Auth2().authCard?.expirationDate) ? sprintf(Localization().getStringEx('widget.home.wallet.bus_pass.label.card_expires.text', 'Expires: %s'), [Auth2().authCard?.expirationDate ?? '']) : '',
                           valueTextStyle: (message != null) ? null : TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 14, color: Styles().colors?.fillColorPrimary),
                           margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -476,6 +476,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
                           title: (message != null) ? message : StringUtils.isNotEmpty(Auth2().authCard?.fullName) ? Auth2().authCard?.fullName : Auth2().fullName,
                           titleTextStyle: (message != null) ? TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary) : null,
                           value: (message != null) ? null : Auth2().authCard?.uin,
+                          valueTextStyle: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),
                           margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                       ),
