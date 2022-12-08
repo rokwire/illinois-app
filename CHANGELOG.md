@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated research projects questionnaire [#2669](https://github.com/rokwire/illinois-app/issues/2669).
 ### Fixed
 - Show appointment instructions in detail panel [#2653](https://github.com/rokwire/illinois-app/issues/2653).
+- Fixed navigation from Browse / My / My Research Projects [#2656](https://github.com/rokwire/illinois-app/issues/2656).
 
 ## [4.2.35] - 2022-12-07
 ### Added
