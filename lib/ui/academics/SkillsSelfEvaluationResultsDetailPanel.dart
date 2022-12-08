@@ -20,6 +20,7 @@ import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -53,7 +54,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
         textAlign: TextAlign.center,
       ))),
       backgroundColor: Styles().colors?.background,
-      bottomNavigationBar: null,
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

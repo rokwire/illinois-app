@@ -22,6 +22,7 @@ import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -33,7 +34,6 @@ import 'package:rokwire_plugin/ui/widgets/ribbon_button.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-
 
 class SkillsSelfEvaluation extends StatefulWidget {
 
@@ -202,7 +202,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
     List<String>? academicUiComponents = JsonUtils.stringListValue(FlexUI()['academics']);
     if (academicUiComponents?.contains('skills_self_evaluation') == true) {
       if (Config().bessiSurveyID != null && Auth2().isOidcLoggedIn && Auth2().privacyMatch(4)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget())));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget(), tabBar: uiuc.TabBar())));
       } else {
         Widget infoTextWidget = Text.rich(
           TextSpan(
