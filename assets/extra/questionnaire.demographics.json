@@ -55,23 +55,6 @@
 		]
 	},{
 		"id":"q04",
-		"title":"What is your sexual orientation?",
-		"hint":"Sexual Orientation",
-		"description_prefix":null,
-		"description_suffix":null,
-		"min_answers":1,
-		"max_answers":1,
-		"answers": [
-			{"id":"a01", "title":"Heterosexual"},
-			{"id":"a02", "title":"Homosexual"},
-			{"id":"a03", "title":"Bisexual"},
-			{"id":"a04", "title":"Pansexual"},
-			{"id":"a05", "title":"Asexual"},
-			{"id":"a06", "title":"Other"},
-			{"id":"a07", "title":"I'd rather not answer", "hint":"NA"}
-		]
-	},{
-		"id":"q05",
 		"title":"What is your year in college?",
 		"hint":"Year",
 		"description_prefix":null,
@@ -89,7 +72,7 @@
 			{"id":"a08", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
-		"id":"q06",
+		"id":"q05",
 		"title":"What is your ethnic background?",
 		"hint":"Ethnic Background",
 		"description_prefix":null,
@@ -103,7 +86,7 @@
 			{"id":"a04", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
-		"id":"q07",
+		"id":"q06",
 		"title":"What is your racial background?",
 		"hint":"Racial Background",
 		"description_prefix":null,
@@ -122,45 +105,7 @@
 			{"id":"a09", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
-		"id":"q08",
-		"title":"Which of the following best describes your racial or ethnic ancestry?",
-		"hint":"Ethnic Ancestry",
-		"description_prefix":null,
-		"description_suffix":null,
-		"min_answers":1,
-		"max_answers":5,
-		"answers": [
-			{"id":"a01", "title":"Asian Indian"},
-			{"id":"a02", "title":"Cambodian"},
-			{"id":"a03", "title":"Chinese"},
-			{"id":"a04", "title":"Filipino/a"},
-			{"id":"a05", "title":"Indonesian"},
-			{"id":"a06", "title":"Japanese"},
-			{"id":"a07", "title":"Korean"},
-			{"id":"a08", "title":"Lao"},
-			{"id":"a09", "title":"Pakistani"},
-			{"id":"a10", "title":"Taiwanese"},
-			{"id":"a11", "title":"Vietnamese"},
-			{"id":"a12", "title":"Other Asian"},
-			{"id":"a13", "title":"Cuban"},
-			{"id":"a14", "title":"Mexican"},
-			{"id":"a15", "title":"Puerto Rican"},
-			{"id":"a16", "title":"Central American"},
-			{"id":"a17", "title":"South American"},
-			{"id":"a18", "title":"Arab"},
-			{"id":"a19", "title":"Persian / Iranian"},
-			{"id":"a20", "title":"Turkish"},
-			{"id":"a21", "title":"Irish"},
-			{"id":"a22", "title":"German"},
-			{"id":"a23", "title":"English"},
-			{"id":"a24", "title":"Italian"},
-			{"id":"a25", "title":"French"},
-			{"id":"a26", "title":"Polish"},
-			{"id":"a27", "title":"None of the above", "hint":"Other"},
-			{"id":"a28", "title":"I'd rather not answer", "hint":"NA"}
-		]
-	},{
-		"id":"q09",
+		"id":"q07",
 		"title":"How long have you lived in the U.S?",
 		"hint":"Lived in US",
 		"description_prefix":null,
@@ -182,7 +127,7 @@
 			{"id":"a12", "title":"I'd rather not answer", "hint":"NA"}
 		]
 	},{
-		"id":"q10",
+		"id":"q08",
 		"title":"Are you an international student or an exchange student from a country outside the US?",
 		"hint":"International/Exchange Student",
 		"description_prefix":null,

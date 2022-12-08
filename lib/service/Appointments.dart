@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -104,14 +102,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
 
   //TBD remove when not needed for testing
   Future<List<Appointment>?> loadAssetsAppointments() async {
-    List<Appointment>? appointments;
-    try {
-      appointments = Appointment.listFromJson(JsonUtils.decodeList(await rootBundle.loadString('assets/appointments.json')));
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-
-    return appointments;
+    return Appointment.listFromJson(JsonUtils.decodeList(await AppBundle.loadString('assets/appointments.json')));
   }
 
   //TBD: Appointment - load from backend

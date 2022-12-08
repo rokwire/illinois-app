@@ -56,7 +56,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
   @override
   Widget build(BuildContext context) {
     const double imageSize = 64;
-    String? imageUrl = widget.appointment.imageUrl;
+    String? imageUrl = widget.appointment.imageUrlBasedOnCategory;
     bool isFavorite = Auth2().isFavorite(widget.appointment);
     bool starVisible = Auth2().canFavorite && widget.appointment.isUpcoming;
 
@@ -156,8 +156,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                                             height: imageSize,
                                             child: InkWell(
                                                 onTap: () => _onTapCardImage(imageUrl!),
-                                                child: Image.network(imageUrl!,
-                                                     excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders))))))
+                                                child: Styles().images?.getImage(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders))))))
                             ]))
                       ]))),
               Container(color: (widget.appointment.isUpcoming ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary), height: 4)
@@ -176,7 +175,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
         PageRouteBuilder(
             opaque: false,
             pageBuilder: (context, _, __) =>
-                ModalImagePanel(imageUrl: imageUrl, onCloseAnalytics: () => Analytics().logSelect(target: 'Close Image'))));
+                ModalImagePanel(imageKey: imageUrl, onCloseAnalytics: () => Analytics().logSelect(target: 'Close Image'))));
   }
 
   void _onTapExploreCardStar() {
