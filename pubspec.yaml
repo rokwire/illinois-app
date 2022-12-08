@@ -87,7 +87,6 @@ flutter:
   assets:
   - images/
   - assets/
-  - assets/extra/
   - app/images/
   - app/assets/
 
