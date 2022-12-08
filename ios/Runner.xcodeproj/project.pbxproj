@@ -159,8 +159,8 @@
 		B681B2B923DEFD9E00093A67 /* NSData+InaHex.m in Sources */ = {isa = PBXBuildFile; fileRef = B681B2B823DEFD9E00093A67 /* NSData+InaHex.m */; };
 		B6BDCD37242CCF5F002F7364 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B6BDCD39242CCF5F002F7364 /* Localizable.strings */; };
 		B6EA372423A7EF76001D78A5 /* Bluetooth+InaUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EA372323A7EF76001D78A5 /* Bluetooth+InaUtils.m */; };
-		BB7BF12F5D3356D25889D23A /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
-		D604F124B491DE058CE3A2B6 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACB526D062122D3F8BC62A77 /* Pods_Runner.framework */; };
+		BB7BF12F5D3356D25889D23A /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		D604F124B491DE058CE3A2B6 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -200,9 +200,9 @@
 		00062ACEF240D9A50A316D36 /* Pods-Illinois.debug-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-illinoisprod.xcconfig"; sourceTree = "<group>"; };
 		059E7F9D872A48C3B476D35D /* Pods-Illinois.release-illinoistst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release-illinoistst.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release-illinoistst.xcconfig"; sourceTree = "<group>"; };
 		069388F8EFA876FC6053913F /* Pods-Illinois.profile-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-illinoisdev.xcconfig"; sourceTree = "<group>"; };
+		07BF7245B3C351B91F6FB892 /* Pods-Runner.profile-illinoistst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-illinoistst.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-illinoistst.xcconfig"; sourceTree = "<group>"; };
 		0C603266F6C8A0C8F51F5661 /* Pods-Illinois.release-wisconsindev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release-wisconsindev.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release-wisconsindev.xcconfig"; sourceTree = "<group>"; };
 		0F7E8A74ED3C7B2DC535BC27 /* Pods-Runner.debug-wisconsindev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-wisconsindev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-wisconsindev.xcconfig"; sourceTree = "<group>"; };
-		07BF7245B3C351B91F6FB892 /* Pods-Runner.profile-illinoistst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-illinoistst.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile-illinoistst.xcconfig"; sourceTree = "<group>"; };
 		141EF64818F18EB19F34DA32 /* Pods-Illinois.release-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release-illinoisprod.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
@@ -307,13 +307,13 @@
 		26FAB1CA22EB35C7008E987C /* NSDate+InaUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+InaUtils.m"; sourceTree = "<group>"; };
 		26FAB1CB22EB35C7008E987C /* NSDate+InaUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+InaUtils.h"; sourceTree = "<group>"; };
 		27D62877E29DB9D266B90C0F /* Pods-Illinois.debug-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-prod.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-prod.xcconfig"; sourceTree = "<group>"; };
+		27E14EAA11DDFC5FFA409F36 /* Pods-Illinois.profile-tst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-tst.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-tst.xcconfig"; sourceTree = "<group>"; };
 		2B89CEEA397E1BFD5A8D8767 /* Pods-Runner.release-wisconsintest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-wisconsintest.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-wisconsintest.xcconfig"; sourceTree = "<group>"; };
+		2D004407AA6D37A12A942F4E /* Pods-Illinois.debug-tst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-tst.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-tst.xcconfig"; sourceTree = "<group>"; };
 		2EFFAB157A67F7E119B35375 /* Pods-Illinois.release-wisconsinprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release-wisconsinprod.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release-wisconsinprod.xcconfig"; sourceTree = "<group>"; };
 		2F70D44386C3C38180E733B0 /* Pods-Wisconsin.debug-wisconsinprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.debug-wisconsinprod.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.debug-wisconsinprod.xcconfig"; sourceTree = "<group>"; };
 		3537202BC0843C40E0BFD86F /* Pods-Wisconsin.profile-wisconsintest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-wisconsintest.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-wisconsintest.xcconfig"; sourceTree = "<group>"; };
 		376C231CDBBC59BC4DF14AB7 /* Pods-Runner.release-wisconsinprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-wisconsinprod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-wisconsinprod.xcconfig"; sourceTree = "<group>"; };
-		27E14EAA11DDFC5FFA409F36 /* Pods-Illinois.profile-tst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-tst.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-tst.xcconfig"; sourceTree = "<group>"; };
-		2D004407AA6D37A12A942F4E /* Pods-Illinois.debug-tst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-tst.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-tst.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		3BD3161E0D394341880F6CC2 /* Pods-Wisconsin.debug-wisconsindev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.debug-wisconsindev.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.debug-wisconsindev.xcconfig"; sourceTree = "<group>"; };
 		3C62C644B619DC99828A2E66 /* Pods-Runner.debug-wisconsinprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-wisconsinprod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-wisconsinprod.xcconfig"; sourceTree = "<group>"; };
@@ -335,8 +335,8 @@
 		62316DF64EAC13E7FE9C4882 /* Pods-Runner.debug-illinoistest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-illinoistest.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-illinoistest.xcconfig"; sourceTree = "<group>"; };
 		65366B5161465FD6E9B97981 /* Pods-Wisconsin.release-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.release-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.release-illinoisprod.xcconfig"; sourceTree = "<group>"; };
 		67A5235A0396BB6D9D8F40C4 /* Pods-Illinois.profile-wisconsintest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-wisconsintest.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-wisconsintest.xcconfig"; sourceTree = "<group>"; };
-		6D9CD7EADAC6A7EE7D1960B6 /* Pods-Wisconsin.release-test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.release-test.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.release-test.xcconfig"; sourceTree = "<group>"; };
 		6CB9708B4A04E31D6B48B3FE /* Pods-Illinois.release-tst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.release-tst.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.release-tst.xcconfig"; sourceTree = "<group>"; };
+		6D9CD7EADAC6A7EE7D1960B6 /* Pods-Wisconsin.release-test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.release-test.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.release-test.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		77084484F870D8437AAA61F0 /* Pods-Runner.release-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-dev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-dev.xcconfig"; sourceTree = "<group>"; };
 		78776667AEB03C27841F312B /* Pods_Wisconsin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wisconsin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -361,9 +361,9 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Runner-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Runner-Info.plist"; sourceTree = "<group>"; };
+		98ABED14063FC02C5426B06F /* Pods-Illinois.profile-illinoistst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-illinoistst.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-illinoistst.xcconfig"; sourceTree = "<group>"; };
 		9A563F9ABE6599D65B6B8635 /* Pods-Wisconsin.debug-wisconsintest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.debug-wisconsintest.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.debug-wisconsintest.xcconfig"; sourceTree = "<group>"; };
 		9B2E38D20742E56EF49BB997 /* Pods-Wisconsin.profile-wisconsinprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-wisconsinprod.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-wisconsinprod.xcconfig"; sourceTree = "<group>"; };
-		98ABED14063FC02C5426B06F /* Pods-Illinois.profile-illinoistst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.profile-illinoistst.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.profile-illinoistst.xcconfig"; sourceTree = "<group>"; };
 		9BD51356257B0E6649796BC6 /* Pods-Runner.release-illinoisdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-illinoisdev.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-illinoisdev.xcconfig"; sourceTree = "<group>"; };
 		9DE540203DBDE25309CCA1E1 /* Pods-Wisconsin.release-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.release-prod.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.release-prod.xcconfig"; sourceTree = "<group>"; };
 		9F258BBE59ADE95B29DD0E66 /* Pods-Wisconsin.profile-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-illinoisprod.xcconfig"; sourceTree = "<group>"; };
@@ -408,8 +408,8 @@
 		F21473F2C3F947E5DCE46089 /* Pods-Wisconsin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.debug.xcconfig"; sourceTree = "<group>"; };
 		F4189E6515DC2C5FAF1318C1 /* Pods-Wisconsin.profile-illinoistest.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-illinoistest.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-illinoistest.xcconfig"; sourceTree = "<group>"; };
 		F6F212C9FE249D8C7352F71F /* Pods-Runner.debug-prod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-prod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-prod.xcconfig"; sourceTree = "<group>"; };
-		FFA633908D457E40304CC2E3 /* Pods-Wisconsin.profile-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-dev.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-dev.xcconfig"; sourceTree = "<group>"; };
 		FB2BEF2D2F3BF5A1AFF9836E /* Pods-Illinois.debug-illinoistst.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Illinois.debug-illinoistst.xcconfig"; path = "Pods/Target Support Files/Pods-Illinois/Pods-Illinois.debug-illinoistst.xcconfig"; sourceTree = "<group>"; };
+		FFA633908D457E40304CC2E3 /* Pods-Wisconsin.profile-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wisconsin.profile-dev.xcconfig"; path = "Pods/Target Support Files/Pods-Wisconsin/Pods-Wisconsin.profile-dev.xcconfig"; sourceTree = "<group>"; };
 		FFB68EDA32DAB6475F6AA4AE /* Pods-Runner.debug-illinoisprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-illinoisprod.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-illinoisprod.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -434,8 +434,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D604F124B491DE058CE3A2B6 /* Pods_Runner.framework in Frameworks */,
-				BB7BF12F5D3356D25889D23A /* BuildFile in Frameworks */,
+				D604F124B491DE058CE3A2B6 /* (null) in Frameworks */,
+				BB7BF12F5D3356D25889D23A /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1517,6 +1517,34 @@
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Profile;
+		};
+		260849F52941F57C008D0851 /* Debug-Tst */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Debug-Tst";
+		};
+		260849F62941F57C008D0851 /* Debug-IllinoisTst */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Debug-IllinoisTst";
+		};
+		260849F72941F57C008D0851 /* Release-Tst */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Release-Tst";
+		};
+		260849F82941F57C008D0851 /* Release-IllinoisTst */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Release-IllinoisTst";
 		};
 		261784DD28C8ED6A009172BB /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -4690,7 +4718,7 @@
 			};
 			name = "Debug-WisconsinProd";
 		};
-		26E5830928ED992A00EFE29A /* Debug-WisconsinTest */ = {
+		26E5830928ED992A00EFE29A /* Debug-WisconsinTst */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 263C9CB428C635720092B53B /* Debug-Test.xcconfig */;
 			buildSettings = {
@@ -4745,9 +4773,9 @@
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = "Debug-WisconsinTest";
+			name = "Debug-WisconsinTst";
 		};
-		26E5830A28ED992A00EFE29A /* Debug-WisconsinTest */ = {
+		26E5830A28ED992A00EFE29A /* Debug-WisconsinTst */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 263C9CB428C635720092B53B /* Debug-Test.xcconfig */;
 			buildSettings = {
@@ -4778,9 +4806,9 @@
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Debug-WisconsinTest";
+			name = "Debug-WisconsinTst";
 		};
-		26E5830B28ED992A00EFE29A /* Debug-WisconsinTest */ = {
+		26E5830B28ED992A00EFE29A /* Debug-WisconsinTst */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 263C9CB428C635720092B53B /* Debug-Test.xcconfig */;
 			buildSettings = {
@@ -4811,9 +4839,9 @@
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Debug-WisconsinTest";
+			name = "Debug-WisconsinTst";
 		};
-		26E5830C28ED992A00EFE29A /* Debug-WisconsinTest */ = {
+		26E5830C28ED992A00EFE29A /* Debug-WisconsinTst */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 263C9CB428C635720092B53B /* Debug-Test.xcconfig */;
 			buildSettings = {
@@ -4844,7 +4872,7 @@
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Debug-WisconsinTest";
+			name = "Debug-WisconsinTst";
 		};
 		26E5830D28ED993C00EFE29A /* Release-WisconsinDev */ = {
 			isa = XCBuildConfiguration;
@@ -5142,7 +5170,7 @@
 			};
 			name = "Release-WisconsinProd";
 		};
-		26E5831528ED995B00EFE29A /* Release-WisconsinTest */ = {
+		26E5831528ED995B00EFE29A /* Release-WisconsinTst */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 263C9CB528C635720092B53B /* Release-Test.xcconfig */;
 			buildSettings = {
@@ -5192,9 +5220,9 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
-			name = "Release-WisconsinTest";
+			name = "Release-WisconsinTst";
 		};
-		26E5831628ED995B00EFE29A /* Release-WisconsinTest */ = {
+		26E5831628ED995B00EFE29A /* Release-WisconsinTst */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 263C9CB528C635720092B53B /* Release-Test.xcconfig */;
 			buildSettings = {
@@ -5224,9 +5252,9 @@
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Release-WisconsinTest";
+			name = "Release-WisconsinTst";
 		};
-		26E5831728ED995B00EFE29A /* Release-WisconsinTest */ = {
+		26E5831728ED995B00EFE29A /* Release-WisconsinTst */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 263C9CB528C635720092B53B /* Release-Test.xcconfig */;
 			buildSettings = {
@@ -5256,9 +5284,9 @@
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Release-WisconsinTest";
+			name = "Release-WisconsinTst";
 		};
-		26E5831828ED995B00EFE29A /* Release-WisconsinTest */ = {
+		26E5831828ED995B00EFE29A /* Release-WisconsinTst */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 263C9CB528C635720092B53B /* Release-Test.xcconfig */;
 			buildSettings = {
@@ -5288,7 +5316,7 @@
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Release-WisconsinTest";
+			name = "Release-WisconsinTst";
 		};
 		26E5831928ED996900EFE29A /* Profile-WisconsinDev */ = {
 			isa = XCBuildConfiguration;
@@ -5572,7 +5600,7 @@
 			};
 			name = "Profile-WisconsinProd";
 		};
-		26E5832128ED998B00EFE29A /* Profile-WisconsinTest */ = {
+		26E5832128ED998B00EFE29A /* Profile-WisconsinTst */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 263C9CB528C635720092B53B /* Release-Test.xcconfig */;
 			buildSettings = {
@@ -5621,9 +5649,9 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
-			name = "Profile-WisconsinTest";
+			name = "Profile-WisconsinTst";
 		};
-		26E5832228ED998B00EFE29A /* Profile-WisconsinTest */ = {
+		26E5832228ED998B00EFE29A /* Profile-WisconsinTst */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 263C9CB528C635720092B53B /* Release-Test.xcconfig */;
 			buildSettings = {
@@ -5651,9 +5679,9 @@
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Profile-WisconsinTest";
+			name = "Profile-WisconsinTst";
 		};
-		26E5832328ED998B00EFE29A /* Profile-WisconsinTest */ = {
+		26E5832328ED998B00EFE29A /* Profile-WisconsinTst */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 263C9CB528C635720092B53B /* Release-Test.xcconfig */;
 			buildSettings = {
@@ -5681,9 +5709,9 @@
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Profile-WisconsinTest";
+			name = "Profile-WisconsinTst";
 		};
-		26E5832428ED998B00EFE29A /* Profile-WisconsinTest */ = {
+		26E5832428ED998B00EFE29A /* Profile-WisconsinTst */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 263C9CB528C635720092B53B /* Release-Test.xcconfig */;
 			buildSettings = {
@@ -5711,7 +5739,7 @@
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
-			name = "Profile-WisconsinTest";
+			name = "Profile-WisconsinTst";
 		};
 		97C147031CF9000F007C117D /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -5898,9 +5926,9 @@
 				261784DF28C8ED6A009172BB /* Debug-Prod */,
 				26AAA1E828CA248A00BE694B /* Debug-IllinoisProd */,
 				26E5830728ED991900EFE29A /* Debug-WisconsinProd */,
-				261784E028C8ED6A009172BB /* Debug-Test */,
-				26AAA1EB28CA249A00BE694B /* Debug-IllinoisTest */,
-				26E5830B28ED992A00EFE29A /* Debug-WisconsinTest */,
+				261784E028C8ED6A009172BB /* Debug-Tst */,
+				26AAA1EB28CA249A00BE694B /* Debug-IllinoisTst */,
+				26E5830B28ED992A00EFE29A /* Debug-WisconsinTst */,
 				261784E028C8ED6A009172BB /* Debug-Tst */,
 				26AAA1EB28CA249A00BE694B /* Debug-IllinoisTst */,
 				261784E128C8ED6A009172BB /* Release */,
@@ -5910,9 +5938,9 @@
 				261784E328C8ED6A009172BB /* Release-Prod */,
 				26AAA1F128CA251C00BE694B /* Release-IllinoisProd */,
 				26E5831328ED994B00EFE29A /* Release-WisconsinProd */,
-				261784E428C8ED6A009172BB /* Release-Test */,
-				26AAA1F428CA252800BE694B /* Release-IllinoisTest */,
-				26E5831728ED995B00EFE29A /* Release-WisconsinTest */,
+				261784E428C8ED6A009172BB /* Release-Tst */,
+				26AAA1F428CA252800BE694B /* Release-IllinoisTst */,
+				26E5831728ED995B00EFE29A /* Release-WisconsinTst */,
 				261784E428C8ED6A009172BB /* Release-Tst */,
 				26AAA1F428CA252800BE694B /* Release-IllinoisTst */,
 				261784E528C8ED6A009172BB /* Profile */,
@@ -5922,9 +5950,9 @@
 				261784E728C8ED6A009172BB /* Profile-Prod */,
 				26AAA1FA28CA254400BE694B /* Profile-IllinoisProd */,
 				26E5831F28ED997700EFE29A /* Profile-WisconsinProd */,
-				261784E828C8ED6A009172BB /* Profile-Test */,
-				26AAA1FD28CA255100BE694B /* Profile-IllinoisTest */,
-				26E5832328ED998B00EFE29A /* Profile-WisconsinTest */,
+				261784E828C8ED6A009172BB /* Profile-Tst */,
+				26AAA1FD28CA255100BE694B /* Profile-IllinoisTst */,
+				26E5832328ED998B00EFE29A /* Profile-WisconsinTst */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -5941,7 +5969,7 @@
 				26E5830828ED991900EFE29A /* Debug-WisconsinProd */,
 				26E582EE28ED972B00EFE29A /* Debug-Test */,
 				26E582EF28ED972B00EFE29A /* Debug-IllinoisTest */,
-				26E5830C28ED992A00EFE29A /* Debug-WisconsinTest */,
+				26E5830C28ED992A00EFE29A /* Debug-WisconsinTst */,
 				26E582F028ED972B00EFE29A /* Release */,
 				26E582F128ED972B00EFE29A /* Release-Dev */,
 				26E582F228ED972B00EFE29A /* Release-IllinoisDev */,
@@ -5951,7 +5979,7 @@
 				26E5831428ED994B00EFE29A /* Release-WisconsinProd */,
 				26E582F528ED972B00EFE29A /* Release-Test */,
 				26E582F628ED972B00EFE29A /* Release-IllinoisTest */,
-				26E5831828ED995B00EFE29A /* Release-WisconsinTest */,
+				26E5831828ED995B00EFE29A /* Release-WisconsinTst */,
 				26E582F728ED972B00EFE29A /* Profile */,
 				26E582F828ED972B00EFE29A /* Profile-Dev */,
 				26E582F928ED972B00EFE29A /* Profile-IllinoisDev */,
@@ -5961,9 +5989,13 @@
 				26E5832028ED997700EFE29A /* Profile-WisconsinProd */,
 				26E582FC28ED972B00EFE29A /* Profile-Test */,
 				26E582FD28ED972B00EFE29A /* Profile-IllinoisTest */,
-				26E5832428ED998B00EFE29A /* Profile-WisconsinTest */,
+				26E5832428ED998B00EFE29A /* Profile-WisconsinTst */,
 				261784E828C8ED6A009172BB /* Profile-Tst */,
 				26AAA1FD28CA255100BE694B /* Profile-IllinoisTst */,
+				260849F52941F57C008D0851 /* Debug-Tst */,
+				260849F62941F57C008D0851 /* Debug-IllinoisTst */,
+				260849F72941F57C008D0851 /* Release-Tst */,
+				260849F82941F57C008D0851 /* Release-IllinoisTst */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -5978,9 +6010,9 @@
 				263C9CBC28C641A80092B53B /* Debug-Prod */,
 				26AAA1E628CA248A00BE694B /* Debug-IllinoisProd */,
 				26E5830528ED991900EFE29A /* Debug-WisconsinProd */,
-				263C9CBA28C6419C0092B53B /* Debug-Test */,
-				26AAA1E928CA249A00BE694B /* Debug-IllinoisTest */,
-				26E5830928ED992A00EFE29A /* Debug-WisconsinTest */,
+				263C9CBA28C6419C0092B53B /* Debug-Tst */,
+				26AAA1E928CA249A00BE694B /* Debug-IllinoisTst */,
+				26E5830928ED992A00EFE29A /* Debug-WisconsinTst */,
 				263C9CBA28C6419C0092B53B /* Debug-Tst */,
 				26AAA1E928CA249A00BE694B /* Debug-IllinoisTst */,
 				97C147041CF9000F007C117D /* Release */,
@@ -5990,9 +6022,9 @@
 				263C9CC028C641DD0092B53B /* Release-Prod */,
 				26AAA1EF28CA251C00BE694B /* Release-IllinoisProd */,
 				26E5831128ED994B00EFE29A /* Release-WisconsinProd */,
-				263C9CBE28C641CE0092B53B /* Release-Test */,
-				26AAA1F228CA252800BE694B /* Release-IllinoisTest */,
-				26E5831528ED995B00EFE29A /* Release-WisconsinTest */,
+				263C9CBE28C641CE0092B53B /* Release-Tst */,
+				26AAA1F228CA252800BE694B /* Release-IllinoisTst */,
+				26E5831528ED995B00EFE29A /* Release-WisconsinTst */,
 				263C9CBE28C641CE0092B53B /* Release-Tst */,
 				26AAA1F228CA252800BE694B /* Release-IllinoisTst */,
 				249021D3217E4FDB00AE95B9 /* Profile */,
@@ -6002,9 +6034,9 @@
 				263C9CC428C642040092B53B /* Profile-Prod */,
 				26AAA1F828CA254400BE694B /* Profile-IllinoisProd */,
 				26E5831D28ED997700EFE29A /* Profile-WisconsinProd */,
-				263C9CC228C641FC0092B53B /* Profile-Test */,
-				26AAA1FB28CA255100BE694B /* Profile-IllinoisTest */,
-				26E5832128ED998B00EFE29A /* Profile-WisconsinTest */,
+				263C9CC228C641FC0092B53B /* Profile-Tst */,
+				26AAA1FB28CA255100BE694B /* Profile-IllinoisTst */,
+				26E5832128ED998B00EFE29A /* Profile-WisconsinTst */,
 				263C9CC228C641FC0092B53B /* Profile-Tst */,
 				26AAA1FB28CA255100BE694B /* Profile-IllinoisTst */,
 			);
@@ -6021,9 +6053,9 @@
 				263C9CBD28C641A80092B53B /* Debug-Prod */,
 				26AAA1E728CA248A00BE694B /* Debug-IllinoisProd */,
 				26E5830628ED991900EFE29A /* Debug-WisconsinProd */,
-				263C9CBB28C6419C0092B53B /* Debug-Test */,
-				26AAA1EA28CA249A00BE694B /* Debug-IllinoisTest */,
-				26E5830A28ED992A00EFE29A /* Debug-WisconsinTest */,
+				263C9CBB28C6419C0092B53B /* Debug-Tst */,
+				26AAA1EA28CA249A00BE694B /* Debug-IllinoisTst */,
+				26E5830A28ED992A00EFE29A /* Debug-WisconsinTst */,
 				263C9CBB28C6419C0092B53B /* Debug-Tst */,
 				26AAA1EA28CA249A00BE694B /* Debug-IllinoisTst */,
 				97C147071CF9000F007C117D /* Release */,
@@ -6033,9 +6065,9 @@
 				263C9CC128C641DD0092B53B /* Release-Prod */,
 				26AAA1F028CA251C00BE694B /* Release-IllinoisProd */,
 				26E5831228ED994B00EFE29A /* Release-WisconsinProd */,
-				263C9CBF28C641CE0092B53B /* Release-Test */,
-				26AAA1F328CA252800BE694B /* Release-IllinoisTest */,
-				26E5831628ED995B00EFE29A /* Release-WisconsinTest */,
+				263C9CBF28C641CE0092B53B /* Release-Tst */,
+				26AAA1F328CA252800BE694B /* Release-IllinoisTst */,
+				26E5831628ED995B00EFE29A /* Release-WisconsinTst */,
 				263C9CBF28C641CE0092B53B /* Release-Tst */,
 				26AAA1F328CA252800BE694B /* Release-IllinoisTst */,
 				249021D4217E4FDB00AE95B9 /* Profile */,
@@ -6045,9 +6077,9 @@
 				263C9CC528C642040092B53B /* Profile-Prod */,
 				26AAA1F928CA254400BE694B /* Profile-IllinoisProd */,
 				26E5831E28ED997700EFE29A /* Profile-WisconsinProd */,
-				263C9CC328C641FC0092B53B /* Profile-Test */,
-				26AAA1FC28CA255100BE694B /* Profile-IllinoisTest */,
-				26E5832228ED998B00EFE29A /* Profile-WisconsinTest */,
+				263C9CC328C641FC0092B53B /* Profile-Tst */,
+				26AAA1FC28CA255100BE694B /* Profile-IllinoisTst */,
+				26E5832228ED998B00EFE29A /* Profile-WisconsinTst */,
 				263C9CC328C641FC0092B53B /* Profile-Tst */,
 				26AAA1FC28CA255100BE694B /* Profile-IllinoisTst */,
 			);
