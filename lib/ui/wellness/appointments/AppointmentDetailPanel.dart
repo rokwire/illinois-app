@@ -333,7 +333,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       }
     }
     bool isLocationTextVisible = StringUtils.isNotEmpty(locationTextValue);
-    return GestureDetector(
+    return InkWell(
         onTap: _onLocationDetailTapped,
         child: Padding(
             padding: EdgeInsets.only(bottom: 8),
@@ -344,10 +344,14 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                 children: [
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Padding(padding: EdgeInsets.only(right: 6), child: Image.asset('images/location.png', excludeFromSemantics: true)),
-                    Container(
-                        child: Text(typeLabel,
-                            style:
-                                TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
+                    Text(typeLabel,
+                        style: TextStyle(
+                            fontFamily: Styles().fontFamilies!.medium,
+                            fontSize: 16,
+                            color: Styles().colors!.textBackground,
+                            decoration: TextDecoration.underline,
+                            decorationColor: Styles().colors!.fillColorSecondary,
+                            decorationThickness: 1))
                   ]),
                   Container(height: 4),
                   Visibility(
@@ -358,7 +362,12 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                               padding: EdgeInsets.only(bottom: 2),
                               child: Text(StringUtils.ensureNotEmpty(locationTextValue),
                                   style: TextStyle(
-                                      fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))))
+                                      fontFamily: Styles().fontFamilies!.medium,
+                                      fontSize: 16,
+                                      color: Styles().colors!.textBackground,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: Styles().colors!.fillColorSecondary,
+                                      decorationThickness: 1)))))
                 ])));
   }
 
