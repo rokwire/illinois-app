@@ -38,7 +38,7 @@
 
     <!-- MapDirectionsActivity -->
     <string name="directionsTitle">Direcciones</string>
-    <string name="routeFailedMsg">No se pudo encontrar la ruta.</string>
+    <string name="routeFailedMsg">Failed to find a route:\n%s</string>
     <string name="locationFailedMsg">No se pudo detectar la ubicación actual.</string>
     <string name="start">COMIENZO</string>
     <string name="finish">TERMINAR</string>
