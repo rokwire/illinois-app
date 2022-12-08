@@ -24,11 +24,10 @@ import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/ui/SavedPanel.dart';
-import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
-import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -247,8 +246,20 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   Widget _buildItemCard(Favorite? item) {
     //Custom layout for super events before release
-    if(item is Event && item.isComposite){
-      return _buildCompositEventCard(item);
+    if (item is Event && item.isComposite) {
+      return ExploreCard(
+        explore: item,
+        showTopBorder: true,
+        horizontalPadding: 0,
+        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        onTap:() => _onTapItem(item)
+      );
+    }
+    else if (item is MTDStop) {
+      return MTDStopCard(
+        stop: item,
+        onTap: () => _onTapItem(item),
+      );
     }
 
     bool isFavorite = Auth2().isFavorite(item);
@@ -272,11 +283,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
                         Text(title ?? '', semanticsLabel: "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20), ),
                       ),
                       Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
-                        GestureDetector(behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            Analytics().logSelect(target: "Favorite: $title", source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
-                            Auth2().prefs?.toggleFavorite(item);
-                          }, child:
+                        GestureDetector(behavior: HitTestBehavior.opaque, onTap: () => _onTapFavoriteStar(item), child:
                           Semantics(container: true,
                             label: isFavorite
                                 ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
@@ -286,8 +293,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
                                 : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                             button: true,
                             excludeSemantics: true,
-                            child:
-                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: favoriteStarIcon))),
+                            child: Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: favoriteStarIcon))),
                           )
                         ],
                       )
@@ -310,20 +316,6 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
             )
           ],
         )),);
-  }
-
-  Widget _buildCompositEventCard(Event? item){
-      return ExploreCard(explore: item,showTopBorder: true, horizontalPadding: 0,border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        onTap:(){
-          if (item != null) {
-            if (item.isComposite) {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: item)));
-            } else {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-                  ExploreDetailPanel(explore: item)));
-            }
-          }
-        });
   }
 
   void _refreshFavorites({bool showProgress = true}) {
@@ -556,8 +548,14 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     item?.favoriteLaunchDetail(context);
   }
 
+  void _onTapFavoriteStar(Favorite? item) {
+    Analytics().logSelect(target: "Favorite: ${item?.favoriteTitle}", source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
+    Auth2().prefs?.toggleFavorite(item);
+  }
+
   void _onSeeAll() {
     Analytics().logSelect(target: 'View All', source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
   }
 }
+

@@ -14,6 +14,7 @@ import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
+import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -164,9 +165,15 @@ extension FavoriteExt on Favorite {
     }
   }
 
+
   void favoriteLaunchDetail(BuildContext context) {
     if (this is Event) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: this as Event,)));
+      if ((this as Event).isComposite) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: this as Event)));
+      }
+      else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: this as Event,)));
+      }
     }
     else if (this is Dining) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining,)));

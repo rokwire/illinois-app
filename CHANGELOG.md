@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GroupDetailPanel change Notifications button label to "Notification Preferences" [#2649](https://github.com/rokwire/illinois-app/issues/2649).
 ### Added
 - Added user friendly alerts when native directions controller fails to build a route [#2615](https://github.com/rokwire/illinois-app/issues/2615).
+- Show departures in My MTD Buss items [#2633](https://github.com/rokwire/illinois-app/issues/2633).
 ### Fixed
 - Fix Appointments Image behaviour [#2660](https://github.com/rokwire/illinois-app/issues/2660).
 - Show appointment instructions in detail panel [#2653](https://github.com/rokwire/illinois-app/issues/2653).
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make appointment display time in 12-hour format [#2663](https://github.com/rokwire/illinois-app/issues/2663).
 - Issues in HomeStudentCoursesWidget [#2654](https://github.com/rokwire/illinois-app/issues/2654).
 - Fix Create Group Panel: can auto join switch is not working [#2642](https://github.com/rokwire/illinois-app/issues/2642).
+- Fixed map notifications from Android native side [#2633](https://github.com/rokwire/illinois-app/issues/2633).
 
 ## [4.2.35] - 2022-12-07
 ### Added
