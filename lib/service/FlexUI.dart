@@ -22,6 +22,7 @@ import 'package:illinois/service/IlliniCash.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart' as rokwire;
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class FlexUI extends rokwire.FlexUI {
 
@@ -102,6 +103,22 @@ class FlexUI extends rokwire.FlexUI {
     }
 
     return super.localeIsEntryAvailable(entry, group: group, rules: rules);
+  }
+
+  @override
+  Map<String, dynamic> unsatisfiedRulesForEntry(String entry, { String? group, Map<String, dynamic>? rules }) {
+    Map<String, dynamic> entryRules = {};
+    rules ??= JsonUtils.mapValue(defaultContent?['rules']) ?? <String, dynamic>{};
+    String? pathEntry = (group != null) ? '$group.$entry' : null;
+
+    Map<String, dynamic>? illiniCashRules = rules['illini_cash'];
+    dynamic illiniCashRule = (illiniCashRules != null) ? (((pathEntry != null) ? illiniCashRules[pathEntry] : null) ?? illiniCashRules[entry])  : null;
+    if ((illiniCashRule != null) && !_localeEvalIlliniCashRule(illiniCashRule)) {
+      entryRules['illini_cash'] = illiniCashRule;
+    }
+
+    entryRules.addAll(super.unsatisfiedRulesForEntry(entry, group: group, rules: rules));
+    return entryRules;
   }
 
   static bool _localeEvalIlliniCashRule(dynamic illiniCashRule) {

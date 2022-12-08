@@ -13,19 +13,19 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class LoginPrivacyCard extends StatefulWidget {
-  final int requiredPrivacyLevel;
-  final Auth2LoginType? requiredLoginType;
-  final String? resource;
-  final EdgeInsetsGeometry margin;
+  final String resource;
 
-  const LoginPrivacyCard({this.requiredPrivacyLevel = 4, this.requiredLoginType, this.resource, this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),});
+  const LoginPrivacyCard({required this.resource,});
+
+  static LoginPrivacyCard? builder({required String resource}) => JsonUtils.stringListValue(FlexUI()[resource])?.contains('may_access') == true ? LoginPrivacyCard(resource: resource) : null;
 
   @override
   _LoginPrivacyCardState createState() => _LoginPrivacyCardState();
@@ -36,8 +36,7 @@ class _LoginPrivacyCardState extends State<LoginPrivacyCard> implements Notifica
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      Auth2UserPrefs.notifyPrivacyLevelChanged,
-      Auth2.notifyLoginChanged,
+      FlexUI.notifyChanged,
     ]);
     super.initState();
   }
@@ -50,7 +49,7 @@ class _LoginPrivacyCardState extends State<LoginPrivacyCard> implements Notifica
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: widget.margin, child:
+    return Padding(padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0), child:
       Container(padding: EdgeInsets.all(16),
         decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         child: _LoginPrivacyContent(
@@ -66,9 +65,7 @@ class _LoginPrivacyCardState extends State<LoginPrivacyCard> implements Notifica
 
   @override
   void onNotification(String name, param) {
-    if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      setState(() {});
-    } else if (name == Auth2.notifyLoginChanged) {
+    if (name == FlexUI.notifyChanged) {
       setState(() {});
     }
   }
@@ -84,63 +81,28 @@ class LoginPrivacyDialog extends StatefulWidget {
   _LoginPrivacyDialogState createState() => _LoginPrivacyDialogState();
 
   static Future<void> show({
-    String? title,
-    TextStyle? titleTextStyle,
-    Color? titleTextColor,
-    String? titleFontFamily,
-    double titleFontSize = 20,
-    TextAlign? titleTextAlign,
+    required String resource,
+    required BuildContext context,
     EdgeInsetsGeometry titlePadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     Color? titleBarColor,
-    Widget? closeButtonIcon,
-    
-    String? message,
-    TextStyle? messageTextStyle,
-    Color? messageTextColor,
-    String? messageFontFamily,
-    double messageFontSize = 16.0,
-    TextAlign? messageTextAlign,
+
     EdgeInsetsGeometry messagePadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
     
-    List<Widget> buttons = const [],
     EdgeInsetsGeometry buttonsPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-    Axis buttonAxis = Axis.horizontal,
 
-    ShapeBorder? border,
-    BorderRadius? borderRadius,
-
-    required BuildContext context,
     bool barrierDismissible = true,
-  }) => showDialog(
+  }) => JsonUtils.stringListValue(FlexUI()[resource])?.contains('may_access') == true ? showDialog(
     context: context,
     barrierDismissible: barrierDismissible,
     builder: (BuildContext context) => ActionsMessage(
-      title: title,
-      titleTextStyle: titleTextStyle,
-      titleTextColor: titleTextColor,
-      titleFontFamily: titleFontFamily,
-      titleFontSize: titleFontSize,
-      titleTextAlign: titleTextAlign,
       titlePadding: titlePadding,
       titleBarColor: titleBarColor,
-      closeButtonIcon: closeButtonIcon,
-  
-      message: message,
-      messageTextStyle: messageTextStyle,
-      messageTextColor: messageTextColor,
-      messageFontFamily: messageFontFamily,
-      messageFontSize: messageFontSize,
-      messageTextAlign: messageTextAlign,
+
       messagePadding: messagePadding,
   
-      buttons: buttons,
-      buttonAxis: buttonAxis,
       buttonsPadding: buttonsPadding,
-
-      border: border,
-      borderRadius: borderRadius,
     )
-  );
+  ) : Future.value();
 }
 
 class _LoginPrivacyDialogState extends State<LoginPrivacyDialog> implements NotificationsListener {
@@ -148,8 +110,7 @@ class _LoginPrivacyDialogState extends State<LoginPrivacyDialog> implements Noti
   @override
   void initState() {
     NotificationService().subscribe(this, [
-      Auth2UserPrefs.notifyPrivacyLevelChanged,
-      Auth2.notifyLoginChanged,
+      FlexUI.notifyChanged,
     ]);
     super.initState();
   }
@@ -162,6 +123,7 @@ class _LoginPrivacyDialogState extends State<LoginPrivacyDialog> implements Noti
 
   @override
   Widget build(BuildContext context) {
+    //title: You may not access <resource>
     return Scaffold(
       appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.info.header.title', 'Skills Self-Evaluation'),),
       body: SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(24.0), child: _buildContent(context))),
@@ -174,42 +136,62 @@ class _LoginPrivacyDialogState extends State<LoginPrivacyDialog> implements Noti
 
   @override
   void onNotification(String name, param) {
-    if (name == polls.Polls.notifySurveyResponseCreated) {
-      _refreshHistory();
-    } else if (name == FlexUI.notifyChanged) {
-      setState(() {
-        _sectionEntryCodes = JsonUtils.setStringsValue(FlexUI()['wellness.health_screener']);
-      });
+    if (name == FlexUI.notifyChanged) {
+      setState(() {});
     }
   }
 }
 
 class _LoginPrivacyContent extends StatelessWidget {
-  final int requiredPrivacyLevel;
-  final Auth2LoginType? requiredLoginType;
-  final String? resource;
+  static const List<String> rulePriority = ['roles', 'privacy', 'auth'];
+  final String resource;
 
-  const _LoginPrivacyContent({this.requiredPrivacyLevel = 4, this.requiredLoginType, this.resource});
+  const _LoginPrivacyContent({required this.resource});
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> unsatisfiedRules = FlexUI().unsatisfiedRulesForEntry(resource);
+    //TODO: need to find a way to convert flex ui rule values into readable strings
+
+    String message = '';
+    String buttonLabel = '';
+    for (String ruleType in rulePriority) {
+      
+    }
+
     return Column(children: <Widget>[
       StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
         Expanded(child:
           Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-            Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), semanticsLabel: '',)
+            Text(title ?? '', style: Styles().textStyles?.getTextStyle('widget.description.regular'), semanticsLabel: '',)
           ),
         )
       ]) : Container(),
-      StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
-        Expanded(child:
-          Text(message ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground), semanticsLabel: '',)
-        )
-      ]) : Container(),
+      //TODO: build action button
     ]);
   }
 
   /*
+  static bool isAccessGranted({int? requiredPrivacyLevel, Auth2LoginType? requiredLoginType}) {
+    return _privacyMatch(requiredPrivacyLevel: requiredPrivacyLevel) && _loginTypeMatch(requiredLoginType: requiredLoginType);
+  }
+
+  static bool _privacyMatch({int? requiredPrivacyLevel}) {
+    return requiredPrivacyLevel == null || Auth2().privacyMatch(requiredPrivacyLevel);
+  }
+
+  static bool _loginTypeMatch({Auth2LoginType? requiredLoginType}) {
+    switch (requiredLoginType) {
+      case null: return Auth2().isLoggedIn;
+      case Auth2LoginType.email: return Auth2().isEmailLoggedIn;
+      case Auth2LoginType.phone: return Auth2().isPhoneLoggedIn;
+      case Auth2LoginType.phoneTwilio: return Auth2().isPhoneLoggedIn;
+      case Auth2LoginType.oidc: return Auth2().isOidcLoggedIn;
+      case Auth2LoginType.oidcIllinois: return Auth2().isOidcLoggedIn;
+      default: return false;
+    }
+  }
+
     TextSpan(
       text: Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.prefix', 'You need to be signed in with your NetID to access Assessments.\n'),
       style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
