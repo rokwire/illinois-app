@@ -31,6 +31,9 @@
     <string name="buildings">Buildings</string>
     <string name="student_courses">Courses</string>
     <string name="appointments">Appointments</string>
+    <string name="mtd_stops">MTD Stops</string>
+    <string name="locations">Locations</string>
+    <string name="location">Location</string>
     <string name="ok">OK</string>
 
     <!-- MapDirectionsActivity -->

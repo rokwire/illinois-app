@@ -339,7 +339,7 @@ public class Utils {
             if (markerLocation == null) {
                 return null;
             }
-            String markerTitle = getMarkerTitle(mapMarkerViewType, singleExploreMap, groupExploresJson);
+            String markerTitle = getMarkerTitle(context, mapMarkerViewType, singleExploreMap, groupExploresJson);
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(markerLocation);
             markerOptions.zIndex(1);
@@ -585,7 +585,7 @@ public class Utils {
             return colorResource;
         }
 
-        private static String getMarkerTitle(MapMarkerViewType mapMarkerViewType, HashMap singleExploreMap, ArrayList groupExploresList) {
+        private static String getMarkerTitle(Context context, MapMarkerViewType mapMarkerViewType, HashMap singleExploreMap, ArrayList groupExploresList) {
             if (mapMarkerViewType == MapMarkerViewType.SINGLE) {
                 Object markerTitle;
                 ExploreType exporeType = getExploreType(singleExploreMap);
@@ -602,7 +602,7 @@ public class Utils {
                 } else if (exporeType == ExploreType.POI) {
                     markerTitle = singleExploreMap.get("name");
                     if (markerTitle == null) {
-                        markerTitle = "Location";
+                        markerTitle = context.getString(R.string.location);
                     }
                 } else {
                     markerTitle = singleExploreMap.get("title");
@@ -717,10 +717,10 @@ public class Utils {
                         typeSuffix = context.getString(R.string.appointments);
                         break;
                     case MTD_STOP:
-                        typeSuffix = "MTD Stops";
+                        typeSuffix = context.getString(R.string.mtd_stops);
                         break;
                     case POI:
-                        typeSuffix = "Locations";
+                        typeSuffix = context.getString(R.string.locations);
                         break;
                     default:
                         typeSuffix = context.getString(R.string.explores);
