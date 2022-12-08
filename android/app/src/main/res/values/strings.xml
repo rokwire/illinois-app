@@ -31,11 +31,14 @@
     <string name="buildings">Buildings</string>
     <string name="student_courses">Courses</string>
     <string name="appointments">Appointments</string>
+    <string name="mtd_stops">MTD Stops</string>
+    <string name="locations">Locations</string>
+    <string name="location">Location</string>
     <string name="ok">OK</string>
 
     <!-- MapDirectionsActivity -->
     <string name="directionsTitle">Directions</string>
-    <string name="routeFailedMsg">Failed to find route.</string>
+    <string name="routeFailedMsg">Failed to find a route:\n%s</string>
     <string name="locationFailedMsg">Failed to detect current location.</string>
     <string name="start">START</string>
     <string name="finish">FINISH</string>
