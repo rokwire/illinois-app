@@ -1881,8 +1881,8 @@
 	"panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
 
 	"panel.wellness.appointments.home.reschedule_appointment.label": "需要取消或重新安排？",
-	"panel.wellness.appointments.home.reschedule_appointment.alert.description": "要取消約會，請轉到 <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> 或 在工作時間致電 (<u>{{mckinley_phone}}</u>)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
-	"panel.wellness.appointments.home.upcoming.list.empty.msg": "您目前沒有在伊利諾伊州應用程序中鏈接的即將到來的約會。",
+	"panel.wellness.appointments.home.reschedule_appointment.alert.description": "<p>要取消預約，請前往<a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt='' /> 或在工作時間致電 (<u>{{mckinley_phone}}</u>)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。</p><p>取消和預約更改最多可能需要 20 分鐘才能顯示在伊利諾伊州應用程序中。 兩小時取消費用將根據您通過<a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}取消的時間計算 ' alt=''/>.</p>",
+	"panel.wellness.appointments.home.upcoming.list.empty.msg": "您目前沒有在伊利諾伊州應用程序中鏈接即將到來的約會。 通過 <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> 進行的新約會最多可能需要 20 分鐘出現在 {{app_title}} 應用中。",
 	"panel.wellness.appointments.home.past.list.empty.msg": "您沒有在伊利諾伊應用程序中鏈接最近的過去約會。",
 	"panel.wellness.appointments.home.past_appointments.header.label": "最近過去的約會",
 	"panel.wellness.appointments.home.past_appointments.footer.description": "<a href='{{mckinley url}}'>訪問 {{mckinley_url_label}} 以查看過去約會的完整歷史記錄。</a>&nbsp;<img src='asset:{{external_links icon}}' alt= ''/>",
@@ -1974,7 +1974,7 @@
 	"panel.group_detail.button.group_promote.hint": "",
 	"panel.group_detail.button.take_attendance.title": "Take Attendance",
 	"panel.group_detail.button.take_attendance.hint": "",
-	"panel.group_detail.button.notifications.title": "Notifications",
+	"panel.group_detail.button.notifications.title": "Notifications Preferences",
 	"panel.group_detail.button.notifications.hint": "",
 	"panel.group_detail.button.website.title": "Website",
 	"panel.group_detail.label.tags": "Group Tags: ",
@@ -2560,7 +2560,8 @@
 
 	"panel.appointment.detail.meeting.id.label": "會議編號：",
 	"panel.appointment.detail.meeting.passcode.label": "密碼：",
-	"panel.appointment.detail.cancel.description": "要取消約會，請轉到 <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> 或 在工作時間致電 (<u>{{mckinley_phone}}</u>)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
+    "panel.appointment.detail.instructions.label": "需要準備",
+	"panel.appointment.detail.cancel.description": "<b>要取消約會</b>，請轉到 <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> 或 在工作時間致電 (<u>{{mckinley_phone}}</u>)。 為避免錯過預約費用，您必須在預定預約時間前至少兩小時取消預約。",
 	"panel.appointment.detail.error.msg": "無法加載約會數據。",
 
 	"widget.game_day.label.its_game_day":"这是比赛日！",

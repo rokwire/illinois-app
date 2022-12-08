@@ -33,6 +33,9 @@ class Appointment with Explore, Favorite {
   final String? instructions;
   final AppointmentHost? host;
 
+  //Util fields
+  String? randomImageURL; // to return same random image for this instance
+
   Appointment(
       {this.id, this.dateTimeUtc, this.type, this.onlineDetails, this.location, this.cancelled, this.instructions, this.host});
 
@@ -52,7 +55,7 @@ class Appointment with Explore, Favorite {
   }
 
   String? get displayDate {
-    return AppDateTime().formatDateTime(AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc), format: 'MMM dd, H:mma');
+    return AppDateTime().formatDateTime(AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc), format: 'MMM dd, h:mm a');
   }
 
   bool get isUpcoming {
@@ -81,7 +84,24 @@ class Appointment with Explore, Favorite {
   }
 
   String? get _randomImageUrl {
-    return Assets().randomStringFromListWithKey('images.random.events.Other');
+    randomImageURL ??= Assets().randomStringFromListWithKey('images.random.events.Other');
+    return randomImageURL;
+  }
+
+  String? get imageUrlBasedOnCategory { //Keep consistent images
+      String? toutImageUrl;
+      switch (type) {
+        case AppointmentType.in_person:
+          toutImageUrl = 'images/appointment-detail-inperson-tout.png';
+          break;
+        case AppointmentType.online:
+          toutImageUrl = 'images/appointment-detail-online-tout.jpg';
+          break;
+        default:
+          toutImageUrl = imageUrl!;
+          break;
+      }
+      return toutImageUrl;
   }
 
   static List<Appointment>? listFromJson(List<dynamic>? jsonList) {

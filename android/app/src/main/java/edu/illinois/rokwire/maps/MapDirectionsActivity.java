@@ -563,7 +563,7 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
         if (originCoord == null || destinationCoord == null) {
             showLoadingFrame(false);
             Log.e(TAG, "buildRoute() -> origin or destination coordinate is null!");
-            String routeFailedMsg = getString(R.string.routeFailedMsg);
+            String routeFailedMsg = String.format(getString(R.string.routeFailedMsg), "");
             showAlert(routeFailedMsg);
             return;
         }
@@ -664,7 +664,7 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
             cameraPosition = googleMap.getCameraPosition();
             navStatus = NavStatus.START;
         } else {
-            String routeFailedMsg = (navRouteError != null) ? navRouteError : getString(R.string.routeFailedMsg);
+            String routeFailedMsg = String.format(getString(R.string.routeFailedMsg), (navRouteError != null) ? navRouteError : "");
             showAlert(routeFailedMsg);
         }
 

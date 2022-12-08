@@ -46,7 +46,7 @@
 	else if ([self objectForKey:@"coursetitle"] != nil) {
 		return UIUCExploreType_StudentCourse;
 	}
-	else if ([self objectForKey:@"source_id"] != nil) {
+	else if (([self objectForKey:@"id"] != nil) && ([self objectForKey:@"date_time"] != nil) && ([self objectForKey:@"type"] != nil)) {
 		return UIUCExploreType_Appointment;
 	}
 	else if ([self objectForKey:@"stop_id"] != nil) {
