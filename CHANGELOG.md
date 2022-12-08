@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added user friendly alerts when native directions controller fails to build a route [#2615](https://github.com/rokwire/illinois-app/issues/2615).
 ### Fixed
+- Fix Appointments Image behaviour [#2660](https://github.com/rokwire/illinois-app/issues/2660).
 - Show appointment instructions in detail panel [#2653](https://github.com/rokwire/illinois-app/issues/2653).
 - Fixed navigation from Browse / My / My Research Projects [#2656](https://github.com/rokwire/illinois-app/issues/2656).
 - Fixed appointment detection in app native sides [#2664](https://github.com/rokwire/illinois-app/issues/2664).
