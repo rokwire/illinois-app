@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed navigation from Browse / My / My Research Projects [#2656](https://github.com/rokwire/illinois-app/issues/2656).
 - Fixed appointment detection in app native sides [#2664](https://github.com/rokwire/illinois-app/issues/2664).
 - Show appointment location detail in underlined link style [#2665](https://github.com/rokwire/illinois-app/issues/2665).
+- Make appointment display time in 12-hour format [#2663](https://github.com/rokwire/illinois-app/issues/2663).
 
 ## [4.2.35] - 2022-12-07
 ### Added
