@@ -2559,6 +2559,7 @@
 
     "panel.appointment.detail.meeting.id.label": "Meeting ID:",
     "panel.appointment.detail.meeting.passcode.label": "Passcode:",
+    "panel.appointment.detail.instructions.label": "Required prep",
     "panel.appointment.detail.cancel.description": "To cancel an appointment, go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call (<u>{{mckinley_phone}}</u>) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
     "panel.appointment.detail.error.msg": "Failed to load appointment data.",
 
