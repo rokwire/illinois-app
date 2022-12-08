@@ -233,7 +233,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     final String externalLinkIconMacro = '{{external_link_icon}}';
     final String phoneMacro = '{{mckinley_phone}}';
     String rescheduleContentHtml = Localization().getStringEx("panel.wellness.appointments.home.reschedule_appointment.alert.description",
-        "To cancel an appointment, go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call (<u>{{mckinley_phone}}</u>) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.");
+        "<p>To cancel an appointment, go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call (<u>{{mckinley_phone}}</u>) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.</p><p>Cancellations and appointment changes may take up to 20 minutes to appear in the Illinois app. The two-hour cancellation fee will be based on the time you cancel via  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>.</p>");
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(urlMacro, Config().saferMcKinleyUrl ?? '');
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
@@ -242,7 +242,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
         context: context,
         contentPadding: EdgeInsets.all(0),
         contentWidget: Container(
-            height: 250,
+            height: 400,
             decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
               Padding(
@@ -266,7 +266,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
                   ])),
               Align(
                   alignment: Alignment.topRight,
-                  child: GestureDetector(
+                  child: InkWell(
                       onTap: _onTapCloseReschedulePopup,
                       child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png'))))
             ])));

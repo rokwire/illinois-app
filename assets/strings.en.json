@@ -1880,7 +1880,7 @@
     "panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
 
     "panel.wellness.appointments.home.reschedule_appointment.label": "Need to cancel or reschedule?",
-    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "To cancel an appointment, go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call (<u>{{mckinley_phone}}</u>) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.",
+    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "<p>To cancel an appointment, go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call (<u>{{mckinley_phone}}</u>) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.</p><p>Cancellations and appointment changes may take up to 20 minutes to appear in the Illinois app. The two-hour cancellation fee will be based on the time you cancel via  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>.</p>",
     "panel.wellness.appointments.home.upcoming.list.empty.msg": "You currently have no upcoming appointments linked within the Illinois app.",
     "panel.wellness.appointments.home.past.list.empty.msg": "You don't have recent past appointments linked within the Illinois app.",
     "panel.wellness.appointments.home.past_appointments.header.label": "Recent Past Appointments",
