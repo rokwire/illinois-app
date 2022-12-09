@@ -1879,7 +1879,7 @@
     "panel.wellness.resources.button.all.hint": "Tap to view all wellness resources",
 
     "panel.wellness.appointments.home.reschedule_appointment.label": "¿Necesitas cancelar o reprogramar?",
-    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "<p>Para cancelar una cita, vaya a <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt='' /> o llame al (<u>{{mckinley_phone}}</u>) durante el horario comercial. Para evitar el cargo de una cita perdida, debe cancelar su cita al menos dos horas antes de la hora programada.</p><p>Las cancelaciones y los cambios de citas pueden tardar hasta 20 minutos en aparecer en la aplicación de Illinois. La tarifa de cancelación de dos horas se basará en el tiempo que canceles a través de <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}} 'alt=''/>.</p>",
+    "panel.wellness.appointments.home.reschedule_appointment.alert.description": "<p>Para cancelar una cita, vaya a <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt='' /> o llame al <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}</u>)</a> durante el horario comercial. Para evitar el cargo de una cita perdida, debe cancelar su cita al menos dos horas antes de la hora programada.</p><p>Las cancelaciones y los cambios de citas pueden tardar hasta 20 minutos en aparecer en la aplicación de Illinois. La tarifa de cancelación de dos horas se basará en el tiempo que canceles a través de <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}} 'alt=''/>.</p>",
     "panel.wellness.appointments.home.upcoming.list.empty.msg": "Actualmente no tiene citas próximas vinculadas dentro de la aplicación de Illinois. Las nuevas citas realizadas a través de <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> pueden tardar hasta 20 minutos para aparecer en la aplicación {{app_title}}.",
     "panel.wellness.appointments.home.past.list.empty.msg": "No tiene citas pasadas recientes vinculadas dentro de la aplicación de Illinois.",
     "panel.wellness.appointments.home.past_appointments.header.label": "Citas pasadas recientes",
@@ -2559,7 +2559,7 @@
     "panel.appointment.detail.meeting.id.label": "Identificación de la reunión:",
     "panel.appointment.detail.meeting.passcode.label": "Código de acceso:",
     "panel.appointment.detail.instructions.label": "Preparación requerida",
-    "panel.appointment.detail.cancel.description": "<b>Para cancelar una cita,</b> vaya a <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> o llame a (<u>{{mckinley_phone}}</u>) durante el horario comercial. Para evitar el cargo de una cita perdida, debe cancelar su cita al menos dos horas antes de la hora de la cita programada.",
+    "panel.appointment.detail.cancel.description": "<b>Para cancelar una cita,</b> vaya a <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> o llame al <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}</u>)</a> durante el horario laboral. Para evitar el cargo de una cita perdida, debe cancelar su cita al menos dos horas antes de la hora de la cita programada.",
     "panel.appointment.detail.error.msg": "No se pudieron cargar los datos de la cita.",
 
     "widget.game_day.label.its_game_day":"¡Es el día del juego!",
