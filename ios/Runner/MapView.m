@@ -131,7 +131,14 @@
 	_explores = explores;
 	_exploreOptions = options;
 	if (_didFirstLayout) {
-		[self acknowledgeExplores];
+		
+		NSNumber *updateOnly = [_exploreOptions inaNumberForKey:@"UpdateOnly"];
+		if ([updateOnly boolValue]) {
+			[self buildDisplayExplores];
+		}
+		else {
+			[self acknowledgeExplores];
+		}
 	}
 }
 

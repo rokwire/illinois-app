@@ -159,6 +159,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       accountIDs: _post?.reactions[thumbsUpReaction],
                       selectedIconPath: 'images/icon-thumbs-up-solid.png',
                       deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                      onTapEnabled: _canSendReaction,
                     ),
                   ),
                 ),
@@ -356,11 +357,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildPostEdit() {
-    bool currentUserIsMemberOrAdmin =
-        widget.group?.currentUserIsMemberOrAdmin ?? false;
     return Visibility(
         key: _postEditKey,
-        visible: currentUserIsMemberOrAdmin,
+        visible: _canSendReply,
         child: Padding(
             padding: EdgeInsets.all(_outerPadding),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1003,7 +1002,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   bool get _isReplyVisible {
-    return widget.group?.currentUserIsMemberOrAdmin ?? false;
+    return _canSendReply;
   }
 
   bool get _isReportAbuseVisible {
@@ -1012,6 +1011,18 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   bool get _isEditMainPost {
     return _mainPostUpdateData!=null;
+  }
+
+  bool get _canSendReply {
+    return ((widget.group?.currentUserIsAdmin == true) ||
+        (widget.group?.currentUserIsMember == true &&
+            widget.group?.isMemberAllowedToReplyToPost == true));
+  }
+
+  bool get _canSendReaction {
+    return (widget.group?.currentUserIsAdmin == true) ||
+        (widget.group?.currentUserIsMember == true &&
+            widget.group?.isMemberAllowedToSendReactionsToPost == true);
   }
 
   // Notifications Listener
