@@ -2555,6 +2555,7 @@
     "panel.checklist.text.course.section": "Section",
     "panel.checklist.text.course.term": "Term",
 
+    "panel.appointment.detail.cancelled.label": "Cancelado",
     "panel.appointment.detail.meeting.id.label": "Identificación de la reunión:",
     "panel.appointment.detail.meeting.passcode.label": "Código de acceso:",
     "panel.appointment.detail.instructions.label": "Preparación requerida",
@@ -3042,6 +3043,8 @@
     "widget.home.dinings.all.button.description": "Los estudiantes, profesores, personal e invitados son bienvenidos a comer en cualquier comedor de la residencia.",
     "widget.home.dinings.open.button.title": "Residence Hall Dining Abierto ahora",
     "widget.home.dinings.open.button.description": "Acceso rápido a cualquier ubicación que esté actualmente abierta.",
+
+    "widget.appointment.card.cancelled.label": "Cancelado",
 
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",

@@ -2554,6 +2554,7 @@
 	"panel.checklist.text.course.section": "Section",
 	"panel.checklist.text.course.term": "Term",
 
+	"panel.appointment.detail.cancelled.label": "取消",
 	"panel.appointment.detail.meeting.id.label": "會議編號：",
 	"panel.appointment.detail.meeting.passcode.label": "密碼：",
     "panel.appointment.detail.instructions.label": "需要準備",
@@ -3041,6 +3042,8 @@
 	"widget.home.dinings.all.button.description": "歡迎學生、教職員工和客人在任何宿舍用餐地點就餐。",
 	"widget.home.dinings.open.button.title": "宿舍餐廳現在開放",
 	"widget.home.dinings.open.button.description": "快速訪問當前打開的任何位置。",
+
+    "widget.appointment.card.cancelled.label": "取消",
 
 	"model.group.updated.now": "Updated now",
 	"model.group.updated.minute": "Updated about a minute ago",
