@@ -3043,6 +3043,8 @@
     "widget.home.dinings.open.button.title": "Residence Hall Dining Abierto ahora",
     "widget.home.dinings.open.button.description": "Acceso rápido a cualquier ubicación que esté actualmente abierta.",
 
+    "widget.appointment.card.cancelled.label": "Cancelado",
+
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",
     "model.group.updated.minutes": "Updated about %s minutes ago",

@@ -3042,6 +3042,8 @@
 	"widget.home.dinings.open.button.title": "宿舍餐廳現在開放",
 	"widget.home.dinings.open.button.description": "快速訪問當前打開的任何位置。",
 
+    "widget.appointment.card.cancelled.label": "取消",
+
 	"model.group.updated.now": "Updated now",
 	"model.group.updated.minute": "Updated about a minute ago",
 	"model.group.updated.minutes": "Updated about %s minutes ago",

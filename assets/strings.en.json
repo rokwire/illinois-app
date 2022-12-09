@@ -3045,6 +3045,8 @@
     "widget.home.dinings.open.button.title": "Residence Hall Dining Open Now",
     "widget.home.dinings.open.button.description": "Quick access to any locations that are currently open.",
 
+    "widget.appointment.card.cancelled.label": "Cancelled",
+
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",
     "model.group.updated.minutes": "Updated about %s minutes ago",
