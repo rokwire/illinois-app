@@ -1305,6 +1305,7 @@ class ExplorePanelState extends State<ExplorePanel>
         descriptionWidget = _buildStopDescription();
       }
       else if (_selectedMapExplore is ExplorePOI) {
+        title = title?.replaceAll('\n', ' ');
         detailsLabel = Localization().getStringEx('panel.explore.button.clear_destination.title', 'Clear Destination');
         detailsHint = Localization().getStringEx('panel.explore.button.clear_destination.hint', '');
         onTapDetail = _onTapMapClearDestination;
@@ -1514,10 +1515,9 @@ class ExplorePanelState extends State<ExplorePanel>
 
   void _onTapMapClearDestination() {
     Analytics().logSelect(target: 'Clear Destination');
-    // TBD
-    /*if (_selectedMapExplore is Favorite) {
+    if (_selectedMapExplore is Favorite) {
       Auth2().account?.prefs?.setFavorite(_selectedMapExplore as Favorite, false);
-    }*/
+    }
     _selectMapExplore(null);
   }
 
@@ -1891,12 +1891,13 @@ class ExplorePanelState extends State<ExplorePanel>
     _enableMyLocationOnMap();
   }
 
-  void _placeExploresOnMap() {
+  void _placeExploresOnMap({ bool updateOnly = false }) {
     if (_nativeMapController != null)   {
       _nativeMapController!.placePOIs(_displayExplores, options: <String, dynamic>{
         MapController.HideBuildingLabelsParams : (_selectedItem == ExploreItem.Buildings) ? true : null,
         MapController.HideBusStopPOIsParams : (_selectedItem == ExploreItem.MTDStops) ? true : null,
         MapController.ShowMarkerPopupsParams: (_selectedItem != ExploreItem.MTDStops) ? true : false,
+        MapController.UpdateOnlyParams: updateOnly
       });
     }
   }
@@ -1987,7 +1988,7 @@ class ExplorePanelState extends State<ExplorePanel>
       _updateLocationServicesStatus();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _refresh(() { });
+      _onFavoritesChanged();
     }
     else if (name == FlexUI.notifyChanged) {
       _updateLocationServicesStatus();
@@ -2040,6 +2041,24 @@ class ExplorePanelState extends State<ExplorePanel>
     if (FlexUI().isLocationServicesAvailable) {
       _locationServicesStatus = status;
       _updateExploreItems();
+    }
+  }
+
+  void _onFavoritesChanged() {
+    if (_selectedItem == ExploreItem.MTDDestinations) {
+      List<Explore>? explores = ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
+      if (!DeepCollectionEquality().equals(_displayExplores, explores)) {
+        _refresh(() {
+          _displayExplores = explores;
+          _placeExploresOnMap(updateOnly: true);
+        });
+      }
+      else {
+        _refresh(() {});
+      }
+    }
+    else {
+      _refresh(() {});
     }
   }
 
