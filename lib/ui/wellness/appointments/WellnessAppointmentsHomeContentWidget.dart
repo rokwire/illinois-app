@@ -257,7 +257,6 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
         context: context,
         contentPadding: EdgeInsets.all(0),
         contentWidget: Container(
-            height: 400,
             decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
               Padding(
@@ -279,11 +278,11 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
                               "a": Style(color: Styles().colors?.fillColorPrimary)
                             }))
                   ])),
-              Align(
+              Positioned.fill(child: Align(
                   alignment: Alignment.topRight,
                   child: InkWell(
                       onTap: _onTapCloseReschedulePopup,
-                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png'))))
+                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png')))))
             ])));
   }
 
