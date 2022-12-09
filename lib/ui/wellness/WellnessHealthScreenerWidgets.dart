@@ -239,7 +239,18 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   void _onTapTakeScreener() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().healthScreenerSurveyID, tabBar: uiuc.TabBar())));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().healthScreenerSurveyID, tabBar: uiuc.TabBar(), offlineWidget: _buildOfflineWidget(),)));
+  }
+
+  Widget _buildOfflineWidget() {
+    return Padding(padding: EdgeInsets.all(28), child:
+      Center(child:
+        Text(
+          Localization().getStringEx('panel.wellness.sections.health_screener.offline.error.msg', 'Illinois Health Screener is not available while offline.'),
+          textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('widget.detail.regular.fat')
+        )
+      ),
+    );
   }
 
   DateTime? get _selectedStartDate {

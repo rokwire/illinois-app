@@ -119,7 +119,7 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
     if (Auth2().privacyMatch(4)) {
       setState(() {
         Map<String, bool> assessmentsSaveResultsMap = Storage().assessmentsSaveResultsMap ?? {};
-        assessmentsSaveResultsMap['bessi'] = !(assessmentsSaveResultsMap['bessi'] ?? false);
+        assessmentsSaveResultsMap['bessi'] = !(assessmentsSaveResultsMap['bessi'] ?? true);
         Storage().assessmentsSaveResultsMap = assessmentsSaveResultsMap;
       });
     } else {

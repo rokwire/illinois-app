@@ -20,6 +20,7 @@ import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -48,12 +49,12 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
         childrenAlignment: CrossAxisAlignment.start,
         allowOverlap: false,
       ) : Padding(padding: const EdgeInsets.all(24.0), child: Text(
-        Localization().getStringEx("panel.skills_self_evaluation.results_detail.missing_content", "There is no detailed results content for this skill."),
+        Localization().getStringEx("panel.skills_self_evaluation.results_detail.unavailable", "Detailed results content for this skill not available."),
         style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
         textAlign: TextAlign.center,
       ))),
       backgroundColor: Styles().colors?.background,
-      bottomNavigationBar: null,
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

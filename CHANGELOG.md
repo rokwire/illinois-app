@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added user friendly alerts when native directions controller fails to build a route [#2615](https://github.com/rokwire/illinois-app/issues/2615).
 - Show departures in My MTD Buss items [#2633](https://github.com/rokwire/illinois-app/issues/2633).
+- Handle multiple BESSI score profiles [#2647](https://github.com/rokwire/illinois-app/issues/2647)
 ### Fixed
 - Fix Appointments Image behaviour [#2660](https://github.com/rokwire/illinois-app/issues/2660).
 - Show appointment instructions in detail panel [#2653](https://github.com/rokwire/illinois-app/issues/2653).
