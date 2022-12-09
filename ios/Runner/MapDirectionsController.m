@@ -381,8 +381,10 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 					self.gmsMapView.hidden = false;
 					[_activityIndicator stopAnimating];
 					[_activityStatus setText:@""];
-
-					[self alertMessage:_exploreAddressError.debugDescription];
+					
+					NSString *message = [NSString stringWithFormat:NSLocalizedString(@"Failed to resolve destination address:\n%@", nil),
+						(0 < _exploreAddressError.debugDescription.length) ? _exploreAddressError.debugDescription : @""];
+					[self alertMessage:message];
 				}
 			}
 			else {
@@ -419,13 +421,9 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 			[self updateNav];
 
 			// Alert error
-			NSString *message = nil;
-			if (0 < self.clLocationError.localizedDescription.length) {
-				message = self.clLocationError.localizedDescription;
-			}
-			else {
-				message = NSLocalizedString(@"Failed to detect current location.", nil);
-			}
+			NSString *message = [NSString stringWithFormat:NSLocalizedString(@"Failed to detect current location:\n%@", nil),
+				(0 < self.clLocationError.localizedDescription.length) ? self.clLocationError.localizedDescription : @""
+			];
 			[self alertMessage:message];
 		}
 	}
@@ -483,14 +481,9 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 	[self.gmsMapView moveCamera:cameraUpdate];
 
 	if (_navRoute == nil) {
-		NSString *message = nil;
-		if (0 < _navRouteError.localizedDescription.length) {
-			message = _navRouteError.localizedDescription;
-		}
-		else {
-			message = NSLocalizedString(@"Failed to find route.", nil);
-		}
-
+		NSString *message = [NSString stringWithFormat:NSLocalizedString(@"Failed to find a route:\n%@", nil),
+			(0 < _navRouteError.localizedDescription.length) ? _navRouteError.localizedDescription : @""
+		];
 		[self alertMessage:message];
 	}
 }
@@ -926,7 +919,8 @@ static const NSString * kTravelModeKey = @"mapDirections.travelMode";
 
 - (NSInteger)buildTravelModeSegments {
 	NSInteger selectedTravelModeIndex = 0;
-	NSString *selectedTravelMode = [[NSUserDefaults standardUserDefaults] inaStringForKey:self.travelModeKey defaults:self.travelModeDefault];
+	NSDictionary *options = [self.parameters inaDictForKey:@"options"];
+	NSString *selectedTravelMode = [options inaStringForKey:@"travelMode"] ?: [[NSUserDefaults standardUserDefaults] inaStringForKey:self.travelModeKey defaults:self.travelModeDefault];
 	for (NSInteger index = 0; index < _nsTravelModes.count; index++) {
 		UIImage *segmentImage = nil;
 		NSString *travelMode = [_nsTravelModes objectAtIndex:index];

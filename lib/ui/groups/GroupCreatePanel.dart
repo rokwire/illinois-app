@@ -829,6 +829,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           } else {
             _group?.canJoinAutomatically = true;
           }
+
+          if(mounted) {
+            setState(() {
+
+            });
+          }
         }
       ),
     );

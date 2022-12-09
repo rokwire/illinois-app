@@ -70,6 +70,7 @@ class MapController {
   static const String HideBuildingLabelsParams = 'HideBuildingLabels';
   static const String HideBusStopPOIsParams = 'HideBusStopPOIs';
   static const String ShowMarkerPopupsParams = 'ShowMarkerPopus';
+  static const String UpdateOnlyParams = 'UpdateOnly';
 
   late MethodChannel _channel;
   int? _mapId;
@@ -108,7 +109,11 @@ class MapController {
     return _channel.invokeMethod('enableMyLocation', enable);
   }
 
-  Future<void> viewPoi(Map<String, dynamic>? target) async {
-    return _channel.invokeMethod('viewPoi', {'target': target});
+  Future<void> viewPOI(Map<String, dynamic>? target) async {
+    return _channel.invokeMethod('viewPOI', {'target': target});
+  }
+
+  Future<void> markPOI(Explore? explore) async {
+    return _channel.invokeMethod('markPOI', {'explore': explore?.toJson()});
   }
 }

@@ -744,7 +744,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
       }
       commands.add(RibbonButton(
-        label: Localization().getStringEx("panel.group_detail.button.notifications.title", "Notifications"),
+        label: Localization().getStringEx("panel.group_detail.button.notifications.title", "Notifications Preferences"),
         hint: Localization().getStringEx("panel.group_detail.button.notifications.hint", ""),
         leftIconAsset: 'images/icon-reminder.png',
         leftIconPadding: EdgeInsets.only(right: 8, left: 2),

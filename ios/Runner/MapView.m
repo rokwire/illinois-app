@@ -42,7 +42,9 @@
 	NSArray*      _explores;
 	NSDictionary* _exploreOptions;
 	NSArray*      _displayExplores;
-	NSDictionary* _poi;
+	NSDictionary* _viewPOI;
+	NSDictionary* _markPOI;
+	GMSMarker*    _markMarker;
 	NSMutableSet* _markers;
 	GMSMapStyle*  _mapStyleNoPoi;
 	GMSMapStyle*  _mapStyleNoBusStop;
@@ -118,7 +120,8 @@
 
 	if (!_didFirstLayout) {
 		_didFirstLayout = true;
-		[self acknowledgePOI];
+		[self acknowledgeViewPOI];
+		[self acknowledgeMarkPOI];
 		[self acknowledgeExplores];
 		[self applyEnabled];
 	}
@@ -128,7 +131,14 @@
 	_explores = explores;
 	_exploreOptions = options;
 	if (_didFirstLayout) {
-		[self acknowledgeExplores];
+		
+		NSNumber *updateOnly = [_exploreOptions inaNumberForKey:@"UpdateOnly"];
+		if ([updateOnly boolValue]) {
+			[self buildDisplayExplores];
+		}
+		else {
+			[self acknowledgeExplores];
+		}
 	}
 }
 
@@ -354,26 +364,51 @@
 
 #pragma mark POI
 
-- (void)applyPOI:(NSDictionary*)poi {
-	_poi = poi;
+- (void)applyViewPOI:(NSDictionary*)poi {
+	_viewPOI = poi;
 	
 	if (_didFirstLayout) {
-		[self acknowledgePOI];
+		[self acknowledgeViewPOI];
 	}
 }
 
-- (void)acknowledgePOI {
-	if ((_poi != nil) && _didFirstLayout) {
-		NSNumber *latitude = [_poi inaNumberForKey:@"latitude"];
-		NSNumber *longitude = [_poi inaNumberForKey:@"longitude"];
+- (void)acknowledgeViewPOI {
+	if ((_viewPOI != nil) && _didFirstLayout) {
+		NSNumber *latitude = [_viewPOI inaNumberForKey:@"latitude"];
+		NSNumber *longitude = [_viewPOI inaNumberForKey:@"longitude"];
 		CLLocationCoordinate2D location = ((latitude != nil) && (longitude != nil) && ((longitude.doubleValue != 0.0) || (longitude.doubleValue != 0.0))) ?
 			CLLocationCoordinate2DMake(latitude.doubleValue, longitude.doubleValue) : kInitialCameraLocation;
-		int zoom = [_poi inaIntForKey:@"zoom" defaults:kInitialCameraZoom];
+		int zoom = [_viewPOI inaIntForKey:@"zoom" defaults:kInitialCameraZoom];
 
 		GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:location.latitude longitude:location.longitude zoom:(_currentZoom = zoom)];
 		GMSCameraUpdate *update = [GMSCameraUpdate setCamera:camera];
 		[_mapView moveCamera:update];
-		_poi = nil;
+		_viewPOI = nil;
+	}
+}
+
+- (void)applyMarkPOI:(NSDictionary*)poi {
+	_markPOI = poi;
+	
+	if (_didFirstLayout) {
+		[self acknowledgeMarkPOI];
+	}
+}
+
+- (void)acknowledgeMarkPOI {
+	if (_didFirstLayout) {
+		if (_markPOI != nil) {
+			GMSMarker *marker = [self markerFromExplore:_markPOI markerData:nil];
+			if (marker != nil) {
+				_markMarker.map = nil;
+				_markMarker = marker;
+				_markMarker.map = _mapView;
+			}
+		}
+		else {
+			_markMarker.map = nil;
+			_markMarker = nil;
+		}
 	}
 }
 
@@ -530,20 +565,6 @@
 
 #pragma mark GMSMapViewDelegate
 
-- (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {
-	NSLog(@"didTapAtCoordinate: [%@, %@]",
-		@(round(coordinate.latitude * 1000000) / 1000000),
-		@(round(coordinate.longitude * 1000000) / 1000000));
-	NSDictionary *arguments = @{
-		@"mapId" : @(_mapId),
-		@"location": @{
-			@"latitude" : @(coordinate.latitude),
-			@"longitude" : @(coordinate.longitude),
-		}
-	};
-	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"map.location.select" arguments:arguments.inaJsonString];
-}
-
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(nonnull GMSMarker *)marker {
 	NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
 	id exploreParam = explore.uiucExplores ?: explore;
@@ -563,6 +584,18 @@
 	}
 }
 
+- (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {
+	NSLog(@"didTapAtCoordinate: [%.6f, %.6f]", coordinate.latitude, coordinate.longitude);
+	NSDictionary *arguments = @{
+		@"mapId" : @(_mapId),
+		@"location": @{
+			@"latitude" : @(coordinate.latitude),
+			@"longitude" : @(coordinate.longitude),
+		}
+	};
+	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"map.location.select" arguments:arguments.inaJsonString];
+}
+
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
 	NSLog(@"GMSMapViewZoom: %@", @(position.zoom));
 	
@@ -577,14 +610,12 @@
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapPOIWithPlaceID:(NSString *)placeID name:(NSString *)name location:(CLLocationCoordinate2D)location {
-	NSLog(@"didTapPOIWithPlaceID: %@ name: %@ location: [%@, %@]", placeID, name,
-		@(round(location.latitude * 1000000) / 1000000),
-		@(round(location.longitude * 1000000) / 1000000));
+	NSLog(@"didTapPOIWithPlaceID: %@ name: %@ location: [%.6f, %.6f]", placeID, name, location.latitude, location.longitude);
 		
 	NSDictionary *arguments = @{
 		@"mapId" : @(_mapId),
 		@"poi" : @{
-			@"placeID" : placeID ?: [NSNull null],
+			@"placeId" : placeID ?: [NSNull null],
 			@"name" : name ?: [NSNull null],
 			@"location": @{
 				@"latitude" : @(location.latitude),
@@ -665,18 +696,28 @@
 		NSDictionary *optionsJsonMap = [parameters inaDictForKey:@"options"];
 		[_mapView applyExplores:exploresJsonList options:optionsJsonMap];
 		result(@(true));
-	} else if ([[call method] isEqualToString:@"enable"]) {
+	}
+	else if ([[call method] isEqualToString:@"enable"]) {
 		bool enable = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;
 		[_mapView enable:enable];
-	} else if ([[call method] isEqualToString:@"enableMyLocation"]) {
+	}
+	else if ([[call method] isEqualToString:@"enableMyLocation"]) {
 		bool enableMyLocation = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;
 		[_mapView enableMyLocation:enableMyLocation];
-	} else if ([[call method] isEqualToString:@"viewPoi"]) {
+	}
+	else if ([[call method] isEqualToString:@"viewPOI"]) {
 		NSDictionary *parameters = [call.arguments isKindOfClass:[NSDictionary class]] ? call.arguments : nil;
 		NSDictionary *targetJsonMap = [parameters inaDictForKey:@"target"];
-		[_mapView applyPOI:targetJsonMap];
+		[_mapView applyViewPOI:targetJsonMap];
 		result(@(true));
-	} else {
+	}
+	else if ([[call method] isEqualToString:@"markPOI"]) {
+		NSDictionary *parameters = [call.arguments isKindOfClass:[NSDictionary class]] ? call.arguments : nil;
+		NSDictionary *exploreJsonMap = [parameters inaDictForKey:@"explore"];
+		[_mapView applyMarkPOI:exploreJsonMap];
+		result(@(true));
+	}
+	else {
 		result(FlutterMethodNotImplemented);
 	}
 }

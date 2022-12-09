@@ -71,6 +71,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     private HashMap exploreOptions;
     private List<Object> displayExplores;
     private List<Marker> markers;
+    private Marker markMarker;
 
     private IconGenerator iconGenerator;
     private View markerLayoutView;
@@ -184,7 +185,14 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         this.explores = explores;
         this.exploreOptions = options;
         if (mapLayoutPassed) {
-            acknowledgeExplores();
+            Object exploreUpdateOnlyParam = (exploreOptions != null) ? exploreOptions.get("UpdateOnly") : null;
+            Boolean exploreUpdateOnly = (exploreUpdateOnlyParam instanceof Boolean) ? ((Boolean)exploreUpdateOnlyParam) : false;
+            if (exploreUpdateOnly) {
+                buildDisplayExplores();
+            }
+            else {
+                acknowledgeExplores();
+            }
         }
     }
 
@@ -194,6 +202,27 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             double longitude = Utils.Map.getValueFromPath(target, "longitude", Constants.DEFAULT_INITIAL_CAMERA_POSITION.longitude);
             double zoom = Utils.Map.getValueFromPath(target, "zoom", Constants.DEFAULT_CAMERA_ZOOM);
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(new LatLng(latitude, longitude), (float) zoom)));
+        }
+    }
+
+    public void markPoi(HashMap explore) {
+        if (mapLayoutPassed) {
+            if (explore != null) {
+                MarkerOptions markerOptions = Utils.Explore.constructMarkerOptions(getContext(), explore, markerLayoutView, markerGroupLayoutView, iconGenerator);
+                if (markerOptions != null) {
+                    if (markMarker != null) {
+                        markMarker.remove();
+                    }
+                    Marker marker = googleMap.addMarker(markerOptions);
+                    JSONObject tagJson = Utils.Explore.constructMarkerTagJson(getContext(), marker.getTitle(), explore);
+                    marker.setTag(tagJson);
+                    markMarker = marker;
+                }
+            }
+            else if (markMarker != null) {
+                markMarker.remove();
+                markMarker = null;
+            }
         }
     }
 
@@ -380,7 +409,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             
             JSONObject jsonLocation = new JSONObject();
             jsonLocation.put("latitude", latLng.latitude);
-            jsonLocation.put("longitude", latLng.latitude);
+            jsonLocation.put("longitude", latLng.longitude);
             jsonArgs.put("location", jsonLocation);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -395,12 +424,12 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             jsonArgs.put("mapId", mapId);
             
             JSONObject jsonPOI = new JSONObject();
-            jsonPOI.put("placeID", poi.placeId);
+            jsonPOI.put("placeId", poi.placeId);
             jsonPOI.put("name", poi.name);
 
             JSONObject jsonLocation = new JSONObject();
             jsonLocation.put("latitude", poi.latLng.latitude);
-            jsonLocation.put("longitude", poi.latLng.latitude);
+            jsonLocation.put("longitude", poi.latLng.longitude);
             jsonPOI.put("location", jsonLocation);
             jsonArgs.put("poi", jsonPOI);
 
@@ -408,7 +437,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             e.printStackTrace();
         }
         String methodArguments = jsonArgs.toString();
-        MainActivity.invokeFlutterMethod("map.location.select", methodArguments);
+        MainActivity.invokeFlutterMethod("map.poi.select", methodArguments);
     }
 
     private void onCameraIdle() {

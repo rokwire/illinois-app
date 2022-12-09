@@ -12,7 +12,7 @@
 				"state_farm_center", "app_help", "video_tutorials",
 				"gies_checklist", "new_student_checklist", "safer", "student_courses", "canvas_courses",
 				"campus_highlights", "campus_safety_resources", "campus_resources",
-				"recent_items", "my_news", "my_appointments", "my_mtd_stops"
+				"recent_items", "my_news", "my_appointments", "my_mtd_stops", "my_mtd_destinations"
 			],
 			"home.system": ["tout", "welcome", "emergency", "voter_registration", "connect"],
 			"home.connect": ["netid", "phone_or_email"],
@@ -38,8 +38,8 @@
 			"browse.feeds": ["twitter", "daily_illini", "wpgufm_radio"],
 			"browse.groups": ["all_groups", "my_groups"],
 			"browse.research_projects": ["open_research_projects", "my_research_projects"],
-			"browse.mtd": ["all_mtd_stops", "my_mtd_stops"],
-			"browse.my": ["my_athletics", "my_news", "my_campus_guide", "student_courses", "my_dining", "my_events", "my_appointments", "my_mtd_stops", "my_game_day", "canvas_courses", "my_groups", "my_research_projects", "my_laundry", "wellness_resources"],
+			"browse.mtd": ["all_mtd_stops", "my_mtd_stops", "my_mtd_destinations"],
+			"browse.my": ["my_athletics", "my_news", "my_campus_guide", "student_courses", "my_dining", "my_events", "my_appointments", "my_mtd_stops", "my_mtd_destinations", "my_game_day", "canvas_courses", "my_groups", "my_research_projects", "my_laundry", "wellness_resources"],
 			"browse.inbox": ["all_notifications", "unread_notifications"],
 			"browse.polls": ["create_poll", "recent_polls"],
 			"browse.recent": ["recent_items"],
@@ -64,7 +64,7 @@
 			"wellness.health_screener": ["take_screener"],
 
 			"explore.list": ["events", "dining"],
-			"explore.map":  ["events", "dining", "laundry", "student_courses", "buildings", "mtd_stops", "appointments", "state_farm_wayfinding"],
+			"explore.map":  ["events", "dining", "laundry", "student_courses", "buildings", "appointments", "mtd_stops", "mtd_destinations", "state_farm_wayfinding"],
 	
 			"privacy_center": ["connect", "heading", "description", "manage", "policy", "delete"],
 	
@@ -206,7 +206,7 @@
 					"student": [
 						"dinings", "gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "laundry",
 						"wallet", "daily_illini", "wpgufm_radio", "campus_highlights", "campus_safety_resources", "campus_reminders", "all_notifications", "unread_notifications",
-						"all_groups", "open_research_projects", "twitter", "my_dining", "my_events", "my_groups", "my_research_projects", "my_appointments", "my_mtd_stops",
+						"all_groups", "open_research_projects", "twitter", "my_dining", "my_events", "my_groups", "my_research_projects", "my_appointments", "my_mtd_stops", "my_mtd_destinations",
 						"wellness_resources", "wellness_rings", "wellness_todo", "wellness_tips",
 						"my_game_day", "my_athletics", "my_news", "my_campus_guide", "create_poll",
 						"recent_polls", "recent_items", "suggested_events",
@@ -219,12 +219,12 @@
 						"my_campus_guide", "sport_events", "sport_news",
 						"my_athletics", "my_news", "my_game_day", "create_poll", "recent_polls",
 						"campus_highlights", "campus_safety_resources", "campus_reminders", "all_notifications", "unread_notifications", "app_help", "video_tutorials", "dinings",
-						"laundry", "my_dining", "my_events", "my_appointments", "my_mtd_stops",
+						"laundry", "my_dining", "my_events", "my_appointments", "my_mtd_stops", "my_mtd_destinations",
 						"state_farm_center", "suggested_events"
 					],
 					"gies_offcampus":[
 						"gies_checklist", "student_courses", "canvas_courses", "wallet", "daily_illini", "wpgufm_radio",
-						"twitter", "recent_items", "all_groups", "open_research_projects", "my_groups", "my_research_projects", "my_appointments", "my_mtd_stops",
+						"twitter", "recent_items", "all_groups", "open_research_projects", "my_groups", "my_research_projects", "my_appointments", "my_mtd_stops", "my_mtd_destinations",
 						"wellness_resources", "wellness_rings", "wellness_todo", "wellness_tips",
 						"my_campus_guide", "sport_events", "sport_news",
 						"my_athletics", "my_news", "my_game_day", "create_poll", "recent_polls",
@@ -232,7 +232,7 @@
 					],
 					"elderly": [
 						"dinings", "wallet", "all_groups", "campus_reminders", "all_notifications", "unread_notifications",
-						"my_events", "my_groups", "my_appointments", "my_mtd_stops",
+						"my_events", "my_groups", "my_appointments", "my_mtd_stops", "my_mtd_destinations",
 						"wellness_resources", "wellness_rings", "wellness_todo", "wellness_tips",
 						"campus_highlights", "campus_safety_resources", "recent_items", "twitter", "suggested_events", "create_poll",
 						"recent_polls", "daily_illini", "wpgufm_radio", "sport_events", "sport_news",

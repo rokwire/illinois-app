@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -117,16 +119,32 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
     MemberNotificationsPreferences? memberPreferences = _member?.notificationsPreferences;
     preferenceWidgets.add(_buildGlobalNotificationsInfo());
 
-    preferenceWidgets.add(EnabledToggleButton(
+    preferenceWidgets.add(_EnabledToggleButton(
         enabled: _toggleButtonEnabled,
         borderRadius: BorderRadius.zero,
         label: Localization().getStringEx(
             "panel.group_member_notifications.override_notifications.label", "Use these notification preferences for this group"),
         toggled: memberPreferences?.overridePreferences ?? false,
         onTap: _toggleButtonEnabled ? _onToggleOverrideNotificationPreferences : null,
-        textStyle: _toggleButtonEnabled
-            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
-            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")));
+        customTitle: Container(
+          child:RichText(
+          textAlign: TextAlign.left,
+          textScaleFactor: MediaQuery.of(context).textScaleFactor,
+              text: TextSpan(
+                style: _toggleButtonEnabled ?
+                Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled") :
+                Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled"),
+                  children: [
+                    // TextSpan(text: "Use these notification preferences for this group", style: switchTextStyle, )
+                    TextSpan(
+                      text: "Override ",),
+                    TextSpan(
+                        text: "my global notification settings",
+                        style: TextStyle(decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, height: 1.61), //height is workaround to add some padding between the text and underlined decoration //Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.underline")
+                        recognizer: TapGestureRecognizer()..onTap = _onTapNotificationPreferences
+                    ),
+                    TextSpan(text:" with: "),
+                  ])))));
     preferenceWidgets.add(Row(children: [
       Expanded(
           child: Container(
@@ -327,6 +345,12 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
     });
   }
 
+  void _onTapNotificationPreferences(){
+    Analytics().logSelect(target: "Notifications");
+    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.preferences);
+  }
+
+
   void _increaseProgress() {
     setStateIfMounted(() {
       _loadingProgress++;
@@ -378,4 +402,27 @@ class _DisabledToggleButton extends ToggleRibbonButton{
       void Function()? onTap,
       TextStyle? textStyle,})
       : super(label: label, toggled: (toggled == true), onTap: onTap, textStyle: textStyle, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),rightIcons: _rightIcons);
+}
+
+class _EnabledToggleButton extends ToggleRibbonButton {
+  final bool? enabled;
+  final Widget? customTitle;
+
+
+  _EnabledToggleButton(
+      {String? label,
+      bool? toggled,
+      void Function()? onTap,
+      BoxBorder? border,
+      BorderRadius? borderRadius,
+      TextStyle? textStyle,
+        this.enabled,
+        this.customTitle,})
+      : super(label: label, toggled: (toggled == true), onTap: onTap, border: border, borderRadius: borderRadius, textStyle: textStyle);
+
+  @override
+  bool get toggled => (enabled == true) && super.toggled;
+
+  @override
+  Widget? get textWidget => this.customTitle ?? super.textWidget;
 }
