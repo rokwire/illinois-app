@@ -32,6 +32,8 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
+import 'GroupWidgets.dart';
+
 class GroupMemberNotificationsPanel extends StatefulWidget {
   final String? groupId;
   final String? memberId;
@@ -150,7 +152,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
               child: Padding(
                   padding: EdgeInsets.only(left: 10),
                   child: Column(children: [
-                    _EnabledToggleButton(
+                    EnabledToggleButton(
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
                         label: Localization().getStringEx("panel.group_member_notifications.posts.label", "Posts"),
@@ -159,7 +161,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                         textStyle: _groupSubNotificationsEnabled
                             ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                             : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    _EnabledToggleButton(
+                    EnabledToggleButton(
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
                         label: Localization().getStringEx("panel.group_member_notifications.event.label", "Event"),
@@ -168,7 +170,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                         textStyle: _groupSubNotificationsEnabled
                             ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                             : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    _EnabledToggleButton(
+                    EnabledToggleButton(
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
                         label: Localization().getStringEx("panel.group_member_notifications.invitations.label", "Invitations"),
@@ -177,7 +179,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                         textStyle: _groupSubNotificationsEnabled
                             ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                             : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    _EnabledToggleButton(
+                    EnabledToggleButton(
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
                         label: Localization().getStringEx("panel.group_member_notifications.polls.label", "Polls"),

@@ -87,7 +87,9 @@ class Auth2 extends rokwire.Auth2 {
 
   void _checkEnabled() {
     if (isLoggedIn && !FlexUI().isAuthenticationAvailable) {
-      logout();
+      onUserPrefsChanged(account?.prefs).then((_) {
+        logout();
+      });
     }
   }
 

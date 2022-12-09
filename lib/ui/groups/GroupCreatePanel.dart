@@ -84,11 +84,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _group?.researchOpen ??= (_group?.researchProject == true) ? true : null;
     _group?.privacy ??= (_group?.researchProject == true) ? GroupPrivacy.public : GroupPrivacy.private;
     _group?.category ??= (_group?.researchProject == true) ? 'Other' : null;
+    _group?.settings ??= GroupSettings.initialDefaultSettings();
 
     _groupTitleController.text = _group?.title ?? '';
     _groupDescriptionController.text = _group?.description ?? '';
     _researchConsentDetailsController.text = _group?.researchConsentDetails ?? '';
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
+
 
     // #2550: we need consent checkbox selected by default
     // #2626: Hide consent checkbox and edit control. Default it to false...
@@ -232,6 +234,11 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       Visibility(visible: !_isResearchProject, child:
                         Padding(padding: EdgeInsets.only(top: 8), child:
                           _buildAttendanceLayout(),
+                        )
+                      ),
+                      Visibility(visible: !_isResearchProject, child:
+                        Padding(padding: EdgeInsets.only(top: 8), child:
+                          _buildSettingsLayout(),
                         )
                       ),
                       Container(height: 40),
@@ -822,6 +829,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           } else {
             _group?.canJoinAutomatically = true;
           }
+
+          if(mounted) {
+            setState(() {
+
+            });
+          }
         }
       ),
     );
@@ -909,6 +922,21 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         setState(() {});
       }
     }
+  }
+
+  //Settings
+  Widget _buildSettingsLayout() {
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: GroupMemberSettingsLayout(
+            settings: _group?.settings,
+            onChanged: () {
+              if (mounted) {
+                setState(() {});
+              }
+            }
+        )
+    );
   }
 
   //Buttons

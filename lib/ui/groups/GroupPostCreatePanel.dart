@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -79,7 +80,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(height: 12,),
-                  GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group.id, groupPrivacy: widget.group.privacy, onSelectionChanged: _onMembersSelectionChanged),
+                  Visibility(
+                    visible: _canSelectMembers,
+                    child: GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group.id, groupPrivacy: widget.group.privacy, onSelectionChanged: _onMembersSelectionChanged),
+                  ),
                   _buildNudgesWidget(),
                   Container(height: 12,),
                   Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
@@ -345,5 +349,11 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
   bool get _isLoading {
     return (_progressLoading > 0);
+  }
+
+  bool get _canSelectMembers {
+    return (widget.group.currentUserIsAdmin == true) ||
+        (widget.group.currentUserIsMember &&
+            widget.group.isMemberAllowedToPostToSpecificMembers);
   }
 }

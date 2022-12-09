@@ -185,7 +185,14 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         this.explores = explores;
         this.exploreOptions = options;
         if (mapLayoutPassed) {
-            acknowledgeExplores();
+            Object exploreUpdateOnlyParam = (exploreOptions != null) ? exploreOptions.get("UpdateOnly") : null;
+            Boolean exploreUpdateOnly = (exploreUpdateOnlyParam instanceof Boolean) ? ((Boolean)exploreUpdateOnlyParam) : false;
+            if (exploreUpdateOnly) {
+                buildDisplayExplores();
+            }
+            else {
+                acknowledgeExplores();
+            }
         }
     }
 
@@ -402,7 +409,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             
             JSONObject jsonLocation = new JSONObject();
             jsonLocation.put("latitude", latLng.latitude);
-            jsonLocation.put("longitude", latLng.latitude);
+            jsonLocation.put("longitude", latLng.longitude);
             jsonArgs.put("location", jsonLocation);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -422,7 +429,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
 
             JSONObject jsonLocation = new JSONObject();
             jsonLocation.put("latitude", poi.latLng.latitude);
-            jsonLocation.put("longitude", poi.latLng.latitude);
+            jsonLocation.put("longitude", poi.latLng.longitude);
             jsonPOI.put("location", jsonLocation);
             jsonArgs.put("poi", jsonPOI);
 
@@ -430,7 +437,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             e.printStackTrace();
         }
         String methodArguments = jsonArgs.toString();
-        MainActivity.invokeFlutterMethod("map.location.select", methodArguments);
+        MainActivity.invokeFlutterMethod("map.poi.select", methodArguments);
     }
 
     private void onCameraIdle() {

@@ -239,6 +239,9 @@ class NativeCommunicator with Service {
       case "map.explore.select":
         _notifyMapSelectExplore(call.arguments);
         break;
+      case "map.poi.select":
+        _notifyMapSelectPOI(call.arguments);
+        break;
       case "map.location.select":
         _notifyMapLocationSelect(call.arguments);
         break;
@@ -250,9 +253,6 @@ class NativeCommunicator with Service {
         _notifyMapRouteFinish(call.arguments);
         break;
       
-      case "map.poi.select":
-        _notifyMapSelectPOI(call.arguments);
-        break;
 
       case "firebase_message":
         //PS use firebase messaging plugin!

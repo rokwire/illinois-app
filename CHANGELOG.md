@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Privacy level is not getting saved property [#2666](https://github.com/rokwire/illinois-app/issues/2666)
+
+## [4.2.37] - 2022-12-09
+### Added
+- Show "Cancelled" label for Appointments [#2692](https://github.com/rokwire/illinois-app/issues/2692).
+### Fixed
+- Fixed Teams Coach and Roaster list panels open full size image url[#2694](https://github.com/rokwire/illinois-app/issues/2694).
+- McKinley link and phone number handling[#2659](https://github.com/rokwire/illinois-app/issues/2659).
+### Changed
+- MTD Stops and Desinations map view updates [#2633](https://github.com/rokwire/illinois-app/issues/2633).
+
+## [4.2.36] - 2022-12-08
 ### Changed
 - Updated research projects questionnaire [#2669](https://github.com/rokwire/illinois-app/issues/2669).
 - Texts for MyMcKinley appointments [#2662](https://github.com/rokwire/illinois-app/issues/2662).
@@ -12,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GroupDetailPanel change Notifications button label to "Notification Preferences" [#2649](https://github.com/rokwire/illinois-app/issues/2649).
 ### Added
 - Added user friendly alerts when native directions controller fails to build a route [#2615](https://github.com/rokwire/illinois-app/issues/2615).
+- Show departures in My MTD Buss items [#2633](https://github.com/rokwire/illinois-app/issues/2633).
+- Handle multiple BESSI score profiles [#2647](https://github.com/rokwire/illinois-app/issues/2647)
 ### Fixed
 - Fix Appointments Image behaviour [#2660](https://github.com/rokwire/illinois-app/issues/2660).
 - Show appointment instructions in detail panel [#2653](https://github.com/rokwire/illinois-app/issues/2653).
@@ -20,6 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show appointment location detail in underlined link style [#2665](https://github.com/rokwire/illinois-app/issues/2665).
 - Make appointment display time in 12-hour format [#2663](https://github.com/rokwire/illinois-app/issues/2663).
 - Issues in HomeStudentCoursesWidget [#2654](https://github.com/rokwire/illinois-app/issues/2654).
+- Fix Create Group Panel: can auto join switch is not working [#2642](https://github.com/rokwire/illinois-app/issues/2642).
+- Fixed map notifications from Android native side [#2633](https://github.com/rokwire/illinois-app/issues/2633).
 
 ## [4.2.35] - 2022-12-07
 ### Added
