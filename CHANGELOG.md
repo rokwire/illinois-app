@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Privacy level is not getting saved property [#2666](https://github.com/rokwire/illinois-app/issues/2666)
+### Added
+- Sort items and sections in Browse panel [#2699](https://github.com/rokwire/illinois-app/issues/2699).
 
 ## [4.2.37] - 2022-12-09
 ### Added
