@@ -1272,6 +1272,7 @@ class ExplorePanelState extends State<ExplorePanel>
     Color? exploreColor;
     Widget? descriptionWidget;
     bool canDirections = _userLocationEnabled(), canDetail = true;
+    void Function() onTapDetail = _onTapMapExploreDetail;
 
     if (_selectedMapExplore is Explore) {
       title = _selectedMapExplore?.exploreTitle;
@@ -1282,7 +1283,11 @@ class ExplorePanelState extends State<ExplorePanel>
         detailsHint = Localization().getStringEx('panel.explore.button.bus_schedule.hint', '');
         descriptionWidget = _buildStopDescription();
       }
-      canDetail = !(_selectedMapExplore is ExplorePOI);
+      else if (_selectedMapExplore is ExplorePOI) {
+        detailsLabel = Localization().getStringEx('panel.explore.button.clear_destination.title', 'Clear Destination');
+        detailsHint = Localization().getStringEx('panel.explore.button.clear_destination.hint', '');
+        onTapDetail = _onTapMapClearDestination;
+      }
     }
     else if  (_selectedMapExplore is List<Explore>) {
       String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
@@ -1341,7 +1346,7 @@ class ExplorePanelState extends State<ExplorePanel>
                       fontSize: 16.0,
                       textColor: canDetail ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                       borderColor: canDetail ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                      onTap: _onTapMapExploreDetail,
+                      onTap: onTapDetail,
                     ),
                   ),
                 ],),
@@ -1438,7 +1443,6 @@ class ExplorePanelState extends State<ExplorePanel>
     Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
 
     Route? route;
-    String? message;
     if (_selectedMapExplore is Event) {
       if (_selectedMapExplore.isGameEvent) {
         route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(gameId: _selectedMapExplore.speaker, sportName: _selectedMapExplore.registrationLabel,),);
@@ -1472,7 +1476,7 @@ class ExplorePanelState extends State<ExplorePanel>
       route = CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: _selectedMapExplore),);
     }
     else if (_selectedMapExplore is ExplorePOI) {
-      message = Localization().getStringEx("panel.explore.details.na.msg", "Details are not available for custom points of interests.");
+      // Not supported
     }
     else if (_selectedMapExplore is Explore) {
       route = CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: _selectedMapExplore, initialLocationData: _locationData,),);
@@ -1485,9 +1489,11 @@ class ExplorePanelState extends State<ExplorePanel>
       _selectMapExplore(null);
       Navigator.push(context, route);
     }
-    else if (message != null) {
-      AppAlert.showMessage(context, message);
-    }
+  }
+
+  void _onTapMapClearDestination() {
+    Analytics().logSelect(target: 'Clear Destination');
+    _selectMapExplore(null);
   }
 
   void _updateSelectedMapStopRoutes() {
