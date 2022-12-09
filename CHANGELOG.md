@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [4.2.37] - 2022-12-0
+## [4.2.37] - 2022-12-09
 ### Added
 - Show "Cancelled" label for Appointments [#2692](https://github.com/rokwire/illinois-app/issues/2692).
 ### Fixed
