@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
@@ -36,7 +35,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppointmentDetailPanel extends StatefulWidget {
@@ -540,7 +538,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     final String externalLinkIconMacro = '{{external_link_icon}}';
     final String phoneMacro = '{{mckinley_phone}}';
     String descriptionHtml = Localization().getStringEx("panel.appointment.detail.cancel.description",
-        "<b>To cancel an appointment,</b> go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call (<u>{{mckinley_phone}}</u>) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.");
+        "<b>To cancel an appointment,</b> go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}</u>)</a> during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.");
     descriptionHtml = descriptionHtml.replaceAll(urlMacro, Config().saferMcKinleyUrl ?? '');
     descriptionHtml = descriptionHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
     descriptionHtml = descriptionHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
@@ -565,14 +563,12 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     }
   }
 
-  void _launchUrl(String? url) {
+  void _launchUrl(String? url) async {
     if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
+      if (StringUtils.isNotEmpty(url)) {
         Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
+        if ((uri != null) && (await canLaunchUrl(uri))) {
+          launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       }
     }

@@ -659,7 +659,6 @@ class ExplorePanelState extends State<ExplorePanel>
         context: context,
         contentPadding: EdgeInsets.all(0),
         contentWidget: Container(
-            height: 200,
             decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
               Padding(
@@ -672,14 +671,14 @@ class ExplorePanelState extends State<ExplorePanel>
                             textAlign: TextAlign.center,
                             style: Styles().textStyles?.getTextStyle("widget.detail.small")))
                   ])),
-              Align(
+              Positioned.fill(child: Align(
                   alignment: Alignment.topRight,
                   child: InkWell(
                       onTap: () {
                         Analytics().logSelect(target: 'Close missing appointments popup');
                         Navigator.of(context).pop();
                       },
-                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png'))))
+                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png')))))
             ])));
   }
 
