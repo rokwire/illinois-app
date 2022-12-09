@@ -105,61 +105,73 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                         ]),
                         Padding(
                             padding: EdgeInsets.only(top: 6),
-                            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Expanded(
-                                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Row(children: [
-                                  Expanded(
-                                      child: Text(StringUtils.ensureNotEmpty(widget.appointment.title),
-                                          style: TextStyle(
-                                              color: Styles().colors?.fillColorPrimary,
-                                              fontFamily: Styles().fontFamilies?.extraBold,
-                                              fontSize: 20)))
-                                ]),
-                                Padding(
-                                    padding: EdgeInsets.only(top: 12),
-                                    child: Row(children: [
-                                      Padding(padding: EdgeInsets.only(right: 6), child: Image.asset('images/icon-calendar.png')),
-                                      Expanded(
-                                          child: Text(StringUtils.ensureNotEmpty(widget.appointment.displayDate),
-                                              style: TextStyle(
-                                                  color: Styles().colors?.textBackground,
-                                                  fontFamily: Styles().fontFamilies?.medium,
-                                                  fontSize: 16)))
-                                    ])),
-                                Padding(
-                                    padding: EdgeInsets.only(top: 12),
-                                    child: Row(children: [
-                                      Padding(
-                                          padding: EdgeInsets.only(right: 6),
-                                          child: Image.asset((widget.appointment.type == AppointmentType.online)
-                                              ? 'images/laptop.png'
-                                              : 'images/icon-location.png')),
-                                      Expanded(
-                                          child: Text(StringUtils.ensureNotEmpty(Appointment.typeToDisplayString(widget.appointment.type)),
-                                              style: TextStyle(
-                                                  color: Styles().colors?.textBackground,
-                                                  fontFamily: Styles().fontFamilies?.medium,
-                                                  fontSize: 16)))
-                                    ]))
-                              ])),
-                              Visibility(
-                                  visible: StringUtils.isNotEmpty(imageUrl),
-                                  child: Padding(
-                                      padding: EdgeInsets.only(left: 16, bottom: 4),
-                                      child: Semantics(
+                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                Expanded(
+                                    child: Text(StringUtils.ensureNotEmpty(widget.appointment.title),
+                                        style: TextStyle(
+                                            color: Styles().colors?.fillColorPrimary,
+                                            fontFamily: Styles().fontFamilies?.extraBold,
+                                            fontSize: 20))),
+                                Visibility(
+                                    visible: StringUtils.isNotEmpty(imageUrl),
+                                    child: Padding(
+                                        padding: EdgeInsets.only(left: 16, bottom: 4),
+                                        child: Semantics(
                                             label: "appointment image",
                                             button: true,
                                             hint: "Double tap to expand image",
-                                            child:SizedBox(
-                                            width: imageSize,
-                                            height: imageSize,
-                                            child: InkWell(
-                                                onTap: () => _onTapCardImage(imageUrl!),
-                                                child: Styles().images?.getImage(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill, networkHeaders: Config().networkAuthHeaders))))))
+                                            child: SizedBox(
+                                                width: imageSize,
+                                                height: imageSize,
+                                                child: InkWell(
+                                                    onTap: () => _onTapCardImage(imageUrl!),
+                                                    child: Styles().images?.getImage(imageUrl!,
+                                                        excludeFromSemantics: true,
+                                                        fit: BoxFit.fill,
+                                                        networkHeaders: Config().networkAuthHeaders))))))
+                              ]),
+                              Padding(
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Row(children: [
+                                    Padding(padding: EdgeInsets.only(right: 6), child: Image.asset('images/icon-calendar.png')),
+                                    Expanded(
+                                        child: Text(StringUtils.ensureNotEmpty(widget.appointment.displayDate),
+                                            style: TextStyle(
+                                                color: Styles().colors?.textBackground,
+                                                fontFamily: Styles().fontFamilies?.medium,
+                                                fontSize: 16)))
+                                  ])),
+                              Padding(
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Row(children: [
+                                    Padding(
+                                        padding: EdgeInsets.only(right: 6),
+                                        child: Image.asset((widget.appointment.type == AppointmentType.online)
+                                            ? 'images/laptop.png'
+                                            : 'images/icon-location.png')),
+                                    Expanded(
+                                        child: Text(StringUtils.ensureNotEmpty(Appointment.typeToDisplayString(widget.appointment.type)),
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                color: Styles().colors?.textBackground,
+                                                fontFamily: Styles().fontFamilies?.medium,
+                                                fontSize: 16))),
+                                    Visibility(
+                                        visible: (widget.appointment.cancelled == true),
+                                        child: Padding(
+                                            padding: EdgeInsets.only(left: 7),
+                                            child: Text(Localization().getStringEx('widget.appointment.card.cancelled.label', 'Cancelled'),
+                                                style: TextStyle(
+                                                    color: Styles().colors!.accentColor1,
+                                                    fontSize: 22,
+                                                    fontFamily: Styles().fontFamilies!.extraBold))))
+                                  ]))
                             ]))
                       ]))),
-              Container(color: (widget.appointment.isUpcoming ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary), height: 4)
+              Container(
+                  color: (widget.appointment.isUpcoming ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary),
+                  height: 4)
             ])));
   }
 

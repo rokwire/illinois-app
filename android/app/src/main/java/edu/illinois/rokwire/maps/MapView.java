@@ -185,7 +185,14 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         this.explores = explores;
         this.exploreOptions = options;
         if (mapLayoutPassed) {
-            acknowledgeExplores();
+            Object exploreUpdateOnlyParam = (exploreOptions != null) ? exploreOptions.get("UpdateOnly") : null;
+            Boolean exploreUpdateOnly = (exploreUpdateOnlyParam instanceof Boolean) ? ((Boolean)exploreUpdateOnlyParam) : false;
+            if (exploreUpdateOnly) {
+                buildDisplayExplores();
+            }
+            else {
+                acknowledgeExplores();
+            }
         }
     }
 

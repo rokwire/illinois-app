@@ -516,7 +516,10 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
 
     private void buildTravelModes() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String selectedTravelMode = preferences.getString(TRAVEL_MODE_PREFS_KEY, Navigation.TRAVEL_MODE_WALKING);
+        String selectedTravelMode = Utils.Map.getValueFromPath(options, "travelMode", (String)null);
+        if (selectedTravelMode == null) {
+            selectedTravelMode = preferences.getString(TRAVEL_MODE_PREFS_KEY, Navigation.TRAVEL_MODE_WALKING);
+        }
         travelModesMap = new HashMap<>();
         for (String currentTravelMode : TRAVEL_MODES) {
             View travelModeView = null;
