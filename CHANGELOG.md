@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Show "Cancelled" label for Appointments [#2692](https://github.com/rokwire/illinois-app/issues/2692).
+- ### Fixed
+- Fixed Teams Coach and Roaster list panels open full size image url[#2694](https://github.com/rokwire/illinois-app/issues/2694).
 
 ## [4.2.36] - 2022-12-08
 ### Changed
