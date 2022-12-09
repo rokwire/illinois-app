@@ -173,7 +173,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get _canCreatePost {
-    return _isAdmin || (_isMember && FlexUI().isSharingAvailable);
+    return _isAdmin || (_isMember && _group?.isMemberAllowedToCreatePost == true && FlexUI().isSharingAvailable);
   }
 
   bool get _canCreatePoll {
@@ -186,6 +186,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
   bool get _isAttendanceGroup {
     return (_group?.attendanceGroup == true);
+  }
+
+  bool get _canViewMembers {
+    return _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
   }
 
   @override
@@ -1506,6 +1510,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapMembers(){
+    if(_canViewMembers == false){
+      return; // forbidden
+    }
     Analytics().logSelect(target: "Group Members", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group)));
   }
