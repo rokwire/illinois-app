@@ -565,14 +565,12 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     }
   }
 
-  void _launchUrl(String? url) {
+  void _launchUrl(String? url) async {
     if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
+      if (StringUtils.isNotEmpty(url)) {
         Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
+        if ((uri != null) && (await canLaunchUrl(uri))) {
+          launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       }
     }

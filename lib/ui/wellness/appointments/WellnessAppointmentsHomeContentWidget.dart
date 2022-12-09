@@ -292,16 +292,12 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     Navigator.of(context).pop();
   }
 
-  void _onTapMcKinleyUrl(String? url) {
+  void _onTapMcKinleyUrl(String? url) async {
     Analytics().logSelect(target: 'McKinley Url');
     if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
-        }
+      Uri? uri = Uri.tryParse(url!);
+      if ((uri != null) && (await canLaunchUrl(uri))) {
+        launchUrl(uri, mode: LaunchMode.externalApplication);
       }
     }
   }
