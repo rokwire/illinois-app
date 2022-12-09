@@ -70,6 +70,7 @@ class MapController {
   static const String HideBuildingLabelsParams = 'HideBuildingLabels';
   static const String HideBusStopPOIsParams = 'HideBusStopPOIs';
   static const String ShowMarkerPopupsParams = 'ShowMarkerPopus';
+  static const String UpdateOnlyParams = 'UpdateOnly';
 
   late MethodChannel _channel;
   int? _mapId;
