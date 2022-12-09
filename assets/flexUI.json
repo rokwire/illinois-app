@@ -60,8 +60,9 @@
 			"settings.linked.email": ["info", "remove", "verify"],
 	
 			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "skills_self_evaluation", "due_date_catalog", "my_illini"],
+			"academics.skills_self_evaluation": ["may_access"],
 
-			"wellness.health_screener": ["take_screener"],
+			"wellness.health_screener": ["may_access"],
 
 			"explore.list": ["events", "dining"],
 			"explore.map":  ["events", "dining", "laundry", "student_courses", "buildings", "appointments", "mtd_stops", "mtd_destinations", "state_farm_wayfinding"],
@@ -99,7 +100,7 @@
 	
 				"onboarding.sport_prefs"                  : ["fan"],
 
-				"wellness.health_screener.take_screener" : ["student"]
+				"wellness.health_screener.may_access" : ["student"]
 			},
 			"groups": {
 				"home.twitter.account.canvas"            : ["${config.settings.groups.canvas}", "AND", ["NOT", "${config.settings.groups.gies}"]],
@@ -136,7 +137,9 @@
 				"features.notifications"          : 4,
 				"features.payment_information"    : 4,
 				"features.authentication"         : 4,
-				"features.sharing"                : 5
+				"features.sharing"                : 5,
+				
+				"academics.skills_self_evaluation.may_access": 4
 			},
 			"auth": {
 				"connect"                             : { "loggedIn": false },
@@ -177,7 +180,10 @@
 				"settings.linked.email.info"          : { "emailLinked": true },
 				"settings.linked.email.remove"        : { "emailLinked": true },
 
-				"onboarding.research_questionnaire"   : { "shibbolethLoggedIn": true }
+				"onboarding.research_questionnaire"   : { "shibbolethLoggedIn": true },
+
+				"academics.skills_self_evaluation.may_access":  { "shibbolethLoggedIn": true },
+				"wellness.health_screener.may_access" : 		{ "shibbolethLoggedIn": true }
 			},
 			"platform":{
 				"campus_resources": { "build": "debug" }

@@ -21,6 +21,7 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -54,14 +55,10 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
   List<SurveyResponse> _responses = [];
 
-  Set<String>? _sectionEntryCodes;
-
   late ScrollPagerController _pagerController;
 
   @override
   void initState() {
-    _sectionEntryCodes = JsonUtils.setStringsValue(FlexUI()['wellness.health_screener']);
-
     _pagerController = ScrollPagerController(limit: 20, onPage: _loadPage, onStateChanged: _onPagerStateChanged);
     _pagerController.registerScrollController(widget.scrollController);
 
@@ -85,76 +82,83 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   Widget _buildContent() {
-    bool canTakeScreener = _sectionEntryCodes?.contains('take_screener') == true;
+    Widget? accessWidget = AccessCard.builder(resource: 'wellness.health_screener');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // SurveyWidget(survey: Config().symptomSurveyID, onChangeSurveyResponse: (_) {
-        //   setState(() {});
-        // }),
-        _buildHealthScreenerSectionWidget(canTakeScreener),
-        Visibility(visible: canTakeScreener && Auth2().isLoggedIn, child: _buildHistorySectionWidget()),
+        HomeSlantWidget(
+          title: accessWidget != null ? Localization().getStringEx('widget.access.dailog.title', 'You may not access ') + 'the Illinois Health Screener' :
+            Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Screener'),
+          titleIcon: Image.asset(accessWidget != null ? 'images/icon-info-orange.png' : 'images/campus-tools.png', excludeFromSemantics: true,),
+          childPadding: HomeSlantWidget.defaultChildPadding,
+          child: accessWidget ?? _buildHealthScreenerSectionWidget(),
+        ),
+        Visibility(visible: accessWidget == null, child: _buildHistorySectionWidget()),
       ]);
   }
 
-  Widget _buildHealthScreenerSectionWidget(bool canTakeScreener) {
+  Widget _buildHealthScreenerSectionWidget() {
     Widget content;
-    if (Auth2().isOidcLoggedIn) {
-      if (canTakeScreener) {
-        if (StringUtils.isNotEmpty(Config().healthScreenerSurveyID)) {
-          content = Column(children: [
-            Text(
-              Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.details.title',
-                  'Not feeling well? Use the Illinois Health Screener to help you find the right resources'),
-              style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
-            ),
-            SizedBox(height: 8),
-            Text(
-              Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.details.text',
-                  'Your screening results are confidential unless you choose to share them'),
-              style: Styles().textStyles?.getTextStyle('widget.detail.small'),
-            ),
-            SizedBox(height: 16),
-            RoundedButton(
-                label: Localization().getStringEx('panel.wellness.sections.health_screener.button.take_screener.title',
-                    'Take the Screener'),
-                textStyle: Styles().textStyles?.getTextStyle('widget.detail.regular.fat'),
-                onTap: _onTapTakeScreener),
-          ]);
-        } else {
-          content = Text(
-            Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.missing.title',
-                'The Illinois Health Screener is currently unavailable. Please check back later.'),
-            style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
-          );
-        }
-      } else {
-        content = Text(
-          Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.invalid_role.title',
-              'The Illinois Health Screener is currently only available to students'),
+    if (StringUtils.isNotEmpty(Config().healthScreenerSurveyID)) {
+      content = Column(children: [
+        Text(
+          Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.details.title',
+              'Not feeling well? Use the Illinois Health Screener to help you find the right resources'),
           style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
-        );
-      }
-      content = Card(
-        child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: content
         ),
+        SizedBox(height: 8),
+        Text(
+          Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.details.text',
+              'Your screening results are confidential unless you choose to share them'),
+          style: Styles().textStyles?.getTextStyle('widget.detail.small'),
+        ),
+        SizedBox(height: 16),
+        RoundedButton(
+            label: Localization().getStringEx('panel.wellness.sections.health_screener.button.take_screener.title',
+                'Take the Screener'),
+            textStyle: Styles().textStyles?.getTextStyle('widget.detail.regular.fat'),
+            onTap: _onTapTakeScreener),
+      ]);
+    } else {
+      content = Text(
+        Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.missing.title',
+            'The Illinois Health Screener is currently unavailable. Please check back later.'),
+        style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
       );
     }
-    else {
-      //TODO: Build standardized widget for logged out warning and actions
-      content = HomeMessageCard(
-        title: Localization().getStringEx("common.message.logged_out", "You are not logged in"),
-        message: Localization().getStringEx("panel.wellness.sections.health_screener.label.screener.logged_out.text", "You need to be logged in with your NetID to access the Illinois Health Screener."),);
-    }
 
-    return HomeSlantWidget(
-      title: Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Screener'),
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-      childPadding: HomeSlantWidget.defaultChildPadding,
-      child: content
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: content
+      ),
     );
+
+    // if (Auth2().isOidcLoggedIn) {
+    //   if (canTakeScreener) {
+        
+    //   } else {
+    //     content = Text(
+    //       Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.invalid_role.title',
+    //           'The Illinois Health Screener is currently only available to students'),
+    //       style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
+    //     );
+    //   }
+      
+    // }
+    // else {
+    //   //TODO: Build standardized widget for logged out warning and actions
+    //   content = HomeMessageCard(
+    //     title: Localization().getStringEx("common.message.logged_out", "You are not logged in"),
+    //     message: Localization().getStringEx("panel.wellness.sections.health_screener.label.screener.logged_out.text", "You need to be logged in with your NetID to access the Illinois Health Screener."),);
+    // }
+
+    // return HomeSlantWidget(
+    //   title: Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Screener'),
+    //   titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+    //   childPadding: HomeSlantWidget.defaultChildPadding,
+    //   child: content
+    // );
   }
 
   Widget _buildHistorySectionWidget() {
@@ -320,9 +324,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
     if (name == polls.Polls.notifySurveyResponseCreated) {
       _refreshHistory();
     } else if (name == FlexUI.notifyChanged) {
-      setState(() {
-        _sectionEntryCodes = JsonUtils.setStringsValue(FlexUI()['wellness.health_screener']);
-      });
+      setState(() {});
     }
   }
 }

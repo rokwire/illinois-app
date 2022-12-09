@@ -108,7 +108,7 @@ class FlexUI extends rokwire.FlexUI {
   @override
   Map<String, dynamic> unsatisfiedRulesForEntry(String entry, { String? group, Map<String, dynamic>? rules }) {
     Map<String, dynamic> entryRules = {};
-    rules ??= JsonUtils.mapValue(defaultContent?['rules']) ?? <String, dynamic>{};
+    rules ??= JsonUtils.mapValue(defaultContentSourceEntry?['rules']) ?? <String, dynamic>{};
     String? pathEntry = (group != null) ? '$group.$entry' : null;
 
     Map<String, dynamic>? illiniCashRules = rules['illini_cash'];
