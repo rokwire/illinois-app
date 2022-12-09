@@ -574,6 +574,9 @@ class ExplorePanelState extends State<ExplorePanel>
               .replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
         }
       }
+      else if ((_selectedItem == ExploreItem.MTDStops) && (Storage().showMtdStopMapInstructions != false)) {
+        _showMTDInstructionsPopup();
+      }
     });
   }
 
@@ -678,6 +681,10 @@ class ExplorePanelState extends State<ExplorePanel>
                       },
                       child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png'))))
             ])));
+  }
+
+  void _showMTDInstructionsPopup() {
+    showDialog(context: context, builder: (context) => _MTDInstructionsPopup());
   }
 
   List<Event>? _buildDisplayEvents(List<Event> allEvents) {
@@ -1071,6 +1078,7 @@ class ExplorePanelState extends State<ExplorePanel>
       label: _exploreItemName(_selectedItem!),
       hint: _exploreItemHint(_selectedItem!),
       onTap: _changeExploreItemsDropDownValuesVisibility
+      //() => _showMissingAppointmentsPopup('There is nothing to display as you have chosen not to display any past or future appointments.'), 
     );
   }
 
@@ -2048,8 +2056,79 @@ class ExplorePanelState extends State<ExplorePanel>
       }
     }
   }
-
 }
+
+///////////////////////
+// _MTDInstructionsPopup
+
+class _MTDInstructionsPopup extends StatefulWidget {
+  _MTDInstructionsPopup({Key? key}) : super(key: key);
+
+  @override
+  State<_MTDInstructionsPopup> createState() => _MTDInstructionsPopupState();
+}
+
+class _MTDInstructionsPopupState extends State<_MTDInstructionsPopup> {
+  bool? showMtdStopMapInstructions = Storage().showMtdStopMapInstructions;
+  
+  @override
+  Widget build(BuildContext context) {
+    String message = Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap the location on the map that will be your destination. (You can tap on a Bus Stop to get Details about the Bus Stop or Save the selected Bus Stop. You can tap the Map to get Directions or Save your destination as a favorite.");
+    String dontShow = Localization().getStringEx("panel.explore.instructions.mtd_stops.dont_show.msg", "Don't show me this again.");
+
+
+    return AlertDialog(contentPadding: EdgeInsets.zero, content:
+      Container(decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)), child:
+        Stack(alignment: Alignment.center, children: [
+          Padding(padding: EdgeInsets.only(top: 36, bottom: 9), child:
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+                Column(children: [
+                  Image.asset('images/block-i-orange.png'),
+                  Padding(padding: EdgeInsets.only(top: 18), child:
+                    Text(message, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small"))
+                  ),
+                ],),
+              ),
+
+              Padding(padding: EdgeInsets.only(left: 16, right: 32), child:
+                Row(mainAxisSize: MainAxisSize.min, children: [
+                  InkWell(onTap: _onDoNotShow, child:
+                    Padding(padding: EdgeInsets.all(16), child:
+                      Image.asset((showMtdStopMapInstructions == false) ? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
+                    ),
+                  ),
+                  Expanded(child:
+                    Text(dontShow, style: Styles().textStyles?.getTextStyle("widget.detail.small"), textAlign: TextAlign.left,)
+                  ),
+                ]),
+              ),
+            ])
+          ),
+          Positioned.fill(child:
+            Align(alignment: Alignment.topRight, child:
+              InkWell(onTap: () {
+                Analytics().logSelect(target: 'Close MTD instructions popup');
+                Navigator.of(context).pop();
+                }, child:
+                Padding(padding: EdgeInsets.all(16), child:
+                  Image.asset('images/icon-x-orange.png')
+                )
+              )
+            )
+          ),
+        ])
+     )
+    );
+  }
+
+  void _onDoNotShow() {
+    setState(() {
+      showMtdStopMapInstructions = Storage().showMtdStopMapInstructions = (showMtdStopMapInstructions == false);
+    });  
+  }
+}
+
 
 ////////////////////
 // ExploreFilter
@@ -2117,3 +2196,4 @@ String? exploreItemToString(ExploreItem? value) {
     default: return null;
   }
 }
+
