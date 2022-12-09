@@ -2557,6 +2557,7 @@
     "panel.checklist.text.course.section": "Section",
     "panel.checklist.text.course.term": "Term",
 
+    "panel.appointment.detail.cancelled.label": "Cancelled",
     "panel.appointment.detail.meeting.id.label": "Meeting ID:",
     "panel.appointment.detail.meeting.passcode.label": "Passcode:",
     "panel.appointment.detail.instructions.label": "Required prep",

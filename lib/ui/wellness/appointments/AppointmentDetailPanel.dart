@@ -242,9 +242,9 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   Widget _buildDetails() {
     List<Widget> details = [];
 
-    Widget? time = _buildTimeDetail();
-    if (time != null) {
-      details.add(time);
+    Widget? timeCancelled = _buildTimeAndCancelledRowDetail();
+    if (timeCancelled != null) {
+      details.add(timeCancelled);
     }
 
     Widget? location = _buildLocationDetail();
@@ -284,6 +284,20 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         : Container();
   }
 
+  Widget? _buildTimeAndCancelledRowDetail() {
+    Widget? time = _buildTimeDetail();
+    Widget? cancelled = _buildCancelDetail();
+    if ((time != null) && (cancelled != null)) {
+      return Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [Flexible(child: time, fit: FlexFit.loose), cancelled]);
+    } else if (time != null) {
+      return time;
+    } else if (cancelled != null) {
+      return Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.end, children: [cancelled]);
+    } else {
+      return null;
+    }
+  }
+
   Widget? _buildTimeDetail() {
     String? displayTime = _appointment!.displayDate;
     if (StringUtils.isEmpty(displayTime)) {
@@ -300,6 +314,16 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                   child: Text(displayTime!,
                       style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
             ])));
+  }
+
+  Widget? _buildCancelDetail() {
+    if (_appointment!.cancelled != true) {
+      return null;
+    }
+    return Padding(
+        padding: EdgeInsets.only(left: 7),
+        child: Text(Localization().getStringEx('panel.appointment.detail.cancelled.label', 'Cancelled'),
+            style: TextStyle(color: Styles().colors!.accentColor1, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)));
   }
 
   Widget? _buildLocationDetail() {
