@@ -8,6 +8,7 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
@@ -25,6 +26,7 @@ import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -59,6 +61,9 @@ extension FavoriteExt on Favorite {
     else if (this is ExplorePOI) {
       return (this as ExplorePOI).exploreTitle;
     }
+    else if (this is Appointment) {
+      return (this as Appointment).exploreTitle;
+    }
     else {
       return null;
     }
@@ -85,6 +90,9 @@ extension FavoriteExt on Favorite {
     }
     else if (this is ExplorePOI) {
       return (this as ExplorePOI).exploreLocationDescription;
+    }
+    else if (this is Appointment) {
+      return (this as Appointment).displayDate;
     }
     else {
       return null;
@@ -120,6 +128,9 @@ extension FavoriteExt on Favorite {
     }
     else if (this is ExplorePOI) {
       return Image.asset('images/icon-location.png', excludeFromSemantics: true);
+    }
+    else if (this is Appointment) {
+      return Image.asset('images/icon-calendar.png', excludeFromSemantics: true);
     }
     else {
       return null;
@@ -229,6 +240,9 @@ extension FavoriteExt on Favorite {
     }
     else if (lowerCaseKey == GuideFavorite.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
+    }
+    else if (lowerCaseKey == Appointment.favoriteKeyName.toLowerCase()) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.appointments)));
     }
   }
 }
