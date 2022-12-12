@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -196,9 +197,13 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     List<Widget> options = [];
     if (_optionsControllers?.isNotEmpty ?? false) {
       for (int i = 0; i < _optionsControllers!.length; i++) {
-        TextEditingController controller = _optionsControllers![i];
         String title = Localization().getStringEx("panel.create_poll.text.option", "OPTION") + " " + (i + 1).toString();
-        options.add(PollOptionView(title: title, textController: controller, enabled: (_progressPollStatus == null),));
+        options.add(PollOptionView(
+          title: title,
+          textController: _optionsControllers![i],
+          enabled: (_progressPollStatus == null),
+          onClose: (_defaultOptionsCount <= i) ? () => _onRemoveOption(i) : null,
+        ));
       }
 
       if (_optionsControllers!.length < _maxOptionsCount)
@@ -215,39 +220,45 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
   Widget _constructAddOptionButton() {
     String label = Localization().getStringEx("panel.create_poll.button.add_option.text", "Add Option");
     String? hint = Localization().getStringEx("panel.create_poll.button.add_option.hint", "");
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 24),
-      alignment: Alignment.centerRight,
-      child: Semantics(
-          label: label,
-          hint: hint,
-          button: true,
-          excludeSemantics: true,
-          child: InkWell(
-              onTap: () {
-                if (_progressPollStatus == null) {
-                  _optionsControllers!.add(TextEditingController());
-                  setState(() {});
-                }
-              },
-              child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                  decoration: BoxDecoration(
-                    color: Styles().colors!.white,
-                    border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2.0),
-                    borderRadius: BorderRadius.circular(24.0),
-                  ),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                    Text(
-                      label,
-                      style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: Image.asset('images/icon-add-14x14.png'),
-                    )
-                  ])))),
+    return Container(padding: EdgeInsets.symmetric(vertical: 24), alignment: Alignment.centerRight, child:
+      Semantics(label: label, hint: hint, button: true, excludeSemantics: true, child:
+        InkWell(onTap: _onAddOption, child:
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+            decoration: BoxDecoration(
+              color: Styles().colors!.white,
+              border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2.0),
+              borderRadius: BorderRadius.circular(24.0),
+            ),
+            child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+              Text(label, style:
+                Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
+              ),
+              Padding(padding: EdgeInsets.only(left: 5), child:
+                Image.asset('images/icon-add-14x14.png'),
+              ),
+            ]),
+          )
+        )
+      ),
     );
+  }
+
+  void _onAddOption() {
+    Analytics().logSelect(target: 'Add Option');
+    if (_progressPollStatus == null) {
+      _optionsControllers?.add(TextEditingController());
+      setState(() {});
+    }
+  }
+
+  void _onRemoveOption(int index) {
+    Analytics().logSelect(target: 'Remove Option');
+    if ((_progressPollStatus == null) && (_optionsControllers != null) & (0 <= index) && (index < _optionsControllers!.length)) {
+      _optionsControllers![index].dispose();
+      _optionsControllers!.removeAt(index);
+      setState(() {});
+    }
   }
 
   Widget _buildSettingsHeader() {
@@ -498,8 +509,9 @@ class PollOptionView extends StatefulWidget {
   final int minLines;
   final int maxLines;
   final bool enabled;
+  final void Function()? onClose;
 
-  const PollOptionView({Key? key, this.title, this.textController, this.maxLength = 45, this.minLines = 1, this.maxLines = 10, this.hint, this.enabled = true}) : super(key: key);
+  const PollOptionView({Key? key, this.title, this.textController, this.maxLength = 45, this.minLines = 1, this.maxLines = 10, this.hint, this.enabled = true, this.onClose}) : super(key: key);
 
   @override
   _PollOptionViewState createState() {
@@ -526,25 +538,42 @@ class _PollOptionViewState extends State<PollOptionView> {
             ])
           )
         ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
-          child: Semantics(label: widget.title, hint: Localization().getStringEx("panel.create_poll_panel.hint", ""), textField: true, excludeSemantics: true, child:
-            TextField(
-                controller: widget.textController,
-                onChanged: (String text) {
-                  setState(() {});
-                },
-                minLines: widget.minLines,
-                maxLines: widget.maxLength,
-                decoration: InputDecoration(hintText: widget.hint, border: InputBorder.none, counterText: ""),
-                maxLength: widget.maxLength,
-                maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                style: Styles().textStyles?.getTextStyle("widget.detail.regular"),
-                enabled: widget.enabled,
-                textCapitalization: TextCapitalization.sentences,
-              )),
-        )
+        Stack(children: [
+          Container(
+            padding: EdgeInsets.only(left: 12, right: canClose ? 18 : 12),
+            decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1)),
+            child: Semantics(label: widget.title, hint: Localization().getStringEx("panel.create_poll_panel.hint", ""), textField: true, excludeSemantics: true, child:
+              TextField(
+                  controller: widget.textController,
+                  onChanged: (String text) {
+                    setState(() {});
+                  },
+                  minLines: widget.minLines,
+                  maxLines: widget.maxLength,
+                  decoration: InputDecoration(hintText: widget.hint, border: InputBorder.none, counterText: ""),
+                  maxLength: widget.maxLength,
+                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                  style: Styles().textStyles?.getTextStyle("widget.detail.regular"),
+                  enabled: widget.enabled,
+                  textCapitalization: TextCapitalization.sentences,
+                )),
+          ),
+          Visibility(visible: canClose, child:
+            Positioned.fill(child:
+              Align(alignment: Alignment.topRight, child:
+                Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+                  InkWell(onTap : widget.onClose, child:
+                    Padding(padding: EdgeInsets.only(left: 12, right: 8, top: 8, bottom: 12), child:
+                        Text('X', style:
+                          TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),
+                        ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],)
       ],
     );
   }
@@ -552,4 +581,6 @@ class _PollOptionViewState extends State<PollOptionView> {
   _getCounterText() {
     return sprintf(counterFormat, [widget.textController?.text.length, widget.maxLength]);
   }
+
+  bool get canClose => (widget.onClose != null);
 }

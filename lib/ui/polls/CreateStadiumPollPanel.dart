@@ -213,7 +213,12 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
       for (int i = 0; i < _optionsControllers!.length; i++) {
         TextEditingController controller = _optionsControllers![i];
         String title = Localization().getStringEx("panel.create_stadium_poll.text.option", "OPTION") + " " + (i + 1).toString();
-        options.add(PollOptionView(title: title, textController: controller, enabled: (_progressPollStatus == null),));
+        options.add(PollOptionView(
+          title: title,
+          textController: controller,
+          enabled: (_progressPollStatus == null),
+          onClose: (_defaultOptionsCount <= i) ? () => _onRemoveOption(i) : null,
+        ));
       }
 
       if (_optionsControllers!.length < _maxOptionsCount)
@@ -230,39 +235,45 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   Widget _constructAddOptionButton() {
     String label = Localization().getStringEx("panel.create_stadium_poll.button.add_option.text", "Add Option");
     String? hint = Localization().getStringEx("panel.create_stadium_poll.button.add_option.hint", "");
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 24),
-      alignment: Alignment.centerRight,
-      child: Semantics(
-          label: label,
-          hint: hint,
-          button: true,
-          excludeSemantics: true,
-          child: InkWell(
-              onTap: () {
-                if (_progressPollStatus == null) {
-                  _optionsControllers!.add(TextEditingController());
-                  setState(() {});
-                }
-              },
-              child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                  decoration: BoxDecoration(
-                    color: Styles().colors!.white,
-                    border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2.0),
-                    borderRadius: BorderRadius.circular(24.0),
-                  ),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                    Text(
-                      label,
-                      style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: Image.asset('images/icon-add-14x14.png'),
-                    )
-                  ])))),
+    return Container(padding: EdgeInsets.symmetric(vertical: 24), alignment: Alignment.centerRight, child:
+      Semantics(label: label, hint: hint, button: true, excludeSemantics: true, child:
+        InkWell(onTap: _onAddOption, child:
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+            decoration: BoxDecoration(
+              color: Styles().colors!.white,
+              border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2.0),
+              borderRadius: BorderRadius.circular(24.0),
+            ),
+            child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+              Text(label, style:
+                Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
+              ),
+              Padding(padding: EdgeInsets.only(left: 5), child:
+                Image.asset('images/icon-add-14x14.png'),
+              )
+            ])
+          )
+        )
+      ),
     );
+  }
+
+  void _onAddOption() {
+    Analytics().logSelect(target: 'Add Option');
+    if (_progressPollStatus == null) {
+      _optionsControllers?.add(TextEditingController());
+      setState(() {});
+    }
+  }
+
+  void _onRemoveOption(int index) {
+    Analytics().logSelect(target: 'Remove Option');
+    if ((_progressPollStatus == null) && (_optionsControllers != null) & (0 <= index) && (index < _optionsControllers!.length)) {
+      _optionsControllers![index].dispose();
+      _optionsControllers!.removeAt(index);
+      setState(() {});
+    }
   }
 
   Widget _buildSettingsHeader() {
