@@ -2056,7 +2056,7 @@
     "panel.group_member_notifications.header.title": "Group Notifications",
     "panel.group_member_notifications.save.button": "Save",
     "panel.group_member_notifications.member.load.failed.msg": "Failed to load member data.",
-    "panel.group_member_notifications.override_notifications.label": "Use these notification preferences for this group",
+    "panel.group_member_notifications.override_notifications.label": "Use these custom notification preferences below",
     "panel.group_member_notifications.posts.label": "Posts",
     "panel.group_member_notifications.event.label": "Event",
     "panel.group_member_notifications.invitations.label": "Invitations",

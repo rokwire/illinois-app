@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
@@ -119,32 +118,16 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
     MemberNotificationsPreferences? memberPreferences = _member?.notificationsPreferences;
     preferenceWidgets.add(_buildGlobalNotificationsInfo());
 
-    preferenceWidgets.add(_EnabledToggleButton(
+    preferenceWidgets.add(EnabledToggleButton(
         enabled: _toggleButtonEnabled,
         borderRadius: BorderRadius.zero,
         label: Localization().getStringEx(
-            "panel.group_member_notifications.override_notifications.label", "Use these notification preferences for this group"),
+            "panel.group_member_notifications.override_notifications.label", "Use these custom notification preferences below"),
         toggled: memberPreferences?.overridePreferences ?? false,
         onTap: _toggleButtonEnabled ? _onToggleOverrideNotificationPreferences : null,
-        customTitle: Container(
-          child:RichText(
-          textAlign: TextAlign.left,
-          textScaleFactor: MediaQuery.of(context).textScaleFactor,
-              text: TextSpan(
-                style: _toggleButtonEnabled ?
-                Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled") :
-                Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled"),
-                  children: [
-                    // TextSpan(text: "Use these notification preferences for this group", style: switchTextStyle, )
-                    TextSpan(
-                      text: "Override ",),
-                    TextSpan(
-                        text: "my global notification settings",
-                        style: TextStyle(decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, height: 1.61), //height is workaround to add some padding between the text and underlined decoration //Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.underline")
-                        recognizer: TapGestureRecognizer()..onTap = _onTapNotificationPreferences
-                    ),
-                    TextSpan(text:" with: "),
-                  ])))));
+        textStyle: _toggleButtonEnabled
+            ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
+            : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")));
     preferenceWidgets.add(Row(children: [
       Expanded(
           child: Container(
@@ -191,6 +174,9 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                   ]))))
     ]));
 
+    preferenceWidgets.add(Container(color: Styles().colors?.white, height: 10,));
+    preferenceWidgets.add(_buildDescription());
+
     return Container(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: preferenceWidgets));
   }
 
@@ -203,11 +189,14 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
     List<Widget> widgets = [];
     widgets.add(Row(children: [
         Expanded(
-          child: Container(
+          child: InkWell(
+            onTap: _onTapNotificationPreferences,
+            child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               color: Colors.white,
-              child: Text(Localization().getStringEx('panel.group_member_notifications.member.info.heading.msg', 'Current group notification preferences'), //TBD localize
-                  style: Styles().textStyles?.getTextStyle("widget.title.regular")),
+              child: Text(Localization().getStringEx('panel.group_member_notifications.member.info.heading.msg', 'My global group notification preferences'), //TBD localize
+                  style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16.0, color: Styles().colors?.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, height: 1.61)),
+            )
           )
         )
     ],));
@@ -239,6 +228,50 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
       return Container(
         child: Padding(padding: EdgeInsets.all(0), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets)),
       );
+  }
+
+  Widget _buildDescription(){
+    String valuesMessage = "";
+
+    List<String> values = [];
+    if(_member!.notificationsPreferences!=null){
+      if(_member?.notificationsPreferences?.mutePosts == true){
+        values.add("Posts");
+      }
+      if(_member?.notificationsPreferences?.muteEvents == true){
+        values.add("Events");
+      }
+      if(_member?.notificationsPreferences?.muteInvitations == true){
+        values.add("Invitations");
+      }
+      if(_member?.notificationsPreferences?.mutePolls == true){
+        values.add("Polls");
+      }
+    }
+
+    if(values.isNotEmpty){
+      for(int i = 0; i< values.length; i++){
+        String value = values[i];
+        valuesMessage += value;
+        if(values.length > 1 && i< values.length - 1){//The last don't need separator
+
+          valuesMessage += (i== values.length-2) ? " and ": ", "; // before last use and as separator
+        }
+      }
+    }
+
+      return values. isEmpty || _member?.notificationsPreferences?.overridePreferences == false? Container():
+      Row(children: [
+        Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              color: Colors.white,
+              child: Text("Custom notification preferences: $valuesMessage are muted.",
+                style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),
+              ),
+            ))
+      ],)
+      ;
   }
 
   void _checkNotificationsEnabled() {
@@ -402,27 +435,4 @@ class _DisabledToggleButton extends ToggleRibbonButton{
       void Function()? onTap,
       TextStyle? textStyle,})
       : super(label: label, toggled: (toggled == true), onTap: onTap, textStyle: textStyle, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),rightIcons: _rightIcons);
-}
-
-class _EnabledToggleButton extends ToggleRibbonButton {
-  final bool? enabled;
-  final Widget? customTitle;
-
-
-  _EnabledToggleButton(
-      {String? label,
-      bool? toggled,
-      void Function()? onTap,
-      BoxBorder? border,
-      BorderRadius? borderRadius,
-      TextStyle? textStyle,
-        this.enabled,
-        this.customTitle,})
-      : super(label: label, toggled: (toggled == true), onTap: onTap, border: border, borderRadius: borderRadius, textStyle: textStyle);
-
-  @override
-  bool get toggled => (enabled == true) && super.toggled;
-
-  @override
-  Widget? get textWidget => this.customTitle ?? super.textWidget;
 }

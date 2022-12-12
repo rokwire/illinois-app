@@ -3008,6 +3008,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                   ])
     ])));
 
+    preferenceWidgets.add(Container(height: 10,));
+
     return Container(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: preferenceWidgets));
   }
 
