@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Introduce Surveys BB [#2703](https://github.com/rokwire/illinois-app/issues/2703)
+### Fixed
+- Style definition for wellness to-do item card [#2702](https://github.com/rokwire/illinois-app/issues/2702)
 
 ## [4.2.38] - 2022-12-09
 ### Fixed
