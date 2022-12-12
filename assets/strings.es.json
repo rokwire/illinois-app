@@ -1193,6 +1193,7 @@
     "panel.saved.label.mtd_stops": "My MTD Stops",
     "panel.saved.label.mtd_destinations": "My MTD Destinations",
     "panel.saved.label.campus_guide": "My Campus Guide",
+    "panel.saved.label.appointments": "MyMcKinley Appointments",
 
     "panel.saved.notifications.label": "¡No te pierdas un evento! Reciba recordatorios de los próximos eventos!",
     "panel.saved.notifications.enable.label": "Permitir notificaciones",
@@ -1678,6 +1679,7 @@
     "panel.create_poll_panel.counter.hint": "máximo,% s, caracteres",
     "panel.create_poll.message.error.default": "No se pudo crear la encuesta. Complete todos los campos e intente nuevamente.",
     "panel.create_poll.description.non_editable.text": "Una vez iniciada, ya no podrá editar la encuesta.",
+    "panel.create_poll.message.logged_out.text": "Debe iniciar sesión con su NetID para crear una encuesta. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
 
     "panel.create_stadium_poll.header.title": "Crear una encuesta de estadio",
     "panel.create_stadium_poll.text.wants_to_know": "quiere saber…",
@@ -2822,6 +2824,7 @@
     "widget.home.favorites.title.mtd_stops": "Mi MTD se detiene",
     "widget.home.favorites.title.mtd_destinations": "Mis destinos MTD",
     "widget.home.favorites.title.campus_guide": "Guía de Mi Campus",
+    "widget.home.favorites.title.appointments": "Mis citas de McKinley",
 
     "widget.home.favorites.message.offline.events": "Mis Eventos no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.dining": "Mis ubicaciones para cenar no están disponibles sin conexión.",
@@ -2831,6 +2834,7 @@
     "widget.home.favorites.message.offline.mtd_stops": "Mis paradas MTD no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.mtd_destinations": "Mis destinos MTD no están disponibles sin conexión.",
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide no está disponible sin conexión.",
+    "widget.home.favorites.message.offline.appointments": "Mis citas de McKinley no están disponibles sin conexión.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
     "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
@@ -2840,6 +2844,8 @@
     "widget.home.favorites.message.empty.mtd_stops": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MTD Stops</b></a> for quick access here.",
     "widget.home.favorites.message.empty.mtd_destinations": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MTD Destinations</b></a> for quick access here.",
     "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.appointments": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MyMcKinley Appointments</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.appointments.not_to_display": "There is nothing to display as you have chosen not to display any past or future appointments.",
 
     "widget.home.favorites.all.title": "Ver todo",
     "widget.home.favorites.all.hint.events": "Toque para ver todos los eventos favoritos",
@@ -2850,6 +2856,7 @@
     "widget.home.favorites.all.hint.mtd_stops": "Toque para ver todas las paradas MTD favoritas",
     "widget.home.favorites.all.hint.mtd_destinations": "Toque para ver todos los destinos MTD favoritos",
     "widget.home.favorites.all.hint.campus_guide": "Toque para ver todos los artículos favoritos de la guía del campus",
+    "widget.home.favorites.all.hint.appointments": "Toque para ver todas las citas favoritas",
 
 	"widget.home.wellness_resources.header.label": "Mis recursos de bienestar",
     "widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> so you can quickly find them here.",
@@ -2904,12 +2911,6 @@
     "widget.home.daily_illini.button.all.title": "Ver todo",
     "widget.home.daily_illini.button.all.hint": "Toque para ver la alimentación diaria de illini",
     "widget.home.daily_illini.text.empty.description": "No se pudo cargar la alimentación diaria de illini.",
-    
-    "widget.home.appointments.my.label.header.title": "Mis citas de McKinley",
-    "widget.home.appointments.my.text.empty.description": "Actualmente no tiene citas próximas vinculadas dentro de la aplicación {{app_title}}.",
-    "widget.home.appointments.my.text.display.nothing.msg": "No hay nada que mostrar ya que ha elegido no mostrar citas pasadas o futuras.",
-    "widget.home.appointments.my.button.all.title": "Ver todo",
-    "widget.home.appointments.my.button.all": "Toque para ver todas las citas",
 
     "widget.food_detail.label.loading.title": "Cargando datos del menú",
     "widget.food_detail.label.loading.hint": "",

@@ -1195,6 +1195,7 @@
     "panel.saved.label.mtd_stops": "My MTD Stops",
     "panel.saved.label.mtd_destinations": "My MTD Destinations",
     "panel.saved.label.campus_guide": "My Campus Guide",
+    "panel.saved.label.appointments": "MyMcKinley Appointments",
 
     "panel.saved.notifications.label": "Don’t miss an event! Get reminders of upcoming events.",
     "panel.saved.notifications.enable.label": "Enable notifications",
@@ -1680,6 +1681,7 @@
     "panel.create_poll_panel.counter.hint": "maximum, %s, characters",
     "panel.create_poll.message.error.default": "Failed to create poll. Please fill all fields and try again.",
     "panel.create_poll.description.non_editable.text": "Once started, you can no longer edit the poll.",
+    "panel.create_poll.message.logged_out.text": "You need to be logged in with your NetID to create a poll. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 
     "panel.create_stadium_poll.header.title": "Create a Stadium Poll",
     "panel.create_stadium_poll.text.wants_to_know": "wants to know…",
@@ -2825,6 +2827,7 @@
     "widget.home.favorites.title.mtd_stops": "My MTD Stops",
     "widget.home.favorites.title.mtd_destinations": "My MTD Destinations",
     "widget.home.favorites.title.campus_guide": "My Campus Guide",
+    "widget.home.favorites.title.appointments": "MyMcKinley Appointments",
 
     "widget.home.favorites.message.offline.events": "My Events are not available while offline.",
     "widget.home.favorites.message.offline.dining": "My Dining Locations are not available while offline.",
@@ -2834,6 +2837,7 @@
     "widget.home.favorites.message.offline.mtd_stops": "My MTD Stops are not available while offline.",
     "widget.home.favorites.message.offline.mtd_destinations": "My MTD Destinations are not available while offline.",
     "widget.home.favorites.message.offline.campus_guide": "My Campus Guide are not available while offline.",
+    "widget.home.favorites.message.offline.appointments": "MyMcKinley Appointments are not available while offline.",
 
     "widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
     "widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
@@ -2843,6 +2847,8 @@
     "widget.home.favorites.message.empty.mtd_stops": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MTD Stops</b></a> for quick access here.",
     "widget.home.favorites.message.empty.mtd_destinations": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MTD Destinations</b></a> for quick access here.",
     "widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.appointments": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MyMcKinley Appointments</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.appointments.not_to_display": "There is nothing to display as you have chosen not to display any past or future appointments.",
 
     "widget.home.favorites.all.title": "View All",
     "widget.home.favorites.all.hint.events": "Tap to view all favorite events",
@@ -2853,6 +2859,7 @@
     "widget.home.favorites.all.hint.mtd_stops": "Tap to view all favorite MTD stops",
     "widget.home.favorites.all.hint.mtd_destinations": "Tap to view all favorite MTD destinations",
     "widget.home.favorites.all.hint.campus_guide": "Tap to view all favorite campus guide articles",
+    "widget.home.favorites.all.hint.appointments": "Tap to view all favorite appointments",
 
 	"widget.home.wellness_resources.header.label": "My Wellness Resources",
     "widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> so you can quickly find them here.",
@@ -2907,12 +2914,6 @@
     "widget.home.daily_illini.button.all.title": "View All",
     "widget.home.daily_illini.button.all.hint": "Tap to view the daily illini feed",
     "widget.home.daily_illini.text.empty.description": "Failed to load daily illini feed.",
-    
-    "widget.home.appointments.my.label.header.title": "MyMcKinley Appointments",
-    "widget.home.appointments.my.text.empty.description": "You currently have no upcoming appointments linked within the {{app_title}} app.",
-    "widget.home.appointments.my.text.display.nothing.msg": "There is nothing to display as you have chosen not to display any past or future appointments.",
-    "widget.home.appointments.my.button.all.title": "View All",
-    "widget.home.appointments.my.button.all": "Tap to view all appointments",
 
     "widget.food_detail.label.loading.title": "Loading menu data",
     "widget.food_detail.label.loading.hint": "",

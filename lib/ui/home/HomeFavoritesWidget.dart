@@ -14,7 +14,9 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Dinings.dart';
@@ -23,11 +25,13 @@ import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Sports.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -65,6 +69,7 @@ class HomeFavoritesWidget extends StatefulWidget {
       case MTDStop.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.mtd_stops', 'My MTD Stops');
       case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.mtd_destinations', 'My MTD Destinations');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.campus_guide', 'My Campus Guide');
+      case Appointment.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.appointments', 'MyMcKinley Appointments');
     }
     return null;
   }
@@ -83,6 +88,11 @@ class HomeFavoritesWidget extends StatefulWidget {
       case MTDStop.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.mtd_stops", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>MTD Stops</b></a> for quick access here."); break;
       case ExplorePOI.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.mtd_destinations", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>MTD Destinations</b></a> for quick access here."); break;
       case GuideFavorite.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.campus_guide", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Campus Guide</b></a> for quick access here."); break;
+      case Appointment.favoriteKeyName: 
+        message = (Storage().appointmentsCanDisplay != true) ? 
+          Localization().getStringEx('widget.home.favorites.message.empty.appointments.not_to_display', 'There is nothing to display as you have chosen not to display any past or future appointments.') : 
+          Localization().getStringEx("widget.home.favorites.message.empty.appointments", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>MyMcKinley Appointments</b></a> for quick access here."); 
+        break;
     }
     return (message != null) ? message.replaceAll(localUrlMacro, '$localScheme://${key.toLowerCase()}') : null;
   }
@@ -97,6 +107,7 @@ class HomeFavoritesWidget extends StatefulWidget {
       case MTDStop.favoriteKeyName: return Styles().colors?.accentColor3;
       case ExplorePOI.favoriteKeyName: return Styles().colors?.accentColor3;
       case GuideFavorite.favoriteKeyName: return Styles().colors?.accentColor3;
+      case Appointment.favoriteKeyName: return Styles().colors?.accentColor3;
     }
     return null;
   }
@@ -132,6 +143,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       FlexUI.notifyChanged,
       Guide.notifyChanged,
       Config.notifyConfigChanged,
+      Storage.notifySettingChanged,
     ]);
     
     if (widget.updateController != null) {
@@ -168,6 +180,11 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     else if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
             (name == Guide.notifyChanged)) {
       _refreshFavorites(showProgress: false);
+    }
+    else if (name == Storage.notifySettingChanged) {
+      if ((widget.favoriteKey == Appointment.favoriteKeyName) && (param == Storage().appointmentsDisplayEnabledKey)) {
+        _initFavorites((_favoriteIds ?? LinkedHashSet<String>()), showProgress: true);
+      }
     }
   }
 
@@ -261,6 +278,11 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         onTap: () => _onTapItem(item),
       );
     }
+    else if (item is Appointment) {
+      return AppointmentCard(
+        appointment: item,
+      );
+    }
 
     bool isFavorite = Auth2().isFavorite(item);
     Image? favoriteStarIcon = item?.favoriteStarIcon(selected: isFavorite);
@@ -322,29 +344,33 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     if (Connectivity().isOnline) {
       LinkedHashSet<String> refFavoriteIds = Auth2().prefs?.getFavorites(widget.favoriteKey) ?? LinkedHashSet<String>();
       if (!DeepCollectionEquality().equals(_favoriteIds, refFavoriteIds)) {
-        if (showProgress && mounted) {
-          setState(() {
-            _loadingFavorites = true;
-          });
-        }
-        LinkedHashSet<String> favoriteIds = LinkedHashSet<String>.from(refFavoriteIds);
-        _loadFavorites(favoriteIds).then((List<Favorite>? favorites) {
-          if (mounted) {
-            setState(() {
-              _favoriteIds = favoriteIds;
-              _favorites = favorites;
-              _updateCurrentPage();
-            });
-          }
-        }).whenComplete(() {
-          if (mounted) {
-            setState(() {
-              _loadingFavorites = false;
-            });
-          }
-        }); 
+        _initFavorites(refFavoriteIds, showProgress: showProgress);
       }
     }
+  }
+
+  void _initFavorites(LinkedHashSet<String> refFavoriteIds, {bool showProgress = true}) {
+    if (showProgress && mounted) {
+      setState(() {
+        _loadingFavorites = true;
+      });
+    }
+    LinkedHashSet<String> favoriteIds = LinkedHashSet<String>.from(refFavoriteIds);
+    _loadFavorites(favoriteIds).then((List<Favorite>? favorites) {
+      if (mounted) {
+        setState(() {
+          _favoriteIds = favoriteIds;
+          _favorites = favorites;
+          _updateCurrentPage();
+        });
+      }
+    }).whenComplete(() {
+      if (mounted) {
+        setState(() {
+          _loadingFavorites = false;
+        });
+      }
+    });
   }
 
   double get _pageHeight {
@@ -402,6 +428,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         case MTDStop.favoriteKeyName: return _loadFavoriteMTDStops(favoriteIds);
         case ExplorePOI.favoriteKeyName: return _loadFavoriteMTDDestinations(favoriteIds);
         case GuideFavorite.favoriteKeyName: return _loadFavoriteGuideItems(favoriteIds);
+        case Appointment.favoriteKeyName: return _loadFavoriteAppointments(favoriteIds);
       }
     }
     return null;
@@ -454,6 +481,11 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     }
     return guideItems;
   }
+
+  Future<List<Favorite>?> _loadFavoriteAppointments(LinkedHashSet<String>? favoriteIds) async =>
+      (CollectionUtils.isNotEmpty(favoriteIds) && (Storage().appointmentsCanDisplay == true))
+          ? _buildFavoritesList(await Appointments().loadAppointments(onlyUpcoming: true), favoriteIds)
+          : null;
 
   List<Favorite>? _buildFavoritesList(List<Favorite>? sourceList, LinkedHashSet<String>? favoriteIds) {
     if ((sourceList != null) && (favoriteIds != null)) {
@@ -511,6 +543,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       case MTDStop.favoriteKeyName: return Image.asset('images/icon-location.png', excludeFromSemantics: true,);
       case ExplorePOI.favoriteKeyName: return Image.asset('images/icon-location.png', excludeFromSemantics: true,);
       case GuideFavorite.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
+      case Appointment.favoriteKeyName: return Image.asset('images/campus-tools.png', excludeFromSemantics: true,);
     }
     return null;
   }
@@ -525,6 +558,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       case MTDStop.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.mtd_stops', 'My MTD Stops are not available while offline.');
       case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.mtd_destinations', 'My MTD Destinations are not available while offline.');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.campus_guide', 'My Campus Guide are not available while offline.');
+      case Appointment.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.appointments', 'MyMcKinley Appointments are not available while offline.');
     }
     return null;
   }
@@ -539,6 +573,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       case MTDStop.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.mtd_stops', 'Tap to view all favorite MTD stops');
       case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.mtd_destinations', 'Tap to view all favorite MTD destinations');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.campus_guide', 'Tap to view all favorite campus guide articles');
+      case Appointment.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.appointments', 'Tap to view all favorite appointments');
     }
     return null;
   }
