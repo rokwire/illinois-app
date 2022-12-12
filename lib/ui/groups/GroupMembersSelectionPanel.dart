@@ -353,9 +353,9 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
       result += StringUtils.isNotEmpty(result) ? "\r\n" : "";
       result += member.email ?? "";
     }
-    if(_allowSnowID && StringUtils.isNotEmpty(member.externalId)) {//TBD NetID
+    if(_allowSnowID && StringUtils.isNotEmpty(member.netId)) {
       result += StringUtils.isNotEmpty(result) ? "\r\n" : "";
-      result += member.externalId ?? ""; //TBD NetID
+      result += member.netId ?? "";
     }
 
     return result;
