@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
@@ -37,6 +38,15 @@ class CreatePollPanel extends StatefulWidget {
   final Group? group;
 
   CreatePollPanel({this.group});
+
+  static void present(BuildContext context) {
+    if (Auth2().isLoggedIn) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));      
+    }
+    else {
+      AppAlert.showPopup(context, Localization().getStringEx("panel.create_poll.message.logged_out.text", "You need to be logged in with your NetID to create a poll. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings."));
+    }
+  }
 
   _CreatePollPanelState createState() => _CreatePollPanelState();
 }

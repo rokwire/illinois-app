@@ -1023,7 +1023,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapCreatePoll(BuildContext context) {
     Analytics().logSelect(target: "Create Poll");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));
+    CreatePollPanel.present(context);
   }
 
   void _onTapViewPolls(BuildContext context) {

@@ -19,6 +19,7 @@ import 'package:flutter/semantics.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class AppAlert {
@@ -91,6 +92,37 @@ class AppAlert {
               }
           ) //return dismissed 'true'
         ],
+      );
+    },);
+  }
+
+  static Future<void> showPopup(BuildContext context, String? message) async {
+    return showDialog(context: context, builder: (context) {
+      return AlertDialog(contentPadding: EdgeInsets.zero, content:
+        Container(decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)), child:
+          Stack(alignment: Alignment.center, children: [
+            Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32), child:
+              Column(mainAxisSize: MainAxisSize.min, children: [
+                Image.asset('images/block-i-orange.png'),
+                Padding(padding: EdgeInsets.only(top: 18), child:
+                  Text(message ?? '', textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small"))
+                ),
+              ])
+            ),
+            Positioned.fill(child:
+              Align(alignment: Alignment.topRight, child:
+                InkWell(onTap: () {
+                  Analytics().logAlert(text: message, selection: 'Close');
+                  Navigator.of(context).pop();
+                  }, child:
+                  Padding(padding: EdgeInsets.all(16), child:
+                    Image.asset('images/icon-x-orange.png')
+                  )
+                )
+              )
+            ),
+          ])
+      )
       );
     },);
   }

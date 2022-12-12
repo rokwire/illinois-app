@@ -1680,6 +1680,7 @@
 	"panel.create_poll_panel.counter.hint": "最多, %s, 字符",
 	"panel.create_poll.message.error.default": "創建投票失敗. 請填寫所有字段, 然後重試.",
 	"panel.create_poll.description.non_editable.text": "一旦開始, 您將無法再編輯投票.",
+	"panel.create_poll.message.logged_out.text": "您需要使用您的 NetID 登錄才能創建投票。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在“設置”下找到登錄提示。",
 
 	"panel.create_stadium_poll.header.title": " 创建体育场投票 ",
 	"panel.create_stadium_poll.text.wants_to_know": "想知道…",
