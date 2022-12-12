@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Introduce Surveys BB [#2703](https://github.com/rokwire/illinois-app/issues/2703).
+- Hide "Allow repeat votes" from Create Poll panels [#2686](https://github.com/rokwire/illinois-app/issues/2686).
+
 ### Fixed
 - Style definition for wellness to-do item card [#2702](https://github.com/rokwire/illinois-app/issues/2702).
 - Show MyMcKinley appointments in home panel based on the user favorites [#2702](https://github.com/rokwire/illinois-app/issues/2702).

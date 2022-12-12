@@ -318,7 +318,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
             });
           }
         }));
-    widgets.add(Container(
+    /*widgets.add(Container(
       height: 16,
     ));
     widgets.add(ToggleRibbonButton(
@@ -332,7 +332,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
               _selectedRepeatVotes = !_selectedRepeatVotes;
             });
           }
-        }));
+        }));*/
     widgets.add(Container(
       height: 16,
     ));

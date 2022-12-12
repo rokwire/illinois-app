@@ -324,21 +324,21 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
             });
           }
         }));
-    widgets.add(Container(
+    /*widgets.add(Container(
       height: 16,
     ));
     widgets.add(ToggleRibbonButton(
-        label: Localization().getStringEx("panel.create_poll.setting.repeat_vote", "Allow repeat votes"),
-        toggled: _selectedRepeatVotes,
-        borderRadius: rounding,
-        textStyle: _textStyle,
-        onTap: () {
-          if (_progressPollStatus == null) {
-            setState(() {
-              _selectedRepeatVotes = !_selectedRepeatVotes;
-            });
-          }
-        }));
+      label: Localization().getStringEx("panel.create_poll.setting.repeat_vote", "Allow repeat votes"),
+      toggled: _selectedRepeatVotes,
+      borderRadius: rounding,
+      textStyle: _textStyle,
+      onTap: () {
+        if (_progressPollStatus == null) {
+          setState(() {
+            _selectedRepeatVotes = !_selectedRepeatVotes;
+          });
+        }
+      }));*/
     widgets.add(Container(
       height: 16,
     ));
