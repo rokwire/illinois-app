@@ -1681,6 +1681,7 @@
     "panel.create_poll_panel.counter.hint": "maximum, %s, characters",
     "panel.create_poll.message.error.default": "Failed to create poll. Please fill all fields and try again.",
     "panel.create_poll.description.non_editable.text": "Once started, you can no longer edit the poll.",
+    "panel.create_poll.message.logged_out.text": "You need to be logged in with your NetID to create a poll. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 
     "panel.create_stadium_poll.header.title": "Create a Stadium Poll",
     "panel.create_stadium_poll.text.wants_to_know": "wants to know…",

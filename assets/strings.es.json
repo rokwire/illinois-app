@@ -1679,6 +1679,7 @@
     "panel.create_poll_panel.counter.hint": "máximo,% s, caracteres",
     "panel.create_poll.message.error.default": "No se pudo crear la encuesta. Complete todos los campos e intente nuevamente.",
     "panel.create_poll.description.non_editable.text": "Una vez iniciada, ya no podrá editar la encuesta.",
+    "panel.create_poll.message.logged_out.text": "Debe iniciar sesión con su NetID para crear una encuesta. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
 
     "panel.create_stadium_poll.header.title": "Crear una encuesta de estadio",
     "panel.create_stadium_poll.text.wants_to_know": "quiere saber…",

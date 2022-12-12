@@ -6,14 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Introduce Surveys BB [#2703](https://github.com/rokwire/illinois-app/issues/2703)
+- Introduce Surveys BB [#2703](https://github.com/rokwire/illinois-app/issues/2703).
 ### Fixed
-- Style definition for wellness to-do item card [#2702](https://github.com/rokwire/illinois-app/issues/2702)
-- Show MyMcKinley appointments in home panel based on the user favorites [#2702](https://github.com/rokwire/illinois-app/issues/2702)
+- Style definition for wellness to-do item card [#2702](https://github.com/rokwire/illinois-app/issues/2702).
+- Show MyMcKinley appointments in home panel based on the user favorites [#2702](https://github.com/rokwire/illinois-app/issues/2702).
+- Check for login status before presenting create poll panel [#2705](https://github.com/rokwire/illinois-app/issues/2705).
 
 ## [4.2.38] - 2022-12-09
 ### Fixed
-- Privacy level is not getting saved property [#2666](https://github.com/rokwire/illinois-app/issues/2666)
+- Privacy level is not getting saved property [#2666](https://github.com/rokwire/illinois-app/issues/2666).
 ### Added
 - Sort items and sections in Browse panel [#2699](https://github.com/rokwire/illinois-app/issues/2699).
 
