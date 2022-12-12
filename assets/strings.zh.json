@@ -1193,6 +1193,7 @@
 	"panel.saved.label.mtd_stops": "My MTD Stops",
 	"panel.saved.label.mtd_destinations": "My MTD Destinations",
 	"panel.saved.label.campus_guide": "My Campus Guide",
+    "panel.saved.label.appointments": "MyMcKinley Appointments",
 
 	"panel.saved.notifications.label": "不要错过任何活动！获取即将发生的事件的提醒。",
 	"panel.saved.notifications.enable.label": " 启用通知",
@@ -2821,6 +2822,7 @@
 	"widget.home.favorites.title.mtd_stops": "我的 MTD 停止",
 	"widget.home.favorites.title.mtd_destinations": "我的 MTD 目的地",
 	"widget.home.favorites.title.campus_guide": "我的校園指南",
+    "widget.home.favorites.title.appointments": "我的麥金萊約會",
 
 	"widget.home.favorites.message.offline.events": "我的活動在離線時不可用。",
 	"widget.home.favorites.message.offline.dining": "我的用餐地點在離線時不可用。",
@@ -2829,7 +2831,8 @@
 	"widget.home.favorites.message.offline.laundry": "我的洗衣房在離線時不可用。",
 	"widget.home.favorites.message.offline.mtd_stops": "我的 MTD 停靠點在離線時不可用。",
 	"widget.home.favorites.message.offline.mtd_destinations": "我的 MTD 目的地在離線時不可用。",
-"widget.home.favorites.message.offline.campus_guide": "我的校園指南在離線時不可用。",
+	"widget.home.favorites.message.offline.campus_guide": "我的校園指南在離線時不可用。",
+	"widget.home.favorites.message.offline.appointments": "我的 McKinley 約會在離線時不可用。",
 
 	"widget.home.favorites.message.empty.events": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Events</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.dining": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Dining</b></a> for quick access here.",
@@ -2839,6 +2842,8 @@
 	"widget.home.favorites.message.empty.mtd_stops": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MTD Stops</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.mtd_destinations": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MTD Destinations</b></a> for quick access here.",
 	"widget.home.favorites.message.empty.campus_guide": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.appointments": "Tap the \u2606 on items in <a href='{{local_url}}'><b>MyMcKinley Appointments</b></a> for quick access here.",
+    "widget.home.favorites.message.empty.appointments.not_to_display": "There is nothing to display as you have chosen not to display any past or future appointments.",
 
 	"widget.home.favorites.all.title": "查看全部",
 	"widget.home.favorites.all.hint.events": "點按即可查看所有喜愛的活動",
@@ -2848,7 +2853,8 @@
 	"widget.home.favorites.all.hint.laundry": "點擊查看所有喜歡的洗衣店",
 	"widget.home.favorites.all.hint.mtd_stops": "點擊查看所有最喜歡的 MTD 站點",
 	"widget.home.favorites.all.hint.mtd_destinations": "點擊查看所有最喜歡的 MTD 目的地",
-"widget.home.favorites.all.hint.campus_guide": "點擊查看所有喜歡的校園指南文章",
+	"widget.home.favorites.all.hint.campus_guide": "點擊查看所有喜歡的校園指南文章",
+	"widget.home.favorites.all.hint.appointments": "點擊查看所有最喜歡的約會",
 
 	"widget.home.wellness_resources.header.label": "我的健康資源",
 	"widget.home.wellness_resources.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Wellness Resources</b></a> so you can quickly find them here.",
@@ -2903,12 +2909,6 @@
 	"widget.home.daily_illini.button.all.title": "查看全部",
 	"widget.home.daily_illini.button.all.hint": "點擊查看每日伊利尼飼料",
 	"widget.home.daily_illini.text.empty.description": "無法加載每日 illini Feed。",
-
-	"widget.home.appointments.my.label.header.title": "我的麥金利約會",
-	"widget.home.appointments.my.text.empty.description": "您目前沒有在 {{app_title}} 應用中鏈接的即將到來的約會。",
-    "widget.home.appointments.my.text.display.nothing.msg": "沒有可顯示的內容，因為您選擇不顯示任何過去或未來的約會。",
-	"widget.home.appointments.my.button.all.title": "查看全部",
-	"widget.home.appointments.my.button.all": "點擊查看所有約會",
 
 	"widget.food_detail.label.loading.title":"正在加载菜单数据",
 	"widget.food_detail.label.loading.hint":"",
