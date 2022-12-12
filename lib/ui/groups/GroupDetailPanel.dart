@@ -925,7 +925,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (_isMemberOrAdmin) {
         Column(children: <Widget>[
           SectionSlantHeader(
-              title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
+              title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts and Direct Messages'),
               titleIconAsset: 'images/icon-calendar.png',
               rightIconAsset: _canCreatePost ? "images/icon-add-20x18.png" : null,
               rightIconAction: _canCreatePost ? _onTapCreatePost : null,
@@ -964,7 +964,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     return Column(children: <Widget>[
       SectionSlantHeader(
-          title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
+          title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts and Direct Messages'),
           titleIconAsset: 'images/icon-calendar.png',
           rightIconAsset: _canCreatePost ? "images/icon-add-20x18.png" : null,
           rightIconAction: _canCreatePost ? _onTapCreatePost : null,
