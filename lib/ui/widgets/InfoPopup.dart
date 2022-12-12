@@ -14,6 +14,7 @@ class InfoPopup extends StatelessWidget {
 
   final String? infoText;
   final TextStyle? infoTextStyle;
+  final Widget? infoTextWidget;
 
   final Widget? closeIcon;
   final EdgeInsetsGeometry closeIconMargin;
@@ -28,6 +29,7 @@ class InfoPopup extends StatelessWidget {
 
     this.infoText,
     this.infoTextStyle,
+    this.infoTextWidget,
 
     this.closeIcon,
     this.closeIconMargin = const EdgeInsets.all(16),
@@ -44,7 +46,7 @@ class InfoPopup extends StatelessWidget {
               Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
                 Row(children: [
                   Expanded(child:
-                    Text(infoText ?? '', style: infoTextStyle),
+                    infoTextWidget ?? Text(infoText ?? '', style: infoTextStyle),
                   ),
                 ],),
               ],),

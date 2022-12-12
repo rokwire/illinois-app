@@ -221,7 +221,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
     if (1 < (_messages?.length ?? 0)) {
 
       for (InboxMessage message in _messages!) {
-        pages.add(Padding(key: _contentKeys[message.messageId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
+        pages.add(Padding(key: _contentKeys[message.messageId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
           InboxMessageCard(message: message, onTap: () => _onTapMessage(message)),
         ));
       }

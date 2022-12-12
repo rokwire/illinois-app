@@ -157,7 +157,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         News news = _news![index];
-        pages.add(Padding(key: _contentKeys[news.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
+        pages.add(Padding(key: _contentKeys[news.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
           AthleticsNewsCard(news: news, onTap: () => _onTapNews(news))
         ));
       }

@@ -81,6 +81,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 	__weak typeof(self) weakSelf = self;
 	
+	_backgroundOperationQueue = [[NSOperationQueue alloc] init];
+	
 //	Initialize Google Maps SDK
 //	[GMSServices provideAPIKey:kGoogleAPIKey];
 
@@ -149,6 +151,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
+	[_backgroundOperationQueue cancelAllOperations];
 
 	[super applicationWillTerminate:application];
 }

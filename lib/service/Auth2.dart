@@ -87,7 +87,9 @@ class Auth2 extends rokwire.Auth2 {
 
   void _checkEnabled() {
     if (isLoggedIn && !FlexUI().isAuthenticationAvailable) {
-      logout();
+      onUserPrefsChanged(account?.prefs).then((_) {
+        logout();
+      });
     }
   }
 
@@ -134,8 +136,6 @@ class Auth2 extends rokwire.Auth2 {
 
   @override
   void logout({ Auth2UserPrefs? prefs }) {
-    super.logout(prefs: prefs);
-
     if (_uiucToken != null) {
       Storage().auth2UiucToken = _uiucToken = null;
     }
@@ -146,6 +146,8 @@ class Auth2 extends rokwire.Auth2 {
       Storage().auth2CardTime = null;
       NotificationService().notify(notifyCardChanged);
     }
+
+    super.logout(prefs: prefs);
   }
 
   // Overrides

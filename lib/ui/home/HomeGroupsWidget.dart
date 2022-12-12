@@ -16,6 +16,7 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 
 class HomeGroupsWidget extends StatefulWidget {
@@ -85,7 +86,8 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
   }
 
   void _loadGroups(){
-    Groups().loadGroups(contentType: widget.contentType).then((groups) {
+    Groups().loadGroups(contentType: widget.contentType).then((List<Group>? groupsList) {
+      List<Group>? groups = ListUtils.from(groupsList);
       _sortGroups(groups);
       if (mounted) {
         setState(() {
@@ -96,7 +98,8 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
   }
 
   void _updateGroups() {
-    Groups().loadGroups(contentType: widget.contentType).then((List<Group>? groups) {
+    Groups().loadGroups(contentType: widget.contentType).then((List<Group>? groupsList) {
+      List<Group>? groups = ListUtils.from(groupsList);
       _sortGroups(groups);
       if (mounted && !DeepCollectionEquality().equals(_groups, groups)) {
         setState(() {
@@ -110,7 +113,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
 
   void _applyUserGroups() {
     if (widget.contentType == GroupsContentType.my) {
-      List<Group>? userGroups = Groups().userGroups;
+      List<Group>? userGroups = ListUtils.from(Groups().userGroups);
       _sortGroups(userGroups);
       if (mounted) {
         setState(() {
@@ -131,12 +134,11 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
 
 
   Widget _buildContent() {
-
     List<Widget> pages = <Widget>[];
     if(_groups?.isNotEmpty ?? false) {
       for (Group? group in _groups!) {
         if ((group != null) && group.isVisible) {
-          pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
+          pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
             Semantics(
               // excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),
              child: GroupCard(group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),

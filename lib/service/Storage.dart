@@ -366,4 +366,26 @@ class Storage extends rokwire.Storage {
   String? get selectedCourseTermId => getStringWithName(selectedCourseTermIdKey);
   set selectedCourseTermId(String? value) => setStringWithName(selectedCourseTermIdKey, value);
 
+  // Explore
+  String get selectedListExploreItemKey => 'edu.illinois.rokwire.explore.list.selected.item';
+  String? get selectedListExploreItem => getStringWithName(selectedListExploreItemKey);
+  set selectedListExploreItem(String? value) => setStringWithName(selectedListExploreItemKey, value);
+
+  String get selectedMapExploreItemKey => 'edu.illinois.rokwire.explore.map.selected.item';
+  String? get selectedMapExploreItem => getStringWithName(selectedMapExploreItemKey);
+  set selectedMapExploreItem(String? value) => setStringWithName(selectedMapExploreItemKey, value);
+
+  // Appointments
+  String get appointmentsDisplayEnabledKey => 'edu.illinois.rokwire.appointments.display_enabled';
+  bool? get appointmentsCanDisplay => getBoolWithName(appointmentsDisplayEnabledKey, defaultValue: true);
+  set appointmentsCanDisplay(bool? value) => setBoolWithName(appointmentsDisplayEnabledKey, value);
+
+  // MTD Map instructions
+  String get showMtdStopsMapInstructionsKey => 'edu.illinois.rokwire.explore.map.mtd_stops.show_instructions';
+  bool? get showMtdStopsMapInstructions => getBoolWithName(showMtdStopsMapInstructionsKey);
+  set showMtdStopMapsInstructions(bool? value) => setBoolWithName(showMtdStopsMapInstructionsKey, value);
+
+  String get showMtdDestinationsMapInstructionsKey => 'edu.illinois.rokwire.explore.map.mtd_destinations.show_instructions';
+  bool? get showMtdDestinationsMapInstructions => getBoolWithName(showMtdDestinationsMapInstructionsKey);
+  set showMtdDestinationsMapInstructions(bool? value) => setBoolWithName(showMtdDestinationsMapInstructionsKey, value);
 }

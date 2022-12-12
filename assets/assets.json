@@ -1002,27 +1002,46 @@
 				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.mp4",
 				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.webp",
 				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.srt"
+			},
+			{
+				"id": "favorites.tutorial.4.2",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_favorites_tutorial.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_favorites_tutorial.webp",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_favorites_tutorial.srt"
+			},
+			{
+				"id": "groups.create.new.4.2",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_groups_create_new.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_groups_create_new.webp",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_groups_create_new.srt"
 			}
 		],
 		"onboarding": { "dev": "video.tutorial.4.0", "test": "video.tutorial.4.0", "production": "video.tutorial.4.0" },
+		"welcome": { "dev": "favorites.tutorial.4.2", "test": "favorites.tutorial.4.2", "production": "favorites.tutorial.4.2" },
 		"strings": {
 			"en": {
 				"video.tutorial.4.0": "Application overview",
 				"find.your.courses.4.1": "Find Your Courses",
 				"groups.overview.4.1": "Groups Overview",
-				"wellness.rings.overview.4.1": "Daily Wellness Rings"
+				"wellness.rings.overview.4.1": "Daily Wellness Rings",
+				"favorites.tutorial.4.2": "Favorites Tutorial",
+				"groups.create.new.4.2": "Creating a New Group"
 			},
 			"es": {
 				"video.tutorial.4.0": "Descripción general de la aplicación",
 				"find.your.courses.4.1": "Encuentra tus cursos",
 				"groups.overview.4.1": "Resumen de grupos",
-				"wellness.rings.overview.4.1": "Anillos de bienestar diarios"
+				"wellness.rings.overview.4.1": "Anillos de bienestar diarios",
+				"favorites.tutorial.4.2": "Tutorial de Favoritos",
+				"groups.create.new.4.2": "Creación de un nuevo grupo"
 			},
 			"zh": {
 				"video.tutorial.4.0": "應用概述",
 				"find.your.courses.4.1": "查找您的課程",
 				"groups.overview.4.1": "組概述",
-				"wellness.rings.overview.4.1": "每日健康戒指"
+				"wellness.rings.overview.4.1": "每日健康戒指",
+				"favorites.tutorial.4.2": "收藏教程",
+				"groups.create.new.4.2": "創建一個新組"
 			}
 		}
 	}

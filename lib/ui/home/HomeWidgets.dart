@@ -7,6 +7,7 @@ import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -547,7 +548,7 @@ class HomeCommandButton extends StatelessWidget {
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 15, bottom: 7), child:
-                  Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary), semanticsLabel: "",),
+                  Text(title ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), semanticsLabel: "",),
                 )
               ),
               // Image.asset('images/chevron-right.png', excludeFromSemantics: true)
@@ -607,6 +608,65 @@ class HomeMessageCard extends StatelessWidget {
         ]),
       ),
     );
+  }
+}
+
+////////////////////////////
+// HomeMessageCard
+
+class HomeMessageHtmlCard extends StatelessWidget {
+
+  final String? title;
+  final String? message;
+  final EdgeInsetsGeometry margin;
+  final void Function(String? url)? onTapLink;
+
+  HomeMessageHtmlCard({Key? key,
+    this.title,
+    this.message,
+    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+    this.onTapLink
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(padding: margin, child:
+      Container(padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        child: Column(children: <Widget>[
+          StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
+            Expanded(child:
+              Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
+                Html(data: title,
+                  onLinkTap: (url, renderContext, attributes, element) => _onTapLink(url),
+                  style: {
+                    "body": Style(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                    "a": Style(color: Styles().colors?.fillColorSecondary),
+                  },
+                ),
+              ),
+            )
+          ]) : Container(),
+          StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
+            Expanded(child:
+                Html(data: message,
+                  onLinkTap: (url, renderContext, attributes, element) => _onTapLink(url),
+                  style: {
+                    "body": Style(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                    "a": Style(color: Styles().colors?.fillColorSecondary),
+                  },
+                ),
+            )
+          ]) : Container(),
+        ]),
+      ),
+    );
+  }
+
+  void _onTapLink(String? url) {
+    if (onTapLink != null) {
+      onTapLink!(url);
+    }
   }
 }
 

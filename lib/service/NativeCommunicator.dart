@@ -27,7 +27,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class NativeCommunicator with Service {
   
   static const String notifyMapSelectExplore  = "edu.illinois.rokwire.nativecommunicator.map.explore.select";
-  static const String notifyMapClearExplore   = "edu.illinois.rokwire.nativecommunicator.map.explore.clear";
+  static const String notifyMapSelectLocation   = "edu.illinois.rokwire.nativecommunicator.map.location.select";
   
   static const String notifyMapRouteStart  = "edu.illinois.rokwire.nativecommunicator.map.route.start";
   static const String notifyMapRouteFinish = "edu.illinois.rokwire.nativecommunicator.map.route.finish";
@@ -78,7 +78,7 @@ class NativeCommunicator with Service {
     }
   }
 
-  Future<void> launchExploreMapDirections({dynamic target}) async {
+  Future<void> launchExploreMapDirections({dynamic target, Map<String, dynamic>? options}) async {
     dynamic jsonData;
     try {
       if (target != null) {
@@ -97,23 +97,29 @@ class NativeCommunicator with Service {
     }
     
     if (jsonData != null) {
-      await launchMapDirections(jsonData: jsonData);
+      await launchMapDirections(jsonData: jsonData, options: options);
     }
   }
 
-  Future<void> launchMapDirections({dynamic jsonData}) async {
+  Future<void> launchMapDirections({dynamic jsonData, Map<String, dynamic>? options}) async {
     try {
       String? lastPageName = Analytics().currentPageName;
       Map<String, dynamic>? lastPageAttributes = Analytics().currentPageAttributes;
       Analytics().logPage(name: 'MapDirections');
       Analytics().logMapShow();
+
+      Map<String, dynamic> optionsParam = {
+        'showDebugLocation': Storage().debugMapLocationProvider,
+        'enableLevels': Storage().debugMapShowLevels,
+      };
+      if (options != null) {
+        optionsParam.addAll(options);
+      }
       
       await _platformChannel.invokeMethod('directions', {
         'explore': jsonData,
-        'options': {
-          'showDebugLocation': Storage().debugMapLocationProvider,
-          'enableLevels': Storage().debugMapShowLevels,
-        }});
+        'options': optionsParam
+      });
 
       Analytics().logMapHide();
       Analytics().logPage(name: lastPageName, attributes: lastPageAttributes);
@@ -233,8 +239,11 @@ class NativeCommunicator with Service {
       case "map.explore.select":
         _notifyMapSelectExplore(call.arguments);
         break;
-      case "map.explore.clear":
-        _notifyMapClearExplore(call.arguments);
+      case "map.poi.select":
+        _notifyMapSelectPOI(call.arguments);
+        break;
+      case "map.location.select":
+        _notifyMapLocationSelect(call.arguments);
         break;
       
       case "map.route.start":
@@ -244,9 +253,6 @@ class NativeCommunicator with Service {
         _notifyMapRouteFinish(call.arguments);
         break;
       
-      case "map.poi.select":
-        _notifyMapSelectPOI(call.arguments);
-        break;
 
       case "firebase_message":
         //PS use firebase messaging plugin!
@@ -263,8 +269,8 @@ class NativeCommunicator with Service {
     NotificationService().notify(notifyMapSelectExplore, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
   }
   
-  void _notifyMapClearExplore(dynamic arguments) {
-    NotificationService().notify(notifyMapClearExplore, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
+  void _notifyMapLocationSelect(dynamic arguments) {
+    NotificationService().notify(notifyMapSelectLocation, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
   }
 
   void _notifyMapSelectPOI(dynamic arguments) {

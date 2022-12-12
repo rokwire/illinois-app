@@ -5,8 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
+import 'package:illinois/model/Video.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -38,6 +40,7 @@ import 'package:illinois/ui/home/HomeTwitterWidget.dart';
 import 'package:illinois/ui/home/HomeWPGUFMRadioWidget.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/laundry/LaundryHomePanel.dart';
+import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/parking/ParkingEventsPanel.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/CreateStadiumPollPanel.dart';
@@ -95,7 +98,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       Styles.notifyChanged,
     ]);
     
-    _contentCodes = JsonUtils.listStringsValue(FlexUI()['browse']);
+    _contentCodes = buildContentCodes();
     super.initState();
   }
 
@@ -185,7 +188,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
   }
 
   void _updateContentCodes() {
-    List<String>?  contentCodes = JsonUtils.listStringsValue(FlexUI()['browse']);
+    List<String>?  contentCodes = buildContentCodes();
     if ((contentCodes != null) && !DeepCollectionEquality().equals(_contentCodes, contentCodes)) {
       if (mounted) {
         setState(() {
@@ -223,6 +226,17 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       setState(() {});
     }
   }
+
+  static List<String>? buildContentCodes() {
+    List<String>? codes = JsonUtils.listStringsValue(FlexUI()['browse']);
+    codes?.sort((String code1, String code2) {
+      String title1 = _BrowseSection.title(sectionId: code1);
+      String title2 = _BrowseSection.title(sectionId: code2);
+      return title1.compareTo(title2);
+    });
+    return codes;
+  }
+
 }
 
 class _BrowseSection extends StatelessWidget {
@@ -235,11 +249,21 @@ class _BrowseSection extends StatelessWidget {
   final Set<String>? _homeRootEntriesCodes;
 
   _BrowseSection({Key? key, required this.sectionId, this.expanded = false, this.onExpand}) :
-    _browseEntriesCodes = JsonUtils.listStringsValue(FlexUI()['browse.$sectionId']),
+    _browseEntriesCodes = _buildBrowseEntryCodes(sectionId: sectionId),
     _homeSectionEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home.$sectionId']),
     _homeRootEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home']),
     super(key: key);
 
+  static List<String>? _buildBrowseEntryCodes({required String sectionId}) {
+    List<String>? codes = JsonUtils.listStringsValue(FlexUI()['browse.$sectionId']);
+    codes?.sort((String code1, String code2) {
+      String title1 = _BrowseEntry.title(sectionId: sectionId, entryId: code1);
+      String title2 = _BrowseEntry.title(sectionId: sectionId, entryId: code2);
+      return title1.compareTo(title2);
+    });
+    return codes;
+  }
+  
   HomeFavorite? _favorite(String code) {
     if (_homeSectionEntriesCodes?.contains(code) ?? false) {
       return HomeFavorite(code, category: sectionId);
@@ -326,9 +350,18 @@ class _BrowseSection extends StatelessWidget {
       ) : Container();
   }
 
-  String get _appTitle => Localization().getStringEx('app.title', 'Illinois');
-  String get _title => Localization().getStringEx('panel.browse.section.$sectionId.title', StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
-  String get _description => Localization().getStringEx('panel.browse.section.$sectionId.description', '').replaceAll('{{app_title}}', _appTitle);
+  String get _title => title(sectionId: sectionId);
+  String get _description => description(sectionId: sectionId);
+
+  static String get appTitle => Localization().getStringEx('app.title', 'Illinois');
+  
+  static String title({required String sectionId}) {
+    return Localization().getString('panel.browse.section.$sectionId.title') ?? StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
+  }
+
+  static String description({required String sectionId}) {
+    return Localization().getString('panel.browse.section.$sectionId.description')?.replaceAll('{{app_title}}', appTitle) ?? '';
+  }
 
   void _onTapExpand() {
     if (_hasBrowseContent && (onExpand != null)) {
@@ -462,12 +495,10 @@ class _BrowseEntry extends StatelessWidget {
     );
   }
 
-  String get _title {
-    if ((entryId == 'video_tutorials') && (sectionId == 'app_help')) {
-      return (_videoTutorialsCount > 1) ? Localization().getStringEx('panel.browse.entry.app_help.video_tutorials.title', 'Video Tutorials') : Localization().getStringEx('panel.browse.entry.app_help.video_tutorial.title', 'Video Tutorial');
-    } else {
-      return Localization().getStringEx('panel.browse.entry.$sectionId.$entryId.title', StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
-    }
+  String get _title => title(sectionId: sectionId, entryId: entryId);
+
+  static String title({required String sectionId, required String entryId}) {
+    return Localization().getString('panel.browse.entry.$sectionId.$entryId.title') ?? StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
   }
 
   void _onTap(BuildContext context) {
@@ -498,7 +529,12 @@ class _BrowseEntry extends StatelessWidget {
       case "laundry.laundry":                 _onTapLaundry(context); break;
       case "laundry.my_laundry":              _onTapMyLaundry(context); break;
 
+      case "mtd.all_mtd_stops":              _onTapMTDStops(context); break;
+      case "mtd.my_mtd_stops":               _onTapMyMTDStops(context); break;
+      case "mtd.my_mtd_destinations":        _onTapMyMTDDestinations(context); break;
+
       case "campus_guide.campus_highlights": _onTapCampusHighlights(context); break;
+      case "campus_guide.campus_safety_resources": _onTapCampusSafetyResources(context); break;
       case "campus_guide.campus_guide":      _onTapCampusGuide(context); break;
       case "campus_guide.my_campus_guide":   _onTapMyCampusGuide(context); break;
 
@@ -542,6 +578,9 @@ class _BrowseEntry extends StatelessWidget {
       case "my.canvas_courses":              _onTapCanvasCourses(context); break;
       case "my.my_groups":                   _onTapMyGroups(context); break;
       case "my.my_laundry":                  _onTapMyLaundry(context); break;
+      case "my.my_research_projects":        _onTapMyResearchProjects(context); break;
+      case "my.my_mtd_stops":                _onTapMyMTDStops(context); break;
+      case "my.my_mtd_destinations":         _onTapMyMTDDestinations(context); break;
       case "my.wellness_resources":          _onTapWellnessResources(context); break;
       case "my.my_appointments":             _onTapMyAppointments(context); break;
 
@@ -564,12 +603,12 @@ class _BrowseEntry extends StatelessWidget {
       case "wallet.illini_id_card":          _onTapIlliniId(context); break;
       case "wallet.library_card":            _onTapLibraryCard(context); break;
 
-      case "wellness.wellness_resources":    _onTapWellnessResources(context); break;
-      case "wellness.wellness_rings":        _onTapWellnessRings(context); break;
-      case "wellness.wellness_todo":         _onTapWellnessToDo(context); break;
-      case "wellness.my_appointments":       _onTapMyAppointments(context); break;
-      case "wellness.wellness_tips":         _onTapWellnessTips(context); break;
-      case "wellness.wellness_symptom_screener": _onTapWellnessSymptomScreener(context); break;
+      case "wellness.wellness_resources":       _onTapWellnessResources(context); break;
+      case "wellness.wellness_rings":           _onTapWellnessRings(context); break;
+      case "wellness.wellness_todo":            _onTapWellnessToDo(context); break;
+      case "wellness.my_appointments":          _onTapMyAppointments(context); break;
+      case "wellness.wellness_tips":            _onTapWellnessTips(context); break;
+      case "wellness.wellness_health_screener": _onTapWellnessHealthScreener(context); break;
     }
   }
 
@@ -642,22 +681,22 @@ class _BrowseEntry extends StatelessWidget {
   bool get _canVideoTutorials => (_videoTutorialsCount > 0);
 
   void _onTapVideoTutorials(BuildContext context) {
-    Analytics().logSelect(target: "Video Tutorials");
-    
     if (Connectivity().isOffline) {
       AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.video_tutorial', 'Video Tutorial not available while offline.'));
     }
     else if (_canVideoTutorials) {
-      List<dynamic>? videoTutorials = _getVideoTutorials();
-      if (_videoTutorialsCount == 1) {
-        Map<String, dynamic>? videoTutorial = JsonUtils.mapValue(videoTutorials?.first);
+      List<Video>? videoTutorials = _getVideoTutorials();
+      if (videoTutorials?.length == 1) {
+        Video? videoTutorial = videoTutorials?.first;
         if (videoTutorial != null) {
+          Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString(), attributes: videoTutorial.analyticsAttributes);
           Navigator.push(
               context,
               CupertinoPageRoute(
                   settings: RouteSettings(), builder: (context) => SettingsVideoTutorialPanel(videoTutorial: videoTutorial)));
         }
       } else {
+        Analytics().logSelect(target: "Video Tutorials", source: runtimeType.toString());
         Navigator.push(
             context,
             CupertinoPageRoute(
@@ -666,7 +705,7 @@ class _BrowseEntry extends StatelessWidget {
     }
   }
 
-  List<dynamic>? _getVideoTutorials() {
+  List<Video>? _getVideoTutorials() {
     Map<String, dynamic>? videoTutorials = JsonUtils.mapValue(Assets()['video_tutorials']);
     if (videoTutorials == null) {
       return null;
@@ -676,12 +715,7 @@ class _BrowseEntry extends StatelessWidget {
       return null;
     }
     Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials['strings']);
-    for (dynamic video in videos!) {
-      String? videoId = video['id'];
-      String? videoTitle = Localization().getContentString(strings, videoId);
-      video['title'] = videoTitle;
-    }
-    return videos;
+    return Video.listFromJson(jsonList: videos, contentStrings: strings);
   }
 
   bool get _canFeedback => StringUtils.isNotEmpty(Config().feedbackUrl);
@@ -777,8 +811,18 @@ class _BrowseEntry extends StatelessWidget {
     Analytics().logSelect(target: 'Campus Highlights');
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
       contentList: Guide().promotedList,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Safety Resources'),
-      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Safety Resources."),
+      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Campus Highlights'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Hightlights."),
+    )));
+  }
+
+  void _onTapCampusSafetyResources(BuildContext context) {
+    Analytics().logSelect(target: 'Campus Safety Resources');
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
+      contentList: Guide().safetyResourcesList,
+      contentTitle: Localization().getStringEx('panel.guide_list.label.campus_safety_resources.section', 'Safety Resources'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.campus_safety_resources.empty", "There are no active Campus Safety Resources."),
+      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusSafetyResourceContentType),
     )));
   }
 
@@ -826,6 +870,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapLaundry(BuildContext context) {
     Analytics().logSelect(target: "Laundry");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => LaundryHomePanel()));
+  }
+
+  void _onTapMTDStops(BuildContext context) {
+    Analytics().logSelect(target: "All MTD Stops");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all,)));
   }
 
   void _onTapIlliniCash(BuildContext context) {
@@ -947,6 +996,16 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [LaundryRoom.favoriteKeyName]); } ));
   }
 
+  void _onTapMyMTDStops(BuildContext context) {
+    Analytics().logSelect(target: "My MTD Stops");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.my,)));
+  }
+
+  void _onTapMyMTDDestinations(BuildContext context) {
+    Analytics().logSelect(target: "My MTD Destinations");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [ExplorePOI.favoriteKeyName]); } ));
+  }
+
   void _onTapMyCampusGuide(BuildContext context) {
     Analytics().logSelect(target: "My Campus Guide");
     Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [GuideFavorite.favoriteKeyName]); } ));
@@ -964,7 +1023,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapCreatePoll(BuildContext context) {
     Analytics().logSelect(target: "Create Poll");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));
+    CreatePollPanel.present(context);
   }
 
   void _onTapViewPolls(BuildContext context) {
@@ -1031,9 +1090,9 @@ class _BrowseEntry extends StatelessWidget {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.dailyTips,)));
   }
 
-  void _onTapWellnessSymptomScreener(BuildContext context) {
-    Analytics().logSelect(target: "Wellness Symptom Screener");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.symptomScreener,)));
+  void _onTapWellnessHealthScreener(BuildContext context) {
+    Analytics().logSelect(target: "Wellness Health Screener");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.healthScreener,)));
   }
 
   void _notImplemented(BuildContext context) {

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
@@ -84,13 +82,12 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   }
 
   Future<List<Appointment>?> loadBBAppointments() async {
-    if (!isEnabled) {
-      Log.w('Failed to load wellness todo items. Missing wellness url.');
+    if (StringUtils.isEmpty(Config().appointmentsUrl)) {
+      Log.w('Failed to appointments. Missing appointments url.');
       return null;
     }
     String? url;
     url = "${Config().appointmentsUrl}/services/appointments";
-    url = "https://api-dev.rokwire.illinois.edu/appointments/services/appointments"; //TBD add Appointments URL to the config
     http.Response? response = await Network().get(url, auth: Auth2());
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -98,21 +95,14 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
       List<Appointment>? items = Appointment.listFromJson(JsonUtils.decodeList(responseString));
       return items;
     } else {
-      Log.w('Failed to load Appointments items. Response:\n$responseCode: $responseString');
+      Log.w('Failed to load Appointments. Response:\n$responseCode: $responseString');
       return null;
     }
   }
 
   //TBD remove when not needed for testing
   Future<List<Appointment>?> loadAssetsAppointments() async {
-    List<Appointment>? appointments;
-    try {
-      appointments = Appointment.listFromJson(JsonUtils.decodeList(await rootBundle.loadString('assets/appointments.json')));
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-
-    return appointments;
+    return Appointment.listFromJson(JsonUtils.decodeList(await AppBundle.loadString('assets/appointments.json')));
   }
 
   //TBD: Appointment - load from backend
@@ -193,8 +183,6 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
       }
     }
   }
-
-  bool get isEnabled => StringUtils.isNotEmpty(Config().wellnessUrl);
 
   // NotificationsListener
   @override

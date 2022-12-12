@@ -27,8 +27,9 @@ import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+  final String favoriteKey;
   final String? guideEntryId;
-  GuideDetailPanel({ this.guideEntryId });
+  GuideDetailPanel({ this.guideEntryId, this.favoriteKey = GuideFavorite.favoriteKeyName });
 
   @override
   _GuideDetailPanelState createState() => _GuideDetailPanelState();
@@ -60,7 +61,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
       FlexUI.notifyChanged,
     ]);
     _guideEntry = Guide().entryById(widget.guideEntryId);
-    _isFavorite = Auth2().isFavorite(GuideFavorite(id: widget.guideEntryId));
+    _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: widget.guideEntryId));
     
     RecentItems().addRecentItem(RecentItem.fromGuideItem(_guideEntry));
   }
@@ -82,7 +83,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() {
-        _isFavorite = Auth2().isFavorite(GuideFavorite(id: widget.guideEntryId));
+        _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: widget.guideEntryId));
       });
     }
     else if (name == FlexUI.notifyChanged) {
@@ -466,7 +467,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
         if (guideEntry != null) {
           contentList.add(
             Padding(padding: EdgeInsets.only(bottom: 16), child:
-              GuideEntryCard(guideEntry)
+              GuideEntryCard(guideEntry, favoriteKey: widget.favoriteKey,)
           ),);
         }
       }
@@ -485,7 +486,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
   void _onTapFavorite() {
     String? title = Guide().entryTitle(_guideEntry, stripHtmlTags: true);
     Analytics().logSelect(target: "Favorite: $title");
-    Auth2().prefs?.toggleFavorite(GuideFavorite(id: Guide().entryId(_guideEntry)));
+    Auth2().prefs?.toggleFavorite(FavoriteItem(key:widget.favoriteKey, id: Guide().entryId(_guideEntry)));
   }
 
   void _onTapLink(String? url, {bool? useInternalBrowser}) {

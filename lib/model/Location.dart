@@ -9,6 +9,8 @@ class LatLng {
 
   LatLng({this.latitude, this.longitude});
 
+  bool get isValid => (latitude != null) && (longitude != null);
+
   // JSON serialization
 
   static LatLng? fromJson(Map<String, dynamic>? json) {

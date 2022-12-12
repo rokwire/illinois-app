@@ -1,5 +1,6 @@
 
 
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,16 +9,16 @@ import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
-class MTD with Service implements NotificationsListener {
+class MTD with Service implements ExploreJsonHandler, NotificationsListener {
 
   static const String notifyStopsChanged = 'edu.illinois.rokwire.mtd.stops.changed';
-  static const String notifyRoutesChanged = 'edu.illinois.rokwire.mtd.routes.changed';
   static const String _mtdStopsName = "mtdStops.json";
 
   late Directory _appDocDir;
@@ -37,12 +38,14 @@ class MTD with Service implements NotificationsListener {
     NotificationService().subscribe(this,[
       AppLivecycle.notifyStateChanged,
     ]);
+    Explore.addJsonHandler(this);
     super.createService();
   }
 
   @override
   void destroyService() {
     NotificationService().unsubscribe(this);
+    Explore.removeJsonHandler(this);
     super.destroyService();
   }
 
@@ -94,9 +97,23 @@ class MTD with Service implements NotificationsListener {
     }
   }
 
+  // ExploreJsonHandler
+  @override bool exploreCanJson(Map<String, dynamic>? json) => MTDStop.canJson(json);
+  @override Explore? exploreFromJson(Map<String, dynamic>? json) => MTDStop.fromJson(json);
+
   // Stops
 
   MTDStops? get stops => _stops;
+
+  List<MTDStop>? stopsByIds(LinkedHashSet<String>? stopIds) {
+    return MTDStop.stopsInList2(_stops?.stops, stopIds: stopIds);
+  }
+
+  MTDStop? stopById(String? stopId) {
+    return MTDStop.stopInList(_stops?.stops, stopId: stopId);
+  }
+
+  Future<void> refreshStops() => _updateStops();
 
   File _getStopsCacheFile() => File(join(_appDocDir.path, _mtdStopsName));
 

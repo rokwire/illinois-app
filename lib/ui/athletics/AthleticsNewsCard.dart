@@ -158,7 +158,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
       padding: EdgeInsets.only(left: 24, right: 24, top: 12),
       child: Text(
         (widget.news!.title != null) ? widget.news!.title! : "",
-        style: Styles().textStyles?.getTextStyle('widget.athletics.card.title.large'),
+        style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),
       ),
     );
   }

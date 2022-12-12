@@ -17,45 +17,34 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/MTD.dart';
+import 'package:illinois/ui/mtd/MTDWidgets.dart';
+import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:intl/intl.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class MTDStopDeparturesPanel extends StatefulWidget  {
   final MTDStop stop;
-  final List<MTDRoute>? routes;
 
-  MTDStopDeparturesPanel({required this.stop, this.routes });
+  MTDStopDeparturesPanel({required this.stop });
 
   @override
   State<MTDStopDeparturesPanel> createState() => _MTDStopDeparturesPanelState();
 }
 
-class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
+class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> implements NotificationsListener {
 
-  List<MTDRoute>? _routes;
-  bool _loadingRoutes = false;
   List<MTDDeparture>? _departures;
   bool _loadingDepartures = false;
 
   @override
   void initState() {
-    if (widget.routes != null) {
-      _routes = widget.routes;
-    }
-    else if (widget.stop.id != null) {
-      _loadingRoutes = true;
-      MTD().getRoutes(stopId: widget.stop.id!).then((List<MTDRoute>? routes) {
-        if (mounted) {
-          setState(() {
-            _loadingRoutes = false;
-            _routes = routes;
-          });
-        }
-      });
-    }
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+    ]);
 
     if (widget.stop.id != null) {
       _loadingDepartures = true;
@@ -72,9 +61,31 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
   }
 
   @override
+  void dispose() {
+    NotificationService().unsubscribe(this);
+    super.dispose();
+  }
+
+ // NotificationsListener
+  @override
+  void onNotification(String name, dynamic param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (mounted) {
+        setState(() {
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HeaderBar(title: widget.stop.name,),
+      appBar: HeaderBar(
+        title: widget.stop.name,
+        actions: [
+          FavoriteButton(favorite: widget.stop, style: FavoriteIconStyle.SlantHeader)
+        ],
+      ),
       body: _buildBody(),
       backgroundColor: Styles().colors?.white,
       bottomNavigationBar: uiuc.TabBar(),
@@ -83,14 +94,14 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
 
   Widget _buildBody() {
     return Column(children: <Widget>[
-      _buildRoutes(),
+      //_buildRoutes(),
       Expanded(child:
         _buildDepartures(),
       ),
     ]);
   }
 
-  Widget _buildRoutes() {
+  /*Widget _buildRoutes() {
     Widget contentWidget;
     if (_loadingRoutes) {
       contentWidget = Center(child:
@@ -130,7 +141,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
         Expanded(child: contentWidget),
       ],),
     );
-  }
+  }*/
 
   Widget _buildDepartures() {
     if (_loadingDepartures) {
@@ -143,81 +154,26 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> {
       return _buildDeparturesError('No bus schedule available.');
     }
     else {
-      return SingleChildScrollView(scrollDirection: Axis.vertical, child:
-          Column(children: _buildDeparturesList(),)
-        );
+      return ListView.separated(
+        itemBuilder: (context, index) => _buildDeparture(ListUtils.entry(_departures, index)),
+        separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
+        itemCount: _departures?.length ?? 0,
+        padding: EdgeInsets.zero,
+      );
     }
   }
 
-  List<Widget> _buildDeparturesList() {
-    List<Widget> contentList = <Widget>[];
-    if (_departures != null) {
-      for (MTDDeparture departure in _departures!) {
-        contentList.add(_buildDeparture(departure));
-      }
-    }
-    return contentList;
+  Widget _buildDeparture(MTDDeparture? departure) {
+    return (departure != null) ? MTDDepartureCard(departure: departure, onTap: () => _onDeparture(departure),) : Container();
   }
 
-  Widget _buildDeparture(MTDDeparture departure) {
-    
-    String? status;
-    if (departure.isScheduled ?? false) {
-      DateTime? scheduledTime = departure.scheduledTime;
-      String? scheduledTimeString = (scheduledTime != null) ? DateFormat('h:mma').format(scheduledTime).toLowerCase() : null;
-      status = (scheduledTimeString != null) ? 'Scheduled: $scheduledTimeString' : 'Scheduled';
-    }
-    
-    String? expectedTimeString1, expectedTimeString2;
-    int expectedMins = departure.expectedMins ?? -1;
-    if (expectedMins == 0) {
-      expectedTimeString1 = 'Now';
-    }
-    else if (expectedMins == 1) {
-      expectedTimeString1 = '1 min';
-    }
-    else if ((1 < expectedMins) && (expectedMins < 60)) {
-      expectedTimeString1 = '$expectedMins mins';
-    }
-    else {
-      DateTime? expectedTime = departure.expectedTime;
-      expectedTimeString1 = (expectedTime != null) ? DateFormat('h:mm').format(expectedTime) : null;
-      expectedTimeString2 = (expectedTime != null) ? DateFormat('a').format(expectedTime) : null;
-    }
-    
-    return InkWell(onTap: () => _onDeparture(departure), child: Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Styles().colors!.surfaceAccent!, width: 1),),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Padding(padding: EdgeInsets.only(right: 6), child:
-            Image.asset('images/icon-bus-solid.png', color: Styles().colors?.fillColorPrimary,),
-          ),
-          (departure.route != null) ? Padding(padding: EdgeInsets.only(right: 6), child: _buildRoute(departure.route!)) : Container(),
-          Expanded(child:
-            Text(departure.trip?.headsign ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),)
-          ),
-          Text(expectedTimeString1 ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),)
-        ],),
-        Row(children: [
-          Expanded(child:
-            Text(status ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),)
-          ),
-          Text(expectedTimeString2 ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),),
-        ]),
-      ],),
-    ),);
-  }
-
-  Widget _buildRoute(MTDRoute route) {
+  /*Widget _buildRoute(MTDRoute route) {
     return Container(decoration: BoxDecoration(color: route.color, border: Border.all(color: route.textColor ?? Colors.transparent, width: 1), borderRadius: BorderRadius.circular(5)), child:
       Padding(padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2), child:
-        Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 12, color: route.textColor,)),
+        Text(route.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 12, color: route.textColor,)),
       )
     );
-  }
+  }*/
 
   Widget _buildDeparturesLoading() {
     return Row(children: [

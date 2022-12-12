@@ -516,7 +516,10 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
 
     private void buildTravelModes() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String selectedTravelMode = preferences.getString(TRAVEL_MODE_PREFS_KEY, Navigation.TRAVEL_MODE_WALKING);
+        String selectedTravelMode = Utils.Map.getValueFromPath(options, "travelMode", (String)null);
+        if (selectedTravelMode == null) {
+            selectedTravelMode = preferences.getString(TRAVEL_MODE_PREFS_KEY, Navigation.TRAVEL_MODE_WALKING);
+        }
         travelModesMap = new HashMap<>();
         for (String currentTravelMode : TRAVEL_MODES) {
             View travelModeView = null;
@@ -563,7 +566,7 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
         if (originCoord == null || destinationCoord == null) {
             showLoadingFrame(false);
             Log.e(TAG, "buildRoute() -> origin or destination coordinate is null!");
-            String routeFailedMsg = getString(R.string.routeFailedMsg);
+            String routeFailedMsg = String.format(getString(R.string.routeFailedMsg), "");
             showAlert(routeFailedMsg);
             return;
         }
@@ -664,7 +667,7 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
             cameraPosition = googleMap.getCameraPosition();
             navStatus = NavStatus.START;
         } else {
-            String routeFailedMsg = (navRouteError != null) ? navRouteError : getString(R.string.routeFailedMsg);
+            String routeFailedMsg = String.format(getString(R.string.routeFailedMsg), (navRouteError != null) ? navRouteError : "");
             showAlert(routeFailedMsg);
         }
 

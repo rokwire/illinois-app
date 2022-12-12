@@ -104,25 +104,54 @@ extension GroupExt on Group {
     return !(onlyAdminsCanCreatePolls ?? true);
   }
 
+  bool get isResearchProject {
+    return researchProject == true;
+  }
+
   String? get currentUserStatusText {
     Member? member = currentMember;
     if(member?.status != null){
-      return groupMemberStatusToDisplayString(member!.status);
+      return isResearchProject ? researchParticipantStatusToDisplayString(member!.status) : groupMemberStatusToDisplayString(member!.status);
     }
     return "";
   }
-}
 
-Color? groupMemberStatusToColor(GroupMemberStatus? value) {
-  if (value != null) {
-    switch(value){
-      case GroupMemberStatus.admin    :  return Styles().colors!.fillColorSecondary;
-      case GroupMemberStatus.member   :  return Styles().colors!.fillColorPrimary;
-      case GroupMemberStatus.pending  :  return Styles().colors!.mediumGray1;
-      case GroupMemberStatus.rejected :  return Styles().colors!.mediumGray1;
-    }
-  }
-  return null;
+  //Settings
+  //Post
+  bool get isMemberAllowedToPost => /*true ||*//*TMP TODO*//* */(settings?.memberPostPreferences?.allowSendPost == true) && //If all 5 sub checks for posts are set to false by an admin, this is the same as the admin unchecking/false the main section category, in this case "Member Posts"
+      ((settings?.memberPostPreferences?.sendPostToSpecificMembers == true) ||
+          (settings?.memberPostPreferences?.sendPostToAdmins == true) ||
+          (settings?.memberPostPreferences?.sendPostToAll == true) ||
+          (settings?.memberPostPreferences?.sendPostReplies == true) ||
+          (settings?.memberPostPreferences?.sendPostReactions == true)
+      );
+
+  bool get isMemberAllowedToCreatePost => (settings?.memberPostPreferences?.allowSendPost == true) && //If all the above 3 are set to false then a member will not see a + (create) option for posts as they cannot make a post.
+      ((settings?.memberPostPreferences?.sendPostToSpecificMembers == true) ||
+          (settings?.memberPostPreferences?.sendPostToAdmins == true) ||
+          (settings?.memberPostPreferences?.sendPostToAll == true)
+      );
+
+  bool get isMemberAllowedToPostToSpecificMembers =>
+      (settings?.memberPostPreferences?.allowSendPost == true) &&
+      (settings?.memberPostPreferences?.sendPostToSpecificMembers == true);
+
+  bool get isMemberAllowedToReplyToPost =>
+      (settings?.memberPostPreferences?.allowSendPost == true) &&
+          (settings?.memberPostPreferences?.sendPostReplies == true);
+
+  bool get isMemberAllowedToSendReactionsToPost =>
+      (settings?.memberPostPreferences?.allowSendPost == true) &&
+          (settings?.memberPostPreferences?.sendPostReactions == true);
+
+  //Member Info
+  bool get isMemberAllowedToViewMembersInfo => (settings?.memberInfoPreferences?.allowMemberInfo == true) && //If all 5 sub checks for posts are set to false by an admin, this is the same as the admin unchecking/false the main section category, in this case allowMemberInfo/"View Other Members"
+      ((settings?.memberInfoPreferences?.viewMemberNetId == true) ||
+          (settings?.memberInfoPreferences?.viewMemberName == true) ||
+          (settings?.memberInfoPreferences?.viewMemberEmail == true) ||
+          (settings?.memberInfoPreferences?.viewMemberPhone == true)
+      );
+
 }
 
 String? groupMemberStatusToDisplayString(GroupMemberStatus? value) {
@@ -139,6 +168,34 @@ String? groupMemberStatusToDisplayString(GroupMemberStatus? value) {
   }
   return null;
 }
+
+String? researchParticipantStatusToDisplayString(GroupMemberStatus? value) {
+  if (value != null) {
+    if (value == GroupMemberStatus.pending) {
+      return 'Pending';
+    } else if (value == GroupMemberStatus.member) {
+      return 'Participant';
+    } else if (value == GroupMemberStatus.admin) {
+      return 'Principle Investigator';
+    } else if (value == GroupMemberStatus.rejected) {
+      return 'Denied';
+    }
+  }
+  return null;
+}
+
+Color? groupMemberStatusToColor(GroupMemberStatus? value) {
+  if (value != null) {
+    switch(value){
+      case GroupMemberStatus.admin    :  return Styles().colors!.fillColorSecondary;
+      case GroupMemberStatus.member   :  return Styles().colors!.fillColorPrimary;
+      case GroupMemberStatus.pending  :  return Styles().colors!.mediumGray1;
+      case GroupMemberStatus.rejected :  return Styles().colors!.mediumGray1;
+    }
+  }
+  return null;
+}
+
 
 extension GroupPostExt on GroupPost {
   String? get displayDateTime {

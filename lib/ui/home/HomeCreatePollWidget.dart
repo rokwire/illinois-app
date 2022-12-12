@@ -16,7 +16,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -112,8 +111,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
 
   void _onCreatePoll() {
     Analytics().logSelect(target: "Create Poll", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));
-
+    CreatePollPanel.present(context);
   }
 
   bool get _canCreatePoll {

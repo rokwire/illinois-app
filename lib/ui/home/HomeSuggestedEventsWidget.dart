@@ -316,7 +316,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
     if (1 < (_events?.length ?? 0)) {
 
       for (Event event in _events!) {
-        pages.add(Padding(key: _contentKeys[event.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 4), child:
+        pages.add(Padding(key: _contentKeys[event.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
           ExploreCard(explore: event, showTopBorder: true, horizontalPadding: 0, onTap: () => _onTapEvent(event),
         )
         ));
@@ -339,7 +339,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 4), child:
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
         ExploreCard(explore: _events?.first, showTopBorder: true, horizontalPadding: 0, onTap: () => _onTapEvent(_events?.first))
       );
     }

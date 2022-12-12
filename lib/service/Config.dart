@@ -117,7 +117,7 @@ class Config extends rokwire.Config {
   String? get sportsServiceUrl       => JsonUtils.stringValue(platformBuildingBlocks['sports_service_url']);
   String? get transportationUrl      => JsonUtils.stringValue(platformBuildingBlocks["transportation_url"]);
   String? get wellnessUrl            => JsonUtils.stringValue(platformBuildingBlocks["wellness_url"]);
-  String? get appointmentsUrl    => JsonUtils.stringValue(platformBuildingBlocks["appointments_url"]);
+  String? get appointmentsUrl        => JsonUtils.stringValue(platformBuildingBlocks["appointments_url"]);
 
   // Getters: Third Party Services
   String? get instagramHostUrl       => JsonUtils.stringValue(thirdPartyServices['instagram_host_url']);
@@ -197,7 +197,8 @@ class Config extends rokwire.Config {
   bool get allowGroupsAuthmanSync    => JsonUtils.boolValue(settings['allowGroupsAuthmanSync']) ?? false;
   bool get showGroupPostReactions    => JsonUtils.boolValue(settings['showGroupPostReactions']) ?? false;
 
-  String? get symptomSurveyID        => JsonUtils.stringValue(settings['symptom_survey_id']);
+  String? get healthScreenerSurveyID => JsonUtils.stringValue(settings['health_screener_survey_id']);
+  String? get bessiSurveyID          => JsonUtils.stringValue(settings['bessi_survey_id']);
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;

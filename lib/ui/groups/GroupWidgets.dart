@@ -821,7 +821,7 @@ class _GroupCardState extends State<GroupCard> {
   @override
   Widget build(BuildContext context) {
     String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), [StringUtils.ensureNotEmpty((_groupStats?.pendingCount ?? 0).toString())]);
-    String? groupCategory = StringUtils.ensureNotEmpty(widget.group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
+    String groupCategory = _isResearchProject ? '' : StringUtils.ensureNotEmpty(widget.group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
     return GestureDetector(onTap: () => _onTapCard(context), child:
       Padding(padding: widget.margin, child:
         Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
@@ -832,7 +832,7 @@ class _GroupCardState extends State<GroupCard> {
               Row(children:[
                 Expanded(child:
                   Column(children:[
-                    Row(children: [
+                    groupCategory.isNotEmpty ? Row(children: [
                       Expanded(child:
                         Text(groupCategory,
                           overflow: TextOverflow.ellipsis,
@@ -840,11 +840,11 @@ class _GroupCardState extends State<GroupCard> {
                           style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat")
                         )
                       ),
-                    ]),
+                    ]) : Container(),
                     Row(children: [
                       Expanded(child:
                         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style:  Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"))
+                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
                         )
                       )
                     ]),
@@ -996,14 +996,41 @@ class _GroupCardState extends State<GroupCard> {
     ));
   }
 
+  bool get _isResearchProject => widget.group?.researchProject == true;
+
   Widget _buildMembersCount() {
+    String membersLabel;
     int count = _groupStats?.activeMembersCount ?? 0;
-    String membersLabel = (count == 1)
-        ? Localization().getStringEx('widget.group_card.member.label', 'member')
-        : Localization().getStringEx('widget.group_card.members.label', 'members');
-    return Container(
-        child: Text('$count $membersLabel',
-            style: Styles().textStyles?.getTextStyle("widget.card.detail.small_variant")));
+    if (!_isResearchProject) {
+      if (count == 0) {
+        membersLabel = "No members";
+      }
+      else if (count == 1) {
+        membersLabel = "1 member";
+      }
+      else {
+        membersLabel = sprintf("%s members", [count]);
+      }
+    }
+    else if (widget.group?.currentUserIsAdmin ?? false) {
+      if (count == 0) {
+        membersLabel = "No participants";
+      }
+      else if (count == 1) {
+        membersLabel = "1 participant";
+      }
+      else {
+        membersLabel = sprintf("%s participants", [count]);
+      }
+    }
+    else {
+      membersLabel = "";
+    }
+    return Visibility(visible: StringUtils.isNotEmpty(membersLabel), child:
+      Text(membersLabel, style:
+        Styles().textStyles?.getTextStyle("widget.card.detail.small_variant")
+      ),
+    );
   }
 
    void _loadGroupStats() {
@@ -1414,17 +1441,20 @@ class GroupPostReaction extends StatelessWidget {
   final List<String>? accountIDs;
   final String selectedIconKey;
   final String deselectedIconKey;
+  final double iconSize;
+  final bool onTapEnabled;
+  final bool onLongPressEnabled;
 
   GroupPostReaction({required this.groupID, required this.post, required this.reaction,
-    this.accountIDs, required this.selectedIconKey, required this.deselectedIconKey});
+    this.accountIDs, required this.selectedIconKey, required this.deselectedIconKey, this.iconSize = 18, this.onTapEnabled = true, this.onLongPressEnabled = true});
 
   @override
   Widget build(BuildContext context) {
     bool selected = accountIDs?.contains(Auth2().accountId) ?? false;
     return Semantics(button: true, label: reaction,
         child: InkWell(
-            onTap: () => _onTapReaction(groupID, post, reaction),
-            onLongPress: () => _onLongPressReactions(context, accountIDs, groupID),
+            onTap: () => onTapEnabled ? _onTapReaction(groupID, post, reaction) : null,
+            onLongPress: () => onLongPressEnabled ? _onLongPressReactions(context, accountIDs, groupID): null,
             child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -2771,4 +2801,223 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
   void _onTapClose() {
     Navigator.of(context).pop(<Group>[]);
   }
+}
+
+class EnabledToggleButton extends ToggleRibbonButton {
+  final bool? enabled;
+
+  EnabledToggleButton(
+      {String? label,
+        bool? toggled,
+        void Function()? onTap,
+        BoxBorder? border,
+        BorderRadius? borderRadius,
+        TextStyle? textStyle,
+        this.enabled})
+      : super(label: label, toggled: (toggled == true), onTap: onTap, border: border, borderRadius: borderRadius, textStyle: textStyle);
+
+  @override
+  bool get toggled => (enabled == true) && super.toggled;
+
+  @override
+  Widget? get rightIconImage =>Image.asset((toggled) ? 'images/switch-on.png' : 'images/switch-off.png');  //Workaround for blurry images
+}
+
+class GroupMemberSettingsLayout extends StatelessWidget{
+  final GroupSettings? settings;
+  final Function? onChanged;
+
+  const GroupMemberSettingsLayout({Key? key, this.settings, this.onChanged}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: settings!=null?
+        _buildSettingsLayout() :
+        Container(),
+    );
+  }
+
+  Widget _buildSettingsLayout() {
+    List<Widget> preferenceWidgets = [];
+    MemberPostPreferences? groupPostSettings = settings?.memberPostPreferences;
+    MemberInfoPreferences? groupInfoSettings = settings?.memberInfoPreferences;
+
+    bool isGroupPostAllowed = groupPostSettings?.allowSendPost ?? true; // true by default
+    bool isGroupInfoAllowed = groupInfoSettings?.allowMemberInfo ?? true; // true by default
+
+    //Info
+    preferenceWidgets.add(
+        Container(
+          padding: EdgeInsets.all(1),
+          decoration:  BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
+          child: Column(
+            children: [
+              EnabledToggleButton(
+                  enabled: true,
+                  borderRadius: BorderRadius.zero,
+                  label: Localization().getStringEx("panel.groups_create.settings.enable_member_info.label", "View Other Members"),
+                  toggled: isGroupInfoAllowed,
+                  onTap: (){_onSettingsTap(
+                      changeSetting: (){ settings?.memberInfoPreferences?.allowMemberInfo =  !(settings?.memberInfoPreferences?.allowMemberInfo ?? true);}
+                  );},
+                  textStyle: isGroupInfoAllowed
+                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
+                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")),
+              Row(children: [
+                Expanded(
+                    child: Container(
+                        color: Styles().colors!.white,
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Column(children: [
+                              EnabledToggleButton(
+                                  enabled: isGroupInfoAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.settings.allow_info_net_id.label", "View University ID (NetID)"), //TBD localize section
+                                  toggled: (settings?.memberInfoPreferences?.viewMemberNetId ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberNetId = !(settings?.memberInfoPreferences?.viewMemberNetId ?? false);}}
+                                  );},
+                                  textStyle: isGroupInfoAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupInfoAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.settings.allow_view_name.label", "View Name"),
+                                  toggled: (settings?.memberInfoPreferences?.viewMemberName ?? false),
+                                  onTap: (){
+                                    _onSettingsTap(
+                                        changeSetting: (){ if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberName =  !(settings?.memberInfoPreferences?.viewMemberName ?? false);}}
+                                    );},
+                                  textStyle: isGroupInfoAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupInfoAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.settings.allow_view_email.label", "View Email"),
+                                  toggled: (settings?.memberInfoPreferences?.viewMemberEmail ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){  if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberEmail =  !(settings?.memberInfoPreferences?.viewMemberEmail ?? false);}}
+                                  );},
+                                  textStyle: isGroupInfoAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              // EnabledToggleButton(
+                              //     enabled: isGroupInfoAllowed,
+                              //     borderRadius: BorderRadius.zero,
+                              //     label: Localization().getStringEx("panel.groups_create.settings.allow_view_phone.label", "View Phone"),
+                              //     toggled: (settings?.memberInfoPreferences?.viewMemberPhone ?? false),
+                              //     onTap: (){_onSettingsTap(
+                              //         changeSetting: (){ if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberPhone =  !(settings?.memberInfoPreferences?.viewMemberPhone ?? false);}}
+                              //     );},
+                              //     textStyle: isGroupInfoAllowed
+                              //         ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                              //         : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                            ]))))
+              ])
+        ],
+      ),
+    ));
+
+    preferenceWidgets.add(Container(height: 8,));
+    //Post
+    preferenceWidgets.add(Container(
+        padding: EdgeInsets.all(1),
+        decoration:  BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
+        child: Column(
+            children: [
+              EnabledToggleButton(
+                  enabled: true,
+                  borderRadius: BorderRadius.zero,
+                  label: Localization().getStringEx("panel.groups_create.settings.enable_post.label", "Member Posts"),
+                  toggled: isGroupPostAllowed,
+                  onTap: (){_onSettingsTap(
+                      changeSetting: (){settings?.memberPostPreferences?.allowSendPost =  !(settings?.memberPostPreferences?.allowSendPost ?? true);}
+                  );},
+                  textStyle: isGroupPostAllowed
+                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
+                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")),
+              Row(children: [
+                Expanded(
+                    child: Container(
+                        color: Styles().colors!.white,
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Column(children: [
+                              EnabledToggleButton(
+                                  enabled: isGroupPostAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Send posts to specific members"), //TBD localize section
+                                  toggled: (settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToSpecificMembers =  !(settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false);}}
+                                  );},
+                                  textStyle: isGroupPostAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupPostAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_admins.label", "Send posts to admins"),
+                                  toggled: (settings?.memberPostPreferences?.sendPostToAdmins ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAdmins =  !(settings?.memberPostPreferences?.sendPostToAdmins ?? false);}}
+                                  );},
+                                  textStyle: isGroupPostAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupPostAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_all.label", "Send posts to all members"),
+                                  toggled: (settings?.memberPostPreferences?.sendPostToAll ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAll =  !(settings?.memberPostPreferences?.sendPostToAll ?? false);}}
+                                  );},
+                                  textStyle: isGroupPostAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupPostAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.send_replies.label", "Send replies"),
+                                  toggled: (settings?.memberPostPreferences?.sendPostReplies ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReplies =  !(settings?.memberPostPreferences?.sendPostReplies ?? false);}}
+                                  );},
+                                  textStyle: isGroupPostAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupPostAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Reactions (emojis) to posts"),
+                                  toggled: (settings?.memberPostPreferences?.sendPostReactions ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReactions =  !(settings?.memberPostPreferences?.sendPostReactions ?? false);}}
+                                  );},
+                                  textStyle: isGroupPostAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                            ]))))
+                  ])
+    ])));
+
+    preferenceWidgets.add(Container(height: 10,));
+
+    return Container(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: preferenceWidgets));
+  }
+
+  void _onSettingsTap({Function? changeSetting}){
+    if(changeSetting!=null){
+      changeSetting();
+      if(onChanged != null){
+        onChanged!();
+      }
+    }
+  }
+
 }

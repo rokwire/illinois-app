@@ -213,11 +213,14 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       if (tweetsPage.tweets != null) {
         for (Tweet? tweet in tweetsPage.tweets!) {
           bool isFirst = pages.isEmpty;
-          pages.add(_TweetWidget(
-            tweet: tweet,
-            margin: EdgeInsets.only(right: _pageSpacing),
-            onTapPrevious: isFirst? null : _onTapPrevious,
-            onTapNext: _onTapNext,
+          pages.add(Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: _TweetWidget(
+              tweet: tweet,
+              margin: EdgeInsets.only(right: _pageSpacing),
+              onTapPrevious: isFirst? null : _onTapPrevious,
+              onTapNext: _onTapNext,
+            ),
           ));
         }
       }
@@ -651,9 +654,9 @@ class _TweetWidget extends StatelessWidget {
         decoration: BoxDecoration(
             color: Styles().colors!.white,
             boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
+            borderRadius: BorderRadius.all(Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
         ),
-        clipBehavior: Clip.none,
+        clipBehavior: Clip.hardEdge,
         child:
           Column(children: <Widget>[
                 Column(children: [

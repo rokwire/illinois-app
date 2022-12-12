@@ -112,28 +112,28 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
   Widget _buildConnectWidget(){
     return Visibility(
       visible: _showFinishSetupWidget,
-      child: Semantics( container: true,
-        child:Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(height: 40,),
-          Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup", "Finish setup"),
-            style: Styles().textStyles?.getTextStyle("panel.settings.privacy_center.title.medium.fat")
-          ),
-          Container(height: 4,),
-          Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Sign in with your NetID or Telephone number to get the full  {{app_title}} experience.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
-            style: Styles().textStyles?.getTextStyle("panel.settings.privacy_center.title.regular")
-          ),
-          Container(height: 10,),
-          Semantics(explicitChildNodes: true,
-            child: RibbonButton(
-            label: Localization().getStringEx("panel.settings.privacy_center.button.verify_identity.title", "Verify your Identity"),
-            leftIconAsset: "images/user-check.png",
-            borderRadius: BorderRadius.circular(4),
-            borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.15), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
-            onTap: () => _onTapVerifyIdentity(),
-          )),
-        ],
+      child: Semantics(container: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup", "Finish setup"),
+              style: Styles().textStyles?.getTextStyle("panel.settings.privacy_center.title.medium.fat")
+            ),
+            SizedBox(height: 8,),
+            Text(Localization().getStringEx("panel.settings.privacy_center.label.finish_setup_description", "Sign in with your NetID or Telephone number to get the full  {{app_title}} experience.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+              style: Styles().textStyles?.getTextStyle("panel.settings.privacy_center.title.regular")
+            ),
+            SizedBox(height: 16,),
+            Semantics(explicitChildNodes: true,
+              child: RibbonButton(
+              label: Localization().getStringEx("panel.settings.privacy_center.button.verify_identity.title", "Verify your Identity"),
+              leftIconAsset: "images/user-check.png",
+              borderRadius: BorderRadius.circular(4),
+              borderShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.15), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))],
+              onTap: () => _onTapVerifyIdentity(),
+            )),
+            SizedBox(height: 24,),
+          ],
       ),
     ));
   }
@@ -307,7 +307,7 @@ class _SettingsPrivacyCenterContentWidgetState extends State<SettingsPrivacyCent
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description2", "Permanently "),style: TextStyle(fontFamily: Styles().fontFamilies!.bold)),
           TextSpan(text: Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description3", "delete all of your information. You will not be able to retrieve your data after you have deleted it. Are you sure you want to continue?")),
           TextSpan(text: contributeInGroups?
-          Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, and events) or leave them for others to see.") :
+          Localization().getStringEx("panel.settings.privacy_center.label.delete_message.description.groups", " You have contributed to Groups. Do you wish to delete all of those entries (posts, replies, reactions and events) or leave them for others to see.") :
           "")
         ],
         options:contributeInGroups ? [groupsSwitchTitle] : null,

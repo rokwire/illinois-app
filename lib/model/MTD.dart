@@ -1,14 +1,19 @@
+import 'dart:collection';
+import 'dart:math' as math;
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:illinois/model/Location.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 ///////////////////////////
 // MTDStop
 
-class MTDStop {
+class MTDStop with Explore implements Favorite {
   final String? id;
   final String? name;
   final String? code;
@@ -109,11 +114,11 @@ class MTDStop {
     return nearestStop;
   }
 
-  static List<MTDStop>? stopInList(List<MTDStop>? stops, { String? name, LatLng? location, double locationThresholdDistance = 1 /* in meters */ }) {
+  static List<MTDStop>? stopsInList(List<MTDStop>? stops, { String? name, LatLng? location, double locationThresholdDistance = 1 /* in meters */ }) {
     List<MTDStop>? result;
     if (stops != null) {
       for (MTDStop stop in stops) {
-        List<MTDStop>? pointsResult = stopInList(stop.points, name: name, location: location, locationThresholdDistance: locationThresholdDistance);
+        List<MTDStop>? pointsResult = stopsInList(stop.points, name: name, location: location, locationThresholdDistance: locationThresholdDistance);
         if ((pointsResult != null) && pointsResult.isNotEmpty) {
           if (result != null) {
             result.addAll(pointsResult);
@@ -150,6 +155,148 @@ class MTDStop {
     
     return true;
   }
+
+  // List Retrieval
+
+  static List<MTDStop>? stopsInList2(List<MTDStop>? stops, { LinkedHashSet<String>? stopIds }) {
+    if ((stops != null) && (stopIds != null)) {
+      Map<String, MTDStop> stopsMap = <String, MTDStop>{};
+      _mapStops(stopsMap, stops: stops, stopIds: stopIds);
+
+      List<MTDStop> result = <MTDStop>[];
+      if (stopsMap.isNotEmpty) {
+        for (String stopId in stopIds) {
+          MTDStop? stop = stopsMap[stopId];
+          if (stop != null) {
+            result.add(stop);
+          }
+        }
+      }
+      
+      return result;
+    }
+    return null;
+  }
+
+  static void _mapStops(Map<String, MTDStop> stopsMap, { List<MTDStop>? stops, Set<String>? stopIds}) {
+    if ((stops != null) && (stopIds != null)) {
+      for(MTDStop stop in stops) {
+        String? stopId = stop.id;
+        if ((stopId != null) && stopIds.contains(stopId)) {
+          stopsMap[stopId] = stop;
+        }
+        if (stop.points != null) {
+          _mapStops(stopsMap, stops: stop.points, stopIds: stopIds);
+        }
+      }
+    }
+  }
+
+  static MTDStop? stopInList(List<MTDStop>? stops, { String? stopId }) {
+    return _mapStop(stops: stops, stopId: stopId);
+  }
+
+  static MTDStop? _mapStop({ List<MTDStop>? stops, String? stopId}) {
+    if ((stops != null) && (stopId != null)) {
+      for(MTDStop stop in stops) {
+        String? stopEntryId = stop.id;
+        if ((stopEntryId != null) && (stopId == stopEntryId)) {
+          return stop;
+        }
+        if (stop.points != null) {
+          MTDStop? result = _mapStop(stops: stop.points, stopId: stopId);
+          if (result != null) {
+            return result;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  // Center location
+
+  LatLng? get position => ((latitude != null) && (longitude != null)) ? LatLng(latitude: latitude, longitude: longitude) : null;
+
+  LatLng? get anyPosition => position ?? (CollectionUtils.isNotEmpty(points) ? points?.first.anyPosition : null);
+
+  LatLng? get centerPoint {
+    double pi = math.pi / 180;
+    double xpi = 180 / math.pi;
+    double x = 0, y = 0, z = 0;
+    int total = 0;
+    LatLng? position;
+
+    if (points != null) {
+      for (MTDStop stop in points!) {
+        LatLng? stopPosition = stop.position ?? stop.centerPoint;
+        double? stopLatitude = stopPosition?.latitude;
+        double? stopLongitude = stopPosition?.longitude;
+        if ((stopLatitude != null) && (stopLongitude != null)) {
+          double latitude = stopLatitude * pi;
+          double longitude = stopLongitude * pi;
+          double c1 = math.cos(latitude);
+          x = x + c1 * math.cos(longitude);
+          y = y + c1 * math.sin(longitude);
+          z = z + math.sin(latitude);
+          position = stopPosition;
+          total++;
+        }
+      }
+    }
+
+    if (total == 0) {
+      return null;
+    }
+    else if (total == 1) {
+      return position;
+    }
+    else {
+      x = x / total;
+      y = y / total;
+      z = z / total;
+
+      double centralLongitude = math.atan2(y, x);
+      double centralSquareRoot = math.sqrt(x * x + y * y);
+      double centralLatitude = math.atan2(z, centralSquareRoot);
+
+      return LatLng(latitude: centralLatitude * xpi, longitude: centralLongitude * xpi);
+    }
+  }
+
+
+  // ExploreJsonHandler
+
+  static bool canJson(Map<String, dynamic>? json) {
+    return (json != null) &&
+      (json['stop_id'] != null) &&
+      (json['stop_name'] != null) &&
+      (json['code'] != null);
+  }
+
+  bool get hasLocation => (latitude != null) && (longitude != null);
+
+  // Explore implementation
+
+  @override String? get exploreId => id;
+  @override String get exploreTitle => name ?? '';
+  @override String? get exploreSubTitle => code ?? '';
+  @override String? get exploreShortDescription => null;
+  @override String? get exploreLongDescription => null;
+  @override DateTime? get exploreStartDateUtc => null;
+  @override String? get exploreImageURL => null;
+  @override String? get explorePlaceId => null;
+  @override ExploreLocation? get exploreLocation => ExploreLocation(
+    building : name,
+    latitude : latitude,
+    longitude : longitude,
+  );
+  @override String? get exploreLocationDescription => code;
+
+  // Favorite implementation
+  static const String favoriteKeyName = "mtdBusStopIds";
+  @override String get favoriteKey => favoriteKeyName;
+  @override String? get favoriteId => id;
 }
 
 ///////////////////////////
@@ -191,7 +338,7 @@ class MTDStops {
   // Operations
 
   MTDStop? findStop({ String? name, LatLng? location, double locationThresholdDistance = 10 /* in meters */ }) {
-    List<MTDStop>? result = MTDStop.stopInList(stops, name: name, location: location, locationThresholdDistance: locationThresholdDistance);
+    List<MTDStop>? result = MTDStop.stopsInList(stops, name: name, location: location, locationThresholdDistance: locationThresholdDistance);
     if ((result != null) && result.isNotEmpty) {
       MTDStop? nearestStop = (1 < result.length) ? MTDStop.nearestStopInList(result, location: location) : null;
       return nearestStop ?? result.first;

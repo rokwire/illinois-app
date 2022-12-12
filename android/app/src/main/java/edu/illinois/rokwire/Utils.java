@@ -45,11 +45,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -253,6 +251,10 @@ public class Utils {
                         return optLatLng(buildingMap);
                     }
                 }
+            } else if (exploreType == ExploreType.MTD_STOP) {
+                Object latObj = explore.get("stop_lat");
+                Object lngObj = explore.get("stop_lon");
+                return ((latObj instanceof Double) && (lngObj instanceof Double) && (((double)latObj) != 0.0) && (((double)lngObj) != 0.0)) ? new LatLng((double)latObj, (double)lngObj) : null;
             } else {
                 HashMap location = optLocation(explore);
                 return optLatLng(location);
@@ -337,7 +339,7 @@ public class Utils {
             if (markerLocation == null) {
                 return null;
             }
-            String markerTitle = getMarkerTitle(mapMarkerViewType, singleExploreMap, groupExploresJson);
+            String markerTitle = getMarkerTitle(context, mapMarkerViewType, singleExploreMap, groupExploresJson);
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(markerLocation);
             markerOptions.zIndex(1);
@@ -359,7 +361,6 @@ public class Utils {
                 ImageView iconImageView = markerLayoutView.findViewById(R.id.markerIconView);
                 iconImageView.setImageResource(iconResource);
                 iconGenerator.setContentView(markerLayoutView);
-                markerIcon = iconGenerator.makeIcon();
             } else {
                 TextView markerTitleView = markerGroupLayoutView.findViewById(R.id.markerGroupTitleView);
                 markerTitleView.setText(markerTitle);
@@ -374,12 +375,23 @@ public class Utils {
                     gradientDrawable.setColor(ContextCompat.getColor(context, exploreGroupColor));
                 }
                 iconGenerator.setContentView(markerGroupLayoutView);
-                markerIcon = iconGenerator.makeIcon();
             }
+            markerIcon = iconGenerator.makeIcon();
             if (markerIcon != null) {
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(markerIcon));
             }
             return markerOptions;
+        }
+
+        public static boolean shouldUpdateMarkerView(float currentZoom, float previousZoom) {
+            if (currentZoom == previousZoom) {
+                return false;
+            }
+            float minZoom = Math.min(currentZoom, previousZoom);
+            float maxZoom = Math.max(currentZoom, previousZoom);
+            boolean crossedFirstThreshold = ((minZoom <= Constants.FIRST_THRESHOLD_MARKER_ZOOM) && (Constants.FIRST_THRESHOLD_MARKER_ZOOM < maxZoom));
+            boolean crossedSecondThreshold = ((minZoom <= Constants.SECOND_THRESHOLD_MARKER_ZOOM) && (Constants.SECOND_THRESHOLD_MARKER_ZOOM < maxZoom));
+            return crossedFirstThreshold || crossedSecondThreshold;
         }
 
         public static void updateCustomMarkerAppearance(Context context, Marker marker,
@@ -400,10 +412,9 @@ public class Utils {
                     View textFrameView = markerLayoutView.findViewById(R.id.markerTextFrame);
                     textFrameView.setVisibility(textVisibility);
                     if (passedFirstThreshold) {
-                        String shortTitle = Utils.Explore.optExploreMarkerShortTitle(marker);
                         TextView markerTitleView = markerLayoutView.findViewById(R.id.markerTitleView);
                         String markerTitle = marker.getTitle();
-                        markerTitleView.setText(shortTitle != null ? shortTitle : markerTitle);
+                        markerTitleView.setText(markerTitle);
                         TextView markerSnippetView = markerLayoutView.findViewById(R.id.markerSnippetView);
                         markerSnippetView.setVisibility(GONE);
                     }
@@ -425,8 +436,7 @@ public class Utils {
                 if (singleExploreMarker) {
                     TextView markerTitleView = markerLayoutView.findViewById(R.id.markerTitleView);
                     String markerTitle = marker.getTitle();
-                    String shortTitle = Utils.Explore.optExploreMarkerShortTitle(marker);
-                    markerTitleView.setText(passedSecondThreshold ? markerTitle : shortTitle);
+                    markerTitleView.setText(markerTitle);
                     TextView markerSnippetView = markerLayoutView.findViewById(R.id.markerSnippetView);
                     String snippetText = marker.getSnippet();
                     boolean showSnippet = !Utils.Str.isEmpty(snippetText) && passedSecondThreshold;
@@ -458,12 +468,9 @@ public class Utils {
 
         public static JSONObject constructMarkerTagJson(Context context, String markerTitle, Object markerRawData) {
             boolean singleExploreMarker = (markerRawData instanceof HashMap);
-            String shortTitle = (markerTitle != null && markerTitle.length() > Constants.MARKER_TITLE_MAX_SYMBOLS_NUMBER) ?
-                    String.format("%s...", markerTitle.substring(0, 15)) : markerTitle;
             JSONObject markerTagJson = new JSONObject();
             try {
                 markerTagJson.put("title", markerTitle);
-                markerTagJson.put("short_title", shortTitle);
                 markerTagJson.put("raw_data", markerRawData);
                 markerTagJson.put("single_explore", singleExploreMarker);
                 if (!singleExploreMarker) {
@@ -479,11 +486,6 @@ public class Utils {
         public static Object optExploreMarkerRawData(Marker marker) {
             JSONObject markerTagJson = optMarkerTagJson(marker);
             return (markerTagJson != null) ? markerTagJson.opt("raw_data") : null;
-        }
-
-        private static String optExploreMarkerShortTitle(Marker marker) {
-            JSONObject markerTagJson = optMarkerTagJson(marker);
-            return (markerTagJson != null) ? markerTagJson.optString("short_title", null) : null;
         }
 
         private static String optExploreMarkerDescrLabel(Marker marker) {
@@ -529,8 +531,12 @@ public class Utils {
                 return ExploreType.BUILDING;
             } else if (singleExplore.get("coursetitle") != null) {
                 return ExploreType.STUDENT_COURSE;
-            } else if (singleExplore.get("source_id") != null) {
+            } else if ((singleExplore.get("id") != null) && (singleExplore.get("date_time") != null) && (singleExplore.get("type") != null)) {
                 return ExploreType.APPOINTMENT;
+            } else if (singleExplore.get("stop_id") != null) {
+                return ExploreType.MTD_STOP;
+            } else if (singleExplore.containsKey("placeId")) {
+                return ExploreType.POI;
             } else {
                 return ExploreType.UNKNOWN;
             }
@@ -568,6 +574,10 @@ public class Utils {
                 case DINING:
                     colorResource = R.color.mongo;
                     break;
+                case MTD_STOP:
+                case POI:
+                    colorResource = R.color.darkBlueGrey;
+                    break;
                 default:
                     colorResource = R.color.teal;
                     break;
@@ -575,25 +585,32 @@ public class Utils {
             return colorResource;
         }
 
-        private static String getMarkerTitle(MapMarkerViewType mapMarkerViewType, HashMap singleExploreMap, ArrayList groupExploresList) {
-            String markerTitle;
+        private static String getMarkerTitle(Context context, MapMarkerViewType mapMarkerViewType, HashMap singleExploreMap, ArrayList groupExploresList) {
             if (mapMarkerViewType == MapMarkerViewType.SINGLE) {
+                Object markerTitle;
                 ExploreType exporeType = getExploreType(singleExploreMap);
                 if (exporeType == ExploreType.PARKING) {
                     // Json Example:
                     // {"lot_id":"647b7211-9cdf-412b-a682-1fdb68897f86","lot_name":"SFC - E-14 Lot - Illinois","lot_address1":"1800 S. First Street, Champaign, IL 61820","total_spots":"1710","entrance":{"latitude":40.096691,"longitude":-88.238179},"polygon":[{"latitude":40.097938,"longitude":-88.241409},{"latitude":40.09793,"longitude":-88.238657},{"latitude":40.094742,"longitude":-88.238651},{"latitude":40.094733,"longitude":-88.240223},{"latitude":40.095148,"longitude":-88.240245},{"latitude":40.095181,"longitude":-88.24113},{"latitude":40.095636,"longitude":-88.241135},{"latitude":40.095636,"longitude":-88.241393}],"spots_sold":0,"spots_pre_sold":0}
-                    markerTitle = (String) singleExploreMap.get("lot_name");
+                    markerTitle = singleExploreMap.get("lot_name");
                 } else if (exporeType == ExploreType.BUILDING) {
-                    markerTitle = (String) singleExploreMap.get("name");
+                    markerTitle = singleExploreMap.get("name");
                 } else if (exporeType == ExploreType.STUDENT_COURSE) {
-                    markerTitle = (String) singleExploreMap.get("coursetitle");
+                    markerTitle = singleExploreMap.get("coursetitle");
+                } else if (exporeType == ExploreType.MTD_STOP) {
+                    markerTitle = singleExploreMap.get("stop_name");
+                } else if (exporeType == ExploreType.POI) {
+                    markerTitle = singleExploreMap.get("name");
+                    if (markerTitle == null) {
+                        markerTitle = context.getString(R.string.location);
+                    }
                 } else {
-                    markerTitle = (String) singleExploreMap.get("title");
+                    markerTitle = singleExploreMap.get("title");
                 }
+                return (markerTitle instanceof String) ? ((String)markerTitle) : null;
             } else {
-                markerTitle = String.valueOf(groupExploresList.size());
+                return String.valueOf(groupExploresList.size());
             }
-            return markerTitle;
         }
 
         private static String getMarkerSnippet(Context context, HashMap exploreMap) {
@@ -614,6 +631,17 @@ public class Utils {
             }
             else if (exporeType == ExploreType.BUILDING) {
                 return (String) exploreMap.get("address1");
+            }
+            else if (exporeType == ExploreType.MTD_STOP) {
+                return (String) exploreMap.get("code");
+            }
+            else if (exporeType == ExploreType.POI) {
+                HashMap locationMap = optLocation(exploreMap); 
+                if (locationMap != null) {
+                    double latitude = Utils.Map.getValueFromPath(locationMap, "latitude", 0.0d);
+                    double longitude = Utils.Map.getValueFromPath(locationMap, "longitude", 0.0d);
+                    return ((latitude != 0.0d) && (longitude != 0.0d)) ? String.format(Locale.getDefault(), "%.6f, %.6f", latitude, longitude) : null;
+                }
             }
             else if (exporeType == ExploreType.STUDENT_COURSE) {
                 String result = "";
@@ -687,6 +715,12 @@ public class Utils {
                         break;
                     case APPOINTMENT:
                         typeSuffix = context.getString(R.string.appointments);
+                        break;
+                    case MTD_STOP:
+                        typeSuffix = context.getString(R.string.mtd_stops);
+                        break;
+                    case POI:
+                        typeSuffix = context.getString(R.string.locations);
                         break;
                     default:
                         typeSuffix = context.getString(R.string.explores);
@@ -1024,6 +1058,6 @@ public class Utils {
     }
 
     public enum ExploreType {
-        EVENT, DINING, LAUNDRY, PARKING, BUILDING, STUDENT_COURSE, APPOINTMENT, UNKNOWN
+        EVENT, DINING, LAUNDRY, PARKING, BUILDING, MTD_STOP, STUDENT_COURSE, APPOINTMENT, POI, UNKNOWN
     }
 }
