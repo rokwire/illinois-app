@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/model/group.dart';
+import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -26,22 +27,20 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ext/Group.dart';
 
-enum _DetailTab { Name, Uin, Email}
-
 class GroupMembersSelectionPanel extends StatefulWidget {
   final String? groupId;
   final GroupPrivacy? groupPrivacy;
   final List<Member>? selectedMembers;
   final List<Member>? allMembers;
 
-  GroupMembersSelectionPanel({this.selectedMembers, this.allMembers, this.groupId, this.groupPrivacy});
+  GroupMembersSelectionPanel({this.selectedMembers, this.allMembers, this.groupPrivacy, this.groupId});
 
   @override
   _GroupMembersSelectionState createState() => _GroupMembersSelectionState();
 }
 
 class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
-
+  Group? _group;
   List<Member>? _allMembers;
   List<Member>? _selectedMembers;
 
@@ -50,11 +49,10 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
 
   bool _loading = false;
 
-  _DetailTab _currentTab = _DetailTab.Name;
-
   @override
   void initState() {
     super.initState();
+    _initGroup();
     _initMembers();
   }
 
@@ -121,7 +119,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                           ),
                         )
                     ),
-                    _buildTabs(),
+
                     Padding(padding: EdgeInsets.symmetric(horizontal: 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                       Padding(padding: EdgeInsets.only(top: 12), child: _buildSearchWidget()),
                       Visibility(visible: _searchView, child: Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Text(Localization().getStringEx('panel.group.members.list.search.label', "SEARCH")))),
@@ -147,11 +145,23 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
     ));
   }
 
-  void _initMembers() {
+  void _initGroup(){
     _setLoading(true);
+    Groups().loadGroup(widget.groupId).then((group) {
+        _group = group;
+        if(mounted){
+          setState(() {
+            _setLoading(false);
+          });
+        }
+    });
+  }
+
+  void _initMembers() {
+    // _setLoading(true);
     _selectedMembers = CollectionUtils.isNotEmpty(widget.selectedMembers) ? List.from(widget.selectedMembers!) : [];
     _allMembers = CollectionUtils.isNotEmpty(widget.allMembers) ? List.from(widget.allMembers!) : [];
-    _setLoading(false);
+    // _setLoading(false);
   }
 
   Widget _buildMembersWidget(List<Member>? members) {
@@ -174,61 +184,6 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
               borderRadius: BorderRadius.circular(15),
             ),
             child: Column(children: memberWidgets)));
-  }
-
-  Widget _buildTabs() {
-    List<Widget> tabs = [];
-    // Show uin and email for private groups. Show only name if the group is public
-    List<_DetailTab> visibleTabs = (widget.groupPrivacy == GroupPrivacy.private) ? _DetailTab.values : [_DetailTab.Name];
-    for (_DetailTab tab in visibleTabs) {
-      String title;
-      switch (tab) {
-        case _DetailTab.Name:
-          title = Localization().getStringEx("panel.group.members.button.events.title", 'Name');
-          break;
-        case _DetailTab.Uin:
-          title = Localization().getStringEx("panel.group.members.button.posts.title", 'UIN');
-          break;
-        case _DetailTab.Email:
-          title = Localization().getStringEx("panel.group.members.button.polls.title", 'Email');
-          break;
-      }
-      bool isSelected = (_currentTab == tab);
-
-      if (0 < tabs.length) {
-        tabs.add(Padding(
-          padding: EdgeInsets.only(left: 6),
-          child: Container(),
-        ));
-      }
-
-      Widget tabWidget = RoundedButton(
-          label: title,
-          backgroundColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.background,
-          textColor: (isSelected ? Colors.white : Styles().colors!.fillColorPrimary),
-          fontFamily: isSelected ? Styles().fontFamilies!.bold : Styles().fontFamilies!.regular,
-          fontSize: 16,
-          contentWeight: 0.0,
-          borderColor: isSelected ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-          borderWidth: 1,
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-          onTap: () => _onTab(tab));
-
-      tabs.add(tabWidget);
-    }
-
-    return
-      Row(
-        children: [
-          Expanded(
-            child:
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-              color: Colors.white,
-              child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: tabs))
-            )
-          )
-        ]);
   }
 
   bool _isMemberSelected(Member member) {
@@ -260,7 +215,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
     List<List<Member>>? groupMemberSelection = widget.groupId!=null? selectionsTable[widget.groupId] : null;
     if(groupMemberSelection == null){
       groupMemberSelection = [];
-      selectionsTable[widget.groupId!] = groupMemberSelection;
+      selectionsTable[(widget.groupId)!] = groupMemberSelection;
     }
 
     if(_selectedMembers!=null && widget.groupId!=null) {
@@ -288,66 +243,74 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
   }
 
   Widget _buildSearchWidget() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 0),
-      color: Styles().colors!.surface,
-      height: 48,
-      child: Row(
-        children: <Widget>[
-          Flexible(
-            child: Semantics(
-                label: Localization().getStringEx("panel.group.members.search.field.label", "Search for Members"),
-                hint: Localization().getStringEx("panel.group.members.search.field.hint", "type the Member you are looking for"),
-                textField: true,
+    return
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+              padding: EdgeInsets.symmetric(vertical: 2),
+              child: Text(Localization().getStringEx("panel.group.members.list.search.description","Search for a particular member:"),style: Styles().textStyles?.getTextStyle("widget.message.regular.fat"),)), //TBD localize
+          Container(
+          padding: EdgeInsets.symmetric(horizontal: 0),
+          color: Styles().colors!.surface,
+          height: 48,
+          child: Row(
+            children: <Widget>[
+              Flexible(
+                child: Semantics(
+                    label: Localization().getStringEx("panel.group.members.search.field.label", "Search for Members"),
+                    hint: Localization().getStringEx("panel.group.members.search.field.hint", "type the Member you are looking for"),
+                    textField: true,
+                    excludeSemantics: true,
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: (text) => _onTextChanged(text),
+                      onSubmitted: (_) => () {},
+                      cursorColor: Styles().colors!.fillColorSecondary,
+                      keyboardType: TextInputType.text,
+                      style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
+                      decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)))
+                    )),
+              ),
+              Semantics(
+                label: Localization().getStringEx("panel.group.members.search.cancel.label", "Cancel"),
+                hint: Localization().getStringEx("panel.group.members.search.cancel.hint", "clear the search filter"),
+                button: true,
                 excludeSemantics: true,
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (text) => _onTextChanged(text),
-                  onSubmitted: (_) => () {},
-                  cursorColor: Styles().colors!.fillColorSecondary,
-                  keyboardType: TextInputType.text,
-                  style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
-                  decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0)))
-                )),
-          ),
-          Semantics(
-            label: Localization().getStringEx("panel.group.members.search.cancel.label", "Cancel"),
-            hint: Localization().getStringEx("panel.group.members.search.cancel.hint", "clear the search filter"),
-            button: true,
-            excludeSemantics: true,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14),
-              child: GestureDetector(
-                onTap: () {
-                  _onTapCancelSearch();
-                },
-                child: Image.asset(
-                  'images/icon-x-orange.png',
-                  width: 25,
-                  height: 25,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14),
+                  child: GestureDetector(
+                    onTap: () {
+                      _onTapCancelSearch();
+                    },
+                    child: Image.asset(
+                      'images/icon-x-orange.png',
+                      width: 25,
+                      height: 25,
+                    ),
+                  ),
                 ),
               ),
-            ),
+              Semantics(
+                  label: Localization().getStringEx("panel.group.members.search.button.title", "Search"),
+                  hint: Localization().getStringEx("panel.group.members.search.button.hint", "filter Members"),
+                  button: true,
+                  excludeSemantics: true,
+                  child: GestureDetector(
+                    onTap: () {
+                      _onSearchTap();
+                    },
+                    child: Image.asset(
+                      'images/icon-search.png',
+                      color: Styles().colors!.fillColorSecondary,
+                      width: 25,
+                      height: 25,
+                    ),
+                  ))
+            ],
           ),
-          Semantics(
-              label: Localization().getStringEx("panel.group.members.search.button.title", "Search"),
-              hint: Localization().getStringEx("panel.group.members.search.button.hint", "filter Members"),
-              button: true,
-              excludeSemantics: true,
-              child: GestureDetector(
-                onTap: () {
-                  _onSearchTap();
-                },
-                child: Image.asset(
-                  'images/icon-search.png',
-                  color: Styles().colors!.fillColorSecondary,
-                  width: 25,
-                  height: 25,
-                ),
-              ))
-        ],
-      ),
-    );
+        )
+      ],);
   }
 
   void _onTextChanged(text) {
@@ -371,15 +334,6 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
     });
   }
 
-  void _onTab(_DetailTab tab) {
-    Analytics().logSelect(target: "Tab: $tab");
-    if (_currentTab != tab) {
-      setState(() {
-        _currentTab = tab;
-      });
-    }
-  }
-
   List<Member>? _filterMembers(String key) {
     if (StringUtils.isEmpty(key)) {
       return _allMembers;
@@ -391,19 +345,20 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
 
   String _getMemberDisplayData(Member member){
     String? result = "";
-    switch(_currentTab){
 
-      case _DetailTab.Name:
-         result = member.name;
-         break;
-      case _DetailTab.Uin:
-        result = member.externalId;
-        break;
-      case _DetailTab.Email:
-        result = member.email;
-        break;
+    if(_allowSnowName && StringUtils.isNotEmpty(member.name)) {
+      result += member.name ?? "";
     }
-    return result ?? "";
+    if(_allowSnowEmail && StringUtils.isNotEmpty(member.email)){
+      result += StringUtils.isNotEmpty(result) ? "\r\n" : "";
+      result += member.email ?? "";
+    }
+    if(_allowSnowID && StringUtils.isNotEmpty(member.externalId)) {//TBD NetID
+      result += StringUtils.isNotEmpty(result) ? "\r\n" : "";
+      result += member.externalId ?? ""; //TBD NetID
+    }
+
+    return result;
   }
 
   void _hideKeyboard() {
@@ -418,6 +373,38 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
     }
   }
 
+  bool get _allowSnowName{
+    if(_group == null){
+      return false;
+    }
+    MemberInfoPreferences? infoPref = _group?.settings?.memberInfoPreferences;
+
+    return _group!.currentUserIsAdmin ||
+        (infoPref?.allowMemberInfo == true &&
+        infoPref?.viewMemberName == true);
+  }
+
+  bool get _allowSnowEmail{
+    if(_group == null){
+      return false;
+    }
+    MemberInfoPreferences? infoPref = _group?.settings?.memberInfoPreferences;
+
+    return _group!.currentUserIsAdmin ||
+        (infoPref?.allowMemberInfo == true &&
+            infoPref?.viewMemberEmail == true);
+  }
+
+  bool get _allowSnowID{
+    if(_group == null){
+      return false;
+    }
+    MemberInfoPreferences? infoPref = _group?.settings?.memberInfoPreferences;
+
+    return _group!.currentUserIsAdmin ||
+        (infoPref?.allowMemberInfo == true &&
+            infoPref?.viewMemberNetId == true);
+  }
   //Utils TBD better way is to create class MemberSelection which will override == properly
   bool _memberSelectionsContainsSelection(List<List<Member>> collection, List<Member> item){
     return collection.any(
