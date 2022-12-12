@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Introduce Surveys BB [#2703](https://github.com/rokwire/illinois-app/issues/2703).
 - Hide "Allow repeat votes" from Create Poll panels [#2686](https://github.com/rokwire/illinois-app/issues/2686).
+- Update Group Member Selection Panel [#2708](https://github.com/rokwire/illinois-app/issues/2708).
 
 ### Fixed
 - Style definition for wellness to-do item card [#2702](https://github.com/rokwire/illinois-app/issues/2702).
