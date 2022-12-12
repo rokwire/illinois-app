@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Style definition for wellness to-do item card [#2702](https://github.com/rokwire/illinois-app/issues/2702).
 - Show MyMcKinley appointments in home panel based on the user favorites [#2702](https://github.com/rokwire/illinois-app/issues/2702).
 - Check for login status before presenting create poll panel [#2705](https://github.com/rokwire/illinois-app/issues/2705).
+- Fixed groups sort order inconsistency [#2716](https://github.com/rokwire/illinois-app/issues/2716).
 ### Added
 - Added delete functionality for poll options in create poll panel [#2085](https://github.com/rokwire/illinois-app/issues/2085).
 
