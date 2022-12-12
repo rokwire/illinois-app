@@ -2013,7 +2013,7 @@
     "panel.group_detail.button.create_event.title":  "Create event",
     "panel.group_detail.button.all_posts.title": "See more",
     "panel.group_detail.button.show_older.title": "Show older",
-    "panel.group_detail.label.posts": "Posts",
+    "panel.group_detail.label.posts": "Posts and Direct Messages",
     "panel.group_detail.label.about_us":  "About us",
     "panel.group_detail.label.title.public":  "This is a Public Group",
     "panel.group_detail.label.description.public":  "\u2022 Only admins can see members.\n\u2022 Only members can see posts.\n\u2022 All users can see group events, unless they are marked private.\n\u2022 All users can see admins.",
