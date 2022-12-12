@@ -23,6 +23,7 @@ import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
@@ -235,7 +236,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   void _loadResults() {
-    Polls().loadSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
+    Surveys().loadSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
       _responses.clear();
       if (CollectionUtils.isNotEmpty(responses)) {
         responses!.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
@@ -331,7 +332,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
 
   void _onTapConfirmDeleteScores() {
     Navigator.of(context).pop();
-    Polls().deleteSurveyResponses(surveyTypes: ["bessi"]).then((success) {
+    Surveys().deleteSurveyResponses(surveyTypes: ["bessi"]).then((success) {
       if (success && mounted) {
         _loadResults();
       }

@@ -19,13 +19,12 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
-import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:rokwire_plugin/model/survey.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/service/polls.dart' as polls;
+import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/panels/survey_panel.dart';
 import 'package:rokwire_plugin/ui/widget_builders/scroll_pager.dart';
 import 'package:rokwire_plugin/ui/widget_builders/survey.dart';
@@ -67,7 +66,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
     super.initState();
     NotificationService().subscribe(this, [
-      polls.Polls.notifySurveyResponseCreated,
+      Surveys.notifySurveyResponseCreated,
       FlexUI.notifyChanged
     ]);
   }
@@ -288,7 +287,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   Future<int> _loadPage({required int offset, required int limit}) async {
-    List<SurveyResponse>? responses = await Polls().loadSurveyResponses(surveyTypes: _selectedSurveyTypes,
+    List<SurveyResponse>? responses = await Surveys().loadSurveyResponses(surveyTypes: _selectedSurveyTypes,
         startDate: _selectedStartDate, limit: limit, offset: offset);
     if (responses != null) {
       setState(() {
@@ -317,7 +316,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
 
   @override
   void onNotification(String name, param) {
-    if (name == polls.Polls.notifySurveyResponseCreated) {
+    if (name == Surveys.notifySurveyResponseCreated) {
       _refreshHistory();
     } else if (name == FlexUI.notifyChanged) {
       setState(() {
