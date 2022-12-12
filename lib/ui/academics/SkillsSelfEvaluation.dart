@@ -44,6 +44,7 @@ class SkillsSelfEvaluation extends StatefulWidget {
 
 class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements NotificationsListener {
   Map<String, SkillsSelfEvaluationContent> _infoContentItems = {};
+  bool _accessDialogShown = false;
 
   @override
   void initState() {
@@ -199,7 +200,9 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
 
   void _onTapStartEvaluation() {
     Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation');
-    if (Config().bessiSurveyID != null && result == null) {
+    if (result != null) {
+      _accessDialogShown = true;
+    } else if (Config().bessiSurveyID != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget(), tabBar: uiuc.TabBar())));
     }
   }
@@ -258,7 +261,13 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
     if (name == Storage.notifySettingChanged && param == Storage().assessmentsEnableSaveKey && mounted) {
       setState(() {});
     } else if (name == FlexUI.notifyChanged) {
-      setState(() {});
+      if (_accessDialogShown && AccessDialog.mayAccessResource('academics.skills_self_evaluation')) {
+        Navigator.popUntil(context, (route) {
+          return route.settings.name == AccessDialog.routeName;
+        });
+        Navigator.pop(context);
+        _accessDialogShown = false;
+      }
     }
   }
 }

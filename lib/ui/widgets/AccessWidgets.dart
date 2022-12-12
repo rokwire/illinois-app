@@ -29,7 +29,9 @@ class AccessCard extends StatefulWidget {
 
   const AccessCard({required this.resource,});
 
-  static AccessCard? builder({required String resource}) => JsonUtils.stringListValue(FlexUI()[resource])?.contains('may_access') == true ? null : AccessCard(resource: resource);
+  static AccessCard? builder({required String resource}) => mayAccessResource(resource) ? null : AccessCard(resource: resource);
+
+  static bool mayAccessResource(String resource) => JsonUtils.stringListValue(FlexUI()[resource])?.contains('may_access') == true;
 
   @override
   _AccessCardState createState() => _AccessCardState();
@@ -54,11 +56,21 @@ class _AccessCardState extends State<AccessCard> implements NotificationsListene
   @override
   Widget build(BuildContext context) {
     return Padding(padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0), child:
-      Container(padding: EdgeInsets.all(16),
+      Container(
         decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
-        child: _AccessContent(
-          resource: widget.resource,
-        )
+        child: Column(children: <Widget>[
+          Row(children: <Widget>[
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16), child:
+                Text(
+                  Localization().getStringEx('widget.access.dialog.title', 'You may not access ') + Localization().getStringEx('widget.access.${widget.resource}.name', widget.resource),
+                  style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), semanticsLabel: '',
+                )
+              ),
+            )
+          ]),
+          _AccessContent(resource: widget.resource,),
+        ])
       )
     );
   }
@@ -74,6 +86,7 @@ class _AccessCardState extends State<AccessCard> implements NotificationsListene
 }
 
 class AccessDialog extends StatefulWidget {
+  static final String routeName = 'access_widget';
   final String resource;
 
   const AccessDialog({required this.resource,});
@@ -86,13 +99,16 @@ class AccessDialog extends StatefulWidget {
     required BuildContext context,
 
     bool barrierDismissible = true,
-  }) => JsonUtils.stringListValue(FlexUI()[resource])?.contains('may_access') == true ? null : showDialog(
+  }) => mayAccessResource(resource) ? null : showDialog(
     context: context,
     barrierDismissible: barrierDismissible,
+    routeSettings: RouteSettings(name: routeName),
     builder: (BuildContext context) => AccessDialog(
       resource: resource,
     )
   );
+
+  static bool mayAccessResource(String resource) => JsonUtils.stringListValue(FlexUI()[resource])?.contains('may_access') == true;
 }
 
 class _AccessDialogState extends State<AccessDialog> implements NotificationsListener {
@@ -114,7 +130,7 @@ class _AccessDialogState extends State<AccessDialog> implements NotificationsLis
   @override
   Widget build(BuildContext context) {
     return ActionsMessage(
-      title: Localization().getStringEx('widget.access.dialog.title', 'You may not access ') + widget.resource, //TODO: change resource string to be more readable
+      title: Localization().getStringEx('widget.access.dialog.title', 'You may not access ') + Localization().getStringEx('widget.access.${widget.resource}.name', widget.resource),
       titleTextStyle: Styles().textStyles?.getTextStyle('widget.heading.regular.fat'),
       titleBarColor: Styles().colors?.fillColorPrimary,
       bodyWidget: _AccessContent(resource: widget.resource),
@@ -149,19 +165,17 @@ class _AccessContent extends StatelessWidget {
         if (message.isNotEmpty) {
           message += '\n';
         }
-        //TODO: need to find a way to convert flex ui rule values into readable strings
-        //TODO: check privacy level against privacy.connect for signin
-        message += '$stepNum. ' + Localization().getStringEx('widget.access.$ruleType.unsatisfied.message', 'You must meet the following $ruleType condition: ') + (JsonUtils.encode(unsatisfiedRules[ruleType]) ?? '');
+        message += '$stepNum. ' + Localization().getStringEx('widget.access.$resource.$ruleType.unsatisfied.message', Localization().getStringEx('widget.access.$ruleType.unsatisfied.message', 'You must meet the following $ruleType condition: ') + (JsonUtils.encode(unsatisfiedRules[ruleType]) ?? ''));
         stepNum++;
 
         if (ruleType != 'roles') {
-          button ??= RoundedButton(
+          button ??= Padding(padding: const EdgeInsets.only(top: 16), child: RoundedButton(
             label: Localization().getStringEx('widget.access.$ruleType.unsatisfied.button.label', 'Update'),
             borderColor: Styles().colors?.fillColorSecondary,
             backgroundColor: Styles().colors?.surface,
             textStyle: Styles().textStyles?.getTextStyle('widget.detail.large.fat'),
             onTap: () => _onTapUpdateButton(context, ruleType),
-          );
+          ));
         } else {
           break;
         }
@@ -170,15 +184,13 @@ class _AccessContent extends StatelessWidget {
 
     List<Widget> content = [
       Row(children: [Expanded(child:
-        Padding(padding: EdgeInsets.only(bottom: 8), child:
-          Text(message, style: Styles().textStyles?.getTextStyle('widget.description.regular'), semanticsLabel: '',)
-        ),
+        Text(message, style: Styles().textStyles?.getTextStyle('widget.description.regular'), semanticsLabel: '',)
       )])
     ];
     if (button != null) {
       content.add(button);
     }
-    return Column(children: content);
+    return Padding(padding: const EdgeInsets.all(16), child: Column(children: content));
   }
 
   void _onTapUpdateButton(BuildContext context, String ruleType) {

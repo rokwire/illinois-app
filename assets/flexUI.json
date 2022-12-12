@@ -137,9 +137,7 @@
 				"features.notifications"          : 4,
 				"features.payment_information"    : 4,
 				"features.authentication"         : 4,
-				"features.sharing"                : 5,
-				
-				"academics.skills_self_evaluation.may_access": 4
+				"features.sharing"                : 5
 			},
 			"auth": {
 				"connect"                             : { "loggedIn": false },

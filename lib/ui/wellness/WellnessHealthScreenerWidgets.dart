@@ -16,7 +16,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -86,9 +85,8 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         HomeSlantWidget(
-          title: accessWidget != null ? Localization().getStringEx('widget.access.dailog.title', 'You may not access ') + 'the Illinois Health Screener' :
-            Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Screener'),
-          titleIcon: Image.asset(accessWidget != null ? 'images/icon-info-orange.png' : 'images/campus-tools.png', excludeFromSemantics: true,),
+          title: Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Screener'),
+          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
           childPadding: HomeSlantWidget.defaultChildPadding,
           child: accessWidget ?? _buildHealthScreenerSectionWidget(),
         ),
@@ -132,32 +130,6 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
         child: content
       ),
     );
-
-    // if (Auth2().isOidcLoggedIn) {
-    //   if (canTakeScreener) {
-        
-    //   } else {
-    //     content = Text(
-    //       Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.invalid_role.title',
-    //           'The Illinois Health Screener is currently only available to students'),
-    //       style: Styles().textStyles?.getTextStyle('widget.title.large.fat'),
-    //     );
-    //   }
-      
-    // }
-    // else {
-    //   //TODO: Build standardized widget for logged out warning and actions
-    //   content = HomeMessageCard(
-    //     title: Localization().getStringEx("common.message.logged_out", "You are not logged in"),
-    //     message: Localization().getStringEx("panel.wellness.sections.health_screener.label.screener.logged_out.text", "You need to be logged in with your NetID to access the Illinois Health Screener."),);
-    // }
-
-    // return HomeSlantWidget(
-    //   title: Localization().getStringEx('panel.wellness.sections.health_screener.label.screener.title', 'Screener'),
-    //   titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
-    //   childPadding: HomeSlantWidget.defaultChildPadding,
-    //   child: content
-    // );
   }
 
   Widget _buildHistorySectionWidget() {

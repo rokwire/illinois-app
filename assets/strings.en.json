@@ -3072,6 +3072,11 @@
     "widget.access.privacy.unsatisfied.button.label": "Update privacy level",
     "widget.access.auth.unsatisfied.button.label": "Sign in",
     "widget.access.dialog.title": "You may not access ",
+    "widget.access.academics.skills_self_evaluation.name": "Skills Self-Evaluation",
+    "widget.access.academics.skills_self_evaluation.auth.unsatisfied.message": "Sign in with your NetID",
+    "widget.access.wellness.health_screener.name": "Illinois Health Screener",
+    "widget.access.wellness.health_screener.roles.unsatisfied.message": "You must be a student",
+    "widget.access.wellness.health_screener.auth.unsatisfied.message": "Sign in with your NetID",
 
     "model.group.updated.now": "Updated now",
     "model.group.updated.minute": "Updated about a minute ago",
