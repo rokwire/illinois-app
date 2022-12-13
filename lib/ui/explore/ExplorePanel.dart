@@ -1819,7 +1819,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses');
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.title', 'MyMcKinley In-Person Appointments');
-      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Bus');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Stops');
       case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.button.mtd_destinations.title', 'MTD Destinations');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
@@ -1849,7 +1849,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.header.buildings.title', 'Campus Buildings');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.header.student_course.title', 'My Courses');
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.header.appointments.title', 'MyMcKinley In-Person Appointments');
-      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.header.mtd_stops.title', 'MTD Bus');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.header.mtd_stops.title', 'MTD Stops');
       case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.header.mtd_destinations.title', 'MTD Destinations');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
