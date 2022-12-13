@@ -576,7 +576,7 @@ public class Utils {
                     break;
                 case MTD_STOP:
                 case POI:
-                    colorResource = R.color.darkBlueGrey;
+                    colorResource = R.color.mtdBlue;
                     break;
                 default:
                     colorResource = R.color.teal;
@@ -682,6 +682,12 @@ public class Utils {
                     break;
                 case DINING:
                     iconResource = R.drawable.marker_dining;
+                    break;
+                case MTD_STOP:
+                    iconResource = R.drawable.marker_bus;
+                    break;
+                case POI:
+                    iconResource = R.drawable.marker_poi;
                     break;
                 default:
                     iconResource = R.drawable.marker_default_teal;
