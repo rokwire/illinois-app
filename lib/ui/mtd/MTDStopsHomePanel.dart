@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -319,7 +321,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       return stops;
     }
     else if (_selectedContentType == MTDStopsContentType.my) {
-      return ListUtils.reversed(MTD().stopsByIds(Auth2().account?.prefs?.getFavorites(MTDStop.favoriteKeyName)));
+      return ListUtils.reversed(MTD().stopsByIds(Auth2().account?.prefs?.getFavorites(MTDStop.favoriteKeyName) ?? LinkedHashSet<String>()));
     }
     else {
       return null;
