@@ -65,7 +65,8 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     private Activity activity;
     private com.google.android.gms.maps.MapView googleMapView;
     private GoogleMap googleMap;
-    private MapStyleOptions mapStyleOptions;
+    private MapStyleOptions mapStyleNoPoiOptions;
+    private MapStyleOptions mapStyleNoStopsOptions;
 
     private ArrayList<Object> explores;
     private HashMap exploreOptions;
@@ -144,10 +145,19 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     }
 
     private void initMapStyleOptions() {
+        // No Poi map style options
         try {
-            mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.mapstyle_nopoi);
+            mapStyleNoPoiOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.mapstyle_nopois);
         } catch (Resources.NotFoundException e) {
-            Log.e("MapView", "Failed to load map style options from resources. Stacktrace:");
+            Log.e("MapView", "Failed to load map style 'mapstyle_nopois' options from resources. Stacktrace:");
+            e.printStackTrace();
+        }
+
+        // No Stops map style options
+        try {
+            mapStyleNoStopsOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.mapstyle_nostops);
+        } catch (Resources.NotFoundException e) {
+            Log.e("MapView", "Failed to load map style 'mapstyle_nostops' options from resources. Stacktrace:");
             e.printStackTrace();
         }
     }
@@ -157,7 +167,6 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         onResume();
         googleMap = map;
         enableMyLocation(enableLocationValue);
-        googleMap.setMapStyle(mapStyleOptions);
         googleMap.setOnMarkerClickListener(this::onMarkerClicked);
         googleMap.setOnMapClickListener(this::onMapClick);
         googleMap.setOnCameraIdleListener(this::onCameraIdle);
@@ -364,14 +373,16 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     }
 
     private void updateMapStyle() {
-        boolean hideBuildingLabelsValue = false;
-        Object hideBuildingsLabelParam = (exploreOptions != null) ? exploreOptions.get("HideBuildingLabels") : null;
-        if (hideBuildingsLabelParam instanceof Boolean) {
-            hideBuildingLabelsValue = (Boolean) hideBuildingsLabelParam;
+        boolean hideBuildingLabels = Utils.Map.getValueFromPath(exploreOptions, "HideBuildingLabels", false);
+        boolean hideBusStops = Utils.Map.getValueFromPath(exploreOptions, "HideBusStopPOIs", false);
+        MapStyleOptions mapStyleOptions = null;
+        if (hideBuildingLabels) {
+            mapStyleOptions = (cameraZoom >= Constants.MAP_NO_POI_THRESHOLD_ZOOM) ? mapStyleNoPoiOptions : null;
+        } else if (hideBusStops) {
+            mapStyleOptions = mapStyleNoStopsOptions;
         }
-        if (hideBuildingLabelsValue) {
-            MapStyleOptions mapStyle = (cameraZoom >= Constants.MAP_NO_POI_THRESHOLD_ZOOM) ? mapStyleOptions : null;
-            googleMap.setMapStyle(mapStyle);
+        if (mapStyleOptions != null) {
+            googleMap.setMapStyle(mapStyleOptions);
         }
     }
 
