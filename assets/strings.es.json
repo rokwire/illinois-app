@@ -1005,9 +1005,10 @@
     "panel.explore.hide.appointments.msg":"No hay nada que mostrar ya que ha elegido no mostrar citas pasadas o futuras.",
     "panel.explore.instructions.mtd_stops.msg":"Toque una parada de autobús en el mapa para obtener los horarios de los autobuses. Toca la estrella para guardar la parada de autobús como favorita.",
     "panel.explore.instructions.mtd_destinations.msg":"Toque una ubicación en el mapa que será su destino. Toque la estrella para guardar el destino como favorito.",
-    "panel.explore.instructions.mtd.dont_show.msg":"Don't show me this again.",
-    "panel.explore.directions.na.msg":"You need to enable location services in order to get navigation directions.",
-    "panel.explore.details.na.msg":"Details are not available for custom points of interests.",
+    "panel.explore.instructions.mtd.dont_show.msg":"No me muestres esto de nuevo.",
+    "panel.explore.missing.mtd_destinations.msg":"Actualmente no tiene destinos guardados. Toque la ubicación en el mapa que será su destino. Puede tocar el mapa para obtener indicaciones o guardar el destino como favorito.",
+    "panel.explore.directions.na.msg":"Debe habilitar los servicios de ubicación para obtener indicaciones de navegación.",
+    "panel.explore.details.na.msg":"Los detalles no están disponibles para los puntos de interés personalizados.",
 
     "panel.explore_list.header.title":"Explorar",
 
