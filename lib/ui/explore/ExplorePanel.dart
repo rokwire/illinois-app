@@ -1306,9 +1306,9 @@ class ExplorePanelState extends State<ExplorePanel>
       }
       else if (_selectedMapExplore is ExplorePOI) {
         title = title?.replaceAll('\n', ' ');
-        detailsLabel = Localization().getStringEx('panel.explore.button.clear_destination.title', 'Clear Destination');
-        detailsHint = Localization().getStringEx('panel.explore.button.clear_destination.hint', '');
-        onTapDetail = _onTapMapClearDestination;
+        detailsLabel = Localization().getStringEx('panel.explore.button.clear.title', 'Clear');
+        detailsHint = Localization().getStringEx('panel.explore.button.clear.hint', '');
+        onTapDetail = _onTapMapClear;
       }
     }
     else if  (_selectedMapExplore is List<Explore>) {
@@ -1513,8 +1513,8 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
-  void _onTapMapClearDestination() {
-    Analytics().logSelect(target: 'Clear Destination');
+  void _onTapMapClear() {
+    Analytics().logSelect(target: 'Clear');
     if (_selectedMapExplore is Favorite) {
       Auth2().account?.prefs?.setFavorite(_selectedMapExplore as Favorite, false);
     }

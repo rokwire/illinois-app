@@ -934,8 +934,8 @@
     "panel.explore.button.details.hint":"View details",
     "panel.explore.button.bus_schedule.title":"Bus Schedule",
     "panel.explore.button.bus_schedule.hint":"View bus schedule",
-    "panel.explore.button.clear_destination.title":"Clear Destination",
-    "panel.explore.button.clear_destination.hint":"Clear selected destination",
+    "panel.explore.button.clear.title":"Clear",
+    "panel.explore.button.clear.hint":"Clear selected location",
     "panel.explore.label.spcial_offers.title":"Special Offers",
 
     "panel.explore.button.events.display_type.all.label": "All Events",
