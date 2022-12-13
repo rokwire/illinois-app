@@ -261,6 +261,9 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
                     thresholdDistance = getThresholdDistance(googleMap.getCameraPosition().zoom);
                 }
                 buildDisplayExploresForThresholdDistance(thresholdDistance);
+            } else {
+                CameraUpdate cameraUpdate = CameraUpdateFactory.zoomTo(2);
+                googleMap.moveCamera(cameraUpdate);
             }
         }
     }
