@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GroupMemberNotificationsPanel: update override switches to get global settings values if main override switch is of [#2713](https://github.com/rokwire/illinois-app/issues/2713).
 ### Fixed
 - Fixed HomeGroupWidget vertical overflow.
+- Fixed initial camera zoom and position when presenting empty explores list in iOS [#2727](https://github.com/rokwire/illinois-app/issues/2727).
 ### Added
 - Implemented MTD Stops search [#2724](https://github.com/rokwire/illinois-app/issues/2724).
 

@@ -152,7 +152,9 @@
 			thresoldDistance = debugThresoldDistance.doubleValue;
 		}
 		else {
-			GMSCameraPosition *camera = [_mapView cameraForBounds:bounds insets: UIEdgeInsetsMake(50, 50, 50, 50)];
+			GMSCameraPosition *camera = (bounds != nil) ?
+				[_mapView cameraForBounds:bounds insets: UIEdgeInsetsMake(50, 50, 50, 50)] :
+				[GMSCameraPosition cameraWithTarget:kInitialCameraLocation zoom:kInitialCameraZoom];
 			thresoldDistance = [self thresoldDistanceForZoom:camera.zoom];
 		}
 
@@ -322,7 +324,7 @@
 
 - (GMSCameraUpdate*)cameraUpdateFromBounds:(GMSCoordinateBounds*)bounds {
 		if ((bounds == nil) || !bounds.isValid) {
-			return nil;
+			return [GMSCameraUpdate setTarget:kInitialCameraLocation zoom: kInitialCameraZoom];
 		}
 		else if (CLLocationCoordinate2DIsEqual(bounds.northEast, bounds.southWest)) {
 			return [GMSCameraUpdate setTarget:bounds.northEast zoom: kInitialCameraZoom];
