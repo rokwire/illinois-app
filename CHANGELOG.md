@@ -6,13 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Updated privacy descriptions [#2720](https://github.com/rokwire/illinois-app/issues/2720).
+- MTD Map strings updates [#2722](https://github.com/rokwire/illinois-app/issues/2722).
+- GroupMemberNotificationsPanel: update override switches to get global settings values if main override switch is of [#2713](https://github.com/rokwire/illinois-app/issues/2713).
+### Fixed
+- Fixed HomeGroupWidget vertical overflow.
+### Added
+- Implemented MTD Stops search [#2724](https://github.com/rokwire/illinois-app/issues/2724).
+
+## [4.2.39] - 2022-12-12
+### Changed
 - Introduce Surveys BB [#2703](https://github.com/rokwire/illinois-app/issues/2703).
 - Hide "Allow repeat votes" from Create Poll panels [#2686](https://github.com/rokwire/illinois-app/issues/2686).
 - Update Group Member Selection Panel [#2708](https://github.com/rokwire/illinois-app/issues/2708).
+- Renamed "Posts" section to "Posts and Direct Messages" in Group Detail Panel [#2252](https://github.com/rokwire/illinois-app/issues/2252).
+- Update Group Member Notifications Panel [#2713](https://github.com/rokwire/illinois-app/issues/2713).
 ### Fixed
 - Style definition for wellness to-do item card [#2702](https://github.com/rokwire/illinois-app/issues/2702).
 - Show MyMcKinley appointments in home panel based on the user favorites [#2702](https://github.com/rokwire/illinois-app/issues/2702).
 - Check for login status before presenting create poll panel [#2705](https://github.com/rokwire/illinois-app/issues/2705).
+- Fixed groups sort order inconsistency [#2716](https://github.com/rokwire/illinois-app/issues/2716).
 ### Added
 - Added delete functionality for poll options in create poll panel [#2085](https://github.com/rokwire/illinois-app/issues/2085).
 

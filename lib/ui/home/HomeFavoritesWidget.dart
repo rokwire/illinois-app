@@ -273,7 +273,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       );
     }
     else if (item is MTDStop) {
-      return MTDStopCard(
+      return MTDStopScheduleCard(
         stop: item,
         onTap: () => _onTapItem(item),
       );

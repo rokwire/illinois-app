@@ -228,6 +228,28 @@
 						"description_key" :"privacy.entry.health.location.sharing.description",
 						"dataUsage" : "This feature uses location services but does not store your location.",
 						"dataUsage_key" :"privacy.entry.health.location.sharing.data_usage"
+					},
+					{
+						"min_level": 3,
+						"icon_resource": "personalization-blue.png",
+						"off_icon_resource": "personalization-blue-off.png",
+						"title" : "Personalizations",
+						"title_key" :"privacy.entry.health.personalizations.title",
+						"description" : "View your appointments and Illinois health screener results.",
+						"description_key" :"privacy.entry.health.personalizations.description",
+						"dataUsage" : "This feature uses appointment information and screener answers.",
+						"dataUsage_key" :"privacy.entry.health.personalizations.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "notifications-blue.png",
+						"off_icon_resource": "notifications-blue-off.png",
+						"title" : "Notifications",
+						"title_key" :"privacy.entry.health.notifications.title",
+						"description" : "Get notifications of upcoming appointments and additional screening you should take.",
+						"description_key" :"privacy.entry.health.notifications.description",
+						"dataUsage" : "This feature sends notifications based on your upcoming appointments and screenings.",
+						"dataUsage_key" :"privacy.entry.health.notifications.data_usage"
 					}
 				]
 			},
@@ -241,7 +263,7 @@
 						"off_icon_resource": "view-only-blue.png",
 						"title" : "View Only",
 						"title_key" :"privacy.entry.wayfinding.view.only.title",
-						"description" : "View a map of campus with places of interest.",
+						"description" : "View a map of campus with places of interest, MTD bus stops and schedules.",
 						"description_key" :"privacy.entry.wayfinding.view.only.description",
 						"dataUsage" : "This feature does not use or store your location.",
 						"dataUsage_key" :"privacy.entry.wayfinding.view.only.data_usage"
@@ -252,7 +274,7 @@
 						"off_icon_resource": "location-sharing-blue-off.png",
 						"title" : "Location Sharing",
 						"title_key" :"privacy.entry.wayfinding.location.sharing.title",
-						"description" : "View a map of campus with places of interest.",
+						"description" : "View a map of campus with places of interest, MTD bus destinations and stops with bus directions.",
 						"description_key" :"privacy.entry.wayfinding.location.sharing.description",
 						"dataUsage" : "This feature uses location services but does not store your location.",
 						"dataUsage_key" :"privacy.entry.wayfinding.location.sharing.data_usage"
@@ -363,7 +385,7 @@
 						"off_icon_resource": "view-only-blue.png",
 						"title" : "View Only",
 						"title_key" :"privacy.entry.general.view.only.title",
-						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
+						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog, the Illinois Twitter feed, etc.",
 						"description_key" :"privacy.entry.general.view.only.description",
 						"dataUsage" : "Building access and due date catalog require a university sign in.",
 						"dataUsage_key" :"privacy.entry.general.view.only.data_usage"
@@ -385,9 +407,9 @@
 						"off_icon_resource": "personalization-blue-off.png",
 						"title" : "Personalizations",
 						"title_key" :"privacy.entry.general.personalizations.title",
-						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
+						"description" : "View your Research projects, building access, campus guides, crisis help, campus reminders, due date catalog, the Illinois Twitter feed, etc",
 						"description_key" :"privacy.entry.general.personalizations.description",
-						"dataUsage" : "Building access and due date catalog require a university sign in.",
+						"dataUsage" : "Research projects, building access and due date catalog require a university sign in. Your answers to a Research interest form are used to qualify you to participate in a research project",
 						"dataUsage_key" :"privacy.entry.general.personalizations.data_usage"
 					},
 					{
@@ -398,7 +420,7 @@
 						"title_key" :"privacy.entry.general.notifications.title",
 						"description" : "You may receive notifications when content is updated, and you can star various content.",
 						"description_key" :"privacy.entry.general.notifications.description",
-						"dataUsage" : "Building access and due date catalog require a university sign in.",
+						"dataUsage" : "Research participation, Building access and due date catalog require a university sign in. Your answers to a Research interest form are used to qualify you to participate in research projects",
 						"dataUsage_key" :"privacy.entry.general.notifications.data_usage"
 					},
 					{
