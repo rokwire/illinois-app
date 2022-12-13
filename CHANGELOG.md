@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed HomeGroupWidget vertical overflow.
 ### Added
 - Implemented MTD Stops search [#2724](https://github.com/rokwire/illinois-app/issues/2724).
+- Standardize logged out widget [#2668](https://github.com/rokwire/illinois-app/issues/2668).
 
 ## [4.2.39] - 2022-12-12
 ### Changed

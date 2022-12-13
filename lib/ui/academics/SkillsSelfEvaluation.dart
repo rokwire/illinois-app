@@ -23,7 +23,6 @@ import 'package:illinois/ui/widgets/InfoPopup.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/model/survey.dart';
-import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/storage.dart';
@@ -48,7 +47,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Storage.notifySettingChanged, FlexUI.notifyChanged]);
+    NotificationService().subscribe(this, [Storage.notifySettingChanged]);
     _loadContentItems();
     super.initState();
   }
@@ -199,7 +198,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   }
 
   void _onTapStartEvaluation() {
-    Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation');
+    Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation', onUpdate: () => _onAccessUpdate(context));
     if (result != null) {
       _accessDialogShown = true;
     } else if (Config().bessiSurveyID != null) {
@@ -254,20 +253,22 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationInfoPanel(content: _infoContentItems[key])));
   }
 
+  void _onAccessUpdate(BuildContext context) {
+    if (_accessDialogShown && AccessDialog.mayAccessResource('academics.skills_self_evaluation')) {
+      Navigator.popUntil(context, (route) {
+        return route.settings.name == AccessDialog.routeName;
+      });
+      Navigator.pop(context);
+      _accessDialogShown = false;
+    }
+  }
+
   // NotificationsListener
 
   @override
   void onNotification(String name, dynamic param) {
     if (name == Storage.notifySettingChanged && param == Storage().assessmentsEnableSaveKey && mounted) {
       setState(() {});
-    } else if (name == FlexUI.notifyChanged) {
-      if (_accessDialogShown && AccessDialog.mayAccessResource('academics.skills_self_evaluation')) {
-        Navigator.popUntil(context, (route) {
-          return route.settings.name == AccessDialog.routeName;
-        });
-        Navigator.pop(context);
-        _accessDialogShown = false;
-      }
     }
   }
 }

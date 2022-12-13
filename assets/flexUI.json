@@ -62,7 +62,8 @@
 			"academics": ["gies_checklist", "new_student_checklist", "student_courses", "canvas_courses", "academics_events", "skills_self_evaluation", "due_date_catalog", "my_illini"],
 			"academics.skills_self_evaluation": ["may_access"],
 
-			"wellness.health_screener": ["may_access"],
+			"wellness.appointments": ["may_access"],
+			"wellness.health_screener": ["may_access", "history"],
 
 			"explore.list": ["events", "dining"],
 			"explore.map":  ["events", "dining", "laundry", "student_courses", "buildings", "appointments", "mtd_stops", "mtd_destinations", "state_farm_wayfinding"],
@@ -181,6 +182,7 @@
 				"onboarding.research_questionnaire"   : { "shibbolethLoggedIn": true },
 
 				"academics.skills_self_evaluation.may_access":  { "shibbolethLoggedIn": true },
+				"wellness.appointments.may_access": 			{ "shibbolethLoggedIn": true },
 				"wellness.health_screener.may_access" : 		{ "shibbolethLoggedIn": true }
 			},
 			"platform":{

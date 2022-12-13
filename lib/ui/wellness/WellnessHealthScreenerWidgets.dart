@@ -17,7 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:rokwire_plugin/model/survey.dart';
@@ -43,10 +43,8 @@ class WellnessHealthScreenerHomeWidget extends StatefulWidget {
 }
 
 class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreenerHomeWidget> implements NotificationsListener {
-  //bool _loading = false;
-
+  String resourceName = 'wellness.health_screener';
   List<String> _timeframes = ["Today", "This Week", "This Month", "All Time"];
-  // List<String> _surveyTypes = ["All", "Health Screener", "Symptoms", "Illness Screener"];
 
   String? _selectedTimeframe = "This Week";
   String? _selectedSurveyType = "Health Screener";
@@ -80,7 +78,8 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   }
 
   Widget _buildContent() {
-    Widget? accessWidget = AccessCard.builder(resource: 'wellness.health_screener');
+    Widget? accessWidget = AccessCard.builder(resource: resourceName);
+    bool showHistory = JsonUtils.stringListValue(FlexUI()[resourceName])?.contains('history') ?? false;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -90,7 +89,7 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
           childPadding: HomeSlantWidget.defaultChildPadding,
           child: accessWidget ?? _buildHealthScreenerSectionWidget(),
         ),
-        Visibility(visible: accessWidget == null, child: _buildHistorySectionWidget()),
+        Visibility(visible: showHistory && (accessWidget == null), child: _buildHistorySectionWidget()),
       ]);
   }
 
@@ -276,7 +275,6 @@ class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreene
   void _onPagerStateChanged() {
     setState(() { });
   }
-
   List<DropdownMenuItem<T>> _getDropDownItems<T>(List<T> options, {String? nullOption}) {
     List<DropdownMenuItem<T>> dropDownItems = <DropdownMenuItem<T>>[];
     if (nullOption != null) {

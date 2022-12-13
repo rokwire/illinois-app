@@ -79,7 +79,7 @@ class _AccessCardState extends State<AccessCard> implements NotificationsListene
 
   @override
   void onNotification(String name, param) {
-    if (name == FlexUI.notifyChanged) {
+    if (name == FlexUI.notifyChanged && mounted) {
       setState(() {});
     }
   }
@@ -88,14 +88,16 @@ class _AccessCardState extends State<AccessCard> implements NotificationsListene
 class AccessDialog extends StatefulWidget {
   static final String routeName = 'access_widget';
   final String resource;
+  final Function onUpdate;
 
-  const AccessDialog({required this.resource,});
+  const AccessDialog({required this.resource, required this.onUpdate});
 
   @override
   _AccessDialogState createState() => _AccessDialogState();
 
   static Future<void>? show({
     required String resource,
+    required Function onUpdate,
     required BuildContext context,
 
     bool barrierDismissible = true,
@@ -103,9 +105,7 @@ class AccessDialog extends StatefulWidget {
     context: context,
     barrierDismissible: barrierDismissible,
     routeSettings: RouteSettings(name: routeName),
-    builder: (BuildContext context) => AccessDialog(
-      resource: resource,
-    )
+    builder: (BuildContext context) => AccessDialog(resource: resource, onUpdate: onUpdate)
   );
 
   static bool mayAccessResource(String resource) => JsonUtils.stringListValue(FlexUI()[resource])?.contains('may_access') == true;
@@ -141,14 +141,24 @@ class _AccessDialogState extends State<AccessDialog> implements NotificationsLis
 
   @override
   void onNotification(String name, param) {
-    if (name == FlexUI.notifyChanged) {
+    if (name == FlexUI.notifyChanged && mounted) {
       setState(() {});
+      widget.onUpdate.call();
     }
   }
 }
 
 class _AccessContent extends StatelessWidget {
   static const List<String> rulePriority = ['roles', 'privacy', 'auth'];
+  static const Map<String, String> authRuleStringKeys = {
+    'loggedIn': 'widget.access.auth.login.message',
+    'shibbolethLoggedIn': 'widget.access.auth.netid.login.message',
+    'phoneLoggedIn': 'widget.access.auth.phone.login.message',
+    'emailLoggedIn': 'widget.access.auth.email.login.message',
+    'shibbolethLinked': 'widget.access.auth.netid.linked.message',
+    'phoneLinked': 'widget.access.auth.phone.linked.message',
+    'emailLinked': 'widget.access.auth.email.linked.message',
+  };
   final String resource;
 
   const _AccessContent({required this.resource});
@@ -165,7 +175,16 @@ class _AccessContent extends StatelessWidget {
         if (message.isNotEmpty) {
           message += '\n';
         }
-        message += '$stepNum. ' + Localization().getStringEx('widget.access.$resource.$ruleType.unsatisfied.message', Localization().getStringEx('widget.access.$ruleType.unsatisfied.message', 'You must meet the following $ruleType condition: ') + (JsonUtils.encode(unsatisfiedRules[ruleType]) ?? ''));
+
+        if (unsatisfiedRules[ruleType] is Map) {
+          String authKey = (unsatisfiedRules[ruleType] as Map).keys.first;
+          message += '$stepNum. ' + Localization().getStringEx(authRuleStringKeys[authKey] ?? 'widget.access.auth.login.message', 'Sign in');
+        } else if (unsatisfiedRules[ruleType] is List) {
+          // roles rule (do not need step number)
+          message += Localization().getStringEx('widget.access.$resource.$ruleType.unsatisfied.message', 'You must be ${(unsatisfiedRules[ruleType] as List).join(' ')}');
+        } else {
+          message += '$stepNum. '+ Localization().getStringEx('widget.access.$ruleType.unsatisfied.message', 'You must meet the following $ruleType condition: ') + unsatisfiedRules[ruleType].toString();
+        }
         stepNum++;
 
         if (ruleType != 'roles') {
