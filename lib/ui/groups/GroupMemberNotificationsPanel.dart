@@ -141,7 +141,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
                         label: Localization().getStringEx("panel.group_member_notifications.posts.label", "Posts"),
-                        toggled: !(memberPreferences?.mutePosts ?? true),
+                        toggled: !(memberPreferences?.mutePosts ?? false),
                         defaultValue: (FirebaseMessaging().notifyGroupPostUpdates == true),
                         onTap: _groupSubNotificationsEnabled ? _onTogglePosts : null,
                         textStyle: _groupSubNotificationsEnabled
@@ -151,7 +151,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
                         label: Localization().getStringEx("panel.group_member_notifications.event.label", "Event"),
-                        toggled: !(memberPreferences?.muteEvents ?? true),
+                        toggled: !(memberPreferences?.muteEvents ?? false),
                         defaultValue: FirebaseMessaging().notifyGroupEventsUpdates == true,
                         onTap: _groupSubNotificationsEnabled ? _onToggleEvents : null,
                         textStyle: _groupSubNotificationsEnabled
@@ -161,7 +161,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
                         label: Localization().getStringEx("panel.group_member_notifications.invitations.label", "Invitations"),
-                        toggled: !(memberPreferences?.muteInvitations ?? true),
+                        toggled: !(memberPreferences?.muteInvitations ?? false),
                         defaultValue: (FirebaseMessaging().notifyGroupInvitationsUpdates == true),
                         onTap: _groupSubNotificationsEnabled ? _onToggleInvitations : null,
                         textStyle: _groupSubNotificationsEnabled
@@ -171,7 +171,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
                         label: Localization().getStringEx("panel.group_member_notifications.polls.label", "Polls"),
-                        toggled: !(memberPreferences?.mutePolls ?? true ),
+                        toggled: !(memberPreferences?.mutePolls ?? false ),
                         defaultValue: (FirebaseMessaging().notifyGroupPollsUpdates == true),
                         onTap: _groupSubNotificationsEnabled ? _onTogglePolls : null,
                         textStyle: _groupSubNotificationsEnabled
