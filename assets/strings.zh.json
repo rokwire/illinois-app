@@ -2375,7 +2375,7 @@
 	"panel.mtd_stops.home.status.error.all.text": "Failed to load bus stops.",
 	"panel.mtd_stops.home.status.error.my.text": "Failed to load saved bus stops.",
 	"panel.mtd_stops.home.status.empty.all.text": "There are no bus stops available.",
-	"panel.mtd_stops.home.status.empty.my.text": "You have not saved any stop yet.",
+	"panel.mtd_stops.home.status.empty.my.text": "You have no saved bus stops.",
 
 	"panel.guide_categories.label.heading": "Campus Guide",
 	"panel.guide_categories.label.content.empty": "空的指南內容",
