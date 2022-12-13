@@ -503,8 +503,8 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         final float[] thresholdDistanceByZoom = {
             1000000, 800000, 600000, 200000, 100000,    // zoom 0 - 4
             100000,  80000,  60000,  20000,  10000,     // zoom 5 - 9
-            5000,    1000,   500,    200,    100,       // zoom 10 - 14
-            50,      0                                  // zoom 15 - 16 (max zoom level)
+            5000,    2000,   1000,   500,    250,       // zoom 10 - 14
+            100,     50,     0                          // zoom 15 - 16 (max zoom level)
         };
 
         int zoomIndex = Math.round(zoom);
