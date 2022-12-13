@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated privacy descriptions [#2720](https://github.com/rokwire/illinois-app/issues/2720).
 - MTD Map strings updates [#2722](https://github.com/rokwire/illinois-app/issues/2722).
+- GroupMemberNotificationsPanel: update override switches to get global settings values if main override switch is of [#2713](https://github.com/rokwire/illinois-app/issues/2713).
 ### Fixed
 - Fixed HomeGroupWidget vertical overflow.
 
