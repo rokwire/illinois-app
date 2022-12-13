@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GroupMemberNotificationsPanel: update override switches to get global settings values if main override switch is of [#2713](https://github.com/rokwire/illinois-app/issues/2713).
 ### Fixed
 - Fixed HomeGroupWidget vertical overflow.
+### Added
+- Implemented MTD Stops search [#2724](https://github.com/rokwire/illinois-app/issues/2724).
 
 ## [4.2.39] - 2022-12-12
 ### Changed

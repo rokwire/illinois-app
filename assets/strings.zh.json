@@ -2377,6 +2377,19 @@
 	"panel.mtd_stops.home.status.empty.all.text": "There are no bus stops available.",
 	"panel.mtd_stops.home.status.empty.my.text": "You have no saved bus stops.",
 
+	"panel.mtd_stops.search.header.title":"Search",
+	"panel.mtd_stops.search.search.field.title":"Search",
+	"panel.mtd_stops.search.search.field.hint":"",
+	"panel.mtd_stops.search.clear.button.title":"Clear",
+	"panel.mtd_stops.search.clear.button.hint":"",
+	"panel.mtd_stops.search.search.button.title":"Search",
+	"panel.mtd_stops.search.search.button.hint":"",
+	"panel.mtd_stops.search.label.results_for":"Results for %s",
+	"panel.mtd_stops.search.label.search_for":"Searching MTD Stops",
+	"panel.mtd_stops.search.label.not_found":"No results found",
+	"panel.mtd_stops.search.label.found_single":"1 result found",
+	"panel.mtd_stops.search.label.found_multi":"%d results found",
+
 	"panel.guide_categories.label.heading": "Campus Guide",
 	"panel.guide_categories.label.content.empty": "空的指南內容",
 

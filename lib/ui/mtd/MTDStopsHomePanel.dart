@@ -10,7 +10,8 @@ import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
-import 'package:illinois/ui/widgets/FavoriteButton.dart';
+import 'package:illinois/ui/mtd/MTDStopSearchPanel.dart';
+import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -42,7 +43,6 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   Set<String> _expanded = <String>{};
 
   Position? _currentPosition;
-  LocationServicesStatus? _locationServicesStatus;
   bool _processingLocation = false;
 
   @override
@@ -61,17 +61,14 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     }
     
     _processingLocation = true;
-    _loadLocationServicesStatus().then((LocationServicesStatus? locationServicesStatus) {
-      _locationServicesStatus = locationServicesStatus;
-      _loadPosition().then((Position? position) {
-        _currentPosition = position;
-        if (mounted) {
-          setState(() {
-            _processingLocation = false;
-            _stops = _contentList;
-          });
-        }
-      });
+    LocationServices().location.then((Position? position) {
+      _currentPosition = position;
+      if (mounted) {
+        setState(() {
+          _processingLocation = false;
+          _stops = _contentList;
+        });
+      }
     });
 
     super.initState();
@@ -230,6 +227,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     setState(() {
       _contentTypesDropdownExpanded = false;
     });
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopSearchPanel()));
   }
 
   // Content Widget
@@ -248,9 +246,10 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
 
   Widget _buildStops() {
     return ListView.separated(
-      itemBuilder: (context, index) => _MTDStopCard(
+      itemBuilder: (context, index) => MTDStopCard(
         stop: ListUtils.entry(_stops, index),
         expanded: _expanded,
+        onDetail: () => _onSelectStop(ListUtils.entry(_stops, index)),
         onExpand: () => _onExpandStop(ListUtils.entry(_stops, index)),
         currentPosition: _currentPosition,
       ),
@@ -328,6 +327,13 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     }
   }
 
+  void _onSelectStop(MTDStop? stop) {
+    Analytics().logSelect(target: "MTD Stop: ${stop?.name}" );
+    if (stop != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: stop)));
+    }
+  }
+
   void _onExpandStop(MTDStop? stop) {
     Analytics().logSelect(target: "MTD Stop: ${stop?.name}" );
     if (mounted && (stop?.id != null)) {
@@ -337,25 +343,9 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
     }
   }
 
-  Future<LocationServicesStatus?> _loadLocationServicesStatus() async {
-    LocationServicesStatus? locationServicesStatus;
-    if (FlexUI().isLocationServicesAvailable) {
-      locationServicesStatus = await LocationServices().status;
-      if (locationServicesStatus == LocationServicesStatus.permissionNotDetermined) {
-        locationServicesStatus = await LocationServices().requestPermission();
-      }
-    }
-    return locationServicesStatus;
-  }
-
-  Future<Position?> _loadPosition() async {
-    return (_locationServicesStatus == LocationServicesStatus.permissionAllowed) ? await LocationServices().location : null;
-  }
-
   void _onLocationServicesStatusChanged(LocationServicesStatus? status) {
     if (FlexUI().isLocationServicesAvailable && !_processingLocation) {
-      _locationServicesStatus = status;
-      _loadPosition().then((Position? position) {
+      LocationServices().location.then((Position? position) {
         _currentPosition = position;
         if (mounted) {
           setState(() {
@@ -364,165 +354,6 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
         }
       });
     }
-  }
-}
-
-class _MTDStopCard extends StatelessWidget {
-  final MTDStop? stop;
-  final Set<String>? expanded;
-  final void Function()? onExpand;
-  final Position? currentPosition;
-
-  _MTDStopCard({Key? key, this.stop, this.expanded, this.onExpand, this.currentPosition }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> contentList = <Widget>[];
-    contentList.add(_buildHeading(context));
-    contentList.add(_buildEntries(context));
-    return Column(children: contentList,);
-  }
-
-  Widget _buildHeading(BuildContext context) {
-    String description = '';
-    TextStyle titleStyle;
-    EdgeInsetsGeometry titlePadding, favoritePadding;
-    if (CollectionUtils.isNotEmpty(stop?.points)) {
-
-      if (StringUtils.isNotEmpty(stop?.code)) {
-        description = stop!.code!;
-      }
-
-      String? distance = distanceText;
-      if (StringUtils.isNotEmpty(distance)) {
-        if (description.isNotEmpty) {
-          description += ", $distance";
-        }
-        else {
-          description = distance!;
-        }
-      }
-
-      int stopPointsCount = stop?.points?.length ?? 0;
-      String pointsDescription = (1 < stopPointsCount) ? "$stopPointsCount stop points" : "$stopPointsCount stop point";
-      if (description.isNotEmpty) {
-        description += " ($pointsDescription)";
-      }
-      else {
-        description = pointsDescription;
-      }
-
-      titleStyle = TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary);
-      titlePadding = EdgeInsets.only(top: 12);
-      favoritePadding = EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8);
-    }
-    else {
-      titleStyle = TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary);
-      titlePadding = EdgeInsets.only(top: 16);
-      favoritePadding = EdgeInsets.all(16);
-    }
-
-    return Padding(padding: EdgeInsets.only(bottom: 4), child:
-      InkWell(onTap: () => _onTapStop(context), child:
-        Container(
-          decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),),
-          padding: EdgeInsets.only(left: 16,),
-          child: Column(children: [
-            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Expanded(child:
-                Padding(padding: titlePadding, child:
-                  Text(stop?.name ?? '', style: titleStyle)
-                )
-              ),
-              Opacity(opacity: 1, child:
-                Semantics(label: 'Favorite', button: true, child:
-                  InkWell(onTap: () => _onTapFavorite(context), child:
-                    FavoriteStarIcon(selected: _isFavorite, style: FavoriteIconStyle.Button, padding: favoritePadding,)
-                  ),
-                ),
-              ),
-            ],),
-            
-            Visibility(visible: description.isNotEmpty, child:
-              InkWell(onTap: _onTapExpand, child:
-                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Expanded(child:
-                    Padding(padding: EdgeInsets.only(top: 4, bottom: 8), child:
-                      Text(description, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface), maxLines: 1, overflow: TextOverflow.ellipsis,)
-                    )
-                  ),
-                  Semantics(
-                    label: _isExpanded ? Localization().getStringEx('panel.browse.section.status.colapse.title', 'Colapse') : Localization().getStringEx('panel.browse.section.status.expand.title', 'Expand'),
-                    hint: _isExpanded ? Localization().getStringEx('panel.browse.section.status.colapse.hint', 'Tap to colapse section content') : Localization().getStringEx('panel.browse.section.status.expand.hint', 'Tap to expand section content'),
-                    button: true, child:
-                        Container(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 16), child:
-                          SizedBox(width: 18, height: 18, child:
-                            Center(child:
-                              _isExpanded ?
-                                Image.asset('images/arrow-up-orange.png', excludeFromSemantics: true) :
-                                Image.asset('images/arrow-down-orange.png', excludeFromSemantics: true)
-                            ),
-                          )
-                        ),
-                  ),
-                ],),
-              ),
-            ),
-          ],),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEntries(BuildContext context) {
-      List<Widget> entriesList = <Widget>[];
-      if (_isExpanded && CollectionUtils.isNotEmpty(stop?.points)) {
-        for (MTDStop stop in stop!.points!) {
-          entriesList.add(_MTDStopCard(
-            stop: stop,
-            expanded: expanded,
-            onExpand: onExpand,
-            currentPosition: currentPosition,
-          ));
-        }
-      }
-      return entriesList.isNotEmpty ? Padding(padding: EdgeInsets.only(left: 16), child:
-        Column(children: entriesList,)
-      ) : Container();
-  }
-
-  String? get distanceText {
-    LatLng? stopPosition = stop?.anyPosition;
-    if ((currentPosition != null) && (stopPosition != null) && stopPosition.isValid) {
-      double distanceInMeters = Geolocator.distanceBetween(stopPosition.latitude!, stopPosition.longitude!, currentPosition!.latitude, currentPosition!.longitude);
-      double distanceInMiles = distanceInMeters / 1609.344;
-      return distanceInMiles.toStringAsFixed(1) + " mi away";
-    }
-    return null;
-  }
-
-  void _onTapStop(BuildContext context) {
-    Analytics().logSelect(target: "MTD Stop: ${stop?.name}" );
-    if (stop != null) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: stop!)));
-    }
-  }
-
-  bool get _canExpand => StringUtils.isNotEmpty(stop?.id) && CollectionUtils.isNotEmpty(stop?.points);
-
-  bool get _isExpanded => expanded?.contains(stop?.id) ?? false;
-
-  void _onTapExpand() {
-    if (_canExpand && (onExpand != null)) {
-      onExpand!();
-    }
-  }
-
-  bool get _isFavorite => Auth2().account?.prefs?.isFavorite(stop) ?? false;
-
-  void _onTapFavorite(BuildContext context) {
-    Analytics().logSelect(target: "Favorite: ${MTDStop.favoriteKeyName}");
-    Auth2().account?.prefs?.toggleFavorite(stop);
   }
 }
 
