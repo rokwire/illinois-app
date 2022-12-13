@@ -214,9 +214,11 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
                         markMarker.remove();
                     }
                     Marker marker = googleMap.addMarker(markerOptions);
-                    JSONObject tagJson = Utils.Explore.constructMarkerTagJson(getContext(), marker.getTitle(), explore);
-                    marker.setTag(tagJson);
-                    markMarker = marker;
+                    if (marker != null) {
+                        JSONObject tagJson = Utils.Explore.constructMarkerTagJson(getContext(), marker.getTitle(), explore);
+                        marker.setTag(tagJson);
+                        markMarker = marker;
+                    }
                 }
             }
             else if (markMarker != null) {
