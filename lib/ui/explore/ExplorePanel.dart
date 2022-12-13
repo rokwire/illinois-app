@@ -584,7 +584,7 @@ class ExplorePanelState extends State<ExplorePanel>
       else if (_selectedItem == ExploreItem.MTDStops) {
         if (Storage().showMtdStopsMapInstructions != false) {
           showDialog(context: context, builder: (context) => _MTDInstructionsPopup(
-            message: Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap the location on the map that will be your destination. (You can tap on a Bus Stop to get Details about the Bus Stop or Save the selected Bus Stop. You can tap the Map to get Directions or Save your destination as a favorite."),
+            message: Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite."),
             showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,
           ));
         }
@@ -592,7 +592,7 @@ class ExplorePanelState extends State<ExplorePanel>
       else if (_selectedItem == ExploreItem.MTDDestinations) {
         if (Storage().showMtdDestinationsMapInstructions != false) {
           showDialog(context: context, builder: (context) => _MTDInstructionsPopup(
-            message: Localization().getStringEx("panel.explore.instructions.mtd_destinations.msg", "Please tap the location on the map that will be your destination. You can tap the Map to get Directions or Save the destination as a favorite.",),
+            message: Localization().getStringEx("panel.explore.instructions.mtd_destinations.msg", "Please tap a location on the map that will be your destination. Tap the star to save the destination as a favorite.",),
             showPopupStorageKey: Storage().showMtdDestinationsMapInstructionsKey,
           ));
         }
@@ -1306,9 +1306,9 @@ class ExplorePanelState extends State<ExplorePanel>
       }
       else if (_selectedMapExplore is ExplorePOI) {
         title = title?.replaceAll('\n', ' ');
-        detailsLabel = Localization().getStringEx('panel.explore.button.clear_destination.title', 'Clear Destination');
-        detailsHint = Localization().getStringEx('panel.explore.button.clear_destination.hint', '');
-        onTapDetail = _onTapMapClearDestination;
+        detailsLabel = Localization().getStringEx('panel.explore.button.clear.title', 'Clear');
+        detailsHint = Localization().getStringEx('panel.explore.button.clear.hint', '');
+        onTapDetail = _onTapMapClear;
       }
     }
     else if  (_selectedMapExplore is List<Explore>) {
@@ -1513,8 +1513,8 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
-  void _onTapMapClearDestination() {
-    Analytics().logSelect(target: 'Clear Destination');
+  void _onTapMapClear() {
+    Analytics().logSelect(target: 'Clear');
     if (_selectedMapExplore is Favorite) {
       Auth2().account?.prefs?.setFavorite(_selectedMapExplore as Favorite, false);
     }
@@ -1819,7 +1819,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses');
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.title', 'MyMcKinley In-Person Appointments');
-      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Bus');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Stops');
       case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.button.mtd_destinations.title', 'MTD Destinations');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
@@ -1849,7 +1849,7 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.header.buildings.title', 'Campus Buildings');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.header.student_course.title', 'My Courses');
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.header.appointments.title', 'MyMcKinley In-Person Appointments');
-      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.header.mtd_stops.title', 'MTD Bus');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.header.mtd_stops.title', 'MTD Stops');
       case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.header.mtd_destinations.title', 'MTD Destinations');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;

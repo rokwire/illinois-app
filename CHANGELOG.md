@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Updated privacy descriptions [#2720](https://github.com/rokwire/illinois-app/issues/2720).
+- MTD Map strings updates [#2722](https://github.com/rokwire/illinois-app/issues/2722).
 ### Fixed
 - Fixed HomeGroupWidget vertical overflow.
 
