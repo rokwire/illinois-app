@@ -584,7 +584,7 @@ class ExplorePanelState extends State<ExplorePanel>
       else if (_selectedItem == ExploreItem.MTDStops) {
         if (Storage().showMtdStopsMapInstructions != false) {
           showDialog(context: context, builder: (context) => _MTDInstructionsPopup(
-            message: Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap the location on the map that will be your destination. (You can tap on a Bus Stop to get Details about the Bus Stop or Save the selected Bus Stop. You can tap the Map to get Directions or Save your destination as a favorite."),
+            message: Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite."),
             showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,
           ));
         }
@@ -592,7 +592,7 @@ class ExplorePanelState extends State<ExplorePanel>
       else if (_selectedItem == ExploreItem.MTDDestinations) {
         if (Storage().showMtdDestinationsMapInstructions != false) {
           showDialog(context: context, builder: (context) => _MTDInstructionsPopup(
-            message: Localization().getStringEx("panel.explore.instructions.mtd_destinations.msg", "Please tap the location on the map that will be your destination. You can tap the Map to get Directions or Save the destination as a favorite.",),
+            message: Localization().getStringEx("panel.explore.instructions.mtd_destinations.msg", "Please tap a location on the map that will be your destination. Tap the star to save the destination as a favorite.",),
             showPopupStorageKey: Storage().showMtdDestinationsMapInstructionsKey,
           ));
         }
