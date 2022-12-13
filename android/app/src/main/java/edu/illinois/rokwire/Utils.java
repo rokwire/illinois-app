@@ -519,21 +519,21 @@ public class Utils {
             if (singleExplore == null) {
                 return ExploreType.UNKNOWN;
             }
-            if (singleExplore.get("eventId") != null) {
+            if (singleExplore.containsKey("eventId")) {
                 return ExploreType.EVENT;
-            } else if (singleExplore.get("DiningOptionID") != null) {
+            } else if (singleExplore.containsKey("DiningOptionID")) {
                 return ExploreType.DINING;
-            } else if (singleExplore.get("campus_name") != null) {
+            } else if (singleExplore.containsKey("campus_name")) {
                 return ExploreType.LAUNDRY;
-            } else if (singleExplore.get("lot_id") != null) {
+            } else if (singleExplore.containsKey("lot_id")) {
                 return ExploreType.PARKING;
-            } else if (singleExplore.get("entrances") != null) {
+            } else if (singleExplore.containsKey("entrances")) {
                 return ExploreType.BUILDING;
-            } else if (singleExplore.get("coursetitle") != null) {
+            } else if (singleExplore.containsKey("coursetitle")) {
                 return ExploreType.STUDENT_COURSE;
-            } else if ((singleExplore.get("id") != null) && (singleExplore.get("date_time") != null) && (singleExplore.get("type") != null)) {
+            } else if ((singleExplore.containsKey("id")) && (singleExplore.containsKey("date_time")) && (singleExplore.containsKey("type"))) {
                 return ExploreType.APPOINTMENT;
-            } else if (singleExplore.get("stop_id") != null) {
+            } else if (singleExplore.containsKey("stop_id")) {
                 return ExploreType.MTD_STOP;
             } else if (singleExplore.containsKey("placeId")) {
                 return ExploreType.POI;
