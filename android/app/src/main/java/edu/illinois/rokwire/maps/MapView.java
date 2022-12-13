@@ -339,9 +339,11 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
                 MarkerOptions markerOptions = Utils.Explore.constructMarkerOptions(getContext(), explore, markerLayoutView, markerGroupLayoutView, iconGenerator);
                 if (markerOptions != null) {
                     Marker marker = googleMap.addMarker(markerOptions);
-                    JSONObject tagJson = Utils.Explore.constructMarkerTagJson(getContext(), marker.getTitle(), explore);
-                    marker.setTag(tagJson);
-                    markers.add(marker);
+                    if (marker != null) {
+                        JSONObject tagJson = Utils.Explore.constructMarkerTagJson(getContext(), marker.getTitle(), explore);
+                        marker.setTag(tagJson);
+                        markers.add(marker);
+                    }
                 }
             }
         }
@@ -360,7 +362,8 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
 
     private void updateMarkers() {
         float currentCameraZoom = googleMap.getCameraPosition().zoom;
-        boolean updateMarkerInfo = Utils.Explore.shouldUpdateMarkerView(currentCameraZoom, cameraZoom);
+        boolean showMarkerPopups = Utils.Map.getValueFromPath(exploreOptions, "ShowMarkerPopus", true);
+        boolean updateMarkerInfo = showMarkerPopups && Utils.Explore.crossedZoomThreshold(currentCameraZoom, cameraZoom);
         if (updateMarkerInfo) {
             if (markers != null && !markers.isEmpty()) {
                 for (Marker marker : markers) {

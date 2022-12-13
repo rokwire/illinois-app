@@ -383,7 +383,7 @@ public class Utils {
             return markerOptions;
         }
 
-        public static boolean shouldUpdateMarkerView(float currentZoom, float previousZoom) {
+        public static boolean crossedZoomThreshold(float currentZoom, float previousZoom) {
             if (currentZoom == previousZoom) {
                 return false;
             }
