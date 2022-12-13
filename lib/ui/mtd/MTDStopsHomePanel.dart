@@ -287,7 +287,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   String get _emptyDisplayStatus {
     switch(_selectedContentType) {
       case MTDStopsContentType.all: return Localization().getStringEx('panel.mtd_stops.home.status.empty.all.text', 'There are no bus stops available.');
-      case MTDStopsContentType.my: return Localization().getStringEx('panel.mtd_stops.home.status.empty.my.text', 'You have not saved any stop yet.');
+      case MTDStopsContentType.my: return Localization().getStringEx('panel.mtd_stops.home.status.empty.my.text', 'You have no saved bus stops.');
       default: return '';
     }
   }
