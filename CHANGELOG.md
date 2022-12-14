@@ -5,12 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Android: app bundle builds [#2741](https://github.com/rokwire/illinois-app/issues/2741).
+
+## [4.2.40] - 2022-12-13
 ### Changed
 - Updated privacy descriptions [#2720](https://github.com/rokwire/illinois-app/issues/2720).
 - MTD Map strings updates [#2722](https://github.com/rokwire/illinois-app/issues/2722).
 - GroupMemberNotificationsPanel: update override switches to get global settings values if main override switch is of [#2713](https://github.com/rokwire/illinois-app/issues/2713).
 ### Fixed
 - Fixed HomeGroupWidget vertical overflow.
+- Fixed initial camera zoom and position when presenting empty explores list in iOS [#2727](https://github.com/rokwire/illinois-app/issues/2727).
 ### Added
 - Implemented MTD Stops search [#2724](https://github.com/rokwire/illinois-app/issues/2724).
 - Standardize logged out widget [#2668](https://github.com/rokwire/illinois-app/issues/2668).
