@@ -369,7 +369,7 @@ public class MapDirectionsActivity extends MapActivity implements Navigation.Nav
 
     private void initExploreLocation(HashMap singleExplore) {
         Utils.ExploreType exploreType = Utils.Explore.getExploreType(singleExplore);
-        if (exploreType == Utils.ExploreType.PARKING) {
+        if ((exploreType == Utils.ExploreType.PARKING) || (exploreType == Utils.ExploreType.MTD_STOP)) {
             LatLng latLng = Utils.Explore.optLocationLatLng(singleExplore);
             if (latLng != null) {
                 this.exploreLocation = Utils.Explore.createLocationMap(latLng);

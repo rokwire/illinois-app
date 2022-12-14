@@ -1,0 +1,9 @@
+[
+  {
+    "featureType": "transit.station.bus",
+    "elementType": "all",
+    "stylers": [{
+    	"visibility": "off"
+		}]
+  }
+]
