@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Android: app bundle builds [#2741](https://github.com/rokwire/illinois-app/issues/2741).
 ### Changed
 - Removed debug label in native iOS MapView.
+- Use specific item cards, where possible, in ExploreListPanel [#2664](https://github.com/rokwire/illinois-app/issues/2664).
 
 ## [4.2.40] - 2022-12-13
 ### Changed
