@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Research Projects section description in Browse panel [#2729](https://github.com/rokwire/illinois-app/issues/2729).
 - Removed "Enable attendance checking" from Create Group / Group Settings panels [#2685](https://github.com/rokwire/illinois-app/issues/2685).
 - Removed "Take Attendance" from admin view in Group [#2685](https://github.com/rokwire/illinois-app/issues/2685).
+- "My Favorites" dropdown item in Settings renamed to "Customize Favorites" [#2735](https://github.com/rokwire/illinois-app/issues/2735).
 ### Added
 - Android: handle MTD stops on the Google map [#2711](https://github.com/rokwire/illinois-app/issues/2711).
 

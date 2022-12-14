@@ -1307,7 +1307,7 @@
     "panel.settings.home.settings.sections.sports.label": "Mis equipos deportivos",
     "panel.settings.home.settings.sections.calendar.label": "Configuración de mi calendario",
     "panel.settings.home.settings.sections.appointments.label": "Mis citas de McKinley",
-    "panel.settings.home.settings.sections.favorites.label": "Mis favoritas",
+    "panel.settings.home.settings.sections.favorites.label": "Personalizar favoritos",
     "panel.settings.home.settings.sections.assessments.label": "Mis evaluaciones",
 
     "panel.settings.home.connect.not_logged_in.title":"Inicia sesión en {{app_title}}",
