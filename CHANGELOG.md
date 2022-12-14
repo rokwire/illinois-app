@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Android: app bundle builds [#2741](https://github.com/rokwire/illinois-app/issues/2741).
+- Skills Self- Evaluation - "Clear all Scores" is not clearing the scores [#2731](https://github.com/rokwire/illinois-app/issues/2731).
 ### Changed
 - Removed debug label in native iOS MapView.
 - Use specific item cards, where possible, in ExploreListPanel [#2664](https://github.com/rokwire/illinois-app/issues/2664).
