@@ -1308,7 +1308,7 @@
     "panel.settings.home.settings.sections.sports.label": "My Sports Teams",
     "panel.settings.home.settings.sections.calendar.label": "My Calendar Settings",
     "panel.settings.home.settings.sections.appointments.label": "MyMcKinley Appointments",
-    "panel.settings.home.settings.sections.favorites.label": "My Favorites",
+    "panel.settings.home.settings.sections.favorites.label": "Customize Favorites",
     "panel.settings.home.settings.sections.assessments.label": "My Assessments",
 
     "panel.settings.home.connect.not_logged_in.title":"Sign in to {{app_title}}",

@@ -1307,7 +1307,7 @@
 	"panel.settings.home.settings.sections.sports.label": "我的運動隊",
 	"panel.settings.home.settings.sections.calendar.label": "我的日曆設置",
 	"panel.settings.home.settings.sections.appointments.label": "我的麥金萊約會",
-	"panel.settings.home.settings.sections.favorites.label": "我最喜愛的",
+	"panel.settings.home.settings.sections.favorites.label": "自定義收藏夾",
     "panel.settings.home.settings.sections.assessments.label": "我的評估",
 
 	"panel.settings.home.connect.not_logged_in.title":"登錄{{app_title}}",
