@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.2.41] - 2022-12-14
 ### Fixed
 - Android: app bundle builds [#2741](https://github.com/rokwire/illinois-app/issues/2741).
 - Fixed empty Illini Cash and Meal Plan Wallet widgets content after login [#2736](https://github.com/rokwire/illinois-app/issues/2736).
