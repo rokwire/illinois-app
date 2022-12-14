@@ -42,7 +42,7 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
                           color: Styles().colors!.background,
                           child: Column(children: <Widget>[
                             Container(
-                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                                 child: GroupMemberSettingsLayout(
                                     settings: _settings,
                                     onChanged: () {
