@@ -2950,14 +2950,14 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [
                               EnabledToggleButton(
-                                  enabled: isGroupPostAllowed,
+                                  enabled: (isGroupPostAllowed == true && isGroupInfoAllowed == true),
                                   borderRadius: BorderRadius.zero,
                                   label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Send posts to specific members"), //TBD localize section
                                   toggled: (settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false),
                                   onTap: (){_onSettingsTap(
-                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToSpecificMembers =  !(settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false);}}
+                                      changeSetting: (){ if(isGroupPostAllowed == true && isGroupInfoAllowed == true) {settings?.memberPostPreferences?.sendPostToSpecificMembers =  !(settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false);}}
                                   );},
-                                  textStyle: isGroupPostAllowed
+                                  textStyle: (isGroupPostAllowed == true && isGroupInfoAllowed == true)
                                       ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                                       : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                               EnabledToggleButton(

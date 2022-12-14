@@ -134,7 +134,8 @@ extension GroupExt on Group {
 
   bool get isMemberAllowedToPostToSpecificMembers =>
       (settings?.memberPostPreferences?.allowSendPost == true) &&
-      (settings?.memberPostPreferences?.sendPostToSpecificMembers == true);
+      (settings?.memberPostPreferences?.sendPostToSpecificMembers == true) &&
+      (isMemberAllowedToViewMembersInfo); // Additional dependency to Member Info
 
   bool get isMemberAllowedToReplyToPost =>
       (settings?.memberPostPreferences?.allowSendPost == true) &&
