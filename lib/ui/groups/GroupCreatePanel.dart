@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
@@ -84,7 +85,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _group?.researchOpen ??= (_group?.researchProject == true) ? true : null;
     _group?.privacy ??= (_group?.researchProject == true) ? GroupPrivacy.public : GroupPrivacy.private;
     _group?.category ??= (_group?.researchProject == true) ? 'Other' : null;
-    _group?.settings ??= GroupSettings.initialDefaultSettings();
+    _group?.settings ??= GroupSettingsExt.initialDefaultSettings();
 
     _groupTitleController.text = _group?.title ?? '';
     _groupDescriptionController.text = _group?.description ?? '';
