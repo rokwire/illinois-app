@@ -284,7 +284,7 @@
     "panel.browse.section.groups.title": "Groups",
     "panel.browse.section.groups.description": "Start your own group or discover a new group to join.",
     "panel.browse.section.research_projects.title": "Research at Illinois",
-    "panel.browse.section.research_projects.description": "Start your own research projects or discover other projects to participate.",
+    "panel.browse.section.research_projects.description": "Start your own research projects or discover other projects to participate in.",
     "panel.browse.section.laundry.title": "Laundry",
     "panel.browse.section.laundry.description": "View laundry locations and washer/dryer availability.",
     "panel.browse.section.mtd.title": "MTD",
@@ -1308,7 +1308,7 @@
     "panel.settings.home.settings.sections.sports.label": "My Sports Teams",
     "panel.settings.home.settings.sections.calendar.label": "My Calendar Settings",
     "panel.settings.home.settings.sections.appointments.label": "MyMcKinley Appointments",
-    "panel.settings.home.settings.sections.favorites.label": "My Favorites",
+    "panel.settings.home.settings.sections.favorites.label": "Customize Favorites",
     "panel.settings.home.settings.sections.assessments.label": "My Assessments",
 
     "panel.settings.home.connect.not_logged_in.title":"Sign in to {{app_title}}",

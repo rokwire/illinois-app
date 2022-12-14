@@ -283,7 +283,7 @@
 	"panel.browse.section.groups.title": "團體",
 	"panel.browse.section.groups.description": "開始您自己的群組或發現新的群組加入。",
 	"panel.browse.section.research_projects.title": "伊利諾伊州研究",
-	"panel.browse.section.research_projects.description": "開始您自己的研究項目或發現其他參與的項目。",
+	"panel.browse.section.research_projects.description": "開始你自己的研究項目或發現其他項目參與。",
 	"panel.browse.section.laundry.title": "洗衣店",
 	"panel.browse.section.laundry.description": "查看洗衣地點和洗衣機/烘乾機的可用性。",
 	"panel.browse.section.mtd.title": "MTD",
@@ -1307,7 +1307,7 @@
 	"panel.settings.home.settings.sections.sports.label": "我的運動隊",
 	"panel.settings.home.settings.sections.calendar.label": "我的日曆設置",
 	"panel.settings.home.settings.sections.appointments.label": "我的麥金萊約會",
-	"panel.settings.home.settings.sections.favorites.label": "我最喜愛的",
+	"panel.settings.home.settings.sections.favorites.label": "自定義收藏夾",
     "panel.settings.home.settings.sections.assessments.label": "我的評估",
 
 	"panel.settings.home.connect.not_logged_in.title":"登錄{{app_title}}",

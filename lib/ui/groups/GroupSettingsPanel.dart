@@ -188,11 +188,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               )
                             ),
 
-                            Visibility(visible: !_isResearchProject, child:
-                              Padding(padding: EdgeInsets.only(top: 8), child:
-                                _buildAttendanceLayout(),
-                              )
-                            ),
+                          //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2
+                          //Visibility(visible: !_isResearchProject, child:
+                          //  Padding(padding: EdgeInsets.only(top: 8), child:
+                          //    _buildAttendanceLayout(),
+                          //  )
+                          //),
 
                             Visibility(visible: !_isResearchProject, child:
                               Padding(padding: EdgeInsets.only(top: 8), child:
@@ -1219,7 +1220,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
   
   // Attendance
-  Widget _buildAttendanceLayout() {
+  /*Widget _buildAttendanceLayout() {
     return Container(
       color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
@@ -1240,7 +1241,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         setState(() {});
       }
     }
-  }
+  }*/
 
   //Auto Join
   //Autojoin
