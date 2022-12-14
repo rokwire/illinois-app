@@ -782,9 +782,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               ),
               
               Visibility(visible: StringUtils.isNotEmpty(members), child:
-                GestureDetector(onTap: () => { if (_isMember) {_onTapMembers()} }, child:
+                GestureDetector(onTap: () => { if (_isMember  && _canViewMembers) {_onTapMembers()} }, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                    Container(decoration: (_isMember ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
+                    Container(decoration: (_isMember && _canViewMembers ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
                       Text(members, style:  Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
                     ),
                   ),
@@ -1509,9 +1509,6 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   void _onTapMembers(){
-    if(_canViewMembers == false){
-      return; // forbidden
-    }
     Analytics().logSelect(target: "Group Members", attributes: _group?.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMembersPanel(group: _group)));
   }
