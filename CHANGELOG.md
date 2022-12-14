@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.2.41] - 2022-12-14
 ### Fixed
 - Android: app bundle builds [#2741](https://github.com/rokwire/illinois-app/issues/2741).
+- Fixed empty Illini Cash and Meal Plan Wallet widgets content after login [#2736](https://github.com/rokwire/illinois-app/issues/2736).
 - Skills Self- Evaluation - "Clear all Scores" is not clearing the scores [#2731](https://github.com/rokwire/illinois-app/issues/2731).
 ### Changed
 - Removed debug label in native iOS MapView.
@@ -14,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ensure visible the newly created groups [#2683](https://github.com/rokwire/illinois-app/issues/2683).
 - Updated Research Projects section description in Browse panel [#2729](https://github.com/rokwire/illinois-app/issues/2729).
 - Removed "Enable attendance checking" from Create Group / Group Settings panels [#2685](https://github.com/rokwire/illinois-app/issues/2685).
+- Removed "Take Attendance" from admin view in Group [#2685](https://github.com/rokwire/illinois-app/issues/2685).
+- "My Favorites" dropdown item in Settings renamed to "Customize Favorites" [#2735](https://github.com/rokwire/illinois-app/issues/2735).
+- Rename Group setting switch [#2753](https://github.com/rokwire/illinois-app/issues/2753).
 ### Added
 - Android: handle MTD stops on the Google map [#2711](https://github.com/rokwire/illinois-app/issues/2711).
 

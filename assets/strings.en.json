@@ -1308,7 +1308,7 @@
     "panel.settings.home.settings.sections.sports.label": "My Sports Teams",
     "panel.settings.home.settings.sections.calendar.label": "My Calendar Settings",
     "panel.settings.home.settings.sections.appointments.label": "MyMcKinley Appointments",
-    "panel.settings.home.settings.sections.favorites.label": "My Favorites",
+    "panel.settings.home.settings.sections.favorites.label": "Customize Favorites",
     "panel.settings.home.settings.sections.assessments.label": "My Assessments",
 
     "panel.settings.home.connect.not_logged_in.title":"Sign in to {{app_title}}",
@@ -1531,7 +1531,7 @@
     "panel.settings.notifications.group_updates": "Group Updates",
     "panel.settings.notifications.group_updates.posts.label": "Posts",
     "panel.settings.notifications.group_updates.event.label": "Event",
-    "panel.settings.notifications.group_updates.invitations.label": "Invitations",
+    "panel.settings.notifications.group_updates.invitations.label": "Group membership",
     "panel.settings.notifications.group_updates.polls.label": "Polls",
     "panel.settings.notifications.pause_notifications": "Pause all notifications",
 
@@ -2061,7 +2061,7 @@
     "panel.group_member_notifications.override_notifications.label": "Use these custom notification preferences below",
     "panel.group_member_notifications.posts.label": "Posts",
     "panel.group_member_notifications.event.label": "Event",
-    "panel.group_member_notifications.invitations.label": "Invitations",
+    "panel.group_member_notifications.invitations.label": "Group membership",
     "panel.group_member_notifications.polls.label": "Polls",
     "panel.group_member_notifications.save.success.msg": "Notifications preferences were updated successfully.",
     "panel.group_member_notifications.save.fail.msg": "Failed to update notification preferences.",
