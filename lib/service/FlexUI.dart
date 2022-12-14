@@ -105,22 +105,6 @@ class FlexUI extends rokwire.FlexUI {
     return super.localeIsEntryAvailable(entry, group: group, rules: rules);
   }
 
-  @override
-  Map<String, dynamic> unsatisfiedRulesForEntry(String entry, { String? group, Map<String, dynamic>? rules }) {
-    Map<String, dynamic> entryRules = {};
-    rules ??= JsonUtils.mapValue(defaultContentSourceEntry?['rules']) ?? <String, dynamic>{};
-    String? pathEntry = (group != null) ? '$group.$entry' : null;
-
-    Map<String, dynamic>? illiniCashRules = rules['illini_cash'];
-    dynamic illiniCashRule = (illiniCashRules != null) ? (((pathEntry != null) ? illiniCashRules[pathEntry] : null) ?? illiniCashRules[entry])  : null;
-    if ((illiniCashRule != null) && !_localeEvalIlliniCashRule(illiniCashRule)) {
-      entryRules['illini_cash'] = illiniCashRule;
-    }
-
-    entryRules.addAll(super.unsatisfiedRulesForEntry(entry, group: group, rules: rules));
-    return entryRules;
-  }
-
   static bool _localeEvalIlliniCashRule(dynamic illiniCashRule) {
     bool result = true;  // allow everything that is not defined or we do not understand
     if (illiniCashRule is Map) {

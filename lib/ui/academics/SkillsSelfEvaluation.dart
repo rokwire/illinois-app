@@ -43,7 +43,6 @@ class SkillsSelfEvaluation extends StatefulWidget {
 
 class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements NotificationsListener {
   Map<String, SkillsSelfEvaluationContent> _infoContentItems = {};
-  bool _accessDialogShown = false;
 
   @override
   void initState() {
@@ -198,10 +197,8 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   }
 
   void _onTapStartEvaluation() {
-    Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation', onUpdate: () => _onAccessUpdate(context));
-    if (result != null) {
-      _accessDialogShown = true;
-    } else if (Config().bessiSurveyID != null) {
+    Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation');
+    if (Config().bessiSurveyID != null && result == null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget(), tabBar: uiuc.TabBar())));
     }
   }
@@ -251,16 +248,6 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   void _onTapShowInfo(String key) {
     Navigator.of(context).pop();
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationInfoPanel(content: _infoContentItems[key])));
-  }
-
-  void _onAccessUpdate(BuildContext context) {
-    if (_accessDialogShown && AccessDialog.mayAccessResource('academics.skills_self_evaluation')) {
-      Navigator.popUntil(context, (route) {
-        return route.settings.name == AccessDialog.routeName;
-      });
-      Navigator.pop(context);
-      _accessDialogShown = false;
-    }
   }
 
   // NotificationsListener
