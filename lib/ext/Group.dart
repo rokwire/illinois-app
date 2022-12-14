@@ -116,7 +116,7 @@ extension GroupExt on Group {
     return "";
   }
 
-  //Settings
+  //Settings Preferences rules
   //Post
   bool get isMemberAllowedToPost => /*true ||*//*TMP TODO*//* */(settings?.memberPostPreferences?.allowSendPost == true) && //If all 5 sub checks for posts are set to false by an admin, this is the same as the admin unchecking/false the main section category, in this case "Member Posts"
       ((settings?.memberPostPreferences?.sendPostToSpecificMembers == true) ||
@@ -153,6 +153,18 @@ extension GroupExt on Group {
           (settings?.memberInfoPreferences?.viewMemberPhone == true)
       );
 
+  //Settings user permission depending on settings and role
+  bool get currentUserHasPermissionToSendReactions{
+    return (currentUserIsAdmin == true) ||
+        (currentUserIsMember == true &&
+          isMemberAllowedToSendReactionsToPost == true);
+  }
+
+  bool get currentUserHasPermissionToSendReply{
+    return ((currentUserIsAdmin == true) ||
+        (currentUserIsMember == true &&
+            isMemberAllowedToReplyToPost == true));
+  }
 }
 
 String? groupMemberStatusToDisplayString(GroupMemberStatus? value) {

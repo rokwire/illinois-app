@@ -1330,7 +1330,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                 ),
                 Expanded(child: Container()),
                 Visibility(
-                  visible: Config().showGroupPostReactions,
+                  visible: Config().showGroupPostReactions &&
+                      (widget.group?.currentUserHasPermissionToSendReactions == true),
                   child: GroupPostReaction(
                     groupID: widget.group?.id,
                     post: widget.reply,
