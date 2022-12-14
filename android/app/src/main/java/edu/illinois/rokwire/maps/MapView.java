@@ -262,7 +262,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
                 }
                 buildDisplayExploresForThresholdDistance(thresholdDistance);
             } else {
-                CameraUpdate cameraUpdate = CameraUpdateFactory.zoomTo(2);
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(Constants.DEFAULT_INITIAL_CAMERA_POSITION, Constants.DEFAULT_CAMERA_ZOOM);
                 googleMap.moveCamera(cameraUpdate);
             }
         }
