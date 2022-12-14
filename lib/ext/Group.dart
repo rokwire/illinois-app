@@ -229,3 +229,11 @@ extension GroupPostExt on GroupPost {
   }
 }
 
+extension GroupSettingsExt on GroupSettings{
+  static GroupSettings initialDefaultSettings(){
+    return GroupSettings(
+        memberInfoPreferences: MemberInfoPreferences(allowMemberInfo: true, viewMemberNetId: false, viewMemberName: true, viewMemberEmail: false),
+        memberPostPreferences: MemberPostPreferences(allowSendPost: true, sendPostToSpecificMembers: false, sendPostToAll: true, sendPostToAdmins: true, sendPostReplies: true, sendPostReactions: true)); //Set Default values to true
+  }
+}
+

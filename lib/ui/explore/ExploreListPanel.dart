@@ -17,6 +17,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/MTD.dart';
+import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/ui/academics/StudentCourses.dart';
+import 'package:illinois/ui/home/HomeLaundryWidget.dart';
+import 'package:illinois/ui/mtd/MTDWidgets.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -52,6 +60,7 @@ class ExploreListPanel extends StatefulWidget implements AnalyticsPageAttributes
 class _ExploreListPanelState extends State<ExploreListPanel> {
 
   List<Explore>? _explores;
+  Set<String> _mtdExpanded = <String>{};
 
   @override
   void initState() {
@@ -77,41 +86,54 @@ class _ExploreListPanelState extends State<ExploreListPanel> {
 
   Widget _buildBody() {
     return Column(children: <Widget>[
-      Expanded(
-          child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[_buildListViewWidget()],
-              ))),
+      Expanded(child:
+        Padding(padding: EdgeInsets.zero, child:
+          CollectionUtils.isNotEmpty(_explores) ? ListView.separated(
+            separatorBuilder: (context, index) => Container(),
+            itemCount: _explores!.length,
+            itemBuilder: (context, index) => _exploreCard(index)
+          ) : Container()
+        )
+      )
     ]);
   }
 
-  Widget _buildListViewWidget() {
-    if (_explores == null || _explores!.length == 0) {
-      return Container();
+  Widget _exploreCard(int index) {
+    Explore explore = _explores![index];
+    bool isFirst = (index == 0);
+    bool isLast = ((index + 1) == _explores!.length);
+
+    if (explore is LaundryRoom) {
+      return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: isLast ? 16 : 0), child:
+        LaundryRoomCard(room: explore, onTap: () => _onExploreTap(explore)),
+      );
     }
-    return ListView.separated(
-      physics: NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      separatorBuilder: (context, index) =>
-          Divider(
-            color: Colors.transparent,
-          ),
-      itemCount: _explores!.length,
-      itemBuilder: (context, index) {
-        Explore explore = _explores![index];
-        ExploreCard exploreView = ExploreCard(
-            explore: explore,
-            onTap: () => _onExploreTap(explore),
-            locationData: widget.initialLocationData,
-            showTopBorder: true);
-        return Padding(
-            padding: EdgeInsets.only(top: 16),
-            child: exploreView);
-      },
-    );
+    else if (explore is MTDStop) {
+      return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: isFirst ? 16 : 4, bottom: isLast ? 16 : 0), child:
+        MTDStopCard(
+          stop: explore,
+          expanded: _mtdExpanded,
+          onDetail: () => _onExploreTap(explore),
+          onExpand: () => _onExpandMTDStop(explore),
+          currentPosition: widget.initialLocationData,
+        ),
+      );
+    }
+    else if (explore is StudentCourse) {
+      return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: isLast ? 16 : 0), child:
+        StudentCourseCard(course: explore,),
+      );
+    }
+    else if (explore is Appointment) {
+      return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: isLast ? 16 : 0), child:
+        AppointmentCard(appointment: explore)
+      );
+    }
+    else {
+      return Padding(padding: EdgeInsets.only(top: 16, bottom: isLast ? 16 : 0), child:
+        ExploreCard(explore: explore, onTap: () => _onExploreTap(explore), locationData: widget.initialLocationData, showTopBorder: true),
+      );
+    }
   }
 
   void _onExploreTap(Explore explore) {
@@ -121,6 +143,15 @@ class _ExploreListPanelState extends State<ExploreListPanel> {
     Widget? detailPanel = ExploreDetailPanel.contentPanel(explore: explore, initialLocationData: widget.initialLocationData,);
     if (detailPanel != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => detailPanel));
+    }
+  }
+
+  void _onExpandMTDStop(MTDStop? stop) {
+    Analytics().logSelect(target: "MTD Stop: ${stop?.name}" );
+    if (mounted && (stop?.id != null)) {
+      setState(() {
+        SetUtils.toggle(_mtdExpanded, stop?.id);
+      });
     }
   }
 }

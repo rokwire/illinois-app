@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Android: app bundle builds [#2741](https://github.com/rokwire/illinois-app/issues/2741).
+### Changed
+- Removed debug label in native iOS MapView.
+- Use specific item cards, where possible, in ExploreListPanel [#2664](https://github.com/rokwire/illinois-app/issues/2664).
+- Ensure visible the newly created groups [#2683](https://github.com/rokwire/illinois-app/issues/2683).
+- Updated Research Projects section description in Browse panel [#2729](https://github.com/rokwire/illinois-app/issues/2729).
+### Added
+- Android: handle MTD stops on the Google map [#2711](https://github.com/rokwire/illinois-app/issues/2711).
 
 ## [4.2.40] - 2022-12-13
 ### Changed
