@@ -160,7 +160,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
                     _EnabledToggleButton(
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.group_member_notifications.invitations.label", "Invitations"),
+                        label: Localization().getStringEx("panel.group_member_notifications.invitations.label", "Group membership"),
                         toggled: !(memberPreferences?.muteInvitations ?? false),
                         defaultValue: (FirebaseMessaging().notifyGroupInvitationsUpdates == true),
                         onTap: _groupSubNotificationsEnabled ? _onToggleInvitations : null,
@@ -220,7 +220,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
       ),
       _DisabledToggleButton(
           toggled: groupInvitationsNotificationsEnabled,
-          label: Localization().getStringEx("panel.settings.notifications.group_updates.invitations.label", "Invitations"),
+          label: Localization().getStringEx("panel.settings.notifications.group_updates.invitations.label", "Group membership"),
           textStyle: groupInvitationsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       ),
       _DisabledToggleButton(
@@ -248,7 +248,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
         values.add("Events");
       }
       if(_member?.notificationsPreferences?.muteInvitations == true){
-        values.add("Invitations");
+        values.add("Group membership");
       }
       if(_member?.notificationsPreferences?.mutePolls == true){
         values.add("Polls");
@@ -336,7 +336,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
 
   void _onToggleInvitations() {
     if (!_isLoading && (_member != null)) {
-      Analytics().logSelect(target: "Invitations");
+      Analytics().logSelect(target: "Group membership");
       if (_member!.notificationsPreferences == null) {
         _member!.notificationsPreferences = MemberNotificationsPreferences();
       }
