@@ -336,7 +336,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             return;
         }
         clearMarkers();
-        if (displayExplores != null && displayExplores.size() > 0) {
+        if ((displayExplores != null) && (displayExplores.size() > 0)) {
             markers = new ArrayList<>();
             for (Object explore : displayExplores) {
                 MarkerOptions markerOptions = Utils.Explore.constructMarkerOptions(getContext(), explore, markerLayoutView, markerGroupLayoutView, iconGenerator);
@@ -366,12 +366,18 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     private void updateMarkers() {
         float currentCameraZoom = googleMap.getCameraPosition().zoom;
         boolean showMarkerPopups = Utils.Map.getValueFromPath(exploreOptions, "ShowMarkerPopus", true);
-        boolean updateMarkerInfo = showMarkerPopups && Utils.Explore.crossedZoomThreshold(currentCameraZoom, cameraZoom);
+        boolean crossedZoomThreshold = Utils.Explore.crossedZoomThreshold(currentCameraZoom, cameraZoom);
+        boolean updateMarkerInfo = showMarkerPopups && crossedZoomThreshold;
+
         if (updateMarkerInfo) {
-            if (markers != null && !markers.isEmpty()) {
+            boolean hasMarkers = (markers != null && !markers.isEmpty());
+            if (hasMarkers) {
+                LatLngBounds visibleMapBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
                 for (Marker marker : markers) {
-                    boolean singleExploreMarker = Utils.Explore.optSingleExploreMarker(marker);
-                    Utils.Explore.updateCustomMarkerAppearance(getContext(), marker, singleExploreMarker, currentCameraZoom, cameraZoom, markerLayoutView, markerGroupLayoutView, iconGenerator);
+                    if (visibleMapBounds.contains(marker.getPosition())) {
+                        boolean singleExploreMarker = Utils.Explore.optSingleExploreMarker(marker);
+                        Utils.Explore.updateCustomMarkerAppearance(getContext(), marker, singleExploreMarker, currentCameraZoom, cameraZoom, markerLayoutView, markerGroupLayoutView, iconGenerator);
+                    }
                 }
             }
         }
