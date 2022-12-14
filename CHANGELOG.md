@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use specific item cards, where possible, in ExploreListPanel [#2664](https://github.com/rokwire/illinois-app/issues/2664).
 - Ensure visible the newly created groups [#2683](https://github.com/rokwire/illinois-app/issues/2683).
 - Updated Research Projects section description in Browse panel [#2729](https://github.com/rokwire/illinois-app/issues/2729).
+- Removed "Enable attendance checking" from Create Group / Group Settings panels [#2685](https://github.com/rokwire/illinois-app/issues/2685).
 
 ## [4.2.40] - 2022-12-13
 ### Changed
