@@ -794,7 +794,8 @@ class GroupCard extends StatefulWidget {
     this.displayType = GroupCardDisplayType.allGroups,
     this.margin = const EdgeInsets.symmetric(horizontal: 16),
     this.onImageTap,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   _GroupCardState createState() => _GroupCardState();
