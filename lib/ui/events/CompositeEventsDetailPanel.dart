@@ -734,7 +734,7 @@ class _EventsListState extends State<_EventsList>{
                     Expanded(
                       child: Text(title, overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Colors.white),),
                     ),
-                    Image.asset('images/chevron-right.png')
+                    Styles().images?.getImage('chevron-right') ?? Container(),
                   ],
                 ),
               ),
@@ -793,7 +793,7 @@ class _EventEntry extends StatelessWidget {
                       hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                           'widget.card.button.favorite.on.hint', ''),
                       button: true,
-                      child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png')
+                      child: Styles().images?.getImage(isFavorite ? 'star-filled': 'star-outline')
                   ))
           )),)
         ],),),

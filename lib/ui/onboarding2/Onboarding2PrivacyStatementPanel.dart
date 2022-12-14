@@ -73,7 +73,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                               _goBack(context);
                             }),
                       ],),
-                      Image.asset("images/lock_illustration.png", excludeFromSemantics: true, width: 130, fit: BoxFit.fitWidth, ),
+                      Styles().images?.getImage("lock-illustration", excludeFromSemantics: true, width: 130, fit: BoxFit.fitWidth) ?? Container(),
                       Semantics(
                         label: titleText + titleText2,
                         hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
@@ -135,7 +135,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                                       TextSpan(text:descriptionText1, semanticsLabel: "",),
                                       TextSpan(text:descriptionText2, semanticsLabel: "",style: Styles().textStyles?.getTextStyle("widget.button.title.small.underline"),
                                           children: [
-                                            WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png", excludeFromSemantics: true,)))
+                                            WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Styles().images?.getImage("images/icon-external-link-blue.png", excludeFromSemantics: true,)))
                                           ]),
                                       TextSpan(text:descriptionText3, semanticsLabel: ""),
                                     ]

@@ -242,7 +242,7 @@ class _IDCardPanelState extends State<IDCardPanel>
                 Semantics(button: true, label: Localization().getStringEx('widget.id_card.header.button.close.title', "close"), child:
                   InkWell(
                     onTap : _onClose,
-                    child: Container(width: 48, height: 48, alignment: Alignment.center, child: Image.asset('images/close-white.png', excludeFromSemantics: true,))),
+                    child: Container(width: 48, height: 48, alignment: Alignment.center, child: Styles().images?.getImage('close-circle-white', excludeFromSemantics: true))),
                 )),
           ],),),
         ],
@@ -278,7 +278,7 @@ class _IDCardPanelState extends State<IDCardPanel>
     }
     else if (_buildingAccess != null) {
 
-      buildingAccessIcon = Image.asset((_buildingAccess == true) ? 'images/group-20.png' : 'images/group-28.png', width: _buildingAccessIconSize, height: _buildingAccessIconSize, semanticLabel: "building access ${(_buildingAccess == true) ? "granted" : "denied"}",);
+      buildingAccessIcon = Styles().images?.getImage((_buildingAccess == true) ? 'images/group-20.png' : 'images/group-28.png', width: _buildingAccessIconSize, height: _buildingAccessIconSize, semanticLabel: "building access ${(_buildingAccess == true) ? "granted" : "denied"}",);
       buildingAccessStatus = (_buildingAccess == true) ? Localization().getString('widget.id_card.label.building_access.granted', defaults: 'GRANTED', language: 'en') : Localization().getString('widget.id_card.label.building_access.denied', defaults: 'DENIED', language: 'en');
     }
     else {
@@ -332,7 +332,7 @@ class _IDCardPanelState extends State<IDCardPanel>
           ),
           Align(alignment: Alignment.topCenter, child:
             Padding(padding: EdgeInsets.only(top:_photoSize - _illiniIconSize / 2 - 5, left: 3), child:
-              Image.asset('images/group-5-white.png',excludeFromSemantics: true, width: _illiniIconSize, height: _illiniIconSize,)
+              Styles().images?.getImage('images/group-5-white.png',excludeFromSemantics: true, width: _illiniIconSize, height: _illiniIconSize,)
             ),
           ),
         ],),
@@ -361,7 +361,7 @@ class _IDCardPanelState extends State<IDCardPanel>
         Visibility(visible: hasBuildingAccess, child: Column(children: [
           Text(Localization().getString('widget.id_card.label.building_access', defaults: 'Building Access', language: 'en')!, style: Styles().textStyles?.getTextStyle("panel.id_card.detail.title.small")),
           Container(height: 8),
-          buildingAccessIcon,
+          buildingAccessIcon ?? Container(),
           Text(buildingAccessStatus ?? '', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.id_card.detail.title.large")),
         ],),),
 

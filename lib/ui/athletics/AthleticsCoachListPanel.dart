@@ -103,7 +103,7 @@ class _CoachListHeading extends StatelessWidget{
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Image.asset(sport!.iconPath!, width: 16, height: 16,),
+                  Styles().images?.getImage(sport!.iconPath!, excludeFromSemantics: true) ?? Container(),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(sport!.name!,

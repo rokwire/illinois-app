@@ -149,7 +149,7 @@ class _Onboarding2ExploreCampusPanelState extends State<Onboarding2ExploreCampus
                               Align(
                                 alignment: Alignment.center,
                                 child:Container(
-                                  child: Styles().images?.getImage('explore_illustration', excludeFromSemantics: true),
+                                  child: Styles().images?.getImage('explore-illustration', excludeFromSemantics: true),
                                 )
                               )
                             ],

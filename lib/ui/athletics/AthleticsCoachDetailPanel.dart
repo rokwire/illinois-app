@@ -149,7 +149,7 @@ class _CoachDetailHeading extends StatelessWidget{
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Image.asset(sport!.iconPath!, width: 16, height: 16,),
+                                Styles().images?.getImage(sport!.iconPath!) ?? Container(),
                                 Expanded(child:
                                   Padding(
                                     padding: EdgeInsets.only(left: 10),

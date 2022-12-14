@@ -248,7 +248,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     }
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
-    String iconRes = "images/location.png" ;
+    String iconKey = "location" ;
     String? locationId = widget.event?.location?.locationId;
     String? locationText = _event?.getLongDisplayLocation(null); // if we need distance calculation - pass _locationData
     String? value = locationId ?? locationText;
@@ -272,7 +272,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(right: 10),
-                          child: Styles().images?.getImage(iconRes, excludeFromSemantics: true),
+                          child: Styles().images?.getImage(iconKey, excludeFromSemantics: true),
                         ),
                         Container(decoration: (null), padding: EdgeInsets.only(bottom: (0)), child: Text(eventType,
                             style: TextStyle(
@@ -306,7 +306,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
 
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event");
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
-    String iconRes = "images/laptop.png";
+    String iconKey = "laptop";
     String? virtualUrl = widget.event?.virtualEventUrl;
     String locationDescription = StringUtils.ensureNotEmpty(widget.event?.location?.description);
     String? locationId = widget.event?.location?.locationId;
@@ -335,7 +335,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(right: 10),
-                          child: Styles().images?.getImage(iconRes, excludeFromSemantics: true),
+                          child: Styles().images?.getImage(iconKey, excludeFromSemantics: true),
                         ),
                         Container(decoration: (StringUtils.isNotEmpty(value) ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (StringUtils.isNotEmpty(value) ? 2 : 0)), child: Text(eventType,
                             style: TextStyle(
@@ -381,7 +381,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(right: 10),
-                      child:Image.asset('images/icon-cost.png'),
+                      child: Styles().images?.getImage("cost"),
                     ),
                     Expanded(child:Text(priceText,
                         style: TextStyle(
@@ -500,7 +500,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               hint: Localization().getStringEx('panel.groups_event_detail.button.visit_website.hint', ''),
               backgroundColor: hasRegistrationUrl ? Styles().colors!.background : Colors.white,
               borderColor: hasRegistrationUrl ? Styles().colors!.fillColorPrimary: Styles().colors!.fillColorSecondary,
-              rightIcon: hasRegistrationUrl ? Image.asset('images/external-link.png', color: Styles().colors!.fillColorPrimary, colorBlendMode: BlendMode.srcIn) : Image.asset('images/external-link.png'),
+              rightIcon: Styles().images?.getImage(hasRegistrationUrl ? 'external-link-dark' : 'external-link'),
               textColor: Styles().colors!.fillColorPrimary,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               onTap: () {
@@ -519,7 +519,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
             hint: Localization().getStringEx('panel.groups_event_detail.button.get_tickets.hint', ''),
             backgroundColor: Colors.white,
             borderColor: Styles().colors!.fillColorSecondary,
-            rightIcon: Image.asset('images/external-link.png'),
+            rightIcon: Styles().images?.getImage('external-link'),
             textColor: Styles().colors!.fillColorPrimary,
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             onTap: () {
@@ -547,7 +547,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                   'widget.card.button.favorite.on.hint', ''),
               button: true,
-              child: Image.asset(isFavorite ? 'images/icon-star-white-transluent.png' : 'images/icon-star-white-frame-bold.png')
+              child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline')
           )));
   }
 
@@ -559,7 +559,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
             RibbonButton(
               label: Localization().getStringEx('panel.groups_event_detail.button.edit.title',  'Edit') ,
               hint: Localization().getStringEx('panel.groups_event_detail.button.edit.hint', '') ,
-              leftIconAsset: "images/icon-edit.png",
+              leftIconKey: "edit",
               onTap: _onTapEdit,
             ),
         Container(
@@ -575,7 +575,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
         RibbonButton(
           label: Localization().getStringEx('panel.groups_event_detail.button.delete.title', "Delete Event"),
           hint:  Localization().getStringEx('panel.groups_event_detail.button.delete.hint', ""),
-          leftIconAsset: "images/icon-leave-group.png",
+          leftIconKey: "trash",
           onTap: _onTapDelete,
         )
       ],

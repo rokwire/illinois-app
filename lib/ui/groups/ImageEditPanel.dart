@@ -84,7 +84,7 @@ class _ImageEditState extends State<ImageEditPanel> with WidgetsBindingObserver{
           button: true,
           excludeSemantics: true,
           child: IconButton(
-              icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true),
+              icon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(),
               onPressed: _onBack),
         ),
         title: Text(

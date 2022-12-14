@@ -119,7 +119,7 @@ class _HomeCampusSafetyResourcesWidgetState extends State<HomeCampusSafetyResour
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.campus_safety_resources.label.campus_safety_resources', 'Campus Safety Resources'),
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'campus-tools',
       child: _buildContent()
     );
   }

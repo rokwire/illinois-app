@@ -76,12 +76,12 @@ class _MTDStopCardState extends State<MTDStopCard> implements NotificationsListe
   @override
   Widget build(BuildContext context) {
     bool isFavorite = Auth2().isFavorite(widget.stop);
-    Image? favoriteStarIcon = widget.stop.favoriteStarIcon(selected: isFavorite);
+    Widget? favoriteStarIcon = widget.stop.favoriteStarIcon(selected: isFavorite);
     Color? headerColor = widget.stop.favoriteHeaderColor;
     String? title = widget.stop.favoriteTitle;
     String? cardDetailText = widget.stop.favoriteDetailText;
     Color? cardDetailTextColor = widget.stop.favoriteDetailTextColor ?? Styles().colors?.textBackground;
-    Image? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? widget.stop.favoriteDetailIcon : null;
+    Widget? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? widget.stop.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: widget.onTap, child:
       Semantics(label: title, child:

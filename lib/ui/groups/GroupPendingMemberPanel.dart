@@ -161,7 +161,7 @@ class _GroupPendingMemberPanelState extends State<GroupPendingMemberPanel> {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(height: 28,),
         Row(children: [
-          Image.asset("images/user-check.png"),
+          Styles().images?.getImage('user-check', excludeFromSemantics: true) ?? Container(),
           Container(width: 8,),
           Text(_isResearchProject ? "Participant Approval" : Localization().getStringEx("panel.pending_member_detail.label.approval", "Member Approval"), style:
             TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),

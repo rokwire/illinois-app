@@ -77,7 +77,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
     return Scaffold(
       appBar: HeaderBar(
         title: (widget.group?.researchProject == true) ? 'Recruitment Questions' : Localization().getStringEx("panel.membership_questions.label.title", 'Membership Questions'),
-        leadingAsset: 'images/icon-circle-close.png',
+        leadingIconKey: 'close-circle-white',
       ),
       body: Column(
         children: <Widget>[

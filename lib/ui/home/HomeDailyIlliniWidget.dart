@@ -113,7 +113,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeDailyIlliniWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png'),
+      titleIconKey: 'campus-tools.png',
       child: _buildContent(),
     );
   }
@@ -349,7 +349,7 @@ class _DailyIlliniItemWidget extends StatelessWidget {
   }
 
   Widget _defaultPlaceholderImage() {
-    return Row(children: [Expanded(child: Image.asset('images/daily-illini-placeholder.jpg', fit: BoxFit.fill))]);
+    return Row(children: [Expanded(child: Styles().images?.getImage('news-placeholder', fit: BoxFit.fill) ?? Container())]);
   }
 
   Widget _buildNavigationButton({required String navigationDirection, required String semanticsLabel, void Function()? onTap}) {

@@ -63,7 +63,7 @@ class _PollBubblePromptPanelState extends State<PollBubblePromptPanel>  {
         excludeSemantics: true,
         child: InkWell(
             onTap : _onClose,
-            child: Container(width: 48, height: 48, alignment: Alignment.center, child: Image.asset('images/close-white.png'))));
+            child: Container(width: 48, height: 48, alignment: Alignment.center, child: Styles().images?.getImage('close-circle-white', excludeFromSemantics: true))));
   }
 
   void _onClose() {
@@ -263,7 +263,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
     int totalVotes = _totalOptionVotes;
     int optionsCount = _poll?.options?.length ?? 0;
     for (int optionIndex = 0; optionIndex < optionsCount; optionIndex++) {
-      String checkboxImage = (0 < _optionVotes(optionIndex)) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
+      String checkboxIconKey = (0 < _optionVotes(optionIndex)) ? 'check-circle-filled' : 'check-circle-outline';
 
       String optionString = _poll!.options![optionIndex];
       String votesString;
@@ -290,7 +290,7 @@ class _PollContentState extends State<PollContentWidget> implements Notification
           child:  Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
             Padding(padding: EdgeInsets.only(right: 10), child: Stack(children: <Widget>[
-              Image.asset(checkboxImage,),
+              Styles().images?.getImage(checkboxIconKey, excludeFromSemantics: true) ?? Container(),
               Visibility(visible: (_votingOptions[optionIndex] != null),
                 child: SizedBox(height: 24, width: 24,
                     child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(_textColor), )

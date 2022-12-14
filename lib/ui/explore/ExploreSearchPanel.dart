@@ -112,12 +112,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                         padding: EdgeInsets.all(12),
                         child: GestureDetector(
                           onTap: _onTapClear,
-                          child: Image.asset(
-                            'images/icon-x-orange.png',
-                            width: 25,
-                            height: 25,
-                            excludeFromSemantics: true
-                          ),
+                          child: Styles().images?.getImage('close', excludeFromSemantics: true),
                         ),
                       )
                     ),
@@ -130,13 +125,7 @@ class _ExploreSearchPanelState extends State<ExploreSearchPanel> {
                         padding: EdgeInsets.all(12),
                         child: GestureDetector(
                           onTap: _onTapSearch,
-                          child: Image.asset(
-                            'images/icon-search.png',
-                            color: Styles().colors!.fillColorSecondary,
-                            width: 25,
-                            height: 25,
-                            excludeFromSemantics: true
-                          ),
+                          child: Styles().images?.getImage('search', excludeFromSemantics: true),
                         ),
                       ),
                     ),

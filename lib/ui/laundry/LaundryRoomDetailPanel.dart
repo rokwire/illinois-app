@@ -121,7 +121,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
 
   Widget _buildLocationWidget() {
     return Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-      Image.asset('images/icon-location.png', excludeFromSemantics: true),
+      Styles().images?.getImage('location', excludeFromSemantics: true) ?? Container(),
       Expanded(
           child: GestureDetector(
               onTap: _onTapViewMap,
@@ -145,7 +145,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
 
   Widget _buildReportIssueWidget() {
     return Padding(padding: EdgeInsets.only(top: 10), child: Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-      Image.asset('images/icon-report-issue.png', excludeFromSemantics: true),
+      Styles().images?.getImage('issue', excludeFromSemantics: true) ?? Container(),
       Expanded(
           child: GestureDetector(
               onTap: _onTapReportIssue,
@@ -227,7 +227,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
       SingleChildScrollView(scrollDirection: Axis.horizontal, child:
         Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
           Row(children: <Widget>[
-            Image.asset('images/icon-washer-big.png', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER'),),
+            Styles().images?.getImage('washer', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER')) ?? Container(),
             Padding(padding: EdgeInsets.only(right: 12),),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Text(Localization().getStringEx('panel.laundry_detail.label.washers', 'WASHERS'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 14, letterSpacing: 1, color: Styles().colors?.fillColorPrimary,),),
@@ -236,7 +236,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
           ],),
           Padding(padding: EdgeInsets.only(right: 16)),
           Row(children: <Widget>[
-            Image.asset('images/icon-dryer-big.png', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.dryer', 'DRYER')),
+            Styles().images?.getImage('dryer', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.dryer', 'DRYER')) ?? Container(),
             Padding(padding: EdgeInsets.only(right: 12),),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Text(Localization().getStringEx('panel.laundry_detail.label.dryers', 'DRYERS'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 14, letterSpacing: 1, color: Styles().colors?.fillColorPrimary,),),

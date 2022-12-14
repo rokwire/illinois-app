@@ -1003,7 +1003,7 @@ class _PollCardState extends State<PollCard> {
       bool useCustomColor = isClosed && maxValueIndex == optionIndex;
       String option = widget.poll!.options![optionIndex];
       bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
-      String checkboxImage = didVote ? 'images/deselected-dark.png' : 'images/checkbox-unselected.png';
+      String checkboxIconKey = didVote ? 'check-circle-filled' : 'check-circle-outline';
 
       String? votesString;
       int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
@@ -1029,7 +1029,7 @@ class _PollCardState extends State<PollCard> {
           child:
           Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(checkboxImage,),),
+            Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage(checkboxIconKey, excludeFromSemantics: true)),
             Expanded(
               flex: 5,
               key: progressKey, child:
@@ -1042,7 +1042,7 @@ class _PollCardState extends State<PollCard> {
                       Padding( padding: EdgeInsets.symmetric(horizontal: 5),
                         child: Text(option, style: useCustomColor? Styles().textStyles?.getTextStyle("panel.polls.home.check.accent") : Styles().textStyles?.getTextStyle("panel.polls.home.check")),)),
                         Visibility( visible: didVote,
-                        child:Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/checkbox-small.png',),)
+                        child:Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('images/checkbox-small.png',),)
                       ),
                     ],),)
               ),
@@ -1105,7 +1105,7 @@ class _PollCardState extends State<PollCard> {
       GestureDetector(onTap: _onDeletePollTapped, child:
         Stack(children: [
           Padding(padding: EdgeInsets.all(12), child:
-              Image.asset('images/trash.png', width: 18, height: 18, excludeFromSemantics: true,),
+          Styles().images?.getImage('trash', excludeFromSemantics: true),
           ),
           _showDeletePollProgress ? Padding(padding: EdgeInsets.all(9), child:
             SizedBox(height: 24, width: 24, child:

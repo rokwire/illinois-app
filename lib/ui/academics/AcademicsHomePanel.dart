@@ -87,7 +87,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
               backgroundColor: Styles().colors!.white,
               borderRadius: BorderRadius.all(Radius.circular(5)),
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-              rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+              rightIconKey: (_contentValuesVisible ? 'chevron-up' : 'chevron-down'),
               label: _getContentLabel(_selectedContent),
               onTap: _onTapRibbonButton
             ),
@@ -141,7 +141,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconKey: null,
         rightIcon: _buildContentItemRightIcon(contentItem),
         label: _getContentLabel(contentItem),
         onTap: () => _onTapContentItem(contentItem));
@@ -151,8 +151,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     switch (contentItem) {
       case AcademicsContent.my_illini:
         return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Image.asset('images/icon-login-grey.png'),
-          Padding(padding: EdgeInsets.only(left: 6), child: Image.asset('images/icon-external-link-grey.png'))
+          Styles().images?.getImage('images/icon-login-grey.png') ?? Container(),
+          Padding(padding: EdgeInsets.only(left: 6), child: Styles().images?.getImage('images/icon-external-link-grey.png'))
         ]);
       default:
         return null;

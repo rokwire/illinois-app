@@ -78,7 +78,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
     return Scaffold(
         appBar: HeaderBar(
           title: Localization().getStringEx("panel.create_stadium_poll.header.title", "Create a Stadium Poll"),
-          leadingAsset: 'images/close-white.png',
+          leadingIconKey: 'close-circle-white',
           onLeading: _onTapCancel,
         ),
         body: Container(
@@ -145,9 +145,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
           excludeSemantics:true,child:
         DropdownButtonHideUnderline(
             child: DropdownButton(
-
-                icon: Image.asset(
-                    'images/icon-down-orange.png'),
+                icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true),
                 isExpanded: true,
                 style:Styles().textStyles?.getTextStyle("panel.poll.create.stadium.geofence.dropdown.title"),
                 hint: Text(_selectedGeofence?.name??"Select Geofence",
@@ -250,7 +248,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                 Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
               ),
               Padding(padding: EdgeInsets.only(left: 5), child:
-                Image.asset('images/icon-add-14x14.png'),
+              Styles().images?.getImage('create', excludeFromSemantics: true),
               )
             ])
           )
@@ -288,7 +286,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                 Container(
                   child: Row(
                     children: <Widget>[
-                      Image.asset('images/icon-settings.png'),
+                      Styles().images?.getImage('settings', excludeFromSemantics: true) ?? Container(),
                       Padding(
                         padding: EdgeInsets.only(left: 10),
                         child: Text(additionalSettingsText, style:  Styles().textStyles?.getTextStyle("widget.title.regular"),

@@ -285,12 +285,12 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     }
 
     bool isFavorite = Auth2().isFavorite(item);
-    Image? favoriteStarIcon = item?.favoriteStarIcon(selected: isFavorite);
+    Widget? favoriteStarIcon = item?.favoriteStarIcon(selected: isFavorite);
     Color? headerColor = item?.favoriteHeaderColor;
     String? title = item?.favoriteTitle;
     String? cardDetailText = item?.favoriteDetailText;
     Color? cardDetailTextColor = item?.favoriteDetailTextColor ?? Styles().colors?.textBackground;
-    Image? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? item?.favoriteDetailIcon : null;
+    Widget? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? item?.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: () => _onTapItem(item), child:
       Semantics(label: title, child:

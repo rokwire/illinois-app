@@ -83,7 +83,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
                     Semantics(label: Localization().getStringEx("widget.home.tout.button.info.label", "Info"), hint: Localization().getStringEx("widget.home.tout.button.info.hint", "Tap for more info"), child:
                       InkWell(onTap: _onInfo, child:
                         Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8), child:
-                          Image.asset('images/icon-info-orange.png', excludeFromSemantics: true,),
+                          Styles().images?.getImage('info', excludeFromSemantics: true),
                         )
                       ),
                     ),
@@ -256,7 +256,7 @@ class _InfoDialog extends StatelessWidget {
                 Semantics(button: true, label: Localization().getStringEx("dialog.close.title","Close"), child:
                   InkWell(onTap: () => _onTapClose(context), child:
                     Padding(padding: EdgeInsets.all(16), child:
-                      Image.asset('images/close-white.png', excludeFromSemantics: true,)
+                      Styles().images?.getImage('close-circle-white', excludeFromSemantics: true)
                     )
                   )
                 )

@@ -63,8 +63,8 @@ class HomeWPGUFMRadioWidget extends StatelessWidget {
               ),
               Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), button: true, child:
                 InkWell(onTap : () => _onClosePopup(context), child:
-                  Padding(padding: EdgeInsets.all(16), child: 
-                    Image.asset('images/close-white.png', semanticLabel: '',),
+                  Padding(padding: EdgeInsets.all(16), child:
+                    Styles().images?.getImage('close-circle-white', excludeFromSemantics: true),
                   ),
                 ),
               ),
@@ -118,10 +118,10 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
   }
 
   Widget _buildContentCard() {
-    String? buttonTitle, iconAsset;
+    String? buttonTitle, iconKey;
     if (WPGUFMRadio().isInitialized) {
       buttonTitle = WPGUFMRadio().isPlaying ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'Tune In');
-      iconAsset = WPGUFMRadio().isPlaying ? 'images/button-pause-orange.png' : 'images/button-play-orange.png';
+      iconKey = WPGUFMRadio().isPlaying ? 'pause-circle' : 'play-circle';
     }
     else if (WPGUFMRadio().isInitializing) {
       buttonTitle = Localization().getStringEx('widget.home.radio.button.initalize.title', 'Initializing');
@@ -159,12 +159,12 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
                           ),
                         ),
                       ),
-                      (iconAsset != null) ? Semantics(button: true,
+                      (iconKey != null) ? Semantics(button: true,
                           excludeSemantics: true,
                           label: buttonTitle,
                           hint: Localization().getStringEx('widget.home.radio.button.add_radio.hint', ''),
                           child:  IconButton(color: Styles().colors!.fillColorPrimary,
-                            icon: Image.asset(iconAsset, excludeFromSemantics: true),
+                            icon: Styles().images?.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
                             onPressed: _onTapPlayPause)
                       ) : Container(),
                     ]),

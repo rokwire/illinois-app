@@ -227,7 +227,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                 Align(
                   alignment: Alignment.centerRight,
                   child: Semantics(label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.button.back.title", "Back"),
-                      child: IconButton(onPressed: () => Navigator.pop(context), icon: Image.asset('images/close-white-large.png'))),
+                      child: IconButton(onPressed: () => Navigator.pop(context), icon: Styles().images?.getImage('close-circle-white') ?? Container())),
                 ),
                 Padding(
                   padding: EdgeInsets.all(8),
@@ -837,7 +837,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                     Container(width: 9,),
                     Container(padding: EdgeInsets.only(right: 20), child: RotationTransition(
                         turns: _iconTurns,
-                        child: Image.asset(isEnabled? "images/arrow-down-orange.png": "images/arrow-down-orange-off.png", excludeFromSemantics: true))),
+                        child: Styles().images?.getImage(isEnabled? "images/arrow-down-orange.png": "images/arrow-down-orange-off.png", excludeFromSemantics: true))),
                   ],
                 )))),
         !infoExpanded? Container():

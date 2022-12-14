@@ -101,7 +101,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
 
           Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
             Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-              Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
+              Styles().images?.getImage('drag-white', excludeFromSemantics: true),
             ),
           ),
 
@@ -507,7 +507,7 @@ class HomeDragFeedback extends StatelessWidget {
         Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
           Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
+            Styles().images?.getImage('drag-white', excludeFromSemantics: true),
           ),
           
           Expanded(child:
@@ -551,7 +551,7 @@ class HomeCommandButton extends StatelessWidget {
                   Text(title ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), semanticsLabel: "",),
                 )
               ),
-              // Image.asset('images/chevron-right.png', excludeFromSemantics: true)
+              // Styles().images?.getImage('images/chevron-right.png', excludeFromSemantics: true)
               ((loading == true)
                 ? Padding(padding: EdgeInsets.all(16), child:
                     SizedBox(height: 16, width: 16, child:

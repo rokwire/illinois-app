@@ -29,7 +29,7 @@ import 'package:rokwire_plugin/ui/widgets/header_bar.dart' as rokwire;
 
 class HeaderBar extends rokwire.HeaderBar {
 
-  static const String defaultLeadingAsset = 'images/chevron-left-white.png';
+  static const String defaultLeadingIconKey = 'chevron-left-white';
 
   HeaderBar({Key? key,
     SemanticsSortKey? sortKey,
@@ -37,7 +37,7 @@ class HeaderBar extends rokwire.HeaderBar {
     Widget? leadingWidget,
     String? leadingLabel,
     String? leadingHint,
-    String? leadingAsset = defaultLeadingAsset,
+    String? leadingIconKey = defaultLeadingIconKey,
     void Function()? onLeading,
     
     Widget? titleWidget,
@@ -58,7 +58,7 @@ class HeaderBar extends rokwire.HeaderBar {
     leadingWidget: leadingWidget,
     leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
     leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
-    leadingAsset: leadingAsset,
+    leadingIconKey: leadingIconKey,
     onLeading: onLeading,
 
     titleWidget: titleWidget,
@@ -142,7 +142,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 // SliverSheetHeaderBar
 
 class SliverHeaderBar extends rokwire.SliverHeaderBar  {
-  static const String defaultLeadingAsset = 'images/close-white.png';
+  static const String defaultLeadingAsset = 'images/close-circle-white.png';
 
   SliverHeaderBar({Key? key,
     bool pinned = true,
@@ -273,7 +273,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
 
   Widget buildHeaderRadioButton(BuildContext context) {
     return Semantics(label: Localization().getStringEx('headerbar.radio.title', 'WPGU 107.1 FM'), hint: Localization().getStringEx('headerbar.radio.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/radio-white.png', excludeFromSemantics: true), onPressed: () => onTapRadio(context),),);
+      IconButton(icon: Styles().images?.getImage('radio-white', excludeFromSemantics: true) ?? Container(), onPressed: () => onTapRadio(context),),);
   }
 
   List<Widget> buildHeaderActions(BuildContext context) {
@@ -286,10 +286,10 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
 
   Widget buildHeaderSettingsButton(BuildContext context) {
     return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-//    IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: () => onTapSettings(context))
+//    IconButton(icon: Styles().images?.getImage('images/settings-white.png', excludeFromSemantics: true), onPressed: () => onTapSettings(context))
       InkWell(onTap: () => onTapSettings(context), child:
         Padding(padding: EdgeInsets.only(top: 16, bottom: 16, right: 16, left: 6), child:
-          Image.asset('images/settings-white.png', excludeFromSemantics: true,),
+          Styles().images?.getImage('settings-white', excludeFromSemantics: true),
         )
       )
     );
@@ -298,11 +298,11 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
   Widget buildHeaderNotificationsButton(BuildContext context) {
     int unreadMsgsCount = Inbox().unreadMessagesCount;
     return Semantics(label: Localization().getStringEx('headerbar.notifications.title', 'Notifications'), hint: Localization().getStringEx('headerbar.notifications.hint', ''), button: true, excludeSemantics: true, child:
-//    IconButton(icon: Image.asset('images/notifications-white.png', excludeFromSemantics: true), onPressed: () => onTapNotifications(context))
+//    IconButton(icon: Styles().images?.getImage('images/notifications-white.png', excludeFromSemantics: true), onPressed: () => onTapNotifications(context))
       InkWell(onTap: () => onTapNotifications(context), child:
         Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 2), child:
           Stack(alignment: Alignment.topRight, children: [
-            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Image.asset('images/notifications-white.png', excludeFromSemantics: true,))),
+            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Styles().images?.getImage('images/notifications-white.png', excludeFromSemantics: true,))),
             Visibility(visible: (unreadMsgsCount > 0), child: 
               Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(2), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child: 
                 Text(unreadMsgsCount.toString(), style: TextStyle(color: Styles().colors!.white, fontSize: 10, fontFamily: Styles().fontFamilies!.medium)))))
@@ -314,10 +314,10 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
 
   Widget buildHeaderPersonalInfoButton(BuildContext context) {
     return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
-//    IconButton(icon: Image.asset('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations(context))
+//    IconButton(icon: Styles().images?.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations(context))
       InkWell(onTap: () => onTapPersonalInformation(context), child:
         Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
-          Image.asset('images/person-white.png', excludeFromSemantics: true,),
+          Styles().images?.getImage('images/person-white.png', excludeFromSemantics: true,),
         )
       )
     );
@@ -414,7 +414,8 @@ class RootBackHeaderBar extends RootHeaderBar {
         button: true,
         excludeSemantics: true,
         child: IconButton(
-            icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true), onPressed: () => _onTapBack(context)));
+            icon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(),
+            onPressed: () => _onTapBack(context)));
   }
 
   void _onTapBack(BuildContext context) {

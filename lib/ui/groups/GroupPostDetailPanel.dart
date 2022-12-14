@@ -589,12 +589,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-feedback.png",
+                leftIconKey: "feedback",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), post: widget.post),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-feedback.png",
+                leftIconKey: "feedback",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: widget.post),
               )),
@@ -619,7 +619,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Visibility(visible: _isReplyVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-group-post-reply.png",
+                leftIconKey: "reply",
                 label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -627,7 +627,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 },
               )),
               Visibility(visible: _isEditVisible(reply), child: RibbonButton(
-                leftIconAsset: "images/icon-edit.png",
+                leftIconKey: "edit",
                 label: Localization().getStringEx("panel.group.detail.post.reply.edit.label", "Edit"),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -635,7 +635,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 },
               )),
               Visibility(visible: _isDeleteReplyVisible(reply), child: RibbonButton(
-                leftIconAsset: "images/trash.png",
+                leftIconKey: "trash",
                 label: Localization().getStringEx("panel.group.detail.post.reply.delete.label", "Delete"),
                 onTap: () {
                 Navigator.of(context).pop();
@@ -643,12 +643,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               },
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-feedback.png",
+                leftIconKey: "feedback",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents: true), post: reply),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-feedback.png",
+                leftIconKey: "feedback",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: reply),
               )),

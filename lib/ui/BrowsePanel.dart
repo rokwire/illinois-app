@@ -320,8 +320,8 @@ class _BrowseSection extends StatelessWidget {
                       Center(child:
                         _hasBrowseContent ? (
                           expanded ?
-                            Styles().images?.getImage('arrow-up', excludeFromSemantics: true) :
-                            Styles().images?.getImage('arrow-down', excludeFromSemantics: true)
+                            Styles().images?.getImage('chevron-up', excludeFromSemantics: true) :
+                            Styles().images?.getImage('chevron-down', excludeFromSemantics: true)
                         ) : Container()
                       ),
                     )
@@ -488,7 +488,7 @@ class _BrowseEntry extends StatelessWidget {
                 ),
               ),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                  child: Styles().images?.getImage('arrow-right', excludeFromSemantics: true)),
+                  child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true)),
             ],),
         ),
       ),

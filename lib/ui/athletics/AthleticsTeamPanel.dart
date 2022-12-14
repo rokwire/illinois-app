@@ -170,7 +170,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                           onTap: _onTapSportPreference,
                           child: Padding(
                               padding: EdgeInsets.only(top: 8),
-                              child: hasSportPreference ? Image.asset('images/deselected-dark.png', excludeFromSemantics: true) : Image.asset('images/deselected.png', excludeFromSemantics: true)
+                              child: Styles().images?.getImage(hasSportPreference ? 'check-circle-filled' : 'check-circle-outline', excludeFromSemantics: true),
                           ),
                         ),
                       )
@@ -271,7 +271,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     Container(
                       height: 112,
                       width: double.infinity,
-                      child: Image.asset('images/slant-down-right.png',
+                      child: Styles().images?.getImage('images/slant-down-right.png',
                         color: Styles().colors!.fillColorPrimary,
                         fit: BoxFit.fill,
                         excludeFromSemantics: true
@@ -291,7 +291,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                           children: <Widget>[
                             Padding(
                               padding: EdgeInsets.only(right: 16),
-                              child: Image.asset('images/icon-schedule.png', excludeFromSemantics: true),
+                              child: Styles().images?.getImage('calendar', excludeFromSemantics: true),
                             ),
                             Text(
                               Localization().getStringEx("panel.athletics_team.label.schedule.title", 'Schedule'),
@@ -375,7 +375,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                             children: <Widget>[
                               Padding(
                                 padding: EdgeInsets.only(right: 16),
-                                child: Image.asset('images/icon-news.png', excludeFromSemantics: true),
+                                child: Styles().images?.getImage('images/icon-news.png', excludeFromSemantics: true),
                               ),
                               Text(
                                 Localization().getStringEx("panel.athletics_team.button.news.title", 'News'),
@@ -559,7 +559,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                   child: Container(
                     height: 98,
                     width: double.infinity,
-                    child: Image.asset('images/slant-down-right-rotated.png', color: Styles().colors!.fillColorSecondary,fit: BoxFit.fill, excludeFromSemantics: true),
+                    child: Styles().images?.getImage('images/slant-down-right-rotated.png', color: Styles().colors!.fillColorSecondary,fit: BoxFit.fill, excludeFromSemantics: true),
                   ),
                 ),
                 Row(
@@ -572,7 +572,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       excludeSemantics: true,
                       child: _TeamSocialCell(
                         name:"Facebook",
-                        iconResource: 'images/fb-16x32.png',
+                        iconKey: 'facebook-logo',
                         webUrl: facebookPageUrl,
                       ),
                     ),
@@ -583,7 +583,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       excludeSemantics: true,
                       child: _TeamSocialCell(
                         name:"Twitter",
-                        iconResource: 'images/twitter-32x28.png',
+                        iconKey: 'twitter-logo',
                         webUrl: twitterUrl,
                       ),
                     ),
@@ -593,8 +593,8 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       button: true,
                       excludeSemantics: true,
                       child: _TeamSocialCell(
-                        name:"Youtube",
-                        iconResource: 'images/you-tube-32x24.png',
+                        name:"YouTube",
+                        iconKey: 'youtube-logo',
                         webUrl: Config().youtubeUrl,
                       ),
                     ),
@@ -605,7 +605,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       excludeSemantics: true,
                       child: _TeamSocialCell(
                         name:"Instagram",
-                        iconResource: 'images/ig-32x32.png',
+                        iconKey: 'instagram-logo',
                         webUrl: instagramUrl,
                       ),
                     )
@@ -982,10 +982,10 @@ class _RosterItem extends StatelessWidget {
 
 class _TeamSocialCell extends StatelessWidget {
   final String? name;
-  final String? iconResource;
+  final String? iconKey;
   final String? webUrl;
 
-  _TeamSocialCell({this.iconResource, this.webUrl, this.name});
+  _TeamSocialCell({this.iconKey, this.webUrl, this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -998,7 +998,7 @@ class _TeamSocialCell extends StatelessWidget {
             color: Styles().colors!.fillColorPrimary,
             borderRadius: BorderRadius.all(Radius.circular(4))),
         child: Center(
-          child: Image.asset(iconResource!, excludeFromSemantics: true),
+          child: Styles().images?.getImage(iconKey, excludeFromSemantics: true),
         ),
       ),
     );

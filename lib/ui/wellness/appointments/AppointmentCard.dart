@@ -97,11 +97,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                                               child: Container(
                                                   child: Padding(
                                                       padding: EdgeInsets.only(left: 24, bottom: 5),
-                                                      child: Image.asset(
-                                                          isFavorite
-                                                              ? 'images/icon-star-orange.png'
-                                                              : 'images/icon-star-gray-frame-thin.png',
-                                                          excludeFromSemantics: true))))))))
+                                                      child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline', excludeFromSemantics: true))))))))
                         ]),
                         Padding(
                             padding: EdgeInsets.only(top: 6),
@@ -134,7 +130,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                               Padding(
                                   padding: EdgeInsets.only(top: 5),
                                   child: Row(children: [
-                                    Padding(padding: EdgeInsets.only(right: 6), child: Image.asset('images/icon-calendar.png')),
+                                    Padding(padding: EdgeInsets.only(right: 6), child: Styles().images?.getImage('images/icon-calendar.png')),
                                     Expanded(
                                         child: Text(StringUtils.ensureNotEmpty(widget.appointment.displayDate),
                                             style: TextStyle(
@@ -147,7 +143,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                                   child: Row(children: [
                                     Padding(
                                         padding: EdgeInsets.only(right: 6),
-                                        child: Image.asset((widget.appointment.type == AppointmentType.online)
+                                        child: Styles().images?.getImage((widget.appointment.type == AppointmentType.online)
                                             ? 'images/laptop.png'
                                             : 'images/icon-location.png')),
                                     Expanded(

@@ -567,7 +567,7 @@ class _SettingsAddIlliniCashPanelState
                                                 child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                                                   Text(Localization().getStringEx("panel.settings.add_illini_cash.label.agree", "terms & conditions"),
                                                    style: Styles().textStyles?.getTextStyle("widget.detail.regular") ),
-                                                  Padding(padding: EdgeInsets.only(left: 3), child: Image.asset('images/external-link.png'))
+                                                  Padding(padding: EdgeInsets.only(left: 3), child: Styles().images?.getImage('external-link', excludeFromSemantics: true))
                                                 ]),
                                               ))),
                                     ],

@@ -49,7 +49,7 @@ class ExploreViewTypeTab extends StatelessWidget {
           decoration: selected ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!,width: 2, style: BorderStyle.solid))) : null,
           child:Padding(padding: EdgeInsets.symmetric(vertical:3, horizontal: 5), child:Column(children: <Widget>[
             Row(children: <Widget>[
-              Image.asset(iconResource!, excludeFromSemantics: true),
+              Styles().images?.getImage(iconResource, excludeFromSemantics: true) ?? Container(),
               Container(width: 5,),
               Text(label!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.white, fontSize: 16,),textScaleFactor:( MediaQuery.of(context).textScaleFactor> 2 ? MediaQuery.of(context).textScaleFactor - 0.8 : MediaQuery.of(context).textScaleFactor),)
             ]),

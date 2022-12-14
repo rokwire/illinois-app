@@ -106,7 +106,7 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
                           style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link'),
                         ),
                         WidgetSpan(
-                          child: linkData.icon != null ? Padding(padding: const EdgeInsets.only(left: 4.0), child: Image.asset(linkData.icon!)) : Container(),
+                          child: linkData.icon != null ? Padding(padding: const EdgeInsets.only(left: 4.0), child: Styles().images?.getImage(linkData.icon, excludeFromSemantics: true)) : Container(),
                         ),
                       ],
                     ),

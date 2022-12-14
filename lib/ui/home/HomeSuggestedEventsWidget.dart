@@ -421,7 +421,7 @@ class _EventsRibbonHeader extends StatelessWidget {
     List<Widget> titleList = <Widget>[];
 
     titleList.add(
-      HomeTitleIcon(image: Image.asset('images/icon-calendar.png')),
+      HomeTitleIcon(image: Styles().images?.getImage('calendar')),
     );
       
     titleList.add(

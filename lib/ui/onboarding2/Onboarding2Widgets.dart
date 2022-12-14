@@ -26,7 +26,7 @@ class Onboarding2TitleWidget extends StatelessWidget{
           SafeArea(child:
             Column(children: [
               Container(height: 31,),
-              Image.asset("images/illinois-blockI-blue.png", excludeFromSemantics: true, width: 24, fit: BoxFit.fitWidth,),
+              Styles().images?.getImage("university-logo", excludeFromSemantics: true) ?? Container(),
               Container(height: 17,),
               Row(children: <Widget>[
                 Container(width: 32,),
@@ -135,8 +135,8 @@ class Onboarding2ToggleButton extends StatelessWidget{
     return toggled!? toggledTitle : unToggledTitle;
   }
 
-  Widget get _image{
-    return Image.asset( toggled! ? 'images/toggle-yes.png' : 'images/toggle-no.png');
+  Widget? get _image{
+    return Styles().images?.getImage(toggled! ? 'toggle-on' : 'toggle-off', excludeFromSemantics: true);
   }
 }
 
@@ -218,7 +218,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                                       padding: EdgeInsets.only(bottom: 2),
                                       child: Container(
                                           padding: EdgeInsets.only(bottom: 4),
-                                          child: Image.asset("images/icon-external-link-blue.png", excludeFromSemantics: true,)))),
+                                          child: Styles().images?.getImage("images/icon-external-link-blue.png", excludeFromSemantics: true,)))),
                                 ]
                             )
                         ),

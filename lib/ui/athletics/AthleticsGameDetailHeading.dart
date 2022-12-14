@@ -157,7 +157,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   checked: isGameFavorite,
                                   child: GestureDetector(
                                       child: Container(padding: EdgeInsets.only(right: 24, left: 10, bottom: 20, top: 20),
-                                        child: Image.asset(isGameFavorite ? 'images/icon-star-white-transluent.png' : 'images/icon-star-white-frame-thin.png',excludeFromSemantics: true
+                                        child: Styles().images?.getImage(isGameFavorite ? 'images/icon-star-white-transluent.png' : 'images/icon-star-white-frame-thin.png',excludeFromSemantics: true
                                       )),
                                       onTap: _onTapSwitchFavorite),
                                 ),
@@ -192,7 +192,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   padding: EdgeInsets.only(bottom: 10),
                                   child: Row(
                                     children: <Widget>[
-                                      Image.asset('images/icon-calendar.png', excludeFromSemantics: true),
+                                      Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
                                       Padding(
                                         padding: EdgeInsets.symmetric(horizontal: 10),
                                         child: Text(
@@ -216,7 +216,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                                   children: <Widget>[
                                     Padding(
                                       padding: EdgeInsets.only(right: 10),
-                                      child: Image.asset('images/icon-location.png', excludeFromSemantics: true),
+                                      child: Styles().images?.getImage('location', excludeFromSemantics: true),
                                     ),
                                     Flexible(
                                         child: Text(
@@ -237,7 +237,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 ],
               ),
               Container(
-                child: Semantics(excludeSemantics: true, child: Image.asset('images/2.0x/slant-down-right-blue.png', color: Styles().colors!.fillColorPrimary,)),
+                child: Semantics(excludeSemantics: true, child: Styles().images?.getImage('images/2.0x/slant-down-right-blue.png', color: Styles().colors!.fillColorPrimary,)),
               ),
               Container(
                 color: Styles().colors!.background,
@@ -1424,7 +1424,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
                 visible: isHomePossession,
                 child: Padding(
                   padding: EdgeInsets.only(right: 5),
-                  child: Image.asset('images/posession.png', height: 25, fit: BoxFit.fitHeight),
+                  child: Styles().images?.getImage('images/posession.png', height: 25, fit: BoxFit.fitHeight),
                 ),
               ),
               Text(
@@ -1463,7 +1463,7 @@ class _FootballScoreWidgetState extends _SportScoreWidgetState {
                 visible: isVisitingPossession,
                 child: Padding(
                   padding: EdgeInsets.only(left: 5),
-                  child: Image.asset('images/posession.png', height: 25, fit: BoxFit.fitHeight),
+                  child: Styles().images?.getImage('images/posession.png', height: 25, fit: BoxFit.fitHeight),
                 ),
               ),
               Expanded(

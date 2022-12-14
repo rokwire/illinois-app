@@ -353,7 +353,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
       Localization().getStringEx('widget.card.button.favorite.off.hint', '') :
       Localization().getStringEx('widget.card.button.favorite.on.hint','');
 
-    String favIcon = isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png';
+    Widget? favIcon = Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline', excludeFromSemantics: true);
 
     return Padding(padding: EdgeInsets.only(bottom: 8), child:
       Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), clipBehavior: Clip.none, child:
@@ -380,11 +380,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
               Align(alignment: Alignment.topRight, child:
                 GestureDetector(onTap: _onTapFavorite, child:
                   Semantics(excludeSemantics: true, label: favLabel, hint: favHint, child:
-                    Container(padding: EdgeInsets.all(16), child: 
-                      Image.asset(favIcon)
-              ),),),),
-            ),
-
+                    Container(padding: EdgeInsets.all(16), child: favIcon))))),
           ],),
       ),
     ),);
@@ -422,7 +418,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
       String displayDate = Localization().getStringEx('widget.home_recent_item_card.label.date', 'Date');
       return Semantics(label: displayDate, excludeSemantics: true, child:
         Row(children: <Widget>[
-          Image.asset('images/icon-calendar.png'),
+          Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
           Padding(padding: EdgeInsets.only(right: 5),),
           Text(displayDate, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 12, color: Styles().colors!.textBackground)),
         ],),
@@ -437,7 +433,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
     if ((displayTime != null) && displayTime.isNotEmpty) {
       return Semantics(label: displayTime, excludeSemantics: true, child:
         Row(children: <Widget>[
-            Image.asset('images/icon-calendar.png'),
+          Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
             Padding(padding: EdgeInsets.only(right: 5),),
             Text(displayTime, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 12, color: Styles().colors!.textBackground)),
         ],),

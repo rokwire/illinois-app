@@ -109,40 +109,40 @@ extension FavoriteExt on Favorite {
     }
     return null;
   }
-  
-  Image? get favoriteDetailIcon {
+
+  Widget? get favoriteDetailIcon {
     if (this is Event) {
-      return Image.asset('images/icon-calendar.png', excludeFromSemantics: true);
+      return Styles().images?.getImage('events', excludeFromSemantics: true);
     }
     else if (this is Dining) {
-      return Image.asset('images/icon-time.png', excludeFromSemantics: true);
+      return Styles().images?.getImage('dining', excludeFromSemantics: true);
     }
     else if (this is Game) {
-      return Image.asset('images/icon-calendar.png', excludeFromSemantics: true);
+      return Styles().images?.getImage('athletics', excludeFromSemantics: true);
     }
     else if (this is News) {
-      return Image.asset('images/icon-calendar.png', excludeFromSemantics: true);
+      return Styles().images?.getImage('news', excludeFromSemantics: true);
     }
     else if (this is LaundryRoom) {
-      return Image.asset('images/icon-online.png', excludeFromSemantics: true, color: favoriteDetailTextColor, colorBlendMode: BlendMode.srcIn,);
+      return Styles().images?.getImage('laundry', excludeFromSemantics: true);
     }
     else if (this is ExplorePOI) {
-      return Image.asset('images/icon-location.png', excludeFromSemantics: true);
+      return Styles().images?.getImage('location', excludeFromSemantics: true);
     }
     else if (this is Appointment) {
-      return Image.asset('images/icon-calendar.png', excludeFromSemantics: true);
+      return Styles().images?.getImage('appointments', excludeFromSemantics: true);
     }
     else {
       return null;
     }
   }
 
-  Image? favoriteStarIcon({required bool selected}) {
+  Widget? favoriteStarIcon({required bool selected}) {
     if ((this is Event) || (this is Dining) || (this is LaundryRoom) || (this is InboxMessage) || (this is MTDStop)|| (this is ExplorePOI)) {
-      return Image.asset(selected ? 'images/icon-star-orange.png' : 'images/icon-star-white.png', excludeFromSemantics: true);
+      return Styles().images?.getImage(selected ? 'star-filled' : 'star-outline', excludeFromSemantics: true);
     }
     else if ((this is Game) || (this is News) || (this is GuideFavorite)) {
-      return Image.asset(selected ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true);
+      return Styles().images?.getImage(selected ? 'star-filled' : 'star-outline', excludeFromSemantics: true);
     }
     else {
       return null;

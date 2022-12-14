@@ -116,7 +116,7 @@ class _HomeVoterRegistrationWidgetState extends State<HomeVoterRegistrationWidge
               excludeSemantics: true,
               button: true,
               child: GestureDetector(
-                child: Image.asset('images/close-orange.png'),
+                child: Styles().images?.getImage('close', excludeFromSemantics: true),
                 onTap: _hideByUser,
               ),
             ),)

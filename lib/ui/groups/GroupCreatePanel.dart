@@ -176,7 +176,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           Padding(padding: EdgeInsets.symmetric(vertical: 20), child:
                             Container(height: 1, color: Styles().colors!.surfaceAccent,),
                           ),
-                          _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "images/icon-search.png"),
+                          _buildTitle(Localization().getStringEx("panel.groups_create.label.discoverability", "Discoverability"), "search"),
                           _buildCategoryDropDown(),
                           _buildTagsLayout(),
                         ]),
@@ -203,7 +203,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           Padding(padding: EdgeInsets.symmetric(vertical: 24), child:
                             Container(height: 1, color: Styles().colors!.surfaceAccent,),
                           ),
-                          _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
+                          _buildTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "privacy"),
                           Container(height: 8),
                           _buildPrivacyDropDown(),
                           _buildHiddenForSearch(),
@@ -211,12 +211,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       ),
 
                       Visibility(visible: _isManagedGroupAdmin && !_isResearchProject, child: Column(children: [
-                        _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "images/icon-member.png"),
+                        _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "member"),
                         _buildAuthManLayout(),
                       ])),
                       
                       Visibility(visible: !_isAuthManGroup, child: Padding(padding: EdgeInsets.only(top: 20), child: Column(children: [
-                        _buildTitle(_isResearchProject ? 'Participation' : Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
+                        _buildTitle(_isResearchProject ? 'Participation' : Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "member"),
                         _buildMembershipLayout(),
                       ],),),),
                       
@@ -551,7 +551,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                     )),
                 Container (
                   padding: EdgeInsets.only(top:8,bottom: 8,right: 8, left: 8),
-                  child: Image.asset("images/small-add-orange.png"),
+                  child: Styles().images?.getImage('create', excludeFromSemantics: true),
                 )
 
               ],)
@@ -713,7 +713,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 )),
                 Padding(
                   padding: EdgeInsets.only(left: 5),
-                  child: Image.asset('images/chevron-right.png'),
+                  child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
                 )
               ]),
               Container(
@@ -1072,7 +1072,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     );
   }
 
-  Widget _buildTitle(String title, String iconRes){
+  Widget _buildTitle(String title, String iconKey){
     return
       Container(
         padding: EdgeInsets.only(left: 16),
@@ -1085,7 +1085,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
             Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Image.asset(iconRes, color: Styles().colors!.fillColorSecondary,),
+              Styles().images?.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
               Expanded(child:
               Container(
                   padding: EdgeInsets.only(left: 14, right: 4),
@@ -1112,7 +1112,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
               GestureDetector(
                   onTap: onTap ?? (){},
-                  child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset((value ?? false) ? 'images/switch-on.png' : 'images/switch-off.png')))
+                  child: Padding(padding: EdgeInsets.only(left: 10), child: Styles().images?.getImage(value ?? false ? 'toggle-on' : 'toggle-off')))
             ])
           ])),
     );

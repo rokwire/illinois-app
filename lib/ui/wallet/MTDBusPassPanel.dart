@@ -141,7 +141,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
             Align(alignment: Alignment.bottomCenter, child:
               Padding(padding: EdgeInsets.only(bottom: 10), child:
                 Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
-                  InkWell(onTap: _onClose, child: Styles().images?.getImage('close-white-large', excludeFromSemantics: true)),
+                  InkWell(onTap: _onClose, child: Styles().images?.getImage('close-circle-white-large', excludeFromSemantics: true)),
                 ),
               ),
             ),
@@ -187,7 +187,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
         Align(alignment: Alignment.center, child:
           Padding(padding: EdgeInsets.only(top: 20), child:
             Opacity(opacity: busPassAvailable ? 1 : 0, child:
-              Styles().images?.getImage('mtd-logo', excludeFromSemantics: true)
+              Styles().images?.getImage('transit-logo', excludeFromSemantics: true)
             )
           ),
         ),
@@ -219,7 +219,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
             alignment: Alignment.topCenter,
             child: Padding(
                 padding: EdgeInsets.only(top: _photoSize - _iconSize / 2 - 5, left: 15),
-                child: Image.asset(
+                child: Styles().images?.getImage(
                   'images/group-5-blue.png',
                   excludeFromSemantics: true,
                   width: _iconSize,
@@ -270,7 +270,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
       width: iconSize-1,
       height: iconSize-1,
       color: _activeColor,
-      child: Image.asset(
+      child: Styles().images?.getImage(
         'images/transparent-bus-icon.png',
         excludeFromSemantics: true,
         width: iconSize,

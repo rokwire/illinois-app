@@ -67,7 +67,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
     return Scaffold(
       appBar: HeaderBar(
         title: 'Target Audience',
-        leadingAsset: 'images/icon-circle-close.png',
+        leadingIconKey: 'close-circle-white',
       ),
       body: _buildContent(),
       backgroundColor: Styles().colors?.background,
@@ -156,7 +156,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
             Align(alignment: Alignment.bottomRight, child:
               InkWell(onTap: _onDescriptionInfo, child:
                 Padding(padding: EdgeInsets.only(left: 8, right: 12, top: 8, bottom: 12), child:
-                  Image.asset('images/icon-eye.png', excludeFromSemantics: true,)
+                  Styles().images?.getImage('images/icon-eye.png', excludeFromSemantics: true,)
                 )
               ),
             ),
@@ -275,7 +275,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       Row(children: [
         InkWell(onTap: () => _onAnswer(answer, question: question), child:
           Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 8, ), child:
-            Image.asset(selected ? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
+            Styles().images?.getImage(selected ? "check-box-filled" : "box-outline", excludeFromSemantics: true),
           ),
         ),
         Expanded(child:

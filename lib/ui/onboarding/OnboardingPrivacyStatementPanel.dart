@@ -83,9 +83,9 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Stack(children: <Widget>[
-                        Image.asset("images/privacy-header.png", key: _headingKey, fit: BoxFit.fitWidth, width: headingWidth, excludeFromSemantics: true, ),
+                        Styles().images?.getImage("header-privacy", key: _headingKey, fit: BoxFit.fitWidth, width: headingWidth, excludeFromSemantics: true) ?? Container(),
                         Container(width: headingWidth, height: headingHeight, alignment: Alignment.bottomCenter, child:
-                          Image.asset("images/lock.gif", fit: BoxFit.fitHeight, height: lockSize, excludeFromSemantics: true, ),                        
+                          Styles().images?.getImage("images/lock.gif", fit: BoxFit.fitHeight, height: lockSize, excludeFromSemantics: true, ),
                         ),
                         OnboardingBackButton( padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                         onTap:() {

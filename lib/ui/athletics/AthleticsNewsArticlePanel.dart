@@ -151,7 +151,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
                           hint: Localization().getStringEx("panel.athletics_news_article.button.save_game.hint", "Tap to save"),
                           child: GestureDetector(onTap: _onTapSwitchFavorite, child:
                             Container(padding: EdgeInsets.all(24), child:
-                              Image.asset(isNewsFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png',excludeFromSemantics: true),
+                              Styles().images?.getImage(isNewsFavorite ? 'star-filled' : 'star-outline', excludeFromSemantics: true),
                             ),
                           ),
                         ),
@@ -165,7 +165,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
                   ),
                   Padding(padding: EdgeInsets.only(left: 24, right: 24, bottom: 24), child:
                     Row(children: <Widget>[
-                      Image.asset('images/icon-news.png'),
+                      Styles().images?.getImage('news', excludeFromSemantics: true) ?? Container(),
                       Container(width: 5,),
                       Text(_article?.displayTime ?? '', style:
                         TextStyle(fontSize: 16, color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.medium),

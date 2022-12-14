@@ -87,7 +87,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                     //   RoundedButton(label: Localization().getStringEx('panel.group.members.button.done.title', 'Done'), contentWeight: 0.0, textColor: Styles().colors!.fillColorPrimary, borderColor: Styles().colors!.fillColorSecondary, backgroundColor: Styles().colors!.white, onTap: _onTapDone)
                     // ])),
                     Container(
-                        padding: EdgeInsets.only(left: 12,bottom: 32),
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                         color: Styles().colors!.fillColorPrimary!,
                         child: Semantics(
                           label: Localization().getStringEx("panel.group.members.label.tap_to_follow_team.title", "Tap the checkmark to select members"),
@@ -103,7 +103,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                                     color: Styles().colors!.white,
                                     fontSize: 16),
                               ),
-                              Styles().images?.getImage('check-circle-white', excludeFromSemantics: true) ?? Container(),
+                              Styles().images?.getImage('check-circle-outline-white', excludeFromSemantics: true) ?? Container(),
                               Expanded(
                                   child:Text(
                                     Localization().getStringEx("panel.group.members.label.follow_team.title", " to select members"),
@@ -295,12 +295,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                     onTap: () {
                       _onSearchTap();
                     },
-                    child: Image.asset(
-                      'images/icon-search.png',
-                      color: Styles().colors!.fillColorSecondary,
-                      width: 25,
-                      height: 25,
-                    ),
+                    child: Styles().images?.getImage('search'),
                   ))
             ],
           ),
@@ -436,18 +431,18 @@ class _MemberSelectionWidget extends StatelessWidget {
             child: Container(
                 color: Colors.white,
                 child: Padding(
-                    padding: EdgeInsets.only(left: 12, right: 12, bottom: 12),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Row(
                         mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
+                      Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline') ?? Container(),
+                      SizedBox(width: 16),
                       Expanded(
                           child:
                           Container(
-                            padding: EdgeInsets.only(top: 12),
                             child: Text(label,
-                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16)))),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -465,11 +460,6 @@ class _MemberSelectionWidget extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Container(width: 6,),
-                      Container(
-                        padding: EdgeInsets.only(top: 12),
-                        child: Image.asset(selected ? 'images/deselected-dark.png' : 'images/deselected.png')
-                      )
                     ])))));
   }
 }

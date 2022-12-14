@@ -57,7 +57,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
         Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
           Row(children: [
             Padding(padding: EdgeInsets.only(right: 6), child:
-              Image.asset('images/icon-location.png'),
+              Styles().images?.getImage('images/icon-location.png'),
             ),
             Expanded(child:
               Text(building.fullAddress ?? '', style:
@@ -81,7 +81,7 @@ class ExploreBuildingDetailPanel extends StatelessWidget {
         InkWell(onTap: onTap, child:
           SizedBox(width: 48, height: 48, child:
             Center(child:
-              Image.asset('images/chevron-left-gray.png', excludeFromSemantics: true
+              Styles().images?.getImage('images/chevron-left-gray.png', excludeFromSemantics: true
             ),
           ),
         ),

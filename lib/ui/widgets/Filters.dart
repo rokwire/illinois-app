@@ -76,11 +76,11 @@ class FilterSelector extends rokwire.FilterSelector {
     GestureTapCallback? onTap,
 
     Widget? icon,
-    String? iconAsset = 'images/icon-down.png',
+    String? iconKey = 'chevron-down',
     EdgeInsetsGeometry iconPadding = const EdgeInsets.symmetric(horizontal: 4),
 
     Widget? activeIcon,
-    String? activeIconAsset = 'images/icon-up.png',
+    String? activeIconKey = 'chevron-up',
     EdgeInsetsGeometry activeIconPadding = const EdgeInsets.symmetric(horizontal: 4),
   }) : super(key: key,
     title: title,
@@ -94,11 +94,11 @@ class FilterSelector extends rokwire.FilterSelector {
     onTap: onTap,
 
     icon: icon,
-    iconAsset: iconAsset,
+    iconKey: iconKey,
     iconPadding: iconPadding,
 
     activeIcon: activeIcon,
-    activeIconAsset: activeIconAsset,
+    activeIconKey: activeIconKey,
     activeIconPadding: activeIconPadding,
   );
 }

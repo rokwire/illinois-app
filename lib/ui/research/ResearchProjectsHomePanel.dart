@@ -131,7 +131,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         backgroundColor: Styles().colors?.white,
         borderRadius: BorderRadius.all(Radius.circular(5)),
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: (_contentTypesDropdownExpanded ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+        rightIconKey: _contentTypesDropdownExpanded ? 'chevron-up' : 'chevron-down',
         label: _getContentTypeName(_selectedContentType),
         onTap: _onTapContentTypeDropdownButton
       )
@@ -160,7 +160,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       contentList.add(RibbonButton(
         backgroundColor: Styles().colors?.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconKey: null,
         label: Localization().getStringEx('panel.research_projects.home.dropdown.create.title', 'Create New Research Project'),
         onTap: _onTapCreate
       ),);
@@ -168,7 +168,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     contentList.add(RibbonButton(
       backgroundColor: Styles().colors?.white,
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-      rightIconAsset: null,
+        rightIconKey: null,
       label: Localization().getStringEx('panel.research_projects.home.dropdown.search.title', 'Search Research Projects'),
       onTap: _onTapSearch
     ),);
@@ -183,7 +183,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
     return RibbonButton(
         backgroundColor: Styles().colors?.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconKey: null,
         label: _getContentTypeName(contentType),
         onTap: () => _onTapContentTypeDropdownItem(contentType));
   }
@@ -252,7 +252,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
               Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                 Text(createTitle, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
                 Padding(padding: EdgeInsets.only(left: 5), child:
-                  Image.asset('images/icon-add-more.png')
+                  Styles().images?.getImage('images/icon-add-more.png')
                 )
               ])
             ),
@@ -263,7 +263,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         Semantics(label: searchTitle, button: true, child:
           InkWell(onTap: _onTapSearch, child: 
             Padding(padding: EdgeInsets.only(left: 4, right: 16, top: 10, bottom: 10), child:
-              Image.asset('images/icon-search.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: true, width: 25, height: 25),
+              Styles().images?.getImage('images/icon-search.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: true, width: 25, height: 25),
             ),
           ),
         ),

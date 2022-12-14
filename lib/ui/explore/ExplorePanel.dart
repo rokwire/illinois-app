@@ -691,7 +691,7 @@ class ExplorePanelState extends State<ExplorePanel>
               Padding(
                   padding: EdgeInsets.all(30),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-                    Image.asset('images/block-i-orange.png'),
+                    Styles().images?.getImage('university-logo') ?? Container(),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
                         child: Text(missingAppointmentsText,
@@ -705,7 +705,7 @@ class ExplorePanelState extends State<ExplorePanel>
                         Analytics().logSelect(target: 'Close missing appointments popup');
                         Navigator.of(context).pop();
                       },
-                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png')))))
+                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage("close")))))
             ])));
   }
 
@@ -1038,7 +1038,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return Semantics(label: Localization().getStringEx('headerbar.search.title', 'Search'), hint: Localization().getStringEx('headerbar.search.hint', ''), button: true, excludeSemantics: true, child:
       InkWell(onTap: _onTapSearch, child:
         Padding(padding: EdgeInsets.all(16), child:
-          Image.asset('images/icon-search.png', excludeFromSemantics: true,),
+          Styles().images?.getImage('search', excludeFromSemantics: true),
         )
       )
     );
@@ -1096,7 +1096,7 @@ class ExplorePanelState extends State<ExplorePanel>
       backgroundColor: Styles().colors!.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-      rightIconAsset: (_itemsDropDownValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+      rightIconKey: (_itemsDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
       label: _exploreItemName(_selectedItem!),
       hint: _exploreItemHint(_selectedItem!),
       onTap: _changeExploreItemsDropDownValuesVisibility
@@ -1136,7 +1136,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconKey: null,
         label: _exploreItemName(exploreItem),
         onTap: () => _onTapExploreItem(exploreItem));
   }
@@ -1164,7 +1164,7 @@ class ExplorePanelState extends State<ExplorePanel>
       backgroundColor: Styles().colors!.white,
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-      rightIconAsset: (_eventsDisplayDropDownValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+      rightIconKey: (_eventsDisplayDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
       label: _eventsDisplayTypeLabel(_selectedEventsDisplayType),
       onTap: _changeEventsDisplayDropDownValuesVisibility
     );
@@ -1203,7 +1203,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconKey: null,
         label: _eventsDisplayTypeLabel(displayType),
         onTap: () => _onTapEventsDisplayType(displayType));
   }
@@ -2147,11 +2147,12 @@ class _MTDInstructionsPopupState extends State<_MTDInstructionsPopup> {
             Column(mainAxisSize: MainAxisSize.min, children: [
               Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
                 Column(children: [
-                  Image.asset('images/block-i-orange.png'),
-                  Padding(padding: EdgeInsets.only(top: 18), child:
-                    Text(widget.message, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small"))
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Styles().images?.getImage('university-logo', excludeFromSemantics: true),
                   ),
-                ],),
+                  Text(widget.message, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small")),
+                ]),
               ),
 
               Visibility(visible: (widget.showPopupStorageKey != null), child:
@@ -2159,7 +2160,7 @@ class _MTDInstructionsPopupState extends State<_MTDInstructionsPopup> {
                   Row(mainAxisSize: MainAxisSize.min, children: [
                     InkWell(onTap: _onDoNotShow, child:
                       Padding(padding: EdgeInsets.all(16), child:
-                        Image.asset((showInstructionsPopup == false) ? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
+                        Styles().images?.getImage((showInstructionsPopup == false) ? "check-circle-filled" : "check-circle-outline"),
                       ),
                     ),
                     Expanded(child:
@@ -2177,7 +2178,7 @@ class _MTDInstructionsPopupState extends State<_MTDInstructionsPopup> {
                 Navigator.of(context).pop();
                 }, child:
                 Padding(padding: EdgeInsets.all(16), child:
-                  Image.asset('images/icon-x-orange.png')
+                  Styles().images?.getImage('close', excludeFromSemantics: true)
                 )
               )
             )

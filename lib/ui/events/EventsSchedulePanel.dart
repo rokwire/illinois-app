@@ -385,12 +385,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
               padding: EdgeInsets.all(12),
               child: GestureDetector(
                 onTap: _onTapSearchTags,
-                child: Image.asset(
-                  'images/icon-search.png',
-                  color: Styles().colors!.fillColorSecondary,
-                  width: 25,
-                  height: 25,
-                ),
+                child: Styles().images?.getImage('search'),
               ),
             ),
           ),
@@ -1093,7 +1088,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                           Container(
                               child: Padding(
                                   padding: EdgeInsets.only(right: 8),
-                                  child: Image.asset("images/icon-calendar.png"))),
+                                  child: Styles().images?.getImage('calendar'))),
                           Expanded(
                             child: Text(
                               widget.event!.title!,
@@ -1120,7 +1115,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                                     child: Container(
                                         child: Padding(
                                             padding: EdgeInsets.only(left: 24),
-                                            child: Image.asset(favorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png'))))),
+                                            child: Styles().images?.getImage(favorite ? 'star-filled' : 'star-outline'))))),
                           )
                         ],
                       )

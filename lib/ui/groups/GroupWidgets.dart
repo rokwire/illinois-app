@@ -127,7 +127,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                     splashColor: Styles().colors!.white,
                   ),
                   child: DropdownButton(
-                      icon: Styles().images?.getImage('arrow-down', excludeFromSemantics: true), //Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
+                      icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true), //Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
                       isExpanded: true,
                       focusColor: Styles().colors!.white,
                       underline: Container(),
@@ -280,7 +280,7 @@ class HeaderBackButton extends StatelessWidget {
       button: true,
       excludeSemantics: true,
       child: IconButton(
-          icon: Styles().images?.getImage('arrow-left-white', excludeFromSemantics: true) ?? Container(),
+          icon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(),
           onPressed: (){
             Analytics().logSelect(target: "Back");
             Navigator.pop(context);
@@ -516,7 +516,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     if (_canEdit) {
       options.add(RibbonButton(
         label: Localization().getStringEx("panel.group_detail.button.edit_event.title", "Edit Event"),
-        leftIconAsset: "images/icon-edit.png",
+        leftIconKey: "edit",
         onTap: _onEditEventTap
       ),);
     }
@@ -524,7 +524,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     if (_canDelete) {
       options.add(RibbonButton(
         label: Localization().getStringEx("panel.group_detail.button.delete_event.title", "Remove group event"),
-        leftIconAsset: "images/icon-leave-group.png",
+        leftIconKey: "trash",
         onTap: (){
           Analytics().logSelect(target: "Remove group event");
           showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
@@ -1441,12 +1441,11 @@ class GroupPostReaction extends StatelessWidget {
   final List<String>? accountIDs;
   final String selectedIconKey;
   final String deselectedIconKey;
-  final double iconSize;
   final bool onTapEnabled;
   final bool onLongPressEnabled;
 
   GroupPostReaction({required this.groupID, required this.post, required this.reaction,
-    this.accountIDs, required this.selectedIconKey, required this.deselectedIconKey, this.iconSize = 18, this.onTapEnabled = true, this.onLongPressEnabled = true});
+    this.accountIDs, required this.selectedIconKey, required this.deselectedIconKey, this.onTapEnabled = true, this.onLongPressEnabled = true});
 
   @override
   Widget build(BuildContext context) {
@@ -1600,22 +1599,19 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      _FontIcon(
-                          onTap: _onTapBold,
-                          buttonLabel: "Bold",
-                          iconPath: 'images/icon-bold.png'),
+                      IconButton(
+                        icon: Styles().images?.getImage('bold-dark', semanticLabel: 'Bold') ?? Container(),
+                        onPressed: _onTapBold),
                       Padding(
                           padding: EdgeInsets.only(left: 20),
-                          child: _FontIcon(
-                              onTap: _onTapItalic,
-                              buttonLabel: "Italic",
-                              iconPath: 'images/icon-italic.png')),
+                          child: IconButton(
+                              icon: Styles().images?.getImage('italic-dark', semanticLabel: 'Italic') ?? Container(),
+                              onPressed: _onTapItalic)),
                       Padding(
                           padding: EdgeInsets.only(left: 20),
-                          child: _FontIcon(
-                              onTap: _onTapUnderline,
-                              buttonLabel: "Underline",
-                              iconPath: 'images/icon-underline.png')),
+                          child: IconButton(
+                              icon: Styles().images?.getImage('underline-dark', semanticLabel: 'Underline') ?? Container(),
+                              onPressed: _onTapUnderline)),
                       Padding(
                           padding: EdgeInsets.only(left: 20),
                           child: Semantics(button: true, child:
@@ -2040,20 +2036,6 @@ class GroupMemberSelectionData {
   GroupMemberSelectionData({required this.type, required this.selection, this.requiresValidation = false});
 }
 
-class _FontIcon extends StatelessWidget {
-  final GestureTapCallback? onTap;
-  final String iconPath;
-  final String? buttonLabel;
-  _FontIcon({this.onTap, required this.iconPath, this.buttonLabel});
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(button: true, label: buttonLabel,
-        child:GestureDetector(
-            onTap: onTap, child: Image.asset(iconPath, width: 18, height: 18, excludeFromSemantics: true,)));
-  }
-}
-
 typedef void OnImageChangedListener(String imageUrl);
 class ImageChooserWidget extends StatefulWidget{ //TBD Localize properly
   final String? imageUrl;
@@ -2250,7 +2232,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
                 Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
                   GestureDetector(onTap: _onPollOptionsTap, child:
                     Padding(padding: EdgeInsets.all(10), child:
-                      Image.asset('images/icon-groups-options-orange.png'),
+                    Styles().images?.getImage('more'),
                     ),
                   ),
                 ),
@@ -2304,7 +2286,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
       bool useCustomColor = isClosed && maxValueIndex == optionIndex;
       String option = widget.poll!.options![optionIndex];
       bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
-      String checkboxImage = didVote ? 'images/deselected-dark.png' : 'images/checkbox-unselected.png';
+      String checkboxImage = didVote ? 'check-circle-filled' : 'check-circle-outline';
 
       String votesString;
       int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
@@ -2330,7 +2312,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
           child:
           Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(checkboxImage,),),
+            Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage(checkboxImage)),
             Expanded(
                 flex: 5,
                 key: progressKey, child:
@@ -2343,7 +2325,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
                 Padding( padding: EdgeInsets.symmetric(horizontal: 5),
                   child: Text(option, style: useCustomColor? Styles().textStyles?.getTextStyle('widget.group.card.poll.option_variant')  : Styles().textStyles?.getTextStyle('widget.group.card.poll.option')),)),
                 Visibility( visible: didVote,
-                    child:Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/checkbox-small.png',),)
+                    child:Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('check-circle-outline'))
                 ),
               ],),)
               ),
@@ -2488,7 +2470,7 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
     if (widget.pollCard._canStart) {
       options.add(RibbonButton(
         label: Localization().getStringEx("panel.polls_home.card.button.title.start_poll", "Start Poll"),
-        leftIconAsset: "images/icon-gear.png",
+        leftIconKey: "settings",
         progress: _isStarting,
         onTap: _onStartPollTapped
       ),);
@@ -2496,7 +2478,7 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
     if (widget.pollCard._canEnd) {
       options.add(RibbonButton(
         label: Localization().getStringEx("panel.polls_home.card.button.title.end_poll", "End Poll"),
-        leftIconAsset: "images/icon-gear.png",
+        leftIconKey: "settings",
         progress: _isEnding,
         onTap: _onEndPollTapped
       ),);
@@ -2505,7 +2487,7 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
     if (widget.pollCard._canDelete) {
       options.add(RibbonButton(
         label: Localization().getStringEx("panel.polls_home.card.button.title.delete_poll", "Delete Poll"),
-        leftIconAsset: "images/icon-leave-group.png",
+        leftIconKey: "trash",
         progress: _isDeleting,
         onTap: _onDeletePollTapped
       ),);
@@ -2621,15 +2603,14 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
   @override
   Widget build(BuildContext context) {
     bool hasProfilePhoto = (_imageBytes != null);
-    Image profileImage = hasProfilePhoto
-        ? Image.memory(_imageBytes!)
-        : Image.asset('images/missing-profile-photo-placeholder.png', excludeFromSemantics: true);
+    Widget? profileImage = hasProfilePhoto
+        ? Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: (hasProfilePhoto ? BoxFit.cover : BoxFit.contain), image: Image.memory(_imageBytes!).image)))
+        : Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true);
 
     return GestureDetector(
         onTap: widget.onTap ?? _onImageTap,
         child: Stack(alignment: Alignment.center, children: [
-          Container(
-              decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: (hasProfilePhoto ? BoxFit.cover : BoxFit.contain), image: profileImage.image))),
+          if (profileImage != null) profileImage,
           Visibility(
               visible: _loading,
               child: SizedBox(
@@ -2719,37 +2700,37 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
           ),
           child: Row(children: <Widget>[
             Opacity(opacity: 0, child:
-            Padding(padding: EdgeInsets.all(8), child:
-            Image.asset('images/close-white.png', excludeFromSemantics: true,)
-            )
+              Padding(padding: EdgeInsets.all(8), child:
+                Styles().images?.getImage('close-circle-white', excludeFromSemantics: true)
+              )
             ),
             Expanded(child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-            Text(Localization().getStringEx("widget.groups.selection.heading", "Select Group"), textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 24)
-            )
-            )
+              Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+                Text(Localization().getStringEx("widget.groups.selection.heading", "Select Group"), textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 24)
+                )
+              )
             ),
             Semantics(button: true, label: Localization().getStringEx("dialog.close.title","Close"), child:
-            InkWell(onTap: _onTapClose, child:
-            Padding(padding: EdgeInsets.only(top: 8, bottom: 8, left: 4, right: 12), child:
-            Image.asset('images/close-white.png', excludeFromSemantics: true,)
-            )
-            )
+              InkWell(onTap: _onTapClose, child:
+                Padding(padding: EdgeInsets.only(top: 8, bottom: 8, left: 4, right: 12), child:
+                  Styles().images?.getImage('close-circle-white', excludeFromSemantics: true)
+                )
+              )
             )
           ])
       ),
       Padding(padding: EdgeInsets.all(10), child: _buildGroupsList()),
       Semantics(container: true, child:
-      Padding(padding: EdgeInsets.all(10), child:
-      RoundedButton(
-          label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select"),
-          borderColor: Styles().colors!.fillColorSecondary,
-          backgroundColor: Styles().colors!.white,
-          textColor: Styles().colors!.fillColorPrimary,
-          onTap: _onTapSelect
-      )
-      )
+        Padding(padding: EdgeInsets.all(10), child:
+          RoundedButton(
+              label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select"),
+              borderColor: Styles().colors!.fillColorSecondary,
+              backgroundColor: Styles().colors!.white,
+              textColor: Styles().colors!.fillColorPrimary,
+              onTap: _onTapSelect
+          )
+        )
       )
     ]));
   }
@@ -2820,7 +2801,7 @@ class EnabledToggleButton extends ToggleRibbonButton {
   bool get toggled => (enabled == true) && super.toggled;
 
   @override
-  Widget? get rightIconImage =>Image.asset((toggled) ? 'images/switch-on.png' : 'images/switch-off.png');  //Workaround for blurry images
+  Widget? get rightIconImage => Styles().images?.getImage(toggled ? 'toggle-on' : 'toggle-off');  //Workaround for blurry images
 }
 
 class GroupMemberSettingsLayout extends StatelessWidget{

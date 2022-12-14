@@ -166,7 +166,7 @@ class _GuideCategoriesPanelState extends State<GuideCategoriesPanel> implements 
                 Expanded(child:
                   Text(section.name ?? '', style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
                 ),
-                Image.asset("images/chevron-right-white.png", excludeFromSemantics: true,)
+                Styles().images?.getImage('chevron-right-white', excludeFromSemantics: true) ?? Container(),
             ],)),
           ),
         ),

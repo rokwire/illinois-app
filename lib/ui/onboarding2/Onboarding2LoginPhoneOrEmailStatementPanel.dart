@@ -55,7 +55,7 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
 
     return Scaffold(backgroundColor: Styles().colors!.background, body:
       Stack(children: <Widget>[
-        Image.asset("images/login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
+        Styles().images?.getImage("header-login", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         Column(children:[
           Expanded(child:
             SingleChildScrollView(child:

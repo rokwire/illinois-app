@@ -178,10 +178,10 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
                     width: 10,
                   ),
                   Container(
-                    child: Image.asset(
-                      widget.enabled?
-                      (widget.toggled ? ('images/switch-on.png') : ('images/switch-off.png')) :
-                      ("images/off.png"),
+                    child: Styles().images?.getImage(
+                      widget.enabled ?
+                        (widget.toggled ? 'toggle-on' : 'toggle-off') :
+                        "toggle-disabled",
                       excludeFromSemantics: true,
                     ),
                   ),

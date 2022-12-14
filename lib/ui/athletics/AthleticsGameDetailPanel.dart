@@ -139,7 +139,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                           Container(
                             height: 112,
                             width: double.infinity,
-                            child: Image.asset('images/slant-down-right.png',
+                            child: Styles().images?.getImage('images/slant-down-right.png',
                               color: Styles().colors!.fillColorPrimary,
                               fit: BoxFit.fill,
                               excludeFromSemantics: true,
@@ -155,7 +155,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                               children: <Widget>[
                                 Padding(
                                   padding: EdgeInsets.only(right: 16),
-                                  child: Image.asset(
+                                  child: Styles().images?.getImage(
                                     'images/icon-athletics-orange.png',
                                     excludeFromSemantics: true,
                                   ),
@@ -296,10 +296,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 8),
-                      child: Image.asset((_newsExpanded
-                          ? 'images/icon-up.png'
-                          : 'images/icon-down-orange.png'),
-                        excludeFromSemantics: true,),
+                      child: Styles().images?.getImage(_newsExpanded ? 'chevron-up' : 'chevron-down', excludeFromSemantics: true,),
                     )
                   ],
                 ),

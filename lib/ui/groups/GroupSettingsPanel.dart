@@ -341,7 +341,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   BorderRadius.all(Radius.circular(4))),
               child: Row(
                 children: <Widget>[
-                  Image.asset('images/warning-orange.png'),
+                  Styles().images?.getImage('warning', excludeFromSemantics: true) ?? Container(),
                   Expanded(child:
                   Container(
                       padding: EdgeInsets.only(left: 12, right: 4),
@@ -598,7 +598,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   ),
                 Container (
                   padding: EdgeInsets.only(top:8,bottom: 8,right: 8, left: 8),
-                  child: Image.asset("images/small-add-orange.png", excludeFromSemantics: true,),
+                  child: Styles().images?.getImage('create', excludeFromSemantics: true),
                 )
 
               ],)
@@ -796,7 +796,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 5),
-                      child: Image.asset('images/chevron-right.png'),
+                      child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
                     ),
                 ]),
                 Container(
@@ -1003,7 +1003,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                         GestureDetector(
                             onTap: _onTapAuthMan,
                             child: Padding(
-                                padding: EdgeInsets.only(left: 10), child: Image.asset(isAuthManGroup ? 'images/switch-on.png' : 'images/switch-off.png')))
+                                padding: EdgeInsets.only(left: 10), child: Styles().images?.getImage(isAuthManGroup ? 'toggle-on' : 'toggle-off')))
                       ])
                     ])),
                 Visibility(
@@ -1341,7 +1341,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: enabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent))),
               GestureDetector(
                   onTap: (enabled && (onTap != null)) ? onTap : (){},
-                  child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset((value ?? false) ? 'images/switch-on.png' : 'images/switch-off.png')))
+                  child: Padding(padding: EdgeInsets.only(left: 10), child: Styles().images?.getImage(value ?? false ? 'toggle-on' : 'toggle-off')))
             ])
           ])),
     );

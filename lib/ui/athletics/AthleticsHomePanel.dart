@@ -201,8 +201,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                             Localization().getStringEx("panel.athletics.label.tap_the.title", "Tap the "),
                                             style: Styles().textStyles?.getTextStyle('panel.athletics.home.detail.medium') ,
                                           ),
-                                          Image.asset(
-                                              'images/icon-check-example.png', excludeFromSemantics: true),
+                                          Styles().images?.getImage('images/icon-check-example.png', excludeFromSemantics: true) ?? Container(),
                                           Expanded(
                                             child:Text(
                                               Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams"),
@@ -241,7 +240,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                           Container(
                                             height: 112,
                                             width: double.infinity,
-                                            child: Image.asset('images/slant-down-right-blue.png',
+                                            child: Styles().images?.getImage('images/slant-down-right-blue.png',
                                               fit:BoxFit.fill,
                                               color: Styles().colors!.fillColorPrimaryVariant,
                                               excludeFromSemantics: true
@@ -260,7 +259,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                       right: 16),
-                                                  child: Image.asset('images/explore.png', excludeFromSemantics: true),
+                                                  child: Styles().images?.getImage('images/explore.png', excludeFromSemantics: true),
                                                 ),
                                                 Expanded(child:
                                                   Text(
@@ -356,7 +355,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   Widget _buildHeaderBackButton() {
     return Semantics(label: Localization().getStringEx('headerbar.back.title', 'Back'), hint: Localization().getStringEx('headerbar.back.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true), onPressed: _onTapBack,));
+      IconButton(icon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(), onPressed: _onTapBack,));
   }
 
   Widget _buildHeaderTitle() {
@@ -376,7 +375,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
 
   Widget _buildHeaderSettingsButton() {
     return Semantics(label: Localization().getStringEx('headerbar.settings.title', 'Settings'), hint: Localization().getStringEx('headerbar.settings.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Image.asset('images/settings-white.png', excludeFromSemantics: true), onPressed: _onTapSettings));
+      IconButton(icon: Styles().images?.getImage('settings-white', excludeFromSemantics: true) ?? Container(), onPressed: _onTapSettings));
   }
 
   Widget _buildHeaderActions() {
@@ -609,7 +608,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
             showImage ? Container(height: 72, color: Styles().colors!.fillColorSecondaryTransparent05,) : Container(height: 0)
           ],),
           showImage ? Container(height: 112, width: double.infinity, child:
-            Image.asset('images/slant-down-right.png', color: Styles().colors!.fillColorSecondary, fit: BoxFit.fill, excludeFromSemantics: true),
+            Styles().images?.getImage('images/slant-down-right.png', color: Styles().colors!.fillColorSecondary, fit: BoxFit.fill, excludeFromSemantics: true),
           ) : Container(),
           showImage ? Container(height: 140, color: Styles().colors!.background,) : Container()
         ],),
@@ -639,7 +638,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                             hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx( 'widget.card.button.favorite.on.hint', ''),
                             excludeSemantics: true, child:
                             Padding(padding: EdgeInsets.only(right: 24, top: 24, left: 24, bottom: 8), child:
-                              Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)
+                              Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline', excludeFromSemantics: true)
                             ),
                           ),
                         ),
@@ -750,7 +749,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
         padding: _detailPadding,
         child:Semantics(label:displayTime, excludeSemantics: true ,child: Row(
           children: <Widget>[
-            Image.asset('images/icon-time.png', excludeFromSemantics: true),
+            Styles().images?.getImage('time', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: _iconPadding,
             ),
@@ -772,7 +771,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
         child: Semantics(label:locationText, excludeSemantics: true ,child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Image.asset('images/icon-location.png', excludeFromSemantics: true),
+            Styles().images?.getImage('location', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: _iconPadding,
             ),

@@ -142,7 +142,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
             visible: starVisible,
             child: GestureDetector(child: Container(
                   padding: EdgeInsets.only(top: 20, right: 24),
-                  child: Image.asset(isGameSaved ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)), onTap: _onTapSaveGame),
+                  child: Styles().images?.getImage(isGameSaved ? 'star-filled' : 'star-outline', excludeFromSemantics: true)), onTap: _onTapSaveGame),
           )
         ],
       ),
@@ -173,7 +173,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
         padding: EdgeInsets.only(top: 12, left: 24, right: 24),
         child: Row(
           children: <Widget>[
-            Image.asset('images/icon-calendar.png', excludeFromSemantics: true),
+            Styles().images?.getImage('calendar', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: EdgeInsets.only(right: 5),
             ),
@@ -223,7 +223,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                             Padding(
                               padding: EdgeInsets.only(left: 8),
                             ),
-                            Visibility(visible: hasTickets, child: Image.asset('images/chevron-right.png', excludeFromSemantics: true))
+                            Visibility(visible: hasTickets, child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true) ?? Container())
                           ]))),
                 ))
           ],

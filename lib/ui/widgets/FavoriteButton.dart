@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 
 enum FavoriteIconStyle { SlantHeader, Handle, Button, BlueButton }
 
@@ -21,38 +22,38 @@ class FavoriteStarIcon extends StatelessWidget {
     );
   }
 
-  Widget get _starImage {
-    String? imageName;
+  Widget? get _starImage {
+    String? imageKey;
     if (style == FavoriteIconStyle.SlantHeader) {
       switch (selected) {
-        case true:  imageName = 'images/icon-star-orange.png'; break;
-        case false: imageName = 'images/icon-star-white-frame-thin.png'; break;
-        default:    imageName = 'images/icon-star-gray.png'; break;
+        case true:  imageKey = 'star-filled'; break;
+        case false: imageKey = 'star-outline'; break;
+        default:    imageKey = 'star-gray'; break;
       }
     }
     else if (style == FavoriteIconStyle.Handle) {
       switch (selected) {
-        case true:  imageName = 'images/icon-star-orange.png'; break;
-        case false: imageName = 'images/icon-star-white.png'; break;
-        default:    imageName = 'images/icon-star-gray.png'; break;
+        case true:  imageKey = 'star-filled'; break;
+        case false: imageKey = 'star-white'; break;
+        default:    imageKey = 'star-gray'; break;
       }
     }
     else if (style == FavoriteIconStyle.Button) {
       switch (selected) {
-        case true:  imageName = 'images/icon-star-orange.png'; break;
-        case false: imageName = 'images/icon-star-white.png'; break;
-        default:    imageName = 'images/icon-star-gray.png'; break;
+        case true:  imageKey = 'star-filled'; break;
+        case false: imageKey = 'star-white'; break;
+        default:    imageKey = 'star-gray'; break;
       }
     }
     else if (style == FavoriteIconStyle.BlueButton) {
       switch (selected) {
-        case true:  imageName = 'images/icon-star-blue.png'; break;
-        case false: imageName = 'images/icon-star-white.png'; break;
-        default:    imageName = 'images/icon-star-gray.png'; break;
+        case true:  imageKey = 'star-dark'; break;
+        case false: imageKey = 'star-white'; break;
+        default:    imageKey = 'star-gray'; break;
       }
     }
     
-    return Image.asset(imageName ?? 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true);
+    return Styles().images?.getImage(imageKey ?? 'star-outline', excludeFromSemantics: true);
   }
 }
 

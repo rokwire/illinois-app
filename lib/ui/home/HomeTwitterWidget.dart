@@ -146,7 +146,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
         Container(color: Styles().colors!.fillColorPrimary, child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-            HomeTitleIcon(image: Image.asset('images/campus-tools.png')),
+            HomeTitleIcon(image: Styles().images?.getImage('campus-tools')),
 
             Expanded(child:
               Padding(padding: EdgeInsets.only(top: 14), child:
@@ -171,7 +171,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     return Semantics(label: currentAccountName, hint: "Double tap to select account", button: true, container: true, child:
       DropdownButtonHideUnderline(child:
         DropdownButton<String>(
-          icon: Padding(padding: EdgeInsets.only(left: 4), child: Image.asset('images/icon-down-white.png')),
+          icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down-white', excludeFromSemantics: true)),
           isExpanded: false,
           style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16, ),
           hint: (currentAccountName != null) ? Text(currentAccountName, style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)) : null,
@@ -456,7 +456,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
       Semantics(label: currentAccountName, hint: "Double tap to select account", button: true, container: true, child:
         DropdownButtonHideUnderline(child:
           DropdownButton<String>(
-            icon: Padding(padding: EdgeInsets.only(left: 4, right: 16), child: Image.asset('images/icon-down-white.png')),
+            icon: Padding(padding: EdgeInsets.only(left: 4, right: 16), child: Styles().images?.getImage('chevron-down-white', excludeFromSemantics: true)),
             isExpanded: false,
             style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16, ),
             hint: (currentAccountName != null) ? Text(currentAccountName, style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)) : null,

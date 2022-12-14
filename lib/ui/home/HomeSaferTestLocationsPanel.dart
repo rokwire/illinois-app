@@ -363,7 +363,7 @@ class _TestLocation extends StatelessWidget {
       underline: Container(),
       value: period,
       onChanged: (value){},
-      icon: Styles().images?.getImage('arrow-down', excludeFromSemantics: true),
+      icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true),
       selectedItemBuilder:(context){
         return items.map<Widget>((entry){
           return Row(

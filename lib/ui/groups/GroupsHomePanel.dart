@@ -307,7 +307,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     return RibbonButton(
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        rightIconAsset: null,
+        rightIconKey: null,
         label: _getContentLabel(contentType),
         onTap: () => _onTapContentType(contentType));
   }
@@ -321,7 +321,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                   backgroundColor: Styles().colors!.white,
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                   border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                  rightIconAsset: (_contentTypesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+                  rightIconKey: _contentTypesVisible ? 'chevron-up' : 'chevron-down',
                   label: _getContentLabel(_selectedContentType),
                   onTap: _canTapGroupsContentType ? _changeContentTypesVisibility : null));
   }
@@ -340,13 +340,13 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                     Padding(padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10), child:
                       InkWell(onTap: _onTapCreate, child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                         Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
-                        Padding(padding: EdgeInsets.only(left: 5), child: Image.asset('images/icon-add-more.png'))
+                        Padding(padding: EdgeInsets.only(left: 5), child: Styles().images?.getImage('create', excludeFromSemantics: true))
                       ])),
                     ),
                   ),
                 Semantics(label:Localization().getStringEx("panel.groups_home.button.search.title", "Search"), child:
                   IconButton(
-                    icon: Image.asset('images/icon-search.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: true, width: 25, height: 25),
+                    icon: Styles().images?.getImage('search', excludeFromSemantics: true) ?? Container(),
                     onPressed: () {
                       Analytics().logSelect(target: "Search");
                       Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupsSearchPanel()));

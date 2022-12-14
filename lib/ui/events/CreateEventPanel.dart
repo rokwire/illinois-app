@@ -159,7 +159,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  Image.asset('images/icon-create-event.png'),
+                                  Styles().images?.getImage('create') ?? Container(),
                                   Padding(
                                     padding: EdgeInsets.only(left: 12),
                                     child: Text(_panelTitleText!,
@@ -221,7 +221,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                       hint: Localization().getStringEx("panel.create_event.date_time.hint",""), header: true, excludeSemantics: true, child:
                                       Row(
                                         children: <Widget>[
-                                          Image.asset('images/icon-calendar.png'),
+                                          Styles().images?.getImage('calendar') ?? Container(),
                                           Padding(
                                             padding: EdgeInsets.only(left: 3),
                                             child: Text(
@@ -701,8 +701,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                   EdgeInsets.only(left: 12, right: 8),
                   child: DropdownButtonHideUnderline(
                       child: DropdownButton(
-                          icon: Image.asset(
-                              'images/icon-down-orange.png'),
+                          icon: Styles().images?.getImage('chevron-down'),
                           isExpanded: true,
                           style: TextStyle(
                               color: Styles().colors!.mediumGray,
@@ -922,8 +921,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                     EdgeInsets.only(left: 12, right: 8),
                     child: DropdownButtonHideUnderline(
                         child: DropdownButton(
-                            icon: Image.asset(
-                                'images/icon-down-orange.png'),
+                            icon: Styles().images?.getImage('chevron-down'),
                             isExpanded: true,
                             style: TextStyle(
                                 color: Styles().colors!.mediumGray,
@@ -965,7 +963,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                             header: true, excludeSemantics: true, child:
                             Row(
                               children: <Widget>[
-                                Image.asset('images/icon-location.png'),
+                                Styles().images?.getImage('location') ?? Container(),
                                 Padding(
                                   padding: EdgeInsets.only(left: 3),
                                   child: Text(
@@ -1456,8 +1454,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           EdgeInsets.only(left: 12, right: 8),
                           child: DropdownButtonHideUnderline(
                               child: DropdownButton(
-                                  icon: Image.asset(
-                                      'images/icon-down-orange.png'),
+                                  icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true),
                                   isExpanded: true,
                                   style: TextStyle(
                                       color: Styles().colors!.mediumGray,
@@ -2188,7 +2185,7 @@ class _EventDateDisplayView extends StatelessWidget {
                   fontSize: 16,
                   fontFamily: Styles().fontFamilies!.regular),
             ),
-            Image.asset('images/icon-down-orange.png')
+            Styles().images?.getImage('chevron-down') ?? Container()
           ],
         ),
       ),

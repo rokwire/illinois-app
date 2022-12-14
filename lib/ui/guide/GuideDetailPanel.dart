@@ -115,7 +115,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                 button: true,
                 child: GestureDetector(onTap: _onTapFavorite, child:
                   Container(padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
-                    Image.asset(_isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,)
+                  Styles().images?.getImage(_isFavorite ? 'star-filled' : 'star-outline', excludeFromSemantics: true)
                   )
             ),),),),
           ],)
@@ -425,7 +425,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                   borderWidth: 2,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   onTap:() { _onTapLink(url);  },
-                  rightIcon: Image.asset('images/external-link.png', semanticLabel: "external link",),
+                  rightIcon: Styles().images?.getImage('external-link'),
                 )
               ),
             );
@@ -476,7 +476,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     return ((contentList != null) && (0 < contentList.length)) ?
       Container(padding: EdgeInsets.symmetric(vertical: 16), child:
         SectionSlantHeader(title: "Related",
-          titleIconAsset: 'images/icon-related.png',
+          titleIconKey: 'related',
           children: contentList,
       )) :
       Container();

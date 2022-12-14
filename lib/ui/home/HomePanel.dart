@@ -902,7 +902,7 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
                   alignment: Alignment.topRight,
                   child: GestureDetector(
                       onTap: _dismissUnstarConfirmationDialog,
-                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png', color: Colors.black))))
+                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage('close', excludeFromSemantics: true))))
             ])));
   }
 

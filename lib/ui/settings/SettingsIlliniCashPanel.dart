@@ -305,7 +305,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: <Widget>[
-                Image.asset(StringUtils.ensureNotEmpty(iconSrc, defaultValue: 'images/icon-settings.png')),
+                Styles().images?.getImage(StringUtils.ensureNotEmpty(iconSrc, defaultValue: 'settings'), excludeFromSemantics: true) ?? Container(),
                 Padding(
                   padding: EdgeInsets.only(left: 12),
                   child: Text(
@@ -732,7 +732,7 @@ class _DateValue extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(title!, style: Styles().textStyles?.getTextStyle("widget.title.regular"),),
-          Image.asset('images/icon-down.png')
+          Styles().images?.getImage('chevron-down', excludeFromSemantics: true) ?? Container(),
         ],), Container(height: 2, color: Styles().colors!.fillColorSecondary,)
     ],),),);
   }
