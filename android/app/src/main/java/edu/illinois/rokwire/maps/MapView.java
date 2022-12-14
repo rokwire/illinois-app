@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -272,8 +273,13 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         if (mapLayoutPassed) {
             Object exploreLocationThresholdParam = (exploreOptions != null) ? exploreOptions.get("LocationThresoldDistance") : null;
             double thresholdDistance = (exploreLocationThresholdParam instanceof Double) ? (Double) exploreLocationThresholdParam : getAutomaticThresholdDistance();
-            buildDisplayExploresForThresholdDistance(thresholdDistance);
+            buildDisplayExploresAsyncForThresholdDistance(thresholdDistance);
         }
+    }
+
+    private void buildDisplayExploresAsyncForThresholdDistance(double thresholdDistance) {
+        MarkersAsyncTask markersAsyncTask = new MarkersAsyncTask();
+        markersAsyncTask.execute(thresholdDistance);
     }
 
     private void buildDisplayExploresForThresholdDistance(double thresholdDistance) {
@@ -539,5 +545,19 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             return zoomDistance - (zoom - (float) zoomIndex) * (zoomDistance - nextZoomDistance);
         }
         return 0;
+    }
+
+    private class MarkersAsyncTask extends AsyncTask<Double, Void, List<Object>> {
+
+        @Override
+        protected List<Object> doInBackground(Double... params) {
+            return buildExplores(explores, params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(List<Object> explores) {
+            displayExplores = explores;
+            showExploresOnMap();
+        }
     }
 }
