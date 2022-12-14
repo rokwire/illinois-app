@@ -53,7 +53,6 @@
 	bool          _enabled;
 	NSOperation*  _buildeExploresOperation;
 	NSMutableDictionary<NSString*, UIImage*>* _markersImageCache;
-	UILabel*       _debugLabel;
 }
 @property (nonatomic, readonly) GMSMapView*     mapView;
 @property (nonatomic) NSArray*      explores;
@@ -84,14 +83,6 @@
 		//_mapView.settings.indoorPicker = NO;
 		[self addSubview:_mapView];
 
-		_debugLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-		_debugLabel.font = [UIFont boldSystemFontOfSize:14];
-		_debugLabel.textAlignment = NSTextAlignmentLeft;
-		_debugLabel.textColor = [UIColor blackColor];
-		_debugLabel.shadowColor = [UIColor colorWithWhite:1 alpha:0.5];
-		_debugLabel.shadowOffset = CGSizeMake(2, 2);
-		[self addSubview:_debugLabel];
-
 		_markers = [[NSMutableSet alloc] init];
 		_markersImageCache = [[NSMutableDictionary alloc] init];
 		_enabled = true;
@@ -116,7 +107,6 @@
 - (void)layoutSubviews {
 	CGSize contentSize = self.frame.size;
 	_mapView.frame = CGRectMake(0, 0, contentSize.width, contentSize.height);
-	_debugLabel.frame = CGRectMake(8, 8, contentSize.width - 16, 16);
 
 	if (!_didFirstLayout) {
 		_didFirstLayout = true;
@@ -315,7 +305,6 @@
 		double nextZoomDistance = ((zoomIndex + 1) < _countof(kThresoldDistanceByZoom)) ? kThresoldDistanceByZoom[zoomIndex + 1] : 0;
 		double thresoldDistance = zoomDistance - (zoom - (double)zoomIndex) * (zoomDistance - nextZoomDistance);
 		NSLog(@"thresoldDistanceForZoom: %.2f => %ld", zoom, (NSInteger)floor(thresoldDistance));
-		_debugLabel.text = [NSString stringWithFormat:@"Zoom: %.2f Dist: %ldm", zoom, (NSInteger)floor(thresoldDistance)];
 		return thresoldDistance;
 	}
 	return 0;
