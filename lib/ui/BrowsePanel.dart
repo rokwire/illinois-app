@@ -820,6 +820,7 @@ class _BrowseEntry extends StatelessWidget {
       contentList: Guide().promotedList,
       contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Campus Highlights'),
       contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Hightlights."),
+      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusHighlightContentType),
     )));
   }
 
