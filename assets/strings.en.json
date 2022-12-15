@@ -2728,8 +2728,8 @@
     "widget.home_create_poll.button.create_poll.label":"Create a Poll",
     "widget.home_create_poll.button.login.label":"Login",
 
-    "widget.home.campus_guide_highlights.label.heading": "Campus Safety Resources",
-    "widget.home.campus_guide_highlights.text.empty.description": "There are no active Campus Safety Resources.",
+    "widget.home.campus_guide_highlights.label.heading": "Campus Guide Highlights",
+    "widget.home.campus_guide_highlights.text.empty.description": "There are no active Campus Guide Highlights.",
     "widget.home.campus_guide_highlights.button.all.title": "View All",
     "widget.home.campus_guide_highlights.button.all.hint": "Tap to view all highlights",
 

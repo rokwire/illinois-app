@@ -2726,10 +2726,10 @@
     "widget.home_create_poll.button.create_poll.label":"Crea una encuesta",
     "widget.home_create_poll.button.login.label":"Iniciar sesión",
 
-    "widget.home.campus_guide_highlights.label.heading": "Recursos de seguridad del campus",
-    "widget.home.campus_guide_highlights.text.empty.description": "No hay recursos de seguridad en el campus activos.",
+    "widget.home.campus_guide_highlights.label.heading": "Puntos destacados de la guía del campus",
+    "widget.home.campus_guide_highlights.text.empty.description": "No hay Destacados de la Guía del Campus activos.",
     "widget.home.campus_guide_highlights.button.all.title": "Ver todo",
-    "widget.home.campus_guide_highlights.button.all.hint": "Toca para ver todos los aspectos destacados",
+    "widget.home.campus_guide_highlights.button.all.hint": "Toca para ver todos los momentos destacados",
 
     "widget.home.safer.label.title": "Building Access",
 	"widget.home.safer.text.empty.description": "Tap the \u2606 on items in Building Access so you can quickly find them here.",
