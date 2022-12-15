@@ -273,7 +273,7 @@ class _TagSelectionWidget extends StatelessWidget {
                           child: Text(label,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16))),
-                      Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline', excludeFromSemantics: true) ?? Container(),
+                      Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true) ?? Container(),
                     ])))));
   }
 }

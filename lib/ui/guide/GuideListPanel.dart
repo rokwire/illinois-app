@@ -281,48 +281,49 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
   GuideFeatureButton? _buildFeatureButton(String feature) {
 
     List<dynamic> features = JsonUtils.listValue(FlexUI()['campus_guide.features']) ?? [];
-    
+
+    //TODO: ICONS - Replace browse icons?
     if (feature == 'athletics') {
-      return features.contains('athletics') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.athletics.title", "Athletics"), icon: "browse-athletics", onTap: _navigateAthletics,) : null;
+      return features.contains('athletics') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.athletics.title", "Athletics"), iconKey: "browse-athletics", onTap: _navigateAthletics,) : null;
     }
     else if (feature == 'bus-pass') {
-      return features.contains('bus_pass') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.bus_pass.title", "Bus Pass"), icon: "guide-bus-pass", onTap: _navigateBusPass,) : null;
+      return features.contains('bus_pass') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.bus_pass.title", "Bus Pass"), iconKey: "guide-bus-pass", onTap: _navigateBusPass,) : null;
     }
     else if (feature == 'dining') {
-      return features.contains('dining') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.dining.title", "Dining"), icon: "browse-dining", onTap: _navigateDining) : null;
+      return features.contains('dining') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.dining.title", "Dining"), iconKey: "browse-dining", onTap: _navigateDining) : null;
     }
     else if (feature == 'events') {
-      return features.contains('events') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.events.title", "Events"), icon: "browse-events", onTap: _navigateEvents) : null;
+      return features.contains('events') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.events.title", "Events"), iconKey: "browse-events", onTap: _navigateEvents) : null;
     }
     else if (feature == 'groups') {
-      return features.contains('groups') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.groups.title", "Groups"), icon: "browse-groups", onTap: _navigateGroups) : null;
+      return features.contains('groups') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.groups.title", "Groups"), iconKey: "browse-groups", onTap: _navigateGroups) : null;
     }
     else if (feature == 'illini-cash') {
-      return features.contains('illini_cash') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.illini_cash.title", "Illini Cash"), icon: "browse-student-cash", onTap: _navigateIlliniCash) : null;
+      return features.contains('illini_cash') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.illini_cash.title", "Illini Cash"), iconKey: "browse-student-cash", onTap: _navigateIlliniCash) : null;
     }
     else if (feature == 'illini-id') {
-      return features.contains('illini_id') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.illini_id.title", "Illini ID"), icon: "guide-student-id", onTap: _navigateIlliniId) : null;
+      return features.contains('illini_id') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.illini_id.title", "Illini ID"), iconKey: "guide-student-id", onTap: _navigateIlliniId) : null;
     }
     else if (feature == 'laundry') {
-      return features.contains('laundry') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.laundry.title", "Laundry"), icon: "browse-laundry", onTap: _navigateLaundry,) : null;
+      return features.contains('laundry') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.laundry.title", "Laundry"), iconKey: "browse-laundry", onTap: _navigateLaundry,) : null;
     }
     else if (feature == 'library-card') {
-      return features.contains('library_card') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.library_card.title", "Library Card"), icon: "guide-library-card", onTap: _navigateLibraryCard) : null;
+      return features.contains('library_card') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.library_card.title", "Library Card"), iconKey: "guide-library-card", onTap: _navigateLibraryCard) : null;
     }
     else if (feature == 'meal-plan') {
-      return features.contains('meal_plan') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.meal_plan.title", "Meal Plan"), icon: "guide-meal-plan", onTap: _navigateMealPlan,) : null;
+      return features.contains('meal_plan') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.meal_plan.title", "Meal Plan"), iconKey: "guide-meal-plan", onTap: _navigateMealPlan,) : null;
     }
     else if (feature == 'my-illini') {
-      return features.contains('my_illini') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.my_illini.title", "My Illini"), icon: "browse-student-portal", onTap: _navigateMyIllini) : null;
+      return features.contains('my_illini') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.my_illini.title", "My Illini"), iconKey: "browse-student-portal", onTap: _navigateMyIllini) : null;
     }
     else if (feature == 'parking') {
-      return features.contains('parking') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.parking.title", "Parking"), icon: "guide-parking", onTap: _navigateParking) : null;
+      return features.contains('parking') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.parking.title", "Parking"), iconKey: "guide-parking", onTap: _navigateParking) : null;
     }
     else if (feature == 'quick-polls') {
-      return features.contains('quick_polls') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.quick_polls.title", "Quick Polls"), icon: "browse-polls", onTap: _navigateQuickPolls) : null;
+      return features.contains('quick_polls') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.quick_polls.title", "Quick Polls"), iconKey: "browse-polls", onTap: _navigateQuickPolls) : null;
     }
     else if (feature == 'saved') {
-      return features.contains('saved') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.saved.title", "Saved"), icon: "browse-saved", onTap: _navigateSaved) : null;
+      return features.contains('saved') ? GuideFeatureButton(title: Localization().getStringEx("panel.guide_list.button.saved.title", "Saved"), iconKey: "browse-saved", onTap: _navigateSaved) : null;
     }
     else {
       return null;
@@ -411,9 +412,9 @@ class _GuideListPanelState extends State<GuideListPanel> implements Notification
 
 class GuideFeatureButton extends StatefulWidget {
   final String? title;
-  final String? icon;
+  final String? iconKey;
   final void Function()? onTap;
-  GuideFeatureButton({this.title, this.icon, this.onTap});
+  GuideFeatureButton({this.title, this.iconKey, this.onTap});
 
   _GuideFeatureButtonState createState() => _GuideFeatureButtonState();
 }
@@ -442,7 +443,7 @@ class _GuideFeatureButtonState extends State<GuideFeatureButton> {
           ), child:
           Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 6), child:
             Column(children: <Widget>[
-              Image.asset(widget.icon!, excludeFromSemantics: true,),
+              Styles().images?.getImage(widget.iconKey, excludeFromSemantics: true) ?? Container(),
               Container(height: 12),
               Row(children: [
                 Expanded(child:

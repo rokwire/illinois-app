@@ -232,7 +232,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                               ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
                               : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                           button: true,
-                          child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline', excludeFromSemantics: true)))))
+                          child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))))
         ]));
   }
 

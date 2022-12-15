@@ -275,7 +275,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
       Row(children: [
         InkWell(onTap: () => _onAnswer(answer, question: question), child:
           Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 8, ), child:
-            Styles().images?.getImage(selected ? "check-box-filled" : "box-outline", excludeFromSemantics: true),
+            Styles().images?.getImage(selected ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true),
           ),
         ),
         Expanded(child:

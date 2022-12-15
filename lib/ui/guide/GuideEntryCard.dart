@@ -110,7 +110,7 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
             child:
             GestureDetector(onTap: _onTapFavorite, child:
               Container(padding: EdgeInsets.only(top:16, right:16, left: 20, bottom: 20), child:
-              Styles().images?.getImage(_isFavorite ? 'star-filled' : 'star-outline', excludeFromSemantics: true)
+              Styles().images?.getImage(_isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
           ),)),),),
       ],),
     );

@@ -1115,7 +1115,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                                     child: Container(
                                         child: Padding(
                                             padding: EdgeInsets.only(left: 24),
-                                            child: Styles().images?.getImage(favorite ? 'star-filled' : 'star-outline'))))),
+                                            child: Styles().images?.getImage(favorite ? 'star-filled' : 'star-outline-gray'))))),
                           )
                         ],
                       )

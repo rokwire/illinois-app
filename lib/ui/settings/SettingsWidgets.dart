@@ -172,7 +172,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
             child: Container(
               padding: EdgeInsets.only(bottom: 16),
               child: Row(children: <Widget>[
-                Styles().images?.getImage(isChecked ? "check-box-filled" : "box-outline", excludeFromSemantics: true) ?? Container(),
+                Styles().images?.getImage(isChecked ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true) ?? Container(),
                 Container(width: 10,),
                 Expanded(child:
                   Text(
@@ -304,11 +304,11 @@ class _SettingsDialogState extends State<SettingsDialog>{
 class InfoButton extends StatelessWidget {
   final String? title;
   final String? description;
-  final String? iconRes;
+  final String? iconKey;
   final String? additionalInfo;
   final void Function()? onTap;
 
-  const InfoButton({Key? key, this.title, this.description, this.iconRes, this.onTap, this.additionalInfo}) : super(key: key);
+  const InfoButton({Key? key, this.title, this.description, this.iconKey, this.onTap, this.additionalInfo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -323,7 +323,7 @@ class InfoButton extends StatelessWidget {
           children: <Widget>[
             Container(
               padding: EdgeInsets.symmetric(horizontal: 11),
-              child: Image.asset(iconRes!, excludeFromSemantics: true,),
+              child: Styles().images?.getImage(iconKey, excludeFromSemantics: true),
             ),
             Expanded(child:
             Column(

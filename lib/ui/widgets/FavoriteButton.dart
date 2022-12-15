@@ -27,7 +27,7 @@ class FavoriteStarIcon extends StatelessWidget {
     if (style == FavoriteIconStyle.SlantHeader) {
       switch (selected) {
         case true:  imageKey = 'star-filled'; break;
-        case false: imageKey = 'star-outline'; break;
+        case false: imageKey = 'star-outline-gray'; break;
         default:    imageKey = 'star-gray'; break;
       }
     }
@@ -53,7 +53,7 @@ class FavoriteStarIcon extends StatelessWidget {
       }
     }
     
-    return Styles().images?.getImage(imageKey ?? 'star-outline', excludeFromSemantics: true);
+    return Styles().images?.getImage(imageKey ?? 'star-outline-gray', excludeFromSemantics: true);
   }
 }
 

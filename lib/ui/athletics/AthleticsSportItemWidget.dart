@@ -79,7 +79,7 @@ class AthleticsSportItemWidget extends StatelessWidget {
                         child: Padding(
                       padding: EdgeInsets.only(
                           right: 10, top: 15, bottom: 15, left: 25),
-                      child: Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline', excludeFromSemantics: true),
+                      child: Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true),
                     )),
                   ) : Container(height: 54,),
                 ],

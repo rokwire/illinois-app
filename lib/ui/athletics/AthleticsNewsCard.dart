@@ -143,7 +143,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
                         padding: EdgeInsets.only(
                             left: 24,
                             bottom: 0),
-                        child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline', excludeFromSemantics: true)
+                        child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
                     ))
                 )),)
         ],

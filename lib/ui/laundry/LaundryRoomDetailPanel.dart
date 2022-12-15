@@ -182,7 +182,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
       Localization().getStringEx('widget.card.button.favorite.off.hint', '') :
       Localization().getStringEx('widget.card.button.favorite.on.hint', '');
 
-    String favoriteIcon = isFavorite? 'images/icon-star-orange.png' : 'images/icon-star-white.png';
+    String favoriteIconKey = isFavorite? 'star-filled' : 'star-outline-gray';
     
     return Container(color: Colors.white, child:
       Padding(padding: EdgeInsets.only(left: 24), child:
@@ -197,7 +197,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
               GestureDetector(onTap: _onTapFavorite, child:
                 Semantics(label: favoriteLabel, hint: favoriteHint, button: true, excludeSemantics: true, child:
                   Padding(padding: EdgeInsets.only(left: 12, right: 16, top: 24, bottom: 25), child:
-                    Image.asset(favoriteIcon, excludeFromSemantics: true)
+                    Styles().images?.getImage(favoriteIconKey, excludeFromSemantics: true)
                   ),
                 ),
               ),
@@ -227,7 +227,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
       SingleChildScrollView(scrollDirection: Axis.horizontal, child:
         Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
           Row(children: <Widget>[
-            Styles().images?.getImage('washer', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER')) ?? Container(),
+            Styles().images?.getImage('washer-large', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.washer', 'WASHER')) ?? Container(),
             Padding(padding: EdgeInsets.only(right: 12),),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Text(Localization().getStringEx('panel.laundry_detail.label.washers', 'WASHERS'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 14, letterSpacing: 1, color: Styles().colors?.fillColorPrimary,),),
@@ -236,7 +236,7 @@ class _LaundryRoomDetailPanelState extends State<LaundryRoomDetailPanel> impleme
           ],),
           Padding(padding: EdgeInsets.only(right: 16)),
           Row(children: <Widget>[
-            Styles().images?.getImage('dryer', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.dryer', 'DRYER')) ?? Container(),
+            Styles().images?.getImage('dryer-large', semanticLabel: Localization().getStringEx('panel.laundry_detail.label.dryer', 'DRYER')) ?? Container(),
             Padding(padding: EdgeInsets.only(right: 12),),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Text(Localization().getStringEx('panel.laundry_detail.label.dryers', 'DRYERS'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 14, letterSpacing: 1, color: Styles().colors?.fillColorPrimary,),),
@@ -339,12 +339,12 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String imageAssetPath = _getImageAssetPath(appliance.type);
+    String imageKey = _getImageAssetPath(appliance.type);
     String? deviceName = _getDeviceName(appliance.type);
     return Container(color: Colors.white, child:
       Padding(padding: EdgeInsets.all(12), child:
         Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          Image.asset(imageAssetPath, semanticLabel: deviceName, excludeFromSemantics: true),
+          Styles().images?.getImage(imageKey, semanticLabel: deviceName, excludeFromSemantics: true) ?? Container(),
           Padding(padding: EdgeInsets.only(left: 12, right: 10), child:
             Text(appliance.label ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),),
           ),
@@ -358,9 +358,9 @@ class _LaundryRoomApplianceItem extends StatelessWidget {
 
   String _getImageAssetPath(LaundryApplianceType? applianceType) {
     switch (applianceType) {
-      case LaundryApplianceType.washer: return 'images/icon-washer-small.png';
-      case LaundryApplianceType.dryer: return 'images/icon-dryer-small.png';
-      default: return 'images/icon-washer-small.png';
+      case LaundryApplianceType.washer: return 'washer';
+      case LaundryApplianceType.dryer: return 'dryer';
+      default: return 'washer';
     }
   }
 

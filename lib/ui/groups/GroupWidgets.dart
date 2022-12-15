@@ -474,7 +474,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                   excludeSemantics: true,
                   child: InkWell(onTap: _onFavoriteTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
-                      Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline'),
+                      Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray'),
                     ),
                 ))),
 
@@ -1336,7 +1336,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                     reaction: thumbsUpReaction,
                     accountIDs: widget.reply?.reactions[thumbsUpReaction],
                     selectedIconKey: 'thumbs-up-filled',
-                    deselectedIconKey: 'thumbs-up-outline',
+                    deselectedIconKey: 'thumbs-up-outline-gray',
                   ),
                 ),
                 Visibility(
@@ -2286,7 +2286,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
       bool useCustomColor = isClosed && maxValueIndex == optionIndex;
       String option = widget.poll!.options![optionIndex];
       bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
-      String checkboxImage = didVote ? 'check-circle-filled' : 'check-circle-outline';
+      String checkboxImage = didVote ? 'check-circle-filled' : 'check-circle-outline-gray';
 
       String votesString;
       int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
@@ -2325,7 +2325,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
                 Padding( padding: EdgeInsets.symmetric(horizontal: 5),
                   child: Text(option, style: useCustomColor? Styles().textStyles?.getTextStyle('widget.group.card.poll.option_variant')  : Styles().textStyles?.getTextStyle('widget.group.card.poll.option')),)),
                 Visibility( visible: didVote,
-                    child:Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('check-circle-outline'))
+                    child:Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('check-circle-outline-gray'))
                 ),
               ],),)
               ),

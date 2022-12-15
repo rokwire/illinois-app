@@ -97,7 +97,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                                               child: Container(
                                                   child: Padding(
                                                       padding: EdgeInsets.only(left: 24, bottom: 5),
-                                                      child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline', excludeFromSemantics: true))))))))
+                                                      child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true))))))))
                         ]),
                         Padding(
                             padding: EdgeInsets.only(top: 6),

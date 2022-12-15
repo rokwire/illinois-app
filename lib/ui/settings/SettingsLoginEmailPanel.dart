@@ -224,7 +224,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                       child: InkWell(onTap: () => _onTapShowPassword(), child:
                         Padding(padding: EdgeInsets.only(top: 12, bottom: 12), child:
                           Row(mainAxisSize: MainAxisSize.min, children: [
-                            Styles().images?.getImage(_isShowingPassword ? 'check-circle-filled' : 'check-circle-outline', excludeFromSemantics: true) ?? Container(),
+                            Styles().images?.getImage(_isShowingPassword ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true) ?? Container(),
                             Container(width: 6),
                             Text(showPassword, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat"),),
                           ],)

@@ -164,7 +164,7 @@ class _GroupMembershipRequestPanelState extends State<GroupMembershipRequestPane
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               InkWell(onTap: _onResearchProjectConsent, child:
                 Padding(padding: EdgeInsets.only(left: outerPadding, right: 8, top: 16, bottom: 16), child:
-                  Styles().images?.getImage(_researchProjectConsent ? "check-box-filled" : "box-outline", excludeFromSemantics: true),
+                  Styles().images?.getImage(_researchProjectConsent ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true),
                 ),
               ),
               Expanded(child:

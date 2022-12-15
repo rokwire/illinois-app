@@ -158,7 +158,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       reaction: thumbsUpReaction,
                       accountIDs: _post?.reactions[thumbsUpReaction],
                       selectedIconKey: 'thumbs-up-filled',
-                      deselectedIconKey: 'thumbs-up-outline',
+                      deselectedIconKey: 'thumbs-up-outline-gray',
                       onTapEnabled: _canSendReaction,
                     ),
                   ),

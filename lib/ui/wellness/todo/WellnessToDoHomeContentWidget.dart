@@ -674,7 +674,7 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
   }
 
   Widget _buildCompletedWidget({required Color color}) {
-    Widget? viewWidget = Styles().images?.getImage(widget.item.isCompleted ? 'check-circle-outline-white' : 'circle-outline-white', excludeFromSemantics: true);
+    Widget? viewWidget = Styles().images?.getImage(widget.item.isCompleted ? 'check-circle-outline-gray-white' : 'circle-outline-white', excludeFromSemantics: true);
     return AppSemantics.buildCheckBoxSemantics( selected: widget.item.isCompleted, title: widget.item.name,
     child:GestureDetector(onTap: _onTapCompleted, child: Padding(padding: EdgeInsets.only(right: 20), child: viewWidget)));
   }

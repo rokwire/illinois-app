@@ -257,7 +257,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 StringUtils.isEmpty(liveStatsUrl)
                     ? Container()
                     : _DetailRibbonButton(
-                        iconResource: 'images/icon-live-stats.png',
+                        iconKey: 'chart',
                         title: Localization().getStringEx('widget.game_detail_heading.button.live_stats.title', 'Live Stats'),
                         hint: Localization().getStringEx('widget.game_detail_heading.button.live_stats.hint', ''),
                         onTap: () {
@@ -273,7 +273,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 StringUtils.isEmpty(audioUrl)
                     ? Container()
                     : _DetailRibbonButton(
-                        iconResource: 'images/icon-listen.png',
+                        iconKey: 'sound',
                         title: Localization().getStringEx('widget.game_detail_heading.button.listen.title', 'Listen'),
                         hint: Localization().getStringEx('widget.game_detail_heading.button.listen.hint', ''),
                         subTitle: widget.game?.radio,
@@ -288,7 +288,7 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
                 StringUtils.isEmpty(videoUrl)
                     ? Container()
                     : _DetailRibbonButton(
-                        iconResource: 'images/icon-watch.png',
+                        iconKey: 'play-circle',
                         title: Localization().getStringEx('widget.game_detail_heading.button.watch.title', 'Watch'),
                         hint: Localization().getStringEx('widget.game_detail_heading.button.watch.hint', ''),
                         subTitle: widget.game?.tv,
@@ -499,13 +499,13 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
 /// _DetailRibbonButton
 ///
 class _DetailRibbonButton extends StatelessWidget {
-  final String iconResource;
+  final String iconKey;
   final String? title;
   final String? subTitle;
   final String? hint;
   final GestureTapCallback? onTap;
 
-  _DetailRibbonButton({required this.iconResource, required this.title, this.subTitle = '', this.hint = '', this.onTap});
+  _DetailRibbonButton({required this.iconKey, required this.title, this.subTitle = '', this.hint = '', this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -523,7 +523,7 @@ class _DetailRibbonButton extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Image.asset(iconResource, excludeFromSemantics: true),
+                  Styles().images?.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8),
                     child: Text(

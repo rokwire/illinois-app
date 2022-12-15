@@ -91,10 +91,10 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
     Widget? machineImagePlaceHolder;
     switch (widget.issues.type) {
       case LaundryApplianceType.washer:
-        machineImagePlaceHolder = Styles().images?.getImage('washer', excludeFromSemantics: true) ?? Container();
+        machineImagePlaceHolder = Styles().images?.getImage('washer-large', excludeFromSemantics: true) ?? Container();
         break;
       case LaundryApplianceType.dryer:
-        machineImagePlaceHolder = Styles().images?.getImage('dryer', excludeFromSemantics: true) ?? Container();
+        machineImagePlaceHolder = Styles().images?.getImage('dryer-large', excludeFromSemantics: true) ?? Container();
         break;
       default:
     }
@@ -124,7 +124,7 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
             child: Padding(
                 padding: EdgeInsets.only(top: 15),
                 child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                  Styles().images?.getImage(selected ? "check-box-filled" : "box-outline", excludeFromSemantics: true) ?? Container(),
+                  Styles().images?.getImage(selected ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true) ?? Container(),
                   Padding(
                       padding: EdgeInsets.only(left: 15),
                       child: Text(StringUtils.ensureNotEmpty(issueCode),

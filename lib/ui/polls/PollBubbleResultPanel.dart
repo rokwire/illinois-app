@@ -146,7 +146,7 @@ class _PollBubbleResultPanelState extends State<PollBubbleResultPanel> implement
     _progressKeys = [];
     int totalVotes = poll.results?.totalVotes ?? 0;
     for (int optionIndex = 0; optionIndex < poll.options!.length; optionIndex++) {
-      String checkboxIconKey = 'check-circle-outline'; // (_vote[optionIndex] != null) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
+      String checkboxIconKey = 'check-circle-outline-gray'; // (_vote[optionIndex] != null) ? 'images/checkbox-selected.png' : 'images/checkbox-unselected.png';
 
       String optionString = poll.options![optionIndex];
       String votesString;

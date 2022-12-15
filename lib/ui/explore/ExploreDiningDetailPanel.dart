@@ -225,7 +225,7 @@ class _DiningDetailPanelState extends State<ExploreDiningDetailPanel> implements
                     label: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites') : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child:Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline', excludeFromSemantics: true))))
+                    child:Padding(padding: EdgeInsets.only(left: 20, top: 10, bottom: 10), child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true))))
             ),),
           ],
         ));

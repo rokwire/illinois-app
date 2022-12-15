@@ -544,11 +544,11 @@ class _SavedItemsList extends StatefulWidget {
   final int limit;
   final String? headingTitle;
   final String? headingIconKey;
-  final String slantImageResource;
+  final String slantImageKey;
   final Color? slantColor;
 
   // ignore: unused_element
-  _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconKey, this.slantImageResource = 'images/slant-down-right-blue.png', this.slantColor});
+  _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconKey, this.slantImageKey = 'slant-dark', this.slantColor});
 
   _SavedItemsListState createState() => _SavedItemsListState();
 }
@@ -568,7 +568,7 @@ class _SavedItemsListState extends State<_SavedItemsList>{
         SectionSlantHeader(
             title: widget.headingTitle,
             titleIconKey: widget.headingIconKey,
-            slantImageAsset: widget.slantImageResource,
+            slantImageKey: widget.slantImageKey,
             slantColor: widget.slantColor ?? Styles().colors!.fillColorPrimary,
             children: (0 <  widget.items!.length) ? _buildListItems(context) : _buildEmptyContent(context),),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(

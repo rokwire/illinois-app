@@ -151,7 +151,7 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
                           hint: Localization().getStringEx("panel.athletics_news_article.button.save_game.hint", "Tap to save"),
                           child: GestureDetector(onTap: _onTapSwitchFavorite, child:
                             Container(padding: EdgeInsets.all(24), child:
-                              Styles().images?.getImage(isNewsFavorite ? 'star-filled' : 'star-outline', excludeFromSemantics: true),
+                              Styles().images?.getImage(isNewsFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true),
                             ),
                           ),
                         ),

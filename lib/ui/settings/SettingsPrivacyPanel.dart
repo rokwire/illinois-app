@@ -758,8 +758,8 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
     String title = Localization().getString(data.titleKey, defaults: data.title)!;
     String? description = Localization().getString(data.descriptionKey, defaults: data.description)?.replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
     String? dataUsageInfo = Localization().getString(data.dataUsageKey, defaults: data.dataUsage);
-    String iconRes = "images/" + data.iconRes!;
-    String iconResOff = "images/" + data.offIconRes!;
+    String iconKey = data.iconRes!;
+    String iconKeyOff = data.offIconRes!;
     int minLevel = data.minLevel!;
     //The additional data is needed for the Wallet section (personalization)
     String? additionalDescription = Localization().getString(data.additionalDescriptionKey, defaults: data.additionalDescription);
@@ -779,7 +779,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
           children: <Widget>[
             Container(
               padding: EdgeInsets.only(top: 4),
-              child: PrivacyIcon(enabledIcon: iconRes, disabledIcon: iconResOff, minPrivacyLevel: minLevel, currentPrivacyLevel: widget.currentPrivacyLevel,)),
+              child: PrivacyIcon(enabledIconKey: iconKey, disabledIconKey: iconKeyOff, minPrivacyLevel: minLevel, currentPrivacyLevel: widget.currentPrivacyLevel,)),
             Container(width: 10,),
             Expanded(
              child: Column(

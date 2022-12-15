@@ -121,7 +121,7 @@ class _WPGUFMRadioControlState extends State<_WPGUFMRadioControl> implements Not
     String? buttonTitle, iconKey;
     if (WPGUFMRadio().isInitialized) {
       buttonTitle = WPGUFMRadio().isPlaying ? Localization().getStringEx('widget.home.radio.button.pause.title', 'Pause') :  Localization().getStringEx('widget.home.radio.button.play.title', 'Tune In');
-      iconKey = WPGUFMRadio().isPlaying ? 'pause-circle' : 'play-circle';
+      iconKey = WPGUFMRadio().isPlaying ? 'pause-circle-large' : 'play-circle-large';
     }
     else if (WPGUFMRadio().isInitializing) {
       buttonTitle = Localization().getStringEx('widget.home.radio.button.initalize.title', 'Initializing');

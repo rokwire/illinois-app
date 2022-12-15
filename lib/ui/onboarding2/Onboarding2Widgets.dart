@@ -53,10 +53,10 @@ class Onboarding2TitleWidget extends StatelessWidget{
 class Onboarding2BackButton extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final GestureTapCallback? onTap;
-  final String image;
+  final String imageKey;
   final Color? color;
 
-  Onboarding2BackButton({this.padding, this.onTap, this.image = 'images/chevron-left.png', this.color});
+  Onboarding2BackButton({this.padding, this.onTap, this.imageKey = 'chevron-left', this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +69,7 @@ class Onboarding2BackButton extends StatelessWidget {
           behavior: HitTestBehavior.translucent,
           child: Padding(
             padding: padding!,
-            child: Container(
-                height: 32,
-                width: 32,
-                child: Image.asset(image, color: this.color ?? Styles().colors!.fillColorSecondary,)
+            child: Container(child: Styles().images?.getImage(imageKey, color: this.color, excludeFromSemantics: true)
             ),
           ),
         )
@@ -185,9 +182,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                             onTap: () {
                               Navigator.pop(context);
                             },
-                            child: Container(child: Image.asset(
-                              "images/close-orange.png",
-                              excludeFromSemantics: true,)),
+                            child: Container(child: Styles().images?.getImage("close", excludeFromSemantics: true)),
                           ))),
                         Container(height: 12,),
                         content ?? Container(),

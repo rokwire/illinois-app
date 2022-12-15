@@ -21,13 +21,13 @@ import 'package:rokwire_plugin/service/styles.dart';
 class ExploreViewTypeTab extends StatelessWidget {
   final String? label;
   final String? hint;
-  final String? iconResource;
+  final String? iconKey;
   final GestureTapCallback? onTap;
   final bool selected;
 
   ExploreViewTypeTab(
       {this.label,
-      this.iconResource,
+      this.iconKey,
       this.onTap,
       this.hint = '',
       this.selected = false});
@@ -49,7 +49,7 @@ class ExploreViewTypeTab extends StatelessWidget {
           decoration: selected ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!,width: 2, style: BorderStyle.solid))) : null,
           child:Padding(padding: EdgeInsets.symmetric(vertical:3, horizontal: 5), child:Column(children: <Widget>[
             Row(children: <Widget>[
-              Styles().images?.getImage(iconResource, excludeFromSemantics: true) ?? Container(),
+              Styles().images?.getImage(iconKey, excludeFromSemantics: true) ?? Container(),
               Container(width: 5,),
               Text(label!, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.white, fontSize: 16,),textScaleFactor:( MediaQuery.of(context).textScaleFactor> 2 ? MediaQuery.of(context).textScaleFactor - 0.8 : MediaQuery.of(context).textScaleFactor),)
             ]),

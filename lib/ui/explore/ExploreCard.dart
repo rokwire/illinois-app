@@ -280,7 +280,7 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
                       right: 16, top: 12, left: 24, bottom: 5),
                       child: Styles().images?.getImage(isFavorite
                           ? 'star-filled'
-                          : 'star-outline',
+                          : 'star-outline-gray',
                         excludeFromSemantics: true,)
                       ))
                   )),)))
@@ -664,7 +664,7 @@ class _EventSmallCard extends StatelessWidget {
                                 'widget.card.button.favorite.on.hint', ''),
                             button: true,
                             excludeSemantics: true,
-                            child: Container(child: Padding(padding: EdgeInsets.only(left: 24, bottom: 5), child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline', excludeFromSemantics: true)))
+                            child: Container(child: Padding(padding: EdgeInsets.only(left: 24, bottom: 5), child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))
                         )),),
                     Visibility(visible: isMoreCardType, child: Padding(
                       padding: EdgeInsets.only(left: 24, top: 4), child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true)))

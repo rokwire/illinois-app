@@ -203,7 +203,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                         'widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline')
+                    child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray')
                 ))
         )),)
       ],
@@ -690,7 +690,7 @@ class _EventsListState extends State<_EventsList>{
         : "panel.explore_detail.recurring_event.schedule.heading.title";
     return SectionSlantHeader(
         title: Localization().getStringEx(titleKey, "Event Schedule"),
-        slantImageAsset: "images/slant-down-right-grey.png",
+        slantImageKey: "slant-dark",
         slantColor: Styles().colors!.backgroundVariant,
         titleTextColor: Styles().colors!.fillColorPrimary,
         children: _buildListItems()
@@ -793,7 +793,7 @@ class _EventEntry extends StatelessWidget {
                       hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                           'widget.card.button.favorite.on.hint', ''),
                       button: true,
-                      child: Styles().images?.getImage(isFavorite ? 'star-filled': 'star-outline')
+                      child: Styles().images?.getImage(isFavorite ? 'star-filled': 'star-outline-gray')
                   ))
           )),)
         ],),),

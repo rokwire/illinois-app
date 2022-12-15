@@ -547,7 +547,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                   'widget.card.button.favorite.on.hint', ''),
               button: true,
-              child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline')
+              child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray')
           )));
   }
 

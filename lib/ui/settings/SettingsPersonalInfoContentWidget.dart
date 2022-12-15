@@ -376,7 +376,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
               )
             ),
             Padding(padding: EdgeInsets.only(left: 5), child:
-              Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline', excludeFromSemantics: true)
+              Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true)
             )
           ])
         )

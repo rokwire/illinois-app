@@ -103,7 +103,7 @@ class _GroupMembersSelectionState extends State<GroupMembersSelectionPanel> {
                                     color: Styles().colors!.white,
                                     fontSize: 16),
                               ),
-                              Styles().images?.getImage('check-circle-outline-white', excludeFromSemantics: true) ?? Container(),
+                              Styles().images?.getImage('check-circle-outline-gray-white', excludeFromSemantics: true) ?? Container(),
                               Expanded(
                                   child:Text(
                                     Localization().getStringEx("panel.group.members.label.follow_team.title", " to select members"),
@@ -437,7 +437,7 @@ class _MemberSelectionWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                      Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline') ?? Container(),
+                      Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray') ?? Container(),
                       SizedBox(width: 16),
                       Expanded(
                           child:

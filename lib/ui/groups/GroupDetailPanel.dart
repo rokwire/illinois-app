@@ -1194,7 +1194,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 InkWell(onTap: _onResearchProjectConsent, child:
                   Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images?.getImage(_researchProjectConsent ? "check-box-filled" : "box-outline", excludeFromSemantics: true)
+                    Styles().images?.getImage(_researchProjectConsent ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true)
                   ),
                 ),
                 Expanded(child:

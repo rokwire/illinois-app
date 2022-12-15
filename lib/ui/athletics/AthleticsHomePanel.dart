@@ -638,7 +638,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
                             hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx( 'widget.card.button.favorite.on.hint', ''),
                             excludeSemantics: true, child:
                             Padding(padding: EdgeInsets.only(right: 24, top: 24, left: 24, bottom: 8), child:
-                              Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline', excludeFromSemantics: true)
+                              Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
                             ),
                           ),
                         ),

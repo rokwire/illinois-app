@@ -115,7 +115,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                 button: true,
                 child: GestureDetector(onTap: _onTapFavorite, child:
                   Container(padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
-                  Styles().images?.getImage(_isFavorite ? 'star-filled' : 'star-outline', excludeFromSemantics: true)
+                  Styles().images?.getImage(_isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
                   )
             ),),),),
           ],)

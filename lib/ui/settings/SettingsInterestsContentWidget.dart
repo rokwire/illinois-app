@@ -119,7 +119,7 @@ class _SettingsManageInterestsState extends State<SettingsInterestsContentWidget
                               style: Styles().textStyles?.getTextStyle("widget.heading.regular"),
                               children: [
                             TextSpan(text: headerMsgStart),
-                            WidgetSpan(alignment: PlaceholderAlignment.middle, child: Styles().images?.getImage('check-circle-outline-white') ?? Container()),
+                            WidgetSpan(alignment: PlaceholderAlignment.middle, child: Styles().images?.getImage('check-circle-outline-gray-white') ?? Container()),
                             TextSpan(text: headerMsgEnd)
                           ]))))),
           Padding(
@@ -451,7 +451,7 @@ class _SelectionItemWidget extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: Styles().textStyles?.getTextStyle("widget.title.regular")
                       )),
-                  Styles().images?.getImage(selected! ? 'check-circle-filled' : 'check-circle-outline') ?? Container(),
+                  Styles().images?.getImage(selected! ? 'check-circle-filled' : 'check-circle-outline-gray') ?? Container(),
                 ],
               ),
             ),

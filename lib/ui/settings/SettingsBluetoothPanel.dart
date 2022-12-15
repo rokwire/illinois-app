@@ -57,7 +57,7 @@ class _SettingsBluetoothPanelState extends State<SettingsBluetoothPanel> {
             title: Localization().getStringEx("panel.settings.bluetooth.label.desctiption", "Access device's bluetooth"),
             description: _bluetoothStatus,
             additionalInfo: Localization().getStringEx("panel.settings.bluetooth.label.info", "To use Bluetooth enable in your device's settings."),
-            iconRes: "images/bluetooth.png",
+            iconKey: "images/bluetooth.png",
             onTap: _onTapBluetooth(),
           ),
         ],),

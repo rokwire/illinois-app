@@ -231,7 +231,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                           child: InkWell(onTap: () => _onTapShowPassword(), child:
                             Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12), child:
                               Row(mainAxisSize: MainAxisSize.min, children: [
-                                Styles().images?.getImage(_showingPassword ? 'check-circle-filled' : 'check-circle-outline', excludeFromSemantics: true) ?? Container(),
+                                Styles().images?.getImage(_showingPassword ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true) ?? Container(),
                                 Container(width: 6),
                                 Text(showPassword, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),),
                               ],)

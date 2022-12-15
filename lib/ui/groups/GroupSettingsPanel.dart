@@ -120,7 +120,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                           child: Column(children: <Widget>[
                             _buildImageSection(),
                             Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                              _buildSectionTitle((_group?.researchProject == true) ? "General project information" : Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"), "images/icon-schedule.png"),
+                              _buildSectionTitle((_group?.researchProject == true) ? "General project information" :
+                                Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"),
+                                  "campus-tools"),
                             ),
                             _buildNameField(),
                             _buildDescriptionField(),
@@ -130,7 +132,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               Column(children: [
                                 Container(height: 1, color: Styles().colors!.surfaceAccent,),
                                 Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                                  _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability"), "images/icon-schedule.png"),
+                                  _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability"),
+                                      "search"),
                                 ),
                                 _buildCategoryDropDown(),
                                 _buildTagsLayout(),
@@ -141,7 +144,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               Column(children: [
                                 Container(height: 1, color: Styles().colors!.surfaceAccent,),
                                 Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                                  _buildSectionTitle("Research", "images/icon-gear.png"),
+                                  _buildSectionTitle("Research", "settings"),
                                 ),
                                 //_buildResearchOptionLayout(),
                                 _buildResearchConsentDetailsField(),
@@ -158,7 +161,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                                   Container(height: 1, color: Styles().colors!.surfaceAccent,),
                                 ),
                                 Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                                  _buildSectionTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
+                                  _buildSectionTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "privacy"),
                                 ),
                                 Container(height: 8),
                                 _buildPrivacyDropDown(),
@@ -753,7 +756,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column( children: <Widget>[
-          _buildSectionTitle(sectionTitle, "images/icon-member.png"),
+          _buildSectionTitle(sectionTitle, "member"),
           Container(height: 12,),
           Semantics(
             explicitChildNodes: true,
@@ -984,7 +987,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(children: <Widget>[
-          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "University managed membership"), "images/icon-member.png"),
+          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "University managed membership"), "member"),
           Container(height: 12),
           Padding(
               padding: EdgeInsets.only(top: 12),
@@ -1299,7 +1302,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     );
   }
 
-  Widget _buildSectionTitle(String title, String iconRes){
+  Widget _buildSectionTitle(String title, String iconKey){
     return Container(
         padding: EdgeInsets.only(top:24),
         child:
@@ -1308,7 +1311,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           children: <Widget>[
               Container(
                 padding: EdgeInsets.only(right: 10),
-                child: Image.asset(iconRes, excludeFromSemantics: true,)
+                child: Styles().images?.getImage(iconKey, excludeFromSemantics: true)
               ),
             Expanded(child:
               Semantics(

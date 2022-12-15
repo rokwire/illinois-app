@@ -170,7 +170,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                           onTap: _onTapSportPreference,
                           child: Padding(
                               padding: EdgeInsets.only(top: 8),
-                              child: Styles().images?.getImage(hasSportPreference ? 'check-circle-filled' : 'check-circle-outline', excludeFromSemantics: true),
+                              child: Styles().images?.getImage(hasSportPreference ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true),
                           ),
                         ),
                       )

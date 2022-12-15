@@ -2160,7 +2160,7 @@ class _MTDInstructionsPopupState extends State<_MTDInstructionsPopup> {
                   Row(mainAxisSize: MainAxisSize.min, children: [
                     InkWell(onTap: _onDoNotShow, child:
                       Padding(padding: EdgeInsets.all(16), child:
-                        Styles().images?.getImage((showInstructionsPopup == false) ? "check-circle-filled" : "check-circle-outline"),
+                        Styles().images?.getImage((showInstructionsPopup == false) ? "check-circle-filled" : "check-circle-outline-gray"),
                       ),
                     ),
                     Expanded(child:
