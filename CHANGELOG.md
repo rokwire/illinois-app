@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed privacy content statement strings [#2763](https://github.com/rokwire/illinois-app/issues/2763).
 - Unread notifications issues [#2761](https://github.com/rokwire/illinois-app/issues/2761).
+- Cleaned up Create Group / Research Project button processing [#2740](https://github.com/rokwire/illinois-app/issues/2740).
 
 ## [4.2.41] - 2022-12-14
 ### Fixed
