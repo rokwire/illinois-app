@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Android: app bundle builds [#2741](https://github.com/rokwire/illinois-app/issues/2741).
 - Fixed empty Illini Cash and Meal Plan Wallet widgets content after login [#2736](https://github.com/rokwire/illinois-app/issues/2736).
+- Skills Self- Evaluation - "Clear all Scores" is not clearing the scores [#2731](https://github.com/rokwire/illinois-app/issues/2731).
 ### Changed
 - Removed debug label in native iOS MapView.
 - Use specific item cards, where possible, in ExploreListPanel [#2664](https://github.com/rokwire/illinois-app/issues/2664).
