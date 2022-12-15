@@ -2714,7 +2714,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(contentPadding: EdgeInsets.zero, scrollable: true, content:
+    return AlertDialog(contentPadding: EdgeInsets.zero, scrollable: false, content:
     Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
       Container(
           decoration: BoxDecoration(
@@ -2759,6 +2759,9 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
   }
 
   Widget _buildGroupsList() {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double maxListHeight = screenHeight>0 ? screenHeight/2 : 100;
+
     if (CollectionUtils.isEmpty(widget.groups)) {
       return Container();
     }
@@ -2775,7 +2778,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
       }
 
     }
-    return Column(children: groupWidgetList);
+    return Container(constraints: BoxConstraints(maxHeight: maxListHeight), child:SingleChildScrollView(child:Column(children: groupWidgetList)));
   }
 
   void _onTapGroup(String groupId) {
