@@ -43,7 +43,7 @@ class WellnessHealthScreenerHomeWidget extends StatefulWidget {
 }
 
 class _WellnessHealthScreenerHomeWidgetState extends State<WellnessHealthScreenerHomeWidget> implements NotificationsListener {
-  String resourceName = 'wellness.health_screener';
+  String resourceName = 'wellness.health_screener.features';
   List<String> _timeframes = ["Today", "This Week", "This Month", "All Time"];
 
   String? _selectedTimeframe = "This Week";
