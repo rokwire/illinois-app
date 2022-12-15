@@ -175,19 +175,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             Visibility(visible: !_isAuthManGroup, child:
                               _buildMembershipLayout()
                             ),
-                            
-                            Visibility(visible:!_isResearchProject, child:
-                              Padding(padding: EdgeInsets.only(top: 8), child:
-                                _buildCanAutoJoinLayout(),
-                              )
-                            ),
-
-                            Visibility(visible: !_isResearchProject, child:
-                              Padding(padding: EdgeInsets.only(top: 8), child:
-                                _buildPollsLayout(),
-                              )
-                            ),
-
                           //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2
                           //Visibility(visible: !_isResearchProject, child:
                           //  Padding(padding: EdgeInsets.only(top: 8), child:
@@ -1192,32 +1179,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
   //
 
-
-  //Polls
-  Widget _buildPollsLayout(){
-    return Container(
-      color: Styles().colors!.background,
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: _buildSwitch(title: Localization().getStringEx("panel.groups_settings.only_admins_create_polls.enabled.label", "Only admins can create Polls"),
-          enabled: _canUpdate,
-          value: _group?.onlyAdminsCanCreatePolls,
-          onTap: _onTapOnlyAdminCreatePolls
-      ),
-    );
-  }
-
-  void _onTapOnlyAdminCreatePolls() {
-    if (!_canUpdate) {
-      return;
-    }
-    if(_group?.onlyAdminsCanCreatePolls != null) {
-      if(mounted){
-        setState(() {
-          _group!.onlyAdminsCanCreatePolls = !(_group!.onlyAdminsCanCreatePolls ?? false);
-        });
-      }
-    }
-  }
   
   // Attendance
   /*Widget _buildAttendanceLayout() {
@@ -1243,34 +1204,6 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     }
   }*/
 
-  //Auto Join
-  //Autojoin
-  Widget _buildCanAutoJoinLayout(){
-    return Container( color: Styles().colors!.background,
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: _buildSwitch(title: Localization().getStringEx("panel.groups_settings.auto_join.enabled.label", "Group can be joined automatically?"),
-          enabled: _canUpdate,
-          value: _group?.canJoinAutomatically,
-          onTap: () {
-            if (!_canUpdate) {
-              return;
-            }
-            if (_group?.canJoinAutomatically != null) {
-              _group!.canJoinAutomatically = !(_group!.canJoinAutomatically!);
-            } else {
-              _group?.canJoinAutomatically = true;
-            }
-
-            if(mounted){
-              setState(() {
-
-              });
-            }
-          }
-      ),
-    );
-  }
-
   //Settings
   Widget _buildSettingsLayout() {
     return Container(
@@ -1281,11 +1214,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
             borderRadius: BorderRadius.circular(4),
             onTap: (){
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAdvancedSettingsPanel(group: _group,))).then((updatedSettings){
-                if(updatedSettings is GroupSettings){
-                  if(_group!=null) {
-                    _group?.settings = updatedSettings;
-                  }
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAdvancedSettingsPanel(group: _group,))).then((_){
+                if(mounted){
+                  setState(() {
+
+                  });
                 }
               });
             }),
