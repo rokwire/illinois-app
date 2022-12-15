@@ -2886,7 +2886,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                   textStyle: isGroupInfoAllowed
                                       ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                                       : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                              EnabledToggleButton(
+                             //Hide View Name. We will always want to show the name, so just keep it as true and just hide it so it cannot be changed.
+                              /*EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
                                   borderRadius: BorderRadius.zero,
                                   label: Localization().getStringEx("panel.groups_create.settings.allow_view_name.label", "View Name"),
@@ -2897,7 +2898,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                     );},
                                   textStyle: isGroupInfoAllowed
                                       ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),*/
                               EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
                                   borderRadius: BorderRadius.zero,
@@ -2909,6 +2910,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                   textStyle: isGroupInfoAllowed
                                       ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                                       : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              //Hide Phone for now
                               // EnabledToggleButton(
                               //     enabled: isGroupInfoAllowed,
                               //     borderRadius: BorderRadius.zero,
