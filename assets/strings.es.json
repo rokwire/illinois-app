@@ -2725,7 +2725,7 @@
     "widget.home_create_poll.button.login.label":"Iniciar sesión",
 
     "widget.home.campus_guide_highlights.label.heading": "Puntos destacados de la guía del campus",
-    "widget.home.campus_guide_highlights.text.empty.description": "No hay Destacados de la Guía del Campus activos.",
+    "widget.home.campus_guide_highlights.text.empty.description": "Toque \u2606 en los elementos de <a href='{{local_url}}'><b>Destacados de la guía del campus</b></a> para acceder rápidamente aquí.",
     "widget.home.campus_guide_highlights.button.all.title": "Ver todo",
     "widget.home.campus_guide_highlights.button.all.hint": "Toca para ver todos los momentos destacados",
 
