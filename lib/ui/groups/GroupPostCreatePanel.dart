@@ -261,7 +261,7 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
     selectedGroups.add(widget.group);
     // If the event is part of a group - allow the admin to select other groups that one wants to save the event as well.
     //If post has membersSelection then do not allow linking to other groups
-    if (CollectionUtils.isEmpty(_selectedMembers)) {
+    if (CollectionUtils.isEmpty(_selectedMembers)) { //TBD and if checked
         List<Group>? otherGroups = await _loadOtherAdminUserGroups();
         if (CollectionUtils.isNotEmpty(otherGroups)) {
           otherGroupsToSave = await showDialog(context: context, barrierDismissible: true, builder: (_) => GroupsSelectionPopup(groups: otherGroups,));

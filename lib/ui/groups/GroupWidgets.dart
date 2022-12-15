@@ -2703,13 +2703,6 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
   @override
   void initState() {
     super.initState();
-    if (CollectionUtils.isNotEmpty(widget.groups)) {
-      for (Group group in widget.groups!) {
-        if (group.id != null) {
-          _selectedGroupIds.add(group.id!);
-        }
-      }
-    }
   }
 
   @override
@@ -2744,15 +2737,71 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
           ])
       ),
       Padding(padding: EdgeInsets.all(10), child: _buildGroupsList()),
+
       Semantics(container: true, child:
-      Padding(padding: EdgeInsets.all(10), child:
-      RoundedButton(
-          label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select"),
-          borderColor: Styles().colors!.fillColorSecondary,
-          backgroundColor: Styles().colors!.white,
-          textColor: Styles().colors!.fillColorPrimary,
-          onTap: _onTapSelect
-      )
+      Container(
+          // constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 4 ),
+          padding: EdgeInsets.all(10), child:
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: _onTapSelectAll,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                          color: Colors.white,
+                          child: Text( 'Select All', //TBD localize
+                            style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16.0, color: Styles().colors?.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, height: 1.61)),
+                      )
+                    )
+                  ),
+
+                  Expanded(child:
+                  Row(
+                    children: [
+                      Expanded(child: Container()),
+                      Container(child:InkWell(
+                        onTap: _onTapClearSelection,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                          color: Colors.white,
+                          child:Text('Deselect All', //TBD localize
+                            textAlign: TextAlign.left,
+                            style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16.0, color: Styles().colors?.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, height: 1.61))),
+
+                      ))
+                    ],
+                  )),
+                ],
+              ),
+            Container(height: 12,),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                  child: RoundedButton(
+                      label: Localization().getStringEx("widget.groups.selection.button.send.label", "Send"),//TBD localize
+                      borderColor: Styles().colors!.fillColorSecondary,
+                      backgroundColor: Styles().colors!.white,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapSelect
+                  )),
+                  Container(width: 16,),
+                  Expanded(child:RoundedButton(
+                      label: Localization().getStringEx("widget.groups.selection.button.cancel.label", "Cancel"),//TBD localize
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      backgroundColor: Styles().colors!.white,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapClose
+                  ))
+                ],
+              )
+          ],
+        )
       )
       )
     ]));
@@ -2766,6 +2815,13 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
       return Container();
     }
     List<Widget> groupWidgetList = [];
+
+    groupWidgetList.add(Container(
+      padding: EdgeInsets.only(top:10), //TBD localize
+      child: Text(Localization().getStringEx("widget.groups.selection.message", "Also send this post to these selected groups:"), textAlign: TextAlign.center,
+          style: Styles().textStyles?.getTextStyle("widget.message.regular.fat")),
+    ),);
+
     for (Group group in widget.groups!) {
       if (group.id != null) {
         groupWidgetList.add(ToggleRibbonButton(
@@ -2803,6 +2859,36 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
       }
     }
     Navigator.of(context).pop(selectedGroups);
+  }
+
+  void _onTapSelectAll(){
+    if (CollectionUtils.isNotEmpty(widget.groups)) {
+      _clearSelection();
+      for (Group group in widget.groups!) {
+        if (group.id != null) {
+          _selectedGroupIds.add(group.id!);
+        }
+      }
+      if(mounted){
+        setState(() {
+
+        });
+      }
+    }
+
+  }
+
+  void _onTapClearSelection(){
+    _clearSelection();
+    if(mounted){
+      setState(() {
+
+      });
+    }
+  }
+
+  void _clearSelection(){
+    _selectedGroupIds = {};
   }
 
   void _onTapClose() {
