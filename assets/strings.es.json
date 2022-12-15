@@ -2395,6 +2395,7 @@
     "panel.guide_categories.label.content.empty": "Contenido de la guía vacía",
 
     "panel.inbox.label.content.empty": "Ningún mensaje",
+    "panel.inbox.mark_all_read.label": "Marcar todo como leido",
     "panel.inbox.label.time.any": "Cualquier momento",
     "panel.inbox.label.time.today": "Hoy dia",
     "panel.inbox.label.time.yesterday": "El dia de ayer",
@@ -2402,6 +2403,7 @@
     "panel.inbox.label.time.last_week": "La semana pasada",
     "panel.inbox.label.time.this_month": "Este mes",
     "panel.inbox.label.time.last_month": "El mes pasado",
+    "panel.inbox.mark_as_read.failed.msg": "Error al marcar todos los mensajes como leídos",
 
     "panel.guide_list.label.highlights.heading": "Campus Guide",
 
