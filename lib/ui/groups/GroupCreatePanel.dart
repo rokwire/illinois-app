@@ -18,7 +18,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -232,11 +234,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           _buildPollsLayout(),
                         )
                       ),
-                      Visibility(visible: !_isResearchProject, child:
-                        Padding(padding: EdgeInsets.only(top: 8), child:
-                          _buildAttendanceLayout(),
-                        )
-                      ),
+                    //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2
+                    //Visibility(visible: !_isResearchProject, child:
+                    //  Padding(padding: EdgeInsets.only(top: 8), child:
+                    //    _buildAttendanceLayout(),
+                    //  )
+                    //),
                       Visibility(visible: !_isResearchProject, child:
                         Padding(padding: EdgeInsets.only(top: 8), child:
                           _buildSettingsLayout(),
@@ -907,7 +910,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   }
 
   // Attendance
-  Widget _buildAttendanceLayout() {
+  /*Widget _buildAttendanceLayout() {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: _buildSwitch(
@@ -923,20 +926,26 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         setState(() {});
       }
     }
-  }
+  }*/
 
   //Settings
   Widget _buildSettingsLayout() {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: GroupMemberSettingsLayout(
-            settings: _group?.settings,
-            onChanged: () {
-              if (mounted) {
-                setState(() {});
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child:  RibbonButton(
+          label: Localization().getStringEx('panel.groups_settings..button.advanced_settings.title', 'Advanced Settings'), //Localize
+          hint: Localization().getStringEx('panel.groups_settings..button.advanced_settings..hint', ''),
+          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+          borderRadius: BorderRadius.circular(4),
+          onTap: (){
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAdvancedSettingsPanel(group: _group,))).then((updatedSettings){
+              if(updatedSettings is GroupSettings){
+                if(_group!=null) {
+                  _group?.settings = updatedSettings;
+                }
               }
-            }
-        )
+            });
+          }),
     );
   }
 
