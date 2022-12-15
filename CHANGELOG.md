@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Added Skills Self-Evaluation entry in Academics section in Browse panel [#2746](https://github.com/rokwire/illinois-app/issues/2746).
+### Changed
 - Updated GroupAdvancedSettingsPanel [#2744](https://github.com/rokwire/illinois-app/issues/2744).
 - Updated privacy content statements [#2763](https://github.com/rokwire/illinois-app/issues/2763).
 ### Fixed
