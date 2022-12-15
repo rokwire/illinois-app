@@ -39,11 +39,13 @@ class SkillsSelfEvaluationResultsPanel extends StatefulWidget {
 }
 
 class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationResultsPanel> {
+  static const String _defaultComparisonResponseId = 'none';
+  
   Map<String, SkillsSelfEvaluationContent> _resultsContentItems = {};
   List<SkillsSelfEvaluationProfile> _profileContentItems = [];
   List<SurveyResponse> _responses = [];
   SurveyResponse? _latestResponse;
-  String _comparisonResponseId = 'none';
+  String _comparisonResponseId = _defaultComparisonResponseId;
 
   bool _latestCleared = false;
   bool _loading = false;
@@ -141,7 +143,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     Iterable<String> responseSections = _resultsContentItems['section_titles']?.params?.keys ?? [];
     Map<String, num>? comparisonScores;
     SkillsSelfEvaluationProfile? selectedProfile;
-    if (_comparisonResponseId != 'none') {
+    if (_comparisonResponseId != _defaultComparisonResponseId) {
       try {
         selectedProfile = _profileContentItems.firstWhere((element) => element.key == _comparisonResponseId);
         comparisonScores = selectedProfile.scores;
@@ -225,16 +227,19 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   List<DropdownMenuItem<String>> _buildResponseDateDropDownItems() {
     List<DropdownMenuItem<String>> items = [
       DropdownMenuItem<String>(
-        value: 'none',
+        value: _defaultComparisonResponseId,
         child: Align(alignment: Alignment.center, child: Text('NONE', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,)),
       ),
     ];
+
+    List<String> profileKeys = [];
     for (SkillsSelfEvaluationProfile profile in _profileContentItems) {
-      if (profile.params['abbreviation'] is String) {
+      if (profile.params['abbreviation'] is String && !profileKeys.contains(profile.key)) {
         items.add(DropdownMenuItem<String>(
           value: profile.key,
           child: Align(alignment: Alignment.center, child: Text(profile.params['abbreviation'], style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,)),
         ));
+        profileKeys.add(profile.key);
       }
     }
     
@@ -305,7 +310,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
 
   void _onResponseDateDropDownChanged(String? value) {
     setState(() {
-      _comparisonResponseId = value ?? 'none';
+      _comparisonResponseId = value ?? _defaultComparisonResponseId;
     });
   }
 
@@ -355,6 +360,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     Surveys().deleteSurveyResponses(surveyTypes: ["bessi"]).then((_) {
       _latestCleared = true;
       _latestResponse = null;
+      _comparisonResponseId = _defaultComparisonResponseId;
       _loadResults();
     });
   }
