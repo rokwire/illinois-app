@@ -895,8 +895,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   //Buttons
   Widget _buildButtonsLayout() {
-    return
-        Container( color: Styles().colors!.white,
+    return Container( color: Styles().colors!.white,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
             child: RoundedButton(
@@ -906,33 +905,51 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               textColor: _canSave ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
               enabled: _canSave,
               progress:  _creating,
-              onTap: _onCreateTap,
+              onTap: _onTapCreate,
             ),
           ),
         );
   }
 
-  void _onCreateTap() {
-    AppAlert.showCustomDialog(
-        context: context,
-        contentWidget: Text(Localization().getStringEx("panel.groups_create.prompt.msg.title", "The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.").replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois'))),
-        actions: <Widget>[
-          TextButton(
-              child:
-              Text(Localization().getStringEx('dialog.ok.title', 'Ok')),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _onCreateGroup();
-              }),
-          TextButton(
-              child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')),
-              onPressed: () => Navigator.of(context).pop())
-        ]);
+  void _onTapCreate() {
+    Analytics().logSelect(target: "Create Group");
+    if (!_creating && _canSave) {
+      if (_isResearchProject) {
+        _onCreateGroup();
+      }
+      else {
+        _showCreateGroupPrompt().then((bool? result) {
+          if (result == true) {
+            _onCreateGroup();
+          }
+        });
+      }
+      
+    }
+  }
+
+  Future<bool?> _showCreateGroupPrompt() {
+    String prompt = Localization().getStringEx("panel.groups_create.prompt.msg.title", "The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.").replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois'));
+    return AppAlert.showCustomDialog(context: context,
+      contentWidget: Text(prompt),
+      actions: <Widget>[
+        TextButton(
+          child: Text(Localization().getStringEx('dialog.ok.title', 'OK')),
+          onPressed: () {
+            Analytics().logAlert(text: prompt, selection: "OK");
+            Navigator.of(context).pop(true);
+          }),
+        TextButton(
+          child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')),
+          onPressed: () {
+            Analytics().logAlert(text: prompt, selection: "Cancel");
+            Navigator.of(context).pop(false);
+          })
+      ]);
   }
 
   void _onCreateGroup() {
-    Analytics().logSelect(target: "Create Group");
-    if(!_creating && _canSave) {
+    if (!_creating && _canSave) {
       setState(() {
         _creating = true;
       });

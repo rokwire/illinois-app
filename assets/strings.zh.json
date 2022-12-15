@@ -305,6 +305,7 @@
 
 	"panel.browse.entry.academics.gies_checklist.title": "iDegrees 新學生清單",
 	"panel.browse.entry.academics.new_student_checklist.title": "新學生清單",
+	"panel.browse.entry.academics.skills_self_evaluation.title": "技能自我評估",
 	"panel.browse.entry.academics.canvas_courses.title": "我的 Gies 帆布課程",
 	"panel.browse.entry.academics.student_courses.title": "我的課程",
 	"panel.browse.entry.academics.my_illini.title": "米利尼",
@@ -2394,6 +2395,7 @@
 	"panel.guide_categories.label.content.empty": "空的指南內容",
 
 	"panel.inbox.label.content.empty": "沒有消息",
+    "panel.inbox.mark_all_read.label": "標記為已讀",
 	"panel.inbox.label.time.any": "任何時間",
 	"panel.inbox.label.time.today": "今天",
 	"panel.inbox.label.time.yesterday": "昨天",
@@ -2401,6 +2403,7 @@
 	"panel.inbox.label.time.last_week": "上個星期",
 	"panel.inbox.label.time.this_month": "這個月",
 	"panel.inbox.label.time.last_month": "上個月",
+    "panel.inbox.mark_as_read.failed.msg": "無法將所有消息標記為已讀",
 
 	"panel.guide_list.label.highlights.heading": "Campus Guide",
 
