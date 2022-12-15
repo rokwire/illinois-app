@@ -2725,10 +2725,10 @@
 	"widget.home_create_poll.button.create_poll.label":"创建投票",
 	"widget.home_create_poll.button.login.label":"登录",
 
-	"widget.home.campus_guide_highlights.label.heading": "校園安全資源",
-	"widget.home.campus_guide_highlights.text.empty.description": "沒有有效的校園安全資源。",
+	"widget.home.campus_guide_highlights.label.heading": "校園指南亮點",
+	"widget.home.campus_guide_highlights.text.empty.description": "沒有活躍的校園指南亮點。",
 	"widget.home.campus_guide_highlights.button.all.title": "查看全部",
-	"widget.home.campus_guide_highlights.button.all.hint": "點按即可查看所有亮點",
+	"widget.home.campus_guide_highlights.button.all.hint": "點擊查看所有亮點",
 
 	"widget.home.safer.label.title": "Building Access",
 	"widget.home.safer.text.empty.description": "Tap the \u2606 on items in Building Access so you can quickly find them here.",
