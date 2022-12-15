@@ -2729,7 +2729,7 @@
     "widget.home_create_poll.button.login.label":"Login",
 
     "widget.home.campus_guide_highlights.label.heading": "Campus Guide Highlights",
-    "widget.home.campus_guide_highlights.text.empty.description": "There are no active Campus Guide Highlights.",
+    "widget.home.campus_guide_highlights.text.empty.description": "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide Highlights</b></a> for quick access here.",
     "widget.home.campus_guide_highlights.button.all.title": "View All",
     "widget.home.campus_guide_highlights.button.all.hint": "Tap to view all highlights",
 
