@@ -17,11 +17,15 @@ class GroupAdvancedSettingsPanel extends StatefulWidget{
 
 class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>{
   GroupSettings? _settings;
+  bool _settingCanJoinAutomatically = false;
+  bool _settingOnlyAdminCanCreatePolls= false;
 
   @override
   void initState() {
     super.initState();
     _settings = GroupSettings.fromOther(widget.group?.settings);
+    _settingCanJoinAutomatically = widget.group?.canJoinAutomatically == true;
+    _settingOnlyAdminCanCreatePolls = widget.group?.onlyAdminsCanCreatePolls == true;
   }
 
   @override
@@ -41,8 +45,12 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
                         Container(
                           color: Styles().colors!.background,
                           child: Column(children: <Widget>[
+                            Padding(padding: EdgeInsets.only(top: 16),
+                              child: _buildCanAutoJoinLayout(),),
+                            Padding(padding: EdgeInsets.only(top: 8),
+                              child: _buildPollsLayout(),),
                             Container(
-                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                 child: GroupMemberSettingsLayout(
                                     settings: _settings,
                                     onChanged: () {
@@ -93,14 +101,59 @@ class _GroupAdvancedSettingsPanelState extends State<GroupAdvancedSettingsPanel>
       ,),);
   }
 
+  //Auto Join
+  //Autojoin
+  Widget _buildCanAutoJoinLayout(){
+    return Container( color: Styles().colors!.background,
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: EnabledToggleButton(
+          label: Localization().getStringEx("panel.groups_settings.auto_join.enabled.label", "Group can be joined automatically?"),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+          enabled: true,
+          toggled: _settingCanJoinAutomatically,
+          onTap: () {
+            if(mounted){
+              setState(() {
+                _settingCanJoinAutomatically = !_settingCanJoinAutomatically;
+              });
+            }
+          }
+      ),
+    );
+  }
+
+  Widget _buildPollsLayout(){
+    return Container(
+      color: Styles().colors!.background,
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: EnabledToggleButton(
+          label: Localization().getStringEx("panel.groups_settings.only_admins_create_polls.enabled.label", "Only admins can create Polls"),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+          enabled: true,
+          toggled: _settingOnlyAdminCanCreatePolls,
+          onTap: () {
+            if(mounted){
+              setState(() {
+                _settingOnlyAdminCanCreatePolls = !_settingOnlyAdminCanCreatePolls;
+              });
+            }
+          }
+      ),
+    );
+  }
+
   void onTapCancel(){
     Navigator.of(context).pop();
   }
 
   void onTapSave(){
-   // if(widget.group!=null && _settings!=null) {
-   //   widget.group!.settings = _settings;
-   // }
+   if(widget.group!=null && _settings!=null) {
+     widget.group!.settings = _settings;
+     widget.group!.canJoinAutomatically = _settingCanJoinAutomatically;
+     widget.group!.onlyAdminsCanCreatePolls = _settingOnlyAdminCanCreatePolls;
+   }
    Navigator.of(context).pop(_settings);
   }
 
