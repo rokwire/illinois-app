@@ -29,6 +29,7 @@ class Guide with Service implements NotificationsListener {
 
   static const String campusGuide = "For students";
   static const String campusReminderContentType = "campus-reminder";
+  static const String campusHighlightContentType = "campus-highlight";
   static const String campusSafetyResourceContentType = "campus-safety-resource";
 
   static const String _cacheFileName = "guide.json";
