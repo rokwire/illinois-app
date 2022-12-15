@@ -11,7 +11,6 @@ import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
@@ -250,30 +249,16 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
         ));
   }
 
-  Widget _buildReadAllButton(){
-      return Container(
+  Widget _buildReadAllButton() {
+    return Container(
         child: UnderlinedButton(
-          title: Localization().getStringEx("panel.inbox.label.mark_all_as_read", "Mark all as read"),//TBD localize
-          padding: EdgeInsets.symmetric(vertical: 8),
-          progress: _loadingMarkAllAsRead,
-          onTap: () {
-            Log.d("Mark All as read Called");
-            setState(() {_loadingMarkAllAsRead = true;});
-            Inbox().markAllMessagesAsRead().then((success) {
-              setState(() {_loadingMarkAllAsRead = false;});
-              if(success == true){
-                _refreshMessages();
-              } else if(success == false){
-                Log.d("Failed to mark all messages as read");
-                AppToast.show("Failed to mark all messages as read");
-              }
-            });
-          },
-        ),
-      );
+            title: Localization().getStringEx("panel.inbox.mark_all_read.label", "Mark all as read"),
+            padding: EdgeInsets.symmetric(vertical: 8),
+            progress: _loadingMarkAllAsRead,
+            onTap: _onTapMarkAllAsRead));
   }
-  // Filters
 
+  // Filters
   Widget _buildFilters() {
     return SingleChildScrollView(scrollDirection: Axis.horizontal, child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
@@ -672,6 +657,26 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
 
   Future<void> _onPullToRefresh() async {
     _refreshMessages();
+  }
+
+  void _onTapMarkAllAsRead() {
+    Analytics().logSelect(target: "Mark All As Read");
+    _setMarkAllAsReadLoading(true);
+    Inbox().markAllMessagesAsRead().then((succeeded) {
+      if (succeeded) {
+        _loadInitialContent();
+      } else {
+        AppAlert.showMessage(
+            context, Localization().getStringEx('panel.inbox.mark_as_read.failed.msg', 'Failed to mark all messages as read'));
+      }
+      _setMarkAllAsReadLoading(false);
+    });
+  }
+
+  void _setMarkAllAsReadLoading(bool loading) {
+    setStateIfMounted(() {
+      _loadingMarkAllAsRead = loading;
+    });
   }
 
   bool get _isAllMessagesSelected {
