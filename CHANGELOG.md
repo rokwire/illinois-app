@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Updated GroupAdvancedSettingsPanel [#2744](https://github.com/rokwire/illinois-app/issues/2744).
 
 ## [4.2.41] - 2022-12-14
 ### Fixed
@@ -33,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed initial camera zoom and position when presenting empty explores list in iOS [#2727](https://github.com/rokwire/illinois-app/issues/2727).
 ### Added
 - Implemented MTD Stops search [#2724](https://github.com/rokwire/illinois-app/issues/2724).
+- Standardize logged out widget [#2668](https://github.com/rokwire/illinois-app/issues/2668).
 
 ## [4.2.39] - 2022-12-12
 ### Changed
