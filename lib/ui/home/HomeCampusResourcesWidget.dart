@@ -34,6 +34,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -413,7 +414,8 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
 
   void _onTapInbox(BuildContext context) {
     Analytics().logSelect(target: "Inbox", source: runtimeType.toString());
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.all);
+    SettingsNotificationsContentPanel.present(context,
+        content: (Inbox().unreadMessagesCount > 0) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
   }
 }
 
