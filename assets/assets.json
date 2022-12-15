@@ -230,17 +230,6 @@
 						"dataUsage_key" :"privacy.entry.health.location.sharing.data_usage"
 					},
 					{
-						"min_level": 3,
-						"icon_resource": "personalization-blue.png",
-						"off_icon_resource": "personalization-blue-off.png",
-						"title" : "Personalizations",
-						"title_key" :"privacy.entry.health.personalizations.title",
-						"description" : "View your appointments and Illinois health screener results.",
-						"description_key" :"privacy.entry.health.personalizations.description",
-						"dataUsage" : "This feature uses appointment information and screener answers.",
-						"dataUsage_key" :"privacy.entry.health.personalizations.data_usage"
-					},
-					{
 						"min_level": 4,
 						"icon_resource": "notifications-blue.png",
 						"off_icon_resource": "notifications-blue-off.png",
@@ -418,7 +407,7 @@
 						"off_icon_resource": "notifications-blue-off.png",
 						"title" : "Notifications",
 						"title_key" :"privacy.entry.general.notifications.title",
-						"description" : "You may receive notifications when content is updated, and you can star various content.",
+						"description" : "You may receive notifications when content is updated, research project qualification, appointments, group membership and you can star various content.",
 						"description_key" :"privacy.entry.general.notifications.description",
 						"dataUsage" : "Research participation, Building access and due date catalog require a university sign in. Your answers to a Research interest form are used to qualify you to participate in research projects",
 						"dataUsage_key" :"privacy.entry.general.notifications.data_usage"
@@ -429,9 +418,9 @@
 						"off_icon_resource": "share-blue-off.png",
 						"title" : "Sharing",
 						"title_key" :"privacy.entry.general.sharing.title",
-						"description" : "You may receive notifications when content is updated, and you can star various content.",
+						"description" : "You may receive notifications when content is updated, research project qualification, appointments, group membership and you can star various content.",
 						"description_key" :"privacy.entry.general.sharing.description",
-						"dataUsage" : "Building access and due date catalog require a University sign in.",
+						"dataUsage" : "Research participation, Building access and due date catalog require a university sign in. Your answers to a Research interest form are used to qualify you to participate in research projects",
 						"dataUsage_key" :"privacy.entry.general.sharing.data_usage"
 					}
 				]
