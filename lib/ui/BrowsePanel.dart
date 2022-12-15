@@ -233,7 +233,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     codes?.sort((String code1, String code2) {
       String title1 = _BrowseSection.title(sectionId: code1);
       String title2 = _BrowseSection.title(sectionId: code2);
-      return title1.compareTo(title2);
+      return title1.toLowerCase().compareTo(title2.toLowerCase());
     });
     return codes;
   }
@@ -260,7 +260,7 @@ class _BrowseSection extends StatelessWidget {
     codes?.sort((String code1, String code2) {
       String title1 = _BrowseEntry.title(sectionId: sectionId, entryId: code1);
       String title2 = _BrowseEntry.title(sectionId: sectionId, entryId: code2);
-      return title1.compareTo(title2);
+      return title1.toLowerCase().compareTo(title2.toLowerCase());
     });
     return codes;
   }
