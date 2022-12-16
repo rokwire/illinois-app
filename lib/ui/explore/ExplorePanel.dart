@@ -189,6 +189,7 @@ class ExplorePanelState extends State<ExplorePanel>
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
       StudentCourses.notifyCachedCoursesChanged,
+      MTD.notifyStopsChanged,
       ExplorePanel.notifySelectMap,
       RootPanel.notifyTabChanged,
       AppLivecycle.notifyStateChanged,
@@ -2024,6 +2025,11 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else if (name == StudentCourses.notifyCachedCoursesChanged) {
       if ((_selectedItem == ExploreItem.StudentCourse) && ((param == null) || (StudentCourses().displayTermId == param)) && mounted && widget.rootTabDisplay) {
+        _loadExplores();
+      }
+    }
+    else if (name == MTD.notifyStopsChanged) {
+      if ((_selectedItem == ExploreItem.MTDStops) && mounted && widget.rootTabDisplay) {
         _loadExplores();
       }
     }
