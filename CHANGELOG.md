@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unread notifications issues [#2761](https://github.com/rokwire/illinois-app/issues/2761).
 - Cleaned up Create Group / Research Project button processing [#2740](https://github.com/rokwire/illinois-app/issues/2740).
 - Fixed Campus Guide Highlights home widget [#2785](https://github.com/rokwire/illinois-app/issues/2785).
+- Fix access widget strings and BESSI clear scores [#2770](https://github.com/rokwire/illinois-app/issues/2770).
 
 ## [4.2.41] - 2022-12-14
 ### Fixed
