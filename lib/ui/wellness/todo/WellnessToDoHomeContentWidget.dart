@@ -290,7 +290,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
             decoration: BoxDecoration(color: item?.color ?? Colors.transparent, shape: BoxShape.circle),
             child: Visibility(
                 visible: hasReminder,
-                child: Center(child: Styles().images?.getImage('clock', excludeFromSemantics: true) ?? Container()))));
+                child: Center(child: Styles().images?.getImage('clock-white', excludeFromSemantics: true) ?? Container()))));
   }
 
   Widget _buildItemsContent() {

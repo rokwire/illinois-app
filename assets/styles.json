@@ -531,6 +531,8 @@
     "minus-circle-white": {"src": "images/group-decrease.png", "type": "flutter.asset", "color": "surface", "size": 18},
     "notification-white": {"src": "images/notifications-blue.png", "type": "flutter.asset", "color": "surface", "size": 16, "todo": "size"},
 
+    "clock-white": {"src": "f017", "type": "fa.icon", "weight": "regular", "color": "surface", "size": 18},
+
     "retry-gray": {"src": "0xf2f9", "type": "fa.icon", "weight": "solid", "size": 18.0, "color": "mediumGray"},
     "chevron-up-gray": {"src": "images/arrow-up-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 10, "todo": "size issue?"},
     "chevron-down-gray": {"src": "images/arrow-down-orange.png", "type": "flutter.asset", "color": "mediumGray", "size": 10, "todo": "size issue?"},

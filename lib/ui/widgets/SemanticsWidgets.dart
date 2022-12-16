@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class AccessibleViewPagerNavigationButtons extends StatefulWidget{
@@ -34,8 +35,8 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(top: 8),
+    return Material(
+      color: Colors.transparent,
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -46,18 +47,9 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
                 // enabled: prevEnabled,
                   label: "Previous Page",
                   button: true,
-                  child: GestureDetector(
-                      onTap: _onTapPrevious,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 24),
-                        child: Text(
-                          "<",
-                          semanticsLabel: "",
-                          style: TextStyle(
-                            color : Styles().colors!.fillColorPrimary,
-                            fontFamily: Styles().fontFamilies!.bold,
-                            fontSize: 26,
-                          ),),)
+                  child: IconButton(
+                      onPressed: _onTapPrevious,
+                      icon: Styles().images?.getImage('chevron-left', excludeFromSemantics: true) ?? Container()
                   )
               )
           ),
@@ -66,18 +58,9 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
               child: Semantics(
                   label: "Next Page",
                   button: true,
-                  child: GestureDetector(
-                      onTap: _onTapNext,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 24,),
-                        child: Text(
-                          ">",
-                          semanticsLabel: "",
-                          style: TextStyle(
-                            color : Styles().colors!.fillColorPrimary,
-                            fontFamily: Styles().fontFamilies!.bold,
-                            fontSize: 26,
-                          ),),)
+                  child: IconButton(
+                      onPressed: _onTapNext,
+                      icon: Styles().images?.getImage('chevron-right', excludeFromSemantics: true) ?? Container()
                   )
               )
           )
