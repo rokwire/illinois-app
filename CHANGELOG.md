@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MTD Bus Stop favorites issues [#2775](https://github.com/rokwire/illinois-app/issues/2775).
 - Fixed alert for insufficient privacy level when attempting to open group detail panel [#2756](https://github.com/rokwire/illinois-app/issues/2756).
 
-## [4.2.43] - 2022-12-15
+## [4.2.42] - 2022-12-15
 ### Changed
 - Added Skills Self-Evaluation entry in Academics section in Browse panel [#2746](https://github.com/rokwire/illinois-app/issues/2746).
 ### Changed
