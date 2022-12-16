@@ -637,7 +637,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             padding: EdgeInsets.only(bottom: 2),
             child: Text(title,
                 semanticsLabel: "",
-                style: Styles().textStyles?.getTextStyle("panel.settings.button.title.medium")))));
+                style:  Styles().textStyles?.getTextStyle("panel.settings.button.title.medium")))));
   }
 
   void _loadUserProfilePicture() {
@@ -934,7 +934,7 @@ class _PersonalInfoEntry extends StatelessWidget {
               Text(title ?? '', style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.medium")
               ),
               Container(height: 5,),
-              Text(value ?? '', style: Styles().textStyles?.getTextStyle("widget.detail.large"))
+              Text(value ?? '', style: Styles().textStyles?.getTextStyle("widget.detail.large.fat"))
             ],),
         )
       ],),
