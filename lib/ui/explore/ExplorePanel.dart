@@ -2019,11 +2019,6 @@ class ExplorePanelState extends State<ExplorePanel>
         _loadExplores();
       }
     }
-    else if (name == Appointments.notifyAppointmentDetail) {
-      if (_selectedItem == ExploreItem.Appointments) {
-        _loadExplores();
-      }
-    }
     else if (name == ExplorePanel.notifyMapSelect) {
       if (mounted) {
         setState(() {
