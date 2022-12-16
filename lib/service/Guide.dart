@@ -173,6 +173,7 @@ class Guide with Service implements NotificationsListener {
     // return AppBundle.loadString('assets/guide.json');
     try {
       Response? response = await Network().get("${Config().contentUrl}/student_guides", auth: Auth2());
+      //TMP: Log.d("Campus Guide: ${response?.body}", lineLength: 812);
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     }
     catch (e) { print(e.toString()); }
