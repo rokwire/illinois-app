@@ -335,7 +335,7 @@
     "panel.settings.toggle_button.title.small.disabled": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimaryTransparent015"},
     "panel.settings.toggle_button.title.small.variant.enabled": {"font_family": "regular", "size": 14.0, "color": "textSurface"},
     "panel.settings.toggle_button.title.small.variant.disabled": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimaryTransparent015"},
-    "panel.settings.button.title.medium": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimaryTransparent015"},
+    "panel.settings.button.title.medium": {"font_family": "medium", "size": 16.0, "color": "textBackground"},
 
     "panel.settings.food_filter.title": {"font_family": "bold", "size": 14.0, "color": "white", "letter_spacing" :  1.0},
     "panel.settings.link_account.type.title": {"font_family": "regular", "size": 14.0, "color": "textSurface"},
