@@ -2044,7 +2044,7 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else if (name == RootPanel.notifyTabChanged) {
       if (((param == RootTab.Explore) || (param == RootTab.Maps)) &&
-          (CollectionUtils.isEmpty(_exploreItems) || (_selectedItem == ExploreItem.Appointments)) && // Do not refresh for other ExploreItem types as they are rarely changed or fire notification for that
+          (CollectionUtils.isEmpty(_exploreItems)|| (_selectedItem == ExploreItem.Events) || (_selectedItem == ExploreItem.Appointments)) && // Do not refresh for other ExploreItem types as they are rarely changed or fire notification for that
           widget.rootTabDisplay && mounted
       ) {
         _loadExplores();
