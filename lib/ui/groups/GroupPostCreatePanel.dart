@@ -115,12 +115,16 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                     hint:  Localization().getStringEx( "panel.group.detail.post.create.body.field.hint",  "Write a Post ..."),
                   ),
                   Container(
+                    padding: EdgeInsets.symmetric(vertical: 12),
                     child: EnabledToggleButton(
                         label: "Also send to additional groups...",
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
                         enabled: CollectionUtils.isEmpty(_selectedMembers),
                         toggled: _allowSenPostToOtherGroups,
+                        textStyle: CollectionUtils.isEmpty(_selectedMembers) ?
+                          Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled") :
+                          Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled"),
                         onTap: () {
                           if(mounted){
                             setState(() {
