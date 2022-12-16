@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - MTD Bus Stop favorites issues [#2775](https://github.com/rokwire/illinois-app/issues/2775).
 - Fixed alert for insufficient privacy level when attempting to open group detail panel [#2756](https://github.com/rokwire/illinois-app/issues/2756).
+### Added
+- Added switch to allow/disable sending post to additional groups [#2765](https://github.com/rokwire/illinois-app/issues/2765).
 - Issues related to inbox notifications [#2778](https://github.com/rokwire/illinois-app/issues/2778).
 
 ## [4.2.42] - 2022-12-15
