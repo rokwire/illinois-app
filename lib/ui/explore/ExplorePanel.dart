@@ -1998,20 +1998,24 @@ class ExplorePanelState extends State<ExplorePanel>
     else if (name == Styles.notifyChanged){
       _refresh(() { });
     }
-    else if (name == StudentCourses.notifyTermsChanged){
-      _refresh(() {
-        _studentCourseTerms = StudentCourses().terms;
-      });
-      _loadExplores();
+    else if (name == StudentCourses.notifyTermsChanged) {
+      if (_selectedItem == ExploreItem.StudentCourse) {
+        _refresh(() {
+          _studentCourseTerms = StudentCourses().terms;
+        });
+        _loadExplores();
+      }
     }
     else if (name == StudentCourses.notifySelectedTermChanged) {
-      _refresh(() {
-        _updateSelectedTermId();
-      });
-      _loadExplores();
+      if (_selectedItem == ExploreItem.StudentCourse) {
+        _refresh(() {
+          _updateSelectedTermId();
+        });
+        _loadExplores();
+      }
     }
     else if (name == StudentCourses.notifyCachedCoursesChanged) {
-      if ((param == null) || (StudentCourses().displayTermId == param)) {
+      if ((_selectedItem == ExploreItem.StudentCourse) && ((param == null) || (StudentCourses().displayTermId == param))) {
         _loadExplores();
       }
     }
