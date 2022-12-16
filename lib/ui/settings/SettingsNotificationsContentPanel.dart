@@ -26,7 +26,6 @@ import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -74,12 +73,8 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
   }
 
   static void launchMessageDetail(InboxMessage message) {
-    if (message.read == false) {
-      Log.d("Open unread message");
+    if (message.isRead == false) {
       Inbox().readMessage(message.messageId);
-    } 
-    else {
-      Log.d("Open read message");
     }
     FirebaseMessaging().processDataMessageEx(message.data, allowedPayloadTypes: {
       FirebaseMessaging.payloadTypeEventDetail,
@@ -105,8 +100,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   final GlobalKey _allContentKey = GlobalKey();
   final GlobalKey _mutedContentKey = GlobalKey();
   final GlobalKey _unreadContentKey = GlobalKey();
-  final GlobalKey _headerBarKey = GlobalKey();
-  final GlobalKey _tabBarKey = GlobalKey();
+  final GlobalKey _sheetHeaderKey = GlobalKey();
   final GlobalKey _contentDropDownKey = GlobalKey();
   double _contentWidgetHeight = 300; // default value
   bool _contentValuesVisible = false;
@@ -147,7 +141,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
     // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
     return Column(children: [
       Container(color: Styles().colors?.white, child:
-        Row(children: [
+        Row(key: _sheetHeaderKey, children: [
           Expanded(child:
             Padding(padding: EdgeInsets.only(left: 16), child:
               Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors?.fillColorSecondary),)
@@ -270,19 +264,17 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   void _evalContentWidgetHeight() {
     double takenHeight = 0;
     try {
-      final RenderObject? headerRenderBox = _headerBarKey.currentContext?.findRenderObject();
-      if (headerRenderBox is RenderBox) {
-        takenHeight += headerRenderBox.size.height;
-      }
+      MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+      takenHeight += mediaQuery.viewPadding.top + mediaQuery.viewInsets.top + 16;
 
       final RenderObject? contentDropDownRenderBox = _contentDropDownKey.currentContext?.findRenderObject();
       if (contentDropDownRenderBox is RenderBox) {
         takenHeight += contentDropDownRenderBox.size.height;
       }
 
-      final RenderObject? tabBarRenderBox = _tabBarKey.currentContext?.findRenderObject();
-      if (tabBarRenderBox is RenderBox) {
-        takenHeight += tabBarRenderBox.size.height;
+      final RenderObject? sheetHeaderRenderBox = _sheetHeaderKey.currentContext?.findRenderObject();
+      if (sheetHeaderRenderBox is RenderBox) {
+        takenHeight += sheetHeaderRenderBox.size.height;
       }
     } on Exception catch (e) {
       print(e.toString());
@@ -298,11 +290,11 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   Widget get _contentWidget {
     switch (_selectedContent) {
       case SettingsNotificationsContent.all:
-        return SettingsInboxHomeContentWidget(key: _allContentKey, onTapBanner: _onTapPausedBanner,);
+        return SettingsInboxHomeContentWidget(muted: false, key: _allContentKey, onTapBanner: _onTapPausedBanner,);
       case SettingsNotificationsContent.muted:
         return SettingsInboxHomeContentWidget(muted: true, key: _mutedContentKey, onTapBanner: _onTapPausedBanner);
       case SettingsNotificationsContent.unread:
-        return SettingsInboxHomeContentWidget(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
+        return SettingsInboxHomeContentWidget(muted: false, unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
       case SettingsNotificationsContent.preferences:
         return SettingsNotificationPreferencesContentWidget();
     }
