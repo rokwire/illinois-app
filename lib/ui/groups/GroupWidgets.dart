@@ -34,7 +34,6 @@ import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
-import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -2153,16 +2152,6 @@ class GroupPollCard extends StatefulWidget{
       (group?.currentUserIsAdmin ?? false)
     );
   }
-  
-  bool get _canVote {
-    return ((poll!.status == PollStatus.opened) &&
-        (((poll!.userVote?.totalVotes ?? 0) == 0) ||
-            poll!.settings!.allowMultipleOptions! ||
-            poll!.settings!.allowRepeatOptions!
-        ) &&
-        (!poll!.isGeoFenced || GeoFence().currentRegionIds.contains(poll!.regionId))
-    );
-  }
 
   bool get _canEnd {
     return (poll?.status == PollStatus.opened) && (
@@ -2223,7 +2212,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.created","Polls created");
     } if (poll.status == PollStatus.opened) {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.open","Polls open");
-      if (widget._canVote) {
+      if (poll.canVote) {
         footerWidgets.add(_createVoteButton());
       }
     }
