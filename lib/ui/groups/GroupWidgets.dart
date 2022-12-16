@@ -1076,7 +1076,7 @@ class _GroupCardState extends State<GroupCard> {
     String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
     String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
 
-    return RichText(text: TextSpan(style: Styles().textStyles?.getTextStyle('"widget.description.small.fat'), children: [
+    return RichText(text: TextSpan(style: Styles().textStyles?.getTextStyle('widget.description.small.fat'), children: [
       TextSpan(text: privacyMsgStart),
       WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget()),
       TextSpan(text: privacyMsgEnd)
