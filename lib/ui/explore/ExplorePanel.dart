@@ -186,6 +186,7 @@ class ExplorePanelState extends State<ExplorePanel>
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
       StudentCourses.notifyCachedCoursesChanged,
+      Appointments.notifyAppointmentDetail,
       ExplorePanel.notifyMapSelect,
     ]);
 
@@ -2011,6 +2012,11 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else if (name == StudentCourses.notifyCachedCoursesChanged) {
       if ((param == null) || (StudentCourses().displayTermId == param)) {
+        _loadExplores();
+      }
+    }
+    else if (name == Appointments.notifyAppointmentDetail) {
+      if (_selectedItem == ExploreItem.Appointments) {
         _loadExplores();
       }
     }
