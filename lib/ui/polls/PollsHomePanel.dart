@@ -893,7 +893,7 @@ class _PollCardState extends State<PollCard> {
       }
     } if (poll.status == PollStatus.opened) {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.open","Polls open");
-      if (_canVote) {
+      if (poll.canVote) {
         footerWidgets.add(_createVoteButton());
         footerWidgets.add(Container(height:8));  
       }
@@ -1227,16 +1227,6 @@ class _PollCardState extends State<PollCard> {
     setStateIfMounted(() {
       _showDeletePollProgress = showProgress;
     });
-  }
-
-  bool get _canVote {
-    return ((widget.poll!.status == PollStatus.opened) &&
-        (((widget.poll!.userVote?.totalVotes ?? 0) == 0) ||
-          widget.poll!.settings!.allowMultipleOptions! ||
-          widget.poll!.settings!.allowRepeatOptions!
-        ) &&
-        (!widget.poll!.isGeoFenced || GeoFence().currentRegionIds.contains(widget.poll!.regionId))
-    );
   }
 
   String get _pollVotesStatus {
