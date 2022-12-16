@@ -702,7 +702,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         commands.add(RibbonButton(
           label: _isResearchProject ? 'Manage Participants' : Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
           hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
-          leftIconKey: 'member',
+          leftIconKey: 'person-circle',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapMembers,
         ));
@@ -901,7 +901,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         SectionSlantHeader(
             title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') + ' ($_allEventsCount)',
             titleIconKey: 'calendar',
-            rightIconKey: _canAddEvent ? "create" : null,
+            rightIconKey: _canAddEvent ? "plus-circle" : null,
             rightIconAction: _canAddEvent ? _onTapEventOptions : null,
             rightIconLabel: _canAddEvent ? Localization().getStringEx("panel.group_detail.button.create_event.title", "Create Event") : null,
             children: content)
@@ -925,7 +925,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           SectionSlantHeader(
               title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts and Direct Messages'),
               titleIconKey: 'posts',
-              rightIconKey: _canCreatePost ? "create" : null,
+              rightIconKey: _canCreatePost ? "plus-circle" : null,
               rightIconAction: _canCreatePost ? _onTapCreatePost : null,
               rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
               children: postsContent)
@@ -964,7 +964,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       SectionSlantHeader(
           title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts and Direct Messages'),
           titleIconKey: 'posts',
-          rightIconKey: _canCreatePost ? "create" : null,
+          rightIconKey: _canCreatePost ? "plus-circle" : null,
           rightIconAction: _canCreatePost ? _onTapCreatePost : null,
           rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
           children: postsContent)
@@ -1004,7 +1004,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         SectionSlantHeader(
             title: Localization().getStringEx('panel.group_detail.label.polls', 'Polls'),
             titleIconKey: 'polls',
-            rightIconKey: _canCreatePoll? 'create' : null,
+            rightIconKey: _canCreatePoll? 'plus-circle' : null,
             rightIconAction: _canCreatePoll? _onTapCreatePoll : null,
             rightIconLabel: _canCreatePoll? Localization().getStringEx('panel.group_detail.button.create_poll.title', 'Create Poll') : null,
             children: pollsContentList)
@@ -1331,7 +1331,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canCreatePost,
                     child: RibbonButton(
-                        leftIconKey: "create",
+                        leftIconKey: "plus-circle",
                         label: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
                         onTap: () {
                           Navigator.of(context).pop();

@@ -179,7 +179,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   Widget _buildPollsTabbar() {
     return _couldCreatePoll ?
       Container(
-        color: Styles().colors!.backgroundVariant,
+        color: Styles().colors!.fillColorPrimary,
         padding: EdgeInsets.only(left: 16, top: 16, right: 16),
         child: Row(
           children: <Widget>[
@@ -257,17 +257,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           alignment: Alignment.topCenter,
           children: <Widget>[
             Visibility(visible: _couldCreatePoll, child:
-              Column(
-                children: <Widget>[
-                  Container(
-                    height: 88,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("images/slant-down-right-grey.png" ),
-                            fit: BoxFit.fill)),
-                  )
-                ],
-              ),
+              Styles().images?.getImage("slant-dark") ?? Container()
             ),
             Padding( padding: EdgeInsets.symmetric(horizontal: 16),
                 child: pollsContent,
@@ -1042,7 +1032,7 @@ class _PollCardState extends State<PollCard> {
                       Padding( padding: EdgeInsets.symmetric(horizontal: 5),
                         child: Text(option, style: useCustomColor? Styles().textStyles?.getTextStyle("panel.polls.home.check.accent") : Styles().textStyles?.getTextStyle("panel.polls.home.check")),)),
                         Visibility( visible: didVote,
-                        child:Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('images/checkbox-small.png',),)
+                        child: Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('check-circle-outline-gray', excludeFromSemantics: true))
                       ),
                     ],),)
               ),

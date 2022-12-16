@@ -277,8 +277,7 @@ class _IDCardPanelState extends State<IDCardPanel>
         ,),);
     }
     else if (_buildingAccess != null) {
-
-      buildingAccessIcon = Styles().images?.getImage((_buildingAccess == true) ? 'images/group-20.png' : 'images/group-28.png', width: _buildingAccessIconSize, height: _buildingAccessIconSize, semanticLabel: "building access ${(_buildingAccess == true) ? "granted" : "denied"}",);
+      buildingAccessIcon = Styles().images?.getImage((_buildingAccess == true) ? 'building-access-granted' : 'building-access-denied', width: _buildingAccessIconSize, height: _buildingAccessIconSize, semanticLabel: "building access ${(_buildingAccess == true) ? "granted" : "denied"}",);
       buildingAccessStatus = (_buildingAccess == true) ? Localization().getString('widget.id_card.label.building_access.granted', defaults: 'GRANTED', language: 'en') : Localization().getString('widget.id_card.label.building_access.denied', defaults: 'DENIED', language: 'en');
     }
     else {
@@ -332,7 +331,7 @@ class _IDCardPanelState extends State<IDCardPanel>
           ),
           Align(alignment: Alignment.topCenter, child:
             Padding(padding: EdgeInsets.only(top:_photoSize - _illiniIconSize / 2 - 5, left: 3), child:
-              Styles().images?.getImage('images/group-5-white.png',excludeFromSemantics: true, width: _illiniIconSize, height: _illiniIconSize,)
+              Styles().images?.getImage('university-logo-circle-white', excludeFromSemantics: true, width: _illiniIconSize, height: _illiniIconSize,)
             ),
           ),
         ],),

@@ -156,7 +156,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
             Align(alignment: Alignment.bottomRight, child:
               InkWell(onTap: _onDescriptionInfo, child:
                 Padding(padding: EdgeInsets.only(left: 8, right: 12, top: 8, bottom: 12), child:
-                  Styles().images?.getImage('images/icon-eye.png', excludeFromSemantics: true,)
+                  Styles().images?.getImage('eye', excludeFromSemantics: true,)
                 )
               ),
             ),

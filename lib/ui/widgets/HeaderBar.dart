@@ -84,7 +84,7 @@ class HeaderBar extends rokwire.HeaderBar {
 
 class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 
-  static const String defaultLeadingAsset = 'images/chevron-left-white.png';
+  static const String defaultLeadingIconKey = 'chevron-left-white';
 
   SliverToutHeaderBar({
     bool pinned = true,
@@ -94,6 +94,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 
     Widget? flexWidget,
     String? flexImageUrl,
+    String? flexImageKey,
     Color?  flexBackColor,
     Color?  flexRightToLeftTriangleColor,
     double? flexRightToLeftTriangleHeight = 30,
@@ -106,7 +107,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     EdgeInsetsGeometry? leadingPadding = const EdgeInsets.all(8),
     Size? leadingOvalSize = const Size(32, 32),
     Color? leadingOvalColor,
-    String? leadingAsset = defaultLeadingAsset,
+    String? leadingIconKey = defaultLeadingIconKey,
     void Function()? onLeading,
   }) : super(
     pinned: pinned,
@@ -115,6 +116,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     backgroundColor: backgroundColor ?? Styles().colors?.fillColorPrimaryVariant,
 
     flexWidget: flexWidget,
+    flexImageKey: flexImageKey,
     flexImageUrl: flexImageUrl,
     flexBackColor: flexBackColor ?? Styles().colors?.background,
     flexRightToLeftTriangleColor: flexRightToLeftTriangleColor ?? Styles().colors?.background,
@@ -128,7 +130,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
     leadingPadding: leadingPadding,
     leadingOvalSize: leadingOvalSize,
     leadingOvalColor: leadingOvalColor ?? Styles().colors?.fillColorPrimary,
-    leadingAsset: leadingAsset,
+    leadingIconKey: leadingIconKey,
     onLeading: onLeading,
   );
 
@@ -142,7 +144,7 @@ class SliverToutHeaderBar extends rokwire.SliverToutHeaderBar {
 // SliverSheetHeaderBar
 
 class SliverHeaderBar extends rokwire.SliverHeaderBar  {
-  static const String defaultLeadingAsset = 'images/close-circle-white.png';
+  static const String defaultLeadingIconKey = 'close-circle-white';
 
   SliverHeaderBar({Key? key,
     bool pinned = true,
@@ -153,7 +155,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     Widget? leadingWidget,
     String? leadingLabel,
     String? leadingHint,
-    String? leadingAsset = defaultLeadingAsset,
+    String? leadingIconKey = defaultLeadingIconKey,
     void Function()? onLeading,
     
     Widget? titleWidget,
@@ -178,7 +180,7 @@ class SliverHeaderBar extends rokwire.SliverHeaderBar  {
     leadingWidget: leadingWidget,
     leadingLabel: leadingLabel ?? Localization().getStringEx('headerbar.back.title', 'Back'),
     leadingHint: leadingHint ?? Localization().getStringEx('headerbar.back.hint', ''),
-    leadingAsset: leadingAsset,
+    leadingIconKey: leadingIconKey,
     onLeading: onLeading,
 
     titleWidget: titleWidget,
@@ -302,7 +304,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
       InkWell(onTap: () => onTapNotifications(context), child:
         Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 2), child:
           Stack(alignment: Alignment.topRight, children: [
-            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Styles().images?.getImage('images/notifications-white.png', excludeFromSemantics: true,))),
+            Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Styles().images?.getImage('notification-white', excludeFromSemantics: true,))),
             Visibility(visible: (unreadMsgsCount > 0), child: 
               Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(2), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child: 
                 Text(unreadMsgsCount.toString(), style: TextStyle(color: Styles().colors!.white, fontSize: 10, fontFamily: Styles().fontFamilies!.medium)))))
@@ -317,7 +319,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
 //    IconButton(icon: Styles().images?.getImage('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations(context))
       InkWell(onTap: () => onTapPersonalInformation(context), child:
         Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
-          Styles().images?.getImage('images/person-white.png', excludeFromSemantics: true,),
+          Styles().images?.getImage('person-circle-white', excludeFromSemantics: true,),
         )
       )
     );

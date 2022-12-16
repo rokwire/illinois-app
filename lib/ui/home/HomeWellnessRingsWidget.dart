@@ -158,7 +158,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
                     children: <Widget>[
                       Container(
                         padding: EdgeInsets.only(right: 8),
-                        child: Styles().images?.getImage('images/icons-control-add-blue.png', excludeFromSemantics: true, color: enabled? Colors.black : disabledTextColor,),
+                        child: Styles().images?.getImage('plus-circle', excludeFromSemantics: true, color: enabled? Colors.black : disabledTextColor,),
                       ),
                       Expanded(
                           flex: 5,

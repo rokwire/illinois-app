@@ -129,7 +129,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                           excludeSemantics: true,
                           child: SectionRibbonHeader(
                             title: Localization().getStringEx("panel.athletics.label.upcoming_events.title", "Upcoming Events"),
-                            titleIconAsset: 'images/icon-calendar.png',
+                            titleIconKey: 'calendar',
                           ),
                         ),
                         Padding(
@@ -201,7 +201,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                             Localization().getStringEx("panel.athletics.label.tap_the.title", "Tap the "),
                                             style: Styles().textStyles?.getTextStyle('panel.athletics.home.detail.medium') ,
                                           ),
-                                          Styles().images?.getImage('images/icon-check-example.png', excludeFromSemantics: true) ?? Container(),
+                                          Styles().images?.getImage('check-circle-outline-gray', excludeFromSemantics: true) ?? Container(),
                                           Expanded(
                                             child:Text(
                                               Localization().getStringEx("panel.athletics.label.follow_team.title", " to follow your favorite teams"),
@@ -240,9 +240,8 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                           Container(
                                             height: 112,
                                             width: double.infinity,
-                                            child: Styles().images?.getImage('images/slant-down-right-blue.png',
+                                            child: Styles().images?.getImage('slant-dark',
                                               fit:BoxFit.fill,
-                                              color: Styles().colors!.fillColorPrimaryVariant,
                                               excludeFromSemantics: true
                                             ),
                                           )
@@ -259,7 +258,7 @@ class _AthleticsHomePanelState extends State<AthleticsHomePanel>
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                       right: 16),
-                                                  child: Styles().images?.getImage('images/explore.png', excludeFromSemantics: true),
+                                                  child: Styles().images?.getImage('compass', excludeFromSemantics: true),
                                                 ),
                                                 Expanded(child:
                                                   Text(
@@ -608,7 +607,7 @@ class _AthleticsCardState extends State<AthleticsCard> implements NotificationsL
             showImage ? Container(height: 72, color: Styles().colors!.fillColorSecondaryTransparent05,) : Container(height: 0)
           ],),
           showImage ? Container(height: 112, width: double.infinity, child:
-            Styles().images?.getImage('images/slant-down-right.png', color: Styles().colors!.fillColorSecondary, fit: BoxFit.fill, excludeFromSemantics: true),
+            Styles().images?.getImage('slant', fit: BoxFit.fill, excludeFromSemantics: true),
           ) : Container(),
           showImage ? Container(height: 140, color: Styles().colors!.background,) : Container()
         ],),

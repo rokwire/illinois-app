@@ -424,7 +424,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
               Center(
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Styles().images?.getImage('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+                  child: Styles().images?.getImage('plus-circle-white', excludeFromSemantics: true, color:  Styles().colors!.white!),
                 ))
             ]
         ))
@@ -458,7 +458,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
               Center(
                 child:Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Styles().images?.getImage('images/group-decrease.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+                  child: Styles().images?.getImage('minus-circle-white', excludeFromSemantics: true),
               ))
             ]
           )
@@ -551,7 +551,7 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
                   Center(
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                        child: Styles().images?.getImage('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+                        child: Styles().images?.getImage('plus-circle-white', excludeFromSemantics: true),
                       ))
                 ]
             )));

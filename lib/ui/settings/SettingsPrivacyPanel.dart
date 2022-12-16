@@ -837,7 +837,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                     Container(width: 9,),
                     Container(padding: EdgeInsets.only(right: 20), child: RotationTransition(
                         turns: _iconTurns,
-                        child: Styles().images?.getImage(isEnabled? "images/arrow-down-orange.png": "images/arrow-down-orange-off.png", excludeFromSemantics: true))),
+                        child: Styles().images?.getImage(isEnabled? "chevron-down": "chevron-down-gray", excludeFromSemantics: true))),
                   ],
                 )))),
         !infoExpanded? Container():

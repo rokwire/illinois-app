@@ -116,7 +116,7 @@ class AppAlert {
                   Navigator.of(context).pop();
                   }, child:
                   Padding(padding: EdgeInsets.all(16), child:
-                    Styles().images?.getImage('images/icon-x-orange.png')
+                    Styles().images?.getImage('close', excludeFromSemantics: true)
                   )
                 )
               )

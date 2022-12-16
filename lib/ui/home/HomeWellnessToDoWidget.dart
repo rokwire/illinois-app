@@ -90,7 +90,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
                         RoundedButton(
                           label: Localization().getStringEx('widget.home.wellness.todo.items.add.button', 'Add Item'), borderColor: Styles().colors!.fillColorSecondary,
                           textColor: Styles().colors!.fillColorPrimary,
-                          leftIcon: Styles().images?.getImage('create', excludeFromSemantics: true),
+                          leftIcon: Styles().images?.getImage('plus-circle', excludeFromSemantics: true),
                           iconPadding: 8, rightIconPadding: EdgeInsets.only(right: 8), fontSize: 14, contentWeight: 0, 
                           fontFamily: Styles().fontFamilies!.regular, padding: EdgeInsets.zero, onTap: _onTapAddItem),
                         LinkButton(

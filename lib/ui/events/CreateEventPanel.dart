@@ -159,7 +159,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  Styles().images?.getImage('create') ?? Container(),
+                                  Styles().images?.getImage('plus-circle') ?? Container(),
                                   Padding(
                                     padding: EdgeInsets.only(left: 12),
                                     child: Text(_panelTitleText!,

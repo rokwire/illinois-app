@@ -601,7 +601,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   ),
                 Container (
                   padding: EdgeInsets.only(top:8,bottom: 8,right: 8, left: 8),
-                  child: Styles().images?.getImage('create', excludeFromSemantics: true),
+                  child: Styles().images?.getImage('plus-circle', excludeFromSemantics: true),
                 )
 
               ],)
@@ -756,7 +756,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column( children: <Widget>[
-          _buildSectionTitle(sectionTitle, "member"),
+          _buildSectionTitle(sectionTitle, "person-circle"),
           Container(height: 12,),
           Semantics(
             explicitChildNodes: true,
@@ -987,7 +987,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(children: <Widget>[
-          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "University managed membership"), "member"),
+          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "University managed membership"), "person-circle"),
           Container(height: 12),
           Padding(
               padding: EdgeInsets.only(top: 12),

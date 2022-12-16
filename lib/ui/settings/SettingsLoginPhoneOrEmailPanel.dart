@@ -80,7 +80,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
         buttonProceedHint = Localization().getStringEx('panel.settings.link.both.button.proceed.hint', '');
         keyboardType = TextInputType.emailAddress;
       }
-      proceedRightIcon = Styles().images?.getImage('create', excludeFromSemantics: true);
+      proceedRightIcon = Styles().images?.getImage('plus-circle', excludeFromSemantics: true);
     }
     else {
       if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {

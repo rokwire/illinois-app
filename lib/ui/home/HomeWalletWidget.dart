@@ -152,7 +152,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
                       ),
                       Visibility(visible: SettingsAddIlliniCashPanel.canPresent, child:
                         Semantics(button: true, excludeSemantics: true, label: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.title', 'Add Illini Cash'), hint: Localization().getStringEx('widget.home.wallet.illini_cash.button.add_illini_cash.hint', ''), child:
-                          IconButton(color: Styles().colors!.fillColorPrimary, icon: Styles().images?.getImage('create-large', excludeFromSemantics: true) ?? Container(), onPressed: _onTapPlus)
+                          IconButton(color: Styles().colors!.fillColorPrimary, icon: Styles().images?.getImage('plus-circle-large', excludeFromSemantics: true) ?? Container(), onPressed: _onTapPlus)
                         ),
                       )
                     ]),

@@ -248,7 +248,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                 Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
               ),
               Padding(padding: EdgeInsets.only(left: 5), child:
-              Styles().images?.getImage('create', excludeFromSemantics: true),
+              Styles().images?.getImage('plus-circle', excludeFromSemantics: true),
               )
             ])
           )

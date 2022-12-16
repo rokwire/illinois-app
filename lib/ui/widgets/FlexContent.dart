@@ -53,7 +53,7 @@ class FlexContent extends rokwire.FlexContent {
   String get closeButtonHint => Localization().getStringEx("widget.flex_content.button.close.hint", "");
 
   @override
-  String? get closeButtonAsset => 'images/close-orange.png';
+  String? get closeButtonKey => 'close';
 
   @override
   void onTapClose(rokwire.FlexContentWidgetState state) {

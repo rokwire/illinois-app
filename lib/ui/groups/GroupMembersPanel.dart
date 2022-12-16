@@ -275,7 +275,7 @@ class _GroupMembersPanelState extends State<GroupMembersPanel> implements Notifi
     }
 
     return Column(children: <Widget>[
-      SectionRibbonHeader(title: _getSectionHeading(), titleIconAsset: 'images/icon-member.png'),
+      SectionRibbonHeader(title: _getSectionHeading(), titleIconKey: 'person-circle'),
       _buildMembersSearch(),
         Visibility(visible: 1 < CollectionUtils.length(_sortedMemberStatusList), child:
           Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:

@@ -483,7 +483,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
           Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
             Row(children:<Widget>[
               Padding(padding: EdgeInsets.only(right: 8), child:
-                Styles().images?.getImage('images/icon-delete-group.png')
+                Styles().images?.getImage('trash')
               ),
               Expanded(child:
                 Text("Delete", style: Styles().textStyles?.getTextStyle("widget.button.title.regular"),)
@@ -932,7 +932,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                 Visibility(visible: (widget.selected != null), child:
                   Padding(padding: EdgeInsets.only(right: leftPadding), child:
                     Semantics(label:(widget.selected == true) ? "Selected" : "Not Selected", child:
-                      Styles().images?.getImage((widget.selected == true) ? 'images/deselected-dark.png' : 'images/deselected.png', excludeFromSemantics: true,),
+                      Styles().images?.getImage((widget.selected == true) ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true,),
                     )
                   ),
                 ),

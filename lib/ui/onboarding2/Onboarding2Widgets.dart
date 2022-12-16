@@ -213,7 +213,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                                       padding: EdgeInsets.only(bottom: 2),
                                       child: Container(
                                           padding: EdgeInsets.only(bottom: 4),
-                                          child: Styles().images?.getImage("images/icon-external-link-blue.png", excludeFromSemantics: true,)))),
+                                          child: Styles().images?.getImage("external-link", excludeFromSemantics: true,)))),
                                 ]
                             )
                         ),

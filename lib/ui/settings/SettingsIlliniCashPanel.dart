@@ -145,9 +145,9 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
       controller: widget.scrollController,
       slivers: <Widget>[
         SliverHeaderBar(
-          leadingAsset: widget.scrollController == null
-              ? 'images/chevron-left-white.png'
-              : 'images/chevron-left-blue.png',
+          leadingIconKey: widget.scrollController == null
+              ? 'chevron-left-white'
+              : 'chevron-left',
           title: Localization().getStringEx('panel.settings.illini_cash.label.title','Illini Cash'),
           textColor: widget.scrollController == null
               ? Styles().colors!.white
@@ -235,15 +235,14 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     final String externalLinIconMacro = '{{external_link_icon}}';
     String contentHtml = Localization().getStringEx("panel.settings.illini_cash.label.for_yourself_or", "Use Illini Cash to purchase food, books, printing, and <a href='{{services_url}}'>other selected services</a>{{white_space}}<img src='asset:{{external_link_icon}}' alt=''/> with your Illinois app or i-card.");
     contentHtml = contentHtml.replaceAll(servicesUrlMacro, Config().illiniCashServicesUrl ?? '');
-    contentHtml = contentHtml.replaceAll(externalLinIconMacro, 'images/external-link.png');
+    contentHtml = contentHtml.replaceAll(externalLinIconMacro, 'external-link');
     contentHtml = contentHtml.replaceAll(whiteSpaceMacro, '&nbsp;');
     return Container(
         color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildSettingsHeader(Localization().getStringEx("panel.settings.illini_cash.label.buy_illini_cash", "Buy Illini Cash"),
-                'images/icon-schedule.png'),
+            _buildSettingsHeader(Localization().getStringEx("panel.settings.illini_cash.label.buy_illini_cash", "Buy Illini Cash"), 'cost'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Html(data: contentHtml,
@@ -283,7 +282,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     return Column(
       children: <Widget>[
         _buildSettingsHeader(Localization().getStringEx(
-            "panel.settings.illini_cash.label.history", "History"), 'images/icon-schedule.png'),
+            "panel.settings.illini_cash.label.history", "History"), 'history'),
         _buildBalanceTableRow(),
         _buildBalancePeriodViewPicker(),
 

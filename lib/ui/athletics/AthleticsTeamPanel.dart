@@ -271,8 +271,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                     Container(
                       height: 112,
                       width: double.infinity,
-                      child: Styles().images?.getImage('images/slant-down-right.png',
-                        color: Styles().colors!.fillColorPrimary,
+                      child: Styles().images?.getImage('slant-dark',
                         fit: BoxFit.fill,
                         excludeFromSemantics: true
                       ),
@@ -350,14 +349,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                       color: Styles().colors!.fillColorPrimary,
                       height: 40,
                     ),
-                    Container(
-                      height: 112,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage(
-                                  'images/slant-down-right-blue.png'),
-                              fit: BoxFit.fill)),
-                    )
+                    Styles().images?.getImage('slant-dark', excludeFromSemantics: true) ?? Container(),
                   ],
                 ),
                 Column(
@@ -375,7 +367,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
                             children: <Widget>[
                               Padding(
                                 padding: EdgeInsets.only(right: 16),
-                                child: Styles().images?.getImage('images/icon-news.png', excludeFromSemantics: true),
+                                child: Styles().images?.getImage('news', excludeFromSemantics: true),
                               ),
                               Text(
                                 Localization().getStringEx("panel.athletics_team.button.news.title", 'News'),
@@ -630,7 +622,7 @@ class _AthleticsTeamPanelState extends State<AthleticsTeamPanel> implements Noti
           //Only the first item got image
           imageUrl: news.imageUrl,
           slantImageColor: Styles().colors!.fillColorPrimaryTransparent03,
-          slantImageAsset: 'images/slant-down-right-blue.png',
+          slantImageKey: 'slant-dark',
           child: _buildAthleticsNewsCard(news)
         ) : _buildAthleticsNewsCard(news);
       },

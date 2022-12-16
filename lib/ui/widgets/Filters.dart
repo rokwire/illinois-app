@@ -33,11 +33,11 @@ class FilterListItem extends rokwire.FilterListItem {
     GestureTapCallback? onTap,
   
     Widget? icon,
-    String? iconAsset = 'images/icon-unselected.png',
+    String? iconKey = 'check-circle-outline-gray',
     EdgeInsetsGeometry iconPadding = const EdgeInsets.only(left: 10),
 
     Widget? selectedIcon,
-    String? selectedIconAsset = 'images/icon-selected.png',
+    String? selectedIconKey = 'check-circle-filled',
     EdgeInsetsGeometry selectedIconPadding = const EdgeInsets.only(left: 10),
   }) : super(key: key,
     title: title,
@@ -53,11 +53,11 @@ class FilterListItem extends rokwire.FilterListItem {
     onTap: onTap,
   
     icon: icon,
-    iconAsset: iconAsset,
+    iconKey: iconKey,
     iconPadding: iconPadding,
 
     selectedIcon: selectedIcon,
-    selectedIconAsset: selectedIconAsset,
+    selectedIconKey: selectedIconKey,
     selectedIconPadding: selectedIconPadding,
   );
 }

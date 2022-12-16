@@ -104,7 +104,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     return Padding(padding: EdgeInsets.only(top: 16), child:
       Semantics(label: Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'), hint: Localization().getStringEx('panel.wellness.sections.dimensions.hint', 'Tap to see the 8 Dimensions of Wellness'), button: true, image: true, child:
         InkWell(onTap: _onTapEightDimensionsImage, child:
-          Styles().images?.getImage('images/wellness-wheel-thumbnail.png', width: 45, height: 45, excludeFromSemantics: true,),
+          Styles().images?.getImage('wellness-wheel-small', excludeFromSemantics: true,),
         ),
       ),
     );
@@ -135,7 +135,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     return RoundedButton(
         label: Localization().getStringEx('panel.wellness.sections.dimensions.button', 'Learn more about the 8 dimensions'),
         textStyle: Styles().textStyles?.getTextStyle("panel.wellness.tips.button.title.small"),
-        rightIcon: Styles().images?.getImage('images/external-link.png'),
+        rightIcon: Styles().images?.getImage('external-link', excludeFromSemantics: true),
         rightIconPadding: EdgeInsets.only(left: 4, right: 6),
         onTap: onTapEightDimension);
   }

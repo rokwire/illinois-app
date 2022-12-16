@@ -63,7 +63,7 @@ class _SettingsLocationPanelState extends State<SettingsLocationPanel> {
             description: _locationStatus,
             additionalInfo: Localization().getStringEx(
                 "panel.settings.button.access_location.label.info", "To get the most out of our features, enable location in your device’s settings."),
-            iconKey: "images/m.png",
+            iconKey: "location",
             onTap: _onTapLocation(),
           ),
           Container(height: 24,),

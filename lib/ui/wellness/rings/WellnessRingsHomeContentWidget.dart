@@ -237,7 +237,6 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
 
   Widget _buildCreateRingButton(){
     bool enabled = WellnessRings().canAddRing;
-    final Color disabledTextColor = ColorUtils.fromHex("5c5c5c") ?? Colors.white; //TODO move to colors
     final Color disabledBackgroundColor = ColorUtils.fromHex("e7e7e7") ?? Colors.white; //TODO move to colors
     String label = "Create New Ring";
     String description = "Maximum of 4 total";
@@ -256,7 +255,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
                 children: <Widget>[
                   Container(
                     padding: EdgeInsets.only(right: 14),
-                      child: Styles().images?.getImage('images/icons-control-add-blue.png', excludeFromSemantics: true, color: enabled? Colors.black : disabledTextColor,),
+                      child: Styles().images?.getImage(enabled ? 'plus-dark' : 'add-gray', excludeFromSemantics: true),
                   ),
                   Expanded(
                       flex: 5,
@@ -307,7 +306,7 @@ class _WellnessRingsHomeContentWidgetState extends State<WellnessRingsHomeConten
                   alignment: Alignment.topRight,
                   child: GestureDetector(
                       onTap: _onClose,
-                      child: Padding(padding: EdgeInsets.all(11), child: Styles().images?.getImage('images/icon-x-orange.png'))))
+                      child: Padding(padding: EdgeInsets.all(11), child: Styles().images?.getImage('close', excludeFromSemantics: true))))
             ])));
   }
 

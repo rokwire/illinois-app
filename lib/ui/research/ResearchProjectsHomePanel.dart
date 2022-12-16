@@ -252,7 +252,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
               Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                 Text(createTitle, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
                 Padding(padding: EdgeInsets.only(left: 5), child:
-                  Styles().images?.getImage('images/icon-add-more.png')
+                  Styles().images?.getImage('plus-circle')
                 )
               ])
             ),
@@ -263,7 +263,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
         Semantics(label: searchTitle, button: true, child:
           InkWell(onTap: _onTapSearch, child: 
             Padding(padding: EdgeInsets.only(left: 4, right: 16, top: 10, bottom: 10), child:
-              Styles().images?.getImage('images/icon-search.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: true, width: 25, height: 25),
+              Styles().images?.getImage('search', excludeFromSemantics: true),
             ),
           ),
         ),
@@ -336,8 +336,6 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
           title: category,
           selected: _selectedCategoryFilter == category,
           onTap: () => _onTapCategoryFilter(category),
-          iconAsset: "images/oval-orange.png",
-          selectedIconAsset: "images/checkbox-selected.png",
         ));
       }
     }
@@ -350,8 +348,6 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
           title: _filterTagToDisplayString(tagFilter),
           selected: _selectedTagFilter == tagFilter,
           onTap: () => _onTapTagFilter(tagFilter),
-          iconAsset: "images/oval-orange.png",
-          selectedIconAsset: "images/checkbox-selected.png",
         ));
       }
     }

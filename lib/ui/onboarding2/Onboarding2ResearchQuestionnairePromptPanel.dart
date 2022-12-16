@@ -27,7 +27,7 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
         Styles().images?.getImage("header-questionnaire", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         Padding(padding: EdgeInsets.only(top: 90), child:
           Align(alignment: Alignment.topCenter, child: 
-            Styles().images?.getImage('images/questionnaire-icon.png'),
+            Styles().images?.getImage('questionnaire', excludeFromSemantics: true),
           ),
         ),
         SafeArea(child:

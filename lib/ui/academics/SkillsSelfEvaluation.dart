@@ -79,7 +79,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,)),
           IconButton(
-            icon: Styles().images?.getImage('images/tab-more.png', color: Styles().colors?.surface) ?? Container(),
+            icon: Styles().images?.getImage('more-white', excludeFromSemantics: true) ?? Container(),
             onPressed: _onTapShowBottomSheet,
             padding: EdgeInsets.zero,
           ),
@@ -229,7 +229,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
           padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
           alignment: Alignment.center,
           infoTextWidget: infoTextWidget,
-          closeIcon: Styles().images?.getImage('images/close-orange-small.png', color: Styles().colors?.fillColorPrimaryVariant),
+          closeIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
         ),);
       }
     }
@@ -249,7 +249,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
       padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
       alignment: Alignment.center,
       infoTextWidget: textWidget,
-      closeIcon: Styles().images?.getImage('images/close-orange-small.png', color: Styles().colors?.fillColorPrimaryVariant),
+      closeIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
     ),);
   }
 

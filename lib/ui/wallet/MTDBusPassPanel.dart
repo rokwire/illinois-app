@@ -220,7 +220,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
             child: Padding(
                 padding: EdgeInsets.only(top: _photoSize - _iconSize / 2 - 5, left: 15),
                 child: Styles().images?.getImage(
-                  'images/group-5-blue.png',
+                  'university-logo-circle-dark',
                   excludeFromSemantics: true,
                   width: _iconSize,
                   height: _iconSize,
@@ -265,13 +265,13 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Widget _buildBusIcon(){
-    double iconSize = 25;
+    double iconSize = 24;
     return Container(
       width: iconSize-1,
       height: iconSize-1,
       color: _activeColor,
       child: Styles().images?.getImage(
-        'images/transparent-bus-icon.png',
+        'transit-logo-cutout-dark',
         excludeFromSemantics: true,
         width: iconSize,
         height: iconSize,

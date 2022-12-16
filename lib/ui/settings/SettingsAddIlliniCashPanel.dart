@@ -123,9 +123,7 @@ class _SettingsAddIlliniCashPanelState
                     controller: widget.scrollController,
                     slivers: <Widget>[
                       SliverHeaderBar(
-                        leadingAsset: widget.scrollController == null
-                            ? 'images/chevron-left-white.png'
-                            : 'images/chevron-left-blue.png',
+                        leadingIconKey: widget.scrollController == null ? 'chevron-left-white' : 'chevron-left',
                         title: Localization().getStringEx("panel.settings.add_illini_cash.header.title", "Add Illini Cash"),
                         textColor: widget.scrollController == null
                             ? Styles().colors!.white

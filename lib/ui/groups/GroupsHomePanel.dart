@@ -340,7 +340,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
                     Padding(padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10), child:
                       InkWell(onTap: _onTapCreate, child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                         Text(Localization().getStringEx("panel.groups_home.button.create_group.title", 'Create'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
-                        Padding(padding: EdgeInsets.only(left: 5), child: Styles().images?.getImage('create', excludeFromSemantics: true))
+                        Padding(padding: EdgeInsets.only(left: 5), child: Styles().images?.getImage('plus-circle', excludeFromSemantics: true))
                       ])),
                     ),
                   ),
@@ -403,8 +403,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
             title: StringUtils.ensureNotEmpty(_getFilterItemLabel(index)),
             selected: _isFilterItemSelected(index),
             onTap: ()=> _onTapFilterEntry(_activeFilterList![index]),
-            iconAsset: "images/oval-orange.png",
-            selectedIconAsset: "images/checkbox-selected.png",
           );
         }
     );

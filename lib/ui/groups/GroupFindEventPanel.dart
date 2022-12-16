@@ -288,12 +288,7 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
               padding: EdgeInsets.all(12),
               child: GestureDetector(
                 onTap: _onTapSearch,
-                child: Styles().images?.getImage(
-                  'images/icon-search.png',
-                  color: Styles().colors!.fillColorSecondary,
-                  width: 25,
-                  height: 25,
-                ),
+                child: Styles().images?.getImage('search', excludeFromSemantics: true),
               ),
             ),
           ),

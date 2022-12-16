@@ -163,7 +163,7 @@ class _GroupQrCodePanelState extends State<GroupQrCodePanel> {
                     textColor: Styles().colors!.fillColorPrimary,
                     borderColor: Styles().colors!.fillColorSecondary,
                     onTap: _onTapShare,
-                    rightIcon: Styles().images?.getImage('images/share-blue.png'),
+                    rightIcon: Styles().images?.getImage('share-dark', excludeFromSemantics: true),
                     rightIconPadding: EdgeInsets.only(right: 75),
                   ),
                 )

@@ -151,8 +151,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     switch (contentItem) {
       case AcademicsContent.my_illini:
         return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Styles().images?.getImage('images/icon-login-grey.png') ?? Container(),
-          Padding(padding: EdgeInsets.only(left: 6), child: Styles().images?.getImage('images/icon-external-link-grey.png'))
+          Styles().images?.getImage('key', excludeFromSemantics: true) ?? Container(),
+          Padding(padding: EdgeInsets.only(left: 6), child: Styles().images?.getImage('external-link', excludeFromSemantics: true))
         ]);
       default:
         return null;

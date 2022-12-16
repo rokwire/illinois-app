@@ -551,7 +551,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                     )),
                 Container (
                   padding: EdgeInsets.only(top:8,bottom: 8,right: 8, left: 8),
-                  child: Styles().images?.getImage('create', excludeFromSemantics: true),
+                  child: Styles().images?.getImage('plus-circle', excludeFromSemantics: true),
                 )
 
               ],)

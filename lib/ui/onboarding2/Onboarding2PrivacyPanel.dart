@@ -458,7 +458,7 @@ class _Onboarding2PrivacyPanelState extends State<Onboarding2PrivacyPanel>{
 
               ),
               Container(padding: EdgeInsets.only(bottom: 3),
-                  child: Styles().images?.getImage("images/icon-external-link-white.png")
+                  child: Styles().images?.getImage("external-link", excludeFromSemantics: true)
               ),
             ],)
           )

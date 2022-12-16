@@ -84,8 +84,7 @@ class _WellnessRingSelectPredefinedPanelState extends State<WellnessRingSelectPr
               enabled: _nextButtonEnabled,
               borderColor: _nextButtonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColorTwo,
               textColor: _nextButtonEnabled? Styles().colors!.fillColorPrimary : Styles().colors!.disabledTextColorTwo,
-              rightIcon: Styles().images?.getImage('images/chevron-right.png', excludeFromSemantics: true,
-                color: _nextButtonEnabled ? Styles().colors!.fillColorSecondary : Styles().colors!.disabledTextColorTwo),
+              rightIcon: Styles().images?.getImage(_nextButtonEnabled ? 'chevron-right' : 'chevron-right-gray', excludeFromSemantics: true),
             ),
           ),
           Container(height: 50,)

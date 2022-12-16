@@ -85,7 +85,7 @@ class _OnboardingPrivacyStatementPanelState extends State<OnboardingPrivacyState
                       Stack(children: <Widget>[
                         Styles().images?.getImage("header-privacy", key: _headingKey, fit: BoxFit.fitWidth, width: headingWidth, excludeFromSemantics: true) ?? Container(),
                         Container(width: headingWidth, height: headingHeight, alignment: Alignment.bottomCenter, child:
-                          Styles().images?.getImage("images/lock.gif", fit: BoxFit.fitHeight, height: lockSize, excludeFromSemantics: true, ),
+                          Styles().images?.getImage("images/lock.gif", fit: BoxFit.fitHeight, height: lockSize, excludeFromSemantics: true), //TODO - ICONS is this gif actually working?
                         ),
                         OnboardingBackButton( padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                         onTap:() {

@@ -135,7 +135,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                                       TextSpan(text:descriptionText1, semanticsLabel: "",),
                                       TextSpan(text:descriptionText2, semanticsLabel: "",style: Styles().textStyles?.getTextStyle("widget.button.title.small.underline"),
                                           children: [
-                                            WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Styles().images?.getImage("images/icon-external-link-blue.png", excludeFromSemantics: true,)))
+                                            WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Styles().images?.getImage("external-link", excludeFromSemantics: true,)))
                                           ]),
                                       TextSpan(text:descriptionText3, semanticsLabel: ""),
                                     ]
