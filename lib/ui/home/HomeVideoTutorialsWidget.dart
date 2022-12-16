@@ -132,7 +132,8 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
     setStateIfMounted(() {
       _pageViewKey = UniqueKey();
       _contentKeys.clear();
-      _pageController = null;
+      // _pageController = null;
+      _pageController?.jumpToPage(0);
     });
   }
 
@@ -192,7 +193,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.video_tutorials.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.video_tutorials.button.all.hint', 'Tap to view all video tutorials'),

@@ -210,7 +210,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
               _categoriesFilter = categoriesFilter;
               _events = _randomSelection(events, Config().homeUpcomingEventsCount);
               _pageViewKey = UniqueKey();
-              _pageController = null;
+              // _pageController = null;
               _contentKeys.clear();
             });
           }
@@ -223,7 +223,8 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
               _categoriesFilter = null;
               _events = _randomSelection(events, Config().homeUpcomingEventsCount);
               _pageViewKey = UniqueKey();
-              _pageController = null;
+              // _pageController = null;
+              _pageController?.jumpToPage(0);
               _contentKeys.clear();
             });
           });
@@ -346,7 +347,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.suggested_events.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.suggested_events.button.all.hint', 'Tap to view all events'),

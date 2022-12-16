@@ -263,7 +263,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.inbox.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.inbox.button.all.hint', 'Tap to view all notifications'),

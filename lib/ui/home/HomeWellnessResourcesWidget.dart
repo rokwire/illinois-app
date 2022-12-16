@@ -180,7 +180,7 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
 
     return Column(children: [
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.wellness_resources.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.wellness_resources.button.all.hint', 'Tap to view all wellness resources'),
@@ -296,7 +296,8 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
     }
 
     _pageViewKey = UniqueKey();
-    _pageController = null;
+    // _pageController = null;
+    _pageController?.jumpToPage(0);
     _contentKeys.clear();
   }
 

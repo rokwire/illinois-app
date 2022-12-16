@@ -25,6 +25,7 @@ import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/model/explore.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -32,6 +33,7 @@ import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/explore/ExploreCard.dart';
+import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -57,7 +59,7 @@ class ExploreListPanel extends StatefulWidget implements AnalyticsPageAttributes
   }
 }
 
-class _ExploreListPanelState extends State<ExploreListPanel> {
+class _ExploreListPanelState extends State<ExploreListPanel> implements NotificationsListener {
 
   List<Explore>? _explores;
   Set<String> _mtdExpanded = <String>{};
@@ -70,6 +72,15 @@ class _ExploreListPanelState extends State<ExploreListPanel> {
       //Sort "only for when we go to details from map view and there is a list of items because of the map grouping"
       SortUtils.sort(_explores);
     }
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+    ]);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    NotificationService().unsubscribe(this);
   }
 
   @override
@@ -152,6 +163,15 @@ class _ExploreListPanelState extends State<ExploreListPanel> {
       setState(() {
         SetUtils.toggle(_mtdExpanded, stop?.id);
       });
+    }
+  }
+
+  @override
+  void onNotification(String name, param) {
+    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (mounted) {
+        setState(() { });
+      }
     }
   }
 }
