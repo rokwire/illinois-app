@@ -26,7 +26,6 @@ import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
-import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
@@ -74,12 +73,8 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
   }
 
   static void launchMessageDetail(InboxMessage message) {
-    if (message.read == false) {
-      Log.d("Open unread message");
+    if (message.read != true) {
       Inbox().readMessage(message.messageId);
-    } 
-    else {
-      Log.d("Open read message");
     }
     FirebaseMessaging().processDataMessageEx(message.data, allowedPayloadTypes: {
       FirebaseMessaging.payloadTypeEventDetail,
