@@ -73,7 +73,7 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
   }
 
   static void launchMessageDetail(InboxMessage message) {
-    if (message.read != true) {
+    if (message.isRead == false) {
       Inbox().readMessage(message.messageId);
     }
     FirebaseMessaging().processDataMessageEx(message.data, allowedPayloadTypes: {
@@ -290,11 +290,11 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   Widget get _contentWidget {
     switch (_selectedContent) {
       case SettingsNotificationsContent.all:
-        return SettingsInboxHomeContentWidget(key: _allContentKey, onTapBanner: _onTapPausedBanner,);
+        return SettingsInboxHomeContentWidget(muted: false, key: _allContentKey, onTapBanner: _onTapPausedBanner,);
       case SettingsNotificationsContent.muted:
         return SettingsInboxHomeContentWidget(muted: true, key: _mutedContentKey, onTapBanner: _onTapPausedBanner);
       case SettingsNotificationsContent.unread:
-        return SettingsInboxHomeContentWidget(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
+        return SettingsInboxHomeContentWidget(muted: false, unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
       case SettingsNotificationsContent.preferences:
         return SettingsNotificationPreferencesContentWidget();
     }
