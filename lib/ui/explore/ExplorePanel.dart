@@ -29,6 +29,7 @@ import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/StudentCourses.dart';
+import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
@@ -42,6 +43,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -156,6 +158,7 @@ class ExplorePanelState extends State<ExplorePanel>
   bool? _loadingProgress;
   bool _itemsDropDownValuesVisible = false;
   bool _eventsDisplayDropDownValuesVisible = false;
+  DateTime? _pausedDateTime;
 
   //Maps
   static const double MapBarHeight = 116;
@@ -186,8 +189,9 @@ class ExplorePanelState extends State<ExplorePanel>
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
       StudentCourses.notifyCachedCoursesChanged,
-      Appointments.notifyAppointmentDetail,
       ExplorePanel.notifySelectMap,
+      RootPanel.notifyTabChanged,
+      AppLivecycle.notifyStateChanged,
     ]);
 
 
@@ -1963,7 +1967,7 @@ class ExplorePanelState extends State<ExplorePanel>
       _onLocationServicesStatusChanged(param);
     }
     else if (name == Connectivity.notifyStatusChanged) {
-      if (Connectivity().isNotOffline) {
+      if ((Connectivity().isNotOffline) && mounted) {
         _updateEventCategories();
       }
     }
@@ -1979,11 +1983,15 @@ class ExplorePanelState extends State<ExplorePanel>
     else if (name == NativeCommunicator.notifyMapSelectLocation) {
       _onNativeMapSelectLocation(param);
     }
-    else if(name == Storage.offsetDateKey){
-      _loadExplores();
+    else if (name == Storage.offsetDateKey) {
+      if (mounted) {
+        _loadExplores();
+      }
     }
-    else if(name == Storage.useDeviceLocalTimeZoneKey){
-      _loadExplores();
+    else if (name == Storage.useDeviceLocalTimeZoneKey) {
+      if (mounted) {
+        _loadExplores();
+      }
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateLocationServicesStatus();
@@ -1999,7 +2007,7 @@ class ExplorePanelState extends State<ExplorePanel>
       _refresh(() { });
     }
     else if (name == StudentCourses.notifyTermsChanged) {
-      if (_selectedItem == ExploreItem.StudentCourse) {
+      if ((_selectedItem == ExploreItem.StudentCourse) && mounted && widget.rootTabDisplay) {
         _refresh(() {
           _studentCourseTerms = StudentCourses().terms;
         });
@@ -2007,7 +2015,7 @@ class ExplorePanelState extends State<ExplorePanel>
       }
     }
     else if (name == StudentCourses.notifySelectedTermChanged) {
-      if (_selectedItem == ExploreItem.StudentCourse) {
+      if ((_selectedItem == ExploreItem.StudentCourse) && mounted && widget.rootTabDisplay) {
         _refresh(() {
           _updateSelectedTermId();
         });
@@ -2015,7 +2023,7 @@ class ExplorePanelState extends State<ExplorePanel>
       }
     }
     else if (name == StudentCourses.notifyCachedCoursesChanged) {
-      if ((_selectedItem == ExploreItem.StudentCourse) && ((param == null) || (StudentCourses().displayTermId == param))) {
+      if ((_selectedItem == ExploreItem.StudentCourse) && ((param == null) || (StudentCourses().displayTermId == param)) && mounted && widget.rootTabDisplay) {
         _loadExplores();
       }
     }
@@ -2026,6 +2034,33 @@ class ExplorePanelState extends State<ExplorePanel>
           _mapAllowed = true;
           _selectedItem = param;
         });
+      }
+    }
+    else if (name == RootPanel.notifyTabChanged) {
+      if (((param == RootTab.Explore) || (param == RootTab.Maps)) &&
+          (CollectionUtils.isEmpty(_exploreItems) || (_selectedItem == ExploreItem.Appointments)) && // Do not refresh for other ExploreItem types as they are rarely changed or fire notification for that
+          widget.rootTabDisplay && mounted
+      ) {
+        _loadExplores();
+      }
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          if (mounted) {
+            _loadExplores();
+          }
+        }
       }
     }
   }
