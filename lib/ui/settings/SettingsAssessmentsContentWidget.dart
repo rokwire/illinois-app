@@ -103,7 +103,7 @@ class _SettingsAssessmentsContentWidgetState extends State<SettingsAssessmentsCo
           } else if (bessiCode == 'save_progress') {
             contentList.add(Text(
               Localization().getStringEx('panel.settings.home.assessments.skills_self_evaluation.save_progress.description', 'Progress on an evaluation that you started will be saved automatically until you cancel or complete it.'),
-              style:  Styles().textStyles?.getTextStyle("widget.item.small.thin")
+              style: Styles().textStyles?.getTextStyle("widget.item.small.thin")
             ));
           }
         }

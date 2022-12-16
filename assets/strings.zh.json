@@ -2466,7 +2466,8 @@
 	"panel.student_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 
 	"panel.skills_self_evaluation.get_started.section.title": "技能自我評估",
-    "panel.skills_self_evaluation.get_started.time.description": "5分鐘",
+	"panel.skills_self_evaluation.button.more.hint": "展示更多",
+	"panel.skills_self_evaluation.get_started.time.description": "5分鐘",
     "panel.skills_self_evaluation.get_started.button.label": "開始",
     "panel.skills_self_evaluation.get_started.description.title": "確定您在以下方面的優勢：",
     "panel.skills_self_evaluation.get_started.description.list": "\t\t\u2022 自我管理\n\t\t\u2022 創新\n\t\t\u2022 合作\n\t\t\u2022 社會參與\n\t\t\u2022 情緒恢復力",
