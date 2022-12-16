@@ -201,7 +201,7 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.recent_polls.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.recent_polls.button.all.hint', 'Tap to view all polls'),
@@ -262,7 +262,8 @@ class _HomeRecentPollsWidgetState extends State<HomeRecentPollsWidget> implement
             if ((result?.polls != null) && !DeepCollectionEquality().equals(_recentPolls, result?.polls)) {
               _recentPolls = result?.polls;
               _pageViewKey = UniqueKey();
-              _pageController = null;
+              // _pageController = null;
+              _pageController?.jumpToPage(0);
               _contentKeys.clear();
             }
           });

@@ -822,7 +822,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
               children: pages,
             ),
           ),
-          AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+          AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
         ],);
 
     }
@@ -910,7 +910,8 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
       _currentCode = _displayCodes![_currentPage = currentPage];
 
       _pageViewKey = UniqueKey();
-      _pageController = null;
+      // _pageController = null;
+      _pageController?.jumpToPage(0);
     }
   }
 }

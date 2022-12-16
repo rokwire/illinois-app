@@ -97,7 +97,8 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
             setState(() {
               _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
               _pageViewKey = UniqueKey();
-              _pageController = null;
+              // _pageController = null;
+              _pageController?.jumpToPage(0);
               _contentKeys.clear();
             });
           }
@@ -191,7 +192,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to view all items'),
