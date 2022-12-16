@@ -119,7 +119,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifyCustomize,
-      ExplorePanel.notifyMapSelect,
+      ExplorePanel.notifySelectMap,
     ]);
 
     _tabs = _getTabs();
@@ -237,7 +237,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == HomePanel.notifyCustomize) {
       _onSelectHome();
     }
-    else if (name == ExplorePanel.notifyMapSelect) {
+    else if (name == ExplorePanel.notifySelectMap) {
       _onSelectMaps();
     }
     else if (name == uiuc.TabBar.notifySelectionChanged) {

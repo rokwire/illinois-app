@@ -236,7 +236,7 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all)));
     }
     else if (lowerCaseKey == ExplorePOI.favoriteKeyName.toLowerCase()) {
-      NotificationService().notify(ExplorePanel.notifyMapSelect, ExploreItem.MTDStops);
+      NotificationService().notify(ExplorePanel.notifySelectMap, ExploreItem.MTDDestinations);
     }
     else if (lowerCaseKey == GuideFavorite.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
