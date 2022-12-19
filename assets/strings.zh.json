@@ -3085,6 +3085,7 @@
     "widget.access.privacy.title": "更新隱私級別以訪問 %s",
     "widget.access.auth.title": "登錄以訪問 %s",
     "widget.access.academics.skills_self_evaluation.features.name": "技能自我評估",
+    "widget.access.polls.features.name": "快速投票",
     "widget.access.wellness.appointments.features.name": "我的麥金利約會",
     "widget.access.wellness.health_screener.features.name": "伊利諾伊州健康篩查員",
     "widget.access.wellness.health_screener.features.roles.unsatisfied.message": "Illinois Health Screener 目前僅供學生使用",

@@ -3088,6 +3088,7 @@
     "widget.access.privacy.title": "Update privacy level to access %s",
     "widget.access.auth.title": "Sign in to access %s",
     "widget.access.academics.skills_self_evaluation.features.name": "Skills Self-Evaluation",
+    "widget.access.polls.features.name": "Quick Polls",
     "widget.access.wellness.appointments.features.name": "MyMcKinley Appointments",
     "widget.access.wellness.health_screener.features.name": "Illinois Health Screener",
     "widget.access.wellness.health_screener.features.roles.unsatisfied.message": "The Illinois Health Screener is currently only available to students",

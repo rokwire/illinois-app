@@ -31,6 +31,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/PollBubblePinPanel.dart';
+import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -67,6 +68,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   List<Group>? _myGroups;
 
   bool _loggingIn = false;
+  bool _hasPollsAccess = false;
   
   final GlobalKey _keyBleDescriptionText = GlobalKey();
   double _bleDescriptionTextHeight = 0;
@@ -83,7 +85,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       Polls.notifyLifecycleDelete,
       GeoFence.notifyCurrentRegionsUpdated,
       FlexUI.notifyChanged,
-      Groups.notifyUserMembershipUpdated
+      Groups.notifyUserMembershipUpdated,
     ]);
 
     _scrollController = ScrollController();
@@ -118,8 +120,9 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Widget _buildScaffoldBody() {
-    return Column(children:[
-      Expanded(child:
+    List<Widget> bodyWidgets = [];
+    Widget? accessWidget = AccessCard.builder(resource: 'polls.features');
+    Widget content = Expanded(child:
       CustomScrollView(
           controller: _scrollController,
           slivers: <Widget>[
@@ -136,9 +139,20 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
             ),
           ],
       )
-      ),
-      _buildCreatePollButton()
-    ]);
+    );
+
+    if (accessWidget != null) {
+      bodyWidgets.add(Padding(padding: const EdgeInsets.only(top: 16), child: accessWidget));
+      _hasPollsAccess = false;
+    } else {
+      bodyWidgets.add(content);
+      bodyWidgets.add(_buildCreatePollButton());
+      if (!_hasPollsAccess) {
+        _loadPolls();
+      }
+      _hasPollsAccess = true;
+    }
+    return Column(children: bodyWidgets);
   }
 
   Widget _buildDescriptionLayout(){
