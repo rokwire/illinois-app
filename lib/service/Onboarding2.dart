@@ -91,7 +91,12 @@ class Onboarding2 with Service {
   }
 
   void _didProceedToLogin(BuildContext context, { dynamic loginPanelState}) {
-    _startResearhQuestionnaireIfNeeded(context, currentPanelState: loginPanelState);
+    if (Auth2().isLoggedIn) {
+      _startResearhQuestionnaireIfNeeded(context, currentPanelState: loginPanelState);
+    }
+    else {
+      finish(context);      
+    }
   }
 
   void _startResearhQuestionnaireIfNeeded(BuildContext context, { dynamic currentPanelState }) {
@@ -107,7 +112,7 @@ class Onboarding2 with Service {
             _didFinishResearhQuestionnaire(context);
           }
           else {
-            _promptForResearhQuestionnaire(context);
+            _promptForResearhQuestionnaire(context, questionanire: questionnaire);
           }
         });
       }
@@ -120,44 +125,58 @@ class Onboarding2 with Service {
     }
   }
 
-  void _promptForResearhQuestionnaire(BuildContext context, { Questionnaire? questionanire}) {
-    Navigator.push(context, CupertinoPageRoute<bool>(builder: (context) => Onboarding2ResearchQuestionnairePromptPanel(onboardingContext: {
-      "questionanire": questionanire,
-      "onConfirmAction": () {
-        _proceedToResearhQuestionnaire(context);
+  void _promptForResearhQuestionnaire(BuildContext context, { Questionnaire? questionanire }) {
+    Navigator.push(context, CupertinoPageRoute<bool>(builder: (context) => researhQuestionnairePromptPanel(questionanire: questionanire)));
+  }
+
+  Widget researhQuestionnairePromptPanel({ Questionnaire? questionanire, Map<String, dynamic>? invocationContext}) {
+    return Onboarding2ResearchQuestionnairePromptPanel(onboardingContext: {
+      "onConfirmActionEx": (BuildContext context) {
+        _proceedToResearhQuestionnaire(context, questionanire: questionanire, invocationContext: invocationContext);
       },
-      "onRejectAction": () {
-        _didFinishResearhQuestionnaire(context);
+      "onRejectActionEx": (BuildContext context) {
+        _didFinishResearhQuestionnaire(context, invocationContext: invocationContext);
       }
-    })));
+    });
   }
   
-  void _proceedToResearhQuestionnaire(BuildContext context) {
+  void _proceedToResearhQuestionnaire(BuildContext context, { Questionnaire? questionanire, Map<String, dynamic>? invocationContext }) {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnairePanel(onboardingContext: {
+      "questionanire": questionanire,
       'onContinueAction':  () {
-        _didProceedResearchQuestionnaire(context);
+        _didProceedResearchQuestionnaire(context, invocationContext: invocationContext);
       }
     },)));
   }
 
-  void _didProceedResearchQuestionnaire(BuildContext context) {
-    _acknowledgeResearhQuestionnaire(context);
+  void _didProceedResearchQuestionnaire(BuildContext context, { Map<String, dynamic>? invocationContext }) {
+    _acknowledgeResearhQuestionnaire(context, invocationContext: invocationContext);
   }
 
-  void _acknowledgeResearhQuestionnaire(BuildContext context) {
+  void _acknowledgeResearhQuestionnaire(BuildContext context, { Map<String, dynamic>? invocationContext }) {
     Navigator.push(context, CupertinoPageRoute(builder: (context) => Onboarding2ResearchQuestionnaireAcknowledgementPanel(onboardingContext: {
       'onContinueAction':  () {
-        _didAcknowledgeResearhQuestionnaire(context);
+        _didAcknowledgeResearhQuestionnaire(context, invocationContext: invocationContext);
       }
     },)));
   }
 
-  void _didAcknowledgeResearhQuestionnaire(BuildContext context) {
-    _didFinishResearhQuestionnaire(context);
+  void _didAcknowledgeResearhQuestionnaire(BuildContext context, { Map<String, dynamic>? invocationContext }) {
+    _didFinishResearhQuestionnaire(context, invocationContext: invocationContext);
   }
 
-  void _didFinishResearhQuestionnaire(BuildContext context) {
-    finish(context);
+  void _didFinishResearhQuestionnaire(BuildContext context, { Map<String, dynamic>? invocationContext }) {
+    Function? onFinish = (invocationContext != null) ? invocationContext["onFinishResearhQuestionnaireAction"] : null;
+    Function? onFinishEx = (invocationContext != null) ? invocationContext["onFinishResearhQuestionnaireActionEx"] : null;
+    if (onFinishEx != null) {
+      onFinishEx(context);
+    }
+    else if (onFinish != null) {
+      onFinish();
+    }
+    else {
+      finish(context);
+    }
   }
 
   void finish(BuildContext context) {
