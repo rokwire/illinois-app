@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [4.2.44] - 2022-12-19
 ### Fixed
 - Improve accessibility for Health Screener and BESSI [#2788](https://github.com/rokwire/illinois-app/issues/2788).
 - External website 2FA login loop for McKinley portal [#2578](https://github.com/rokwire/illinois-app/issues/2578).
