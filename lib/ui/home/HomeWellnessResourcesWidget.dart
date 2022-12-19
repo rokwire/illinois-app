@@ -24,7 +24,6 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/DeepLink.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
@@ -356,13 +355,10 @@ class _HomeWellnessResourcesWidgetState extends State<HomeWellnessResourcesWidge
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }
-      else if (UrlUtils.launchInternal(url)){
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      }
-      else{
+      else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {
-          launchUrl(uri);
+          launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       }
     }

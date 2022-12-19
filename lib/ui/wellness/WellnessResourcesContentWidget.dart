@@ -221,7 +221,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
       else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {
-          launchUrl(uri);
+          launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       }
     }
