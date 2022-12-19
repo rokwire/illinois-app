@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Improve accessibility for Health Screener and BESSI [#2788](https://github.com/rokwire/illinois-app/issues/2788).
+- External website 2FA login loop for McKinley portal [#2578](https://github.com/rokwire/illinois-app/issues/2578).
 ### Changed
 - Present research questionnaire on startup after upgrade [#2793](https://github.com/rokwire/illinois-app/issues/2793).
 
