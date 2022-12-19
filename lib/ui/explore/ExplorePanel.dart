@@ -2040,6 +2040,7 @@ class ExplorePanelState extends State<ExplorePanel>
           _mapAllowed = true;
           _selectedItem = param;
         });
+        _loadExplores();
       }
     }
     else if (name == RootPanel.notifyTabChanged) {
