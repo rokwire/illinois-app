@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed tweaks on Favorite MTD items details [#2597](https://github.com/rokwire/illinois-app/issues/2597).
 ### Changed
 - Present research questionnaire on startup after upgrade [#2793](https://github.com/rokwire/illinois-app/issues/2793).
+- Polls :: not-signed-in error - needs better message [#2777](https://github.com/rokwire/illinois-app/issues/2777)
 
 ## [4.2.43] - 2022-12-16
 ### Fixed
