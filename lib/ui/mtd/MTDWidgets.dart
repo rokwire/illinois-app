@@ -398,7 +398,9 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
   }
 
   void _onTapDeparture(MTDDeparture departure) {
-    //TBD
+    if (widget.onTap != null) {
+      widget.onTap!();
+    }
   }
 }
 
