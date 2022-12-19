@@ -2467,6 +2467,7 @@
     "panel.student_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 
     "panel.skills_self_evaluation.get_started.section.title": "Autoevaluación de habilidades",
+    "panel.skills_self_evaluation.button.more.hint": "Mostrar más",
     "panel.skills_self_evaluation.get_started.time.description": "5 minutos",
     "panel.skills_self_evaluation.get_started.button.label": "Empezar",
     "panel.skills_self_evaluation.get_started.description.title": "Identifique sus fortalezas relacionadas con:",

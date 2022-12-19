@@ -2469,6 +2469,7 @@
     "panel.student_courses.load.logged_out.error.msg": "You need to be logged in with your NetID to access My Courses. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.",
 
     "panel.skills_self_evaluation.get_started.section.title": "Skills Self-Evaluation",
+    "panel.skills_self_evaluation.button.more.hint": "Show more",
     "panel.skills_self_evaluation.get_started.time.description": "5 Minutes",
     "panel.skills_self_evaluation.get_started.button.label": "Get Started",
     "panel.skills_self_evaluation.get_started.description.title": "Identify your strengths related to:",

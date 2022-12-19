@@ -77,7 +77,8 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,)),
           IconButton(
-            icon: Image.asset('images/tab-more.png', color: Styles().colors?.surface),
+            icon: Image.asset('images/tab-more.png', color: Styles().colors?.surface, excludeFromSemantics: true),
+            tooltip: Localization().getStringEx('panel.skills_self_evaluation.button.more.hint', 'Show more'),
             onPressed: _onTapShowBottomSheet,
             padding: EdgeInsets.zero,
           ),
@@ -159,9 +160,13 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         return Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
             child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-              Container(
-                height: 24,
-              ),
+              SizedBox(height: 16),
+              Semantics(label: Localization().getStringEx("dialog.close.title", "Close"),
+                  child: GestureDetector(onTap: () => Navigator.of(context).pop(),
+                      child: Container(height: 8, width: 48,
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),
+                              color: Styles().colors?.mediumGray)))),
+              SizedBox(height: 16),
               RibbonButton(
                 rightIconAsset: "images/chevron-right.png",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label", "View past results"),

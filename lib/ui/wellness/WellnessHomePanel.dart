@@ -69,9 +69,9 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
           Padding(
               padding: EdgeInsets.only(left: 16, top: 16, right: 16),
               child: Semantics(
-                  hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
+                  hint: Localization().getStringEx("dropdown.hint", "DropDown"),
                   container: true,
-                  child:RibbonButton(
+                  child: RibbonButton(
                     textColor: Styles().colors!.fillColorSecondary,
                     backgroundColor: Styles().colors!.white,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
