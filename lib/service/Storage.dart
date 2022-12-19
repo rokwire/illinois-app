@@ -388,4 +388,10 @@ class Storage extends rokwire.Storage {
   String get showMtdDestinationsMapInstructionsKey => 'edu.illinois.rokwire.explore.map.mtd_destinations.show_instructions';
   bool? get showMtdDestinationsMapInstructions => getBoolWithName(showMtdDestinationsMapInstructionsKey);
   set showMtdDestinationsMapInstructions(bool? value) => setBoolWithName(showMtdDestinationsMapInstructionsKey, value);
+
+  // Participate In Research
+  static const String participateInResearchPromptedKey  = 'participate_in_research_prompted';
+  bool? get participateInResearchPrompted => getBoolWithName(participateInResearchPromptedKey);
+  set participateInResearchPrompted(bool? value) => setBoolWithName(participateInResearchPromptedKey, value);
+
 }
