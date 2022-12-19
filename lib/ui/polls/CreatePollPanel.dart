@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
@@ -41,11 +42,9 @@ class CreatePollPanel extends StatefulWidget {
   CreatePollPanel({this.group});
 
   static void present(BuildContext context) {
-    if (Auth2().isLoggedIn) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));      
-    }
-    else {
-      AppAlert.showPopup(context, Localization().getStringEx("panel.create_poll.message.logged_out.text", "You need to be logged in with your NetID to create a poll. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings."));
+    Future? result = AccessDialog.show(context: context, resource: 'polls.features');
+    if (result == null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));
     }
   }
 
