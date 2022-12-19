@@ -94,10 +94,10 @@ class Onboarding2 with Service {
     _startResearhQuestionnaireIfNeeded(context, currentPanelState: loginPanelState);
   }
 
-  void _startResearhQuestionnaireIfNeeded(BuildContext context, { dynamic currentPanelState}) {
+  void _startResearhQuestionnaireIfNeeded(BuildContext context, { dynamic currentPanelState }) {
     Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
     if (codes.contains('research_questionnaire')) {
-      if (Questionnaires().participateInResearch) {
+      if (Questionnaires().participateInResearch == true) {
         Onboarding2ProgressableState? progressableState = (currentPanelState is Onboarding2ProgressableState) ? currentPanelState : null;
         progressableState?.onboarding2Progress = true;
         Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
