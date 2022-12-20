@@ -143,7 +143,10 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       Stack(children: [
         GestureDetector(onTap: _onTapContentTypeBackgroundContainer, child:
           Container(color: _dimmedBackgroundColor)),
-        _buildContentTypesDropdownList()
+        Semantics(
+          container: true, //Take accessibility access when shown
+          child: _buildContentTypesDropdownList()
+        )
     ]));
   }
 
