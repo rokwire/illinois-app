@@ -360,6 +360,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     }
 
     private synchronized void clearMarkers() {
+        Utils.Explore.showMarkerInfo(markerLayoutView, false);
         if (markers != null) {
             for (Marker marker : markers) {
                 marker.remove();

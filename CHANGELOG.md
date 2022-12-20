@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Android: show bus stops on the map when zooming [#2807](https://github.com/rokwire/illinois-app/issues/2807).
+- Android: hide marker info view for bus stops [#2809](https://github.com/rokwire/illinois-app/issues/2809).
 
 ## [4.2.44] - 2022-12-19
 ### Fixed
