@@ -155,7 +155,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 Container(
                   child: Align(alignment: Alignment.center,
                     child: SizedBox(height: 24, width: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
+                        child: Semantics(label: "Loading." ,container: true, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ))
                     ),
                   ),
                 ),
@@ -250,7 +250,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Widget _buildImageSection() {
     final double _imageHeight = 200;
 
-    return Container(
+    return Semantics(container: true,  child: Container(
         height: _imageHeight,
         color: Styles().colors!.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
@@ -274,7 +274,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           backgroundColor: Colors.transparent,
                           contentWeight: 0.8,
                     ))))
-        ]));
+        ])));
   }
 
   void _onTapAddImage() async {
@@ -309,6 +309,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 hint: fieldHint,
                 textField: true,
                 excludeSemantics: true,
+                value: _groupTitleController.text,
                 child: TextField(
                   controller: _groupTitleController,
                   onChanged: (text) => setState((){_group?.title = text; }) ,
@@ -350,6 +351,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                     hint: fieldHint,
                     textField: true,
                     excludeSemantics: true,
+                    value: _groupDescriptionController.text,
                     child: TextField(
                       onChanged: (text) => _group?.description = text,
                       controller: _groupDescriptionController,
@@ -378,7 +380,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white), child:
             Row(children: [
               Expanded(child:
-                Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
+                Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, value: _researchConsentDetailsController.text, child:
                   TextField(
                       controller: _researchConsentDetailsController,
                       maxLines: 15,
@@ -895,7 +897,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   //Buttons
   Widget _buildButtonsLayout() {
-    return Container( color: Styles().colors!.white,
+    return Semantics(container: true, child: Container( color: Styles().colors!.white,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
             child: RoundedButton(
@@ -908,7 +910,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               onTap: _onTapCreate,
             ),
           ),
-        );
+        ));
   }
 
   void _onTapCreate() {
