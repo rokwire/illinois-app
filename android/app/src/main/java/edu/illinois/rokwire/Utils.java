@@ -408,9 +408,7 @@ public class Utils {
                     (Constants.FIRST_THRESHOLD_MARKER_ZOOM < maxCurrentZoom)) {
                 boolean passedFirstThreshold = (currentCameraZoom >= Constants.FIRST_THRESHOLD_MARKER_ZOOM);
                 if (singleExploreMarker) {
-                    int textVisibility = passedFirstThreshold ? View.VISIBLE : View.GONE;
-                    View textFrameView = markerLayoutView.findViewById(R.id.markerTextFrame);
-                    textFrameView.setVisibility(textVisibility);
+                    showMarkerInfo(markerLayoutView, passedFirstThreshold);
                     if (passedFirstThreshold) {
                         TextView markerTitleView = markerLayoutView.findViewById(R.id.markerTitleView);
                         String markerTitle = marker.getTitle();
@@ -463,6 +461,15 @@ public class Utils {
                 iconGenerator.setContentView(singleExploreMarker ? markerLayoutView : markerGroupLayoutView);
                 Bitmap icon = iconGenerator.makeIcon();
                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(icon));
+            }
+        }
+
+        public static void showMarkerInfo(View markerLayoutView, boolean show) {
+            if (markerLayoutView != null) {
+                View textFrameView = markerLayoutView.findViewById(R.id.markerTextFrame);
+                if (textFrameView != null) {
+                    textFrameView.setVisibility(show ? VISIBLE : GONE);
+                }
             }
         }
 
