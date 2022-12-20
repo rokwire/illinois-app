@@ -312,7 +312,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 value: _groupTitleController.text,
                 child: TextField(
                   controller: _groupTitleController,
-                  onChanged: (text) => setState((){_group?.title = text; setStateIfMounted(() { });}) ,
+                  onChanged: (text) => setState((){_group?.title = text;}) ,
                   maxLines: 1,
                   decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
                   style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
