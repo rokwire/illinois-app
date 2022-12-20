@@ -2145,6 +2145,9 @@ class ExplorePanelState extends State<ExplorePanel>
         else if (_selectedItem == ExploreItem.MTDDestinations) {
           _selectMapExplore(ExplorePOI.fromJson(poi));
         }
+        else if (_selectedMapExplore != null) {
+          _selectMapExplore(null);
+        }
       }
     }
   }
