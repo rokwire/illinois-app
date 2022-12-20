@@ -138,6 +138,7 @@
     "widget.description.small": { "font_family": "medium", "size": 14.0, "color": "fillColorPrimary"},
     "widget.description.small_underline": { "font_family": "medium", "size": 14.0, "decoration": "underline"},
     "widget.description.small.fat": { "font_family": "bold", "size": 14.0, "color": "fillColorPrimary"},
+    "widget.description.small.fat.semi_expanded": { "font_family": "bold", "size": 14.0, "color": "fillColorPrimary", "letter_spacing": 0.86},
 
     "widget.error.regular": { "font_family": "regular", "size": 16.0, "color": "alert"},
     "widget.error.regular.fat": { "font_family": "bold", "size": 16.0, "color": "alert"},
@@ -217,6 +218,7 @@
     "widget.explore.card.detail.regular.underline": { "font_family": "medium", "size": 14.0, "color": "textBackground",  "decoration": "underline", "decoration_style":  "solid", "decoration_thickness" : 1.0, "decoration_color":  "fillColorSecondary"},
     "widget.explore.card.detail.large": { "font_family": "medium", "size": 16.0, "color": "textBackground"},
     "widget.explore.card.title.regular":  {"font_family": "regular", "size": 18.0, "color": "fillColorPrimary"},
+    "widget.explore.card.title.regular.extra_fat":  {"font_family": "extra_bold", "size": 18.0, "color": "fillColorPrimary"},
     "widget.explore.card.title.large":  {"font_family": "regular", "size": 20.0, "color": "fillColorPrimary"},
 
     "widget.athletics.card.title.large.fat":  {"font_family": "regular", "size": 24.0, "color": "fillColorPrimary",  "weight" :  "w900"},
@@ -335,7 +337,7 @@
     "panel.settings.toggle_button.title.small.disabled": {"font_family": "bold", "size": 14.0, "color": "fillColorPrimaryTransparent015"},
     "panel.settings.toggle_button.title.small.variant.enabled": {"font_family": "regular", "size": 14.0, "color": "textSurface"},
     "panel.settings.toggle_button.title.small.variant.disabled": {"font_family": "regular", "size": 14.0, "color": "fillColorPrimaryTransparent015"},
-    "panel.settings.button.title.medium": {"font_family": "medium", "size": 16.0, "color": "fillColorPrimaryTransparent015"},
+    "panel.settings.button.title.medium": {"font_family": "medium", "size": 16.0, "color": "textBackground"},
 
     "panel.settings.food_filter.title": {"font_family": "bold", "size": 14.0, "color": "white", "letter_spacing" :  1.0},
     "panel.settings.link_account.type.title": {"font_family": "regular", "size": 14.0, "color": "textSurface"},

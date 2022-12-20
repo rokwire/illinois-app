@@ -252,11 +252,11 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       Padding(padding: EdgeInsets.only(top: 8), child:
         contentWidget,
       ),
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount),
       LinkButton(
         title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
         hint: _viewAllHint,
-        onTap: _onSeeAll,
+        onTap: _onTapViewAll,
       )      
     ]);
   }
@@ -273,7 +273,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       );
     }
     else if (item is MTDStop) {
-      return MTDStopCard(
+      return MTDStopScheduleCard(
         stop: item,
         onTap: () => _onTapItem(item),
       );
@@ -412,7 +412,8 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       }
 
       _pageViewKey = UniqueKey();
-      _pageController = null;
+      // _pageController = null; //Doing this will break the listener in the buttons, instead reset to first page
+      _pageController?.jumpToPage(0);
       _contentKeys.clear();
     }
   }
@@ -588,9 +589,14 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     Auth2().prefs?.toggleFavorite(item);
   }
 
-  void _onSeeAll() {
+  void _onTapViewAll() {
     Analytics().logSelect(target: 'View All', source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
+    if ((widget.favoriteKey == MTDStop.favoriteKeyName) || (widget.favoriteKey == ExplorePOI.favoriteKeyName)) {
+      FavoriteExt.launchHome(context, key: widget.favoriteKey);
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
+    }
   }
 }
 

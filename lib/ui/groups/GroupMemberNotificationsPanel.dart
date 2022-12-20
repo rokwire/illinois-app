@@ -84,6 +84,8 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
         backgroundColor: Styles().colors!.white);
   }
 
+
+
   Widget _buildContent() {
     if (_isLoading) {
       return _buildLoadingContent();
@@ -135,38 +137,42 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
               child: Padding(
                   padding: EdgeInsets.only(left: 10),
                   child: Column(children: [
-                    EnabledToggleButton(
+                    _EnabledToggleButton(
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
                         label: Localization().getStringEx("panel.group_member_notifications.posts.label", "Posts"),
                         toggled: !(memberPreferences?.mutePosts ?? false),
+                        defaultValue: (FirebaseMessaging().notifyGroupPostUpdates == true),
                         onTap: _groupSubNotificationsEnabled ? _onTogglePosts : null,
                         textStyle: _groupSubNotificationsEnabled
                             ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                             : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    EnabledToggleButton(
+                    _EnabledToggleButton(
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
                         label: Localization().getStringEx("panel.group_member_notifications.event.label", "Event"),
                         toggled: !(memberPreferences?.muteEvents ?? false),
+                        defaultValue: FirebaseMessaging().notifyGroupEventsUpdates == true,
                         onTap: _groupSubNotificationsEnabled ? _onToggleEvents : null,
                         textStyle: _groupSubNotificationsEnabled
                             ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                             : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    EnabledToggleButton(
+                    _EnabledToggleButton(
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
-                        label: Localization().getStringEx("panel.group_member_notifications.invitations.label", "Invitations"),
+                        label: Localization().getStringEx("panel.group_member_notifications.invitations.label", "Group membership"),
                         toggled: !(memberPreferences?.muteInvitations ?? false),
+                        defaultValue: (FirebaseMessaging().notifyGroupInvitationsUpdates == true),
                         onTap: _groupSubNotificationsEnabled ? _onToggleInvitations : null,
                         textStyle: _groupSubNotificationsEnabled
                             ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                             : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                    EnabledToggleButton(
+                    _EnabledToggleButton(
                         enabled: _groupSubNotificationsEnabled,
                         borderRadius: BorderRadius.zero,
                         label: Localization().getStringEx("panel.group_member_notifications.polls.label", "Polls"),
-                        toggled: !(memberPreferences?.mutePolls ?? false),
+                        toggled: !(memberPreferences?.mutePolls ?? false ),
+                        defaultValue: (FirebaseMessaging().notifyGroupPollsUpdates == true),
                         onTap: _groupSubNotificationsEnabled ? _onTogglePolls : null,
                         textStyle: _groupSubNotificationsEnabled
                             ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
@@ -214,7 +220,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
       ),
       _DisabledToggleButton(
           toggled: groupInvitationsNotificationsEnabled,
-          label: Localization().getStringEx("panel.settings.notifications.group_updates.invitations.label", "Invitations"),
+          label: Localization().getStringEx("panel.settings.notifications.group_updates.invitations.label", "Group membership"),
           textStyle: groupInvitationsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled"): Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       ),
       _DisabledToggleButton(
@@ -242,7 +248,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
         values.add("Events");
       }
       if(_member?.notificationsPreferences?.muteInvitations == true){
-        values.add("Invitations");
+        values.add("Group membership");
       }
       if(_member?.notificationsPreferences?.mutePolls == true){
         values.add("Polls");
@@ -253,9 +259,8 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
       for(int i = 0; i< values.length; i++){
         String value = values[i];
         valuesMessage += value;
-        if(values.length > 1 && i< values.length - 1){//The last don't need separator
-
-          valuesMessage += (i== values.length-2) ? " and ": ", "; // before last use and as separator
+        if(values.length > 1 && i < values.length - 1){//We need separator only if more than one words an the last word don't need separator.
+          valuesMessage += (i== values.length-2) ? " and ": ", "; // before last use 'and' as separator ',' otherwise
         }
       }
     }
@@ -287,6 +292,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
     _increaseProgress();
     Groups().loadMembers(groupId: widget.groupId, memberId: widget.memberId).then((members) {
       _member = members?.first;
+      _updateOverrideValuesIfNeeded();
       _decreaseProgress();
     });
   }
@@ -299,6 +305,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
       }
       setStateIfMounted(() {
         _member!.notificationsPreferences!.overridePreferences = !(_member!.notificationsPreferences!.overridePreferences ?? false);
+        _updateOverrideValuesIfNeeded();
       });
     }
   }
@@ -329,7 +336,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
 
   void _onToggleInvitations() {
     if (!_isLoading && (_member != null)) {
-      Analytics().logSelect(target: "Invitations");
+      Analytics().logSelect(target: "Group membership");
       if (_member!.notificationsPreferences == null) {
         _member!.notificationsPreferences = MemberNotificationsPreferences();
       }
@@ -383,6 +390,15 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
     SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.preferences);
   }
 
+  void _updateOverrideValuesIfNeeded(){
+    MemberNotificationsPreferences? preferences = _member?.notificationsPreferences;
+    if(preferences!= null && preferences.overridePreferences == false){ //Make the default override values to be the same as the global settings
+        preferences.mutePolls = !(FirebaseMessaging().notifyGroupPollsUpdates == true);
+        preferences.mutePosts = !(FirebaseMessaging().notifyGroupPostUpdates == true);
+        preferences.muteInvitations = !(FirebaseMessaging().notifyGroupInvitationsUpdates == true);
+        preferences.muteEvents = !(FirebaseMessaging().notifyGroupEventsUpdates == true);
+    }
+  }
 
   void _increaseProgress() {
     setStateIfMounted(() {
@@ -417,6 +433,7 @@ class _GroupMemberNotificationsPanelState extends State<GroupMemberNotifications
         _checkNotificationsEnabled();
       }
     } else if (name == FirebaseMessaging.notifySettingUpdated) {
+      _updateOverrideValuesIfNeeded();
       setStateIfMounted(() {});
     } else if (name == FlexUI.notifyChanged) {
       setStateIfMounted(() {});
@@ -435,4 +452,25 @@ class _DisabledToggleButton extends ToggleRibbonButton{
       void Function()? onTap,
       TextStyle? textStyle,})
       : super(label: label, toggled: (toggled == true), onTap: onTap, textStyle: textStyle, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),rightIcons: _rightIcons);
+}
+
+class _EnabledToggleButton extends ToggleRibbonButton {
+  final bool? enabled;
+  final bool? defaultValue;
+
+  _EnabledToggleButton(
+      {String? label,
+        bool? toggled,
+        void Function()? onTap,
+        BoxBorder? border,
+        BorderRadius? borderRadius,
+        TextStyle? textStyle,
+        this.enabled = false, this.defaultValue = false})
+      : super(label: label, toggled: (toggled == true), onTap: onTap, border: border, borderRadius: borderRadius, textStyle: textStyle);
+
+  // @override
+  // bool get toggled => (enabled == true) ? super.toggled == true : this.defaultValue == true;
+
+  @override
+  Widget? get rightIconImage =>Image.asset((toggled) ? 'images/switch-on.png' : 'images/switch-off.png');  //Workaround for blurry images
 }

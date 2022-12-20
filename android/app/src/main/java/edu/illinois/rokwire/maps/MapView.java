@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,7 +66,8 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     private Activity activity;
     private com.google.android.gms.maps.MapView googleMapView;
     private GoogleMap googleMap;
-    private MapStyleOptions mapStyleOptions;
+    private MapStyleOptions mapStyleNoPoiOptions;
+    private MapStyleOptions mapStyleNoStopsOptions;
 
     private ArrayList<Object> explores;
     private HashMap exploreOptions;
@@ -144,10 +146,19 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     }
 
     private void initMapStyleOptions() {
+        // No Poi map style options
         try {
-            mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.mapstyle_nopoi);
+            mapStyleNoPoiOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.mapstyle_nopois);
         } catch (Resources.NotFoundException e) {
-            Log.e("MapView", "Failed to load map style options from resources. Stacktrace:");
+            Log.e("MapView", "Failed to load map style 'mapstyle_nopois' options from resources. Stacktrace:");
+            e.printStackTrace();
+        }
+
+        // No Stops map style options
+        try {
+            mapStyleNoStopsOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.mapstyle_nostops);
+        } catch (Resources.NotFoundException e) {
+            Log.e("MapView", "Failed to load map style 'mapstyle_nostops' options from resources. Stacktrace:");
             e.printStackTrace();
         }
     }
@@ -157,7 +168,6 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         onResume();
         googleMap = map;
         enableMyLocation(enableLocationValue);
-        googleMap.setMapStyle(mapStyleOptions);
         googleMap.setOnMarkerClickListener(this::onMarkerClicked);
         googleMap.setOnMapClickListener(this::onMapClick);
         googleMap.setOnCameraIdleListener(this::onCameraIdle);
@@ -214,9 +224,11 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
                         markMarker.remove();
                     }
                     Marker marker = googleMap.addMarker(markerOptions);
-                    JSONObject tagJson = Utils.Explore.constructMarkerTagJson(getContext(), marker.getTitle(), explore);
-                    marker.setTag(tagJson);
-                    markMarker = marker;
+                    if (marker != null) {
+                        JSONObject tagJson = Utils.Explore.constructMarkerTagJson(getContext(), marker.getTitle(), explore);
+                        marker.setTag(tagJson);
+                        markMarker = marker;
+                    }
                 }
             }
             else if (markMarker != null) {
@@ -250,6 +262,9 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
                     thresholdDistance = getThresholdDistance(googleMap.getCameraPosition().zoom);
                 }
                 buildDisplayExploresForThresholdDistance(thresholdDistance);
+            } else {
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(Constants.DEFAULT_INITIAL_CAMERA_POSITION, Constants.DEFAULT_CAMERA_ZOOM);
+                googleMap.moveCamera(cameraUpdate);
             }
         }
     }
@@ -258,8 +273,13 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         if (mapLayoutPassed) {
             Object exploreLocationThresholdParam = (exploreOptions != null) ? exploreOptions.get("LocationThresoldDistance") : null;
             double thresholdDistance = (exploreLocationThresholdParam instanceof Double) ? (Double) exploreLocationThresholdParam : getAutomaticThresholdDistance();
-            buildDisplayExploresForThresholdDistance(thresholdDistance);
+            buildDisplayExploresAsyncForThresholdDistance(thresholdDistance);
         }
+    }
+
+    private void buildDisplayExploresAsyncForThresholdDistance(double thresholdDistance) {
+        MarkersAsyncTask markersAsyncTask = new MarkersAsyncTask();
+        markersAsyncTask.execute(thresholdDistance);
     }
 
     private void buildDisplayExploresForThresholdDistance(double thresholdDistance) {
@@ -322,15 +342,17 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             return;
         }
         clearMarkers();
-        if (displayExplores != null && displayExplores.size() > 0) {
+        if ((displayExplores != null) && (displayExplores.size() > 0)) {
             markers = new ArrayList<>();
             for (Object explore : displayExplores) {
                 MarkerOptions markerOptions = Utils.Explore.constructMarkerOptions(getContext(), explore, markerLayoutView, markerGroupLayoutView, iconGenerator);
                 if (markerOptions != null) {
                     Marker marker = googleMap.addMarker(markerOptions);
-                    JSONObject tagJson = Utils.Explore.constructMarkerTagJson(getContext(), marker.getTitle(), explore);
-                    marker.setTag(tagJson);
-                    markers.add(marker);
+                    if (marker != null) {
+                        JSONObject tagJson = Utils.Explore.constructMarkerTagJson(getContext(), marker.getTitle(), explore);
+                        marker.setTag(tagJson);
+                        markers.add(marker);
+                    }
                 }
             }
         }
@@ -338,6 +360,7 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     }
 
     private synchronized void clearMarkers() {
+        Utils.Explore.showMarkerInfo(markerLayoutView, false);
         if (markers != null) {
             for (Marker marker : markers) {
                 marker.remove();
@@ -349,12 +372,19 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
 
     private void updateMarkers() {
         float currentCameraZoom = googleMap.getCameraPosition().zoom;
-        boolean updateMarkerInfo = Utils.Explore.shouldUpdateMarkerView(currentCameraZoom, cameraZoom);
+        boolean showMarkerPopups = Utils.Map.getValueFromPath(exploreOptions, "ShowMarkerPopus", true);
+        boolean crossedZoomThreshold = Utils.Explore.crossedZoomThreshold(currentCameraZoom, cameraZoom);
+        boolean updateMarkerInfo = showMarkerPopups && crossedZoomThreshold;
+
         if (updateMarkerInfo) {
-            if (markers != null && !markers.isEmpty()) {
+            boolean hasMarkers = (markers != null && !markers.isEmpty());
+            if (hasMarkers) {
+                LatLngBounds visibleMapBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
                 for (Marker marker : markers) {
-                    boolean singleExploreMarker = Utils.Explore.optSingleExploreMarker(marker);
-                    Utils.Explore.updateCustomMarkerAppearance(getContext(), marker, singleExploreMarker, currentCameraZoom, cameraZoom, markerLayoutView, markerGroupLayoutView, iconGenerator);
+                    if (visibleMapBounds.contains(marker.getPosition())) {
+                        boolean singleExploreMarker = Utils.Explore.optSingleExploreMarker(marker);
+                        Utils.Explore.updateCustomMarkerAppearance(getContext(), marker, singleExploreMarker, currentCameraZoom, cameraZoom, markerLayoutView, markerGroupLayoutView, iconGenerator);
+                    }
                 }
             }
         }
@@ -362,14 +392,16 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
     }
 
     private void updateMapStyle() {
-        boolean hideBuildingLabelsValue = false;
-        Object hideBuildingsLabelParam = (exploreOptions != null) ? exploreOptions.get("HideBuildingLabels") : null;
-        if (hideBuildingsLabelParam instanceof Boolean) {
-            hideBuildingLabelsValue = (Boolean) hideBuildingsLabelParam;
+        boolean hideBuildingLabels = Utils.Map.getValueFromPath(exploreOptions, "HideBuildingLabels", false);
+        boolean hideBusStops = Utils.Map.getValueFromPath(exploreOptions, "HideBusStopPOIs", false);
+        MapStyleOptions mapStyleOptions = null;
+        if (hideBuildingLabels) {
+            mapStyleOptions = (cameraZoom >= Constants.MAP_NO_POI_THRESHOLD_ZOOM) ? mapStyleNoPoiOptions : null;
+        } else if (hideBusStops) {
+            mapStyleOptions = mapStyleNoStopsOptions;
         }
-        if (hideBuildingLabelsValue) {
-            MapStyleOptions mapStyle = (cameraZoom >= Constants.MAP_NO_POI_THRESHOLD_ZOOM) ? mapStyleOptions : null;
-            googleMap.setMapStyle(mapStyle);
+        if (mapStyleOptions != null) {
+            googleMap.setMapStyle(mapStyleOptions);
         }
     }
 
@@ -442,11 +474,10 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
 
     private void onCameraIdle() {
         CameraPosition cameraPosition = googleMap.getCameraPosition();
-        float zoomDelta = Math.abs(cameraZoom - cameraPosition.zoom);
+        float currentZoom = cameraPosition.zoom;
+        float zoomDelta = Math.abs(cameraZoom - currentZoom);
         boolean zoomDeltaPassed = (zoomDelta > Constants.MAP_THRESHOLD_ZOOM_UPDATE_STEP);
-        // Prevent building explores (respectively markers) for zoom level that is above our max zoom level
-        boolean maxZoomLevelNotReached = (cameraPosition.zoom < Constants.MAP_MAX_ZOOM_LEVEL_FOR_THRESHOLD);
-        if (zoomDeltaPassed && maxZoomLevelNotReached) {
+        if (zoomDeltaPassed) {
             buildDisplayExplores();
         } else {
             updateMarkers();
@@ -503,8 +534,8 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
         final float[] thresholdDistanceByZoom = {
             1000000, 800000, 600000, 200000, 100000,    // zoom 0 - 4
             100000,  80000,  60000,  20000,  10000,     // zoom 5 - 9
-            5000,    1000,   500,    200,    100,       // zoom 10 - 14
-            50,      0                                  // zoom 15 - 16 (max zoom level)
+            5000,    2000,   1000,   500,    250,       // zoom 10 - 14
+            100,     50,     0                          // zoom 15 - 16 (max zoom level)
         };
 
         int zoomIndex = Math.round(zoom);
@@ -514,5 +545,19 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
             return zoomDistance - (zoom - (float) zoomIndex) * (zoomDistance - nextZoomDistance);
         }
         return 0;
+    }
+
+    private class MarkersAsyncTask extends AsyncTask<Double, Void, List<Object>> {
+
+        @Override
+        protected List<Object> doInBackground(Double... params) {
+            return buildExplores(explores, params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(List<Object> explores) {
+            displayExplores = explores;
+            showExploresOnMap();
+        }
     }
 }

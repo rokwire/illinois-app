@@ -149,7 +149,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 ),
 
                 Visibility(
-                  visible: Config().showGroupPostReactions,
+                  visible: Config().showGroupPostReactions && (widget.group?.currentUserHasPermissionToSendReactions == true),
                   child: Padding(
                     padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
                     child: GroupPostReaction(
@@ -159,7 +159,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       accountIDs: _post?.reactions[thumbsUpReaction],
                       selectedIconKey: 'thumbs-up-filled',
                       deselectedIconKey: 'thumbs-up-outline-gray',
-                      onTapEnabled: _canSendReaction,
+                      // onTapEnabled: _canSendReaction,
                     ),
                   ),
                 ),
@@ -359,7 +359,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   Widget _buildPostEdit() {
     return Visibility(
         key: _postEditKey,
-        visible: _canSendReply,
+        visible: widget.group?.currentUserHasPermissionToSendReply == true,
         child: Padding(
             padding: EdgeInsets.all(_outerPadding),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1002,7 +1002,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   bool get _isReplyVisible {
-    return _canSendReply;
+    return widget.group?.currentUserHasPermissionToSendReply == true;
   }
 
   bool get _isReportAbuseVisible {
@@ -1011,18 +1011,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   bool get _isEditMainPost {
     return _mainPostUpdateData!=null;
-  }
-
-  bool get _canSendReply {
-    return ((widget.group?.currentUserIsAdmin == true) ||
-        (widget.group?.currentUserIsMember == true &&
-            widget.group?.isMemberAllowedToReplyToPost == true));
-  }
-
-  bool get _canSendReaction {
-    return (widget.group?.currentUserIsAdmin == true) ||
-        (widget.group?.currentUserIsMember == true &&
-            widget.group?.isMemberAllowedToSendReactionsToPost == true);
   }
 
   // Notifications Listener

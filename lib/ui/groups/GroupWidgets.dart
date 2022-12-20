@@ -34,7 +34,6 @@ import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
-import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -794,7 +793,8 @@ class GroupCard extends StatefulWidget {
     this.displayType = GroupCardDisplayType.allGroups,
     this.margin = const EdgeInsets.symmetric(horizontal: 16),
     this.onImageTap,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   _GroupCardState createState() => _GroupCardState();
@@ -1075,7 +1075,7 @@ class _GroupCardState extends State<GroupCard> {
     String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
     String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
 
-    return RichText(text: TextSpan(style: Styles().textStyles?.getTextStyle('"widget.description.small.fat'), children: [
+    return RichText(text: TextSpan(style: Styles().textStyles?.getTextStyle('widget.description.small.fat'), children: [
       TextSpan(text: privacyMsgStart),
       WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget()),
       TextSpan(text: privacyMsgEnd)
@@ -1329,7 +1329,8 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                 ),
                 Expanded(child: Container()),
                 Visibility(
-                  visible: Config().showGroupPostReactions,
+                  visible: Config().showGroupPostReactions &&
+                      (widget.group?.currentUserHasPermissionToSendReactions == true),
                   child: GroupPostReaction(
                     groupID: widget.group?.id,
                     post: widget.reply,
@@ -2131,16 +2132,6 @@ class GroupPollCard extends StatefulWidget{
       (group?.currentUserIsAdmin ?? false)
     );
   }
-  
-  bool get _canVote {
-    return ((poll!.status == PollStatus.opened) &&
-        (((poll!.userVote?.totalVotes ?? 0) == 0) ||
-            poll!.settings!.allowMultipleOptions! ||
-            poll!.settings!.allowRepeatOptions!
-        ) &&
-        (!poll!.isGeoFenced || GeoFence().currentRegionIds.contains(poll!.regionId))
-    );
-  }
 
   bool get _canEnd {
     return (poll?.status == PollStatus.opened) && (
@@ -2201,7 +2192,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.created","Polls created");
     } if (poll.status == PollStatus.opened) {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.open","Polls open");
-      if (widget._canVote) {
+      if (poll.canVote) {
         footerWidgets.add(_createVoteButton());
       }
     }
@@ -2680,18 +2671,11 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
   @override
   void initState() {
     super.initState();
-    if (CollectionUtils.isNotEmpty(widget.groups)) {
-      for (Group group in widget.groups!) {
-        if (group.id != null) {
-          _selectedGroupIds.add(group.id!);
-        }
-      }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(contentPadding: EdgeInsets.zero, scrollable: true, content:
+    return AlertDialog(contentPadding: EdgeInsets.zero, scrollable: false, content:
     Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
       Container(
           decoration: BoxDecoration(
@@ -2721,25 +2705,91 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
           ])
       ),
       Padding(padding: EdgeInsets.all(10), child: _buildGroupsList()),
+
       Semantics(container: true, child:
-        Padding(padding: EdgeInsets.all(10), child:
-          RoundedButton(
-              label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select"),
-              borderColor: Styles().colors!.fillColorSecondary,
-              backgroundColor: Styles().colors!.white,
-              textColor: Styles().colors!.fillColorPrimary,
-              onTap: _onTapSelect
-          )
+      Container(
+          // constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 4 ),
+          padding: EdgeInsets.all(10), child:
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: _onTapSelectAll,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                          color: Colors.white,
+                          child: Text( 'Select All', //TBD localize
+                            style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16.0, color: Styles().colors?.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, height: 1.61)),
+                      )
+                    )
+                  ),
+
+                  Expanded(child:
+                  Row(
+                    children: [
+                      Expanded(child: Container()),
+                      Container(child:InkWell(
+                        onTap: _onTapClearSelection,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                          color: Colors.white,
+                          child:Text('Deselect All', //TBD localize
+                            textAlign: TextAlign.left,
+                            style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16.0, color: Styles().colors?.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, height: 1.61))),
+
+                      ))
+                    ],
+                  )),
+                ],
+              ),
+            Container(height: 12,),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                  child: RoundedButton(
+                      label: Localization().getStringEx("widget.groups.selection.button.send.label", "Send"),//TBD localize
+                      borderColor: Styles().colors!.fillColorSecondary,
+                      backgroundColor: Styles().colors!.white,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapSelect
+                  )),
+                  Container(width: 16,),
+                  Expanded(child:RoundedButton(
+                      label: Localization().getStringEx("widget.groups.selection.button.cancel.label", "Cancel"),//TBD localize
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      backgroundColor: Styles().colors!.white,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapClose
+                  ))
+                ],
+              )
+          ],
         )
+      )
       )
     ]));
   }
 
   Widget _buildGroupsList() {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double maxListHeight = screenHeight>0 ? screenHeight/2 : 100;
+
     if (CollectionUtils.isEmpty(widget.groups)) {
       return Container();
     }
     List<Widget> groupWidgetList = [];
+
+    groupWidgetList.add(Container(
+      padding: EdgeInsets.only(top:10), //TBD localize
+      child: Text(Localization().getStringEx("widget.groups.selection.message", "Also send this post to these selected groups:"), textAlign: TextAlign.center,
+          style: Styles().textStyles?.getTextStyle("widget.message.regular.fat")),
+    ),);
+
     for (Group group in widget.groups!) {
       if (group.id != null) {
         groupWidgetList.add(ToggleRibbonButton(
@@ -2752,7 +2802,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
       }
 
     }
-    return Column(children: groupWidgetList);
+    return Container(constraints: BoxConstraints(maxHeight: maxListHeight), child:SingleChildScrollView(child:Column(children: groupWidgetList)));
   }
 
   void _onTapGroup(String groupId) {
@@ -2777,6 +2827,36 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
       }
     }
     Navigator.of(context).pop(selectedGroups);
+  }
+
+  void _onTapSelectAll(){
+    if (CollectionUtils.isNotEmpty(widget.groups)) {
+      _clearSelection();
+      for (Group group in widget.groups!) {
+        if (group.id != null) {
+          _selectedGroupIds.add(group.id!);
+        }
+      }
+      if(mounted){
+        setState(() {
+
+        });
+      }
+    }
+
+  }
+
+  void _onTapClearSelection(){
+    _clearSelection();
+    if(mounted){
+      setState(() {
+
+      });
+    }
+  }
+
+  void _clearSelection(){
+    _selectedGroupIds = {};
   }
 
   void _onTapClose() {
@@ -2863,7 +2943,8 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                   textStyle: isGroupInfoAllowed
                                       ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                                       : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
-                              EnabledToggleButton(
+                             //Hide View Name. We will always want to show the name, so just keep it as true and just hide it so it cannot be changed.
+                              /*EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
                                   borderRadius: BorderRadius.zero,
                                   label: Localization().getStringEx("panel.groups_create.settings.allow_view_name.label", "View Name"),
@@ -2874,7 +2955,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                     );},
                                   textStyle: isGroupInfoAllowed
                                       ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
-                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),*/
                               EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
                                   borderRadius: BorderRadius.zero,
@@ -2886,6 +2967,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                                   textStyle: isGroupInfoAllowed
                                       ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                                       : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              //Hide Phone for now
                               // EnabledToggleButton(
                               //     enabled: isGroupInfoAllowed,
                               //     borderRadius: BorderRadius.zero,
@@ -2929,14 +3011,14 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                             padding: EdgeInsets.only(left: 10),
                             child: Column(children: [
                               EnabledToggleButton(
-                                  enabled: isGroupPostAllowed,
+                                  enabled: (isGroupPostAllowed == true && isGroupInfoAllowed == true),
                                   borderRadius: BorderRadius.zero,
                                   label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Send posts to specific members"), //TBD localize section
                                   toggled: (settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false),
                                   onTap: (){_onSettingsTap(
-                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToSpecificMembers =  !(settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false);}}
+                                      changeSetting: (){ if(isGroupPostAllowed == true && isGroupInfoAllowed == true) {settings?.memberPostPreferences?.sendPostToSpecificMembers =  !(settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false);}}
                                   );},
-                                  textStyle: isGroupPostAllowed
+                                  textStyle: (isGroupPostAllowed == true && isGroupInfoAllowed == true)
                                       ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
                                       : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
                               EnabledToggleButton(

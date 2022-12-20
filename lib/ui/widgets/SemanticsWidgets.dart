@@ -5,7 +5,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 class AccessibleViewPagerNavigationButtons extends StatefulWidget{
   final PageController? controller;
   final int? initialPage;
-  final int? pagesCount;
+  final int Function()? pagesCount; //This must be a function in order to receive updates if the count changes
 
   const AccessibleViewPagerNavigationButtons({Key? key, this.controller, this.initialPage, this.pagesCount}) : super(key: key);
 
@@ -19,17 +19,14 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
 
   @override
   void initState() {
-
     _currentPage = widget.initialPage ?? _currentPage;
-    if(widget.controller!=null){
-      widget.controller!.addListener(() {
-        if(mounted) {
-          setState(() {
-            _currentPage = widget.controller?.page?.round() ?? _currentPage;
-          });
-        }
-      });
-    }
+    widget.controller?.addListener(() {
+      if (mounted) {
+        setState(() {
+          _currentPage = widget.controller?.page?.round() ?? _currentPage;
+        });
+      }
+    });
     super.initState();
   }
 
@@ -90,7 +87,8 @@ class _AccessibleViewPagerNavigationButtonsState extends State<AccessibleViewPag
   }
 
   bool get _nextButtonAvailable{
-    return _currentPage < ((widget.pagesCount ?? 0) -1);
+    int count = widget.pagesCount?.call() ?? 0;
+    return _currentPage < (count - 1);
   }
 
   bool get _previousButtonAvailable{

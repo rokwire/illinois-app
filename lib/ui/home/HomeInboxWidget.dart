@@ -86,7 +86,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
 
     if (Connectivity().isOnline && Auth2().isLoggedIn) {
       _loadingMessages = true;
-      Inbox().loadMessages(unread: _unread, offset: 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
+      Inbox().loadMessages(unread: _unread, muted: false, offset: 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
         setStateIfMounted(() {
           _loadingMessages = false;
           _messages = messages;
@@ -140,7 +140,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
         setState(() {
           _loadingMessagesPage = true;
         });
-        Inbox().loadMessages(unread: _unread, offset: 0, limit: max(_messages?.length ?? 0, Config().homeRecentNotificationsCount)).then((List<InboxMessage>? messages) {
+        Inbox().loadMessages(unread: _unread, muted: false, offset: 0, limit: max(_messages?.length ?? 0, Config().homeRecentNotificationsCount)).then((List<InboxMessage>? messages) {
           setStateIfMounted(() {
             _loadingMessages = false;
             _messages = messages;
@@ -160,7 +160,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
         setState(() {
           _loadingMessagesPage = true;
         });
-        Inbox().loadMessages(unread: _unread, offset: _messages?.length ?? 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
+        Inbox().loadMessages(unread: _unread, muted: false, offset: _messages?.length ?? 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
           setStateIfMounted(() {
             _loadingMessagesPage = false;
             _hasMoreMessages = (messages?.length ?? 0) == Config().homeRecentNotificationsCount;
@@ -263,7 +263,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.inbox.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.inbox.button.all.hint', 'Tap to view all notifications'),

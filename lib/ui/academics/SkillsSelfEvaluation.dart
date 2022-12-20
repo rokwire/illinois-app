@@ -15,16 +15,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationInfoPanel.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
-import 'package:illinois/ui/settings/SettingsPrivacyPanel.dart';
 import 'package:illinois/ui/widgets/InfoPopup.dart';
+import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/model/survey.dart';
-import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/storage.dart';
@@ -80,6 +78,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
           Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,)),
           IconButton(
             icon: Styles().images?.getImage('more-white', excludeFromSemantics: true) ?? Container(),
+            tooltip: Localization().getStringEx('panel.skills_self_evaluation.button.more.hint', 'Show more'),
             onPressed: _onTapShowBottomSheet,
             padding: EdgeInsets.zero,
           ),
@@ -161,9 +160,13 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         return Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 17),
             child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-              Container(
-                height: 24,
-              ),
+              SizedBox(height: 16),
+              Semantics(label: Localization().getStringEx("dialog.close.title", "Close"),
+                  child: GestureDetector(onTap: () => Navigator.of(context).pop(),
+                      child: Container(height: 8, width: 48,
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),
+                              color: Styles().colors?.mediumGray)))),
+              SizedBox(height: 16),
               RibbonButton(
                 rightIconKey: "chevron-right",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label", "View past results"),
@@ -199,39 +202,9 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   }
 
   void _onTapStartEvaluation() {
-    List<String>? academicUiComponents = JsonUtils.stringListValue(FlexUI()['academics']);
-    if (academicUiComponents?.contains('skills_self_evaluation') == true) {
-      if (Config().bessiSurveyID != null && Auth2().isOidcLoggedIn && Auth2().privacyMatch(4)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget(), tabBar: uiuc.TabBar())));
-      } else {
-        Widget infoTextWidget = Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(
-                text: Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.prefix', 'You need to be signed in with your NetID to access Assessments.\n'),
-                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
-              ),
-              WidgetSpan(
-                child: InkWell(onTap: _onTapPrivacyLevel, child: Text(
-                  Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.privacy', 'Set your privacy level to 4 or 5.'),
-                  style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.link'),
-                )),
-              ),
-              TextSpan(
-                text: Localization().getStringEx('panel.skills_self_evaluation.auth_dialog.suffix', ' Then, sign in with your NetID under Settings.'),
-                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.auth_dialog.text'),
-              ),
-            ],
-          ),
-        );
-        showDialog(context: context, builder: (_) => InfoPopup(
-          backColor: Styles().colors?.surface,
-          padding: EdgeInsets.only(left: 24, right: 24, top: 28, bottom: 24),
-          alignment: Alignment.center,
-          infoTextWidget: infoTextWidget,
-          closeIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
-        ),);
-      }
+    Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation.features');
+    if (Config().bessiSurveyID != null && result == null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget(), tabBar: uiuc.TabBar())));
     }
   }
 
@@ -280,10 +253,6 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   void _onTapShowInfo(String key) {
     Navigator.of(context).pop();
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SkillsSelfEvaluationInfoPanel(content: _infoContentItems[key])));
-  }
-
-  void _onTapPrivacyLevel() {
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.regular,)));
   }
 
   // NotificationsListener

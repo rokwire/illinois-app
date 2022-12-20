@@ -188,7 +188,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.laundry.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.laundry.button.all.hint', 'Tap to view all laundries'),
@@ -219,7 +219,8 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
           setState(() {
             _laundrySchool = laundrySchool;
             _pageViewKey = UniqueKey();
-            _pageController = null;
+            // _pageController = null;
+            _pageController?.jumpToPage(0);
             _contentKeys.clear();
           });
         }

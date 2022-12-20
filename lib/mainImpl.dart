@@ -27,6 +27,7 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Explore.dart';
 import 'package:illinois/service/MTD.dart';
+import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -304,6 +305,18 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
     else if (Auth2().prefs?.privacyLevel == null) {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
     }
+    else if ((Storage().participateInResearchPrompted != true) && (Questionnaires().participateInResearch == null) && Auth2().isOidcLoggedIn) {
+      return Onboarding2().researhQuestionnairePromptPanel(invocationContext: {
+        "onFinishResearhQuestionnaireActionEx": (BuildContext context) {
+          if (mounted) {
+            setState(() {
+              Storage().participateInResearchPrompted = true;
+            });
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }
+        }
+      });
+    }
     else {
       return RootPanel();
     }
@@ -437,6 +450,9 @@ class _AppState extends State<App> with TickerProviderStateMixin implements Noti
       else if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          if (mounted) {
+            setState(() {}); // setState could present Participate In Research, in case the user has logged in recently
+          }
           _presentLaunchPopup();
         }
       }

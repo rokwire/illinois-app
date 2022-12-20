@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -53,7 +55,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   bool _isFilterLoading = false;
   int _groupsLoadingProgress = 0;
+  Set<Completer<void>>? _reloadGroupsContentCompleters;
   bool _myGroupsBusy = false;
+
+  String? _newGroupId;
+  GlobalKey? _newGroupKey;
 
   GroupsContentType? _selectedContentType;
   bool _contentTypesVisible = false;
@@ -107,48 +113,67 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   ///////////////////////////////////
   // Data Loading
 
-  void _reloadGroupsContent() {
-    _allGroups = null;
-    _loadUserGroups();
-    _loadAllGroups();
+  Future<void> _reloadGroupsContent() async {
+    if (!Connectivity().isOffline) {
+      if (_reloadGroupsContentCompleters == null) {
+        _reloadGroupsContentCompleters = <Completer<void>>{};
+
+        _allGroups = null;
+        _increaseGroupsLoadingProgress();
+        List<List<Group>?> result = await Future.wait([
+          _loadUserGroups(),
+          _loadAllGroups(),
+        ]);
+        _userGroups = (0 < result.length) ? result[0] : Groups().userGroups;
+        _allGroups = (1 < result.length) ? result[1] : null;
+        _decreaseGroupsLoadingProgress();
+        _checkGroupsContentLoaded();
+
+        if (_reloadGroupsContentCompleters != null) {
+          Set<Completer<void>> loginCompleters = _reloadGroupsContentCompleters!;
+          _reloadGroupsContentCompleters = null;
+          for (Completer<void> completer in loginCompleters) {
+            completer.complete();
+          }
+        }
+      }
+      else {
+        Completer<void> completer = Completer<bool?>();
+        _reloadGroupsContentCompleters!.add(completer);
+        return completer.future;
+      }
+    }
   }
 
-  void _loadUserGroups() {
-    _increaseGroupsLoadingProgress();
-    Groups().loadGroups(contentType: GroupsContentType.my).then((List<Group>? groups) {
-      _userGroups = groups;
+  Future<void> _reloadAllGroupsContent() async {
+    if (!Connectivity().isOffline) {
+      _increaseGroupsLoadingProgress();
+      _allGroups = await _loadAllGroups();
       _decreaseGroupsLoadingProgress();
       _checkGroupsContentLoaded();
-    });
-  }
-
-  void _applyUserGroups() {
-    _userGroups = Groups().userGroups;
-    _updateState();
-  }
-
-  void _loadAllGroups() {
-    // Do not load all groups when device is offline
-    if (Connectivity().isOffline) {
-      return;
     }
-    _increaseGroupsLoadingProgress();
+  }
+
+  Future<List<Group>?> _loadUserGroups() async =>
+    Groups().loadGroups(contentType: GroupsContentType.my);
+
+  Future<List<Group>?> _loadAllGroups() async =>
     Groups().loadGroups(
       contentType: GroupsContentType.all,
       category: (_selectedCategory != _allCategoriesValue) ? _selectedCategory : null,
       tags: (_selectedTagFilter == _TagFilter.my) ? Auth2().prefs?.positiveTags : null,
-    ).then((List<Group>? groups) {
-      _allGroups = groups;
-      _decreaseGroupsLoadingProgress();
-      _checkGroupsContentLoaded();
-    });
-  }
+    );
 
   void _checkGroupsContentLoaded() {
     if (!_isGroupsLoading) {
       _selectedContentType ??= (CollectionUtils.isNotEmpty(_userGroups) ? GroupsContentType.my : GroupsContentType.all);
       _updateState();
     }
+  }
+
+  void _applyUserGroups() {
+    _userGroups = Groups().userGroups;
+    _updateState();
   }
 
   Future<void> _loadFilters() async{
@@ -260,24 +285,20 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         Expanded(child: Stack(alignment: Alignment.topCenter, children: [
           Column(children: [
             _buildFunctionalBar(),
-            Expanded(
-              child: _isLoading
-                ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ),)
-                : Stack(
-                  alignment: AlignmentDirectional.topCenter,
-                  children: <Widget>[
-                    Container(color: Styles().colors!.background, child:
-                      RefreshIndicator(onRefresh: _onPullToRefresh, child:
-                        SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
-                          Column( children: <Widget>[ _buildGroupsContent(), ],),
-                        ),
+            Expanded(child: _isLoading
+              ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ),)
+              : Stack(alignment: AlignmentDirectional.topCenter, children: <Widget>[
+                  Container(color: Styles().colors!.background, child:
+                    RefreshIndicator(onRefresh: _onPullToRefresh, child:
+                      SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
+                        Column(children: <Widget>[ _buildGroupsContent(), ],),
                       ),
                     ),
-                    Visibility(
-                      visible: _hasActiveFilter, child: _buildDimmedContainer()),
-                    _hasActiveFilter ? _buildFilterContent() : Container()
-                  ],
-                ),
+                  ),
+                  Visibility(
+                    visible: _hasActiveFilter, child: _buildDimmedContainer()),
+                  _hasActiveFilter ? _buildFilterContent() : Container()
+                ],),
             )
           ]),
           _buildContentTypesContainer()
@@ -508,7 +529,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         if (group.isVisible) {
           widgets.add(Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup, onImageTap: (){ onTapImage(group);} ,),
+            child: GroupCard(
+              group: group,
+              displayType: GroupCardDisplayType.myGroup,
+              onImageTap: (){ onTapImage(group);},
+              key: _getGroupKey(group),
+            ),
           ));
         }
       }
@@ -530,7 +556,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         if (group.isVisible) {
           widgets.add(Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup,),
+            child: GroupCard(
+              group: group,
+              displayType: GroupCardDisplayType.myGroup,
+              key: _getGroupKey(group),
+            ),
           ));
         }
       }
@@ -560,7 +590,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         if (group.isVisible) {
           widgets.add(Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(group: group),
+            child: GroupCard(
+              group: group,
+              key: _getGroupKey(group),
+            ),
           ));
         }
       }
@@ -580,6 +613,15 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
         Text(text, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
       );
+    }
+  }
+
+  Key? _getGroupKey(Group group) {
+    if ((_newGroupId != null) && (_newGroupId == group.id)) {
+      return _newGroupKey;
+    }
+    else {
+      return null;
     }
   }
 
@@ -628,7 +670,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     setState(() {
       _activeFilterType = _FilterType.none;
     });
-    _loadAllGroups();
+    _reloadAllGroupsContent();
   }
 
   void _onSelectAllGroups(){
@@ -694,7 +736,25 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     if (name == Groups.notifyUserMembershipUpdated) {
       _updateState();
     }
-    else if ((name == Groups.notifyGroupCreated) || (name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted)) {
+    else if (name == Groups.notifyGroupCreated) {
+      if (mounted) {
+        _newGroupId = param;
+        _newGroupKey = GlobalKey();
+        _reloadGroupsContent().then((_) {
+          if (_newGroupId == param) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              BuildContext? newGroupContext = _newGroupKey?.currentContext;
+              _newGroupId = null;
+              _newGroupKey = null;
+              if (newGroupContext != null) {
+                Scrollable.ensureVisible(newGroupContext, duration: Duration(milliseconds: 300));
+              }
+            });
+          }
+        });
+      }
+    }
+    else if ((name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted)) {
       if (mounted) {
         _reloadGroupsContent();
       }

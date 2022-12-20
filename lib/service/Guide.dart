@@ -29,6 +29,7 @@ class Guide with Service implements NotificationsListener {
 
   static const String campusGuide = "For students";
   static const String campusReminderContentType = "campus-reminder";
+  static const String campusHighlightContentType = "campus-highlight";
   static const String campusSafetyResourceContentType = "campus-safety-resource";
 
   static const String _cacheFileName = "guide.json";
@@ -172,6 +173,7 @@ class Guide with Service implements NotificationsListener {
     // return AppBundle.loadString('assets/guide.json');
     try {
       Response? response = await Network().get("${Config().contentUrl}/student_guides", auth: Auth2());
+      //TMP: Log.d("Campus Guide: ${response?.body}", lineLength: 812);
       return ((response != null) && (response.statusCode == 200)) ? response.body : null;
     }
     catch (e) { print(e.toString()); }

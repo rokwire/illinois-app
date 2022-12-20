@@ -48,6 +48,20 @@ class MTDStop with Explore implements Favorite {
     'stop_points': MTDStop.listToJson(points),
   };
 
+  // Copy
+  
+  factory MTDStop.fromOther(MTDStop? other, { String? id, String? name, String? code, double? distance, double? latitude, double? longitude, List<MTDStop>? points}) {
+    return MTDStop(
+      id: id ?? other?.id,
+      name: name ?? other?.name,
+      code: code ?? other?.code,
+      distance: distance ?? other?.distance,
+      latitude: latitude ?? other?.latitude,
+      longitude: longitude ?? other?.longitude,
+      points: points ?? other?.points,
+    );
+  }
+
   // Equality
 
   @override
@@ -140,21 +154,58 @@ class MTDStop with Explore implements Favorite {
     return result;
   }
 
-  bool match({ String? name, LatLng? location, double locationThresholdDistance = 1 /* in meters */ }) {
+  static List<MTDStop>? searchInList(List<MTDStop>? stops, { String? search } ) {
+    List<MTDStop>? result;
+    if ((stops != null) && (search != null)) {
+      for (MTDStop stop in stops) {
+        MTDStop? foundStop;
+        List<MTDStop>? foundPoints = searchInList(stop.points, search: search);
+        if ((foundPoints != null) && foundPoints.isNotEmpty) {
+          foundStop = MTDStop.fromOther(stop, points: foundPoints);
+        }
+        else if (stop._matchSearch(search)) {
+          foundStop = stop;
+        }
+
+        if (foundStop != null) {
+          if (result != null) {
+            result.add(foundStop);
+          }
+          else {
+            result = <MTDStop>[foundStop];
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  bool match({ String? search, String? name, LatLng? location, double locationThresholdDistance = 1 /* in meters */ }) {
     
     if ((name != null) && (name != this.name)) {
       return false;
     }
     
-    if ((location != null) && (location.latitude != null) && (location.longitude != null) &&
-        ((this.latitude == null) || (this.longitude == null) ||
-         (Geolocator.distanceBetween(location.latitude!, location.longitude!, this.latitude!, this.longitude!) > locationThresholdDistance)))
-    {
+    if ((location != null) && (location.latitude != null) && (location.longitude != null) && !_matchLocation(location, thresholdDistance: locationThresholdDistance)) {
+      return false;
+    }
+
+    if ((search != null) && !_matchSearch(search)) {
       return false;
     }
     
     return true;
   }
+
+  bool _matchLocation(LatLng location, { double thresholdDistance = 1 /* in meters */ }) =>
+    (location.latitude != null) && (location.longitude != null) &&
+    (this.latitude != null) && (this.longitude != null) &&
+    (Geolocator.distanceBetween(location.latitude!, location.longitude!, this.latitude!, this.longitude!) < thresholdDistance);
+
+  bool _matchSearch(String search) =>
+    (id?.toLowerCase().contains(search) ?? false) ||
+    (name?.toLowerCase().contains(search) ?? false) ||
+    (code?.toLowerCase().contains(search) ?? false);
 
   // List Retrieval
 
@@ -344,6 +395,10 @@ class MTDStops {
       return nearestStop ?? result.first;
     }
     return null;
+  }
+
+  List<MTDStop>? searchStop(String? search) {
+    return MTDStop.searchInList(stops, search: search?.toLowerCase());
   }
 }
 

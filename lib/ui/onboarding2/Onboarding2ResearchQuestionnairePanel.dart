@@ -239,7 +239,11 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     String imageAsset = (question.maxAnswers == 1) ?
       (selected ? "radio-button-on" : "radio-button-off") :
       (selected ? "check-box-filled" : "check-box-outline-gray");
-    return InkWell(onTap: () => _onAnswer(answer, question: question), child:
+    return
+      Semantics(
+        label: title, button: true,
+        value: selected ?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
+        child:InkWell(onTap: (){_onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context, !selected, title);}, child:
       Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding), child:
         Container(decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: selected ? Styles().colors!.fillColorPrimary! : Styles().colors!.white!, width: 1)), child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
@@ -249,14 +253,14 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
-                  Text(title, style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
+                  Text(title, style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left, semanticsLabel: "",)
                 ),
               ),
             ]),
           ),
         ),
       ),
-    );
+    ));
   }
 
   void _onAnswer(Answer answer, { required Question question }) {

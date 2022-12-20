@@ -281,7 +281,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
 
     return Column(children: [
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.student_courses.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.student_courses.button.all.hint', 'Tap to view all courses'),

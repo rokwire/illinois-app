@@ -165,7 +165,7 @@ class _HomeCampusSafetyResourcesWidgetState extends State<HomeCampusSafetyResour
     }
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.campus_safety_resources.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.campus_safety_resources.button.all.hint', 'Tap to view all safety resources'),
@@ -180,7 +180,8 @@ class _HomeCampusSafetyResourcesWidgetState extends State<HomeCampusSafetyResour
       setState(() {
         _resourceItems = resourceItems;
         _pageViewKey = UniqueKey();
-        _pageController = null;
+        // _pageController = null;
+        _pageController?.jumpToPage(0);
         _contentKeys.clear();
       });
     }

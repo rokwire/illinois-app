@@ -39,11 +39,16 @@ class SkillsSelfEvaluationResultsPanel extends StatefulWidget {
 }
 
 class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationResultsPanel> {
+  static const String _defaultComparisonResponseId = 'none';
+
   Map<String, SkillsSelfEvaluationContent> _resultsContentItems = {};
   List<SkillsSelfEvaluationProfile> _profileContentItems = [];
   List<SurveyResponse> _responses = [];
   SurveyResponse? _latestResponse;
-  String _comparisonResponseId = 'none';
+  String _comparisonResponseId = _defaultComparisonResponseId;
+
+  bool _latestCleared = false;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -138,7 +143,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     Iterable<String> responseSections = _resultsContentItems['section_titles']?.params?.keys ?? [];
     Map<String, num>? comparisonScores;
     SkillsSelfEvaluationProfile? selectedProfile;
-    if (_comparisonResponseId != 'none') {
+    if (_comparisonResponseId != _defaultComparisonResponseId) {
       try {
         selectedProfile = _profileContentItems.firstWhere((element) => element.key == _comparisonResponseId);
         comparisonScores = selectedProfile.scores;
@@ -152,37 +157,47 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     }
 
     return [
-      ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.only(top: 8),
-        itemCount: responseSections.length,
-        itemBuilder: (BuildContext context, int index) {
-          String section = responseSections.elementAt(index);
-          String title = _resultsContentItems['section_titles']?.params?[section].toString() ?? '';
-          num? mostRecentScore = _latestResponse?.survey.stats?.percentages[section];
-          if (mostRecentScore != null) {
-            mostRecentScore = (mostRecentScore*100).round();
-          }
-          num? comparisonScore = comparisonScores?[section];
-          if (comparisonScore != null) {
-            comparisonScore = (comparisonScore*100).round();
-          }
+      Stack(children: [
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(top: 8),
+          itemCount: responseSections.length,
+          itemBuilder: (BuildContext context, int index) {
+            String section = responseSections.elementAt(index);
+            String title = _resultsContentItems['section_titles']?.params?[section].toString() ?? '';
+            num? mostRecentScore = _latestResponse?.survey.stats?.percentages[section];
+            if (mostRecentScore != null) {
+              mostRecentScore = (mostRecentScore*100).round();
+            }
+            num? comparisonScore = comparisonScores?[section];
+            if (comparisonScore != null) {
+              comparisonScore = (comparisonScore*100).round();
+            }
 
-          return Padding(padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-            child: Card(
-              child: InkWell(
-                onTap: () => _showScoreDescription(section),
-                child: Padding(padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16), child: Row(children: [
-                  Flexible(flex: 5, fit: FlexFit.tight, child: Text(title, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))),
-                  Flexible(flex: 3, fit: FlexFit.tight, child: Text(mostRecentScore?.toString() ?? "--", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)),
-                  Flexible(flex: 3, fit: FlexFit.tight, child: Text(comparisonScore?.toString() ?? "--", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.past'), textAlign: TextAlign.center)),
-                  Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true))),
-                ],)),
+            return Padding(padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+              child: Card(
+                child: InkWell(
+                  onTap: () => _showScoreDescription(section),
+                  child: Padding(padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16), child: Row(children: [
+                    Flexible(flex: 5, fit: FlexFit.tight, child: Text(title, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))),
+                    Flexible(flex: 3, fit: FlexFit.tight, child: Text(mostRecentScore?.toString() ?? "--", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)),
+                    Flexible(flex: 3, fit: FlexFit.tight, child: Text(comparisonScore?.toString() ?? "--", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.past'), textAlign: TextAlign.center)),
+                    Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true))),
+                  ],)),
+                )
               )
-            )
-          );
-      }),
+            );
+        }),
+        Visibility(
+          visible: _loading,
+          child: Container(
+            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.fillColorPrimary)),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(vertical: 64),
+          )
+        ),
+      ],),
       Padding(padding: const EdgeInsets.only(top: 4), child: GestureDetector(onTap: _onTapClearAllScores, child:
         Text(Localization().getStringEx('panel.skills_self_evaluation.results.more_info.description', '*Tap score cards for more info'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body.small'), textAlign: TextAlign.left,
       ),)),
@@ -212,16 +227,19 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   List<DropdownMenuItem<String>> _buildResponseDateDropDownItems() {
     List<DropdownMenuItem<String>> items = [
       DropdownMenuItem<String>(
-        value: 'none',
-        child: Text('NONE', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,),
+        value: _defaultComparisonResponseId,
+        child: Align(alignment: Alignment.center, child: Text('NONE', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,)),
       ),
     ];
+
+    List<String> profileKeys = [];
     for (SkillsSelfEvaluationProfile profile in _profileContentItems) {
-      if (profile.params['abbreviation'] is String) {
+      if (profile.params['abbreviation'] is String && !profileKeys.contains(profile.key)) {
         items.add(DropdownMenuItem<String>(
           value: profile.key,
-          child: Text(profile.params['abbreviation'], style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,),
+          child: Align(alignment: Alignment.center, child: Text(profile.params['abbreviation'], style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,)),
         ));
+        profileKeys.add(profile.key);
       }
     }
     
@@ -229,13 +247,14 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
       String dateString = DateTimeUtils.localDateTimeToString(response.dateTaken, format: 'MM/dd/yy h:mma') ?? '';
       items.add(DropdownMenuItem<String>(
         value: response.id,
-        child: Text(dateString, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,),
+        child: Align(alignment: Alignment.center, child: Text(dateString, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,)),
       ));
     }
     return items;
   }
 
   void _loadResults() {
+    _setLoading(true);
     Surveys().loadSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
       _responses.clear();
       if (CollectionUtils.isNotEmpty(responses)) {
@@ -245,13 +264,11 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           _latestResponse = responses[0];
         }
         _responses = responses.sublist(_latestResponse?.id == responses[0].id ? 1 : 0);
-      } else {
+      } else if (!_latestCleared) {
         _latestResponse = widget.latestResponse;
       }
 
-      if (mounted) {
-        setState(() {});
-      }
+      _setLoading(false);
     });
   }
 
@@ -278,6 +295,14 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     });
   }
 
+  void _setLoading(bool value) {
+    if (mounted) {
+      setState(() {
+        _loading = value;
+      });
+    }
+  }
+
   Future<void> _onPullToRefresh() async {
     _loadResults();
     _loadContentItems();
@@ -285,7 +310,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
 
   void _onResponseDateDropDownChanged(String? value) {
     setState(() {
-      _comparisonResponseId = value ?? 'none';
+      _comparisonResponseId = value ?? _defaultComparisonResponseId;
     });
   }
 
@@ -332,10 +357,11 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
 
   void _onTapConfirmDeleteScores() {
     Navigator.of(context).pop();
-    Surveys().deleteSurveyResponses(surveyTypes: ["bessi"]).then((success) {
-      if (success && mounted) {
-        _loadResults();
-      }
+    Surveys().deleteSurveyResponses(surveyTypes: ["bessi"]).then((_) {
+      _latestCleared = true;
+      _latestResponse = null;
+      _comparisonResponseId = _defaultComparisonResponseId;
+      _loadResults();
     });
   }
 }

@@ -17,7 +17,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -62,7 +64,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   List<String>? _groupCategories;
 
   bool _nameIsValid = true;
-  bool _loading = false;
+  bool _updating = false;
   bool _deleting = false;
   bool _researchRequiresConsentConfirmation = false;
 
@@ -82,7 +84,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     _researchRequiresConsentConfirmation = StringUtils.isNotEmpty(_group?.researchConsentStatement) ;
 
     if(_group!=null) {
-      _group?.settings ??= GroupSettings.initialDefaultSettings(); //Group back compatibility for older groups without settings -> initit with default settings.Not used. The BB return all false by default
+      _group?.settings ??= GroupSettingsExt.initialDefaultSettings(); //Group back compatibility for older groups without settings -> initit with default settings.Not used. The BB return all false by default
     }
     _initCategories();
     super.initState();
@@ -176,24 +178,12 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             Visibility(visible: !_isAuthManGroup, child:
                               _buildMembershipLayout()
                             ),
-                            
-                            Visibility(visible:!_isResearchProject, child:
-                              Padding(padding: EdgeInsets.only(top: 8), child:
-                                _buildCanAutoJoinLayout(),
-                              )
-                            ),
-
-                            Visibility(visible: !_isResearchProject, child:
-                              Padding(padding: EdgeInsets.only(top: 8), child:
-                                _buildPollsLayout(),
-                              )
-                            ),
-
-                            Visibility(visible: !_isResearchProject, child:
-                              Padding(padding: EdgeInsets.only(top: 8), child:
-                                _buildAttendanceLayout(),
-                              )
-                            ),
+                          //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2
+                          //Visibility(visible: !_isResearchProject, child:
+                          //  Padding(padding: EdgeInsets.only(top: 8), child:
+                          //    _buildAttendanceLayout(),
+                          //  )
+                          //),
 
                             Visibility(visible: !_isResearchProject, child:
                               Padding(padding: EdgeInsets.only(top: 8), child:
@@ -218,9 +208,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   //Init
   void _initCategories(){
     Groups().loadCategories().then((categories){
-     setState(() {
-       _groupCategories = categories;
-     });
+      setStateIfMounted(() {
+        _groupCategories = categories;
+      });
     });
   }
 
@@ -309,12 +299,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   label: fieldTitle,
                   hint: fieldHint,
                   textField: true,
+                  value: _groupTitleController.text,
                   excludeSemantics: true,
                   child: TextField(
                     controller: _groupTitleController,
                     enabled: _canUpdate,
                     readOnly: !_canUpdate,
-                    onChanged: _onNameChanged,
+                    onChanged: (name){_onNameChanged(name); setStateIfMounted(() { });},
                     maxLines: 1,
                     decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
                     style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
@@ -378,9 +369,10 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 hint: fieldHint,
                 textField: true,
                 excludeSemantics: true,
+                value: _groupDescriptionController.text,
                 child: TextField(
                   controller: _groupDescriptionController,
-                  onChanged: (description){ _group!.description = description;},
+                  onChanged: (description){ _group!.description = description;  setStateIfMounted(() {});},
                   maxLines: 8,
                   enabled: _canUpdate,
                   readOnly: !_canUpdate,
@@ -404,8 +396,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
           Semantics(label:Localization().getStringEx("panel.groups_settings.link.title", "WEBSITE LINK"),
-            hint: Localization().getStringEx("panel.groups_settings.link.title.hint",""), textField: true, excludeSemantics: true, child:
-            Column(
+            hint: Localization().getStringEx("panel.groups_settings.link.title.hint",""), textField: true, excludeSemantics: true, value:  _group!.webURL,
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Padding(
@@ -439,7 +431,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             color: Styles().colors!.textBackground,
                             fontSize: 16,
                             fontFamily: Styles().fontFamilies!.regular),
-                        onChanged: (link){ _group!.webURL = link;},
+                        onChanged: (link){ _group!.webURL = link; setStateIfMounted(() {});},
                         maxLines: 1,
                       ),
                     ),
@@ -876,13 +868,13 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white), child:
             Row(children: [
               Expanded(child:
-                  Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
+                  Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, value: _researchConsentDetailsController.text, child:
                     TextField(
                         controller: _researchConsentDetailsController,
                         maxLines: 15,
                         decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                         style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
-                        onChanged: (text) => _group?.researchConsentDetails = text,
+                        onChanged: (text){ _group?.researchConsentDetails = text; setStateIfMounted(() { });},
                     )
                   ),
                 )
@@ -1071,7 +1063,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                 backgroundColor: Colors.white,
                 borderColor: _canUpdate ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
                 textColor: _canUpdate ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
-                progress: _loading,
+                progress: _updating,
                 enabled: _canUpdate,
                 onTap: _onUpdateTap,
               ),
@@ -1097,7 +1089,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
 
   void _onUpdateTap() {
-    if (_loading || !_canUpdate) {
+    if (_updating || !_canUpdate) {
       return;
     }
 
@@ -1112,7 +1104,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
     Analytics().logSelect(target: 'Update Settings');
     setState(() {
-      _loading = true;
+      _updating = true;
     });
 
     // control research groups options
@@ -1145,7 +1137,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     Groups().updateGroup(_group).then((GroupError? error){
       if (mounted) {
         setState(() {
-          _loading = false;
+          _updating = false;
         });
         if (error == null) { //ok
           Navigator.pop(context);
@@ -1192,35 +1184,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
   }
   //
 
-
-  //Polls
-  Widget _buildPollsLayout(){
-    return Container(
-      color: Styles().colors!.background,
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: _buildSwitch(title: Localization().getStringEx("panel.groups_settings.only_admins_create_polls.enabled.label", "Only admins can create Polls"),
-          enabled: _canUpdate,
-          value: _group?.onlyAdminsCanCreatePolls,
-          onTap: _onTapOnlyAdminCreatePolls
-      ),
-    );
-  }
-
-  void _onTapOnlyAdminCreatePolls() {
-    if (!_canUpdate) {
-      return;
-    }
-    if(_group?.onlyAdminsCanCreatePolls != null) {
-      if(mounted){
-        setState(() {
-          _group!.onlyAdminsCanCreatePolls = !(_group!.onlyAdminsCanCreatePolls ?? false);
-        });
-      }
-    }
-  }
   
   // Attendance
-  Widget _buildAttendanceLayout() {
+  /*Widget _buildAttendanceLayout() {
     return Container(
       color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
@@ -1241,48 +1207,26 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         setState(() {});
       }
     }
-  }
-
-  //Auto Join
-  //Autojoin
-  Widget _buildCanAutoJoinLayout(){
-    return Container( color: Styles().colors!.background,
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: _buildSwitch(title: Localization().getStringEx("panel.groups_settings.auto_join.enabled.label", "Group can be joined automatically?"),
-          enabled: _canUpdate,
-          value: _group?.canJoinAutomatically,
-          onTap: () {
-            if (!_canUpdate) {
-              return;
-            }
-            if (_group?.canJoinAutomatically != null) {
-              _group!.canJoinAutomatically = !(_group!.canJoinAutomatically!);
-            } else {
-              _group?.canJoinAutomatically = true;
-            }
-
-            if(mounted){
-              setState(() {
-
-              });
-            }
-          }
-      ),
-    );
-  }
+  }*/
 
   //Settings
   Widget _buildSettingsLayout() {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
-        child: GroupMemberSettingsLayout(
-          settings: _group?.settings,
-          onChanged: () {
-            if (mounted) {
-              setState(() {});
-            }
-          }
-      )
+        child:  RibbonButton(
+            label: Localization().getStringEx('panel.groups_settings..button.advanced_settings.title', 'Advanced Settings'), //Localize
+            hint: Localization().getStringEx('panel.groups_settings..button.advanced_settings..hint', ''),
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+            borderRadius: BorderRadius.circular(4),
+            onTap: (){
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAdvancedSettingsPanel(group: _group,))).then((_){
+                if(mounted){
+                  setState(() {
+
+                  });
+                }
+              });
+            }),
     );
   }
 
@@ -1331,7 +1275,11 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
 
   Widget _buildSwitch({String? title, bool? value, bool enabled = true, void Function()? onTap}) {
     return Container(
-      child: Container(
+      child: Semantics(
+        label: title,
+        value: value == true?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
+        button: true,
+        child: Container(
           decoration: BoxDecoration(
               color: Styles().colors!.white,
               border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
@@ -1341,13 +1289,17 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Expanded(
                   child: Text(title ?? "",
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: enabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent))),
+                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: enabled ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent), semanticsLabel: "",)),
               GestureDetector(
-                  onTap: (enabled && (onTap != null)) ? onTap : (){},
+                  onTap: (enabled && (onTap != null)) ?
+                    (){
+                      onTap();
+                      AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(value == true), title);
+                  } : (){},
                   child: Padding(padding: EdgeInsets.only(left: 10), child: Styles().images?.getImage(value ?? false ? 'toggle-on' : 'toggle-off')))
             ])
           ])),
-    );
+    ));
   }
 
   void _onNameChanged(String name) {

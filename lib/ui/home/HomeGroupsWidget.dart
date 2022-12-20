@@ -105,7 +105,8 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
         setState(() {
           _groups = groups;
           _pageViewKey = UniqueKey();
-          _pageController = null;
+          // _pageController = null;
+          _pageController?.jumpToPage(0);
         });
       }
     });
@@ -147,7 +148,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
       }
     }
 
-    double pageHeight = 90 * 2 * MediaQuery.of(context).textScaleFactor;
+    double pageHeight = 92 * 2 * MediaQuery.of(context).textScaleFactor;
 
     if (_pageController == null) {
       double screenWidth = MediaQuery.of(context).size.width;
@@ -164,7 +165,7 @@ class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements Notifica
           allowImplicitScrolling : true,
         )
       ),
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.groups.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),

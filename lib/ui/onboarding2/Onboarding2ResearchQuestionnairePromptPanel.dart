@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Questionnaire.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -33,8 +34,10 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
         SafeArea(child:
           _buildContent(context)
         ),
-        SafeArea(child: 
-          OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: () => _onBack(context)),
+        Visibility(visible: Navigator.canPop(context), child:
+          SafeArea(child: 
+            OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: () => _onBack(context)),
+          ),
         ),
       ]),
     );
@@ -117,14 +120,21 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
 
   void _onBack(BuildContext context) {
     Analytics().logSelect(target: "Back");
-    Navigator.pop(context);
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   void _onYes(BuildContext context) {
     Analytics().logSelect(target: "Yes");
     Questionnaires().participateInResearch = true;
+    Storage().participateInResearchPrompted = true;
     Function? onConfirm = (onboardingContext != null) ? onboardingContext!["onConfirmAction"] : null;
-    if (onConfirm != null) {
+    Function? onConfirmEx = (onboardingContext != null) ? onboardingContext!["onConfirmActionEx"] : null;
+    if (onConfirmEx != null) {
+      onConfirmEx(context);
+    }
+    else if (onConfirm != null) {
       onConfirm();
     }
   }
@@ -132,16 +142,26 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
   void _onNo(BuildContext context) {
     Analytics().logSelect(target: "No");
     Questionnaires().participateInResearch = false;
+    Storage().participateInResearchPrompted = true;
     Function? onReject = (onboardingContext != null) ? onboardingContext!["onRejectAction"] : null;
-    if (onReject != null) {
+    Function? onRejectEx = (onboardingContext != null) ? onboardingContext!["onRejectActionEx"] : null;
+    if (onRejectEx != null) {
+      onRejectEx(context);
+    }
+    else if (onReject != null) {
       onReject();
     }
   }
 
   void _onNotRightNow(BuildContext context) {
     Analytics().logSelect(target: "Not right now");
+    Storage().participateInResearchPrompted = true;
     Function? onReject = (onboardingContext != null) ? onboardingContext!["onRejectAction"] : null;
-    if (onReject != null) {
+    Function? onRejectEx = (onboardingContext != null) ? onboardingContext!["onRejectActionEx"] : null;
+    if (onRejectEx != null) {
+      onRejectEx(context);
+    }
+    else if (onReject != null) {
       onReject();
     }
   }

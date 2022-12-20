@@ -21,6 +21,7 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
@@ -232,7 +233,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
     codes?.sort((String code1, String code2) {
       String title1 = _BrowseSection.title(sectionId: code1);
       String title2 = _BrowseSection.title(sectionId: code2);
-      return title1.compareTo(title2);
+      return title1.toLowerCase().compareTo(title2.toLowerCase());
     });
     return codes;
   }
@@ -259,7 +260,7 @@ class _BrowseSection extends StatelessWidget {
     codes?.sort((String code1, String code2) {
       String title1 = _BrowseEntry.title(sectionId: sectionId, entryId: code1);
       String title2 = _BrowseEntry.title(sectionId: sectionId, entryId: code2);
-      return title1.compareTo(title2);
+      return title1.toLowerCase().compareTo(title2.toLowerCase());
     });
     return codes;
   }
@@ -505,6 +506,7 @@ class _BrowseEntry extends StatelessWidget {
     switch("$sectionId.$entryId") {
       case "academics.gies_checklist":        _onTapGiesChecklist(context); break;
       case "academics.new_student_checklist": _onTapNewStudentChecklist(context); break;
+      case "academics.skills_self_evaluation":_onTapSkillSelfEvaluation(context); break;
       case "academics.student_courses":       _onTapStudentCourses(context); break;
       case "academics.canvas_courses":        _onTapCanvasCourses(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
@@ -620,6 +622,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapNewStudentChecklist(BuildContext context) {
     Analytics().logSelect(target: "New Student Checklist");
     CheckListPanel.present(context, contentKey: CheckList.uiucOnboarding);
+  }
+
+  void _onTapSkillSelfEvaluation(BuildContext context) {
+    Analytics().logSelect(target: "Skills Self-Evaluation");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.skills_self_evaluation,)));
   }
 
   void _onTapCanvasCourses(BuildContext context) {
@@ -813,6 +820,7 @@ class _BrowseEntry extends StatelessWidget {
       contentList: Guide().promotedList,
       contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Campus Highlights'),
       contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Hightlights."),
+      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusHighlightContentType),
     )));
   }
 

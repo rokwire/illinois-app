@@ -242,10 +242,11 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       if (StringUtils.isNotEmpty(sportName)) {
         leftLabel += ' - $sportName';
       }
-      leftLabelStyle = Styles().textStyles?.getTextStyle('widget.description.small.fat') ;
+      leftLabelStyle = Styles().textStyles?.getTextStyle('widget.description.small.fat.semi_expanded') ;
     } else {
       leftLabel = widget.explore!.exploreTitle ?? "";
-      leftLabelStyle = Styles().textStyles?.getTextStyle('widget.explore.card.title.regular') ;
+      leftLabelStyle = Styles().textStyles?.getTextStyle('widget.explore.card.title.regular.extra_fat') ;
+    
     }
 
     return Row(

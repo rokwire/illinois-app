@@ -23,8 +23,10 @@ import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
+import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -46,7 +48,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Storage.notifySettingChanged]);
+    NotificationService().subscribe(this, [Storage.notifySettingChanged, FlexUI.notifyChanged]);
     _initAppointments();
     super.initState();
   }
@@ -63,7 +65,11 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildContent() {
-    if (!_appointmentsCanDisplay) {
+    Widget? accessWidget = AccessCard.builder(resource: 'wellness.appointments.features');
+    if (accessWidget != null) {
+      return accessWidget;
+    }
+    else if (!_appointmentsCanDisplay) {
       return Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -346,6 +352,10 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     if (name == Storage.notifySettingChanged) {
       if (param == Storage().appointmentsDisplayEnabledKey) {
         _initAppointments();
+      }
+    } else if (name == FlexUI.notifyChanged) {
+      if (mounted) {
+        setState(() {});
       }
     }
   }

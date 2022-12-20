@@ -58,20 +58,20 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
   void initState() {
     super.initState();
 
-    _selectedContent = selectableContent(widget.content) ?? (_lastSelectedContent ?? WellnessContent.dailyTips);
+    _selectedContent = _selectableContent(widget.content) ?? (_lastSelectedContent ?? WellnessContent.dailyTips);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: headerBar,
+        appBar: _headerBar,
         body: Column(children: <Widget>[
           Padding(
               padding: EdgeInsets.only(left: 16, top: 16, right: 16),
               child: Semantics(
-                  hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
+                  hint: Localization().getStringEx("dropdown.hint", "DropDown"),
                   container: true,
-                  child:RibbonButton(
+                  child: RibbonButton(
                     textColor: Styles().colors!.fillColorSecondary,
                     backgroundColor: Styles().colors!.white,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -89,7 +89,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
           ]))
         ]),
         backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: navigationBar);
+        bottomNavigationBar: _navigationBar);
   }
 
   Widget _buildContentValuesContainer() {
@@ -151,7 +151,7 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
     }
   }
 
-  PreferredSizeWidget get headerBar {
+  PreferredSizeWidget get _headerBar {
     String title = Localization().getStringEx('panel.wellness.home.header.sections.title', 'Wellness');
     if (widget.rootTabDisplay) {
       return RootHeaderBar(title: title);
@@ -160,11 +160,11 @@ class _WellnessHomePanelState extends State<WellnessHomePanel> {
     }
   }
 
-  Widget? get navigationBar {
+  Widget? get _navigationBar {
     return widget.rootTabDisplay ? null : uiuc.TabBar();
   }
 
-  WellnessContent? selectableContent(WellnessContent? content) =>
+  WellnessContent? _selectableContent(WellnessContent? content) =>
      ((content != WellnessContent.podcast) && (content != WellnessContent.struggling)) ? content : null;
 
   Widget get _contentWidget {
