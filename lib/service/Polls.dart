@@ -100,9 +100,12 @@ class Polls extends rokwire.Polls implements NotificationsListener {
         for (dynamic responseEntry in responseList) {
           Map<String, dynamic>? contentItem = JsonUtils.mapValue(responseEntry);
           if (contentItem != null) {
-            String? key = JsonUtils.stringValue(contentItem['key']);
-            if (key != null) {
-              result[key] = contentItem;
+            Map<String, dynamic>? data = JsonUtils.mapValue(contentItem['data']);
+            if (data != null) {
+              String? key = JsonUtils.stringValue(data['key']);
+              if (key != null) {
+                result[key] = data;
+              }
             }
           }
         }
