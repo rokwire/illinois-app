@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Android: hide marker info view for bus stops [#2809](https://github.com/rokwire/illinois-app/issues/2809).
 ### Changed
 - iOS: show activity indicator while processing markers [#2811](https://github.com/rokwire/illinois-app/issues/2811).
+- Allow marking POIs or Locations in Map only in MTD Destinations content type [#2813](https://github.com/rokwire/illinois-app/issues/2813).
 
 
 ## [4.2.44] - 2022-12-19
