@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - iOS: show activity indicator while processing markers [#2811](https://github.com/rokwire/illinois-app/issues/2811).
 - Allow marking POIs or Locations in Map only in MTD Destinations content type [#2813](https://github.com/rokwire/illinois-app/issues/2813).
 - View All on favorite MTD Stops & Destinations launches relevant home panel instead of Saved [#2815](https://github.com/rokwire/illinois-app/issues/2815).
-
+- Polls :: not-signed-in error - needs better message [#2777](https://github.com/rokwire/illinois-app/issues/2777)
 
 ## [4.2.44] - 2022-12-19
 ### Fixed
@@ -23,7 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed video rotation on iOS 16 [#2587](https://github.com/rokwire/illinois-app/issues/2587).
 ### Changed
 - Present research questionnaire on startup after upgrade [#2793](https://github.com/rokwire/illinois-app/issues/2793).
-- Polls :: not-signed-in error - needs better message [#2777](https://github.com/rokwire/illinois-app/issues/2777)
 
 ## [4.2.43] - 2022-12-16
 ### Fixed
