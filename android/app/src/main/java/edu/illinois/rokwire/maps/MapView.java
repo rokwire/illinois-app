@@ -473,11 +473,12 @@ public class MapView extends FrameLayout implements OnMapReadyCallback {
 
     private void onCameraIdle() {
         CameraPosition cameraPosition = googleMap.getCameraPosition();
-        float zoomDelta = Math.abs(cameraZoom - cameraPosition.zoom);
+        float currentZoom = cameraPosition.zoom;
+        float zoomDelta = Math.abs(cameraZoom - currentZoom);
         boolean zoomDeltaPassed = (zoomDelta > Constants.MAP_THRESHOLD_ZOOM_UPDATE_STEP);
         // Prevent building explores (respectively markers) for zoom level that is above our max zoom level
-        boolean maxZoomLevelNotReached = (cameraPosition.zoom < Constants.MAP_MAX_ZOOM_LEVEL_FOR_THRESHOLD);
-        if (zoomDeltaPassed && maxZoomLevelNotReached) {
+        boolean zoomBelowMaxLevel = (currentZoom <= Constants.MAP_MAX_ZOOM_LEVEL_FOR_THRESHOLD) || (cameraZoom <= Constants.MAP_MAX_ZOOM_LEVEL_FOR_THRESHOLD);
+        if (zoomDeltaPassed && zoomBelowMaxLevel) {
             buildDisplayExplores();
         } else {
             updateMarkers();
