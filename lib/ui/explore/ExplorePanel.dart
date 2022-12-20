@@ -2139,7 +2139,12 @@ class ExplorePanelState extends State<ExplorePanel>
           mtdStop = MTD().stops?.findStop(name: poiName) ??
             MTD().stops?.findStop(location: poiLocation, locationThresholdDistance: 10 /*in meters*/);
         }
-        _selectMapExplore(mtdStop ?? ExplorePOI.fromJson(poi));
+        if (mtdStop != null) {
+          _selectMapExplore(mtdStop);
+        }
+        else if (_selectedItem == ExploreItem.MTDDestinations) {
+          _selectMapExplore(ExplorePOI.fromJson(poi));
+        }
       }
     }
   }
@@ -2155,7 +2160,7 @@ class ExplorePanelState extends State<ExplorePanel>
       else if (_selectedMapExplore != null) {
         _selectMapExplore(null);
       }
-      else if (location?.isValid ?? false){
+      else if ((_selectedItem == ExploreItem.MTDDestinations) && (location?.isValid ?? false)) {
         _selectMapExplore(ExplorePOI(location: ExploreLocation(latitude: location?.latitude, longitude: location?.longitude)));
       }
     }
