@@ -59,6 +59,7 @@
 @property (nonatomic) NSArray*      displayExplores;
 @property (nonatomic) NSMutableSet* markers;
 @property (nonatomic) NSOperation*  buildeExploresOperation;
+@property (nonatomic) UIActivityIndicatorView* activityIndicator;
 @end
 
 @interface MapViewMarkerData : NSObject
@@ -82,6 +83,10 @@
 		//_mapView.indoorEnabled = NO;
 		//_mapView.settings.indoorPicker = NO;
 		[self addSubview:_mapView];
+
+		_activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
+		_activityIndicator.color = [UIColor blackColor];
+		[self addSubview:_activityIndicator];
 
 		_markers = [[NSMutableSet alloc] init];
 		_markersImageCache = [[NSMutableDictionary alloc] init];
@@ -107,6 +112,9 @@
 - (void)layoutSubviews {
 	CGSize contentSize = self.frame.size;
 	_mapView.frame = CGRectMake(0, 0, contentSize.width, contentSize.height);
+
+	CGSize activityIndicatorSize = [_activityIndicator sizeThatFits:contentSize];
+	_activityIndicator.frame = CGRectMake((contentSize.width - activityIndicatorSize.width) / 2, (contentSize.height - activityIndicatorSize.height) / 2, activityIndicatorSize.width, activityIndicatorSize.height);
 
 	if (!_didFirstLayout) {
 		_didFirstLayout = true;
@@ -186,19 +194,27 @@
 					if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
 						weakSelf.displayExplores = displayExplores;
 						[weakSelf applyMarkers: [weakSelf buildMarkersFromExplores:displayExplores markerDataMap:markerDataMap]];
+						[weakSelf.activityIndicator stopAnimating];
 						weakSelf.buildeExploresOperation = nil;
 					}
 				});
 			}
 			else if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
 				weakSelf.buildeExploresOperation = nil;
+				dispatch_sync(dispatch_get_main_queue(), ^{
+					[weakSelf.activityIndicator stopAnimating];
+				});
 			}
 		}
 		else if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
 			weakSelf.buildeExploresOperation = nil;
+			dispatch_sync(dispatch_get_main_queue(), ^{
+				[weakSelf.activityIndicator stopAnimating];
+			});
 		}
 	}];
 
+	[self.activityIndicator startAnimating];
 	_buildeExploresOperation = operation;
 	[AppDelegate.sharedInstance.backgroundOperationQueue addOperation:_buildeExploresOperation];
 }
@@ -556,12 +572,26 @@
 
 #pragma mark GMSMapViewDelegate
 
+- (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
+	NSLog(@"GMSMapViewZoom: %@", @(position.zoom));
+	
+	if (kThresoldZoomUpdateStep < fabs(_currentZoom - position.zoom)) {
+		_currentZoom = position.zoom;
+		[self buildDisplayExplores];
+	}
+	else {
+		[self updateMarkersDisplayMode];
+	}
+	[self updateMapStyle];
+}
+
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(nonnull GMSMarker *)marker {
 	NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
 	id exploreParam = explore.uiucExplores ?: explore;
 	NSLog(@"didTapMarker: %@", [exploreParam isKindOfClass:[NSArray class]] ?
 		[NSString stringWithFormat:@"%@ Explores", @([exploreParam count])] :
 		([exploreParam isKindOfClass:[NSDictionary class]] ? [exploreParam uiucExploreTitle] : @"????"));
+
 	if (exploreParam != nil) {
 		NSDictionary *arguments = @{
 			@"mapId" : @(_mapId),
@@ -577,6 +607,7 @@
 
 - (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {
 	NSLog(@"didTapAtCoordinate: [%.6f, %.6f]", coordinate.latitude, coordinate.longitude);
+
 	NSDictionary *arguments = @{
 		@"mapId" : @(_mapId),
 		@"location": @{
@@ -585,19 +616,6 @@
 		}
 	};
 	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"map.location.select" arguments:arguments.inaJsonString];
-}
-
-- (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
-	NSLog(@"GMSMapViewZoom: %@", @(position.zoom));
-	
-	if (kThresoldZoomUpdateStep < fabs(_currentZoom - position.zoom)) {
-		_currentZoom = position.zoom;
-		[self buildDisplayExplores];
-	}
-	else {
-		[self updateMarkersDisplayMode];
-	}
-	[self updateMapStyle];
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapPOIWithPlaceID:(NSString *)placeID name:(NSString *)name location:(CLLocationCoordinate2D)location {
@@ -617,7 +635,6 @@
 	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"map.poi.select" arguments:arguments.inaJsonString];
 	
 }
-
 
 @end
 
