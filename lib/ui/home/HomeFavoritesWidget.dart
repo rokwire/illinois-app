@@ -256,7 +256,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       LinkButton(
         title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
         hint: _viewAllHint,
-        onTap: _onSeeAll,
+        onTap: _onTapViewAll,
       )      
     ]);
   }
@@ -589,9 +589,14 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     Auth2().prefs?.toggleFavorite(item);
   }
 
-  void _onSeeAll() {
+  void _onTapViewAll() {
     Analytics().logSelect(target: 'View All', source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
+    if ((widget.favoriteKey == MTDStop.favoriteKeyName) || (widget.favoriteKey == ExplorePOI.favoriteKeyName)) {
+      FavoriteExt.launchHome(context, key: widget.favoriteKey);
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
+    }
   }
 }
 
