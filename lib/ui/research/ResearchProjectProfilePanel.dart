@@ -6,7 +6,9 @@ import 'package:illinois/model/Questionnaire.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
@@ -117,7 +119,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
 
     return Column(children: <Widget>[
       Stack(children: [
-        Container(color: Styles().colors?.white, child:
+        Semantics(container: true, child:Container(color: Styles().colors?.white, child:
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children:<Widget>[
               Padding(padding: EdgeInsets.zero, child:
@@ -139,7 +141,7 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
               ),
             ]),
           ),
-        ),
+        )),
         Visibility(visible: _updatingTargetAudienceCount, child:
           Positioned.fill(child:
             Align(alignment: Alignment.topRight, child:
@@ -271,20 +273,25 @@ class _ResearchProjectProfilePanelState extends State<ResearchProjectProfilePane
     LinkedHashSet<String>? selectedAnswers = _selection[question.id];
     bool selected = selectedAnswers?.contains(answer.id) ?? false;
     String title = _questionnaireStringEx(answer.title);
-    return Padding(padding: EdgeInsets.only(left: _hPadding - 12, right: _hPadding), child:
-      Row(children: [
-        InkWell(onTap: () => _onAnswer(answer, question: question), child:
-          Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 8, ), child:
-            Image.asset(selected ? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
-          ),
-        ),
-        Expanded(child:
-          Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
-            Text(title, style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
-          ),
-        ),
-      ]),
-    );
+    return
+      Semantics(
+        label: title,
+        value: selected?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
+        button: true,
+        child: Padding(padding: EdgeInsets.only(left: _hPadding - 12, right: _hPadding), child:
+          Row(children: [
+            InkWell(onTap: (){ _onAnswer(answer, question: question); AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(selected == true), title); }, child:
+              Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 8, ), child:
+                Image.asset(selected ? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
+              ),
+            ),
+            Expanded(child:
+              Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:
+                Text(title, style: Styles().textStyles?.getTextStyle("widget.detail.regular"), textAlign: TextAlign.left,)
+              ),
+            ),
+          ]),
+        ));
   }
 
   void _onAnswer(Answer answer, { required Question question }) {
