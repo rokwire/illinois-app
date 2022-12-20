@@ -312,7 +312,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 value: _groupTitleController.text,
                 child: TextField(
                   controller: _groupTitleController,
-                  onChanged: (text) => setState((){_group?.title = text; }) ,
+                  onChanged: (text) => setState((){_group?.title = text; setStateIfMounted(() { });}) ,
                   maxLines: 1,
                   decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
                   style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
@@ -353,7 +353,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                     excludeSemantics: true,
                     value: _groupDescriptionController.text,
                     child: TextField(
-                      onChanged: (text) => _group?.description = text,
+                      onChanged: (text) {_group?.description = text; setStateIfMounted(() { });},
                       controller: _groupDescriptionController,
                       maxLines: 5,
                       decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
@@ -386,7 +386,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       maxLines: 15,
                       decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                       style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
-                      onChanged: (text) => _group?.researchConsentDetails = text,
+                      onChanged: (text){ _group?.researchConsentDetails = text; setStateIfMounted(() { });},
                   )
                 ),
               )
@@ -1072,23 +1072,32 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   Widget _buildSwitch({String? title, bool? value, void Function()? onTap}){
     return Container(
-      child: Container(
-          decoration: BoxDecoration(
-              color: Styles().colors!.white,
-              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(4))),
-          padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Expanded(
-                  child: Text(title ?? "",
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
-              GestureDetector(
-                  onTap: onTap ?? (){},
-                  child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset((value ?? false) ? 'images/switch-on.png' : 'images/switch-off.png')))
-            ])
-          ])),
-    );
+      child: Semantics(
+        label: title,
+        value: value == true?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
+        button: true,
+        child: Container(
+              decoration: BoxDecoration(
+                  color: Styles().colors!.white,
+                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(4))),
+              padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Expanded(
+                      child: Text(title ?? "",
+                          style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+                          semanticsLabel: "",)),
+                  GestureDetector(
+                      onTap: ((onTap != null)) ?
+                          (){
+                        onTap();
+                        AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(value == true), title);
+                      } : (){},
+                      child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset((value ?? false) ? 'images/switch-on.png' : 'images/switch-off.png')))
+                ])
+              ])),
+        ));
   }
 
   bool get _isManagedGroupAdmin {
