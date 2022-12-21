@@ -447,7 +447,7 @@ class MTDDepartureCard extends StatelessWidget {
 
     String? desciption = StringUtils.isNotEmpty(departure.trip?.headsign) ? 'To ${departure.trip?.headsign}' : '';
     
-    return InkWell(onTap: onTap, child: Container(padding: padding, child:
+    return Semantics(child: InkWell(onTap: onTap, child: Container(padding: padding, child:
       Row(children: [
         Container(width: circleSize, height: circleSize,
           decoration: BoxDecoration(
@@ -471,7 +471,7 @@ class MTDDepartureCard extends StatelessWidget {
           Text(expectedTimeString2 ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: timeSize2, color: Styles().colors?.textBackground,),),
         ],)
       ],)
-    ),);
+    ),));
   }
 }
 
