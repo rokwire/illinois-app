@@ -146,7 +146,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
         Container(color: Styles().colors!.fillColorPrimary, child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-            HomeTitleIcon(image: Image.asset('images/campus-tools.png')),
+            HomeTitleIcon(image: Styles().images?.getImage('news')),
 
             Expanded(child:
               Padding(padding: EdgeInsets.only(top: 14), child:
@@ -171,7 +171,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
     return Semantics(label: currentAccountName, hint: "Double tap to select account", button: true, container: true, child:
       DropdownButtonHideUnderline(child:
         DropdownButton<String>(
-          icon: Padding(padding: EdgeInsets.only(left: 4), child: Image.asset('images/icon-down-white.png')),
+          icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down-white', excludeFromSemantics: true)),
           isExpanded: false,
           style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16, ),
           hint: (currentAccountName != null) ? Text(currentAccountName, style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)) : null,
@@ -213,11 +213,14 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       if (tweetsPage.tweets != null) {
         for (Tweet? tweet in tweetsPage.tweets!) {
           bool isFirst = pages.isEmpty;
-          pages.add(_TweetWidget(
-            tweet: tweet,
-            margin: EdgeInsets.only(right: _pageSpacing),
-            onTapPrevious: isFirst? null : _onTapPrevious,
-            onTapNext: _onTapNext,
+          pages.add(Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: _TweetWidget(
+              tweet: tweet,
+              margin: EdgeInsets.only(right: _pageSpacing),
+              onTapPrevious: isFirst? null : _onTapPrevious,
+              onTapNext: _onTapNext,
+            ),
           ));
         }
       }
@@ -453,7 +456,7 @@ class _TwitterPanelState extends State<TwitterPanel> implements NotificationsLis
       Semantics(label: currentAccountName, hint: "Double tap to select account", button: true, container: true, child:
         DropdownButtonHideUnderline(child:
           DropdownButton<String>(
-            icon: Padding(padding: EdgeInsets.only(left: 4, right: 16), child: Image.asset('images/icon-down-white.png')),
+            icon: Padding(padding: EdgeInsets.only(left: 4, right: 16), child: Styles().images?.getImage('chevron-down-white', excludeFromSemantics: true)),
             isExpanded: false,
             style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16, ),
             hint: (currentAccountName != null) ? Text(currentAccountName, style: TextStyle(color: Styles().colors?.white, fontFamily: Styles().fontFamilies?.medium, fontSize: 16)) : null,
@@ -651,9 +654,9 @@ class _TweetWidget extends StatelessWidget {
         decoration: BoxDecoration(
             color: Styles().colors!.white,
             boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
+            borderRadius: BorderRadius.all(Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
         ),
-        clipBehavior: Clip.none,
+        clipBehavior: Clip.hardEdge,
         child:
           Column(children: <Widget>[
                 Column(children: [

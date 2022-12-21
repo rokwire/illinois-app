@@ -46,6 +46,9 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   final double _pageSpacing = 16;
 
+  static const String localScheme = 'local';
+  static const String localUrlMacro = '{{local_url}}';
+
   @override
   void initState() {
     super.initState();
@@ -53,9 +56,10 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     NotificationService().subscribe(this, [
       Config.notifyConfigChanged,
       Guide.notifyChanged,
+      Auth2UserPrefs.notifyFavoritesChanged,
       Auth2UserPrefs.notifyRolesChanged,
-      AppLivecycle.notifyStateChanged,
       Auth2.notifyCardChanged,
+      AppLivecycle.notifyStateChanged,
     ]);
 
     if (widget.updateController != null) {
@@ -66,7 +70,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
       });
     }
 
-    _promotedItems = List<Map<String, dynamic>>.from(Guide().promotedList ?? <Map<String, dynamic>>[]);
+    _promotedItems = _buildContentList();
   }
 
   @override
@@ -91,6 +95,9 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     else if (name == Auth2UserPrefs.notifyRolesChanged) {
       _updatePromotedItems();
     }
+    else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      _updatePromotedItems();
+    }
     else if (name == Auth2.notifyCardChanged) {
       _updatePromotedItems();
     }
@@ -105,15 +112,13 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: Localization().getStringEx('widget.home.campus_guide_highlights.label.heading', 'Campus Guide Highlights'),
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'campus-tools',
       child: _buildContent() 
     );
   }
 
   Widget _buildContent() {
-    return  (_promotedItems?.isEmpty ?? true) ? HomeMessageCard(
-      message: Localization().getStringEx("widget.home.campus_guide_highlights.text.empty.description", "There are no active Campus Guide Highlights."),
-    ) : _buildPromotedContent();
+    return  (_promotedItems?.isEmpty ?? true) ? _buildEmptyContent() : _buildPromotedContent();
   }
 
   Widget _buildPromotedContent() {
@@ -125,7 +130,7 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         Map<String, dynamic>? promotedItem = JsonUtils.mapValue(_promotedItems![index]);
-        pages.add(Padding(key: _contentKeys[Guide().entryId(promotedItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 2), child:
+        pages.add(Padding(key: _contentKeys[Guide().entryId(promotedItem) ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing + 2, bottom: 8), child:
           GuideEntryCard(promotedItem)
         ));
       }
@@ -155,25 +160,64 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
       LinkButton(
             title: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.title', 'View All'),
             hint: Localization().getStringEx('widget.home.campus_guide_highlights.button.all.hint', 'Tap to view all highlights'),
-        onTap: _onSeeAll,
+        onTap: _onViewAll,
       ),
     ]);
   }
 
   void _updatePromotedItems() {
-    List<Map<String, dynamic>>? promotedItems = Guide().promotedList;
+    List<Map<String, dynamic>>? promotedItems = _buildContentList();
     if (mounted && (promotedItems != null) && !DeepCollectionEquality().equals(_promotedItems, promotedItems)) {
       setState(() {
-        _promotedItems = List<Map<String, dynamic>>.from(promotedItems);
+        _promotedItems = promotedItems;
         _pageViewKey = UniqueKey();
-        _pageController = null;
+        // _pageController = null;
+        _pageController?.jumpToPage(0);
         _contentKeys.clear();
       });
     }
+  }
+
+  List<Map<String, dynamic>>? _buildContentList() {
+    List<Map<String, dynamic>>? promotedItems = Guide().promotedList;
+    if (promotedItems != null) {
+      List<Map<String, dynamic>> favoritesList = <Map<String, dynamic>>[];
+      for(Map<String, dynamic> promotedItem in promotedItems) {
+        String? entryId = Guide().entryId(promotedItem);
+        if (Auth2().account?.prefs?.isFavorite(GuideFavorite(contentType: Guide.campusHighlightContentType, id: entryId)) ?? false) {
+          favoritesList.add(promotedItem);
+        }
+      }
+      return favoritesList;
+    }
+    return null;
+  }
+
+  Widget _buildEmptyContent() {
+    String message = Localization().getStringEx("widget.home.campus_guide_highlights.text.empty.description", "Tap the \u2606 on items in <a href='{{local_url}}'><b>Campus Guide Highlights</b></a> for quick access here.")
+      .replaceAll(localUrlMacro, '$localScheme://${Guide.campusHighlightContentType}');
+      return HomeMessageHtmlCard(message: message, onTapLink: _onMessageLink,);
+  }
+
+  void _onMessageLink(String? url) {
+    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+    if ((uri?.scheme == localScheme) && (uri?.host.toLowerCase() == Guide.campusHighlightContentType.toLowerCase())) {
+      _onCampusHighlightLink();
+    }
+  }
+
+  void _onCampusHighlightLink() {
+    Analytics().logSelect(target: "Campus Guide Highlight Link", source: widget.runtimeType.toString());
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
+      contentList: Guide().promotedList,
+      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Campus Highlights'),
+      contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Hightlights."),
+      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusHighlightContentType),
+    )));
   }
 
   double get _pageHeight {
@@ -189,12 +233,13 @@ class _HomeCampusHighlightsWidgetState extends State<HomeCampusHighlightsWidget>
     return minContentHeight ?? 0;
   }
 
-  void _onSeeAll() {
+  void _onViewAll() {
     Analytics().logSelect(target: "View All", source: widget.runtimeType.toString());
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideListPanel(
-      contentList: _promotedItems,
-      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Highlights'),
+      contentList: Guide().promotedList,
+      contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Campus Highlights'),
       contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Guide Highlights."),
+      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusHighlightContentType),
     )));
   }
 }

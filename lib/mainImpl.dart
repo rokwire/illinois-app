@@ -25,6 +25,9 @@ import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/service/CheckList.dart';
+import 'package:illinois/service/Explore.dart';
+import 'package:illinois/service/MTD.dart';
+import 'package:illinois/service/Questionnaire.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:illinois/service/DeviceCalendar.dart';
@@ -66,6 +69,7 @@ import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/app_navigation.dart';
 import 'package:rokwire_plugin/service/firebase_core.dart';
 import 'package:rokwire_plugin/service/firebase_crashlytics.dart';
+import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -118,6 +122,7 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     Styles(),
     Analytics(),
     FirebaseMessaging(),
+    LocalNotifications(),
     Sports(),
     LiveStats(),
     RecentItems(),
@@ -145,6 +150,8 @@ void mainImpl({ rokwire.ConfigEnvironment? configEnvironment }) async {
     AppReview(),
     StudentCourses(),
     Appointments(),
+    MTD(),
+    Explore(),
 
     // These do not rely on Service initialization API so they are not registered as services.
     // Content(),
@@ -183,6 +190,8 @@ class App extends StatefulWidget {
 
   final ServiceError? initializeError;
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  final Map<String, dynamic> _data = <String, dynamic>{};
+  final String _stateKey = 'state';
   static App? _instance;
 
   App({this.initializeError}) {
@@ -190,14 +199,15 @@ class App extends StatefulWidget {
   }
 
   static App? get instance => _instance;
+  _AppState? get state => _data[_stateKey];
 
   BuildContext? get currentContext => navigatorKey.currentContext;
 
   @override
-  _AppState createState() => _AppState();
+  _AppState createState() => (_data[_stateKey] = _AppState());
 }
 
-class _AppState extends State<App> implements NotificationsListener {
+class _AppState extends State<App> with TickerProviderStateMixin implements NotificationsListener {
 
   Key _key = UniqueKey();
   String? _lastRunVersion;
@@ -294,6 +304,18 @@ class _AppState extends State<App> implements NotificationsListener {
     }
     else if (Auth2().prefs?.privacyLevel == null) {
       return SettingsPrivacyPanel(mode: SettingsPrivacyPanelMode.update,); // regular?
+    }
+    else if ((Storage().participateInResearchPrompted != true) && (Questionnaires().participateInResearch == null) && Auth2().isOidcLoggedIn) {
+      return Onboarding2().researhQuestionnairePromptPanel(invocationContext: {
+        "onFinishResearhQuestionnaireActionEx": (BuildContext context) {
+          if (mounted) {
+            setState(() {
+              Storage().participateInResearchPrompted = true;
+            });
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }
+        }
+      });
     }
     else {
       return RootPanel();
@@ -428,6 +450,9 @@ class _AppState extends State<App> implements NotificationsListener {
       else if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          if (mounted) {
+            setState(() {}); // setState could present Participate In Research, in case the user has logged in recently
+          }
           _presentLaunchPopup();
         }
       }

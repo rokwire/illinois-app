@@ -175,7 +175,7 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
               borderColor: Styles().colors!.fillColorPrimary,
               label: Localization().getStringEx('panel.laundry.request_issue.button.submit.label', 'Submit'),
               onTap: _onTapSubmit,
-              rightIcon: Image.asset('images/chevron-right-white.png')),
+              rightIcon: Styles().images?.getImage('chevron-right-white', excludeFromSemantics: true)),
           Visibility(visible: _isLoading, child: CircularProgressIndicator())
         ]));
   }
@@ -187,7 +187,7 @@ class _LaundryRequestIssuePanelState extends State<LaundryRequestIssuePanel> {
           child: Text(Localization().getStringEx('panel.laundry.request_issue.machine_id.example.label', 'Machine ID Example'),
               textAlign: TextAlign.center,
               style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold))),
-      Image.asset('images/icon-laundry-machine-placeholder.png')
+      Styles().images?.getImage('laundry-placeholder') ?? Container(),
     ]);
   }
 

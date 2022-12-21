@@ -13,6 +13,7 @@ import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -82,7 +83,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
                     Semantics(label: Localization().getStringEx("widget.home.tout.button.info.label", "Info"), hint: Localization().getStringEx("widget.home.tout.button.info.hint", "Tap for more info"), child:
                       InkWell(onTap: _onInfo, child:
                         Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 8), child:
-                          Image.asset('images/icon-info-orange.png', excludeFromSemantics: true,),
+                          Styles().images?.getImage('info', excludeFromSemantics: true),
                         )
                       ),
                     ),
@@ -106,7 +107,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   Widget _buildImageWidget(String imageUrl) {
     final double triangleHeight = 40;
     return Stack(children: [
-      Image.network(imageUrl, semanticLabel: 'tout',
+    ModalImageHolder(child: Image.network(imageUrl, semanticLabel: 'tout',
           loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
@@ -118,7 +119,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
                 child: Center(
                     child: CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white))))
             : child;
-      }),
+      })),
       Align(
           alignment: Alignment.topCenter,
           child: CustomPaint(
@@ -255,7 +256,7 @@ class _InfoDialog extends StatelessWidget {
                 Semantics(button: true, label: Localization().getStringEx("dialog.close.title","Close"), child:
                   InkWell(onTap: () => _onTapClose(context), child:
                     Padding(padding: EdgeInsets.all(16), child:
-                      Image.asset('images/close-white.png', excludeFromSemantics: true,)
+                      Styles().images?.getImage('close-circle-white', excludeFromSemantics: true)
                     )
                   )
                 )

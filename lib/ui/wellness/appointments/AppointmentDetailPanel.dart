@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
@@ -23,6 +22,7 @@ import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Auth2.dart';
@@ -35,7 +35,6 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppointmentDetailPanel extends StatefulWidget {
@@ -141,57 +140,45 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget _buildAppointmentContent() {
+    String? toutImageKey = _appointment?.imageKeyBasedOnCategory;
+
     return Column(children: <Widget>[
       Expanded(
           child: Container(
               child: CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
-        SliverToutHeaderBar(flexImageUrl: _appointment!.imageUrl, flexRightToLeftTriangleColor: Colors.white),
+        SliverToutHeaderBar(flexImageKey: toutImageKey, flexRightToLeftTriangleColor: Colors.white),
         SliverList(
             delegate: SliverChildListDelegate([
-          Stack(children: <Widget>[
-            Container(
-                child: Column(children: <Widget>[
-              Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                _buildHeading(),
-                Column(children: <Widget>[
-                  Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 0),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                                padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
-                                color: Colors.white,
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[_buildTitle(), _buildDetails()])),
-                            Container(
-                                padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
-                                child: Column(children: [_buildCancelDescription()]))
-                          ]))
-                ])
-              ])
-            ]))
-          ])
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 0),
+              child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Container(
+                    padding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
+                    color: Colors.white,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[_buildTitle(), _buildDetails()])),
+                Container(
+                    padding: EdgeInsets.symmetric(horizontal: _horizontalPadding), child: Column(children: [_buildInstructionsDescription(), _buildCancelDescription()]))
+              ]))
         ], addSemanticIndexes: false))
       ])))
     ]);
   }
 
-  Widget _buildHeading() {
-    String? category = _appointment!.category;
+  /*Widget _buildHeading() {
+    // String? category = _appointment!.category;
     bool isFavorite = Auth2().isFavorite(_appointment);
     bool starVisible = Auth2().canFavorite && _appointment!.isUpcoming;
     return Container(
         color: Colors.white,
         padding: EdgeInsets.only(left: _horizontalPadding),
         child: Row(children: <Widget>[
-          Expanded(
-              child: Text(StringUtils.ensureNotEmpty(category).toUpperCase(),
-                  style: TextStyle(
-                      fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary, letterSpacing: 1))),
+          // Expanded(
+          //     child: Text(StringUtils.ensureNotEmpty(category).toUpperCase(),
+          //         style: TextStyle(
+          //             fontFamily: Styles().fontFamilies!.bold, fontSize: 14, color: Styles().colors!.fillColorPrimary, letterSpacing: 1))),
           Visibility(
               visible: starVisible,
               child: Container(
@@ -213,25 +200,48 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                                       ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
                                       : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                                   button: true,
-                                  child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png',
+                                  child: Styles().images?.getImage(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png',
                                       excludeFromSemantics: true)))))))
         ]));
-  }
+  }*/
 
   Widget _buildTitle() {
+    bool isFavorite = Auth2().isFavorite(_appointment);
+    bool starVisible = Auth2().canFavorite && _appointment!.isUpcoming;
     return Padding(
         padding: EdgeInsets.only(bottom: 8),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-          Expanded(child: Text(_appointment!.title!, style: TextStyle(fontSize: 24, color: Styles().colors!.fillColorPrimary)))
+          Expanded(
+              child: Text(_appointment!.title!,
+                  maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 22, color: Styles().colors!.fillColorPrimary))),
+          Visibility(
+              visible: starVisible,
+              child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    Analytics().logSelect(target: "Favorite: ${_appointment!.title}");
+                    Auth2().prefs?.toggleFavorite(widget.appointment);
+                  },
+                  child: Container(
+                      padding: EdgeInsets.only(left: 8, top: 16, bottom: 12),
+                      child: Semantics(
+                          label: isFavorite
+                              ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
+                              : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
+                          hint: isFavorite
+                              ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
+                              : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
+                          button: true,
+                          child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))))
         ]));
   }
 
   Widget _buildDetails() {
     List<Widget> details = [];
 
-    Widget? time = _buildTimeDetail();
-    if (time != null) {
-      details.add(time);
+    Widget? timeCancelled = _buildTimeAndCancelledRowDetail();
+    if (timeCancelled != null) {
+      details.add(timeCancelled);
     }
 
     Widget? location = _buildLocationDetail();
@@ -247,6 +257,11 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     Widget? host = _buildHostDetail();
     if (host != null) {
       details.add(host);
+    }
+
+    Widget? instructions = _buildInstructionsDetail();
+    if (instructions != null) {
+      details.add(instructions);
     }
 
     Widget? phone = _buildPhoneDetail();
@@ -266,6 +281,20 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         : Container();
   }
 
+  Widget? _buildTimeAndCancelledRowDetail() {
+    Widget? time = _buildTimeDetail();
+    Widget? cancelled = _buildCancelDetail();
+    if ((time != null) && (cancelled != null)) {
+      return Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [Flexible(child: time, fit: FlexFit.loose), cancelled]);
+    } else if (time != null) {
+      return time;
+    } else if (cancelled != null) {
+      return Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.end, children: [cancelled]);
+    } else {
+      return null;
+    }
+  }
+
   Widget? _buildTimeDetail() {
     String? displayTime = _appointment!.displayDate;
     if (StringUtils.isEmpty(displayTime)) {
@@ -277,11 +306,21 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         child: Padding(
             padding: EdgeInsets.only(bottom: 8),
             child: Row(children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/icon-calendar.png', excludeFromSemantics: true)),
+              Padding(padding: EdgeInsets.only(right: 7), child: Styles().images?.getImage('calendar', excludeFromSemantics: true)),
               Expanded(
                   child: Text(displayTime!,
                       style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
             ])));
+  }
+
+  Widget? _buildCancelDetail() {
+    if (_appointment!.cancelled != true) {
+      return null;
+    }
+    return Padding(
+        padding: EdgeInsets.only(left: 7),
+        child: Text(Localization().getStringEx('panel.appointment.detail.cancelled.label', 'Cancelled'),
+            style: TextStyle(color: Styles().colors!.accentColor1, fontSize: 22, fontFamily: Styles().fontFamilies!.extraBold)));
   }
 
   Widget? _buildLocationDetail() {
@@ -295,8 +334,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     String? locationTextValue;
     if (StringUtils.isNotEmpty(longDisplayLocation)) {
       locationTextValue = longDisplayLocation;
-    }
-    if (StringUtils.isNotEmpty(locationTitle)) {
+    } else if (StringUtils.isNotEmpty(locationTitle)) {
       if (locationTextValue != null) {
         locationTextValue += ', $locationTitle';
       } else {
@@ -304,7 +342,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
       }
     }
     bool isLocationTextVisible = StringUtils.isNotEmpty(locationTextValue);
-    return GestureDetector(
+    return InkWell(
         onTap: _onLocationDetailTapped,
         child: Padding(
             padding: EdgeInsets.only(bottom: 8),
@@ -314,22 +352,31 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/location.png', excludeFromSemantics: true)),
-                    Container(
-                        child: Text(typeLabel,
-                            style:
-                                TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
+                    Padding(padding: EdgeInsets.only(right: 6), child: Styles().images?.getImage('location', excludeFromSemantics: true)),
+                    Text(typeLabel,
+                        style: TextStyle(
+                            fontFamily: Styles().fontFamilies!.medium,
+                            fontSize: 16,
+                            color: Styles().colors!.textBackground,
+                            decoration: TextDecoration.underline,
+                            decorationColor: Styles().colors!.fillColorSecondary,
+                            decorationThickness: 1))
                   ]),
                   Container(height: 4),
                   Visibility(
                       visible: isLocationTextVisible,
                       child: Container(
-                          padding: EdgeInsets.only(left: 28),
+                          padding: EdgeInsets.only(left: 26),
                           child: Container(
                               padding: EdgeInsets.only(bottom: 2),
                               child: Text(StringUtils.ensureNotEmpty(locationTextValue),
                                   style: TextStyle(
-                                      fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))))
+                                      fontFamily: Styles().fontFamilies!.medium,
+                                      fontSize: 16,
+                                      color: Styles().colors!.textBackground,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: Styles().colors!.fillColorSecondary,
+                                      decorationThickness: 1)))))
                 ])));
   }
 
@@ -340,6 +387,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     }
 
     String typeLabel = Appointment.typeToDisplayString(type)!;
+    String? meetingUrl = _appointment!.onlineDetails?.url;
     String? meetingId = _appointment!.onlineDetails?.meetingId;
     String? meetingPasscode = _appointment!.onlineDetails?.meetingPasscode;
     return Padding(
@@ -350,35 +398,55 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/laptop.png', excludeFromSemantics: true)),
+                Padding(padding: EdgeInsets.only(right: 6), child: Styles().images?.getImage('laptop', excludeFromSemantics: true)),
                 Container(
                     padding: EdgeInsets.only(bottom: 2),
                     child: Text(typeLabel,
                         style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
               ]),
-              Container(height: 4),
+              Visibility(
+                  visible: StringUtils.isNotEmpty(meetingUrl),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Container(height: 4),
+                    Container(
+                        padding: EdgeInsets.only(left: 26),
+                        child: Container(
+                            padding: EdgeInsets.only(bottom: 2),
+                            child: LinkButton(
+                              padding: EdgeInsets.zero,
+                              title: meetingUrl,
+                              hint: '',
+                              fontSize: 16,
+                              onTap: () => _launchUrl(meetingUrl),
+                            )))
+                  ])),
               Visibility(
                   visible: StringUtils.isNotEmpty(meetingId),
-                  child: Container(
-                      padding: EdgeInsets.only(left: 28),
-                      child: Container(
-                          padding: EdgeInsets.only(bottom: 2),
-                          child: Text(
-                              Localization().getStringEx('panel.appointment.detail.meeting.id.label', 'Meeting ID:') + ' $meetingId',
-                              style: TextStyle(
-                                  fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground))))),
-              Container(height: 4),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Container(height: 4),
+                    Container(
+                        padding: EdgeInsets.only(left: 26),
+                        child: Container(
+                            padding: EdgeInsets.only(bottom: 2),
+                            child: Text(
+                                Localization().getStringEx('panel.appointment.detail.meeting.id.label', 'Meeting ID:') + ' $meetingId',
+                                style: TextStyle(
+                                    fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground))))
+                  ])),
               Visibility(
                   visible: StringUtils.isNotEmpty(meetingPasscode),
-                  child: Container(
-                      padding: EdgeInsets.only(left: 28),
-                      child: Container(
-                          padding: EdgeInsets.only(bottom: 2),
-                          child: Text(
-                              Localization().getStringEx('panel.appointment.detail.meeting.passcode.label', 'Passcode:') +
-                                  ' $meetingPasscode',
-                              style: TextStyle(
-                                  fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))))
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Container(height: 4),
+                    Container(
+                        padding: EdgeInsets.only(left: 26),
+                        child: Container(
+                            padding: EdgeInsets.only(bottom: 2),
+                            child: Text(
+                                Localization().getStringEx('panel.appointment.detail.meeting.passcode.label', 'Passcode:') +
+                                    ' $meetingPasscode',
+                                style: TextStyle(
+                                    fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground))))
+                  ]))
             ]));
   }
 
@@ -390,9 +458,23 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     return Padding(
         padding: EdgeInsets.only(bottom: 8),
         child: Row(children: <Widget>[
-          Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/u.png', excludeFromSemantics: true)),
+          Padding(padding: EdgeInsets.only(right: 12), child: Styles().images?.getImage('person', excludeFromSemantics: true)),
           Expanded(
               child: Text(hostDisplayName!,
+                  style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
+        ]));
+  }
+
+  Widget? _buildInstructionsDetail() {
+    if (StringUtils.isEmpty(_appointment!.instructions)) {
+      return null;
+    }
+    return Padding(
+        padding: EdgeInsets.only(bottom: 8),
+        child: Row(children: <Widget>[
+          Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('info', excludeFromSemantics: true)),
+          Expanded(
+              child: Text(Localization().getStringEx('panel.appointment.detail.instructions.label', 'Required prep'),
                   style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
         ]));
   }
@@ -405,7 +487,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     return Padding(
         padding: EdgeInsets.only(bottom: 8),
         child: Row(children: <Widget>[
-          Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/icon-phone.png', excludeFromSemantics: true)),
+          Padding(padding: EdgeInsets.only(right: 11), child: Styles().images?.getImage('phone', excludeFromSemantics: true)),
           Expanded(
               child: Text(phone!,
                   style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
@@ -413,7 +495,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget? _buildUrlDetail() {
-    String? url = Config().saferMcKinley['url'];
+    String? url = Config().saferMcKinleyUrl;
     if (StringUtils.isEmpty(url)) {
       return null;
     }
@@ -422,29 +504,55 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         child: Padding(
             padding: EdgeInsets.only(bottom: 8),
             child: Row(children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/external-link.png', excludeFromSemantics: true)),
+              Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('external-link', excludeFromSemantics: true)),
               Expanded(
                   child: Text(url!,
                       style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
             ])));
   }
 
-  //TBD: Appointment - display url and phone with different style
+  Widget _buildInstructionsDescription() {
+    String? instructions = _appointment!.instructions;
+    if (StringUtils.isEmpty(instructions)) {
+      return Container();
+    }
+    String instructionsHtml =
+        '<b>${Localization().getStringEx('panel.appointment.detail.instructions.label', 'Required prep')}: </b> $instructions';
+    return Padding(
+        padding: EdgeInsets.only(top: 10),
+        child: Html(data: instructionsHtml, onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url), style: {
+          "body": Style(
+              color: Styles().colors!.textSurface,
+              fontFamily: Styles().fontFamilies!.medium,
+              fontSize: FontSize(16),
+              padding: EdgeInsets.zero,
+              margin: EdgeInsets.zero),
+          "a": Style(color: Styles().colors?.textSurface)
+        }));
+  }
+
   Widget _buildCancelDescription() {
+    final String urlLabelMacro = '{{mckinley_url_label}}';
+    final String urlMacro = '{{mckinley_url}}';
+    final String externalLinkIconMacro = '{{external_link_icon}}';
+    final String phoneMacro = '{{mckinley_phone}}';
+    String descriptionHtml = Localization().getStringEx("panel.appointment.detail.cancel.description",
+        "<b>To cancel an appointment,</b> go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}</u>)</a> during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.");
+    descriptionHtml = descriptionHtml.replaceAll(urlMacro, Config().saferMcKinleyUrl ?? '');
+    descriptionHtml = descriptionHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
+    descriptionHtml = descriptionHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
+    descriptionHtml = descriptionHtml.replaceAll(phoneMacro, Config().saferMcKinleyPhone ?? '');
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10),
-        child: Html(
-            data: Localization().getStringEx('panel.appointment.detail.cancel.description',
-                'To cancel an appointment, go to MyMcKinley.illinois.edu or call (217-333-2700) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.'),
-            onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url),
-            style: {
-              "body": Style(
-                  color: Styles().colors!.textSurface,
-                  fontFamily: Styles().fontFamilies!.medium,
-                  fontSize: FontSize(16),
-                  padding: EdgeInsets.zero,
-                  margin: EdgeInsets.zero)
-            }));
+        child: Html(data: descriptionHtml, onLinkTap: (url, renderContext, attributes, element) => _launchUrl(url), style: {
+          "body": Style(
+              color: Styles().colors!.textSurface,
+              fontFamily: Styles().fontFamilies!.medium,
+              fontSize: FontSize(16),
+              padding: EdgeInsets.zero,
+              margin: EdgeInsets.zero),
+          "a": Style(color: Styles().colors?.textSurface)
+        }));
   }
 
   void _onLocationDetailTapped() {
@@ -454,14 +562,12 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     }
   }
 
-  void _launchUrl(String? url) {
+  void _launchUrl(String? url) async {
     if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
+      if (StringUtils.isNotEmpty(url)) {
         Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
+        if ((uri != null) && (await canLaunchUrl(uri))) {
+          launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       }
     }

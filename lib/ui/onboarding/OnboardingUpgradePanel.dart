@@ -59,12 +59,12 @@ class _OnboardingUpgradePanelState extends State<OnboardingUpgradePanel> {
             child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Image.asset(
-              'images/login-header.png',
+            Styles().images?.getImage(
+              'header-login',
               fit: BoxFit.fitWidth,
               width: MediaQuery.of(context).size.width,
               excludeFromSemantics: true,
-            ),
+            ) ?? Container(),
             Expanded(
                 child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 0),

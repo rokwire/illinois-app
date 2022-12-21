@@ -6,7 +6,7 @@ class Questionnaire {
   final String? id;
   final String? title;
   final String? description;
-  List<Question>? questions;
+  final List<Question>? questions;
   final Map<String, dynamic>? strings;
 
   Questionnaire({this.id, this.title, this.description, this.questions, this.strings});
@@ -94,13 +94,14 @@ class Questionnaire {
 class Question {
   final String? id;
   final String? title;
+  final String? hint;
   final String? descriptionPrefix;
   final String? descriptionSuffix;
   final int? minAnswers;
   final int? maxAnswers;
   final List<Answer>? answers;
 
-  Question({this.id, this.title, this.descriptionPrefix, this.descriptionSuffix, this.minAnswers, this.maxAnswers, this.answers});
+  Question({this.id, this.title, this.hint, this.descriptionPrefix, this.descriptionSuffix, this.minAnswers, this.maxAnswers, this.answers});
 
   // JSON serialization
 
@@ -108,6 +109,7 @@ class Question {
     return (json != null) ? Question(
       id: JsonUtils.stringValue(json['id']),
       title: JsonUtils.stringValue(json['title']),
+      hint: JsonUtils.stringValue(json['hint']),
       descriptionPrefix: JsonUtils.stringValue(json['description_prefix']),
       descriptionSuffix: JsonUtils.stringValue(json['description_suffix']),
       minAnswers: JsonUtils.intValue(json['min_answers']),
@@ -119,6 +121,7 @@ class Question {
   toJson() => {
     'id': id,
     'title': title,
+    'hint': hint,
     'description_prefix': descriptionPrefix,
     'description_suffix': descriptionSuffix,
     'min_answers': minAnswers,
@@ -133,6 +136,7 @@ class Question {
     (other is Question) &&
     (id == other.id) &&
     (title == other.title) &&
+    (hint == other.hint) &&
     (descriptionPrefix == other.descriptionPrefix) &&
     (descriptionSuffix == other.descriptionSuffix) &&
     (minAnswers == other.minAnswers) &&
@@ -143,6 +147,7 @@ class Question {
   int get hashCode =>
     (id?.hashCode ?? 0) ^
     (title?.hashCode ?? 0) ^
+    (hint?.hashCode ?? 0) ^
     (descriptionPrefix?.hashCode ?? 0) ^
     (descriptionSuffix?.hashCode ?? 0) ^
     (minAnswers?.hashCode ?? 0) ^
@@ -172,13 +177,18 @@ class Question {
     }
     return jsonList;
   }
+
+  // Accessories
+
+  String? get displayHint => hint ?? title;
 }
 
 class Answer {
   final String? id;
   final String? title;
+  final String? hint;
 
-  Answer({this.id, this.title});
+  Answer({this.id, this.title, this.hint});
 
   // JSON serialization
 
@@ -186,12 +196,14 @@ class Answer {
     return (json != null) ? Answer(
       id: JsonUtils.stringValue(json['id']),
       title: JsonUtils.stringValue(json['title']),
+      hint: JsonUtils.stringValue(json['hint']),
     ) : null;
   }
 
   toJson() => {
     'id': id,
     'title': title,
+    'hint': hint,
   };
 
   // Equality
@@ -200,12 +212,14 @@ class Answer {
   bool operator==(dynamic other) =>
     (other is Answer) &&
     (id == other.id) &&
-    (title == other.title);
+    (title == other.title) &&
+    (hint == other.hint);
 
   @override
   int get hashCode =>
     (id?.hashCode ?? 0) ^
-    (title?.hashCode ?? 0);
+    (title?.hashCode ?? 0) ^
+    (hint?.hashCode ?? 0);
 
   // List<Answer> JSON Serialization
 
@@ -230,4 +244,8 @@ class Answer {
     }
     return jsonList;
   }
+
+  // Accessories
+
+  String? get displayHint => hint ?? title;
 }

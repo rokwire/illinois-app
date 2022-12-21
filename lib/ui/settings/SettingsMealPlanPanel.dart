@@ -141,9 +141,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
       controller: widget.scrollController,
       slivers: <Widget>[
         SliverHeaderBar(
-          leadingAsset: widget.scrollController == null
-              ? 'images/chevron-left-white.png'
-              : 'images/chevron-left-blue.png',
+          leadingIconKey: widget.scrollController == null ? 'chevron-left-white' : 'chevron-left',
           title: Localization().getStringEx('panel.settings.meal_plan.label.title','University Housing Meal Plan'),
           textColor: widget.scrollController == null
               ? Styles().colors!.white
@@ -157,7 +155,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
                 children: <Widget>[
 
                   _buildSettingsHeader(Localization().getStringEx(
-                      "panel.settings.meal_plan.heading.text", "University Housing Meal Plan"), 'images/icon-schedule.png'),
+                      "panel.settings.meal_plan.heading.text", "University Housing Meal Plan"), 'dining'),
                   _buildMealPlanSection(),
                   _buildMealPlanHistory(),
                   _buildCafeCreditHistory(),
@@ -175,7 +173,7 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
     return Column(
       children: <Widget>[
         _buildSettingsHeader(Localization().getStringEx(
-            "panel.settings.meal_plan.classic_meal_history.text", "Classic Meal History"), 'images/icon-schedule.png'),
+            "panel.settings.meal_plan.classic_meal_history.text", "Classic Meal History"), 'calendar'),
         _buildBalanceTableRow(_mealPlanTransactionsLoading, _mealPlanTransactions),
         Container(height: 20,),
       ],
@@ -186,14 +184,14 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
     return Column(
       children: <Widget>[
         _buildSettingsHeader(Localization().getStringEx(
-            "panel.settings.meal_plan.dining_dollars_history.text", "Dining Dollars History"), 'images/icon-schedule.png'),
+            "panel.settings.meal_plan.dining_dollars_history.text", "Dining Dollars History"), 'calendar'),
         _buildBalanceTableRow(_cafeCreditTransactionsLoading, _cafeCreditTransactions),
         Container(height: 20,),
       ],
     );
   }
 
-  Widget _buildSettingsHeader(String? title, String iconSrc){
+  Widget _buildSettingsHeader(String? title, String iconKey){
     if (!Auth2().isLoggedIn) {
       return Container();
     }
@@ -210,8 +208,8 @@ class _SettingsMealPlanPanelState extends State<SettingsMealPlanPanel> implement
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: <Widget>[
-                Image.asset(StringUtils.ensureNotEmpty(
-                    iconSrc, defaultValue: 'images/icon-settings.png')),
+                Styles().images?.getImage(StringUtils.ensureNotEmpty(
+                    iconKey, defaultValue: 'settings')) ?? Container(),
                 Expanded(child:
                   Padding(
                     padding: EdgeInsets.only(left: 12),
@@ -744,7 +742,7 @@ class _DateValue extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: Styles().textStyles?.getTextStyle("widget.item.regular.fat"),),
           ),
-          Image.asset('images/icon-down.png')
+          Styles().images?.getImage('chevron-down', excludeFromSemantics: true) ?? Container(),
         ],), Container(height: 2, color: Styles().colors!.fillColorSecondary,)
     ],),),);
   }

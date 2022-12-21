@@ -210,7 +210,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
               _categoriesFilter = categoriesFilter;
               _events = _randomSelection(events, Config().homeUpcomingEventsCount);
               _pageViewKey = UniqueKey();
-              _pageController = null;
+              // _pageController = null;
               _contentKeys.clear();
             });
           }
@@ -223,7 +223,8 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
               _categoriesFilter = null;
               _events = _randomSelection(events, Config().homeUpcomingEventsCount);
               _pageViewKey = UniqueKey();
-              _pageController = null;
+              // _pageController = null;
+              _pageController?.jumpToPage(0);
               _contentKeys.clear();
             });
           });
@@ -284,7 +285,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
         title: Localization().getStringEx('widget.home.suggested_events.label.events_for_you', 'Suggested Events'),
         subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home.suggested_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
         favoriteId: widget.favoriteId,
-        rightIconAsset: 'images/settings-white.png',
+        rightIconKey: 'settings-white',
         rightIconAction: _navigateToSettings,
       ),
       Stack(children:<Widget>[
@@ -316,7 +317,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
     if (1 < (_events?.length ?? 0)) {
 
       for (Event event in _events!) {
-        pages.add(Padding(key: _contentKeys[event.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 4), child:
+        pages.add(Padding(key: _contentKeys[event.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
           ExploreCard(explore: event, showTopBorder: true, horizontalPadding: 0, onTap: () => _onTapEvent(event),
         )
         ));
@@ -339,14 +340,14 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 4), child:
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
         ExploreCard(explore: _events?.first, showTopBorder: true, horizontalPadding: 0, onTap: () => _onTapEvent(_events?.first))
       );
     }
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.suggested_events.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.suggested_events.button.all.hint', 'Tap to view all events'),
@@ -399,7 +400,7 @@ class _EventsRibbonHeader extends StatelessWidget {
   final String? subTitle;
 
   final String? rightIconLabel;
-  final String? rightIconAsset;
+  final String? rightIconKey;
   final void Function()? rightIconAction;
 
   final String? favoriteId;
@@ -410,7 +411,7 @@ class _EventsRibbonHeader extends StatelessWidget {
 
     // ignore: unused_element
     this.rightIconLabel,
-    this.rightIconAsset,
+    this.rightIconKey,
     this.rightIconAction,
 
     this.favoriteId,
@@ -421,7 +422,7 @@ class _EventsRibbonHeader extends StatelessWidget {
     List<Widget> titleList = <Widget>[];
 
     titleList.add(
-      HomeTitleIcon(image: Image.asset('images/icon-calendar.png')),
+      HomeTitleIcon(image: Styles().images?.getImage('calendar')),
     );
       
     titleList.add(
@@ -443,11 +444,11 @@ class _EventsRibbonHeader extends StatelessWidget {
       ),
     );
 
-    Widget? rightIconWidget = (rightIconAsset != null) ?
+    Widget? rightIconWidget = (rightIconKey != null) ?
       Semantics(label: rightIconLabel, button: true, child:
         InkWell(onTap: rightIconAction, child:
           Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
-            Image.asset(rightIconAsset!, excludeFromSemantics: true,),
+            Styles().images?.getImage(rightIconKey, excludeFromSemantics: true,),
           )
         )
       ) : null;

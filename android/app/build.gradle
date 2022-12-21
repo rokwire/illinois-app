@@ -59,6 +59,7 @@ android {
     }
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -70,6 +71,7 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
 
     def isRunningOnTravis = System.getenv("CI") == "true"
@@ -137,6 +139,25 @@ android {
             manifestPlaceholders = [mapsApiKey: "${illinoisKeysProperties.getProperty('googleMapsApiKey')}"]
         }
     }
+
+    // Workaround for building app bundle - flutter/Android
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            def taskSuffix = variant.name.capitalize()
+            def bundleTaskName = "bundle${taskSuffix}"
+            if (tasks.findByName(bundleTaskName)) {
+                def copyAABTask = tasks.create(name: "copyAndRenameAab${taskSuffix}", type: Copy) {
+                    def bundleBuildDir = "${buildDir}/outputs/bundle"
+                    def originalDirPath = "${variant.productFlavors.name.join()}${variant.buildType.name}"
+                    def originalFileName = "${project.archivesBaseName}-${variant.productFlavors.name.join('-')}-${variant.buildType.name}.aab"
+                    from "${bundleBuildDir}/${originalDirPath}/${originalFileName}"
+                    into "${bundleBuildDir}/${variant.buildType.name}/"
+                    rename ("${originalFileName}", "app.aab")
+                }
+                tasks[bundleTaskName].finalizedBy = [copyAABTask]
+            }
+        }
+    }
 }
 
 play {
@@ -181,6 +202,8 @@ dependencies {
 
     //Zxing
     implementation 'com.google.zxing:core:3.3.0' //Use zxing 3.3.0 because we have minSdk < 24
+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 }
 
 apply plugin: 'com.google.gms.google-services'

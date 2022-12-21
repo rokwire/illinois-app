@@ -16,14 +16,15 @@ import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
 
 
-class HomeMyGroupsWidget extends StatefulWidget {
+class HomeGroupsWidget extends StatefulWidget {
   final String? favoriteId;
   final StreamController<String>? updateController;
   final GroupsContentType contentType;
 
-  const HomeMyGroupsWidget({Key? key, required this.contentType, this.favoriteId, this.updateController}) : super(key: key);
+  const HomeGroupsWidget({Key? key, required this.contentType, this.favoriteId, this.updateController}) : super(key: key);
 
   static Widget handle({required GroupsContentType contentType, Key? key, String? favoriteId, HomeDragAndDropHost? dragAndDropHost, int? position}) =>
     HomeHandleWidget(key: key, favoriteId: favoriteId, dragAndDropHost: dragAndDropHost, position: position,
@@ -42,10 +43,10 @@ class HomeMyGroupsWidget extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => _HomeMyGroupsState();
+  State<StatefulWidget> createState() => _HomeGroupsWidgetState();
 }
 
-class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements NotificationsListener{
+class _HomeGroupsWidgetState extends State<HomeGroupsWidget> implements NotificationsListener{
   List<Group>? _groups;
   DateTime? _pausedDateTime;
 
@@ -85,7 +86,8 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   }
 
   void _loadGroups(){
-    Groups().loadGroups(contentType: widget.contentType).then((groups) {
+    Groups().loadGroups(contentType: widget.contentType).then((List<Group>? groupsList) {
+      List<Group>? groups = ListUtils.from(groupsList);
       _sortGroups(groups);
       if (mounted) {
         setState(() {
@@ -96,13 +98,15 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   }
 
   void _updateGroups() {
-    Groups().loadGroups(contentType: widget.contentType).then((List<Group>? groups) {
+    Groups().loadGroups(contentType: widget.contentType).then((List<Group>? groupsList) {
+      List<Group>? groups = ListUtils.from(groupsList);
       _sortGroups(groups);
       if (mounted && !DeepCollectionEquality().equals(_groups, groups)) {
         setState(() {
           _groups = groups;
           _pageViewKey = UniqueKey();
-          _pageController = null;
+          // _pageController = null;
+          _pageController?.jumpToPage(0);
         });
       }
     });
@@ -110,7 +114,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
 
   void _applyUserGroups() {
     if (widget.contentType == GroupsContentType.my) {
-      List<Group>? userGroups = Groups().userGroups;
+      List<Group>? userGroups = ListUtils.from(Groups().userGroups);
       _sortGroups(userGroups);
       if (mounted) {
         setState(() {
@@ -124,19 +128,18 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: widget._title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'groups',
       child: _haveGroups ? _buildContent() : _buildEmpty(),
     );
   }
 
 
   Widget _buildContent() {
-
     List<Widget> pages = <Widget>[];
     if(_groups?.isNotEmpty ?? false) {
       for (Group? group in _groups!) {
         if ((group != null) && group.isVisible) {
-          pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing), child:
+          pages.add(Padding(padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
             Semantics(
               // excludeSemantics: !(_pageController?.page == _groups?.indexOf(group)),
              child: GroupCard(group: group, displayType: GroupCardDisplayType.homeGroups, margin: EdgeInsets.zero,),
@@ -145,7 +148,7 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
       }
     }
 
-    double pageHeight = 90 * 2 * MediaQuery.of(context).textScaleFactor;
+    double pageHeight = 92 * 2 * MediaQuery.of(context).textScaleFactor;
 
     if (_pageController == null) {
       double screenWidth = MediaQuery.of(context).size.width;
@@ -162,10 +165,10 @@ class _HomeMyGroupsState extends State<HomeMyGroupsWidget> implements Notificati
           allowImplicitScrolling : true,
         )
       ),
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
       LinkButton(
-        title: Localization().getStringEx('widget.home.my_groups.button.all.title', 'View All'),
-        hint: Localization().getStringEx('widget.home.my_groups.button.all.hint', 'Tap to view all groups'),
+        title: Localization().getStringEx('widget.home.groups.button.all.title', 'View All'),
+        hint: Localization().getStringEx('widget.home.groups.button.all.hint', 'Tap to view all groups'),
         onTap: _onSeeAll,
       ),
     ],);

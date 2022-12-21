@@ -118,7 +118,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(
-        leadingAsset: 'images/icon-circle-close.png',
+        leadingIconKey: 'close-circle-white',
         title: Localization().getStringEx("panel.membership_request.label.title", 'Membership Steps'),
       ),
       body: Column(
@@ -148,7 +148,7 @@ class _GroupMembershipStepsPanelState extends State<GroupMembershipStepsPanel> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start,
           children:<Widget>[
             Row(children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 4), child: Image.asset('images/campus-tools-blue.png')),
+              Padding(padding: EdgeInsets.only(right: 4), child: Styles().images?.getImage('campus-tools', excludeFromSemantics: true)),
               Text(Localization().getStringEx("panel.membership_request.button.add_steps.title", 'Add Steps'), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
             ],),
             Padding(padding: EdgeInsets.only(top: 8), child:
@@ -348,7 +348,7 @@ class _EventCard extends StatelessWidget {
                 Text(event!.title!,  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary),),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
-                Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
+                Padding(padding: EdgeInsets.only(right: 8), child: Styles().images?.getImage('calendar', excludeFromSemantics: true)),
                 Text(event?.timeDisplayString ?? '',  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textBackground),),
               ],)),
             ],)

@@ -31,6 +31,7 @@ import 'package:illinois/ui/athletics/AthleticsTeamPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/tile_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -138,8 +139,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                           Container(
                             height: 112,
                             width: double.infinity,
-                            child: Image.asset('images/slant-down-right.png',
-                              color: Styles().colors!.fillColorPrimary,
+                            child: Styles().images?.getImage('slant-dark',
                               fit: BoxFit.fill,
                               excludeFromSemantics: true,
                             ),
@@ -154,10 +154,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                               children: <Widget>[
                                 Padding(
                                   padding: EdgeInsets.only(right: 16),
-                                  child: Image.asset(
-                                    'images/icon-athletics-orange.png',
-                                    excludeFromSemantics: true,
-                                  ),
+                                  child: Styles().images?.getImage('athletics', excludeFromSemantics: true),
                                 ),
                                 Expanded(child:
                                   Text(
@@ -177,7 +174,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                     TileButton(
                                       title: Localization().getStringEx("panel.athletics_game_detail.button.schedule.title", "Schedule"),
                                       hint: Localization().getStringEx("panel.athletics_game_detail.button.schedule.hint", ""),
-                                      iconAsset: 'images/2.0x/schedule-orange.png',
+                                      iconAsset: 'calendar', //images/2.0x/schedule-orange.png
                                       contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
                                       onTap: _onScheduleTap,
                                     ),
@@ -186,7 +183,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                     TileButton(
                                       title: Localization().getStringEx("panel.athletics_game_detail.button.news.title", "News"),
                                       hint: Localization().getStringEx("panel.athletics_game_detail.button.news.hint", ""),
-                                      iconAsset: 'images/2.0x/teal.png',
+                                      iconAsset: 'news', //images/2.0x/teal.png
                                       contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
                                       onTap: _onTapNews,
                                     ),
@@ -209,7 +206,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                                     TileButton(
                                       title: Localization().getStringEx("panel.athletics_game_detail.button.teams.title", "Teams"),
                                       hint: Localization().getStringEx("panel.athletics_game_detail.button.teams.hint", ""),
-                                      iconAsset: 'images/2.0x/navy.png',
+                                      iconAsset: 'images/2.0x/navy.png', // TODO - ICONS find an icon
                                       contentSpacing: 16, padding: EdgeInsets.all(16), borderWidth: 0, borderShadow: [],
                                       onTap: _onTapTeams,
                                     ),
@@ -237,11 +234,11 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
       widgets.add(Container(
         height: 200,
         child: SizedBox.expand(
-          child: Image.network(
+          child: ModalImageHolder(child: Image.network(
             game!.newsImageUrl!,
             semanticLabel: "game",
             fit: BoxFit.fitWidth,
-          ),
+          )),
         ),
       ));
     }
@@ -295,10 +292,7 @@ class _AthleticsGameDetailPanelState extends State<AthleticsGameDetailPanel> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 8),
-                      child: Image.asset((_newsExpanded
-                          ? 'images/icon-up.png'
-                          : 'images/icon-down-orange.png'),
-                        excludeFromSemantics: true,),
+                      child: Styles().images?.getImage(_newsExpanded ? 'chevron-up' : 'chevron-down', excludeFromSemantics: true,),
                     )
                   ],
                 ),

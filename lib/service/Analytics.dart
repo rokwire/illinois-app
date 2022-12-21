@@ -282,6 +282,16 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
   static const String   LogAttributeGuideSection           = "guide_section";
   static const String   LogAttributeLocation               = "location";
 
+  // Video Attributes
+  static const String   LogVideoEventName                  = "video";
+  static const String   LogAttributeVideoId                = "video_id";
+  static const String   LogAttributeVideoTitle             = "video_title";
+  static const String   LogAttributeVideoDuration          = "video_duration";
+  static const String   LogAttributeVideoPosition          = "video_position";
+  static const String   LogAttributeVideoEvent             = "video_event";
+  static const String   LogAttributeVideoEventStarted      = "started";
+  static const String   LogAttributeVideoEventPaused       = "paused";
+  static const String   LogAttributeVideoEventStopped      = "stopped";
 
   // Data
 
@@ -514,45 +524,50 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
 
   void _logRoute(Route? route) {
 
-    WidgetBuilder? builder;
-    if (route is CupertinoPageRoute) {
-      builder = route.builder;
-    }
-    else if (route is MaterialPageRoute) {
-      builder = route.builder;
-    }
-    else {
-      // _ModalBottomSheetRoute presented by showModalBottomSheet
-      try { builder = (route as dynamic).builder; }
-      catch(e) { print(e.toString()); }
-    }
-
-    if (builder != null) {
-      Widget? panel = (App.instance?.currentContext != null) ? builder(App.instance!.currentContext!) : null;
-      if (panel != null) {
-        
-        if (panel is RootPanel) {
-          Widget? tabPanel = RootPanel.stateKey.currentState?.currentTabPanel;
-          if (tabPanel != null) {
-            panel = tabPanel;
-          }
-        }
-        
-        String? panelName;
-        if (panel is AnalyticsPageName) {
-          panelName = (panel as AnalyticsPageName).analyticsPageName;
-        }
-        if (panelName == null) {
-          panelName = panel.runtimeType.toString();
-        }
-
-        Map<String, dynamic>? panelAttributes;
-        if (panel is AnalyticsPageAttributes) {
-          panelAttributes = (panel as AnalyticsPageAttributes).analyticsPageAttributes;
-        }
-
-        logPage(name: panelName, attributes: panelAttributes);
+    Widget? panel;
+    try {
+      if (route is CupertinoPageRoute) {
+        panel = (App.instance?.currentContext != null) ? route.builder(App.instance!.currentContext!) : null;
       }
+      else if (route is MaterialPageRoute) {
+        panel = (App.instance?.currentContext != null) ? route.builder(App.instance!.currentContext!) : null;
+      }
+      else if (route is PageRouteBuilder) {
+        AnimationController? animationController = (App.instance?.state != null) ? AnimationController(duration: const Duration(milliseconds: 500), vsync: App.instance!.state!) : null;
+        Animation<double>? animation = (animationController != null) ? Tween<double>(begin: 0, end: 500).animate(animationController) : null;
+        panel = ((App.instance?.currentContext != null) && (animation != null)) ? route.pageBuilder(App.instance!.currentContext!, animation, animation) : null;
+      }
+      else {
+        // _ModalBottomSheetRoute presented by showModalBottomSheet
+        WidgetBuilder? builder = (route as dynamic).builder;
+        panel = ((builder != null) && (App.instance?.currentContext != null)) ? builder(App.instance!.currentContext!) : null;
+      }
+    }
+    catch(e) { print(e.toString()); }
+
+    if (panel != null) {
+      
+      if (panel is RootPanel) {
+        Widget? tabPanel = RootPanel.stateKey.currentState?.currentTabPanel;
+        if (tabPanel != null) {
+          panel = tabPanel;
+        }
+      }
+      
+      String? panelName;
+      if (panel is AnalyticsPageName) {
+        panelName = (panel as AnalyticsPageName).analyticsPageName;
+      }
+      if (panelName == null) {
+        panelName = panel.runtimeType.toString();
+      }
+
+      Map<String, dynamic>? panelAttributes;
+      if (panel is AnalyticsPageAttributes) {
+        panelAttributes = (panel as AnalyticsPageAttributes).analyticsPageAttributes;
+      }
+
+      logPage(name: panelName, attributes: panelAttributes);
     }
   }
 
@@ -1005,6 +1020,18 @@ class Analytics extends rokwire.Analytics implements NotificationsListener {
     );
   }
 
+  void logVideo({required String videoEvent, String? videoId, String? videoTitle, int? duration, int? position}) {
+    Map<String, dynamic> event = {
+      LogEventName                : LogVideoEventName,
+      LogAttributeVideoId         : videoId,
+      LogAttributeVideoTitle      : videoTitle,
+      LogAttributeVideoEvent      : videoEvent,
+      LogAttributeVideoDuration   : duration,
+      LogAttributeVideoPosition   : position,
+    };
+    logEvent(event);
+  }
+
 }
 
 
@@ -1014,4 +1041,14 @@ abstract class AnalyticsPageName {
 
 abstract class AnalyticsPageAttributes {
   Map<String, dynamic>? get analyticsPageAttributes;
+}
+
+class _TicketWidget extends StatefulWidget {
+  @override
+  _TicketWidgetState createState() => _TicketWidgetState();
+}
+
+class _TicketWidgetState extends State<_TicketWidget> with TickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) => Container();
 }

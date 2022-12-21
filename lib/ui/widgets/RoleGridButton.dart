@@ -25,26 +25,32 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class RoleGridButton extends TileToggleButton {
+  static final double  minimumTitleRowsCount = 2;
+  static final double  fontSizeHeightFactor = 1.2;
+
+  final double scaleFactor;
+
   RoleGridButton({
     required String title,
     required String hint,
-    required String iconAsset,
-    required String selectedIconAsset,
+    required String iconKey,
+    required String selectedIconKey,
     Color? selectedTitleColor,
     Color? selectedBackgroundColor,
     required bool selected,
     dynamic data,
     double? sortOrder,
     void Function(RoleGridButton)? onTap,
+    this.scaleFactor = 1.0,
   }) : super(
     title: title,
     hint: hint,
-    iconAsset: iconAsset,
-    selectedIconAsset: selectedIconAsset,
+    iconKey: iconKey,
+    selectedIconKey: selectedIconKey,
     selectedTitleColor: selectedTitleColor,
     selectedBackgroundColor: selectedBackgroundColor,
     selected: selected, 
-    selectionMarkerAsset: 'images/icon-check.png',
+    selectionMarkerKey: 'check-circle-filled',
     iconFit: BoxFit.fitWidth,
     iconWidth: 38,
     semanticsValue: "${Localization().getStringEx("toggle_button.status.unchecked", "unchecked",)}, ${Localization().getStringEx("toggle_button.status.checkbox", "checkbox")}",
@@ -54,112 +60,109 @@ class RoleGridButton extends TileToggleButton {
     onTap: (BuildContext context, TileToggleButton button) => _handleTap(context, button, onTap),
   );
 
-  static RoleGridButton? fromRole(UserRole? role, { bool? selected, double? sortOrder, void Function(RoleGridButton)? onTap }) {
+  @protected Widget get defaultIconWidget =>  Container(constraints: BoxConstraints(minHeight: 40), child: super.defaultIconWidget);
+  @protected Widget get displayTitleWidget =>  Container(constraints: BoxConstraints(minHeight: _titleMinHeight), child: super.displayTitleWidget);
+  double get _titleMinHeight => (minimumTitleRowsCount * titleFontSize * fontSizeHeightFactor * scaleFactor) ;
+
+
+  static RoleGridButton? fromRole(UserRole? role, { bool? selected, double? sortOrder, double? scaleFactor, void Function(RoleGridButton)? onTap }) {
     if (role == UserRole.student) {
       return RoleGridButton(
         title: Localization().getStringEx('panel.onboarding2.roles.button.student.title', 'University Student'),
         hint: Localization().getStringEx('panel.onboarding2.roles.button.student.hint', ''),
-        iconAsset: 'images/icon-persona-student-normal.png',
-        selectedIconAsset: 'images/icon-persona-student-selected.png',
-        selectedBackgroundColor: Styles().colors!.fillColorSecondary,
+        iconKey: 'role-student',
+        selectedIconKey: 'role-student',
+        selectedBackgroundColor: Styles().colors!.white,
         selected: (selected == true),
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
+        scaleFactor: scaleFactor ?? 1,
       );
     }
     else if (role == UserRole.visitor) {
       return RoleGridButton(
         title: Localization().getStringEx('panel.onboarding2.roles.button.visitor.title', 'Visitor'),
         hint: Localization().getStringEx('panel.onboarding2.roles.button.visitor.hint', ''),
-        iconAsset: 'images/icon-persona-visitor-normal.png',
-        selectedIconAsset: 'images/icon-persona-visitor-selected.png',
-        selectedBackgroundColor: Styles().colors!.fillColorSecondary,
+        iconKey: 'role-visitor',
+        selectedIconKey:  'role-visitor',
+        selectedBackgroundColor: Styles().colors!.white,
         selected: (selected == true),
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
+        scaleFactor: scaleFactor ?? 1,
       );
     }
     else if (role == UserRole.fan) {
       return RoleGridButton(
         title: Localization().getStringEx('panel.onboarding2.roles.button.fan.title', 'Athletics Fan'),
         hint: Localization().getStringEx('panel.onboarding2.roles.button.fan.hint', ''),
-        iconAsset: 'images/icon-persona-athletics-normal.png',
-        selectedIconAsset: 'images/icon-persona-athletics-selected.png',
-        selectedBackgroundColor: Styles().colors!.accentColor2,
+        iconKey: 'role-athletics',
+        selectedIconKey:  'role-athletics',
+        selectedBackgroundColor: Styles().colors!.white,
         selected: (selected == true),
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
+        scaleFactor: scaleFactor ?? 1,
       );
     }
     else if (role == UserRole.employee) {
       return RoleGridButton(
         title: Localization().getStringEx('panel.onboarding2.roles.button.employee.title', 'University Employee'),
         hint: Localization().getStringEx('panel.onboarding2.roles.button.employee.hint', ''),
-        iconAsset: 'images/icon-persona-employee-normal.png',
-        selectedIconAsset: 'images/icon-persona-employee-selected.png',
-        selectedBackgroundColor: Styles().colors!.accentColor3,
+        iconKey: 'role-employee',
+        selectedIconKey: 'role-employee',
+        selectedBackgroundColor: Styles().colors!.white,
         selected: (selected == true),
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
+        scaleFactor: scaleFactor ?? 1,
       );
     }
     else if (role == UserRole.alumni) {
       return RoleGridButton(
         title: Localization().getStringEx('panel.onboarding2.roles.button.alumni.title', 'Alumni'),
         hint: Localization().getStringEx('panel.onboarding2.roles.button.alumni.hint', ''),
-        iconAsset: 'images/icon-persona-alumni-normal.png',
-        selectedIconAsset: 'images/icon-persona-alumni-selected.png',
-        selectedBackgroundColor: Styles().colors!.fillColorPrimary,
-        selectedTitleColor: Colors.white,
+        iconKey: 'role-alumni',
+        selectedIconKey: 'role-alumni',
+        selectedBackgroundColor: Styles().colors!.white,
         selected:(selected == true),
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
+        scaleFactor: scaleFactor ?? 1,
       );
     }
     else if (role == UserRole.parent) {
       return RoleGridButton(
         title: Localization().getStringEx('panel.onboarding2.roles.button.parent.title', 'Parent'),
         hint: Localization().getStringEx('panel.onboarding2.roles.button.parent.hint', ''),
-        iconAsset: 'images/icon-persona-parent-normal.png',
-        selectedIconAsset: 'images/icon-persona-parent-selected.png',
-        selectedBackgroundColor: Styles().colors!.fillColorSecondary,
+        iconKey: 'role-parent',
+        selectedIconKey:  'role-parent',
+        selectedBackgroundColor: Styles().colors!.white,
         selected: (selected == true),
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
+        scaleFactor: scaleFactor ?? 1,
       );
     }
-    else if (role == UserRole.resident) {
-      return RoleGridButton(
-        title: Localization().getStringEx('panel.onboarding2.roles.button.resident.title', 'Resident'),
-        hint: Localization().getStringEx('panel.onboarding2.roles.button.resident.hint', ''),
-        iconAsset: 'images/icon-persona-resident-normal.png',
-        selectedIconAsset: 'images/icon-persona-resident-selected.png',
-        selectedBackgroundColor: Styles().colors!.fillColorPrimary,
-        selectedTitleColor: Colors.white,
-        selected: (selected == true),
-        data: role,
-        sortOrder: sortOrder,
-        onTap: onTap,
-      );
-    }
+
     else if (role == UserRole.gies) {
       return RoleGridButton(
         title: Localization().getStringEx('panel.onboarding2.roles.button.gies.title', 'GIES Student'),
         hint: Localization().getStringEx('panel.onboarding2.roles.button.gies.hint', ''),
-        iconAsset: 'images/icon-persona-alumni-normal.png',
-        selectedIconAsset: 'images/icon-persona-alumni-selected.png',
-        selectedBackgroundColor: Styles().colors!.fillColorPrimary,
-        selectedTitleColor: Colors.white,
+        iconKey: 'role-alumni',
+        selectedIconKey: 'role-alumni',
+        selectedBackgroundColor: Styles().colors!.white,
         selected: (selected == true),
         data: role,
         sortOrder: sortOrder,
         onTap: onTap,
+        scaleFactor: scaleFactor ?? 1,
       );
     }
     else {
@@ -167,7 +170,7 @@ class RoleGridButton extends TileToggleButton {
     }
   }
 
-  static Widget gridFromFlexUI({ Set<UserRole>? selectedRoles, double gridSpacing = 5, void Function(RoleGridButton)? onTap }) {
+  static Widget gridFromFlexUI({ Set<UserRole>? selectedRoles, double gridSpacing = 5, void Function(RoleGridButton)? onTap, double? scaleFactor }) {
     List<Widget> roleButtons1 = <Widget>[], roleButtons2 = <Widget>[];
     List<String> codes = JsonUtils.listStringsValue(FlexUI()['roles']) ?? [];
     int index = 1;
@@ -178,6 +181,7 @@ class RoleGridButton extends TileToggleButton {
       RoleGridButton? button = RoleGridButton.fromRole(role,
         selected: selected,
         sortOrder: index.toDouble(),
+        scaleFactor: scaleFactor,
         onTap: onTap
       );
 

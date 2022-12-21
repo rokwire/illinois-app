@@ -3,6 +3,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart' as Core;
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -148,8 +149,8 @@ class _HomeSaferTestLocationsPanelState extends State<HomeSaferTestLocationsPane
         locations.sort((fistLocation, secondLocation) {
           if ((fistLocation.latitude != null) && (fistLocation.longitude != null)) {
             if ((secondLocation.latitude != null) && (secondLocation.longitude != null)) {
-              double firstDistance = LocationUtils.distance(fistLocation.latitude!, fistLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
-              double secondDistance = LocationUtils.distance(secondLocation.latitude!, secondLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
+              double firstDistance = Geolocator.distanceBetween(fistLocation.latitude!, fistLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
+              double secondDistance = Geolocator.distanceBetween(secondLocation.latitude!, secondLocation.longitude!, _currentLocation!.latitude, _currentLocation!.longitude);
               return firstDistance.compareTo(secondDistance);
             }
             else {
@@ -188,7 +189,7 @@ class _TestLocation extends StatelessWidget {
     TextStyle linkStyle = TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.accentColor3, decoration: TextDecoration.underline);
 
     List<Widget> locationContent = <Widget>[
-      Image.asset('images/icon-location.png',excludeFromSemantics: true),
+      Styles().images?.getImage('location', excludeFromSemantics: true) ?? Container(),
       Container(width: 8),
     ];
 
@@ -268,7 +269,7 @@ class _TestLocation extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Image.asset('images/icon-time.png',excludeFromSemantics: true),
+                  Styles().images?.getImage('time', excludeFromSemantics: true) ?? Container(),
                   Container(width: 8,),
                   Expanded(child:
                     _buildWorkTime(),
@@ -362,7 +363,7 @@ class _TestLocation extends StatelessWidget {
       underline: Container(),
       value: period,
       onChanged: (value){},
-      icon: Image.asset('images/chevron-down.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: false,),
+      icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true),
       selectedItemBuilder:(context){
         return items.map<Widget>((entry){
           return Row(

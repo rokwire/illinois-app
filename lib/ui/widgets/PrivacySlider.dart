@@ -31,7 +31,7 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
     int roundedValue = _discreteValue?.round() ?? 0;
     final ThemeData theme = Theme.of(context);
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 17),
+        padding: EdgeInsets.symmetric(horizontal: 18),
         color: widget.color ?? Styles().colors!.white,
         child: Column(
             children: <Widget>[
@@ -41,9 +41,9 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                       child: Align(
                           alignment: Alignment.center,
                           child: Padding(
-                            padding: EdgeInsets.only(left: 10, right: 20),
+                            padding: EdgeInsets.symmetric(horizontal: 24),
                             child: Container(
-                                height: 11,
+                                height: 12,
                                 decoration: BoxDecoration(
                                   color: Styles().colors!.fillColorPrimaryVariant,
                                   border: Border.all(color: Styles().colors!.fillColorPrimaryVariant!, width: 1),
@@ -79,7 +79,7 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                                       value: _discreteValue!,
                                       min: 1.0,
                                       max: 5.0,
-                                      divisions: 5,
+                                      divisions: 4,
                                       semanticFormatterCallback: (double value) => value.round().toString(),
                                       label: "$roundedValue",
                                       onChanged: (double value) {
@@ -104,41 +104,59 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      PrivacyIcon(
-                        currentPrivacyLevel: _currentLevel,
-                        minPrivacyLevel: 1,
-                        enabledIcon: "images/view-only-blue.png",
-                        disabledIcon: "images/view-only-blue.png",
+                      Padding(
+                        padding: const EdgeInsets.only(right: 16.0),
+                        child: PrivacyIcon(
+                          currentPrivacyLevel: _currentLevel,
+                          minPrivacyLevel: 1,
+                          enabledIconKey: "view-dark",
+                          disabledIconKey: "view-dark",
+                        ),
                       ),
-                      PrivacyIcon(
-                        currentPrivacyLevel: _currentLevel,
-                        minPrivacyLevel: 2,
-                        enabledIcon: "images/location-sharing-blue.png",
-                        disabledIcon: "images/location-sharing-blue-off.png",
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: PrivacyIcon(
+                          currentPrivacyLevel: _currentLevel,
+                          minPrivacyLevel: 2,
+                          enabledIconKey: "location-dark",
+                          disabledIconKey: "location-disabled-dark",
+                        ),
                       ),
-                      PrivacyIcon(
-                        currentPrivacyLevel: _currentLevel,
-                        minPrivacyLevel: 3,
-                        enabledIcon: "images/personalization-blue.png",
-                        disabledIcon: "images/personalization-blue-off.png",
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: PrivacyIcon(
+                          currentPrivacyLevel: _currentLevel,
+                          minPrivacyLevel: 3,
+                          enabledIconKey: "sliders-dark",
+                          disabledIconKey: "sliders-disabled-dark",
+                        ),
                       ),
-                      PrivacyIcon(
-                        currentPrivacyLevel: _currentLevel,
-                        minPrivacyLevel: 4,
-                        enabledIcon: "images/notifications-blue.png",
-                        disabledIcon: "images/notifications-blue-off.png",
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          PrivacyIcon(
+                            currentPrivacyLevel: _currentLevel,
+                            minPrivacyLevel: 4,
+                            enabledIconKey: "notification-dark",
+                            disabledIconKey: "notification-disabled-dark",
+                          ),
+                          SizedBox(width: 16),
+                          PrivacyIcon(
+                            currentPrivacyLevel: _currentLevel,
+                            minPrivacyLevel: 4,
+                            enabledIconKey: "person-dark",
+                            disabledIconKey: "person-disabled-dark",
+                          ),
+                        ],
                       ),
-                      PrivacyIcon(
-                        currentPrivacyLevel: _currentLevel,
-                        minPrivacyLevel: 4,
-                        enabledIcon: "images/identiy-blue.png",
-                        disabledIcon: "images/identiy-blue-off.png",
-                      ),
-                      PrivacyIcon(
-                        currentPrivacyLevel: _currentLevel,
-                        minPrivacyLevel: 5,
-                        enabledIcon: "images/share-blue.png",
-                        disabledIcon: "images/share-blue-off.png",
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: PrivacyIcon(
+                          currentPrivacyLevel: _currentLevel,
+                          minPrivacyLevel: 5,
+                          enabledIconKey: "share-dark",
+                          disabledIconKey: "share-disabled-dark",
+                        ),
                       ),
                     ],
                   )
@@ -156,13 +174,13 @@ class _PrivacyLevelSliderState extends State<PrivacyLevelSlider> {
 class PrivacyIcon extends StatelessWidget{
   final int? currentPrivacyLevel;
   final int minPrivacyLevel;
-  final enabledIcon;
-  final disabledIcon;
+  final String? enabledIconKey;
+  final String? disabledIconKey;
 
-  const PrivacyIcon({Key? key, this.minPrivacyLevel = 1, this.enabledIcon, this.disabledIcon, this.currentPrivacyLevel}) : super(key: key);
+  const PrivacyIcon({Key? key, this.minPrivacyLevel = 1, this.enabledIconKey, this.disabledIconKey, this.currentPrivacyLevel}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Image.asset(currentPrivacyLevel!>=minPrivacyLevel? enabledIcon : (disabledIcon??""), excludeFromSemantics: true,);
+    return Styles().images?.getImage(currentPrivacyLevel! >= minPrivacyLevel ? enabledIconKey : disabledIconKey, excludeFromSemantics: true) ?? Container();
   }
 
 }

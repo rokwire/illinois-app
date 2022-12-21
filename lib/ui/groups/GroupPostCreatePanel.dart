@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -27,6 +28,7 @@ class GroupPostCreatePanel extends StatefulWidget{
 class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
   static final double _outerPadding = 16;
 
+  bool _allowSenPostToOtherGroups = false;
   PostDataModel _postData = PostDataModel();
   List<GroupPostNudge>? _postNudges;
   GroupPostNudge? _selectedNudge;
@@ -79,7 +81,10 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(height: 12,),
-                  GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group.id, groupPrivacy: widget.group.privacy, onSelectionChanged: _onMembersSelectionChanged),
+                  Visibility(
+                    visible: _canSelectMembers,
+                    child: GroupMembersSelectionWidget(allMembers: _allMembersAllowedToPost, selectedMembers: _selectedMembers, groupId: widget.group.id, groupPrivacy: widget.group.privacy, onSelectionChanged: _onMembersSelectionChanged),
+                  ),
                   _buildNudgesWidget(),
                   Container(height: 12,),
                   Text(Localization().getStringEx('panel.group.detail.post.create.subject.label', 'Subject'),
@@ -109,6 +114,27 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
                     onBodyChanged: (text) => _postData.body = text,
                     hint:  Localization().getStringEx( "panel.group.detail.post.create.body.field.hint",  "Write a Post ..."),
                   ),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: EnabledToggleButton(
+                        label: "Also send to additional groups...",
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                        enabled: CollectionUtils.isEmpty(_selectedMembers),
+                        toggled: _allowSenPostToOtherGroups,
+                        textStyle: CollectionUtils.isEmpty(_selectedMembers) ?
+                          Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled") :
+                          Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled"),
+                        onTap: () {
+                          if(mounted){
+                            setState(() {
+                              _allowSenPostToOtherGroups = !_allowSenPostToOtherGroups;
+                            });
+                          }
+                        }
+                    ),
+                  ),
+
                   Row(children: [
                     Flexible(
                       flex: 1,
@@ -251,33 +277,50 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
     String htmlModifiedBody = HtmlUtils.replaceNewLineSymbols(body);
     _increaseProgress();
-    List<Group> selectedGroups = [];
-    List<Group>? otherGroupsToSave;
-
-    selectedGroups.add(widget.group);
-    // If the event is part of a group - allow the admin to select other groups that one wants to save the event as well.
-    //If post has membersSelection then do not allow linking to other groups
-    if (CollectionUtils.isEmpty(_selectedMembers)) {
-        List<Group>? otherGroups = await _loadOtherAdminUserGroups();
-        if (CollectionUtils.isNotEmpty(otherGroups)) {
-          otherGroupsToSave = await showDialog(context: context, barrierDismissible: true, builder: (_) => GroupsSelectionPopup(groups: otherGroups,));
-        }
-
-        if(CollectionUtils.isNotEmpty(otherGroupsToSave)){
-          selectedGroups.addAll(otherGroupsToSave!);
-        }
-    }
 
     GroupPost post = GroupPost(subject: subject, body: htmlModifiedBody, private: true, imageUrl: imageUrl, members: _selectedMembers); // if no parentId then this is a new post for the group.
-    if(CollectionUtils.isNotEmpty(selectedGroups)) {
-      List<Future<bool>> futures = [];
-      for(Group group in selectedGroups){
-        futures.add(Groups().createPost(group.id, post));
+
+    Groups().createPost(widget.group.id, post).then((success) {
+      if(success){
+          if(_canSentToOtherAdminCroups){
+            _processPostToOtherAdminGroups(post).then((success){
+              _onCreateFinished(success); //Finished posting to other groups
+            }).onError((error, stackTrace){
+              _onCreateFinished(false); //Failed posting to other groups
+            });
+          } else {// Don't want to post to other groups
+            _onCreateFinished(true); //Successfully posted single post
+          }
+      } else { // Fail
+        _onCreateFinished(false); //Failed posting to original group
       }
-      
-      List<bool> results = await Future.wait(futures);
-      _onCreateFinished(!results.contains(false));
+    }).onError((error, stackTrace) {
+      _onCreateFinished(false);//Failed posting to original group
+    });
+  }
+
+  Future<bool> _processPostToOtherAdminGroups(post) async{
+    // If the event is part of a group - allow the admin to select other groups that one wants to save the event as well.
+    //If post has membersSelection then do not allow linking to other groups
+    List<Group> selectedGroups = [];
+    List<Group>? otherGroups = await _loadOtherAdminUserGroups();
+    if (CollectionUtils.isNotEmpty(otherGroups)) {
+      selectedGroups = await showDialog(context: context, barrierDismissible: true, builder: (_) => GroupsSelectionPopup(groups: otherGroups,));
     }
+
+    if(CollectionUtils.isEmpty(selectedGroups)){
+      return true; //No selection
+    }
+
+    //process with selection
+    List<Future<bool>> futures = [];
+    for(Group group in selectedGroups){
+      futures.add(Groups().createPost(group.id, post));
+    }
+
+    List<bool> results = await Future.wait(futures);
+
+    return !results.contains(false);
   }
 
   void _onCreateFinished(bool succeeded) {
@@ -345,5 +388,15 @@ class _GroupPostCreatePanelState extends State<GroupPostCreatePanel>{
 
   bool get _isLoading {
     return (_progressLoading > 0);
+  }
+
+  bool get _canSelectMembers {
+    return (widget.group.currentUserIsAdmin == true) ||
+        (widget.group.currentUserIsMember &&
+            widget.group.isMemberAllowedToPostToSpecificMembers);
+  }
+
+  bool get _canSentToOtherAdminCroups{
+      return _allowSenPostToOtherGroups && CollectionUtils.isEmpty(_selectedMembers);
   }
 }

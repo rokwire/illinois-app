@@ -34,6 +34,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -112,7 +113,7 @@ class _HomeCampusResourcesWidgetState extends State<HomeCampusResourcesWidget> i
     List<String> contentCodes = _buildContentCodes();
     return contentCodes.isNotEmpty ? HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home.campus_resources.label.campus_tools', 'Campus Resources'),
-        titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+        titleIconKey:'resources',
         childPadding: HomeSlantWidget.defaultChildPadding,
         child: HomeCampusResourcesGridWidget(favoriteCategory: widget.favoriteId, contentCodes: contentCodes, promptFavorite: true,)
     ) : Container();
@@ -198,7 +199,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
       return CampusResourceButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.events.title', 'Events'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.events.hint', ''),
-        iconAsset: 'images/icon-browse-events.png',
+        iconKey: 'browse-events',
         favorite: HomeFavorite(code, category: favoriteCategory),
         promptFavorite: promptFavorite,
         onTap: () => _onTapEvents(context),
@@ -208,7 +209,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
       return CampusResourceButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.dining.title', 'Dining'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.dining.hint', ''),
-        iconAsset: 'images/icon-browse-dinings.png',
+        iconKey: 'browse-dining',
         favorite: HomeFavorite(code, category: favoriteCategory),
         promptFavorite: promptFavorite,
         onTap: () => _onTapDining(context),
@@ -218,7 +219,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
       return CampusResourceButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.athletics.title', 'Athletics'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.athletics.hint', ''),
-        iconAsset: 'images/icon-browse-athletics.png',
+          iconKey: 'browse-athletics',
         favorite: HomeFavorite(code, category: favoriteCategory),
         promptFavorite: promptFavorite,
         onTap: () => _onTapAthletics(context)
@@ -228,7 +229,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
       return CampusResourceButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.illini_cash.title', 'Illini Cash'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.illini_cash.hint', ''),
-        iconAsset: 'images/icon-browse-illini-cash.png',
+          iconKey: 'browse-student-cash',
         favorite: HomeFavorite(code, category: favoriteCategory),
         promptFavorite: promptFavorite,
         onTap: () => _onTapIlliniCash(context)
@@ -238,7 +239,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
       return CampusResourceButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.laundry.title', 'Laundry'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.laundry.hint', ''),
-        iconAsset: 'images/icon-browse-laundry.png',
+        iconKey: 'browse-laundry',
         favorite: HomeFavorite(code, category: favoriteCategory),
         promptFavorite: promptFavorite,
         onTap: () => _onTapLaundry(context)
@@ -248,7 +249,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
       return CampusResourceButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.my_illini.title', 'My Illini'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.my_illini.hint', ''),
-        iconAsset: 'images/icon-browse-my-illini.png',
+        iconKey: 'browse-student-portal',
         favorite: HomeFavorite(code, category: favoriteCategory),
         promptFavorite: promptFavorite,
         onTap: () => _onTapMyIllini(context)
@@ -258,7 +259,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
       return CampusResourceButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.wellness.title', 'Wellness'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.wellness.hint', ''),
-        iconAsset: 'images/icon-browse-wellness.png',
+        iconKey: 'browse-wellness',
         favorite: HomeFavorite(code, category: favoriteCategory),
         promptFavorite: promptFavorite,
         onTap: () => _onTapWellness(context)
@@ -268,7 +269,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
       return CampusResourceButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.crisis_help.title', 'Crisis Help'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.crisis_help.hint', ''),
-        iconAsset: 'images/icon-browse-crisis-help.png',
+        iconKey: 'browse-crisis',
         favorite: HomeFavorite(code, category: favoriteCategory),
         promptFavorite: promptFavorite,
         onTap: () => _onTapCrisisHelp(context)
@@ -278,7 +279,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
       return CampusResourceButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.groups.title', 'Groups'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.groups.hint', ''),
-        iconAsset: 'images/icon-browse-groups.png',
+        iconKey: 'browse-groups',
         favorite: HomeFavorite(code, category: favoriteCategory),
         promptFavorite: promptFavorite,
         onTap: () => _onTapGroups(context),
@@ -288,7 +289,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
       return CampusResourceButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.quick_polls.title', 'Quick Polls'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.quick_polls.hint', ''),
-        iconAsset: 'images/icon-browse-quick-polls.png',
+        iconKey: 'browse-polls',
         favorite: HomeFavorite(code, category: favoriteCategory),
         promptFavorite: promptFavorite,
         onTap: () => _onTapQuickPolls(context),
@@ -298,7 +299,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
       return CampusResourceButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.campus_guide.title', 'Campus Guide'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.campus_guide.hint', ''),
-        iconAsset: 'images/icon-browse-campus-guide.png',
+        iconKey: 'browse-guide',
         favorite: HomeFavorite(code, category: favoriteCategory),
         promptFavorite: promptFavorite,
         onTap: () => _onTapCampusGuide(context),
@@ -308,7 +309,7 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
       return CampusResourceButton(
         title: Localization().getStringEx('widget.home.campus_resources.button.inbox.title', 'Notifications'),
         hint: Localization().getStringEx('widget.home.campus_resources.button.inbox.hint', ''),
-        iconAsset: 'images/icon-browse-inbox.png',
+        iconKey: 'browse-inbox',
         favorite: HomeFavorite(code, category: favoriteCategory),
         promptFavorite: promptFavorite,
         onTap: () => _onTapInbox(context),
@@ -413,7 +414,8 @@ class HomeCampusResourcesGridWidget extends StatelessWidget {
 
   void _onTapInbox(BuildContext context) {
     Analytics().logSelect(target: "Inbox", source: runtimeType.toString());
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.inbox);
+    SettingsNotificationsContentPanel.present(context,
+        content: (Inbox().unreadMessagesCount > 0) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
   }
 }
 
@@ -422,11 +424,11 @@ class CampusResourceButton extends StatelessWidget {
   final HomeFavorite? favorite;
   final String? title;
   final String? hint;
-  final String? iconAsset;
+  final String? iconKey;
   final GestureTapCallback? onTap;
   final bool promptFavorite;
 
-  const CampusResourceButton({ Key? key, this.favorite, this.title,  this.hint, this.iconAsset,  this.onTap, this.promptFavorite = true }) : super(key: key);
+  const CampusResourceButton({ Key? key, this.favorite, this.title,  this.hint, this.iconKey,  this.onTap, this.promptFavorite = true }) : super(key: key);
 
   bool get _canFavorite => FlexUI()[(favorite?.category != null) ? 'home.${favorite?.category}' : 'home']?.contains(favorite?.favoriteId) ?? false;
 
@@ -436,11 +438,14 @@ class CampusResourceButton extends StatelessWidget {
     if (title != null) {
       contentList.add(Text(title!, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: 20)));
     } 
-    if ((title != null) && (iconAsset != null)) {
+    if ((title != null) && (iconKey != null)) {
       contentList.add(Container(height: 26));
     } 
-    if (iconAsset != null) {
-      contentList.add(Image.asset(iconAsset!));
+    if (iconKey != null) {
+      Widget? icon = Styles().images?.getImage(iconKey, excludeFromSemantics: true);
+      if (icon != null) {
+        contentList.add(icon);
+      }
     }
 
     return InkWell(onTap: onTap, child:
@@ -465,7 +470,7 @@ class CampusResourceButton extends StatelessWidget {
                       Align(alignment: Alignment.centerRight, child:
                         SizedBox(width: 44, height: 44, child:
                           Align(alignment: Alignment.bottomRight, child:
-                            Image.asset(iconAsset!)
+                            Styles().images?.getImage(iconKey)
                           ),
                         )
                       )

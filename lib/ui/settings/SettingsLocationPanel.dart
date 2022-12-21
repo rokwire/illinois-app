@@ -63,15 +63,15 @@ class _SettingsLocationPanelState extends State<SettingsLocationPanel> {
             description: _locationStatus,
             additionalInfo: Localization().getStringEx(
                 "panel.settings.button.access_location.label.info", "To get the most out of our features, enable location in your device’s settings."),
-            iconRes: "images/m.png",
+            iconKey: "location",
             onTap: _onTapLocation(),
           ),
           Container(height: 24,),
           _InfoToggleButton(
             title: Localization().getStringEx("panel.settings.location.button.location_history.title", "Save location history"),
             additionalInfo: Localization().getStringEx("panel.settings.button.location_history.label.info","Only available when location access is enabled"),
-            iconRes: "images/blue.png",
-            iconResDisabled: "images/blue-off.png",
+            iconKey: "history-dark",
+            iconDisabledKey: "history-disabled-dark",
             toggled: _locationHistoryEnabled,
             enabled: _locationEnabled,
             onTap: _onTapLocationHistory,
@@ -107,8 +107,8 @@ class _SettingsLocationPanelState extends State<SettingsLocationPanel> {
 
 class _InfoToggleButton extends StatefulWidget {
   final String? title;
-  final String? iconRes;
-  final String iconResDisabled;
+  final String? iconKey;
+  final String? iconDisabledKey;
   final String? additionalInfo;
   final bool enabled;
   final bool toggled;
@@ -117,7 +117,7 @@ class _InfoToggleButton extends StatefulWidget {
   final void Function()? onTap;
 
   // ignore: unused_element
-  const _InfoToggleButton({Key? key, this.title, this.iconRes, this.additionalInfo, this.onTap, this.enabled = true , this.toggled = false, this.height = 110, this.iconResDisabled="",}) : super(key: key);
+  const _InfoToggleButton({Key? key, this.title, this.iconKey, this.additionalInfo, this.onTap, this.enabled = true , this.toggled = false, this.height = 110, this.iconDisabledKey}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _InfoToggleButtonState();
@@ -152,8 +152,8 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
                 children: <Widget>[
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 11,vertical: 4),
-                    child: Image.asset(
-                      widget.enabled? widget.iconRes!: widget.iconResDisabled,
+                    child: Styles().images?.getImage(
+                      widget.enabled ? widget.iconKey: widget.iconDisabledKey,
                       excludeFromSemantics: true,
                     ),
                   ),
@@ -178,10 +178,10 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
                     width: 10,
                   ),
                   Container(
-                    child: Image.asset(
-                      widget.enabled?
-                      (widget.toggled ? ('images/switch-on.png') : ('images/switch-off.png')) :
-                      ("images/off.png"),
+                    child: Styles().images?.getImage(
+                      widget.enabled ?
+                        (widget.toggled ? 'toggle-on' : 'toggle-off') :
+                        "toggle-disabled",
                       excludeFromSemantics: true,
                     ),
                   ),

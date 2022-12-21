@@ -143,9 +143,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
                         padding: EdgeInsets.only(
                             left: 24,
                             bottom: 0),
-                        child: Image.asset(isFavorite
-                            ? 'images/icon-star-blue.png'
-                            : 'images/icon-star-gray-frame-thin.png')
+                        child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
                     ))
                 )),)
         ],
@@ -158,7 +156,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
       padding: EdgeInsets.only(left: 24, right: 24, top: 12),
       child: Text(
         (widget.news!.title != null) ? widget.news!.title! : "",
-        style: Styles().textStyles?.getTextStyle('widget.athletics.card.title.large'),
+        style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),
       ),
     );
   }
@@ -189,7 +187,7 @@ class _AthleticsNewsCardState extends State<AthleticsNewsCard> implements Notifi
         padding: _detailPadding,
         child: Row(
           children: <Widget>[
-            Image.asset('images/icon-news.png'),
+            Styles().images?.getImage('news', excludeFromSemantics: true) ?? Container(),
             Padding(
               padding: _iconPadding,
             ),

@@ -54,25 +54,23 @@ class Voter with Service implements NotificationsListener {
   }
 
   VoterRule? getVoterRuleForToday() {
-    if (CollectionUtils.isEmpty(_voterRules)) {
-      return null;
-    }
-    DateTime now = AppDateTime().now;
-    DateTime? uniLocalTime = AppDateTime().getUniLocalTimeFromUtcTime(now.toUtc());
-    for (VoterRule rule in _voterRules!) {
-      bool afterStartDate = true;
-      bool beforeEndDate = true;
-      if (rule.startDate != null) {
-        bool isSameStartDay = (uniLocalTime!.year == rule.startDate!.year) && (uniLocalTime.month == rule.startDate!.month) &&
-            (uniLocalTime.day == rule.startDate!.day);
-        afterStartDate = (rule.startDate!.isBefore(uniLocalTime)) || isSameStartDay;
-      }
-      if (rule.endDate != null) {
-        bool isSameEndDay = (uniLocalTime!.year == rule.endDate!.year) && (uniLocalTime.month == rule.endDate!.month) && (uniLocalTime.day == rule.endDate!.day);
-        beforeEndDate = (rule.endDate!.isAfter(uniLocalTime)) || isSameEndDay;
-      }
-      if (afterStartDate && beforeEndDate) {
-        return rule;
+    DateTime? uniLocalTime = AppDateTime().getUniLocalTimeFromUtcTime(AppDateTime().now.toUtc());
+    if (CollectionUtils.isNotEmpty(_voterRules) && (uniLocalTime != null)) {
+      for (VoterRule rule in _voterRules!) {
+        bool afterStartDate = true;
+        bool beforeEndDate = true;
+        if (rule.startDate != null) {
+          bool isSameStartDay = (uniLocalTime.year == rule.startDate?.year) && (uniLocalTime.month == rule.startDate?.month) &&
+              (uniLocalTime.day == rule.startDate?.day);
+          afterStartDate = (rule.startDate?.isBefore(uniLocalTime) ?? false) || isSameStartDay;
+        }
+        if (rule.endDate != null) {
+          bool isSameEndDay = (uniLocalTime.year == rule.endDate?.year) && (uniLocalTime.month == rule.endDate?.month) && (uniLocalTime.day == rule.endDate?.day);
+          beforeEndDate = (rule.endDate?.isAfter(uniLocalTime) ?? false) || isSameEndDay;
+        }
+        if (afterStartDate && beforeEndDate) {
+          return rule;
+        }
       }
     }
     return null;

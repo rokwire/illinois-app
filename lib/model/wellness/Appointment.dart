@@ -25,7 +25,6 @@ class Appointment with Explore, Favorite {
   static final String _serverDateTimeFormat = 'yyyy-MM-ddTHH:mm:sssZ';
 
   final String? id;
-  final String? uin;
   final DateTime? dateTimeUtc;
   final AppointmentType? type;
   final AppointmentOnlineDetails? onlineDetails;
@@ -34,8 +33,11 @@ class Appointment with Explore, Favorite {
   final String? instructions;
   final AppointmentHost? host;
 
+  //Util fields
+  String? randomImageURL; // to return same random image for this instance
+
   Appointment(
-      {this.id, this.uin, this.dateTimeUtc, this.type, this.onlineDetails, this.location, this.cancelled, this.instructions, this.host});
+      {this.id, this.dateTimeUtc, this.type, this.onlineDetails, this.location, this.cancelled, this.instructions, this.host});
 
   static Appointment? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -43,8 +45,7 @@ class Appointment with Explore, Favorite {
     }
     return Appointment(
         id: JsonUtils.stringValue(json['id']),
-        uin: JsonUtils.stringValue(json['uin']),
-        dateTimeUtc: DateTimeUtils.dateTimeFromString(json['date_time'], format: _serverDateTimeFormat, isUtc: true),
+        dateTimeUtc: DateTimeUtils.dateTimeFromString(json['date'], format: _serverDateTimeFormat, isUtc: true),
         type: typeFromString(JsonUtils.stringValue(json['type'])),
         onlineDetails: AppointmentOnlineDetails.fromJson(JsonUtils.mapValue(json['online_details'])),
         location: AppointmentLocation.fromJson(JsonUtils.mapValue(json['location'])),
@@ -54,7 +55,7 @@ class Appointment with Explore, Favorite {
   }
 
   String? get displayDate {
-    return AppDateTime().formatDateTime(dateTimeUtc, format: 'MMM dd, H:mma');
+    return AppDateTime().formatDateTime(AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc), format: 'MMM dd, h:mm a');
   }
 
   bool get isUpcoming {
@@ -83,8 +84,24 @@ class Appointment with Explore, Favorite {
   }
 
   String? get _randomImageUrl {
-    //TBD: Appointment - check how to retrieve the image
-    return Assets().randomStringFromListWithKey('images.random.events.Other');
+    randomImageURL ??= Assets().randomStringFromListWithKey('images.random.events.Other');
+    return randomImageURL;
+  }
+
+  String? get imageKeyBasedOnCategory { //Keep consistent images
+      String? toutImageUrl;
+      switch (type) {
+        case AppointmentType.in_person:
+          toutImageUrl = 'photo-building';
+          break;
+        case AppointmentType.online:
+          toutImageUrl = 'photo-online';
+          break;
+        default:
+          toutImageUrl = imageUrl!;
+          break;
+      }
+      return toutImageUrl;
   }
 
   static List<Appointment>? listFromJson(List<dynamic>? jsonList) {
@@ -149,7 +166,6 @@ class Appointment with Explore, Favorite {
   @override Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'uin': uin,
       'title': title,
       'date_time': DateTimeUtils.utcDateTimeToString(dateTimeUtc),
       'type': typeToKeyString(type),
@@ -163,7 +179,7 @@ class Appointment with Explore, Favorite {
 
   static bool canJson(Map<String, dynamic>? json) {
     return (json != null) &&
-      (json['uin'] != null) &&
+      (json['id'] != null) &&
       (json['date_time'] != null) &&
       (json['type'] != null);
   }
@@ -172,7 +188,6 @@ class Appointment with Explore, Favorite {
   bool operator==(dynamic other) =>
     (other is Appointment) &&
     (id == other.id) &&
-    (uin == other.uin) &&
     (dateTimeUtc == other.dateTimeUtc) &&
     (type == other.type) &&
     (onlineDetails == other.onlineDetails) &&
@@ -184,7 +199,6 @@ class Appointment with Explore, Favorite {
   @override
   int get hashCode =>
     (id?.hashCode ?? 0) ^
-    (uin?.hashCode ?? 0) ^
     (dateTimeUtc?.hashCode ?? 0) ^
     (type?.hashCode ?? 0) ^
     (onlineDetails?.hashCode ?? 0) ^

@@ -42,7 +42,7 @@ class LinkButton extends StatelessWidget {
   Color? get _textColor => textColor ?? Styles().colors?.fillColorPrimary;
   Color? get _textDecorationColor => textDecorationColor ?? Styles().colors?.fillColorSecondary;
   TextStyle get _textStyle => textStyle ?? TextStyle(fontFamily: _fontFamily, fontSize: fontSize, color: _textColor, decoration: textDecoration, decorationThickness: textDecorationThickness, decorationStyle: textDecorationStyle, decorationColor: _textDecorationColor);
-  Widget get _textWidget => textWidget ?? Text(title ?? '', style: _textStyle, textAlign: textAlign,);
+  Widget get _textWidget => textWidget ?? Text(title ?? '', style: _textStyle, textAlign: textAlign, semanticsLabel: "",);
 
   @override
   Widget build(BuildContext context) {

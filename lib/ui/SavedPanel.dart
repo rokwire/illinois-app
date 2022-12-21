@@ -22,20 +22,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Favorite.dart';
+import 'package:illinois/model/Explore.dart';
+import 'package:illinois/model/MTD.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:rokwire_plugin/service/assets.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Dinings.dart';
-import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -65,7 +68,8 @@ class SavedPanel extends StatefulWidget {
     Game.favoriteKeyName,
     News.favoriteKeyName,
     LaundryRoom.favoriteKeyName,
-    InboxMessage.favoriteKeyName,
+    MTDStop.favoriteKeyName,
+    ExplorePOI.favoriteKeyName,
     GuideFavorite.favoriteKeyName,
   ];
 
@@ -204,7 +208,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     if (widget.favoriteCategories.length > 1) {
       for (String favoriteCategory in widget.favoriteCategories) {
         contentList.add(_SavedItemsList(headingTitle: _favoriteCategoryTitle(favoriteCategory),
-          headingIconResource: _favoriteCategoryIconResource(favoriteCategory),
+          headingIconKey: _favoriteCategoryIconKey(favoriteCategory),
           items: _favorites[favoriteCategory])
         );
       }
@@ -247,7 +251,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
             ),
             InkWell(onTap: _onAuthorizeSkip, child: 
               Padding(padding: EdgeInsets.only(right: 16), child:
-                Image.asset('images/close-white.png', excludeFromSemantics: true))
+                Styles().images?.getImage('close-circle-white', excludeFromSemantics: true))
               )
           ],),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
@@ -333,8 +337,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case Game.favoriteKeyName: return _loadFavoriteGames;
       case News.favoriteKeyName: return _loadFavoriteNews;
       case LaundryRoom.favoriteKeyName: return _laundryAvailable ? _loadFavoriteLaundries : _loadNOP;
-      case InboxMessage.favoriteKeyName: return _loadFavoriteNotifications;
+      case MTDStop.favoriteKeyName: return _loadFavoriteMTDStops;
+      case ExplorePOI.favoriteKeyName: return _loadFavoriteMTDDestinations;
       case GuideFavorite.favoriteKeyName: return _loadFavoriteGuideItems;
+      case Appointment.favoriteKeyName: return _loadFavoriteAppointments;
     }
     return _loadNOP;
   }
@@ -353,11 +359,14 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   Future<List<Favorite>?> _loadFavoriteNews(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Sports().loadNews(null, 0), favoriteIds) : null;
 
+  Future<List<Favorite>?> _loadFavoriteMTDStops(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? ListUtils.reversed(MTD().stopsByIds(favoriteIds)) : null;
+
+  Future<List<Favorite>?> _loadFavoriteMTDDestinations(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? ListUtils.reversed(ExplorePOI.listFromString(favoriteIds)) : null;
+
   Future<List<Favorite>?> _loadFavoriteLaundries(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList((await Laundries().loadSchoolRooms())?.rooms, favoriteIds) : null;
-
-  Future<List<Favorite>?> _loadFavoriteNotifications(LinkedHashSet<String>? favoriteIds) async =>
-    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Inbox().loadMessages(messageIds: favoriteIds), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteGuideItems(LinkedHashSet<String>? favoriteIds) async {
     List<Favorite>? guideItems;
@@ -385,6 +394,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
     return guideItems;
   }
+
+  Future<List<Favorite>?> _loadFavoriteAppointments(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Appointments().loadAppointments(onlyUpcoming: true), favoriteIds) : null;
 
   List<Favorite>? _buildFavoritesList(List<Favorite>? sourceList, LinkedHashSet<String>? favoriteIds) {
     if ((sourceList != null) && (favoriteIds != null)) {
@@ -424,21 +436,25 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Athletics Events');
       case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My Athletics News');
       case LaundryRoom.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
+      case MTDStop.favoriteKeyName:       return Localization().getStringEx('panel.saved.label.mtd_stops', 'My MTD Stops');
+      case ExplorePOI.favoriteKeyName:    return Localization().getStringEx('panel.saved.label.mtd_destinations', 'My MTD Destinations');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
-      case InboxMessage.favoriteKeyName:  return Localization().getStringEx('panel.saved.label.inbox', 'My Notifications');
+      case Appointment.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.appointments', 'MyMcKinley Appointments');
     }
     return null;
   }
 
-  String? _favoriteCategoryIconResource(String favoriteCategory) {
+  String? _favoriteCategoryIconKey(String favoriteCategory) {
     switch(favoriteCategory) {
-      case Event.favoriteKeyName:         return 'images/icon-calendar.png';
-      case Dining.favoriteKeyName:        return 'images/icon-dining-orange.png';
-      case Game.favoriteKeyName:          return 'images/icon-calendar.png';
-      case News.favoriteKeyName:          return 'images/icon-news.png';
-      case LaundryRoom.favoriteKeyName:   return 'images/icon-news.png';
-      case GuideFavorite.favoriteKeyName: return 'images/icon-news.png';
-      case InboxMessage.favoriteKeyName:  return 'images/icon-news.png';
+      case Event.favoriteKeyName:         return 'events';
+      case Dining.favoriteKeyName:        return 'dining';
+      case Game.favoriteKeyName:          return 'athletics';
+      case News.favoriteKeyName:          return 'news';
+      case LaundryRoom.favoriteKeyName:   return 'laundry';
+      case MTDStop.favoriteKeyName:       return 'transit';
+      case ExplorePOI.favoriteKeyName:    return 'location';
+      case GuideFavorite.favoriteKeyName: return 'guide.';
+      case Appointment.favoriteKeyName:   return 'appointments';
     }
     return null;
   }
@@ -527,12 +543,12 @@ class _SavedItemsList extends StatefulWidget {
   final List<Favorite>? items;
   final int limit;
   final String? headingTitle;
-  final String? headingIconResource;
-  final String slantImageResource;
+  final String? headingIconKey;
+  final String slantImageKey;
   final Color? slantColor;
 
   // ignore: unused_element
-  _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconResource, this.slantImageResource = 'images/slant-down-right-blue.png', this.slantColor});
+  _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconKey, this.slantImageKey = 'slant-dark', this.slantColor});
 
   _SavedItemsListState createState() => _SavedItemsListState();
 }
@@ -551,8 +567,8 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       children: <Widget>[
         SectionSlantHeader(
             title: widget.headingTitle,
-            titleIconAsset: widget.headingIconResource,
-            slantImageAsset: widget.slantImageResource,
+            titleIconKey: widget.headingIconKey,
+            slantImageKey: widget.slantImageKey,
             slantColor: widget.slantColor ?? Styles().colors!.fillColorPrimary,
             children: (0 <  widget.items!.length) ? _buildListItems(context) : _buildEmptyContent(context),),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(
@@ -612,7 +628,7 @@ class _SavedItem extends StatelessWidget {
     Color? headerColor = favorite.favoriteHeaderColor;
     String? title = favorite.favoriteTitle;
     String? cardDetailText = favorite.favoriteDetailText;
-    Image? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? favorite.favoriteDetailIcon : null;
+    Widget? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? favorite.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: () => _onTapFavorite(context), child:
       Semantics(label: title, child:
@@ -676,6 +692,7 @@ class _SavedItem extends StatelessWidget {
     Analytics().logSelect(target: favorite.favoriteTitle);
     favorite.favoriteLaunchDetail(context);
   }
+
   void _onTapCompositeEvent(BuildContext context) {
     Analytics().logSelect(target: favorite.favoriteTitle);
     if (_favoriteEvent?.isComposite ?? false) {

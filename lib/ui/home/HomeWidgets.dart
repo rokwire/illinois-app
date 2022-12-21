@@ -7,6 +7,7 @@ import 'package:collection/collection.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
@@ -100,7 +101,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
 
           Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
             Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-              Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
+              Styles().images?.getImage('drag-white', excludeFromSemantics: true),
             ),
           ),
 
@@ -238,7 +239,7 @@ class HomeSlantWidget extends StatelessWidget {
   static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 16);
 
   final String? title;
-  final Image? titleIcon;
+  final String? titleIconKey;
   final CrossAxisAlignment headerAxisAlignment;
 
   final double flatHeight;
@@ -251,7 +252,7 @@ class HomeSlantWidget extends StatelessWidget {
 
   const HomeSlantWidget({Key? key,
     this.title,
-    this.titleIcon,
+    this.titleIconKey,
     this.headerAxisAlignment = CrossAxisAlignment.center,
     
     this.flatHeight = 40,
@@ -274,7 +275,7 @@ class HomeSlantWidget extends StatelessWidget {
           child: Container(color: Styles().colors!.fillColorPrimary, child:
             Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
-              HomeTitleIcon(image: titleIcon),
+              HomeTitleIcon(image: Styles().images?.getImage(titleIconKey, excludeFromSemantics: true)),
 
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
@@ -320,7 +321,7 @@ class HomeSlantWidget extends StatelessWidget {
 
 class HomeTitleIcon extends StatelessWidget {
 
-  final Image? image;
+  final Widget? image;
   HomeTitleIcon({Key? key, this.image});
 
   @override
@@ -506,7 +507,7 @@ class HomeDragFeedback extends StatelessWidget {
         Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
           Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
+            Styles().images?.getImage('drag-white', excludeFromSemantics: true),
           ),
           
           Expanded(child:
@@ -547,10 +548,10 @@ class HomeCommandButton extends StatelessWidget {
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 15, bottom: 7), child:
-                  Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary), semanticsLabel: "",),
+                  Text(title ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), semanticsLabel: "",),
                 )
               ),
-              // Image.asset('images/chevron-right.png', excludeFromSemantics: true)
+              // Styles().images?.getImage('images/chevron-right.png', excludeFromSemantics: true)
               ((loading == true)
                 ? Padding(padding: EdgeInsets.all(16), child:
                     SizedBox(height: 16, width: 16, child:
@@ -589,24 +590,83 @@ class HomeMessageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
+      Semantics(child:Container(padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
+        child: Column(children: <Widget>[
+          StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
+            Expanded(child:
+              Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
+                Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary))
+              ),
+            )
+          ]) : Container(),
+          StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
+            Expanded(child:
+              Text(message ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground))
+            )
+          ]) : Container(),
+        ]),
+      ),
+    ));
+  }
+}
+
+////////////////////////////
+// HomeMessageCard
+
+class HomeMessageHtmlCard extends StatelessWidget {
+
+  final String? title;
+  final String? message;
+  final EdgeInsetsGeometry margin;
+  final void Function(String? url)? onTapLink;
+
+  HomeMessageHtmlCard({Key? key,
+    this.title,
+    this.message,
+    this.margin = const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+    this.onTapLink
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(padding: margin, child:
       Container(padding: EdgeInsets.all(16),
         decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
               Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-                Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), semanticsLabel: '',)
+                Html(data: title,
+                  onLinkTap: (url, renderContext, attributes, element) => _onTapLink(url),
+                  style: {
+                    "body": Style(color: Styles().colors?.fillColorPrimary, fontFamily: Styles().fontFamilies?.bold, fontSize: FontSize(20), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                    "a": Style(color: Styles().colors?.fillColorSecondary),
+                  },
+                ),
               ),
             )
           ]) : Container(),
           StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
             Expanded(child:
-              Text(message ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground), semanticsLabel: '',)
+                Html(data: message,
+                  onLinkTap: (url, renderContext, attributes, element) => _onTapLink(url),
+                  style: {
+                    "body": Style(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.regular, fontSize: FontSize(16), padding: EdgeInsets.zero, margin: EdgeInsets.zero),
+                    "a": Style(color: Styles().colors?.fillColorSecondary),
+                  },
+                ),
             )
           ]) : Container(),
         ]),
       ),
     );
+  }
+
+  void _onTapLink(String? url) {
+    if (onTapLink != null) {
+      onTapLink!(url);
+    }
   }
 }
 
@@ -652,7 +712,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   String  get contentKey => 'home.$favoriteId';
   
   String? get title;
-  Image?  get titleIcon => Image.asset('images/campus-tools.png', excludeFromSemantics: true);
+  String?  get titleIconKey => 'campus-tools';
   
   String? get emptyTitle => null;
   String? get emptyMessage;
@@ -723,7 +783,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: favoriteId,
       title: title,
-      titleIcon: titleIcon,
+      titleIconKey: titleIconKey,
       childPadding: EdgeInsets.zero,
       child: _buildContent(),
     );
@@ -762,7 +822,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
               children: pages,
             ),
           ),
-          AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+          AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
         ],);
 
     }
@@ -850,7 +910,8 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
       _currentCode = _displayCodes![_currentPage = currentPage];
 
       _pageViewKey = UniqueKey();
-      _pageController = null;
+      // _pageController = null;
+      _pageController?.jumpToPage(0);
     }
   }
 }

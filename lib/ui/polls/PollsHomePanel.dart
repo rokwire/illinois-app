@@ -179,7 +179,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   Widget _buildPollsTabbar() {
     return _couldCreatePoll ?
       Container(
-        color: Styles().colors!.backgroundVariant,
+        color: Styles().colors!.fillColorPrimary,
         padding: EdgeInsets.only(left: 16, top: 16, right: 16),
         child: Row(
           children: <Widget>[
@@ -257,17 +257,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
           alignment: Alignment.topCenter,
           children: <Widget>[
             Visibility(visible: _couldCreatePoll, child:
-              Column(
-                children: <Widget>[
-                  Container(
-                    height: 88,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("images/slant-down-right-grey.png" ),
-                            fit: BoxFit.fill)),
-                  )
-                ],
-              ),
+              Styles().images?.getImage("slant-dark") ?? Container()
             ),
             Padding( padding: EdgeInsets.symmetric(horizontal: 16),
                 child: pollsContent,
@@ -893,7 +883,7 @@ class _PollCardState extends State<PollCard> {
       }
     } if (poll.status == PollStatus.opened) {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.open","Polls open");
-      if (_canVote) {
+      if (poll.canVote) {
         footerWidgets.add(_createVoteButton());
         footerWidgets.add(Container(height:8));  
       }
@@ -1003,7 +993,7 @@ class _PollCardState extends State<PollCard> {
       bool useCustomColor = isClosed && maxValueIndex == optionIndex;
       String option = widget.poll!.options![optionIndex];
       bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
-      String checkboxImage = didVote ? 'images/deselected-dark.png' : 'images/checkbox-unselected.png';
+      String checkboxIconKey = didVote ? 'check-circle-filled' : 'check-circle-outline-gray';
 
       String? votesString;
       int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
@@ -1029,7 +1019,7 @@ class _PollCardState extends State<PollCard> {
           child:
           Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(checkboxImage,),),
+            Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage(checkboxIconKey, excludeFromSemantics: true)),
             Expanded(
               flex: 5,
               key: progressKey, child:
@@ -1042,7 +1032,7 @@ class _PollCardState extends State<PollCard> {
                       Padding( padding: EdgeInsets.symmetric(horizontal: 5),
                         child: Text(option, style: useCustomColor? Styles().textStyles?.getTextStyle("panel.polls.home.check.accent") : Styles().textStyles?.getTextStyle("panel.polls.home.check")),)),
                         Visibility( visible: didVote,
-                        child:Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/checkbox-small.png',),)
+                        child: Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('check-circle-outline-gray', excludeFromSemantics: true))
                       ),
                     ],),)
               ),
@@ -1105,7 +1095,7 @@ class _PollCardState extends State<PollCard> {
       GestureDetector(onTap: _onDeletePollTapped, child:
         Stack(children: [
           Padding(padding: EdgeInsets.all(12), child:
-              Image.asset('images/trash.png', width: 18, height: 18, excludeFromSemantics: true,),
+          Styles().images?.getImage('trash', excludeFromSemantics: true),
           ),
           _showDeletePollProgress ? Padding(padding: EdgeInsets.all(9), child:
             SizedBox(height: 24, width: 24, child:
@@ -1227,16 +1217,6 @@ class _PollCardState extends State<PollCard> {
     setStateIfMounted(() {
       _showDeletePollProgress = showProgress;
     });
-  }
-
-  bool get _canVote {
-    return ((widget.poll!.status == PollStatus.opened) &&
-        (((widget.poll!.userVote?.totalVotes ?? 0) == 0) ||
-          widget.poll!.settings!.allowMultipleOptions! ||
-          widget.poll!.settings!.allowRepeatOptions!
-        ) &&
-        (!widget.poll!.isGeoFenced || GeoFence().currentRegionIds.contains(widget.poll!.regionId))
-    );
   }
 
   String get _pollVotesStatus {

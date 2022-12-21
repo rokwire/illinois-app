@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
@@ -31,7 +32,7 @@ class OnboardingLoginNetIdPanel extends StatefulWidget with OnboardingPanel {
   _OnboardingLoginNetIdPanelState createState() => _OnboardingLoginNetIdPanelState();
 }
 
-class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
+class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> implements Onboarding2ProgressableState {
   bool _progress = false;
 
   @override
@@ -60,12 +61,12 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
                 children: <Widget>[
                   Stack(
                     children: <Widget>[
-                      Image.asset(
-                        "images/login-header.png",
+                      Styles().images?.getImage(
+                        "header-login",
                         fit: BoxFit.fitWidth,
                         width: MediaQuery.of(context).size.width,
                         excludeFromSemantics: true,
-                      ),
+                      ) ?? Container(),
                       OnboardingBackButton(
                           padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20),
                           onTap: () {
@@ -225,12 +226,7 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
             FlexUI().update().then((_) {
               if (mounted) {
                 setState(() { _progress = false; });
-                Function? onSuccess = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null; // Hook this panels to Onboarding2
-                if (onSuccess != null) {
-                  onSuccess();
-                } else {
-                  Onboarding().next(context, widget);
-                }
+                _onContinue();
               }
             });
           }
@@ -249,11 +245,35 @@ class _OnboardingLoginNetIdPanelState extends State<OnboardingLoginNetIdPanel> {
 
   void _onSkipTapped() {
     Analytics().logSelect(target: 'Not right now');
-    Function? onSuccess = widget.onboardingContext!=null? widget.onboardingContext!["onContinueAction"] : null; // Hook this panels to Onboarding2
-    if(onSuccess!=null){
-      onSuccess();
-    } else {
+    _onContinue();
+  }
+
+  void _onContinue() {
+    // Hook this panels to Onboarding2
+    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
+    Function? onContinueEx = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueActionEx"] : null; 
+    if (onContinueEx != null) {
+      onContinueEx(this);
+    }
+    else if (onContinue != null) {
+      onContinue();
+    }
+    else {
       Onboarding().next(context, widget);
+    }
+  }
+
+  // Onboarding2ProgressableState
+
+  @override
+  bool get onboarding2Progress => _progress;
+  
+  @override
+  set onboarding2Progress(bool progress) {
+    if (mounted) {
+      setState(() {
+        _progress = progress;
+      });
     }
   }
 

@@ -15,6 +15,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 
 class SmallRoundedButton extends RoundedButton {
@@ -77,7 +78,7 @@ class SmallRoundedButton extends RoundedButton {
     leftIcon: leftIcon,
     leftIconPadding: leftIconPadding,
   
-    rightIcon: rightIcon ?? Image.asset('images/chevron-right.png', excludeFromSemantics: true),
+    rightIcon: rightIcon ?? Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
     rightIconPadding: rightIconPadding,
 
     iconPadding: iconPadding,

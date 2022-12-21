@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
@@ -24,7 +25,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsVideoTutorialListPanel extends StatefulWidget {
-  final List<dynamic>? videoTutorials;
+  final List<Video>? videoTutorials;
 
   SettingsVideoTutorialListPanel({this.videoTutorials});
 
@@ -51,15 +52,15 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
                   style: Styles().textStyles?.getTextStyle("widget.message.large.fat"))));
     }
     List<Widget> contentList = <Widget>[];
-    for (dynamic video in widget.videoTutorials!) {
+    for (Video video in widget.videoTutorials!) {
       contentList.add(_buildVideoEntry(video));
     }
     return SingleChildScrollView(child: Padding(padding: EdgeInsets.all(16), child: Column(children: contentList)));
   }
 
-  Widget _buildVideoEntry(Map<String, dynamic> video) {
+  Widget _buildVideoEntry(Video video) {
     String videoTitle =
-        JsonUtils.stringValue(video['title']) ?? Localization().getStringEx("panel.settings.video_tutorial.header.title", "Video Tutorial");
+        JsonUtils.stringValue(video.title) ?? Localization().getStringEx("panel.settings.video_tutorial.header.title", "Video Tutorial");
     return InkWell(
         onTap: () => _onTapVideoTutorial(video),
         child: Padding(
@@ -75,12 +76,12 @@ class _SettingsVideoTutorialListPanelState extends State<SettingsVideoTutorialLi
                           padding: EdgeInsets.all(16),
                           child: Text(videoTitle,
                               style: Styles().textStyles?.getTextStyle("widget.button.title.enabled")))),
-                  Padding(padding: EdgeInsets.only(right: 16, top: 18, bottom: 18), child: Image.asset('images/chevron-right.png'))
+                  Padding(padding: EdgeInsets.only(right: 16, top: 18, bottom: 18), child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true))
                 ]))));
   }
 
-  void _onTapVideoTutorial(Map<String, dynamic> video) {
-    Analytics().logSelect(target: 'Settings Video Tutorial');
+  void _onTapVideoTutorial(Video video) {
+    Analytics().logSelect(target: 'Video Tutorial', source: widget.runtimeType.toString(), attributes: video.analyticsAttributes);
     Navigator.push(context, CupertinoPageRoute(builder: (context) => SettingsVideoTutorialPanel(videoTutorial: video)));
   }
 }

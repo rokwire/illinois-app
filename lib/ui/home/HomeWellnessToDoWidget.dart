@@ -60,7 +60,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessToDoWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'todo',
       childPadding: HomeSlantWidget.defaultChildPadding,
       child: _buildContent(),
     );
@@ -90,7 +90,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
                         RoundedButton(
                           label: Localization().getStringEx('widget.home.wellness.todo.items.add.button', 'Add Item'), borderColor: Styles().colors!.fillColorSecondary,
                           textColor: Styles().colors!.fillColorPrimary,
-                          leftIcon: Image.asset('images/icon-add-14x14.png', color: Styles().colors!.fillColorPrimary),
+                          leftIcon: Styles().images?.getImage('plus-circle', excludeFromSemantics: true),
                           iconPadding: 8, rightIconPadding: EdgeInsets.only(right: 8), fontSize: 14, contentWeight: 0, 
                           fontFamily: Styles().fontFamilies!.regular, padding: EdgeInsets.zero, onTap: _onTapAddItem),
                         LinkButton(
@@ -142,9 +142,7 @@ class _HomeWellnessToDoWidgetState extends State<HomeWellnessToDoWidget> impleme
   }
 
   Widget _buildToDoItemWidget(ToDoItem item) {
-    final double completedWidgetSize = 20;
-    Widget completedWidget = item.isCompleted ? Image.asset('images/example.png', color: Styles().colors!.textSurface, height: completedWidgetSize, width: completedWidgetSize, fit: BoxFit.fill) : Container(
-            decoration: BoxDecoration(color: Colors.transparent, shape: BoxShape.circle, border: Border.all(color: Styles().colors!.textSurface!, width: 1)), height: completedWidgetSize, width: completedWidgetSize);
+    Widget? completedWidget = Styles().images?.getImage(item.isCompleted ? 'check-circle-outline-gray-white' : 'circle-outline-white', excludeFromSemantics: true);
     return GestureDetector(onTap: () => _onTapToDoItem(item), child: Padding(padding: EdgeInsets.only(top: 10), child: Container(color: Colors.transparent, child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
       Padding(padding: EdgeInsets.only(right: 10), child: completedWidget),
       Expanded(child: Text(StringUtils.ensureNotEmpty(item.name), maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.start, style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular)))

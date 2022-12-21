@@ -69,7 +69,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
                 ),
               ),
               Padding(padding: EdgeInsets.only(top: 8),
-                child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Select all that apply'),
+                child: Text(Localization().getStringEx('panel.onboarding.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
                   style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground),
                 ),
               )
@@ -79,7 +79,7 @@ class _OnboardingRoleSelectionPanelState extends State<OnboardingRolesPanel> {
         ),
 
         Expanded(child: SingleChildScrollView(child: Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
-          RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton),
+          RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, scaleFactor: MediaQuery.of(context).textScaleFactor,),
         ),),),        
 
         Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 20), child:

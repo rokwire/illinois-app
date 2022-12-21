@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -34,7 +35,7 @@ class Onboarding2LoginPhoneOrEmailStatementPanel extends StatefulWidget with Onb
   _Onboarding2LoginPhoneOrEmailStatementPanelState createState() => _Onboarding2LoginPhoneOrEmailStatementPanelState();
 }
 
-class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2LoginPhoneOrEmailStatementPanel> {
+class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2LoginPhoneOrEmailStatementPanel>  implements Onboarding2ProgressableState {
   bool _progress = false;
 
   @override
@@ -54,7 +55,7 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
 
     return Scaffold(backgroundColor: Styles().colors!.background, body:
       Stack(children: <Widget>[
-        Image.asset("images/login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
+        Styles().images?.getImage("header-login", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         Column(children:[
           Expanded(child:
             SingleChildScrollView(child:
@@ -108,9 +109,27 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
 
   void _onSkipTapped() {
     Analytics().logSelect(target: 'Not right now');
-    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null; // Hook this panels to Onboarding2
-    if (onContinue != null) {
+    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
+    Function? onContinueEx = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueActionEx"] : null; 
+    if (onContinueEx != null) {
+      onContinueEx(this);
+    }
+    else if (onContinue != null) {
       onContinue();
+    }
+  }
+
+  // Onboarding2ProgressableState
+
+  @override
+  bool get onboarding2Progress => _progress;
+  
+  @override
+  set onboarding2Progress(bool progress) {
+    if (mounted) {
+      setState(() {
+        _progress = progress;
+      });
     }
   }
 }

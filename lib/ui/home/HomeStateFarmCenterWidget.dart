@@ -48,6 +48,7 @@ class _HomeStateFarmCenterWidgetState extends HomeCompoundWidgetState<HomeStateF
 
   @override String? get favoriteId => widget.favoriteId;
   @override String? get title => HomeStateFarmCenterWidget.title;
+  @override String?  get titleIconKey => 'athletics';
   @override String? get emptyMessage => Localization().getStringEx("widget.home.state_farm_center.text.empty.description", "Tap the \u2606 on items in State Farm Center so you can quickly find them here.");
 
   @override

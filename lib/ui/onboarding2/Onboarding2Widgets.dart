@@ -26,7 +26,7 @@ class Onboarding2TitleWidget extends StatelessWidget{
           SafeArea(child:
             Column(children: [
               Container(height: 31,),
-              Image.asset("images/illinois-blockI-blue.png", excludeFromSemantics: true, width: 24, fit: BoxFit.fitWidth,),
+              Styles().images?.getImage("university-logo-dark", excludeFromSemantics: true) ?? Container(),
               Container(height: 17,),
               Row(children: <Widget>[
                 Container(width: 32,),
@@ -53,10 +53,10 @@ class Onboarding2TitleWidget extends StatelessWidget{
 class Onboarding2BackButton extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final GestureTapCallback? onTap;
-  final String image;
+  final String imageKey;
   final Color? color;
 
-  Onboarding2BackButton({this.padding, this.onTap, this.image = 'images/chevron-left.png', this.color});
+  Onboarding2BackButton({this.padding, this.onTap, this.imageKey = 'chevron-left', this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +69,7 @@ class Onboarding2BackButton extends StatelessWidget {
           behavior: HitTestBehavior.translucent,
           child: Padding(
             padding: padding!,
-            child: Container(
-                height: 32,
-                width: 32,
-                child: Image.asset(image, color: this.color ?? Styles().colors!.fillColorSecondary,)
+            child: Container(child: Styles().images?.getImage(imageKey, color: this.color, excludeFromSemantics: true)
             ),
           ),
         )
@@ -135,8 +132,8 @@ class Onboarding2ToggleButton extends StatelessWidget{
     return toggled!? toggledTitle : unToggledTitle;
   }
 
-  Widget get _image{
-    return Image.asset( toggled! ? 'images/toggle-yes.png' : 'images/toggle-no.png');
+  Widget? get _image{
+    return Styles().images?.getImage(toggled! ? 'toggle-on' : 'toggle-off', excludeFromSemantics: true);
   }
 }
 
@@ -185,9 +182,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                             onTap: () {
                               Navigator.pop(context);
                             },
-                            child: Container(child: Image.asset(
-                              "images/close-orange.png",
-                              excludeFromSemantics: true,)),
+                            child: Container(child: Styles().images?.getImage("close", excludeFromSemantics: true)),
                           ))),
                         Container(height: 12,),
                         content ?? Container(),
@@ -218,7 +213,7 @@ class Onboarding2InfoDialog extends StatelessWidget{
                                       padding: EdgeInsets.only(bottom: 2),
                                       child: Container(
                                           padding: EdgeInsets.only(bottom: 4),
-                                          child: Image.asset("images/icon-external-link-blue.png", excludeFromSemantics: true,)))),
+                                          child: Styles().images?.getImage("external-link", excludeFromSemantics: true,)))),
                                 ]
                             )
                         ),
@@ -265,9 +260,6 @@ class Onboarding2UnderlinedButton extends StatelessWidget{
           child: Padding(
               padding: padding,
               child: Container(
-                  decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1, ),)
-                  ),
                   padding: EdgeInsets.only(bottom: 2),
                   child: Text(
                     title!,

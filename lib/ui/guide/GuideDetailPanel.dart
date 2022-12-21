@@ -18,6 +18,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -26,8 +27,9 @@ import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+  final String favoriteKey;
   final String? guideEntryId;
-  GuideDetailPanel({ this.guideEntryId });
+  GuideDetailPanel({ this.guideEntryId, this.favoriteKey = GuideFavorite.favoriteKeyName });
 
   @override
   _GuideDetailPanelState createState() => _GuideDetailPanelState();
@@ -59,7 +61,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
       FlexUI.notifyChanged,
     ]);
     _guideEntry = Guide().entryById(widget.guideEntryId);
-    _isFavorite = Auth2().isFavorite(GuideFavorite(id: widget.guideEntryId));
+    _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: widget.guideEntryId));
     
     RecentItems().addRecentItem(RecentItem.fromGuideItem(_guideEntry));
   }
@@ -81,7 +83,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
       setStateIfMounted(() {
-        _isFavorite = Auth2().isFavorite(GuideFavorite(id: widget.guideEntryId));
+        _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: widget.guideEntryId));
       });
     }
     else if (name == FlexUI.notifyChanged) {
@@ -113,7 +115,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                 button: true,
                 child: GestureDetector(onTap: _onTapFavorite, child:
                   Container(padding: EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 16), child:
-                    Image.asset(_isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true,)
+                  Styles().images?.getImage(_isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
                   )
             ),),),),
           ],)
@@ -260,7 +262,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
           Row(children: [
             Expanded(child:
               Column(children: [
-                Image.network(imageUrl, excludeFromSemantics: true,),
+                ModalImageHolder(child: Image.network(imageUrl, excludeFromSemantics: true,)),
               ]),
             ),
           ],)
@@ -423,7 +425,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
                   borderWidth: 2,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   onTap:() { _onTapLink(url);  },
-                  rightIcon: Image.asset('images/external-link.png', semanticLabel: "external link",),
+                  rightIcon: Styles().images?.getImage('external-link'),
                 )
               ),
             );
@@ -465,7 +467,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
         if (guideEntry != null) {
           contentList.add(
             Padding(padding: EdgeInsets.only(bottom: 16), child:
-              GuideEntryCard(guideEntry)
+              GuideEntryCard(guideEntry, favoriteKey: widget.favoriteKey,)
           ),);
         }
       }
@@ -474,7 +476,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     return ((contentList != null) && (0 < contentList.length)) ?
       Container(padding: EdgeInsets.symmetric(vertical: 16), child:
         SectionSlantHeader(title: "Related",
-          titleIconAsset: 'images/icon-related.png',
+          titleIconKey: 'related',
           children: contentList,
       )) :
       Container();
@@ -484,7 +486,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
   void _onTapFavorite() {
     String? title = Guide().entryTitle(_guideEntry, stripHtmlTags: true);
     Analytics().logSelect(target: "Favorite: $title");
-    Auth2().prefs?.toggleFavorite(GuideFavorite(id: Guide().entryId(_guideEntry)));
+    Auth2().prefs?.toggleFavorite(FavoriteItem(key:widget.favoriteKey, id: Guide().entryId(_guideEntry)));
   }
 
   void _onTapLink(String? url, {bool? useInternalBrowser}) {

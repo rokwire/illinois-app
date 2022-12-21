@@ -125,7 +125,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
         title: HomeLaundryWidget.title,
-        titleIcon: Image.asset('images/icon-news.png'),
+        titleIconKey: 'laundry',
         child: _buildContent(),
     );
   }
@@ -188,7 +188,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.laundry.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.laundry.button.all.hint', 'Tap to view all laundries'),
@@ -219,7 +219,8 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
           setState(() {
             _laundrySchool = laundrySchool;
             _pageViewKey = UniqueKey();
-            _pageController = null;
+            // _pageController = null;
+            _pageController?.jumpToPage(0);
             _contentKeys.clear();
           });
         }
@@ -320,7 +321,7 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> implements Notificati
                             button: true,
                             excludeSemantics: true,
                             child:
-                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Image.asset(isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-white.png', excludeFromSemantics: true)))),
+                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))),
                           )
                         ],
                       )

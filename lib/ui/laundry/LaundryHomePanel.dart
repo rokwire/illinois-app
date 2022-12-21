@@ -67,7 +67,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     NotificationService().subscribe(this, [
       LocationServices.notifyStatusChanged,
       NativeCommunicator.notifyMapSelectExplore,
-      NativeCommunicator.notifyMapClearExplore,
+      NativeCommunicator.notifyMapSelectLocation,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       FlexUI.notifyChanged,
     ]);
@@ -111,10 +111,10 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       _onLocationServicesStatusChanged(param);
     }
     else if (name == NativeCommunicator.notifyMapSelectExplore) {
-      _onNativeMapSelectExplore(param['mapId'], param['exploreJson']);
+      _onNativeMapSelectExplore(param);
     }
-    else if (name == NativeCommunicator.notifyMapClearExplore) {
-      _onNativeMapClearExplore(param['mapId']);
+    else if (name == NativeCommunicator.notifyMapSelectLocation) {
+      _onNativeMapSelectLocation(param);
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateLocationServicesStatus();
@@ -143,9 +143,11 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     }
   }
 
-  void _onNativeMapSelectExplore(int? mapID, dynamic laundryJson) {
-    if (_nativeMapController!.mapId == mapID) {
+  void _onNativeMapSelectExplore(Map<String, dynamic>? params) {
+    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
+    if (_nativeMapController!.mapId == mapId) {
       dynamic laundry;
+      dynamic laundryJson = (params != null) ? params['explore'] : null;
       if (laundryJson is Map) {
         laundry = LaundryRoom.fromNativeMapJson(JsonUtils.mapValue(laundryJson));
       }
@@ -165,8 +167,9 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     }
   }
 
-  void _onNativeMapClearExplore(int? mapID) {
-    if (_nativeMapController!.mapId == mapID) {
+  void _onNativeMapSelectLocation(Map<String, dynamic>? params) {
+    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
+    if (_nativeMapController!.mapId == mapId) {
       _selectMapLaundry(null);
     }
   }
@@ -188,7 +191,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
         hint: Localization().getStringEx('headerbar.back.hint', ''),
         button: true,
         child: IconButton(
-          icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true),
+          icon: Styles().images?.getImage('images/chevron-left-white.png', excludeFromSemantics: true),
           onPressed: _onTapBack)
         ),
       actions: <Widget>[

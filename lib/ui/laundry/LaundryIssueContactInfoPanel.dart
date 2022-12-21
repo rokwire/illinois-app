@@ -113,7 +113,7 @@ class _LaundryIssueContactInfoPanelState extends State<LaundryIssueContactInfoPa
             borderColor: Styles().colors!.fillColorPrimary,
             label: Localization().getStringEx('panel.laundry.issues_contact_info.complete.button', 'Complete Request'),
             onTap: _onTapComplete,
-            rightIcon: Image.asset('images/chevron-right-white.png')),
+            rightIcon: Styles().images?.getImage('chevron-right-white', excludeFromSemantics: true)),
             Visibility(visible: _isLoading, child: CircularProgressIndicator())
         ]));
   }

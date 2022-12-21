@@ -18,7 +18,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
@@ -40,6 +40,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
 
   static String get notifyToken                  => rokwire.FirebaseMessaging.notifyToken;
   static String get notifyForegroundMessage      => rokwire.FirebaseMessaging.notifyForegroundMessage;
+  static String get notifyGroupsNotification     => rokwire.FirebaseMessaging.notifyGroupsNotification;
 
   static const String notifyPopupMessage                   = "edu.illinois.rokwire.firebase.messaging.message.popup";
   static const String notifyScoreMessage                   = "edu.illinois.rokwire.firebase.messaging.message.score";
@@ -50,7 +51,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyAthleticsGameStarted           = "edu.illinois.rokwire.firebase.messaging.athletics_game.started";
   static const String notifyAthleticsNewsUpdated           = "edu.illinois.rokwire.firebase.messaging.athletics.news.updated";
   static const String notifySettingUpdated                 = "edu.illinois.rokwire.firebase.messaging.setting.updated";
-  static const String notifyGroupsNotification             = "edu.illinois.rokwire.firebase.messaging.groups.updated";
   static const String notifyGroupPostNotification          = "edu.illinois.rokwire.firebase.messaging.group.posts.updated";
   static const String notifyHomeNotification               = "edu.illinois.rokwire.firebase.messaging.home";
   static const String notifyInboxNotification              = "edu.illinois.rokwire.firebase.messaging.inbox";
@@ -226,18 +226,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
   }
 
-  // AndroidNotificationChannel
-
-  @override
-  AndroidNotificationChannel get androidNotificationChannel {
-    return const AndroidNotificationChannel(
-      "Notifications_Channel_ID", // id
-      "Illinois", // name
-      description: "Receive notifications",
-      importance: Importance.high,
-    );
-  }
-
   // Token
 
   @override
@@ -249,7 +237,13 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   // Message Processing
 
   @override
-  void processDataMessage(Map<String, dynamic>? data) => _processDataMessage(data);
+  void processDataMessage(Map<String, dynamic>? data) {
+    String? messageId = JsonUtils.stringValue(data?['message_id']);
+    if (messageId != null) {
+      Inbox().readMessage(messageId);
+    }
+    _processDataMessage(data);
+  }
 
   void _processDataMessage(Map<String, dynamic>? data, {String? type} ) {
     

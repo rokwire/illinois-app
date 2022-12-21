@@ -149,7 +149,7 @@ class _Onboarding2ImprovePanelState extends State<Onboarding2ImprovePanel> {
                                   Align(
                                       alignment: Alignment.center,
                                       child:Container(
-                                        child: Image.asset("images/improve_illustration.png", excludeFromSemantics: true,fit: BoxFit.fitWidth, width: 300,),
+                                        child: Styles().images?.getImage("improve-illustration", excludeFromSemantics: true),
                                       )
                                   )
                                 ],

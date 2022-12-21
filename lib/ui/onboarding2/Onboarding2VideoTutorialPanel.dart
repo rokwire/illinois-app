@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
+import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/onboarding2/Onboadring2RolesPanel.dart';
@@ -42,6 +43,7 @@ class Onboarding2VideoTutorialPanel extends StatefulWidget {
 }
 
 class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorialPanel> implements NotificationsListener {
+  Video? _video;
   VideoPlayerController? _controller;
   Future<void>? _initializeVideoPlayerFuture;
   bool _isVideoEnded = false;
@@ -55,6 +57,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     super.initState();
     NotificationService().subscribe(this, [AppNavigation.notifyEvent]);
     _enableLandscapeOrientations();
+    _loadOnboardingVideoTutorial();
     _initVideoPlayer();
   }
 
@@ -67,11 +70,10 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   }
 
   void _initVideoPlayer() {
-    Map<String, dynamic>? onboardingVideoTutorial = _loadOnboardingVideoTutorial();
-    if (onboardingVideoTutorial != null) {
-      String? tutorialUrl = onboardingVideoTutorial['video_url'];
+    if (_video != null) {
+      String? tutorialUrl = _video!.videoUrl;
       if (StringUtils.isNotEmpty(tutorialUrl)) {
-        String? ccUrl = onboardingVideoTutorial['cc_url'];
+        String? ccUrl = _video!.ccUrl;
         _controller = VideoPlayerController.network(tutorialUrl!, closedCaptionFile: _loadClosedCaptions(ccUrl));
         _controller!.addListener(_checkVideoStateChanged);
         _initializeVideoPlayerFuture = _controller!.initialize().then((_) {
@@ -80,7 +82,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
           _showCc(true);
           _startCcHidingTimer();
           if (mounted && (ModalRoute.of(context)?.isCurrent ?? false)) {
-            _controller?.play(); // Automatically play video after initialization
+            _playVideo();// Automatically play video after initialization
           }
         });
       }
@@ -88,15 +90,27 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
   }
 
   void _disposeVideoPlayer() {
+    _logAnalyticsVideoEvent(event: Analytics.LogAttributeVideoEventStopped);
     _controller?.dispose();
   }
 
-  Map<String, dynamic>? _loadOnboardingVideoTutorial() {
+  void _playVideo() {
+    _logAnalyticsVideoEvent(event: Analytics.LogAttributeVideoEventStarted);
+    _controller!.play();
+  }
+
+  void _pauseVideo() {
+    _logAnalyticsVideoEvent(event: Analytics.LogAttributeVideoEventPaused);
+    _controller!.pause();
+  }
+
+  void _loadOnboardingVideoTutorial() {
     Map<String, dynamic>? videoTutorials = Assets()['video_tutorials'];
     List<dynamic>? videos = videoTutorials?['videos'];
     if (CollectionUtils.isEmpty(videos)) {
       return null;
     }
+    Map<String, dynamic>? strings = JsonUtils.mapValue(videoTutorials?['strings']);
     Map<String, dynamic>? onboardingMap = videoTutorials?['onboarding'];
     String? onboardingVideoId;
     String? envKey = configEnvToString(Config().configEnvironment);
@@ -115,7 +129,8 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     if (videoMap == null) {
       videoMap = videos!.first;
     }
-    return videoMap;
+    videoMap!['title'] = Localization().getContentString(strings, videoMap['id']);
+    _video = Video.fromJson(videoMap);
   }
 
   Future<ClosedCaptionFile> _loadClosedCaptions(String? closedCaptionsUrl) async {
@@ -237,10 +252,10 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
       return;
     }
     if (_isPlaying) {
-      _controller?.pause();
+      _pauseVideo();
       _showCc(true);
     } else {
-      _controller?.play();
+      _playVideo();
       _startCcHidingTimer();
     }
     setState(() {});
@@ -285,6 +300,15 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     }
   }
 
+  void _logAnalyticsVideoEvent({required String event}) {
+    Analytics().logVideo(
+        videoId: _video?.id,
+        videoTitle: _video?.title,
+        videoEvent: event,
+        duration: _controller?.value.duration.inSeconds,
+        position: _controller?.value.position.inSeconds);
+  }
+
   bool get _isPlaying {
     return (_controller?.value.isPlaying ?? false);
   }
@@ -320,7 +344,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
     if (event == AppNavigationEvent.push) {
       // Pause video when the panel is not on top
       if (_controller!.value.isPlaying) {
-        _controller!.pause();
+        _pauseVideo();
       }
       // Revert allowed orientations if the panel is not on top
       if (previousRoute != null) {
@@ -337,7 +361,7 @@ class _Onboarding2VideoTutorialPanelState extends State<Onboarding2VideoTutorial
           _enableLandscapeOrientations();
           // Play again video when the panel is visible if it has not already ended
           if (!_controller!.value.isPlaying && !_isVideoEnded) {
-            _controller!.play();
+            _playVideo();
           }
         }
       }

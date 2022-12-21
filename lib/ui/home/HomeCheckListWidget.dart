@@ -64,7 +64,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
     return Visibility(visible: true, child:
         HomeSlantWidget(favoriteId: widget.favoriteId,
           title: widget._title,
-          titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+          titleIconKey: 'checklist',
           headerAxisAlignment: CrossAxisAlignment.start,
           childPadding: HomeSlantWidget.defaultChildPadding,
           child: _buildContent(),
@@ -117,9 +117,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                     container: true,
                     child:Text(Localization().getStringEx(
                         'widget.gies.message.start', 'Ready to get started?'),
-                      style: TextStyle(color: Styles().colors!.fillColorPrimary,
-                        fontFamily: Styles().fontFamilies!.extraBold,
-                        fontSize: 32,),),)),
+                      style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')),)),
                   ],),
                 Container(height: 24,),
                 RoundedButton(

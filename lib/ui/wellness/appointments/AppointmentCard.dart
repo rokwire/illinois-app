@@ -56,7 +56,7 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
   @override
   Widget build(BuildContext context) {
     const double imageSize = 64;
-    String? imageUrl = widget.appointment.imageUrl;
+    String? imageKey = widget.appointment.imageKeyBasedOnCategory;
     bool isFavorite = Auth2().isFavorite(widget.appointment);
     bool starVisible = Auth2().canFavorite && widget.appointment.isUpcoming;
 
@@ -97,66 +97,76 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
                                               child: Container(
                                                   child: Padding(
                                                       padding: EdgeInsets.only(left: 24, bottom: 5),
-                                                      child: Image.asset(
-                                                          isFavorite
-                                                              ? 'images/icon-star-orange.png'
-                                                              : 'images/icon-star-gray-frame-thin.png',
-                                                          excludeFromSemantics: true))))))))
+                                                      child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true))))))))
                         ]),
                         Padding(
                             padding: EdgeInsets.only(top: 6),
-                            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Expanded(
-                                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Row(children: [
-                                  Expanded(
-                                      child: Text(StringUtils.ensureNotEmpty(widget.appointment.title),
-                                          style: TextStyle(
-                                              color: Styles().colors?.fillColorPrimary,
-                                              fontFamily: Styles().fontFamilies?.extraBold,
-                                              fontSize: 20)))
-                                ]),
-                                Padding(
-                                    padding: EdgeInsets.only(top: 12),
-                                    child: Row(children: [
-                                      Padding(padding: EdgeInsets.only(right: 6), child: Image.asset('images/icon-calendar.png')),
-                                      Expanded(
-                                          child: Text(StringUtils.ensureNotEmpty(widget.appointment.displayDate),
-                                              style: TextStyle(
-                                                  color: Styles().colors?.textBackground,
-                                                  fontFamily: Styles().fontFamilies?.medium,
-                                                  fontSize: 16)))
-                                    ])),
-                                Padding(
-                                    padding: EdgeInsets.only(top: 12),
-                                    child: Row(children: [
-                                      Padding(
-                                          padding: EdgeInsets.only(right: 6),
-                                          child: Image.asset((widget.appointment.type == AppointmentType.online)
-                                              ? 'images/laptop.png'
-                                              : 'images/icon-location.png')),
-                                      Expanded(
-                                          child: Text(StringUtils.ensureNotEmpty(Appointment.typeToDisplayString(widget.appointment.type)),
-                                              style: TextStyle(
-                                                  color: Styles().colors?.textBackground,
-                                                  fontFamily: Styles().fontFamilies?.medium,
-                                                  fontSize: 16)))
-                                    ]))
-                              ])),
-                              Visibility(
-                                  visible: StringUtils.isNotEmpty(imageUrl),
-                                  child: Padding(
-                                      padding: EdgeInsets.only(left: 16, bottom: 4),
-                                      child: SizedBox(
-                                          width: imageSize,
-                                          height: imageSize,
-                                          child: InkWell(
-                                              onTap: () => _onTapCardImage(imageUrl!),
-                                              child: Image.network(imageUrl!,
-                                                  excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders)))))
+                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                Expanded(
+                                    child: Text(StringUtils.ensureNotEmpty(widget.appointment.title),
+                                        style: TextStyle(
+                                            color: Styles().colors?.fillColorPrimary,
+                                            fontFamily: Styles().fontFamilies?.extraBold,
+                                            fontSize: 20))),
+                                Visibility(
+                                    visible: StringUtils.isNotEmpty(imageKey),
+                                    child: Padding(
+                                        padding: EdgeInsets.only(left: 16, bottom: 4),
+                                        child: Semantics(
+                                            label: "appointment image",
+                                            button: true,
+                                            hint: "Double tap to expand image",
+                                            child: SizedBox(
+                                                width: imageSize,
+                                                height: imageSize,
+                                                child: InkWell(
+                                                    onTap: () => _onTapCardImage(imageKey),
+                                                    child: Styles().images?.getImage(imageKey,
+                                                        excludeFromSemantics: true,
+                                                        fit: BoxFit.fill,
+                                                        networkHeaders: Config().networkAuthHeaders))))))
+                              ]),
+                              Padding(
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Row(children: [
+                                    Padding(padding: EdgeInsets.only(right: 6), child: Styles().images?.getImage('calendar', excludeFromSemantics: true)),
+                                    Expanded(
+                                        child: Text(StringUtils.ensureNotEmpty(widget.appointment.displayDate),
+                                            style: TextStyle(
+                                                color: Styles().colors?.textBackground,
+                                                fontFamily: Styles().fontFamilies?.medium,
+                                                fontSize: 16)))
+                                  ])),
+                              Padding(
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Row(children: [
+                                    Padding(
+                                        padding: EdgeInsets.only(right: 6),
+                                        child: Styles().images?.getImage((widget.appointment.type == AppointmentType.online) ?
+                                          'laptop' : 'location', excludeFromSemantics: true)),
+                                    Expanded(
+                                        child: Text(StringUtils.ensureNotEmpty(Appointment.typeToDisplayString(widget.appointment.type)),
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                color: Styles().colors?.textBackground,
+                                                fontFamily: Styles().fontFamilies?.medium,
+                                                fontSize: 16))),
+                                    Visibility(
+                                        visible: (widget.appointment.cancelled == true),
+                                        child: Padding(
+                                            padding: EdgeInsets.only(left: 7),
+                                            child: Text(Localization().getStringEx('widget.appointment.card.cancelled.label', 'Cancelled'),
+                                                style: TextStyle(
+                                                    color: Styles().colors!.accentColor1,
+                                                    fontSize: 22,
+                                                    fontFamily: Styles().fontFamilies!.extraBold))))
+                                  ]))
                             ]))
                       ]))),
-              Container(color: (widget.appointment.isUpcoming ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary), height: 4)
+              Container(
+                  color: (widget.appointment.isUpcoming ? Styles().colors?.fillColorSecondary : Styles().colors?.fillColorPrimary),
+                  height: 4)
             ])));
   }
 
@@ -165,14 +175,14 @@ class _AppointmentCardState extends State<AppointmentCard> implements Notificati
     Navigator.push(context, CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: widget.appointment)));
   }
 
-  void _onTapCardImage(String imageUrl) {
+  void _onTapCardImage(String? imageKey) {
     Analytics().logSelect(target: 'Appointment Image');
     Navigator.push(
         context,
         PageRouteBuilder(
             opaque: false,
             pageBuilder: (context, _, __) =>
-                ModalImagePanel(imageUrl: imageUrl, onCloseAnalytics: () => Analytics().logSelect(target: 'Close Image'))));
+                ModalImagePanel(imageKey: imageKey, onCloseAnalytics: () => Analytics().logSelect(target: 'Close Image'))));
   }
 
   void _onTapExploreCardStar() {

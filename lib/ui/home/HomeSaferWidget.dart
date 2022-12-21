@@ -44,6 +44,7 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
 
   @override String? get favoriteId => widget.favoriteId;
   @override String? get title => HomeSaferWidget.title;
+  @override String?  get titleIconKey => 'health';
   @override String? get emptyMessage => Localization().getStringEx("widget.home.safer.text.empty.description", "Tap the \u2606 on items in Building Access so you can quickly find them here.");
 
   @override
@@ -197,8 +198,8 @@ class _HomeSaferWidgetState extends HomeCompoundWidgetState<HomeSaferWidget> {
 
   void _onMyMcKinley() {
     Analytics().logSelect(target: 'MyMcKinley', source: widget.runtimeType.toString());
-    if (StringUtils.isNotEmpty(Config().saferMcKinley['url'])) {
-      Uri? uri = Uri.tryParse(Config().saferMcKinley['url']);
+    if (StringUtils.isNotEmpty(Config().saferMcKinleyUrl)) {
+      Uri? uri = Uri.tryParse(Config().saferMcKinleyUrl!);
       if (uri != null) {
         launchUrl(uri);
       }

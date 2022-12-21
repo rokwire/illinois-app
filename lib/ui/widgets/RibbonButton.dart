@@ -34,11 +34,11 @@ class RibbonButton extends rokwire.RibbonButton {
   TextAlign textAlign                 = TextAlign.left,
 
   Widget? leftIcon,
-  String? leftIconAsset,
+  String? leftIconKey,
   EdgeInsetsGeometry leftIconPadding  = const EdgeInsets.only(right: 8),
   
   Widget? rightIcon,
-  String? rightIconAsset              = 'images/chevron-right.png',
+  String? rightIconKey              = 'chevron-right',
   EdgeInsetsGeometry rightIconPadding = const EdgeInsets.only(left: 8),
 
   BoxBorder? border,
@@ -70,11 +70,11 @@ class RibbonButton extends rokwire.RibbonButton {
     textAlign: textAlign,
 
     leftIcon: leftIcon,
-    leftIconAsset: leftIconAsset,
+    leftIconKey: leftIconKey,
     leftIconPadding: leftIconPadding,
     
     rightIcon: rightIcon,
-    rightIconAsset: rightIconAsset,
+    rightIconKey: rightIconKey,
     rightIconPadding: rightIconPadding,
 
     border: border,
@@ -96,9 +96,9 @@ class RibbonButton extends rokwire.RibbonButton {
 
 class ToggleRibbonButton extends rokwire.ToggleRibbonButton {
 
-  static const Map<bool, String> _rightIconAssets = {
-    true: 'images/switch-on.png',
-    false: 'images/switch-off.png',
+  static const Map<bool, String> _rightIconKeys = {
+    true: 'toggle-on',
+    false: 'toggle-off',
   };
 
   final Map<bool, String> _semanticsValues = {
@@ -121,11 +121,11 @@ class ToggleRibbonButton extends rokwire.ToggleRibbonButton {
     TextAlign textAlign                 = TextAlign.left,
 
     Widget? leftIcon,
-    String? leftIconAsset,
+    String? leftIconKey,
     EdgeInsetsGeometry leftIconPadding  = const EdgeInsets.only(right: 8),
     
     Widget? rightIcon,
-    String? rightIconAsset,
+    String? rightIconKey,
     EdgeInsetsGeometry rightIconPadding = const EdgeInsets.only(left: 8),
 
     BoxBorder? border,
@@ -137,10 +137,10 @@ class ToggleRibbonButton extends rokwire.ToggleRibbonButton {
 
     bool toggled = false,
     Map<bool, Widget>? leftIcons,
-    Map<bool, String>? leftIconAssets,
+    Map<bool, String>? leftIconKeys,
 
     Map<bool, Widget>? rightIcons,
-    Map<bool, String>? rightIconAssets = _rightIconAssets,
+    Map<bool, String>? rightIconKeys = _rightIconKeys,
 
     Map<bool, String>? semanticsValues,
   }) : super(
@@ -158,11 +158,11 @@ class ToggleRibbonButton extends rokwire.ToggleRibbonButton {
     textAlign: textAlign,
 
     leftIcon: leftIcon,
-    leftIconAsset: leftIconAsset,
+    leftIconKey: leftIconKey,
     leftIconPadding: leftIconPadding,
     
     rightIcon: rightIcon,
-    rightIconAsset: rightIconAsset,
+    rightIconKey: rightIconKey,
     rightIconPadding: rightIconPadding,
 
     border: border,
@@ -174,10 +174,10 @@ class ToggleRibbonButton extends rokwire.ToggleRibbonButton {
 
     toggled: toggled,
     leftIcons: leftIcons,
-    leftIconAssets: leftIconAssets,
+    leftIconKeys: leftIconKeys,
 
     rightIcons: rightIcons,
-    rightIconAssets: rightIconAssets,
+    rightIconKeys: rightIconKeys,
 
     semanticsValues : semanticsValues,
   );

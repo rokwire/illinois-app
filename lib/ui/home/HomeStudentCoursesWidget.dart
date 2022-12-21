@@ -138,12 +138,12 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
           child: Container(color: Styles().colors?.fillColorPrimary, child:
             Row(children: <Widget>[
 
-              HomeTitleIcon(image: Image.asset('images/campus-tools.png', excludeFromSemantics: true,)),
+              HomeTitleIcon(image: Styles().images?.getImage('courses', excludeFromSemantics: true)),
 
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
                   Semantics(label: HomeStudentCoursesWidget.title, header: true, excludeSemantics: true, child:
-                    Text(HomeStudentCoursesWidget.title, style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                    Text(HomeStudentCoursesWidget.title, style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20))
                   )
                 )
               ),
@@ -188,7 +188,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     return Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
       DropdownButtonHideUnderline(child:
         DropdownButton<String>(
-          icon: Padding(padding: EdgeInsets.only(left: 4), child: Image.asset('images/icon-down-white.png')),
+          icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down-white', excludeFromSemantics: true)),
           isExpanded: false,
           style: getTermDropDownItemStyle(selected: false),
           hint: (currentTerm?.name?.isNotEmpty ?? false) ? Text(currentTerm?.name ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.white)) : null,
@@ -281,7 +281,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
 
     return Column(children: [
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.student_courses.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.student_courses.button.all.hint', 'Tap to view all courses'),

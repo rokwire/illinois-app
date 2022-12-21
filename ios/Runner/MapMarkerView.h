@@ -34,6 +34,8 @@ typedef NS_ENUM(NSInteger, MapMarkerDisplayMode) {
 
 @interface MapMarkerView : UIView
 + (instancetype)createFromExplore:(NSDictionary*)explore;
++ (instancetype)createFromExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode;
++ (instancetype)createFromExplore:(NSDictionary*)explore displayMode:(MapMarkerDisplayMode)displayMode imageCache:(NSMutableDictionary<NSString*, UIImage*>*)imageCache;
 
 @property (nonatomic) MapMarkerDisplayMode displayMode;
 @property (nonatomic) bool blurred;
@@ -42,7 +44,20 @@ typedef NS_ENUM(NSInteger, MapMarkerDisplayMode) {
 @property (nonatomic, readonly) CGPoint anchor;
 
 + (UIImage*)markerImageWithHexColor:(NSString*)hexColor;
++ (UIImage*)markerImageWithHexColor:(NSString*)hexColor imageCache:(NSMutableDictionary<NSString*, UIImage*>*)imageCache;
 @end
 
+@interface MapMarkerView2 : UIView
+- (id)initWithIcon:(UIImage*)icon iconAnchor:(CGPoint)iconAnchor title:(NSString*)title descr:(NSString*)descr displayMode:(MapMarkerDisplayMode)displayMode;
 
+@property (nonatomic) MapMarkerDisplayMode displayMode;
+@property (nonatomic, readonly) CGPoint iconAnchor;
+@property (nonatomic, readonly) CGPoint anchor;
+
++ (UIImage*)markerImageWithHexColor:(NSString*)hexColor;
++ (UIImage*)markerImageWithHexColor:(NSString*)hexColor imageCache:(NSMutableDictionary<NSString*, UIImage*>*)imageCache;
+
++ (UIImage*)groupMarkerImageWithHexColor:(NSString*)hexColor count:(NSInteger)count;
++ (UIImage*)groupMarkerImageWithHexColor:(NSString*)hexColor count:(NSInteger)count imageCache:(NSMutableDictionary<NSString*, UIImage*>*)imageCache;
+@end
 

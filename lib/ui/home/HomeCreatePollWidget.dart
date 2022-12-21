@@ -16,7 +16,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -68,7 +67,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
     return Visibility(visible: _visible, child:
         HomeSlantWidget(favoriteId: widget.favoriteId,
           title: Localization().getStringEx("widget.home_create_poll.heading.title", "Polls"),
-          titleIcon: Image.asset('images/icon-browse-quick-polls.png', scale: 32 / 18,),
+          titleIconKey: 'polls',
           flatHeight: 0, slantHeight: 0,
           childPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
           child: _buildContent(),
@@ -112,8 +111,7 @@ class _HomeCreatePollWidgetState extends State<HomeCreatePollWidget> implements 
 
   void _onCreatePoll() {
     Analytics().logSelect(target: "Create Poll", source: widget.runtimeType.toString());
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));
-
+    CreatePollPanel.present(context);
   }
 
   bool get _canCreatePoll {

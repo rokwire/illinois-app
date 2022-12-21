@@ -34,7 +34,6 @@ import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/content.dart';
-import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/utils/AppUtils.dart';
@@ -49,6 +48,7 @@ import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
 import 'package:illinois/ui/groups/GroupsEventDetailPanel.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -126,7 +126,7 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                     splashColor: Styles().colors!.white,
                   ),
                   child: DropdownButton(
-                      icon: Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
+                      icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true), //Image.asset('images/icon-down-orange.png', excludeFromSemantics: true),
                       isExpanded: true,
                       focusColor: Styles().colors!.white,
                       underline: Container(),
@@ -171,9 +171,9 @@ class _GroupDropDownButtonState<T> extends State<GroupDropDownButton>{
                           style: isSelected? Styles().textStyles?.getTextStyle("widget.group.dropdown_button.item.selected") :  Styles().textStyles?.getTextStyle("widget.group.dropdown_button.item.not_selected")
                         ),
                       )),
-                  isSelected
-                      ? Image.asset("images/checkbox-selected.png", excludeFromSemantics: true)
-                      : Image.asset("images/oval-orange.png", excludeFromSemantics: true)
+                  (isSelected
+                      ? Styles().images?.getImage('check-circle-filled', excludeFromSemantics: true)
+                      : Styles().images?.getImage('circle-outline', excludeFromSemantics: true)) ?? Container()
                 ]),
             description==null? Container() : Container(height: 6,),
             description==null? Container():
@@ -279,7 +279,7 @@ class HeaderBackButton extends StatelessWidget {
       button: true,
       excludeSemantics: true,
       child: IconButton(
-          icon: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true),
+          icon: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true) ?? Container(),
           onPressed: (){
             Analytics().logSelect(target: "Back");
             Navigator.pop(context);
@@ -441,7 +441,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
       )),
     ];
     content.add(Padding(padding: EdgeInsets.symmetric(vertical: 4), child: Row(children: <Widget>[
-      Padding(padding: EdgeInsets.only(right: 8), child: Image.asset('images/icon-calendar.png'),),
+      Padding(padding: EdgeInsets.only(right: 8), child: Styles().images?.getImage('calendar')),
       Expanded(child:
       Text(widget.event?.timeDisplayString ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small"))
       ),
@@ -473,7 +473,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                   excludeSemantics: true,
                   child: InkWell(onTap: _onFavoriteTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
-                      Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png'),
+                      Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray'),
                     ),
                 ))),
 
@@ -481,7 +481,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
                 Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
                   InkWell(onTap: _onEventOptionsTap, child:
                     Container(width: 42, height: 42, alignment: Alignment.center, child:
-                      Image.asset('images/icon-groups-options-orange.png'),
+                      Styles().images?.getImage('options-circle'),
                     ),
                   ),
                 )
@@ -489,13 +489,12 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
             ],),
             Visibility(visible:
                 StringUtils.isNotEmpty(imageUrl),
-                child: Padding(
+                child:Padding(
                   padding: EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 8),
                   child: SizedBox(
                     width: _smallImageSize,
                     height: _smallImageSize,
-                    child: Image.network(
-                      imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders),),)),
+                    child: ModalImageHolder(child: Image.network(imageUrl ?? '', excludeFromSemantics: true, fit: BoxFit.fill, headers: Config().networkAuthHeaders)),),)),
                 ])
                 )
     ],);
@@ -516,7 +515,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     if (_canEdit) {
       options.add(RibbonButton(
         label: Localization().getStringEx("panel.group_detail.button.edit_event.title", "Edit Event"),
-        leftIconAsset: "images/icon-edit.png",
+        leftIconKey: "edit",
         onTap: _onEditEventTap
       ),);
     }
@@ -524,7 +523,7 @@ class _EventContentState extends State<_EventContent> implements NotificationsLi
     if (_canDelete) {
       options.add(RibbonButton(
         label: Localization().getStringEx("panel.group_detail.button.delete_event.title", "Remove group event"),
-        leftIconAsset: "images/icon-leave-group.png",
+        leftIconKey: "trash",
         onTap: (){
           Analytics().logSelect(target: "Remove group event");
           showDialog(context: context, builder: (context)=>_buildRemoveEventDialog(context)).then((value) => Navigator.pop(context));
@@ -794,7 +793,8 @@ class GroupCard extends StatefulWidget {
     this.displayType = GroupCardDisplayType.allGroups,
     this.margin = const EdgeInsets.symmetric(horizontal: 16),
     this.onImageTap,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   _GroupCardState createState() => _GroupCardState();
@@ -821,7 +821,7 @@ class _GroupCardState extends State<GroupCard> {
   @override
   Widget build(BuildContext context) {
     String? pendingCountText = sprintf(Localization().getStringEx("widget.group_card.pending.label", "Pending: %s"), [StringUtils.ensureNotEmpty((_groupStats?.pendingCount ?? 0).toString())]);
-    String? groupCategory = StringUtils.ensureNotEmpty(widget.group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
+    String groupCategory = _isResearchProject ? '' : StringUtils.ensureNotEmpty(widget.group?.category, defaultValue: Localization().getStringEx("panel.groups_home.label.category", "Category"));
     return GestureDetector(onTap: () => _onTapCard(context), child:
       Padding(padding: widget.margin, child:
         Container(padding: EdgeInsets.all(16), decoration: BoxDecoration( color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))]), child:
@@ -832,7 +832,7 @@ class _GroupCardState extends State<GroupCard> {
               Row(children:[
                 Expanded(child:
                   Column(children:[
-                    Row(children: [
+                    groupCategory.isNotEmpty ? Row(children: [
                       Expanded(child:
                         Text(groupCategory,
                           overflow: TextOverflow.ellipsis,
@@ -840,11 +840,11 @@ class _GroupCardState extends State<GroupCard> {
                           style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat")
                         )
                       ),
-                    ]),
+                    ]) : Container(),
                     Row(children: [
                       Expanded(child:
                         Padding(padding: const EdgeInsets.symmetric(vertical: 0), child:
-                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style:  Styles().textStyles?.getTextStyle("widget.title.large.extra_fat"))
+                          Text(widget.group?.title ?? "", overflow: TextOverflow.ellipsis, maxLines: widget.displayType == GroupCardDisplayType.homeGroups? 2 : 10, style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
                         )
                       )
                     ]),
@@ -996,14 +996,41 @@ class _GroupCardState extends State<GroupCard> {
     ));
   }
 
+  bool get _isResearchProject => widget.group?.researchProject == true;
+
   Widget _buildMembersCount() {
+    String membersLabel;
     int count = _groupStats?.activeMembersCount ?? 0;
-    String membersLabel = (count == 1)
-        ? Localization().getStringEx('widget.group_card.member.label', 'member')
-        : Localization().getStringEx('widget.group_card.members.label', 'members');
-    return Container(
-        child: Text('$count $membersLabel',
-            style: Styles().textStyles?.getTextStyle("widget.card.detail.small_variant")));
+    if (!_isResearchProject) {
+      if (count == 0) {
+        membersLabel = "No members";
+      }
+      else if (count == 1) {
+        membersLabel = "1 member";
+      }
+      else {
+        membersLabel = sprintf("%s members", [count]);
+      }
+    }
+    else if (widget.group?.currentUserIsAdmin ?? false) {
+      if (count == 0) {
+        membersLabel = "No participants";
+      }
+      else if (count == 1) {
+        membersLabel = "1 participant";
+      }
+      else {
+        membersLabel = sprintf("%s participants", [count]);
+      }
+    }
+    else {
+      membersLabel = "";
+    }
+    return Visibility(visible: StringUtils.isNotEmpty(membersLabel), child:
+      Text(membersLabel, style:
+        Styles().textStyles?.getTextStyle("widget.card.detail.small_variant")
+      ),
+    );
   }
 
    void _loadGroupStats() {
@@ -1048,7 +1075,7 @@ class _GroupCardState extends State<GroupCard> {
     String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
     String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
 
-    return RichText(text: TextSpan(style: Styles().textStyles?.getTextStyle('"widget.description.small.fat'), children: [
+    return RichText(text: TextSpan(style: Styles().textStyles?.getTextStyle('widget.description.small.fat'), children: [
       TextSpan(text: privacyMsgStart),
       WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelWidget()),
       TextSpan(text: privacyMsgEnd)
@@ -1095,9 +1122,8 @@ class _GroupCardState extends State<GroupCard> {
 class GroupPostCard extends StatefulWidget {
   final GroupPost? post;
   final Group? group;
-  final Function? onImageTap;
 
-  GroupPostCard({Key? key, required this.post, required this.group, this.onImageTap}) :
+  GroupPostCard({Key? key, required this.post, required this.group}) :
     super(key: key);
 
   @override
@@ -1176,18 +1202,12 @@ class _GroupPostCardState extends State<GroupPostCard> {
                             label: "post image",
                             button: true,
                             hint: "Double tap to zoom the image",
-                            child:GestureDetector(
-                              onTap: (){
-                                if(widget.onImageTap!=null){
-                                  widget.onImageTap!();
-                                }
-                              },
-                              child: Container(
+                            child: Container(
                                 padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
                                 child: SizedBox(
                                   width: _smallImageSize,
                                   height: _smallImageSize,
-                                  child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,),),))
+                                  child: ModalImageHolder(child: Image.network(imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,)),),)
                             ))
                     ],),
                     Container(
@@ -1257,9 +1277,8 @@ class GroupReplyCard extends StatefulWidget {
   final void Function()? onIconTap;
   final void Function()? onCardTap;
   final bool showRepliesCount;
-  final void Function()? onImageTap;
 
-  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap, this.onImageTap});
+  GroupReplyCard({@required this.reply, @required this.post, @required this.group, this.iconPath, this.onIconTap, this.semanticsLabel, this.showRepliesCount = true, this.onCardTap});
 
   @override
   _GroupReplyCardState createState() => _GroupReplyCardState();
@@ -1310,14 +1329,15 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                 ),
                 Expanded(child: Container()),
                 Visibility(
-                  visible: Config().showGroupPostReactions,
+                  visible: Config().showGroupPostReactions &&
+                      (widget.group?.currentUserHasPermissionToSendReactions == true),
                   child: GroupPostReaction(
                     groupID: widget.group?.id,
                     post: widget.reply,
                     reaction: thumbsUpReaction,
                     accountIDs: widget.reply?.reactions[thumbsUpReaction],
-                    selectedIconPath: 'images/icon-thumbs-up-solid.png',
-                    deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                    selectedIconKey: 'thumbs-up-filled',
+                    deselectedIconKey: 'thumbs-up-outline-gray',
                   ),
                 ),
                 Visibility(
@@ -1328,7 +1348,7 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                         onTap: widget.onIconTap,
                         child: Padding(
                             padding: EdgeInsets.only(left: 10, top: 3),
-                            child: (StringUtils.isNotEmpty(widget.iconPath) ? Image.asset(widget.iconPath!, excludeFromSemantics: true,) : Container())))))))
+                            child: (StringUtils.isNotEmpty(widget.iconPath) ? Styles().images?.getImage(widget.iconPath!, excludeFromSemantics: true,) : Container())))))))
               ]),
               Row(
                 children: [
@@ -1362,18 +1382,12 @@ class _GroupReplyCardState extends State<GroupReplyCard> with NotificationsListe
                       flex: 1,
                       child: Semantics (
                         button: true, label: "Image",
-                       child: GestureDetector(
-                        onTap: (){
-                          if(widget.onImageTap!=null){
-                            widget.onImageTap!();
-                          }
-                        },
-                        child: Container(
+                       child: Container(
                           padding: EdgeInsets.only(left: 8, bottom: 8, top: 8),
                           child: SizedBox(
                           width: _smallImageSize,
                           height: _smallImageSize,
-                           child: Image.network(widget.reply!.imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,),),)))
+                           child: ModalImageHolder(child: Image.network(widget.reply!.imageUrl!, excludeFromSemantics: true, fit: BoxFit.fill,)),),))
                   )
                 ],),
               Container(
@@ -1426,26 +1440,26 @@ class GroupPostReaction extends StatelessWidget {
   final GroupPost? post;
   final String reaction;
   final List<String>? accountIDs;
-  final String selectedIconPath;
-  final String deselectedIconPath;
-  final double iconSize;
+  final String selectedIconKey;
+  final String deselectedIconKey;
+  final bool onTapEnabled;
+  final bool onLongPressEnabled;
 
   GroupPostReaction({required this.groupID, required this.post, required this.reaction,
-    this.accountIDs, required this.selectedIconPath, required this.deselectedIconPath, this.iconSize = 18});
+    this.accountIDs, required this.selectedIconKey, required this.deselectedIconKey, this.onTapEnabled = true, this.onLongPressEnabled = true});
 
   @override
   Widget build(BuildContext context) {
     bool selected = accountIDs?.contains(Auth2().accountId) ?? false;
     return Semantics(button: true, label: reaction,
         child: InkWell(
-            onTap: () => _onTapReaction(groupID, post, reaction),
-            onLongPress: () => _onLongPressReactions(context, accountIDs, groupID),
+            onTap: () => onTapEnabled ? _onTapReaction(groupID, post, reaction) : null,
+            onLongPress: () => onLongPressEnabled ? _onLongPressReactions(context, accountIDs, groupID): null,
             child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(selected ? selectedIconPath : deselectedIconPath,
-                      width: iconSize, height: iconSize, fit: BoxFit.fitWidth, excludeFromSemantics: true),
+                  Styles().images?.getImage(selected ? selectedIconKey : deselectedIconKey, excludeFromSemantics: true) ?? Container(),
                   Visibility(visible: accountIDs != null && accountIDs!.length > 0,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 4.0),
@@ -1485,8 +1499,7 @@ class GroupPostReaction extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Image.asset('images/icon-thumbs-up-solid.png', width: 24, height: 24,
-                fit: BoxFit.fitWidth, excludeFromSemantics: true),
+            Styles().images?.getImage('thumbs-up-filled', size: 24, fit: BoxFit.fill, excludeFromSemantics: true) ?? Container(),
             Container(width: 16),
             Text(member.displayShortName, style: TextStyle(
                 fontFamily: Styles().fontFamilies!.bold,
@@ -1587,22 +1600,19 @@ class _PostInputFieldState extends State<PostInputField>{ //TBD localize properl
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      _FontIcon(
-                          onTap: _onTapBold,
-                          buttonLabel: "Bold",
-                          iconPath: 'images/icon-bold.png'),
+                      IconButton(
+                        icon: Styles().images?.getImage('bold-dark', semanticLabel: 'Bold') ?? Container(),
+                        onPressed: _onTapBold),
                       Padding(
                           padding: EdgeInsets.only(left: 20),
-                          child: _FontIcon(
-                              onTap: _onTapItalic,
-                              buttonLabel: "Italic",
-                              iconPath: 'images/icon-italic.png')),
+                          child: IconButton(
+                              icon: Styles().images?.getImage('italic-dark', semanticLabel: 'Italic') ?? Container(),
+                              onPressed: _onTapItalic)),
                       Padding(
                           padding: EdgeInsets.only(left: 20),
-                          child: _FontIcon(
-                              onTap: _onTapUnderline,
-                              buttonLabel: "Underline",
-                              iconPath: 'images/icon-underline.png')),
+                          child: IconButton(
+                              icon: Styles().images?.getImage('underline-dark', semanticLabel: 'Underline') ?? Container(),
+                              onPressed: _onTapUnderline)),
                       Padding(
                           padding: EdgeInsets.only(left: 20),
                           child: Semantics(button: true, child:
@@ -2027,20 +2037,6 @@ class GroupMemberSelectionData {
   GroupMemberSelectionData({required this.type, required this.selection, this.requiresValidation = false});
 }
 
-class _FontIcon extends StatelessWidget {
-  final GestureTapCallback? onTap;
-  final String iconPath;
-  final String? buttonLabel;
-  _FontIcon({this.onTap, required this.iconPath, this.buttonLabel});
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(button: true, label: buttonLabel,
-        child:GestureDetector(
-            onTap: onTap, child: Image.asset(iconPath, width: 18, height: 18, excludeFromSemantics: true,)));
-  }
-}
-
 typedef void OnImageChangedListener(String imageUrl);
 class ImageChooserWidget extends StatefulWidget{ //TBD Localize properly
   final String? imageUrl;
@@ -2080,7 +2076,7 @@ class _ImageChooserState extends State<ImageChooserWidget>{
         color: Styles().colors!.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
           StringUtils.isNotEmpty(imageUrl)
-              ? Positioned.fill(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover))
+              ? Positioned.fill(child: ModalImageHolder(child: Image.network(imageUrl!, semanticLabel: widget.imageSemanticsLabel??"", fit: BoxFit.cover)))
               : Container(),
           Visibility( visible: showSlant,
               child: CustomPaint(painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight), child: Container(height: 53))),
@@ -2117,7 +2113,6 @@ class _ImageChooserState extends State<ImageChooserWidget>{
     }
     Log.d("Image Url: $imageUrl");
   }
-
 }
 
 //Polls
@@ -2135,16 +2130,6 @@ class GroupPollCard extends StatefulWidget{
     return (poll?.status == PollStatus.created) && (
       (poll?.isMine ?? false) ||
       (group?.currentUserIsAdmin ?? false)
-    );
-  }
-  
-  bool get _canVote {
-    return ((poll!.status == PollStatus.opened) &&
-        (((poll!.userVote?.totalVotes ?? 0) == 0) ||
-            poll!.settings!.allowMultipleOptions! ||
-            poll!.settings!.allowRepeatOptions!
-        ) &&
-        (!poll!.isGeoFenced || GeoFence().currentRegionIds.contains(poll!.regionId))
     );
   }
 
@@ -2207,7 +2192,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.created","Polls created");
     } if (poll.status == PollStatus.opened) {
       pollStatus = Localization().getStringEx("panel.polls_home.card.state.text.open","Polls open");
-      if (widget._canVote) {
+      if (poll.canVote) {
         footerWidgets.add(_createVoteButton());
       }
     }
@@ -2238,7 +2223,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
                 Semantics(label: Localization().getStringEx("panel.group_detail.label.options", "Options"), button: true,child:
                   GestureDetector(onTap: _onPollOptionsTap, child:
                     Padding(padding: EdgeInsets.all(10), child:
-                      Image.asset('images/icon-groups-options-orange.png'),
+                    Styles().images?.getImage('more'),
                     ),
                   ),
                 ),
@@ -2292,7 +2277,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
       bool useCustomColor = isClosed && maxValueIndex == optionIndex;
       String option = widget.poll!.options![optionIndex];
       bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
-      String checkboxImage = didVote ? 'images/deselected-dark.png' : 'images/checkbox-unselected.png';
+      String checkboxImage = didVote ? 'check-circle-filled' : 'check-circle-outline-gray';
 
       String votesString;
       int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
@@ -2318,7 +2303,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
           child:
           Semantics(label: semanticsText, excludeSemantics: true, child:
           Row(children: <Widget>[
-            Padding(padding: EdgeInsets.only(right: 10), child: Image.asset(checkboxImage,),),
+            Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage(checkboxImage)),
             Expanded(
                 flex: 5,
                 key: progressKey, child:
@@ -2331,7 +2316,7 @@ class _GroupPollCardState extends State<GroupPollCard> {
                 Padding( padding: EdgeInsets.symmetric(horizontal: 5),
                   child: Text(option, style: useCustomColor? Styles().textStyles?.getTextStyle('widget.group.card.poll.option_variant')  : Styles().textStyles?.getTextStyle('widget.group.card.poll.option')),)),
                 Visibility( visible: didVote,
-                    child:Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/checkbox-small.png',),)
+                    child:Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('check-circle-outline-gray'))
                 ),
               ],),)
               ),
@@ -2476,7 +2461,7 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
     if (widget.pollCard._canStart) {
       options.add(RibbonButton(
         label: Localization().getStringEx("panel.polls_home.card.button.title.start_poll", "Start Poll"),
-        leftIconAsset: "images/icon-gear.png",
+        leftIconKey: "settings",
         progress: _isStarting,
         onTap: _onStartPollTapped
       ),);
@@ -2484,7 +2469,7 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
     if (widget.pollCard._canEnd) {
       options.add(RibbonButton(
         label: Localization().getStringEx("panel.polls_home.card.button.title.end_poll", "End Poll"),
-        leftIconAsset: "images/icon-gear.png",
+        leftIconKey: "settings",
         progress: _isEnding,
         onTap: _onEndPollTapped
       ),);
@@ -2493,7 +2478,7 @@ class _GroupPollOptionsState extends State<_GroupPollOptions> {
     if (widget.pollCard._canDelete) {
       options.add(RibbonButton(
         label: Localization().getStringEx("panel.polls_home.card.button.title.delete_poll", "Delete Poll"),
-        leftIconAsset: "images/icon-leave-group.png",
+        leftIconKey: "trash",
         progress: _isDeleting,
         onTap: _onDeletePollTapped
       ),);
@@ -2609,15 +2594,14 @@ class _GroupMemberProfileImageState extends State<GroupMemberProfileImage> imple
   @override
   Widget build(BuildContext context) {
     bool hasProfilePhoto = (_imageBytes != null);
-    Image profileImage = hasProfilePhoto
-        ? Image.memory(_imageBytes!)
-        : Image.asset('images/missing-profile-photo-placeholder.png', excludeFromSemantics: true);
+    Widget? profileImage = hasProfilePhoto
+        ? Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: (hasProfilePhoto ? BoxFit.cover : BoxFit.contain), image: Image.memory(_imageBytes!).image)))
+        : Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true);
 
     return GestureDetector(
         onTap: widget.onTap ?? _onImageTap,
         child: Stack(alignment: Alignment.center, children: [
-          Container(
-              decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: (hasProfilePhoto ? BoxFit.cover : BoxFit.contain), image: profileImage.image))),
+          if (profileImage != null) profileImage,
           Visibility(
               visible: _loading,
               child: SizedBox(
@@ -2687,18 +2671,11 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
   @override
   void initState() {
     super.initState();
-    if (CollectionUtils.isNotEmpty(widget.groups)) {
-      for (Group group in widget.groups!) {
-        if (group.id != null) {
-          _selectedGroupIds.add(group.id!);
-        }
-      }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(contentPadding: EdgeInsets.zero, scrollable: true, content:
+    return AlertDialog(contentPadding: EdgeInsets.zero, scrollable: false, content:
     Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
       Container(
           decoration: BoxDecoration(
@@ -2707,46 +2684,112 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
           ),
           child: Row(children: <Widget>[
             Opacity(opacity: 0, child:
-            Padding(padding: EdgeInsets.all(8), child:
-            Image.asset('images/close-white.png', excludeFromSemantics: true,)
-            )
+              Padding(padding: EdgeInsets.all(8), child:
+                Styles().images?.getImage('close-circle-white', excludeFromSemantics: true)
+              )
             ),
             Expanded(child:
-            Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
-            Text(Localization().getStringEx("widget.groups.selection.heading", "Select Group"), textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 24)
-            )
-            )
+              Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
+                Text(Localization().getStringEx("widget.groups.selection.heading", "Select Group"), textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.medium, fontSize: 24)
+                )
+              )
             ),
             Semantics(button: true, label: Localization().getStringEx("dialog.close.title","Close"), child:
-            InkWell(onTap: _onTapClose, child:
-            Padding(padding: EdgeInsets.only(top: 8, bottom: 8, left: 4, right: 12), child:
-            Image.asset('images/close-white.png', excludeFromSemantics: true,)
-            )
-            )
+              InkWell(onTap: _onTapClose, child:
+                Padding(padding: EdgeInsets.only(top: 8, bottom: 8, left: 4, right: 12), child:
+                  Styles().images?.getImage('close-circle-white', excludeFromSemantics: true)
+                )
+              )
             )
           ])
       ),
       Padding(padding: EdgeInsets.all(10), child: _buildGroupsList()),
+
       Semantics(container: true, child:
-      Padding(padding: EdgeInsets.all(10), child:
-      RoundedButton(
-          label: Localization().getStringEx("widget.groups.selection.button.select.label", "Select"),
-          borderColor: Styles().colors!.fillColorSecondary,
-          backgroundColor: Styles().colors!.white,
-          textColor: Styles().colors!.fillColorPrimary,
-          onTap: _onTapSelect
-      )
+      Container(
+          // constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 4 ),
+          padding: EdgeInsets.all(10), child:
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: _onTapSelectAll,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                          color: Colors.white,
+                          child: Text( 'Select All', //TBD localize
+                            style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16.0, color: Styles().colors?.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, height: 1.61)),
+                      )
+                    )
+                  ),
+
+                  Expanded(child:
+                  Row(
+                    children: [
+                      Expanded(child: Container()),
+                      Container(child:InkWell(
+                        onTap: _onTapClearSelection,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                          color: Colors.white,
+                          child:Text('Deselect All', //TBD localize
+                            textAlign: TextAlign.left,
+                            style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16.0, color: Styles().colors?.fillColorPrimary, decoration: TextDecoration.underline, decorationColor: Styles().colors?.fillColorSecondary, height: 1.61))),
+
+                      ))
+                    ],
+                  )),
+                ],
+              ),
+            Container(height: 12,),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                  child: RoundedButton(
+                      label: Localization().getStringEx("widget.groups.selection.button.send.label", "Send"),//TBD localize
+                      borderColor: Styles().colors!.fillColorSecondary,
+                      backgroundColor: Styles().colors!.white,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapSelect
+                  )),
+                  Container(width: 16,),
+                  Expanded(child:RoundedButton(
+                      label: Localization().getStringEx("widget.groups.selection.button.cancel.label", "Cancel"),//TBD localize
+                      borderColor: Styles().colors!.fillColorPrimary,
+                      backgroundColor: Styles().colors!.white,
+                      textColor: Styles().colors!.fillColorPrimary,
+                      onTap: _onTapClose
+                  ))
+                ],
+              )
+          ],
+        )
       )
       )
     ]));
   }
 
   Widget _buildGroupsList() {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double maxListHeight = screenHeight>0 ? screenHeight/2 : 100;
+
     if (CollectionUtils.isEmpty(widget.groups)) {
       return Container();
     }
     List<Widget> groupWidgetList = [];
+
+    groupWidgetList.add(Container(
+      padding: EdgeInsets.only(top:10), //TBD localize
+      child: Text(Localization().getStringEx("widget.groups.selection.message", "Also send this post to these selected groups:"), textAlign: TextAlign.center,
+          style: Styles().textStyles?.getTextStyle("widget.message.regular.fat")),
+    ),);
+
     for (Group group in widget.groups!) {
       if (group.id != null) {
         groupWidgetList.add(ToggleRibbonButton(
@@ -2759,7 +2802,7 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
       }
 
     }
-    return Column(children: groupWidgetList);
+    return Container(constraints: BoxConstraints(maxHeight: maxListHeight), child:SingleChildScrollView(child:Column(children: groupWidgetList)));
   }
 
   void _onTapGroup(String groupId) {
@@ -2786,7 +2829,258 @@ class _GroupsSelectionPopupState extends State<GroupsSelectionPopup> {
     Navigator.of(context).pop(selectedGroups);
   }
 
+  void _onTapSelectAll(){
+    if (CollectionUtils.isNotEmpty(widget.groups)) {
+      _clearSelection();
+      for (Group group in widget.groups!) {
+        if (group.id != null) {
+          _selectedGroupIds.add(group.id!);
+        }
+      }
+      if(mounted){
+        setState(() {
+
+        });
+      }
+    }
+
+  }
+
+  void _onTapClearSelection(){
+    _clearSelection();
+    if(mounted){
+      setState(() {
+
+      });
+    }
+  }
+
+  void _clearSelection(){
+    _selectedGroupIds = {};
+  }
+
   void _onTapClose() {
     Navigator.of(context).pop(<Group>[]);
   }
+}
+
+class EnabledToggleButton extends ToggleRibbonButton {
+  final bool? enabled;
+
+  EnabledToggleButton(
+      {String? label,
+        bool? toggled,
+        void Function()? onTap,
+        BoxBorder? border,
+        BorderRadius? borderRadius,
+        TextStyle? textStyle,
+        this.enabled})
+      : super(label: label, toggled: (toggled == true), onTap: onTap, border: border, borderRadius: borderRadius, textStyle: textStyle);
+
+  @override
+  bool get toggled => (enabled == true) && super.toggled;
+
+  @override
+  Widget? get rightIconImage => Styles().images?.getImage(toggled ? 'toggle-on' : 'toggle-off');  //Workaround for blurry images
+}
+
+class GroupMemberSettingsLayout extends StatelessWidget{
+  final GroupSettings? settings;
+  final Function? onChanged;
+
+  const GroupMemberSettingsLayout({Key? key, this.settings, this.onChanged}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: settings!=null?
+        _buildSettingsLayout() :
+        Container(),
+    );
+  }
+
+  Widget _buildSettingsLayout() {
+    List<Widget> preferenceWidgets = [];
+    MemberPostPreferences? groupPostSettings = settings?.memberPostPreferences;
+    MemberInfoPreferences? groupInfoSettings = settings?.memberInfoPreferences;
+
+    bool isGroupPostAllowed = groupPostSettings?.allowSendPost ?? true; // true by default
+    bool isGroupInfoAllowed = groupInfoSettings?.allowMemberInfo ?? true; // true by default
+
+    //Info
+    preferenceWidgets.add(
+        Container(
+          padding: EdgeInsets.all(1),
+          decoration:  BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
+          child: Column(
+            children: [
+              EnabledToggleButton(
+                  enabled: true,
+                  borderRadius: BorderRadius.zero,
+                  label: Localization().getStringEx("panel.groups_create.settings.enable_member_info.label", "View Other Members"),
+                  toggled: isGroupInfoAllowed,
+                  onTap: (){_onSettingsTap(
+                      changeSetting: (){ settings?.memberInfoPreferences?.allowMemberInfo =  !(settings?.memberInfoPreferences?.allowMemberInfo ?? true);}
+                  );},
+                  textStyle: isGroupInfoAllowed
+                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
+                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")),
+              Row(children: [
+                Expanded(
+                    child: Container(
+                        color: Styles().colors!.white,
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Column(children: [
+                              EnabledToggleButton(
+                                  enabled: isGroupInfoAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.settings.allow_info_net_id.label", "View University ID (NetID)"), //TBD localize section
+                                  toggled: (settings?.memberInfoPreferences?.viewMemberNetId ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberNetId = !(settings?.memberInfoPreferences?.viewMemberNetId ?? false);}}
+                                  );},
+                                  textStyle: isGroupInfoAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                             //Hide View Name. We will always want to show the name, so just keep it as true and just hide it so it cannot be changed.
+                              /*EnabledToggleButton(
+                                  enabled: isGroupInfoAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.settings.allow_view_name.label", "View Name"),
+                                  toggled: (settings?.memberInfoPreferences?.viewMemberName ?? false),
+                                  onTap: (){
+                                    _onSettingsTap(
+                                        changeSetting: (){ if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberName =  !(settings?.memberInfoPreferences?.viewMemberName ?? false);}}
+                                    );},
+                                  textStyle: isGroupInfoAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),*/
+                              EnabledToggleButton(
+                                  enabled: isGroupInfoAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.settings.allow_view_email.label", "View Email"),
+                                  toggled: (settings?.memberInfoPreferences?.viewMemberEmail ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){  if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberEmail =  !(settings?.memberInfoPreferences?.viewMemberEmail ?? false);}}
+                                  );},
+                                  textStyle: isGroupInfoAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              //Hide Phone for now
+                              // EnabledToggleButton(
+                              //     enabled: isGroupInfoAllowed,
+                              //     borderRadius: BorderRadius.zero,
+                              //     label: Localization().getStringEx("panel.groups_create.settings.allow_view_phone.label", "View Phone"),
+                              //     toggled: (settings?.memberInfoPreferences?.viewMemberPhone ?? false),
+                              //     onTap: (){_onSettingsTap(
+                              //         changeSetting: (){ if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberPhone =  !(settings?.memberInfoPreferences?.viewMemberPhone ?? false);}}
+                              //     );},
+                              //     textStyle: isGroupInfoAllowed
+                              //         ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                              //         : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                            ]))))
+              ])
+        ],
+      ),
+    ));
+
+    preferenceWidgets.add(Container(height: 8,));
+    //Post
+    preferenceWidgets.add(Container(
+        padding: EdgeInsets.all(1),
+        decoration:  BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1), borderRadius:  BorderRadius.all(Radius.circular(4))),
+        child: Column(
+            children: [
+              EnabledToggleButton(
+                  enabled: true,
+                  borderRadius: BorderRadius.zero,
+                  label: Localization().getStringEx("panel.groups_create.settings.enable_post.label", "Member Posts"),
+                  toggled: isGroupPostAllowed,
+                  onTap: (){_onSettingsTap(
+                      changeSetting: (){settings?.memberPostPreferences?.allowSendPost =  !(settings?.memberPostPreferences?.allowSendPost ?? true);}
+                  );},
+                  textStyle: isGroupPostAllowed
+                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.enabled")
+                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.fat.disabled")),
+              Row(children: [
+                Expanded(
+                    child: Container(
+                        color: Styles().colors!.white,
+                        child: Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Column(children: [
+                              EnabledToggleButton(
+                                  enabled: (isGroupPostAllowed == true && isGroupInfoAllowed == true),
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Send posts to specific members"), //TBD localize section
+                                  toggled: (settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true && isGroupInfoAllowed == true) {settings?.memberPostPreferences?.sendPostToSpecificMembers =  !(settings?.memberPostPreferences?.sendPostToSpecificMembers ?? false);}}
+                                  );},
+                                  textStyle: (isGroupPostAllowed == true && isGroupInfoAllowed == true)
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupPostAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_admins.label", "Send posts to admins"),
+                                  toggled: (settings?.memberPostPreferences?.sendPostToAdmins ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAdmins =  !(settings?.memberPostPreferences?.sendPostToAdmins ?? false);}}
+                                  );},
+                                  textStyle: isGroupPostAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupPostAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_all.label", "Send posts to all members"),
+                                  toggled: (settings?.memberPostPreferences?.sendPostToAll ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostToAll =  !(settings?.memberPostPreferences?.sendPostToAll ?? false);}}
+                                  );},
+                                  textStyle: isGroupPostAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupPostAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.send_replies.label", "Send replies"),
+                                  toggled: (settings?.memberPostPreferences?.sendPostReplies ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReplies =  !(settings?.memberPostPreferences?.sendPostReplies ?? false);}}
+                                  );},
+                                  textStyle: isGroupPostAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                              EnabledToggleButton(
+                                  enabled: isGroupPostAllowed,
+                                  borderRadius: BorderRadius.zero,
+                                  label: Localization().getStringEx("panel.groups_create.posts_to_members.label", "Reactions (emojis) to posts"),
+                                  toggled: (settings?.memberPostPreferences?.sendPostReactions ?? false),
+                                  onTap: (){_onSettingsTap(
+                                      changeSetting: (){ if(isGroupPostAllowed == true) {settings?.memberPostPreferences?.sendPostReactions =  !(settings?.memberPostPreferences?.sendPostReactions ?? false);}}
+                                  );},
+                                  textStyle: isGroupPostAllowed
+                                      ? Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.enabled")
+                                      : Styles().textStyles?.getTextStyle("panel.group_member_notifications.toggle_button.title.small.disabled")),
+                            ]))))
+                  ])
+    ])));
+
+    preferenceWidgets.add(Container(height: 10,));
+
+    return Container(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: preferenceWidgets));
+  }
+
+  void _onSettingsTap({Function? changeSetting}){
+    if(changeSetting!=null){
+      changeSetting();
+      if(onChanged != null){
+        onChanged!();
+      }
+    }
+  }
+
 }

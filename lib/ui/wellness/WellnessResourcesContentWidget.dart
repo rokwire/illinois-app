@@ -221,7 +221,7 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
       else {
         Uri? uri = Uri.tryParse(url!);
         if (uri != null) {
-          launchUrl(uri);
+          launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       }
     }
@@ -248,7 +248,7 @@ class WellnessLargeResourceButton extends StatelessWidget {
               ),
             ),
             hasExternalLink ? Padding(padding: EdgeInsets.only(left: 6, top: 18, bottom: 18), child:
-              Image.asset('images/external-link.png', color: Styles().colors!.mediumGray)
+              Styles().images?.getImage('external-link', excludeFromSemantics: true)
             ) : Container(),
             FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16),)
           ]),
@@ -280,14 +280,14 @@ class WellnessRegularResourceButton extends StatelessWidget {
         FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(vertical: 17), child:
-            Text(label ?? '', style: Styles().textStyles?.getTextStyle("panel.wellness.resource.button.title.regular"))
+            Text(label ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
           ),
         ),
         hasExternalLink ? Padding(padding: EdgeInsets.only(left: 8, top: 18, bottom: 18), child:
-          Image.asset('images/external-link.png', color: Styles().colors!.mediumGray)
+          Styles().images?.getImage('external-link', excludeFromSemantics: true)
         ) : Container(),
         Padding(padding: EdgeInsets.only(left: 8, right: 16, top: 18, bottom: 18), child:
-          Image.asset('images/chevron-right.png')
+          Styles().images?.getImage('chevron-right', excludeFromSemantics: true)
         ),
       ]),
     );

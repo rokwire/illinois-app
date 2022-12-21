@@ -30,11 +30,15 @@
     <string name="parkings">Estacionamientos</string>
     <string name="buildings">Edificios</string>
     <string name="student_courses">Cursos</string>
+    <string name="appointments">Equipo</string>
+    <string name="mtd_stops">MTD Stops</string>
+    <string name="locations">Locations</string>
+    <string name="location">Location</string>
     <string name="ok">OK</string>
 
     <!-- MapDirectionsActivity -->
     <string name="directionsTitle">Direcciones</string>
-    <string name="routeFailedMsg">No se pudo encontrar la ruta.</string>
+    <string name="routeFailedMsg">Failed to find a route:\n%s</string>
     <string name="locationFailedMsg">No se pudo detectar la ubicación actual.</string>
     <string name="start">COMIENZO</string>
     <string name="finish">TERMINAR</string>

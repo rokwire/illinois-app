@@ -226,7 +226,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                         'widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)
+                    child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)
                 )))
         )),)
       ],
@@ -351,7 +351,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child: Image.asset('images/icon-calendar.png', excludeFromSemantics: true),
+                  child: Styles().images?.getImage('calendar', excludeFromSemantics: true),
                 ),
                 Expanded(child: Text(displayTime,
                     style: TextStyle(
@@ -373,7 +373,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
     }
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.in_person', "In-person event");
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
-    String iconRes = "images/location.png" ;
+    String iconRes = "location";
     String? locationId = widget.event?.location?.locationId;
     String locationText = widget.event?.getLongDisplayLocation(_locationData)??"";
     String value = locationId ?? locationText;
@@ -397,7 +397,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child:Image.asset(iconRes, excludeFromSemantics: true),
+                  child: Styles().images?.getImage(iconRes, excludeFromSemantics: true),
                 ),
                 Container(decoration: (null), padding: EdgeInsets.only(bottom: (0)), child: Text(eventType,
                     style: TextStyle(
@@ -431,7 +431,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
 
     String eventType = Localization().getStringEx('panel.explore_detail.event_type.online', "Online Event");
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
-    String iconRes = "images/laptop.png";
+    String iconRes = "laptop";
     String? virtualUrl = widget.event?.virtualEventUrl;
     String locationDescription = StringUtils.ensureNotEmpty(widget.event?.location?.description);
     String? locationId = widget.event?.location?.locationId;
@@ -460,7 +460,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(right: 10),
-                          child:Image.asset(iconRes, excludeFromSemantics: true),
+                          child: Styles().images?.getImage(iconRes, excludeFromSemantics: true),
                         ),
                         Container(decoration: (StringUtils.isNotEmpty(value) ? underlineLocationDecoration : null), padding: EdgeInsets.only(bottom: (StringUtils.isNotEmpty(value) ? 2 : 0)), child: Text(eventType,
                             style: TextStyle(
@@ -499,7 +499,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
             padding: EdgeInsets.only(bottom: 16),
             child: Column(children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Image.asset('images/icon-privacy.png', excludeFromSemantics: true)),
+                Padding(padding: EdgeInsets.only(left: 1, right: 11), child: Styles().images?.getImage('privacy', excludeFromSemantics: true)),
                 Expanded(
                     child: Text(privacyText, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
               ])
@@ -525,7 +525,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(right: 10),
-                      child:Image.asset('images/icon-cost.png', excludeFromSemantics: true),
+                      child: Styles().images?.getImage('cost', excludeFromSemantics: true),
                     ),
                       Expanded(child:Text(priceText,
                         style: TextStyle(
@@ -567,7 +567,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/chevron-left.png', excludeFromSemantics: true),),
+              Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('chevron-left', excludeFromSemantics: true)),
               Expanded(child: Text(widget.superEventTitle ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.medium,
                   fontSize: 16,
                   color: Styles().colors!.fillColorPrimary,
@@ -694,7 +694,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.asset('images/selected-orange.png'),
+            Styles().images?.getImage('check-circle-filled') ?? Container(),
             Padding(
               padding: EdgeInsets.only(left: 12),
               child: Text(
@@ -730,7 +730,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
               hint: Localization().getStringEx('panel.explore_detail.button.visit_website.hint', ''),
               backgroundColor: hasRegistrationUrl ? Styles().colors!.background : Colors.white,
               borderColor: hasRegistrationUrl ? Styles().colors!.fillColorPrimary: Styles().colors!.fillColorSecondary,
-              rightIcon: hasRegistrationUrl ? Image.asset('images/external-link.png', color: Styles().colors!.fillColorPrimary, colorBlendMode: BlendMode.srcIn) : Image.asset('images/external-link.png'),
+              rightIcon: Styles().images?.getImage(hasRegistrationUrl ? 'external-link-dark' : 'external-link'),
               textColor: Styles().colors!.fillColorPrimary,
               onTap: () {
                 Analytics().logSelect(target: "Website");
@@ -749,7 +749,7 @@ class _EventDetailPanelState extends State<ExploreEventDetailPanel>
                 hint: Localization().getStringEx('panel.explore_detail.button.get_tickets.hint', ''),
                 backgroundColor: Colors.white,
                 borderColor: Styles().colors!.fillColorSecondary,
-                rightIcon: Image.asset('images/external-link.png'),
+                rightIcon: Styles().images?.getImage('external-link'),
                 textColor: Styles().colors!.fillColorPrimary,
                 onTap: () {
                 Analytics().logSelect(target: "Website");

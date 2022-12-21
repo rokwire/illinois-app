@@ -122,7 +122,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home.athletics_news.text.title', 'Athletics News'),
-        titleIcon: Image.asset('images/icon-news.png'),
+        titleIconKey: 'news',
         child: _buildContent(),
     );
   }
@@ -157,7 +157,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         News news = _news![index];
-        pages.add(Padding(key: _contentKeys[news.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
+        pages.add(Padding(key: _contentKeys[news.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
           AthleticsNewsCard(news: news, onTap: () => _onTapNews(news))
         ));
       }
@@ -186,7 +186,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.athletics_news.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.athletics_news.button.all.hint', 'Tap to view all news'),
@@ -217,7 +217,8 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
           setState(() {
             _news = news;
             _pageViewKey = UniqueKey();
-            _pageController = null;
+            // _pageController = null;
+            _pageController?.jumpToPage(0);
             _contentKeys.clear();
           });
         }

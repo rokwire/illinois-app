@@ -82,7 +82,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
 
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeCanvasCoursesWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'courses',
       child: _buildContent(),
     );
   }
@@ -134,7 +134,7 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
           allowImplicitScrolling: true,
         )
       ),
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: coursePages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => coursePages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.canvas_courses.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.canvas_courses.button.all.hint', 'Tap to view all courses'),
@@ -147,7 +147,8 @@ class _HomeCanvasCoursesWidgetState extends State<HomeCanvasCoursesWidget> imple
     setStateIfMounted(() {
       _courses = Canvas().courses;
       _pageViewKey = UniqueKey();
-      _pageController = null;
+      // _pageController = null;
+      _pageController?.jumpToPage(0);
     });
   }
 

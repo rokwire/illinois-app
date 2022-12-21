@@ -105,7 +105,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       LocationServices.notifyStatusChanged,
       Localization.notifyStringsUpdated,
       NativeCommunicator.notifyMapSelectExplore,
-      NativeCommunicator.notifyMapClearExplore,
+      NativeCommunicator.notifyMapSelectLocation,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
       FlexUI.notifyChanged,
     ]);
@@ -385,12 +385,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
               padding: EdgeInsets.all(12),
               child: GestureDetector(
                 onTap: _onTapSearchTags,
-                child: Image.asset(
-                  'images/icon-search.png',
-                  color: Styles().colors!.fillColorSecondary,
-                  width: 25,
-                  height: 25,
-                ),
+                child: Styles().images?.getImage('search'),
               ),
             ),
           ),
@@ -943,10 +938,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       setState(() { });
     }
     else if (name == NativeCommunicator.notifyMapSelectExplore) {
-      _onNativeMapSelectExplore(param['mapId'], param['exploreJson']);
+      _onNativeMapSelectExplore(param);
     }
-    else if (name == NativeCommunicator.notifyMapClearExplore) {
-      _onNativeMapClearExplore(param['mapId']);
+    else if (name == NativeCommunicator.notifyMapSelectLocation) {
+      _onNativeMapSelectLocation(param);
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateLocationServicesStatus();
@@ -975,9 +970,11 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
   }
 
-  void _onNativeMapSelectExplore(int? mapID, dynamic exploreJson) {
-    if (_nativeMapController!.mapId == mapID) {
+  void _onNativeMapSelectExplore(Map<String, dynamic>? params) {
+    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
+    if (_nativeMapController!.mapId == mapId) {
       dynamic explore;
+      dynamic exploreJson = (params != null) ? params['explore'] : null;
       if (exploreJson is Map) {
         explore = _exploreFromMapExplore(Explore.fromJson(exploreJson as Map<String, dynamic>?));
       }
@@ -991,8 +988,9 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
   }
 
-  void _onNativeMapClearExplore(int? mapID) {
-    if (_nativeMapController!.mapId == mapID) {
+  void _onNativeMapSelectLocation(Map<String, dynamic>? params) {
+    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
+    if (_nativeMapController!.mapId == mapId) {
       _selectMapExplore(null);
     }
   }
@@ -1090,7 +1088,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                           Container(
                               child: Padding(
                                   padding: EdgeInsets.only(right: 8),
-                                  child: Image.asset("images/icon-calendar.png"))),
+                                  child: Styles().images?.getImage('calendar'))),
                           Expanded(
                             child: Text(
                               widget.event!.title!,
@@ -1117,7 +1115,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                                     child: Container(
                                         child: Padding(
                                             padding: EdgeInsets.only(left: 24),
-                                            child: Image.asset(favorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png'))))),
+                                            child: Styles().images?.getImage(favorite ? 'star-filled' : 'star-outline-gray'))))),
                           )
                         ],
                       )

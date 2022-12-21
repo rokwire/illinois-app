@@ -141,9 +141,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
             Align(alignment: Alignment.bottomCenter, child:
               Padding(padding: EdgeInsets.only(bottom: 10), child:
                 Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
-                  InkWell(onTap: _onClose, child:
-                    Image.asset('images/close-white-large.png', excludeFromSemantics: true,)
-                  ),
+                  InkWell(onTap: _onClose, child: Styles().images?.getImage('close-circle-white-large', excludeFromSemantics: true)),
                 ),
               ),
             ),
@@ -159,9 +157,8 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
             Align(alignment: Alignment.topRight, child:
               Semantics(button: true,label: Localization().getStringEx("panel.bus_pass.button.close.title", "close"), child:
                 InkWell(onTap: _onClose, child:
-                  Container(width: 48, height: 48, alignment: Alignment.center, child:
-                    Image.asset('images/close-blue.png', excludeFromSemantics: true,)
-                  ),
+                  Container(width: 48, height: 48, alignment: Alignment.center,
+                      child: Styles().images?.getImage('close-dark', excludeFromSemantics: true)),
                 ),
               )
             ),
@@ -190,7 +187,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
         Align(alignment: Alignment.center, child:
           Padding(padding: EdgeInsets.only(top: 20), child:
             Opacity(opacity: busPassAvailable ? 1 : 0, child:
-              Image.asset('images/mtd-logo.png', excludeFromSemantics: true,),
+              Styles().images?.getImage('transit-logo', excludeFromSemantics: true)
             )
           ),
         ),
@@ -222,8 +219,8 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
             alignment: Alignment.topCenter,
             child: Padding(
                 padding: EdgeInsets.only(top: _photoSize - _iconSize / 2 - 5, left: 15),
-                child: Image.asset(
-                  'images/group-5-blue.png',
+                child: Styles().images?.getImage(
+                  'university-logo-circle-dark',
                   excludeFromSemantics: true,
                   width: _iconSize,
                   height: _iconSize,
@@ -268,13 +265,13 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Widget _buildBusIcon(){
-    double iconSize = 25;
+    double iconSize = 24;
     return Container(
       width: iconSize-1,
       height: iconSize-1,
       color: _activeColor,
-      child: Image.asset(
-        'images/transparent-bus-icon.png',
+      child: Styles().images?.getImage(
+        'transit-logo-cutout-dark',
         excludeFromSemantics: true,
         width: iconSize,
         height: iconSize,

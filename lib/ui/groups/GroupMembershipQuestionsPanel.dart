@@ -28,13 +28,12 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
 class GroupMembershipQuestionsPanel extends StatefulWidget {
-  final List<GroupMembershipQuestion>? questions;
+  final Group? group;
 
-  GroupMembershipQuestionsPanel({this.questions});
+  GroupMembershipQuestionsPanel({this.group});
 
   @override
-  _GroupMembershipQuestionsPanelState createState() =>
-      _GroupMembershipQuestionsPanelState();
+  _GroupMembershipQuestionsPanelState createState() => _GroupMembershipQuestionsPanelState();
 }
 
 class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestionsPanel> {
@@ -42,18 +41,9 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   List<FocusNode>? _focusNodes;
   List<TextEditingController>? _controllers;
 
-  bool get _addButtonEnabled{
-    for(TextEditingController textEditingController in _controllers!){
-      if(StringUtils.isEmpty(textEditingController.text)){
-        return false;
-      }
-    }
-    return true;
-  }
-
   @override
   void initState() {
-    _questions = GroupMembershipQuestion.listFromOthers(widget.questions) ?? [];
+    _questions = GroupMembershipQuestion.listFromOthers(widget.group?.questions) ?? [];
     if (_questions!.isEmpty) {
       _questions!.add(GroupMembershipQuestion());
     }
@@ -86,8 +76,8 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderBar(
-        title: Localization().getStringEx("panel.membership_questions.label.title", 'Membership Question'),
-        leadingAsset: 'images/icon-circle-close.png',
+        title: (widget.group?.researchProject == true) ? 'Recruitment Questions' : Localization().getStringEx("panel.membership_questions.label.title", 'Membership Questions'),
+        leadingIconKey: 'close-circle-white',
       ),
       body: Column(
         children: <Widget>[
@@ -110,6 +100,9 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
   }
 
   Widget _buildHeading() {
+    String description = (widget.group?.researchProject == true) ?
+      'Learn more about people who want to participate to your research project by asking them some questions. Only the principal investigator(s) of your research project will see the answers.' :
+      Localization().getStringEx("panel.membership_questions.label.description", 'Learn more about people who want to join your group by asking them some questions. Only the admins of your group will see the answers.');
     return Container(color:Colors.white,
       child: Padding(padding: EdgeInsets.all(32),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +111,7 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
               Text(Localization().getStringEx("panel.membership_questions.label.edit", 'Edit Questions'), style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
             ],),
             Padding(padding: EdgeInsets.only(top: 8), child:
-              Text(Localization().getStringEx("panel.membership_questions.label.description", 'Learn more about people who want to join your group by asking them some questions. Only the admins of your group will see the answers.'), style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949))),
+              Text(description, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Color(0xff494949))),
             ),
           ]),
       ),
@@ -240,10 +233,20 @@ class _GroupMembershipQuestionsPanelState extends State<GroupMembershipQuestions
       }
     }
 
-    Navigator.pop(context, _questions);
+    widget.group?.questions = _questions;
+    Navigator.pop(context);
   }
 
-  void _onTextChanged(String text){
+   bool get _addButtonEnabled{
+    for(TextEditingController textEditingController in _controllers!){
+      if(StringUtils.isEmpty(textEditingController.text)){
+        return false;
+      }
+    }
+    return true;
+  }
+
+ void _onTextChanged(String text){
     setState(() {});
   }
 

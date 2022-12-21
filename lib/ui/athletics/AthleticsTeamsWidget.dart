@@ -130,7 +130,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
   Widget buildMenSectionHeader(){
     bool allMenSelected = Sports.isAllSportsSelected(_menSports, _preferredSports);
     String menSelectClearTextKey = allMenSelected ? "widget.athletics_teams.label.clear" : "widget.athletics_teams.label.select_all";
-    String menSelectClearImageKey = allMenSelected ? "images/icon-x-orange-small.png" : "images/icon-check-simple.png";
+    String menSelectClearImageKey = allMenSelected ? "close" : "check";
     return Container(decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4))), child:
       Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 10, bottom: 10), child:
         Row(children: <Widget>[
@@ -143,7 +143,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
             Semantics(excludeSemantics: true, label: Localization().getStringEx('widget.athletics_teams.men_sports.title.checkmark', 'Tap to select or deselect all men sports'), value: (allMenSelected?Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) + ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"), child:
               GestureDetector(onTap: _onToggleManSports, child:
                 Row(children: <Widget>[
-                  Text(Localization().getStringEx(menSelectClearTextKey, ''), style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies!.medium),), Padding(padding: EdgeInsets.symmetric(horizontal: 8),child: Image.asset(menSelectClearImageKey),)
+                  Text(Localization().getStringEx(menSelectClearTextKey, ''), style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies!.medium),), Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Styles().images?.getImage(menSelectClearImageKey),)
                 ],),
               ),
             ),
@@ -156,7 +156,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
   Widget buildWomenSectionHeader(){
     bool allWomenSelected = Sports.isAllSportsSelected(_womenSports, _preferredSports);
     String womenSelectClearTextKey = allWomenSelected ? "widget.athletics_teams.label.clear" : "widget.athletics_teams.label.select_all";
-    String womenSelectClearImageKey = allWomenSelected ? "images/icon-x-orange-small.png" : "images/icon-check-simple.png";
+    String womenSelectClearImageKey = allWomenSelected ? "close" : "check";
     return Container(decoration: BoxDecoration(color: Styles().colors!.fillColorPrimary, borderRadius: BorderRadius.only( topLeft: Radius.circular(4), topRight: Radius.circular(4))), child:
       Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 10, bottom: 10), child:
         Row(children: <Widget>[
@@ -171,7 +171,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
                 Row(children: <Widget>[
                   Text(Localization().getStringEx(womenSelectClearTextKey, ''), style: TextStyle(fontSize: 16, color: Colors.white, fontFamily: Styles().fontFamilies!.medium),),
                   Padding(padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Image.asset(womenSelectClearImageKey),
+                    child: Styles().images?.getImage(womenSelectClearImageKey, excludeFromSemantics: true),
                   )
                 ],)
               ,),

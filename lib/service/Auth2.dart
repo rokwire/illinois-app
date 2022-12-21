@@ -87,7 +87,9 @@ class Auth2 extends rokwire.Auth2 {
 
   void _checkEnabled() {
     if (isLoggedIn && !FlexUI().isAuthenticationAvailable) {
-      logout();
+      onUserPrefsChanged(account?.prefs).then((_) {
+        logout();
+      });
     }
   }
 
@@ -110,7 +112,6 @@ class Auth2 extends rokwire.Auth2 {
 
   @override
   Future<void> applyLogin(Auth2Account account, Auth2Token token, { Map<String, dynamic>? params }) async {
-    await super.applyLogin(account, token, params: params);
 
     Auth2Token? uiucToken = (params != null) ? Auth2Token.fromJson(JsonUtils.mapValue(params['oidc_token'])) : null;
     Storage().auth2UiucToken = _uiucToken = ((uiucToken != null) && uiucToken.isValidUiuc) ? uiucToken : null;
@@ -121,6 +122,8 @@ class Auth2 extends rokwire.Auth2 {
     Storage().auth2CardTime = (_authCard != null) ? DateTime.now().millisecondsSinceEpoch : null;
     await _saveAuthCardStringToCache(authCardString);
 
+    await super.applyLogin(account, token, params: params);
+    
     NotificationService().notify(notifyCardChanged);
   }
 
@@ -134,8 +137,6 @@ class Auth2 extends rokwire.Auth2 {
 
   @override
   void logout({ Auth2UserPrefs? prefs }) {
-    super.logout(prefs: prefs);
-
     if (_uiucToken != null) {
       Storage().auth2UiucToken = _uiucToken = null;
     }
@@ -146,6 +147,8 @@ class Auth2 extends rokwire.Auth2 {
       Storage().auth2CardTime = null;
       NotificationService().notify(notifyCardChanged);
     }
+
+    super.logout(prefs: prefs);
   }
 
   // Overrides
