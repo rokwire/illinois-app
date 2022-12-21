@@ -240,7 +240,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return Scaffold(
         appBar: headerBarWidget,
         body: RefreshIndicator(
-          onRefresh: () => _loadExplores(progress: false),
+          onRefresh: () => _loadExplores(progress: false, updateOnly: true),
           child: _buildContent(),
         ),
         backgroundColor: Styles().colors!.background,
@@ -335,13 +335,14 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     
     if (!ListEquality().equals(_exploreItems, exploreItems)) {
+      bool updateOnly = _exploreItems.isNotEmpty;
       _exploreItems = exploreItems;
 
       if (!_exploreItems.contains(_selectedItem)) {
         selectItem(_exploreItems[0]);
       }
       else {
-        _loadExplores();
+        _loadExplores(updateOnly: updateOnly);
       }
     }
 
@@ -409,7 +410,7 @@ class ExplorePanelState extends State<ExplorePanel>
         _refresh(() {
           _eventCategories = result;
         });
-        _loadExplores();
+        _loadExplores(updateOnly: true);
       }
     });
     
@@ -498,62 +499,25 @@ class ExplorePanelState extends State<ExplorePanel>
     return -1;
   }
 
-  Future<void> _loadExplores({bool progress = true}) async {
-
-    _diningSpecials = null;
-
-    _selectMapExplore(null);
-
+  Future<void> _loadExplores({bool progress = true, bool updateOnly = false}) async {
     Future<List<Explore>?>? task;
     if (Connectivity().isNotOffline) {
-
       List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedItem] : null;
       switch (_selectedItem) {
-        
-        case ExploreItem.Events: 
-          task = _loadEvents(selectedFilterList);
-          break;
-        
-        case ExploreItem.Dining:
-          task = _loadDining(selectedFilterList);
-          break;
-
-        case ExploreItem.Laundry:
-          task = _loadLaundry();
-          break;
-
-        case ExploreItem.Buildings:
-          task = _loadBuildings();
-          break;
-
-        case ExploreItem.StudentCourse:
-          task = _loadStudentCourse(selectedFilterList);
-          break;
-
-        case ExploreItem.Appointments:
-          task = _loadAppointments();
-          break;
-
-        case ExploreItem.MTDStops:
-          task = _loadMTDStops();
-          break;
-
-        case ExploreItem.MTDDestinations:
-          task = _loadMTDDestinations();
-          break;
-
-        case ExploreItem.StateFarmWayfinding:
-          _clearExploresFromMap();
-          _viewStateFarmPoi();
-          break;
-
-        default:
-          break;
+        case ExploreItem.Events: task = _loadEvents(selectedFilterList); break;
+        case ExploreItem.Dining: task = _loadDining(selectedFilterList); break;
+        case ExploreItem.Laundry: task = _loadLaundry(); break;
+        case ExploreItem.Buildings: task = _loadBuildings(); break;
+        case ExploreItem.StudentCourse: task = _loadStudentCourse(selectedFilterList); break;
+        case ExploreItem.Appointments: task = _loadAppointments(); break;
+        case ExploreItem.MTDStops: task = _loadMTDStops(); break;
+        case ExploreItem.MTDDestinations: task = _loadMTDDestinations(); break;
+        case ExploreItem.StateFarmWayfinding: break;
+        default: break;
       }
     }
 
     if (task != null) {
-
       _refresh(() {
         _loadingTask = task;
         _loadingProgress = (progress == true);
@@ -562,48 +526,53 @@ class ExplorePanelState extends State<ExplorePanel>
       List<Explore>? explores = await task;
 
       if (_loadingTask == task) {
-        _applyExplores(explores);
+        if ((updateOnly == false) || ((explores != null) && !DeepCollectionEquality().equals(explores, _displayExplores))) {
+          _applyExplores(explores, updateOnly: updateOnly);
+        }
       }
     }
-    else {
-      _applyExplores(null);
+    else if (updateOnly == false) {
+      _applyExplores(null, updateOnly: updateOnly);
     }
   }
 
-  void _applyExplores(List<Explore>? explores) {
+
+  void _applyExplores(List<Explore>? explores, { bool updateOnly = false}) {
+    debugPrint('ExplorePanel._applyExplores(explores:${explores?.length} updateOnly: $updateOnly)');
     _refresh(() {
       _loadingTask = null;
       _loadingProgress = null;
       _displayExplores = explores;
-      _placeExploresOnMap();
-      if (_selectedItem == ExploreItem.Appointments) {
-        if (Storage().appointmentsCanDisplay != true) {
-          _showMissingAppointmentsPopup(Localization().getStringEx('panel.explore.hide.appointments.msg',
-              'There is nothing to display as you have chosen not to display any past or future appointments.'));
-        } else if (CollectionUtils.isEmpty(_displayExplores)) {
-          _showMissingAppointmentsPopup(Localization()
-              .getStringEx('panel.explore.missing.appointments.msg',
-                  'You currently have no upcoming in-person appointments linked within {{app_title}} app.')
-              .replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
+
+      _placeExploresOnMap(updateOnly: updateOnly);
+
+      if (updateOnly == false) {
+        _selectMapExplore(null);
+
+        if (_selectedItem == ExploreItem.Appointments) {
+          if (Storage().appointmentsCanDisplay != true) {
+            _showMessagePopup(Localization().getStringEx('panel.explore.hide.appointments.msg', 'There is nothing to display as you have chosen not to display any past or future appointments.'));
+          } else if (CollectionUtils.isEmpty(_displayExplores)) {
+            _showMessagePopup(Localization().getStringEx('panel.explore.missing.appointments.msg','You currently have no upcoming in-person appointments linked within {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
+          }
         }
-      }
-      else if (_selectedItem == ExploreItem.MTDStops) {
-        if (Storage().showMtdStopsMapInstructions != false) {
-          showDialog(context: context, builder: (context) => _MTDInstructionsPopup(
-            message: Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite."),
-            showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,
-          ));
+        else if (_selectedItem == ExploreItem.MTDStops) {
+          if (Storage().showMtdStopsMapInstructions != false) {
+            _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite."), showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,
+            );
+          }
         }
-      }
-      else if (_selectedItem == ExploreItem.MTDDestinations) {
-        if (Storage().showMtdDestinationsMapInstructions != false) {
-          showDialog(context: context, builder: (context) => _MTDInstructionsPopup(
-            message: Localization().getStringEx("panel.explore.instructions.mtd_destinations.msg", "Please tap a location on the map that will be your destination. Tap the star to save the destination as a favorite.",),
-            showPopupStorageKey: Storage().showMtdDestinationsMapInstructionsKey,
-          ));
+        else if (_selectedItem == ExploreItem.MTDDestinations) {
+          if (Storage().showMtdDestinationsMapInstructions != false) {
+            _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_destinations.msg", "Please tap a location on the map that will be your destination. Tap the star to save the destination as a favorite.",), showPopupStorageKey: Storage().showMtdDestinationsMapInstructionsKey
+            );
+          }
+          else if (CollectionUtils.isEmpty(_displayExplores)) {
+            _showMessagePopup(Localization().getStringEx('panel.explore.missing.mtd_destinations.msg', 'You currently have no saved destinations. Please tap the location on the map that will be your destination. You can tap the Map to get Directions or Save the destination as a favorite.'),);
+          }
         }
-        else if (CollectionUtils.isEmpty(_displayExplores)) {
-          _showMissingAppointmentsPopup(Localization().getStringEx('panel.explore.missing.mtd_destinations.msg', 'You currently have no saved destinations. Please tap the location on the map that will be your destination. You can tap the Map to get Directions or Save the destination as a favorite.'),);
+        else if (_selectedItem == ExploreItem.StateFarmWayfinding) {
+          _viewStateFarmPoi();
         }
       }
     });
@@ -641,9 +610,13 @@ class ExplorePanelState extends State<ExplorePanel>
     bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
 
     _locationData = _userLocationEnabled() ? await LocationServices().location : null;
-    _diningSpecials = await Dinings().loadDiningSpecials();
-
-    return Dinings().loadBackendDinings(onlyOpened, paymentType, _locationData);
+    List<List<dynamic>?> results = await Future.wait([
+      Dinings().loadDiningSpecials(),
+      Dinings().loadBackendDinings(onlyOpened, paymentType, _locationData),
+    ]);
+    
+    _diningSpecials = (0 < results.length) ? (results[0] as List<DiningSpecial>) : null;
+    return (1 < results.length) ? (results[1] as List<Dining>) : null;
   }
 
   Future<List<Explore>?> _loadLaundry() async {
@@ -687,7 +660,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return Appointments().loadAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
   }
 
-  void _showMissingAppointmentsPopup(String missingAppointmentsText) {
+  void _showMessagePopup(String message) {
     AppAlert.showCustomDialog(
         context: context,
         contentPadding: EdgeInsets.all(0),
@@ -700,7 +673,7 @@ class ExplorePanelState extends State<ExplorePanel>
                     Image.asset('images/block-i-orange.png'),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
-                        child: Text(missingAppointmentsText,
+                        child: Text(message,
                             textAlign: TextAlign.center,
                             style: Styles().textStyles?.getTextStyle("widget.detail.small")))
                   ])),
@@ -712,7 +685,14 @@ class ExplorePanelState extends State<ExplorePanel>
                         Navigator.of(context).pop();
                       },
                       child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png')))))
-            ])));
+            ]))).then((_) => _fixMap());
+  }
+
+  void _showOptionalMessagePopup(String message, { String? showPopupStorageKey }) {
+    showDialog(context: context, builder: (context) => _OptionalMessagePopup(
+      message: message,
+      showPopupStorageKey: showPopupStorageKey,
+    )).then((_) => _fixMap());
   }
 
   List<Event>? _buildDisplayEvents(List<Event> allEvents) {
@@ -1892,7 +1872,9 @@ class ExplorePanelState extends State<ExplorePanel>
   ///
   void _onNativeMapCreated(mapController) {
     _nativeMapController = mapController;
-    _placeExploresOnMap();
+    if (_displayExplores != null) {
+      _placeExploresOnMap();
+    }
     _enableMap(_displayType == ListMapDisplayType.Map);
     _enableMyLocationOnMap();
   }
@@ -1908,15 +1890,21 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
-  void _clearExploresFromMap() {
+  /*void _clearExploresFromMap() {
     if (_nativeMapController != null) {
       _nativeMapController!.placePOIs(null);
     }
-  }
+  }*/
 
   void _enableMap(bool enable) {
     if (_nativeMapController != null) {
       _nativeMapController!.enable(enable);
+    }
+  }
+
+  void _fixMap() {
+    if (_nativeMapController != null) {
+      _nativeMapController!.fixZOrder();
     }
   }
 
@@ -1986,12 +1974,12 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else if (name == Storage.offsetDateKey) {
       if (mounted) {
-        _loadExplores();
+        _loadExplores(updateOnly: true);
       }
     }
     else if (name == Storage.useDeviceLocalTimeZoneKey) {
       if (mounted) {
-        _loadExplores();
+        _loadExplores(updateOnly: true);
       }
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
@@ -2012,7 +2000,7 @@ class ExplorePanelState extends State<ExplorePanel>
         _refresh(() {
           _studentCourseTerms = StudentCourses().terms;
         });
-        _loadExplores();
+        _loadExplores(updateOnly: true);
       }
     }
     else if (name == StudentCourses.notifySelectedTermChanged) {
@@ -2020,21 +2008,21 @@ class ExplorePanelState extends State<ExplorePanel>
         _refresh(() {
           _updateSelectedTermId();
         });
-        _loadExplores();
+        _loadExplores(updateOnly: true);
       }
     }
     else if (name == StudentCourses.notifyCachedCoursesChanged) {
       if ((_selectedItem == ExploreItem.StudentCourse) && ((param == null) || (StudentCourses().displayTermId == param)) && mounted && widget.rootTabDisplay) {
-        _loadExplores();
+        _loadExplores(updateOnly: true);
       }
     }
     else if (name == MTD.notifyStopsChanged) {
       if ((_selectedItem == ExploreItem.MTDStops) && mounted && widget.rootTabDisplay) {
-        _loadExplores();
+        _loadExplores(updateOnly: true);
       }
     }
     else if (name == ExplorePanel.notifySelectMap) {
-      if (mounted) {
+      if (mounted && ((_displayType != ListMapDisplayType.Map) || (_selectedItem != param))) {
         setState(() {
           _displayType = ListMapDisplayType.Map;
           _mapAllowed = true;
@@ -2045,10 +2033,10 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else if (name == RootPanel.notifyTabChanged) {
       if (((param == RootTab.Explore) || (param == RootTab.Maps)) &&
-          (CollectionUtils.isEmpty(_exploreItems)|| (_selectedItem == ExploreItem.Events) || (_selectedItem == ExploreItem.Appointments)) && // Do not refresh for other ExploreItem types as they are rarely changed or fire notification for that
+          (CollectionUtils.isEmpty(_exploreItems) || (_selectedItem == ExploreItem.Events) || (_selectedItem == ExploreItem.Appointments)) && // Do not refresh for other ExploreItem types as they are rarely changed or fire notification for that
           widget.rootTabDisplay && mounted
       ) {
-        _loadExplores();
+        _loadExplores(updateOnly: true);
       }
     }
     else if (name == AppLivecycle.notifyStateChanged) {
@@ -2065,7 +2053,7 @@ class ExplorePanelState extends State<ExplorePanel>
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
           if (mounted) {
-            _loadExplores();
+            _loadExplores(updateOnly: true);
           }
         }
       }
@@ -2171,18 +2159,18 @@ class ExplorePanelState extends State<ExplorePanel>
 }
 
 /////////////////////////
-// _MTDInstructionsPopup
+// _OptionalMessagePopup
 
-class _MTDInstructionsPopup extends StatefulWidget {
+class _OptionalMessagePopup extends StatefulWidget {
   final String message;
   final String? showPopupStorageKey;
-  _MTDInstructionsPopup({Key? key, required this.message, this.showPopupStorageKey}) : super(key: key);
+  _OptionalMessagePopup({Key? key, required this.message, this.showPopupStorageKey}) : super(key: key);
 
   @override
-  State<_MTDInstructionsPopup> createState() => _MTDInstructionsPopupState();
+  State<_OptionalMessagePopup> createState() => _MTDInstructionsPopupState();
 }
 
-class _MTDInstructionsPopupState extends State<_MTDInstructionsPopup> {
+class _MTDInstructionsPopupState extends State<_OptionalMessagePopup> {
   bool? showInstructionsPopup;
   
   @override
