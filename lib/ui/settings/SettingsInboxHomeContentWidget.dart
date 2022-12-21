@@ -18,10 +18,9 @@ import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class SettingsInboxHomeContentWidget extends StatefulWidget {
-  final bool? muted;
   final bool? unread;
   final void Function()? onTapBanner;
-  SettingsInboxHomeContentWidget({Key? key, this.muted, this.unread, this.onTapBanner}) : super(key: key);
+  SettingsInboxHomeContentWidget({Key? key, this.unread, this.onTapBanner}) : super(key: key);
 
   _SettingsInboxHomeContentWidgetState createState() => _SettingsInboxHomeContentWidgetState();
 }
@@ -39,6 +38,11 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     _FilterEntry(value: "Other"),
   ];
 
+  final List<_FilterEntry> _mutedValues = [
+    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.muted.show", "Show Muted"), value: null),  // Show both muted and not muted messages
+    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.muted.hide", "Hide Muted"), value: false), // Show only not muted messages
+  ];
+
   final List<_FilterEntry> _times = [
     _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.any", "Any Time"), value: null),
     _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.today", "Today"), value: _TimeFilter.Today),
@@ -53,6 +57,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
 
   String? _selectedCategory;
   _TimeFilter? _selectedTime;
+  bool? _selectedMutedValue;
   _FilterType? _selectedFilter;
   bool? _hasMoreMessages;
   
@@ -70,11 +75,12 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      Inbox.notifyInboxUserInfoChanged
+      Inbox.notifyInboxUserInfoChanged,
+      Inbox.notifyInboxMessageRead
     ]);
 
     _scrollController.addListener(_scrollListener);
-
+    _selectedMutedValue = false;
     _loadInitialContent();
   }
 
@@ -93,6 +99,8 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
           //refresh
         });
       }
+    } else if (name == Inbox.notifyInboxMessageRead) {
+      _refreshContent();
     }
   }
 
@@ -270,6 +278,12 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
           ),*/
           FilterSelector(
             padding: EdgeInsets.symmetric(horizontal: 4),
+            title: _FilterEntry.entryInList(_mutedValues, _selectedMutedValue)?.name ?? '',
+            active: _selectedFilter == _FilterType.Muted,
+            onTap: () { _onFilter(_FilterType.Muted); }
+          ),
+          FilterSelector(
+            padding: EdgeInsets.symmetric(horizontal: 4),
             title: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
             active: _selectedFilter == _FilterType.Time,
             onTap: () { _onFilter(_FilterType.Time); }
@@ -304,6 +318,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     List<String>? subLabels;
     switch(_selectedFilter) {
       case _FilterType.Category: filterValues = _categories; selectedFilterValue = _selectedCategory; subLabels = null; break;
+      case _FilterType.Muted: filterValues = _mutedValues; selectedFilterValue = _selectedMutedValue; subLabels = null; break;
       case _FilterType.Time: filterValues = _times; selectedFilterValue = _selectedTime; subLabels = _buildTimeDates(); break;
       default: filterValues = []; break;
     }
@@ -376,6 +391,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     setState(() {
       switch(filterType) {
         case _FilterType.Category: _selectedCategory = filterEntry.value; break;
+        case _FilterType.Muted: _selectedMutedValue = filterEntry.value; break;
         case _FilterType.Time: _selectedTime = filterEntry.value; break;
         default: break;
       }
@@ -639,7 +655,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   Future<void> _refreshMessages() async{
     int limit = max(_messages.length, _messagesPageSize);
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    List<InboxMessage>? messages = await Inbox().loadMessages(muted: widget.muted, unread: widget.unread, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
+    List<InboxMessage>? messages = await Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
     if (mounted) {
       setState(() {
         if (messages != null) {
@@ -695,7 +711,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     });
 
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(muted: widget.muted, unread: widget.unread, offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -719,7 +735,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     });
 
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(muted: widget.muted, unread: widget.unread, offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -734,16 +750,15 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   }
 
   void _refreshContent({int? messagesCount}) {
-    setState(() {
+    setStateIfMounted(() {
       _loading = true;
     });
 
     int limit = max(messagesCount ?? _messages.length, _messagesPageSize);
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(muted: widget.muted, unread: widget.unread, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
-      if (mounted) {
-        setState(() {
-          if (messages != null) {
+    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+      setStateIfMounted(() {
+        if (messages != null) {
             _messages = messages;
             _hasMoreMessages = (_messagesPageSize <= messages.length);
           }
@@ -753,8 +768,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
           }
           _contentList = _buildContentList();
           _loading = false;
-        });
-      }
+      });
     });
   }
 
@@ -878,7 +892,7 @@ enum _TimeFilter {
 }
 
 enum _FilterType {
-  Category, Time
+  Category, Muted, Time
 }
 
 class InboxMessageCard extends StatefulWidget {

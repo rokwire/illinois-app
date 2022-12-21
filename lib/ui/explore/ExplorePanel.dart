@@ -2202,9 +2202,9 @@ class _MTDInstructionsPopupState extends State<_MTDInstructionsPopup> {
             Column(mainAxisSize: MainAxisSize.min, children: [
               Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
                 Column(children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Styles().images?.getImage('university-logo', excludeFromSemantics: true),
+                  Styles().images?.getImage('university-logo', excludeFromSemantics: true),
+                  Padding(padding: EdgeInsets.only(top: 18), child:
+                    Text(widget.message, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small"))
                   ),
                   Text(widget.message, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small")),
                 ]),
@@ -2212,30 +2212,39 @@ class _MTDInstructionsPopupState extends State<_MTDInstructionsPopup> {
 
               Visibility(visible: (widget.showPopupStorageKey != null), child:
                 Padding(padding: EdgeInsets.only(left: 16, right: 32), child:
-                  Row(mainAxisSize: MainAxisSize.min, children: [
-                    InkWell(onTap: _onDoNotShow, child:
-                      Padding(padding: EdgeInsets.all(16), child:
-                        Styles().images?.getImage((showInstructionsPopup == false) ? "check-circle-filled" : "check-circle-outline-gray"),
+                  Semantics(
+                      label: dontShow,
+                      value: showInstructionsPopup == false ?   Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
+                      button: true,
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      InkWell(
+                        onTap: (){
+                          AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(showInstructionsPopup == false), dontShow);
+                          _onDoNotShow();
+                          },
+                        child: Padding(padding: EdgeInsets.all(16), child:
+                          Styles().images?.getImage((showInstructionsPopup == false) ? "check-circle-filled" : "check-circle-outline-gray"),
+                        ),
                       ),
-                    ),
-                    Expanded(child:
-                      Text(dontShow, style: Styles().textStyles?.getTextStyle("widget.detail.small"), textAlign: TextAlign.left,)
-                    ),
-                  ]),
+                      Expanded(child:
+                        Text(dontShow, style: Styles().textStyles?.getTextStyle("widget.detail.small"), textAlign: TextAlign.left,semanticsLabel: "",)
+                      ),
+                  ])),
                 ),
               ),
             ])
           ),
           Positioned.fill(child:
             Align(alignment: Alignment.topRight, child:
-              InkWell(onTap: () {
+              Semantics(  button: true, label: "close",
+              child: InkWell(onTap: () {
                 Analytics().logSelect(target: 'Close MTD instructions popup');
                 Navigator.of(context).pop();
                 }, child:
                 Padding(padding: EdgeInsets.all(16), child:
                   Styles().images?.getImage('close', excludeFromSemantics: true)
                 )
-              )
+              ))
             )
           ),
         ])

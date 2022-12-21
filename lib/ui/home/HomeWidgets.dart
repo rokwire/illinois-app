@@ -590,24 +590,24 @@ class HomeMessageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(padding: margin, child:
-      Container(padding: EdgeInsets.all(16),
+      Semantics(child:Container(padding: EdgeInsets.all(16),
         decoration: BoxDecoration(color: Styles().colors!.surface, borderRadius: BorderRadius.all(Radius.circular(4)), boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 2.0, blurRadius: 6.0, offset: Offset(2, 2))] ),
         child: Column(children: <Widget>[
           StringUtils.isNotEmpty(title) ? Row(children: <Widget>[
             Expanded(child:
               Padding(padding: StringUtils.isNotEmpty(message) ? EdgeInsets.only(bottom: 8) : EdgeInsets.zero, child:
-                Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary), semanticsLabel: '',)
+                Text(title ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary))
               ),
             )
           ]) : Container(),
           StringUtils.isNotEmpty(message) ? Row(children: <Widget>[
             Expanded(child:
-              Text(message ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground), semanticsLabel: '',)
+              Text(message ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground))
             )
           ]) : Container(),
         ]),
       ),
-    );
+    ));
   }
 }
 

@@ -158,7 +158,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
 
     return [
       Stack(children: [
-        ListView.builder(
+        responseSections.length > 0 ? ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.only(top: 8),
@@ -188,7 +188,11 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
                 )
               )
             );
-        }),
+        }) : Padding(padding: const EdgeInsets.only(top: 80, bottom: 32, left: 32, right: 32), child: Text(
+          Localization().getStringEx('panel.skills_self_evaluation.results.unavailable.message', 'Results content is currently unavailable. Please try again later.'),
+          style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+          textAlign: TextAlign.center,
+        )),
         Visibility(
           visible: _loading,
           child: Container(
@@ -198,9 +202,12 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           )
         ),
       ],),
-      Padding(padding: const EdgeInsets.only(top: 4), child: GestureDetector(onTap: _onTapClearAllScores, child:
-        Text(Localization().getStringEx('panel.skills_self_evaluation.results.more_info.description', '*Tap score cards for more info'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body.small'), textAlign: TextAlign.left,
-      ),)),
+      Visibility(
+        visible: responseSections.length > 0,
+        child: Padding(padding: const EdgeInsets.only(top: 4), child: GestureDetector(onTap: _onTapClearAllScores, child:
+          Text(Localization().getStringEx('panel.skills_self_evaluation.results.more_info.description', '*Tap score cards for more info'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body.small'), textAlign: TextAlign.left,
+        ),)),
+      ),
       Visibility(
         visible: selectedProfile?.params['name'] is String && selectedProfile?.params['definition'] is String,
         child: Padding(padding: const EdgeInsets.only(top: 32, left: 32, right: 32), child: Text.rich(
