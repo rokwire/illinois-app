@@ -72,6 +72,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
       AppLivecycle.notifyStateChanged,
       Auth2.notifyLoginChanged,
       Inbox.notifyInboxUserInfoChanged,
+      Inbox.notifyInboxMessageRead,
     ]);
 
     _unread = (widget.content == HomeInboxContent.unread) ? true : null;
@@ -115,8 +116,14 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
-    else if ((name == Auth2.notifyLoginChanged) || (name == Inbox.notifyInboxUserInfoChanged)) {
+    else if (name == Auth2.notifyLoginChanged) {
       setStateIfMounted(() {});
+    }
+    else if (name == Inbox.notifyInboxUserInfoChanged) {
+      setStateIfMounted(() {});
+    }
+    else if (name == Inbox.notifyInboxMessageRead) {
+      _refresh(showProgress: true);
     }
   }
 
@@ -136,21 +143,21 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
 
   void _refresh({bool showProgress = false}) {
     if (Connectivity().isOnline && Auth2().isLoggedIn) {
-      if (showProgress && mounted) {
-        setState(() {
+      if (showProgress) {
+        setStateIfMounted(() {
           _loadingMessagesPage = true;
         });
-        Inbox().loadMessages(unread: _unread, muted: false, offset: 0, limit: max(_messages?.length ?? 0, Config().homeRecentNotificationsCount)).then((List<InboxMessage>? messages) {
-          setStateIfMounted(() {
-            _loadingMessages = false;
-            _messages = messages;
-          });
-        });
       }
-    }
-    else {
-      setStateIfMounted(() {
+      Inbox().loadMessages(unread: _unread, muted: false, offset: 0, limit: max(_messages?.length ?? 0, Config().homeRecentNotificationsCount)).then((List<InboxMessage>? messages) {
+        if (showProgress) {
+          _loadingMessages = false;
+        }
+        setStateIfMounted(() {
+          _messages = messages;
+        });
       });
+    } else {
+      setStateIfMounted(() {});
     }
   }
 
