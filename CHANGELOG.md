@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix BESSI content items response handling [#2820](https://github.com/rokwire/illinois-app/issues/2820).
 - Remove title from welcome video [#2831](https://github.com/rokwire/illinois-app/issues/2831).
+- Fixed various problems in Maps [#2834](https://github.com/rokwire/illinois-app/issues/2834).
 ### Added
 - Various Notification updates [#2833](https://github.com/rokwire/illinois-app/issues/2833).
 
