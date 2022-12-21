@@ -1,16 +1,16 @@
 {
   "color": {
-    "fillColorPrimary"                      :"#002855",
-    "fillColorPrimaryTransparent03"         :"#4D002855",
-    "fillColorPrimaryTransparent05"         :"#80002855",
-    "fillColorPrimaryTransparent09"         :"#E6002855",
-    "fillColorPrimaryTransparent015"        :"#26002855",
+    "fillColorPrimary"                      :"#001e62",
+    "fillColorPrimaryTransparent03"         :"#4D001e62",
+    "fillColorPrimaryTransparent05"         :"#80001e62",
+    "fillColorPrimaryTransparent09"         :"#E6001e62",
+    "fillColorPrimaryTransparent015"        :"#26001e62",
     "textColorPrimary"                      :"#FFFFFF",
-    "fillColorPrimaryVariant"               :"#0F2040",
-    "fillColorSecondary"                    :"#E84A27",
-    "fillColorSecondaryTransparent05"       :"#80E84A27",
+    "fillColorPrimaryVariant"               :"#D50032",
+    "fillColorSecondary"                    :"#D50032",
+    "fillColorSecondaryTransparent05"       :"#80D50032",
     "textColorSecondary"                    :"#FFFFFF",
-    "fillColorSecondaryVariant"             :"#CF3C1B",
+    "fillColorSecondaryVariant"             :"#B00029",
     "textColorSecondaryVariant"             :"#FFFFFF",
     "gradientColorPrimary"                  :"#244372",
 
@@ -26,20 +26,20 @@
     "textBackground"                        :"#404040",
     "textbackgroundVariant"                 :"#404040",
 
-    "accentColor1"                          :"#E84A27",
-    "accentColor2"                          :"#5FA7A3",
-    "accentColor3"                          :"#5182CF",
+    "accentColor1"                          :"#D50032",
+    "accentColor2"                          :"#00AEC7",
+    "accentColor3"                          :"#BB16A3",
     "accentColor4"                          :"#9318BB",
 
-    "iconColor"                             :"#E84A27",
+    "iconColor"                             :"#D50032",
 
     "alert"                                 :"#ff0000",
 
     "transparentWalletColor"                : "#ff0f2040",
 
-    "eventColor"                            :"#E54B30",
-    "diningColor"                           :"#F09842",
-    "placeColor"                            :"#62A7A3",
+    "eventColor"                            :"#D50032",
+    "diningColor"                           :"#FF7500",
+    "placeColor"                            :"#00AEC7",
     "mtdColor"                              :"#2376E5",
 
     "white"                                 :"#FFFFFF",
@@ -607,8 +607,8 @@
     "radio-button-on": {"src": "images/icon-favorite-selected.png", "type": "flutter.asset", "todo": "color issue"},
     "radio-button-off": {"src": "images/icon-favorite-deselected.png", "type": "flutter.asset", "todo": "color issue"},
 
-    "university-logo": {"src": "images/block-i-orange.png", "type": "flutter.asset"},
-    "university-logo-dark": {"src": "images/illinois-blockI-blue.png", "type": "flutter.asset"},
+    "university-logo": {"src": "images/university-logo.png", "size": 36, "type": "flutter.asset"},
+    "university-logo-dark": {"src": "images/university-logo.png", "size": 48, "type": "flutter.asset"},
     "university-logo-circle-white": {"src": "'images/group-5-white.png'", "type": "flutter.asset"},
     "university-logo-circle-dark": {"src": "'images/group-5-blue.png'", "type": "flutter.asset"},
     "transit-logo": {"src": "images/mtd-logo.png", "type": "flutter.asset"},
