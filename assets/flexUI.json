@@ -64,7 +64,7 @@
 
 			"polls.features": ["authentication", "netid_login"],
 
-			"wellness.appointments.features": ["sharing", "netid_login"],
+			"wellness.appointments.features": ["authentication", "netid_login"],
 			"wellness.health_screener": ["history"],
 			"wellness.health_screener.features": ["student", "authentication", "netid_login"],
 
