@@ -42,7 +42,7 @@ class CreatePollPanel extends StatefulWidget {
   CreatePollPanel({this.group});
 
   static void present(BuildContext context) {
-    Future? result = AccessDialog.show(context: context, resource: 'polls.features');
+    Future? result = AccessDialog.show(context: context, resource: 'polls');
     if (result == null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));
     }

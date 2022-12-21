@@ -119,7 +119,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
 
   Widget _buildScaffoldBody() {
     List<Widget> bodyWidgets = [];
-    Widget? accessWidget = AccessCard.builder(resource: 'polls.features');
+    Widget? accessWidget = AccessCard.builder(resource: 'polls');
     Widget content = Expanded(child:
       CustomScrollView(
           controller: _scrollController,
