@@ -145,7 +145,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeRecentItemsWidget.title,
-      titleIconKey: 'recent',
+      titleIconKey: 'history',
       child: _buildContent(),
     );
   }

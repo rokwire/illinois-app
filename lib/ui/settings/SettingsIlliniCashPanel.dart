@@ -235,7 +235,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     final String externalLinIconMacro = '{{external_link_icon}}';
     String contentHtml = Localization().getStringEx("panel.settings.illini_cash.label.for_yourself_or", "Use Illini Cash to purchase food, books, printing, and <a href='{{services_url}}'>other selected services</a>{{white_space}}<img src='asset:{{external_link_icon}}' alt=''/> with your Illinois app or i-card.");
     contentHtml = contentHtml.replaceAll(servicesUrlMacro, Config().illiniCashServicesUrl ?? '');
-    contentHtml = contentHtml.replaceAll(externalLinIconMacro, 'external-link');
+    contentHtml = contentHtml.replaceAll(externalLinIconMacro, 'images/external-link.png');
     contentHtml = contentHtml.replaceAll(whiteSpaceMacro, '&nbsp;');
     return Container(
         color: Colors.white,

@@ -119,7 +119,7 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
               hint: Localization().getStringEx('panel.mtd_stops.search.clear.button.hint', ''),
               child: Padding(padding: EdgeInsets.all(16), child:
                 GestureDetector(onTap: _onTapClear, child:
-                  Image.asset('images/icon-x-orange.png'),
+                  Styles().images?.getImage('close', excludeFromSemantics: true)
                 ),
               )
           ),

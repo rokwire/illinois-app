@@ -141,7 +141,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeVideoTutorialsWidget.title,
-      titleIconKey: 'video',
+      titleIconKey: 'play-circle',
       child: _buildContent(),
     );
   }

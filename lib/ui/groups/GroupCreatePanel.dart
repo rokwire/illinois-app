@@ -214,12 +214,12 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                       ),
 
                       Visibility(visible: _isManagedGroupAdmin && !_isResearchProject, child: Column(children: [
-                        _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "member"),
+                        _buildTitle(Localization().getStringEx("panel.groups_create.authman.section.title", "University managed membership"), "person"),
                         _buildAuthManLayout(),
                       ])),
                       
                       Visibility(visible: !_isAuthManGroup, child: Padding(padding: EdgeInsets.only(top: 20), child: Column(children: [
-                        _buildTitle(_isResearchProject ? 'Participation' : Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "member"),
+                        _buildTitle(_isResearchProject ? 'Participation' : Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "person"),
                         _buildMembershipLayout(),
                       ],),),),
                     //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2

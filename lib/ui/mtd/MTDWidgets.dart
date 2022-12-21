@@ -115,8 +115,8 @@ class MTDStopCard extends StatelessWidget {
                           SizedBox(width: 18, height: 18, child:
                             Center(child:
                               _isExpanded ?
-                                Image.asset('images/arrow-up-orange.png', excludeFromSemantics: true) :
-                                Image.asset('images/arrow-down-orange.png', excludeFromSemantics: true)
+                                Styles().images?.getImage('chevron-up', excludeFromSemantics: true) :
+                                Styles().images?.getImage('chevron-down', excludeFromSemantics: true)
                             ),
                           )
                         ),

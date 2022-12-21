@@ -146,7 +146,7 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
         Container(color: Styles().colors!.fillColorPrimary, child:
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-            HomeTitleIcon(image: Styles().images?.getImage('campus-tools')),
+            HomeTitleIcon(image: Styles().images?.getImage('news')),
 
             Expanded(child:
               Padding(padding: EdgeInsets.only(top: 14), child:

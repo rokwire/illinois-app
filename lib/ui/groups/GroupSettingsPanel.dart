@@ -124,7 +124,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                             Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
                               _buildSectionTitle((_group?.researchProject == true) ? "General project information" :
                                 Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"),
-                                  "campus-tools"),
+                                  "info"),
                             ),
                             _buildNameField(),
                             _buildDescriptionField(),

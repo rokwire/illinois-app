@@ -472,5 +472,5 @@ class _EnabledToggleButton extends ToggleRibbonButton {
   // bool get toggled => (enabled == true) ? super.toggled == true : this.defaultValue == true;
 
   @override
-  Widget? get rightIconImage =>Image.asset((toggled) ? 'images/switch-on.png' : 'images/switch-off.png');  //Workaround for blurry images
+  Widget? get rightIconImage => Styles().images?.getImage((toggled) ? 'switch-on' : 'switch-off');  //Workaround for blurry images
 }

@@ -2202,7 +2202,7 @@ class _MTDInstructionsPopupState extends State<_MTDInstructionsPopup> {
             Column(mainAxisSize: MainAxisSize.min, children: [
               Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
                 Column(children: [
-                  Styles().images?.getImage('university-logo', excludeFromSemantics: true),
+                  Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container(),
                   Padding(padding: EdgeInsets.only(top: 18), child:
                     Text(widget.message, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small"))
                   ),

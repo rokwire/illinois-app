@@ -53,7 +53,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessRingsWidget.title,
-      titleIconKey: 'wellness-rings',
+      titleIconKey: 'wellness',
       childPadding: HomeSlantWidget.defaultChildPadding,
       child: _buildContent(),
     );

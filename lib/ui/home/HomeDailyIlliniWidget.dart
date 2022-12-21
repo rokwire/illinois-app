@@ -113,7 +113,7 @@ class _HomeDailyIlliniWidgetState extends State<HomeDailyIlliniWidget> implement
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeDailyIlliniWidget.title,
-      titleIconKey: 'campus-tools.png',
+      titleIconKey: 'news',
       child: _buildContent(),
     );
   }

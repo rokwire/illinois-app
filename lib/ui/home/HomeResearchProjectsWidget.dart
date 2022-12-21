@@ -127,7 +127,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: widget._title,
-      titleIconKey: 'campus-tools', // TODO: Change icon
+      titleIconKey: 'research',
       child: _buildContent(),
     );
   }

@@ -138,7 +138,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
           child: Container(color: Styles().colors?.fillColorPrimary, child:
             Row(children: <Widget>[
 
-              HomeTitleIcon(image: Styles().images?.getImage('campus-tools', excludeFromSemantics: true)),
+              HomeTitleIcon(image: Styles().images?.getImage('courses', excludeFromSemantics: true)),
 
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
