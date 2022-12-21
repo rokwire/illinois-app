@@ -126,10 +126,7 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
                               return (loadingProgress == null) ? child : emptyImagePlaceholder;
                             }))
                         : emptyImagePlaceholder),
-                Column(children: [
-                  Text(StringUtils.ensureNotEmpty(_video!.title), style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1.1),),
-                  VideoPlayButton(hasBackground: false)
-                ])
+                VideoPlayButton(hasBackground: false)
               ])
             ])));
   }
