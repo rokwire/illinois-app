@@ -2202,7 +2202,7 @@ class _MTDInstructionsPopupState extends State<_MTDInstructionsPopup> {
             Column(mainAxisSize: MainAxisSize.min, children: [
               Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
                 Column(children: [
-                  Image.asset('images/block-i-orange.png'),
+                  Image.asset('images/block-i-orange.png', semanticLabel: "",),
                   Padding(padding: EdgeInsets.only(top: 18), child:
                     Text(widget.message, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small"))
                   ),
@@ -2211,30 +2211,39 @@ class _MTDInstructionsPopupState extends State<_MTDInstructionsPopup> {
 
               Visibility(visible: (widget.showPopupStorageKey != null), child:
                 Padding(padding: EdgeInsets.only(left: 16, right: 32), child:
-                  Row(mainAxisSize: MainAxisSize.min, children: [
-                    InkWell(onTap: _onDoNotShow, child:
-                      Padding(padding: EdgeInsets.all(16), child:
-                        Image.asset((showInstructionsPopup == false) ? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
+                  Semantics(
+                      label: dontShow,
+                      value: showInstructionsPopup == false ?   Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
+                      button: true,
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      InkWell(
+                        onTap: (){
+                          AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(showInstructionsPopup == false), dontShow);
+                          _onDoNotShow();
+                          },
+                        child: Padding(padding: EdgeInsets.all(16), child:
+                          Image.asset((showInstructionsPopup == false) ? "images/selected-checkbox.png" : "images/deselected-checkbox.png", semanticLabel: "",),
+                        ),
                       ),
-                    ),
-                    Expanded(child:
-                      Text(dontShow, style: Styles().textStyles?.getTextStyle("widget.detail.small"), textAlign: TextAlign.left,)
-                    ),
-                  ]),
+                      Expanded(child:
+                        Text(dontShow, style: Styles().textStyles?.getTextStyle("widget.detail.small"), textAlign: TextAlign.left,semanticsLabel: "",)
+                      ),
+                  ])),
                 ),
               ),
             ])
           ),
           Positioned.fill(child:
             Align(alignment: Alignment.topRight, child:
-              InkWell(onTap: () {
+              Semantics(  button: true, label: "close",
+              child: InkWell(onTap: () {
                 Analytics().logSelect(target: 'Close MTD instructions popup');
                 Navigator.of(context).pop();
                 }, child:
                 Padding(padding: EdgeInsets.all(16), child:
-                  Image.asset('images/icon-x-orange.png')
+                  Image.asset('images/icon-x-orange.png', semanticLabel: "",),
                 )
-              )
+              ))
             )
           ),
         ])
