@@ -2401,6 +2401,8 @@
     "panel.inbox.label.time.last_week": "La semana pasada",
     "panel.inbox.label.time.this_month": "Este mes",
     "panel.inbox.label.time.last_month": "El mes pasado",
+    "panel.inbox.label.muted.show": "Mostrar silenciado",
+    "panel.inbox.label.muted.hide": "Ocultar silenciado",
     "panel.inbox.mark_as_read.failed.msg": "Error al marcar todos los mensajes como leídos",
 
     "panel.guide_list.label.highlights.heading": "Campus Guide",

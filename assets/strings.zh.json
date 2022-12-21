@@ -2400,6 +2400,8 @@
 	"panel.inbox.label.time.last_week": "上個星期",
 	"panel.inbox.label.time.this_month": "這個月",
 	"panel.inbox.label.time.last_month": "上個月",
+    "panel.inbox.label.muted.show": "顯示靜音",
+    "panel.inbox.label.muted.hide": "隱藏靜音",
     "panel.inbox.mark_as_read.failed.msg": "無法將所有消息標記為已讀",
 
 	"panel.guide_list.label.highlights.heading": "Campus Guide",

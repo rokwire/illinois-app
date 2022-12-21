@@ -2403,6 +2403,8 @@
     "panel.inbox.label.time.last_week": "Last week",
     "panel.inbox.label.time.this_month": "This month",
     "panel.inbox.label.time.last_month": "Last month",
+    "panel.inbox.label.muted.show": "Show Muted",
+    "panel.inbox.label.muted.hide": "Hide Muted",
     "panel.inbox.mark_as_read.failed.msg": "Failed to mark all messages as read",
 
     "panel.guide_list.label.highlights.heading": "Campus Guide",
