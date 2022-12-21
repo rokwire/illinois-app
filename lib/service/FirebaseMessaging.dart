@@ -237,7 +237,13 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   // Message Processing
 
   @override
-  void processDataMessage(Map<String, dynamic>? data) => _processDataMessage(data);
+  void processDataMessage(Map<String, dynamic>? data) {
+    String? messageId = JsonUtils.stringValue(data?['message_id']);
+    if (messageId != null) {
+      Inbox().readMessage(messageId);
+    }
+    _processDataMessage(data);
+  }
 
   void _processDataMessage(Map<String, dynamic>? data, {String? type} ) {
     

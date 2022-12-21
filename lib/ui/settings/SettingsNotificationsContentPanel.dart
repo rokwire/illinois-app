@@ -29,7 +29,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum SettingsNotificationsContent { all, muted, unread, preferences }
+enum SettingsNotificationsContent { all, unread, preferences }
 
 class SettingsNotificationsContentPanel extends StatefulWidget {
   static final String routeName = 'settings_notifications_content_panel';
@@ -98,7 +98,6 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   static SettingsNotificationsContent? _lastSelectedContent;
   late SettingsNotificationsContent _selectedContent;
   final GlobalKey _allContentKey = GlobalKey();
-  final GlobalKey _mutedContentKey = GlobalKey();
   final GlobalKey _unreadContentKey = GlobalKey();
   final GlobalKey _sheetHeaderKey = GlobalKey();
   final GlobalKey _contentDropDownKey = GlobalKey();
@@ -290,11 +289,9 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   Widget get _contentWidget {
     switch (_selectedContent) {
       case SettingsNotificationsContent.all:
-        return SettingsInboxHomeContentWidget(muted: false, key: _allContentKey, onTapBanner: _onTapPausedBanner,);
-      case SettingsNotificationsContent.muted:
-        return SettingsInboxHomeContentWidget(muted: true, key: _mutedContentKey, onTapBanner: _onTapPausedBanner);
+        return SettingsInboxHomeContentWidget(key: _allContentKey, onTapBanner: _onTapPausedBanner,);
       case SettingsNotificationsContent.unread:
-        return SettingsInboxHomeContentWidget(muted: false, unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
+        return SettingsInboxHomeContentWidget(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
       case SettingsNotificationsContent.preferences:
         return SettingsNotificationPreferencesContentWidget();
     }
@@ -322,8 +319,6 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
     switch (content) {
       case SettingsNotificationsContent.all:
         return Localization().getStringEx('panel.settings.notifications.content.notifications.all.label', 'All Notifications');
-      case SettingsNotificationsContent.muted:
-        return Localization().getStringEx('panel.settings.notifications.content.notifications.muted.label', 'Muted Notifications');
       case SettingsNotificationsContent.unread:
         return Localization().getStringEx('panel.settings.notifications.content.notifications.unread.label', 'Unread Notifications');
       case SettingsNotificationsContent.preferences:

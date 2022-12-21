@@ -1378,7 +1378,6 @@
 	"panel.settings.profile.header.profile.label": "輪廓",
 
 	"panel.settings.notifications.content.notifications.all.label": "所有通知",
-	"panel.settings.notifications.content.notifications.muted.label": "靜音通知",
 	"panel.settings.notifications.content.notifications.unread.label": "未讀通知",
 	"panel.settings.notifications.content.preferences.label": "我的通知偏好",
 	"panel.settings.notifications.header.inbox.label": "通知",
@@ -2401,6 +2400,8 @@
 	"panel.inbox.label.time.last_week": "上個星期",
 	"panel.inbox.label.time.this_month": "這個月",
 	"panel.inbox.label.time.last_month": "上個月",
+    "panel.inbox.label.muted.show": "顯示靜音",
+    "panel.inbox.label.muted.hide": "隱藏靜音",
     "panel.inbox.mark_as_read.failed.msg": "無法將所有消息標記為已讀",
 
 	"panel.guide_list.label.highlights.heading": "Campus Guide",
