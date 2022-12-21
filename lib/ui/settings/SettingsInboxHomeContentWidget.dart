@@ -75,7 +75,8 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      Inbox.notifyInboxUserInfoChanged
+      Inbox.notifyInboxUserInfoChanged,
+      Inbox.notifyInboxMessageRead
     ]);
 
     _scrollController.addListener(_scrollListener);
@@ -98,6 +99,8 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
           //refresh
         });
       }
+    } else if (name == Inbox.notifyInboxMessageRead) {
+      _refreshContent();
     }
   }
 
@@ -747,16 +750,15 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   }
 
   void _refreshContent({int? messagesCount}) {
-    setState(() {
+    setStateIfMounted(() {
       _loading = true;
     });
 
     int limit = max(messagesCount ?? _messages.length, _messagesPageSize);
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
     Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
-      if (mounted) {
-        setState(() {
-          if (messages != null) {
+      setStateIfMounted(() {
+        if (messages != null) {
             _messages = messages;
             _hasMoreMessages = (_messagesPageSize <= messages.length);
           }
@@ -766,8 +768,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
           }
           _contentList = _buildContentList();
           _loading = false;
-        });
-      }
+      });
     });
   }
 
