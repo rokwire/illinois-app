@@ -117,14 +117,15 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       _buildContentTypeDropdownButton(),
       Expanded(child:
         Stack(children: [
-          Column(children: [
+          Semantics( container: true,
+            child: Column(children: [
             Expanded(child: 
               _processingLocation ? _buildLoading() :
                 RefreshIndicator(onRefresh: _onPullToRefresh, child:
                 _buildContent()
                 ),
             ),
-          ],),
+          ],)),
           _buildContentTypesDropdownContainer()
         ],)
       ),
@@ -173,11 +174,11 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       onTap: _onTapSearch
     ),);
 
-    return Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
+    return Semantics(container: true, child: Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
       SingleChildScrollView(child:
         Column(children: contentList)
       )
-    );
+    ));
   }
 
   Widget _buildContentTypeDropdownItem(MTDStopsContentType contentType) {
