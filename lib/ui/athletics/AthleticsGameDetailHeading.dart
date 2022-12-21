@@ -734,7 +734,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   Widget _getHomeImage() {
     if (widget._game!.isHomeGame) {
       //return illinois image
-      return Styles().images?.getImage('block-i-orange.png', height: 58, fit: BoxFit.fitHeight, excludeFromSemantics: true) ?? Container();
+      return Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container();
     } else {
       //return opponent image
       Opponent? opponent = widget._game!.opponent;
@@ -786,7 +786,7 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   Widget _getAwayImage() {
     if (!widget._game!.isHomeGame) {
       //return illinois image
-      return Styles().images?.getImage('block-i-orange.png', height: 58, fit: BoxFit.fitHeight, excludeFromSemantics: true) ?? Container();
+      return Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container();
     } else {
       //return opponent image
       Opponent? opponent = widget._game!.opponent;
@@ -896,7 +896,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
   Widget? _getHomeImageFrom(double width, double height) {
     if (widget._game!.isHomeGame) {
       //return illinois image
-      return Styles().images?.getImage('block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
+      return Styles().images?.getImage('university-logo', fit: BoxFit.fitHeight);
     } else {
       //return opponent image
       String? opponentUrl = widget._game!.opponent?.logoImage;
@@ -907,7 +907,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
   Widget? _getVisitingImage(double width, double height) {
     if (!widget._game!.isHomeGame) {
       //return illinois image
-      return Styles().images?.getImage('block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
+      return Styles().images?.getImage('university-logo', fit: BoxFit.fitHeight);
     } else {
       //return opponent image
       String? opponentUrl = widget._game?.opponent?.logoImage;

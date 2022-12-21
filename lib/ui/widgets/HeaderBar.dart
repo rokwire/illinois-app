@@ -258,7 +258,7 @@ class RootHeaderBar extends StatefulWidget implements PreferredSizeWidget {
 
   Widget buildHeaderHomeButton(BuildContext context) {
     return Semantics(label: Localization().getStringEx('headerbar.home.title', 'Home'), hint: Localization().getStringEx('headerbar.home.hint', ''), button: true, excludeSemantics: true, child:
-      IconButton(icon: Styles().images?.getImage('block-i-orange.png', excludeFromSemantics: true) ?? Container(), onPressed: () => onTapHome(context),),);
+      IconButton(icon: Styles().images?.getImage('university-logo', excludeFromSemantics: true) ?? Container(), onPressed: () => onTapHome(context),),);
   }
 
   Widget buildHeaderTitle(BuildContext context) {
