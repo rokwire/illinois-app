@@ -578,32 +578,24 @@ class ExplorePanelState extends State<ExplorePanel>
       _placeExploresOnMap();
       if (_selectedItem == ExploreItem.Appointments) {
         if (Storage().appointmentsCanDisplay != true) {
-          _showMissingAppointmentsPopup(Localization().getStringEx('panel.explore.hide.appointments.msg',
-              'There is nothing to display as you have chosen not to display any past or future appointments.'));
+          _showMessagePopup(Localization().getStringEx('panel.explore.hide.appointments.msg', 'There is nothing to display as you have chosen not to display any past or future appointments.'));
         } else if (CollectionUtils.isEmpty(_displayExplores)) {
-          _showMissingAppointmentsPopup(Localization()
-              .getStringEx('panel.explore.missing.appointments.msg',
-                  'You currently have no upcoming in-person appointments linked within {{app_title}} app.')
-              .replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
+          _showMessagePopup(Localization().getStringEx('panel.explore.missing.appointments.msg','You currently have no upcoming in-person appointments linked within {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
         }
       }
       else if (_selectedItem == ExploreItem.MTDStops) {
         if (Storage().showMtdStopsMapInstructions != false) {
-          showDialog(context: context, builder: (context) => _MTDInstructionsPopup(
-            message: Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite."),
-            showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,
-          ));
+          _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite."), showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,
+          );
         }
       }
       else if (_selectedItem == ExploreItem.MTDDestinations) {
         if (Storage().showMtdDestinationsMapInstructions != false) {
-          showDialog(context: context, builder: (context) => _MTDInstructionsPopup(
-            message: Localization().getStringEx("panel.explore.instructions.mtd_destinations.msg", "Please tap a location on the map that will be your destination. Tap the star to save the destination as a favorite.",),
-            showPopupStorageKey: Storage().showMtdDestinationsMapInstructionsKey,
-          ));
+          _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_destinations.msg", "Please tap a location on the map that will be your destination. Tap the star to save the destination as a favorite.",), showPopupStorageKey: Storage().showMtdDestinationsMapInstructionsKey
+          );
         }
         else if (CollectionUtils.isEmpty(_displayExplores)) {
-          _showMissingAppointmentsPopup(Localization().getStringEx('panel.explore.missing.mtd_destinations.msg', 'You currently have no saved destinations. Please tap the location on the map that will be your destination. You can tap the Map to get Directions or Save the destination as a favorite.'),);
+          _showMessagePopup(Localization().getStringEx('panel.explore.missing.mtd_destinations.msg', 'You currently have no saved destinations. Please tap the location on the map that will be your destination. You can tap the Map to get Directions or Save the destination as a favorite.'),);
         }
       }
     });
@@ -687,7 +679,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return Appointments().loadAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
   }
 
-  void _showMissingAppointmentsPopup(String missingAppointmentsText) {
+  void _showMessagePopup(String message) {
     AppAlert.showCustomDialog(
         context: context,
         contentPadding: EdgeInsets.all(0),
@@ -700,7 +692,7 @@ class ExplorePanelState extends State<ExplorePanel>
                     Image.asset('images/block-i-orange.png'),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
-                        child: Text(missingAppointmentsText,
+                        child: Text(message,
                             textAlign: TextAlign.center,
                             style: Styles().textStyles?.getTextStyle("widget.detail.small")))
                   ])),
@@ -712,7 +704,14 @@ class ExplorePanelState extends State<ExplorePanel>
                         Navigator.of(context).pop();
                       },
                       child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png')))))
-            ])));
+            ]))).then((_) => _fixMap());
+  }
+
+  void _showOptionalMessagePopup(String message, { String? showPopupStorageKey }) {
+    showDialog(context: context, builder: (context) => _OptionalMessagePopup(
+      message: message,
+      showPopupStorageKey: showPopupStorageKey,
+    )).then((_) => _fixMap());
   }
 
   List<Event>? _buildDisplayEvents(List<Event> allEvents) {
@@ -1920,6 +1919,12 @@ class ExplorePanelState extends State<ExplorePanel>
     }
   }
 
+  void _fixMap() {
+    if (_nativeMapController != null) {
+      _nativeMapController!.fixZOrder();
+    }
+  }
+
   void _enableMyLocationOnMap() {
     if (_nativeMapController != null) {
       _nativeMapController!.enableMyLocation(_userLocationEnabled());
@@ -2171,18 +2176,18 @@ class ExplorePanelState extends State<ExplorePanel>
 }
 
 /////////////////////////
-// _MTDInstructionsPopup
+// _OptionalMessagePopup
 
-class _MTDInstructionsPopup extends StatefulWidget {
+class _OptionalMessagePopup extends StatefulWidget {
   final String message;
   final String? showPopupStorageKey;
-  _MTDInstructionsPopup({Key? key, required this.message, this.showPopupStorageKey}) : super(key: key);
+  _OptionalMessagePopup({Key? key, required this.message, this.showPopupStorageKey}) : super(key: key);
 
   @override
-  State<_MTDInstructionsPopup> createState() => _MTDInstructionsPopupState();
+  State<_OptionalMessagePopup> createState() => _MTDInstructionsPopupState();
 }
 
-class _MTDInstructionsPopupState extends State<_MTDInstructionsPopup> {
+class _MTDInstructionsPopupState extends State<_OptionalMessagePopup> {
   bool? showInstructionsPopup;
   
   @override

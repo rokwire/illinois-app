@@ -353,12 +353,22 @@
 	if (_enabled) {
 		if (_mapView.superview == nil) {
 			[self addSubview:_mapView];
+			[self addSubview:_activityIndicator];
 		}
 	}
 	else {
 		if (_mapView.superview == self) {
 			[_mapView removeFromSuperview];
+			[_activityIndicator removeFromSuperview];
 		}
+	}
+}
+
+- (void)fixZOrder {
+	if (_mapView.superview == self) {
+		[_mapView removeFromSuperview];
+		[self addSubview:_mapView];
+		[self bringSubviewToFront:_activityIndicator];
 	}
 }
 
@@ -708,6 +718,9 @@
 	else if ([[call method] isEqualToString:@"enable"]) {
 		bool enable = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;
 		[_mapView enable:enable];
+	}
+	else if ([[call method] isEqualToString:@"fixZOrder"]) {
+		[_mapView fixZOrder];
 	}
 	else if ([[call method] isEqualToString:@"enableMyLocation"]) {
 		bool enableMyLocation = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;

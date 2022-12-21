@@ -105,6 +105,10 @@ class MapController {
     return _channel.invokeMethod('enable', enable);
   }
 
+  Future<void>fixZOrder() async {
+    return _channel.invokeMethod('fixZOrder');
+  }
+
   Future<void>enableMyLocation(bool enable) async {
     return _channel.invokeMethod('enableMyLocation', enable);
   }
