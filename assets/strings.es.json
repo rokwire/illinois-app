@@ -889,8 +889,8 @@
     "panel.onboarding2.email.button.link.cancel.hint": "",
     "panel.onboarding2.email.link.cancel.text": "Failed to remove email address from your account.",
 
-    "panel.onboarding2.research.questionnaire.prompt.introduction": "Illinois is one of the world’s great research universities. Become a citizen scientist and take part in the discovery by participating in research at Illinois.",
-    "panel.onboarding2.research.questionnaire.prompt.question": "Would you like to get invitations to participate in research studies via the Illinois app?",
+    "panel.onboarding2.research.questionnaire.prompt.introduction": "Illinois is one of the world’s great research universities. As a member of the university, you can help scientists answer questions that lead to new discoveries.",
+    "panel.onboarding2.research.questionnaire.prompt.question": "Would you like to get invitations to become a research participant via the Illinois app?",
     "panel.onboarding2.research.questionnaire.prompt.explanation": " Many studies offer incentives.",
     "panel.onboarding2.research.questionnaire.acknowledgement.title": "Thank you! We will notify you when you become eligible for any upcoming research projects.",
     "panel.onboarding2.research.questionnaire.acknowledgement.explanation": "View current studies that match your completed Research Interest Form under Browse > Research at Illinois. Opt in and become part of the study\u2019s recruitment pool.",
