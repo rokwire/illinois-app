@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Dining Locations loading in Maps [#2841](https://github.com/rokwire/illinois-app/issues/2841).
 - Fixed never ending progress indicator in Maps [#2841](https://github.com/rokwire/illinois-app/issues/2841).
 - Implement appointments notifications and reminders [#2621](https://github.com/rokwire/illinois-app/issues/2621).
+- Fixed error and empty status in All/Unread Notifications favorite card [#2847](https://github.com/rokwire/illinois-app/issues/2847).
 
 ## [4.2.46] - 2022-12-21
 ### Fixed

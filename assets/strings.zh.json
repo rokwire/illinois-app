@@ -2801,7 +2801,9 @@
 
 	"widget.home.inbox.text.all.title": "所有通知",
 	"widget.home.inbox.text.unread.title": "未讀通知",
-	"widget.home.inbox.text.empty.description": "通知現在可用。",
+	"widget.home.inbox.text.empty.all.description": "您還沒有任何通知。",
+	"widget.home.inbox.text.empty.unread.description": "您沒有未讀通知。 <a href='{{local_url}}'><b>查看所有通知</b></а>。",
+	"widget.home.inbox.text.failed.description": "無法加載通知.",
 	"widget.home.inbox.text.offline": "最近的通知在離線時不可用。",
 	"widget.home.inbox.text.logged_out": "您需要登錄才能訪問通知。 在您的個人資料中將您的隱私級別設置為 4 或 5。 然後在設置下找到登錄提示。",
 	"widget.home.inbox.button.all.title": "查看全部",
