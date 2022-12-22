@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -34,7 +35,7 @@ class Onboarding2LoginPhoneOrEmailStatementPanel extends StatefulWidget with Onb
   _Onboarding2LoginPhoneOrEmailStatementPanelState createState() => _Onboarding2LoginPhoneOrEmailStatementPanelState();
 }
 
-class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2LoginPhoneOrEmailStatementPanel> {
+class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2LoginPhoneOrEmailStatementPanel>  implements Onboarding2ProgressableState {
   bool _progress = false;
 
   @override
@@ -63,13 +64,13 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
                   Semantics(label: titleString, hint: Localization().getStringEx('panel.onboarding2.phone_or_email_statement.title.hint', ''), excludeSemantics: true, header:true, child:
                     Padding(padding: EdgeInsets.symmetric(horizontal: 18), child:
                       Center(child:
-                        Text(titleString, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary)),
+                        Text(titleString, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.onboarding2.login_email.heading.title")),
                       )
                     ),
                   ),
                   Container(height: 24,),
                   Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
-                    Text(Localization().getStringEx('panel.onboarding2.phone_or_email_statement.description', 'This saves your preferences so you can have the same experience on more than one device.'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 20, color: Styles().colors!.fillColorPrimary))
+                    Text(Localization().getStringEx('panel.onboarding2.phone_or_email_statement.description', 'This saves your preferences so you can have the same experience on more than one device.'), textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.description.large"))
                   ),
                 ]),
               ),
@@ -108,9 +109,27 @@ class _Onboarding2LoginPhoneOrEmailStatementPanelState extends State<Onboarding2
 
   void _onSkipTapped() {
     Analytics().logSelect(target: 'Not right now');
-    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null; // Hook this panels to Onboarding2
-    if (onContinue != null) {
+    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
+    Function? onContinueEx = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueActionEx"] : null; 
+    if (onContinueEx != null) {
+      onContinueEx(this);
+    }
+    else if (onContinue != null) {
       onContinue();
+    }
+  }
+
+  // Onboarding2ProgressableState
+
+  @override
+  bool get onboarding2Progress => _progress;
+  
+  @override
+  set onboarding2Progress(bool progress) {
+    if (mounted) {
+      setState(() {
+        _progress = progress;
+      });
     }
   }
 }

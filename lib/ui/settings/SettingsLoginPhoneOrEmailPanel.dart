@@ -55,7 +55,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
     if (widget.link == true) {
       if (widget.mode == SettingsLoginPhoneOrEmailMode.phone) {
         title = Localization().getStringEx('panel.settings.link.phone.label.title', 'Add Mobile');
-        description = Localization().getStringEx('panel.settings.link.phone.label.description', 'You may sign in using your mobile phone number as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
+        description = Localization().getStringEx('panel.settings.link.phone.label.description', 'You may sign in using your mobile phone number as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
         headingTitle = Localization().getStringEx('panel.settings.link.phone.label.heading', 'ADD MY MOBILE PHONE NUMBER');
         headingHint = Localization().getStringEx('panel.settings.link.phone.label.heading.hint', '');
         buttonProceedTitle =  Localization().getStringEx('panel.settings.link.phone.button.proceed.title', 'Add Mobile');
@@ -64,7 +64,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
       }
       else if (widget.mode == SettingsLoginPhoneOrEmailMode.email){
         title = Localization().getStringEx('panel.settings.link.email.label.title', 'Add Email');
-        description = Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
+        description = Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
         headingTitle = Localization().getStringEx('panel.settings.link.email.label.heading', 'ADD MY EMAIL ADDRESS');
         headingHint =  Localization().getStringEx('panel.settings.link.email.label.heading.hint', '');
         buttonProceedTitle = Localization().getStringEx('panel.settings.link.email.button.proceed.title', 'Add Email');
@@ -73,7 +73,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
       }
       else {
         title = Localization().getStringEx('panel.settings.link.both.label.title', 'Add Mobile or Email');
-        description = Localization().getStringEx('panel.settings.link.both.label.description', 'You may sign in using your email or mobile phone number as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.');
+        description = Localization().getStringEx('panel.settings.link.both.label.description', 'You may sign in using your email or mobile phone number as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
         headingTitle = Localization().getStringEx('panel.settings.link.both.label.heading', 'ADD MY MOBILE PHONE NUMBER OR EMAIL ADDRESS');
         headingHint =  Localization().getStringEx('panel.settings.link.both.label.heading.hint', '');
         buttonProceedTitle = Localization().getStringEx('panel.settings.link.both.button.proceed.title', 'Add Mobile or Email');
@@ -121,11 +121,11 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
             Padding(padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: Column(children:[
                 Row(children: [ Expanded(child:
-                  Text(description, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 18, color: Styles().colors!.fillColorPrimary),)
+                  Text(description, style:  Styles().textStyles?.getTextStyle("widget.description.medium"),)
                 )],),
                 Container(height: 48),
                 Row(children: [ Expanded(child:
-                  Text(headingTitle, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors!.fillColorPrimary),)
+                  Text(headingTitle, style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"),)
                 )],),
                 Container(height: 6),
                 Semantics(label: headingTitle, hint: headingHint, textField: true, excludeSemantics: true,
@@ -140,7 +140,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                       onSubmitted: (_) => _clearErrorMsg,
                       cursorColor: Styles().colors?.textBackground,
                       keyboardType: keyboardType,
-                      style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies?.regular, color: Styles().colors?.textBackground),
+                      style: Styles().textStyles?.getTextStyle("widget.input_field.text.medium"),
                       decoration: InputDecoration(
                         disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
                         enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Styles().colors!.mediumGray!, width: 1.0),),
@@ -152,11 +152,11 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
                 Visibility(visible: StringUtils.isNotEmpty(_validationErrorMsg), child:
                   Padding(key: _validationErrorKey, padding: EdgeInsets.symmetric(vertical: 12), child:
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+                      Text(StringUtils.ensureNotEmpty(_validationErrorMsg ?? ''), style: Styles().textStyles?.getTextStyle("panel.settings.error.text")),
                       Visibility(visible: StringUtils.isNotEmpty(_validationErrorDetails), child:
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
+                          child: Text(StringUtils.ensureNotEmpty(_validationErrorDetails ?? ''), style: Styles().textStyles?.getTextStyle("widget.detail.small")),
                         ),
                       ),
                     ],),
@@ -317,7 +317,7 @@ class _SettingsLoginPhoneOrEmailPanelState extends State<SettingsLoginPhoneOrEma
     });
 
     if (StringUtils.isNotEmpty(msg)) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_validationErrorKey.currentContext != null) {
           Scrollable.ensureVisible(_validationErrorKey.currentContext!, duration: Duration(milliseconds: 300)).then((_) {
           });

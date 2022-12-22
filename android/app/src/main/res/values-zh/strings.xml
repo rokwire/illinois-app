@@ -28,12 +28,17 @@
     <string name="places">地方</string>
     <string name="laundries">洗衣房</string>
     <string name="parkings">停車場</string>
+    <string name="buildings">建築物</string>
     <string name="student_courses">培訓班</string>
+    <string name="appointments">約會</string>
+    <string name="mtd_stops">MTD Stops</string>
+    <string name="locations">Locations</string>
+    <string name="location">Location</string>
     <string name="ok">好</string>
 
     <!-- MapDirectionsActivity -->
     <string name="directionsTitle">方向</string>
-    <string name="routeFailedMsg">找不到路線.</string>
+    <string name="routeFailedMsg">Failed to find a route:\n%s</string>
     <string name="locationFailedMsg">無法檢測到當前位置.</string>
     <string name="start">開始</string>
     <string name="finish">完</string>

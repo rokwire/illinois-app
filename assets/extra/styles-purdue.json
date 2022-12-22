@@ -1,0 +1,70 @@
+{
+  "color": {
+    "fillColorPrimary"                      : "#191919",
+    "fillColorPrimaryTransparent03"         : "#4D191919",
+    "fillColorPrimaryTransparent05"         : "#80191919",
+    "fillColorPrimaryTransparent09"         : "#E6191919",
+    "fillColorPrimaryTransparent015"        : "#26191919",
+    "textColorPrimary"                      : "#FFFFFF",
+    "fillColorPrimaryVariant"               : "#000000",
+    "textColorPrimaryVariant"               : "#FFFFFF",
+    "fillColorSecondary"                    : "#CFB991",
+    "fillColorSecondaryTransparent05"       : "#80CFB991",
+    "textColorSecondary"                    : "#FFFFFF",
+    "fillColorSecondaryVariant"             : "#76592C",
+    "textColorSecondaryVariant"             : "#FFFFFF",
+
+    "surface"                               : "#FFFFFF",
+    "surfaceAccent"                         : "#DADDE1",
+    "background"                            : "#F5F5F5",
+    "backgroundVariant"                     : "#E8E9EA",
+    "textSurface"                           : "#404040",
+    "textSurfaceAccent"                     : "#404040",
+    "textBackground"                        : "#404040",
+    "textbackgroundVariant"                 : "#404040",
+
+    "accentColor1"                          : "#CFB991",
+    "accentColor2"                          : "#CFB991",
+    "accentColor3"                          : "#CFB991",
+    "accentColor4"                          : "#9318BB",
+
+    "iconColor"                             : "#CFB991",
+
+    "eventColor"                            : "#CFB991",
+    "diningColor"                           : "#CFB991",
+    "placeColor"                            : "#CFB991",
+    "mtdColor"                              : "#CFB991",
+
+    "white"                                 : "#FFFFFF",
+    "whiteTransparent01"                    : "#1AFFFFFF",
+    "whiteTransparent06"                    : "#99ffffff",
+    "blackTransparent06"                    : "#99000000",
+    "blackTransparent018"                   : "#30000000",
+
+    "mediumGray"                            : "#717372",
+    "lightGray"                             : "#EDEDED",
+    "disabledTextColor"                     : "#BDBDBD",
+    "disabledTextColorTwo"                  : "#868F9D"
+  },
+  "font_family": {
+    "black": "ProximaNovaBlack",
+    "black_italic": "ProximaNovaBlackIt",
+    "bold": "ProximaNovaBold",
+    "bold_italic": "ProximaNovaBoldIt",
+    "extra_bold": "ProximaNovaExtraBold",
+    "extra_bold_italic": "ProximaNovaExtraBoldIt",
+    "light": "ProximaNovaLight",
+    "light_italic": "ProximaNovaLightIt",
+    "medium": "ProximaNovaMedium",
+    "medium_italic": "ProximaNovaMediumIt",
+    "regular": "ProximaNovaRegular",
+    "regular_italic": "ProximaNovaRegularIt",
+    "semi_bold": "ProximaNovaSemiBold",
+    "semi_bold_italic": "ProximaNovaSemiBoldIt",
+    "thin": "ProximaNovaThin",
+    "thin_italic": "ProximaNovaThinIt"
+  },
+  "text_style": {
+    "header_bar": { "font_family": "ProximaNovaExtraBold", "size": 16.0, "color": "textColorPrimary"}
+  }
+}

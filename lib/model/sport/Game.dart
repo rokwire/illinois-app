@@ -118,7 +118,7 @@ class Game with Explore implements Favorite {
 
   String get title {
     String? opponentName = opponent?.name;
-    String cancelledLabel = Localization().getStringEx("app.common.label.cancelled", "Cancelled");
+    String cancelledLabel = Localization().getStringEx("common.label.cancelled", "Cancelled");
     String teamName = Localization().getString('app.team_name') ?? '';
     String title = isHomeGame ? '$opponentName at $teamName' : '$teamName at $opponentName';
 

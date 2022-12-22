@@ -4,7 +4,7 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 
-enum FavoriteIconStyle { SlantHeader, Handle, Button }
+enum FavoriteIconStyle { SlantHeader, Handle, Button, BlueButton }
 
 class FavoriteStarIcon extends StatelessWidget {
 
@@ -40,6 +40,13 @@ class FavoriteStarIcon extends StatelessWidget {
     else if (style == FavoriteIconStyle.Button) {
       switch (selected) {
         case true:  imageName = 'images/icon-star-orange.png'; break;
+        case false: imageName = 'images/icon-star-white.png'; break;
+        default:    imageName = 'images/icon-star-gray.png'; break;
+      }
+    }
+    else if (style == FavoriteIconStyle.BlueButton) {
+      switch (selected) {
+        case true:  imageName = 'images/icon-star-blue.png'; break;
         case false: imageName = 'images/icon-star-white.png'; break;
         default:    imageName = 'images/icon-star-gray.png'; break;
       }

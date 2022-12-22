@@ -60,7 +60,6 @@ class StudentCourse with Explore {
     (instructionMethod?.hashCode ?? 0) ^
     (section?.hashCode ?? 0);
 
-  ////////////////////////////
   // Explore implementation
 
   @override String? get exploreId => number;
@@ -71,15 +70,7 @@ class StudentCourse with Explore {
   @override DateTime? get exploreStartDateUtc => null;
   @override String? get exploreImageURL => null;
   @override String? get explorePlaceId => null;
-  @override ExploreLocation? get exploreLocation => (section?.building != null) ? ExploreLocation(
-    building : section?.building?.name,
-    address : section?.building?.address1,
-    city : section?.building?.city,
-    state : section?.building?.state,
-    zip : section?.building?.zipCode,
-    latitude : section?.building?.latitude,
-    longitude : section?.building?.longitude,
-  ) : null;
+  @override ExploreLocation? get exploreLocation => section?.building?.exploreLocation;
 
   // List<StudentCourse>
 
@@ -104,6 +95,11 @@ class StudentCourse with Explore {
     }
     return jsonList;
   }
+}
+
+class StudentCourseExploreJsonHandler implements ExploreJsonHandler {
+  @override bool exploreCanJson(Map<String, dynamic>? json) => StudentCourse.canJson(json);
+  @override Explore? exploreFromJson(Map<String, dynamic>? json) => StudentCourse.fromJson(json);
 }
 
 // StudentCourseSection
@@ -219,7 +215,7 @@ class StudentCourseSection {
 
 // Building
 
-class Building {
+class Building with Explore {
   final String? id;
   final String? name;
   final String? number;
@@ -295,6 +291,17 @@ class Building {
     'entrances': BuildingEntrance.listToJson(entrances),
   };
 
+  // ExploreJsonHandler
+
+  static bool canJson(Map<String, dynamic>? json) {
+    return (json != null) &&
+      (json['id'] != null) &&
+      (json['name'] != null) &&
+      (json['latitude'] != null) &&
+      (json['longitude'] != null) &&
+      (json['entrances'] != null);
+  }
+
   bool get hasLocation => (latitude != null) && (longitude != null);
 
   @override
@@ -343,6 +350,29 @@ class Building {
     
     DeepCollectionEquality().hash(entrances);
 
+  // Explore implementation
+
+  @override String? get exploreId => id;
+  @override String get exploreTitle => name ?? '';
+  @override String? get exploreSubTitle => address1;
+  @override String? get exploreShortDescription => null;
+  @override String? get exploreLongDescription => null;
+  @override DateTime? get exploreStartDateUtc => null;
+  @override String? get exploreImageURL => null; //TMP: imageURL;
+  @override String? get explorePlaceId => null;
+  @override ExploreLocation? get exploreLocation => ExploreLocation(
+    building : name,
+    description: fullAddress,
+    address : address1,
+    city : city,
+    state : state,
+    zip : zipCode,
+    latitude : latitude,
+    longitude : longitude,
+  );
+
+  // List<Building>
+
   static List<Building>? listFromJson(List<dynamic>? jsonList) {
     List<Building>? values;
     if (jsonList != null) {
@@ -364,6 +394,11 @@ class Building {
     }
     return jsonList;
   }
+}
+
+class BuildingExploreJsonHandler implements ExploreJsonHandler {
+  @override bool exploreCanJson(Map<String, dynamic>? json) => Building.canJson(json);
+  @override Explore? exploreFromJson(Map<String, dynamic>? json) => Building.fromJson(json);
 }
 
 // BuildingEntrance

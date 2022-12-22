@@ -18,6 +18,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
@@ -54,7 +55,10 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Auth2UserPrefs.notifyInterestsChanged]);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyInterestsChanged,
+      FlexUI.notifyChanged,
+    ]);
     _menSports = Sports().menSports;
     _womenSports = Sports().womenSports;
     _preferredSports = Auth2().prefs?.sportsInterests  ?? Set<String>();
@@ -75,6 +79,12 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
       if (mounted) {
         setState(() {
           _preferredSports = Auth2().prefs?.sportsInterests ?? Set<String>();
+        });
+      }
+    }
+    else if (name == FlexUI.notifyChanged) {
+      if (mounted) {
+        setState(() {
         });
       }
     }
@@ -108,7 +118,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
             sport: sport,
             showChevron: widget.handleTeamTap,
             label: sport.customName,
-            checkMarkVisibility: Auth2().privacyMatch(3) && widget.updateSportPrefs,
+            checkMarkVisibility: FlexUI().isPersonalizationAvailable && widget.updateSportPrefs,
             selected: _preferredSports != null && _preferredSports!.contains(sport.shortName),
             onLabelTap: () => widget.handleTeamTap ? _onTapAthleticsTeam(sport) : _onTapAthleticsSportPref(sport),
             onCheckTap: () => _onTapAthleticsSportPref(sport)));
@@ -129,7 +139,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
               Text(Localization().getStringEx("widget.athletics_teams.label.men_sports.title", "MEN'S SPORTS"), textAlign: TextAlign.left, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),),
             ),
           ),
-          Visibility(visible: Auth2().privacyMatch(3) && widget.updateSportPrefs, child:
+          Visibility(visible: FlexUI().isPersonalizationAvailable && widget.updateSportPrefs, child:
             Semantics(excludeSemantics: true, label: Localization().getStringEx('widget.athletics_teams.men_sports.title.checkmark', 'Tap to select or deselect all men sports'), value: (allMenSelected?Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) + ", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"), child:
               GestureDetector(onTap: _onToggleManSports, child:
                 Row(children: <Widget>[
@@ -155,7 +165,7 @@ class AthleticsTeamsWidgetState extends State<AthleticsTeamsWidget> implements N
               Text(Localization().getStringEx("widget.athletics_teams.label.women_sports.title", "WOMEN'S SPORTS"), textAlign: TextAlign.left, overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Colors.white, fontSize: 14, letterSpacing: 1.0),),
             ),
           ),
-          Visibility(visible: Auth2().privacyMatch(3) && widget.updateSportPrefs, child:
+          Visibility(visible: FlexUI().isPersonalizationAvailable && widget.updateSportPrefs, child:
             Semantics(excludeSemantics: true, label: Localization().getStringEx( 'widget.athletics_teams.women_sports.title.checkmark', 'Tap to select or deselect all women sports'), value: (allWomenSelected?Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked")) +", "+ Localization().getStringEx("toggle_button.status.checkbox", "checkbox"), child:
               GestureDetector(onTap: _onToggleWomenSports, child:
                 Row(children: <Widget>[

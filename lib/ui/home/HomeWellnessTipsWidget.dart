@@ -185,7 +185,10 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       }
       else{
-        launch(url!);
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri);
+        }
       }
     }
   }

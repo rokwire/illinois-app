@@ -16,10 +16,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
@@ -67,8 +67,9 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     NotificationService().subscribe(this, [
       LocationServices.notifyStatusChanged,
       NativeCommunicator.notifyMapSelectExplore,
-      NativeCommunicator.notifyMapClearExplore,
+      NativeCommunicator.notifyMapSelectLocation,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
+      FlexUI.notifyChanged,
     ]);
 
     LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
@@ -110,18 +111,21 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
       _onLocationServicesStatusChanged(param);
     }
     else if (name == NativeCommunicator.notifyMapSelectExplore) {
-      _onNativeMapSelectExplore(param['mapId'], param['exploreJson']);
+      _onNativeMapSelectExplore(param);
     }
-    else if (name == NativeCommunicator.notifyMapClearExplore) {
-      _onNativeMapClearExplore(param['mapId']);
+    else if (name == NativeCommunicator.notifyMapSelectLocation) {
+      _onNativeMapSelectLocation(param);
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      _updateOnPrivacyLevelChanged();
+      _updateLocationServicesStatus();
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateLocationServicesStatus();
     }
   }
 
-  void _updateOnPrivacyLevelChanged() {
-    if (Auth2().privacyMatch(2)) {
+  void _updateLocationServicesStatus() {
+    if (FlexUI().isLocationServicesAvailable) {
       LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _enableMyLocationOnMap();
@@ -133,15 +137,17 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   void _onLocationServicesStatusChanged(LocationServicesStatus? status) {
-    if (Auth2().privacyMatch(2)) {
+    if (FlexUI().isLocationServicesAvailable) {
       _locationServicesStatus = status;
       _enableMyLocationOnMap();
     }
   }
 
-  void _onNativeMapSelectExplore(int? mapID, dynamic laundryJson) {
-    if (_nativeMapController!.mapId == mapID) {
+  void _onNativeMapSelectExplore(Map<String, dynamic>? params) {
+    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
+    if (_nativeMapController!.mapId == mapId) {
       dynamic laundry;
+      dynamic laundryJson = (params != null) ? params['explore'] : null;
       if (laundryJson is Map) {
         laundry = LaundryRoom.fromNativeMapJson(JsonUtils.mapValue(laundryJson));
       }
@@ -161,8 +167,9 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
     }
   }
 
-  void _onNativeMapClearExplore(int? mapID) {
-    if (_nativeMapController!.mapId == mapID) {
+  void _onNativeMapSelectLocation(Map<String, dynamic>? params) {
+    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
+    if (_nativeMapController!.mapId == mapId) {
       _selectMapLaundry(null);
     }
   }
@@ -460,7 +467,7 @@ class _LaundryHomePanelState extends State<LaundryHomePanel> with SingleTickerPr
   }
 
   bool _userLocationEnabled() {
-    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
+    return FlexUI().isLocationServicesAvailable && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
   }
 
   void _placeLaundryRoomsOnMap(List<LaundryRoom>? rooms) {

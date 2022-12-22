@@ -218,8 +218,11 @@ class _WellnessResourcesContentWidgetState extends State<WellnessResourcesConten
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }
-      else{
-        launch(url!);
+      else {
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
       }
     }
   }
@@ -241,7 +244,7 @@ class WellnessLargeResourceButton extends StatelessWidget {
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(child:
               Padding(padding: EdgeInsets.symmetric(vertical: 16), child:
-                Text(label ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 18)),
+                Text(label ?? '', style: Styles().textStyles?.getTextStyle("panel.wellness.resource.button.title.large")),
               ),
             ),
             hasExternalLink ? Padding(padding: EdgeInsets.only(left: 6, top: 18, bottom: 18), child:
@@ -277,7 +280,7 @@ class WellnessRegularResourceButton extends StatelessWidget {
         FavoriteButton(favorite: favorite, style: FavoriteIconStyle.Button, padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16)),
         Expanded(child:
           Padding(padding: EdgeInsets.symmetric(vertical: 17), child:
-            Text(label ?? '', style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16))
+            Text(label ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))
           ),
         ),
         hasExternalLink ? Padding(padding: EdgeInsets.only(left: 8, top: 18, bottom: 18), child:

@@ -16,17 +16,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/livestats/LiveGame.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:illinois/service/LiveStats.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:illinois/ui/WebPanel.dart';
@@ -49,7 +52,11 @@ class AthleticsGameDetailHeading extends StatefulWidget {
 class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading> implements NotificationsListener {
   @override
   void initState() {
-    NotificationService().subscribe(this, [LiveStats.notifyLiveGamesLoaded, Auth2UserPrefs.notifyFavoritesChanged]);
+    NotificationService().subscribe(this, [
+      LiveStats.notifyLiveGamesLoaded,
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+    ]);
     super.initState();
   }
 
@@ -64,9 +71,11 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
   @override
   void onNotification(String name, dynamic param) {
     if (name == LiveStats.notifyLiveGamesLoaded) {
-      setState(() {});
+      setStateIfMounted(() {});
     } else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {});
+      setStateIfMounted(() {});
+    } else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
     }
   }
 
@@ -407,10 +416,10 @@ class _AthleticsGameDetailHeadingState extends State<AthleticsGameDetailHeading>
     if(widget.showImageTout) {
       if (!StringUtils.isEmpty(widget.game?.imageUrl)) {
         widgets.add(Positioned(
-            child: Image.network(
-              widget.game!.imageUrl!,
+            child: ModalImageHolder(
+                child: Image.network(widget.game!.imageUrl!,
               semanticLabel: widget.game?.sport?.title ?? "sport",
-            )));
+            ))));
       }
       widgets.add(Semantics(
           excludeSemantics: true,
@@ -725,13 +734,13 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   Widget _getHomeImage() {
     if (widget._game!.isHomeGame) {
       //return illinois image
-      return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight, excludeFromSemantics: true);
+      return Styles().images?.getImage('block-i-orange.png', height: 58, fit: BoxFit.fitHeight, excludeFromSemantics: true) ?? Container();
     } else {
       //return opponent image
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
       if(StringUtils.isNotEmpty(opponentUrl)) {
-        return Image.network(opponentUrl!, excludeFromSemantics: true);
+        return ModalImageHolder(child: Image.network(opponentUrl!, excludeFromSemantics: true));
       } else {
         return Container();
       }
@@ -777,13 +786,13 @@ class _SportScoreWidgetState extends State<_SportScoreWidget> implements Notific
   Widget _getAwayImage() {
     if (!widget._game!.isHomeGame) {
       //return illinois image
-      return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight, excludeFromSemantics: true);
+      return Styles().images?.getImage('block-i-orange.png', height: 58, fit: BoxFit.fitHeight, excludeFromSemantics: true) ?? Container();
     } else {
       //return opponent image
       Opponent? opponent = widget._game!.opponent;
       String? opponentUrl = opponent != null ? opponent.logoImage : null;
       if(StringUtils.isNotEmpty(opponentUrl)) {
-        return Image.network(opponentUrl!, excludeFromSemantics: true);
+        return ModalImageHolder(child: Image.network(opponentUrl!, excludeFromSemantics: true));
       } else {
         return Container();
       }
@@ -839,7 +848,7 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return _hasExtraData()! ? _createRichContent(width, height) : _createLiteContent(width, height);
+    return _hasExtraData() == true ? _createRichContent(width, height) : _createLiteContent(width, height);
   }
 
   bool? _hasExtraData() {
@@ -859,8 +868,8 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     String period = _getPeriod();
     String homeScore = _getHomeScore();
     String visitingScore = _getVisitingScore();
-    Image? homeImage = _getHomeImageFrom(width, height);
-    Image? visitingImage = _getVisitingImage(width, height);
+    Widget? homeImage = _getHomeImageFrom(width, height);
+    Widget? visitingImage = _getVisitingImage(width, height);
     return _LiteContent(period: period, homeScore: homeScore, visitingScore: visitingScore, homeImage: homeImage, visitingImage: visitingImage);
   }
 
@@ -884,25 +893,25 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     return _currentLiveGame!.visitingScore.toString();
   }
 
-  Image? _getHomeImageFrom(double width, double height) {
+  Widget? _getHomeImageFrom(double width, double height) {
     if (widget._game!.isHomeGame) {
       //return illinois image
-      return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
+      return Styles().images?.getImage('block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
     } else {
       //return opponent image
       String? opponentUrl = widget._game!.opponent?.logoImage;
-      return StringUtils.isNotEmpty(opponentUrl) ? Image.network(opponentUrl!, excludeFromSemantics: true) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: Image.network(opponentUrl!, excludeFromSemantics: true)) : null;
     }
   }
 
-  Image? _getVisitingImage(double width, double height) {
+  Widget? _getVisitingImage(double width, double height) {
     if (!widget._game!.isHomeGame) {
       //return illinois image
-      return Image.asset('images/block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
+      return Styles().images?.getImage('block-i-orange.png', height: 58, fit: BoxFit.fitHeight);
     } else {
       //return opponent image
       String? opponentUrl = widget._game?.opponent?.logoImage;
-      return StringUtils.isNotEmpty(opponentUrl) ? Image.network(opponentUrl!, excludeFromSemantics: true) : null;
+      return StringUtils.isNotEmpty(opponentUrl) ? ModalImageHolder(child: Image.network(opponentUrl!, excludeFromSemantics: true)) : null;
     }
   }
 
@@ -922,8 +931,8 @@ class _VolleyballScoreWidgetState extends _SportScoreWidgetState {
     String? hPoints = mapCustomData["HPoints"];
     String? vPoints = mapCustomData["VPoints"];
     String? serving = mapCustomData["Serving"];
-    Image? homeImage = _getHomeImageFrom(width, height);
-    Image? visitingImage = _getVisitingImage(width, height);
+    Widget? homeImage = _getHomeImageFrom(width, height);
+    Widget? visitingImage = _getVisitingImage(width, height);
     return _RichContent(
       phase: phase,
       phaseLabel: phaseLabel,
@@ -943,10 +952,10 @@ class _LiteContent extends StatelessWidget {
   final String _period;
   final String _homeScore;
   final String _visitingScore;
-  final Image? _homeImage;
-  final Image? _visitingImage;
+  final Widget? _homeImage;
+  final Widget? _visitingImage;
 
-  _LiteContent({required String period, required String homeScore, required String visitingScore, Image? homeImage, Image? visitingImage})
+  _LiteContent({required String period, required String homeScore, required String visitingScore, Widget? homeImage, Widget? visitingImage})
       : _period = period,
         _homeScore = homeScore,
         _visitingScore = visitingScore,
@@ -1075,8 +1084,8 @@ class _RichContent extends StatelessWidget {
   final String? _hPoints;
   final String? _vPoints;
   final String? _serving;
-  final Image? _homeImage;
-  final Image? _visitingImage;
+  final Widget? _homeImage;
+  final Widget? _visitingImage;
 
   _RichContent(
       {required String? phase,
@@ -1086,8 +1095,8 @@ class _RichContent extends StatelessWidget {
         required String? hPoints,
         required String? vPoints,
         required String? serving,
-        Image? homeImage,
-        Image? visitingImage})
+        Widget? homeImage,
+        Widget? visitingImage})
       : _phase = phase,
         _phaseLabel = phaseLabel,
         _hScore = hScore,

@@ -76,7 +76,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                       Image.asset("images/lock_illustration.png", excludeFromSemantics: true, width: 130, fit: BoxFit.fitWidth, ),
                       Semantics(
                         label: titleText + titleText2,
-                        hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"),
+                        hint: Localization().getStringEx("common.heading.one.hint","Header 1"),
                         header: true,
                         excludeSemantics: true,
                         child: Padding(
@@ -88,8 +88,8 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
                                   children: <TextSpan>[
-                                    TextSpan(text:titleText , style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32, fontFamily: Styles().fontFamilies!.bold, fontWeight: FontWeight.w700, height: 1.25)),
-                                    TextSpan(text:titleText2, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 32, fontWeight: FontWeight.w400,)),
+                                    TextSpan(text:titleText , style: Styles().textStyles?.getTextStyle("panel.onboarding2.privacy_statement.title.fat")),
+                                    TextSpan(text:titleText2, style: Styles().textStyles?.getTextStyle("panel.onboarding2.privacy_statement.title.regular")),
                                   ]
                                 )
                               ),
@@ -105,11 +105,7 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                                 child: Text(
                               descriptionText,
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  height: 1.4,
-                                  fontFamily: Styles().fontFamilies!.regular,
-                                  fontSize: 16,
-                                  color: Styles().colors!.fillColorPrimary),
+                              style: Styles().textStyles?.getTextStyle("panel.onboarding2.privacy_statement.description.regular")
                             )),
                           )),
                     ]),
@@ -134,13 +130,10 @@ class _Onboarding2PrivacyStatementPanelState extends State<Onboarding2PrivacySta
                             child: RichText(
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
-                                    style: TextStyle(
-                                        fontFamily: Styles().fontFamilies!.regular,
-                                        fontSize: 14,
-                                        color: Styles().colors!.textSurface),
+                                    style: Styles().textStyles?.getTextStyle("widget.info.small"),
                                     children: <TextSpan>[
                                       TextSpan(text:descriptionText1, semanticsLabel: "",),
-                                      TextSpan(text:descriptionText2, semanticsLabel: "",style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary),
+                                      TextSpan(text:descriptionText2, semanticsLabel: "",style: Styles().textStyles?.getTextStyle("widget.button.title.small.underline"),
                                           children: [
                                             WidgetSpan(child: Container(padding: EdgeInsets.only(bottom: 4), child: Image.asset("images/icon-external-link-blue.png", excludeFromSemantics: true,)))
                                           ]),

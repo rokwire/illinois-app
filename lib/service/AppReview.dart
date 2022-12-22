@@ -132,7 +132,7 @@ class AppReview with Service implements NotificationsListener {
     }
   }
 
-  String? get _appVersion  => AppVersion.majorVersion(Config().appVersion, 2);
+  String? get _appVersion  => Config().appMajorVersion;
   String? get _appPlatform  => Platform.operatingSystem.toLowerCase();
   
   String get _appReviewRequestTimeKey  => 'edu.illinois.rokwire.$_appPlatform.$_appVersion.app_review.request.time';

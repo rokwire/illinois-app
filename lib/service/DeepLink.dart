@@ -15,9 +15,13 @@
  */
 
 import 'package:flutter/foundation.dart';
+import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/deep_link.dart' as rokwire;
+import 'package:rokwire_plugin/service/service.dart';
 
 class DeepLink extends rokwire.DeepLink {
+
+  String? _appScheme;
   
   // Singletone Factory
   
@@ -26,10 +30,23 @@ class DeepLink extends rokwire.DeepLink {
 
   factory DeepLink() => ((rokwire.DeepLink.instance is DeepLink) ? (rokwire.DeepLink.instance as DeepLink) : (rokwire.DeepLink.instance = DeepLink.internal()));
 
+  // Service
+
+  @override
+  Future<void> initService() async {
+    _appScheme = await NativeCommunicator().getDeepLinkScheme();
+    await super.initService();
+  }
+
+  @override
+  Set<Service> get serviceDependsOn {
+    return Set.from([NativeCommunicator()]);
+  }
+
   // Overrides
 
   @override
-  String? get appScheme => 'edu.illinois.rokwire';
+  String? get appScheme => _appScheme ?? 'edu.illinois.rokwire';
   
   @override
   String? get appHost => 'rokwire.illinois.edu';

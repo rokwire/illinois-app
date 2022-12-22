@@ -15,13 +15,12 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/ui/settings/SettingsPersonalInfoContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsPrivacyCenterContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsRolesContentWidget.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -37,13 +36,31 @@ class SettingsProfileContentPanel extends StatefulWidget {
   _SettingsProfileContentPanelState createState() => _SettingsProfileContentPanelState();
 
   static void present(BuildContext context, {SettingsProfileContent? content}) {
-    Navigator.push(
-        context,
-        PageRouteBuilder(
-            settings: RouteSettings(name: routeName),
-            pageBuilder: (context, animation1, animation2) => SettingsProfileContentPanel._(content: content),
-            transitionDuration: Duration.zero,
-            reverseTransitionDuration: Duration.zero));
+    if (ModalRoute.of(context)?.settings.name != routeName) {
+      MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+      double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        useRootNavigator: true,
+        routeSettings: RouteSettings(name: routeName),
+        clipBehavior: Clip.antiAlias,
+        backgroundColor: Styles().colors!.background,
+        constraints: BoxConstraints(maxHeight: height, minHeight: height),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+        builder: (context) {
+          return SettingsProfileContentPanel._(content: content);
+        }
+      );
+
+      /*Navigator.push(context, PageRouteBuilder(
+        settings: RouteSettings(name: routeName),
+        pageBuilder: (context, animation1, animation2) => SettingsProfileContentPanel._(content: content),
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero
+      ));*/
+    }
   }
 }
 
@@ -67,31 +84,67 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
 
   @override
   Widget build(BuildContext context) {
+    //return _buildScaffold(context);
+    return _buildSheet(context);
+  }
+
+  /*Widget _buildScaffold(BuildContext context) {
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile')),
-      body: Column(children: <Widget>[
-        Expanded(child:
-          SingleChildScrollView(physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-                RibbonButton(
-                  textColor: Styles().colors!.fillColorSecondary,
-                  backgroundColor: Styles().colors!.white,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                  rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-                  label: _getContentLabel(_selectedContent),
-                  onTap: _changeSettingsContentValuesVisibility
-                )
-              ),
-              _buildContent()
-            ])
-          )
-        )
-      ]),
+      body: _buildPage(context),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: uiuc.TabBar()
     );
+  }*/
+
+  Widget _buildSheet(BuildContext context) {
+    // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
+    return Column(children: [
+      Container(color: Styles().colors?.white, child:
+        Row(children: [
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(left: 16), child:
+              Text(Localization().getStringEx('panel.settings.profile.header.profile.label', 'Profile'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors?.fillColorSecondary),)
+            )
+          ),
+          Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+            InkWell(onTap : _onTapClose, child:
+              Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child: 
+                Image.asset('images/close-orange.png', semanticLabel: '',),
+              ),
+            ),
+          ),
+
+        ],),
+      ),
+      Container(color: Styles().colors?.surfaceAccent, height: 1,),
+      Expanded(child:
+        _buildPage(context),
+      )
+    ],);
+  }
+
+  Widget _buildPage(BuildContext context) {
+    return Column(children: <Widget>[
+      Expanded(child:
+        SingleChildScrollView(physics: _contentValuesVisible ? NeverScrollableScrollPhysics() : null, child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
+              RibbonButton(
+                textColor: Styles().colors!.fillColorSecondary,
+                backgroundColor: Styles().colors!.white,
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+                border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+                label: _getContentLabel(_selectedContent),
+                onTap: _changeSettingsContentValuesVisibility
+              )
+            ),
+            _buildContent()
+          ])
+        )
+      )
+    ]);
   }
 
 
@@ -150,6 +203,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   }
 
   void _onTapContentItem(SettingsProfileContent contentItem) {
+    Analytics().logSelect(target: contentItem.toString(), source: widget.runtimeType.toString());
     _selectedContent = _lastSelectedContent = contentItem;
     _changeSettingsContentValuesVisibility();
   }
@@ -164,7 +218,7 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
   Widget get _contentWidget {
     switch (_selectedContent) {
       case SettingsProfileContent.profile:
-        return SettingsPersonalInfoContentWidget();
+        return SettingsPersonalInfoContentWidget(parentRouteName: SettingsProfileContentPanel.routeName,);
       case SettingsProfileContent.who_are_you:
         return SettingsRolesContentWidget();
       case SettingsProfileContent.privacy:
@@ -172,6 +226,11 @@ class _SettingsProfileContentPanelState extends State<SettingsProfileContentPane
       default:
         return Container();
     }
+  }
+
+  void _onTapClose() {
+    Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
+    Navigator.of(context).pop();
   }
 
   // Utilities

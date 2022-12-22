@@ -8,6 +8,7 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
@@ -132,7 +133,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
   Widget _buildContent() {
     if (Connectivity().isOffline) {
       return HomeMessageCard(
-        title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"),
+        title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
         message: Localization().getStringEx("widget.home.laundry.text.offline", "Laundries are not available while offline."),
       );
     }
@@ -187,7 +188,7 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.laundry.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.laundry.button.all.hint', 'Tap to view all laundries'),
@@ -218,7 +219,8 @@ class _HomeLaundryWidgetState extends State<HomeLaundryWidget> implements Notifi
           setState(() {
             _laundrySchool = laundrySchool;
             _pageViewKey = UniqueKey();
-            _pageController = null;
+            // _pageController = null;
+            _pageController?.jumpToPage(0);
             _contentKeys.clear();
           });
         }
@@ -260,7 +262,10 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> implements Notificati
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+    ]);
     super.initState();
   }
 
@@ -275,7 +280,10 @@ class _LaundryRoomCardState extends State<LaundryRoomCard> implements Notificati
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {});
+      setStateIfMounted(() {});
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
     }
   }
 

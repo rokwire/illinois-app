@@ -22,18 +22,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Favorite.dart';
+import 'package:illinois/model/Explore.dart';
+import 'package:illinois/model/MTD.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/service/Appointments.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SmallRoundedButton.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
-import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/News.dart';
 import 'package:rokwire_plugin/service/assets.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:illinois/service/Dinings.dart';
-import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -53,7 +58,7 @@ import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:notification_permissions/notification_permissions.dart';
+import 'package:firebase_messaging/firebase_messaging.dart' as firebase;
 
 class SavedPanel extends StatefulWidget {
 
@@ -63,7 +68,8 @@ class SavedPanel extends StatefulWidget {
     Game.favoriteKeyName,
     News.favoriteKeyName,
     LaundryRoom.favoriteKeyName,
-    InboxMessage.favoriteKeyName,
+    MTDStop.favoriteKeyName,
+    ExplorePOI.favoriteKeyName,
     GuideFavorite.favoriteKeyName,
   ];
 
@@ -87,6 +93,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
+      FlexUI.notifyChanged,
       Assets.notifyChanged,
       Guide.notifyChanged,
     ]);
@@ -113,6 +120,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
     else if (name == Auth2.notifyLoginChanged) {
       _refreshFavorites(showProgress: false);
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _requestPermissionsStatus();
+      setStateIfMounted(() { });
     }
     else if (name == Assets.notifyChanged) {
       _refreshFavorites(favoriteCategories: {Dining.favoriteKeyName}, showProgress: false);
@@ -167,7 +178,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return Padding(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), child:
       Column(children: <Widget>[
         Expanded(child: Container(), flex: 1),
-        Text(Localization().getStringEx("app.offline.message.title", "You appear to be offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
+        Text(Localization().getStringEx("common.message.offline", "You appear to be offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 20, color: Styles().colors?.fillColorPrimary),),
         Container(height:8),
         Text(Localization().getStringEx("panel.saved.message.offline", "Saved Items are not available while offline"), style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
         Expanded(child: Container(), flex: 3),
@@ -251,12 +262,12 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     ) : Container();
   }
 
-  Widget _buildNotificationPermissionPrompt(BuildContext context, PermissionStatus permissionStatus) {
+  Widget _buildNotificationPermissionPrompt(BuildContext context, firebase.AuthorizationStatus permissionStatus) {
     String? message;
-    if (permissionStatus == PermissionStatus.granted) {
+    if (permissionStatus == firebase.AuthorizationStatus.authorized) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_granted', 'You already have granted access to this app.');
     }
-    else if (permissionStatus == PermissionStatus.denied) {
+    else if (permissionStatus == firebase.AuthorizationStatus.denied) {
       message = Localization().getStringEx('panel.onboarding.notifications.label.access_denied', 'You already have denied access to this app.');
     }
     return Dialog(child:
@@ -326,8 +337,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case Game.favoriteKeyName: return _loadFavoriteGames;
       case News.favoriteKeyName: return _loadFavoriteNews;
       case LaundryRoom.favoriteKeyName: return _laundryAvailable ? _loadFavoriteLaundries : _loadNOP;
-      case InboxMessage.favoriteKeyName: return _loadFavoriteNotifications;
+      case MTDStop.favoriteKeyName: return _loadFavoriteMTDStops;
+      case ExplorePOI.favoriteKeyName: return _loadFavoriteMTDDestinations;
       case GuideFavorite.favoriteKeyName: return _loadFavoriteGuideItems;
+      case Appointment.favoriteKeyName: return _loadFavoriteAppointments;
     }
     return _loadNOP;
   }
@@ -346,11 +359,14 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   Future<List<Favorite>?> _loadFavoriteNews(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Sports().loadNews(null, 0), favoriteIds) : null;
 
+  Future<List<Favorite>?> _loadFavoriteMTDStops(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? ListUtils.reversed(MTD().stopsByIds(favoriteIds)) : null;
+
+  Future<List<Favorite>?> _loadFavoriteMTDDestinations(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? ListUtils.reversed(ExplorePOI.listFromString(favoriteIds)) : null;
+
   Future<List<Favorite>?> _loadFavoriteLaundries(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList((await Laundries().loadSchoolRooms())?.rooms, favoriteIds) : null;
-
-  Future<List<Favorite>?> _loadFavoriteNotifications(LinkedHashSet<String>? favoriteIds) async =>
-    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Inbox().loadMessages(messageIds: favoriteIds), favoriteIds) : null;
 
   Future<List<Favorite>?> _loadFavoriteGuideItems(LinkedHashSet<String>? favoriteIds) async {
     List<Favorite>? guideItems;
@@ -378,6 +394,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
     return guideItems;
   }
+
+  Future<List<Favorite>?> _loadFavoriteAppointments(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Appointments().loadAppointments(onlyUpcoming: true), favoriteIds) : null;
 
   List<Favorite>? _buildFavoritesList(List<Favorite>? sourceList, LinkedHashSet<String>? favoriteIds) {
     if ((sourceList != null) && (favoriteIds != null)) {
@@ -417,8 +436,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case Game.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.athletics', 'My Athletics Events');
       case News.favoriteKeyName:          return Localization().getStringEx('panel.saved.label.news', 'My Athletics News');
       case LaundryRoom.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.laundry', 'My Laundry');
+      case MTDStop.favoriteKeyName:       return Localization().getStringEx('panel.saved.label.mtd_stops', 'My MTD Stops');
+      case ExplorePOI.favoriteKeyName:    return Localization().getStringEx('panel.saved.label.mtd_destinations', 'My MTD Destinations');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
-      case InboxMessage.favoriteKeyName:  return Localization().getStringEx('panel.saved.label.inbox', 'My Notifications');
+      case Appointment.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.appointments', 'MyMcKinley Appointments');
     }
     return null;
   }
@@ -430,8 +451,10 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case Game.favoriteKeyName:          return 'images/icon-calendar.png';
       case News.favoriteKeyName:          return 'images/icon-news.png';
       case LaundryRoom.favoriteKeyName:   return 'images/icon-news.png';
+      case MTDStop.favoriteKeyName:       return 'images/icon-location.png';
+      case ExplorePOI.favoriteKeyName:    return 'images/icon-location.png';
       case GuideFavorite.favoriteKeyName: return 'images/icon-news.png';
-      case InboxMessage.favoriteKeyName:  return 'images/icon-news.png';
+      case Appointment.favoriteKeyName:   return 'images/campus-tools.png';
     }
     return null;
   }
@@ -444,17 +467,18 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return (favoritesCount == 0);
   }
 
-  void _requestPermissionsStatus(){
-    if (Platform.isIOS && Auth2().privacyMatch(4)) {
-
-      NotificationPermissions.getNotificationPermissionStatus().then((PermissionStatus status) {
-        if ((status == PermissionStatus.unknown) && mounted) {
-          setState(() {
+  void _requestPermissionsStatus() {
+    if (FlexUI().isNotificationsAvailable) {
+      firebase.FirebaseMessaging.instance.getNotificationSettings().then((settings) {
+        firebase.AuthorizationStatus status = settings.authorizationStatus;
+        // There is not "notDetermined" status for android. Threat "denied" in Android like "notDetermined" in iOS
+        if ((Platform.isAndroid && (status == firebase.AuthorizationStatus.denied)) ||
+            (Platform.isIOS && (status == firebase.AuthorizationStatus.notDetermined))) {
+          setStateIfMounted(() {
             _showNotificationPermissionPrompt = true;
           });
         }
       });
-
     }
   }
   // Handlers
@@ -488,16 +512,20 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
   }
 
   void _requestAuthorization() async {
-    PermissionStatus permissionStatus = await NotificationPermissions.getNotificationPermissionStatus();
-    if (permissionStatus != PermissionStatus.unknown) {
-      showDialog(context: context, builder: (context) => _buildNotificationPermissionPrompt(context, permissionStatus));
-    }
-    else {
-      permissionStatus = await NotificationPermissions.requestNotificationPermissions();
-      if (permissionStatus == PermissionStatus.granted) {
+    firebase.FirebaseMessaging messagingInstance = firebase.FirebaseMessaging.instance;
+    firebase.NotificationSettings settings = await messagingInstance.getNotificationSettings();
+    firebase.AuthorizationStatus authorizationStatus = settings.authorizationStatus;
+    // There is not "notDetermined" status for android. Threat "denied" in Android like "notDetermined" in iOS
+    if ((Platform.isAndroid && (authorizationStatus != firebase.AuthorizationStatus.denied)) ||
+        (Platform.isIOS && (authorizationStatus != firebase.AuthorizationStatus.notDetermined))) {
+      showDialog(context: context, builder: (context) => _buildNotificationPermissionPrompt(context, authorizationStatus));
+    } else {
+      firebase.NotificationSettings requestSettings = await messagingInstance.requestPermission(
+          alert: true, announcement: false, badge: true, carPlay: false, criticalAlert: false, provisional: false, sound: true);
+      if (requestSettings.authorizationStatus == firebase.AuthorizationStatus.authorized) {
         Analytics().updateNotificationServices();
       }
-      setState(() {
+      setStateIfMounted(() {
         _showNotificationPermissionPrompt = false;
       });
     }
@@ -519,9 +547,8 @@ class _SavedItemsList extends StatefulWidget {
   final String slantImageResource;
   final Color? slantColor;
 
-  _SavedItemsList(
-      {this.items, this.limit = 3, this.headingTitle, this.headingIconResource, this.slantImageResource = 'images/slant-down-right-blue.png',
-        this.slantColor,});
+  // ignore: unused_element
+  _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconResource, this.slantImageResource = 'images/slant-down-right-blue.png', this.slantColor});
 
   _SavedItemsListState createState() => _SavedItemsListState();
 }
@@ -665,6 +692,7 @@ class _SavedItem extends StatelessWidget {
     Analytics().logSelect(target: favorite.favoriteTitle);
     favorite.favoriteLaunchDetail(context);
   }
+
   void _onTapCompositeEvent(BuildContext context) {
     Analytics().logSelect(target: favorite.favoriteTitle);
     if (_favoriteEvent?.isComposite ?? false) {

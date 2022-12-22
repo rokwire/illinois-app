@@ -76,11 +76,7 @@ class _SettingsFoodFiltersContentWidgetState extends State<SettingsFoodFiltersCo
                               child: Text(
                                 onlyShow,
                                 textAlign: TextAlign.left,
-                                style: TextStyle(
-                                    fontFamily: Styles().fontFamilies!.bold,
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    letterSpacing: 1.0),
+                                style: Styles().textStyles?.getTextStyle("panel.settings.food_filter.title")
                                 ),
                               )
                             ],
@@ -109,11 +105,7 @@ class _SettingsFoodFiltersContentWidgetState extends State<SettingsFoodFiltersCo
                             child: Text(
                               Localization().getStringEx("panel.food_filters.label.exclude_ingredients.title", "EXCLUDE FOODS WITH INGREDIENTS"),
                               textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  fontFamily: Styles().fontFamilies!.bold,
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  letterSpacing: 1.0),
+                              style: Styles().textStyles?.getTextStyle("panel.settings.food_filter.title")
                               ),
                               )
                             ],

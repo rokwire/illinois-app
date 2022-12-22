@@ -19,17 +19,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
+import 'package:illinois/model/Video.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/network.dart';
 import 'package:rokwire_plugin/service/styles.dart';
-import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 
 class SettingsVideoTutorialPanel extends StatefulWidget {
-  final Map<String, dynamic> videoTutorial;
+  final Video videoTutorial;
 
   SettingsVideoTutorialPanel({required this.videoTutorial});
 
@@ -60,7 +62,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
   }
 
   void _initVideoPlayer() {
-    String? tutorialUrl = widget.videoTutorial['video_url'];
+    String? tutorialUrl = widget.videoTutorial.videoUrl;
     if (StringUtils.isNotEmpty(tutorialUrl)) {
       _controller = VideoPlayerController.network(tutorialUrl!, closedCaptionFile: _loadClosedCaptions());
       _controller!.addListener(_checkVideoStateChanged);
@@ -70,19 +72,30 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
         _showCc(true);
         _startCcHidingTimer();
         if (mounted) {
-          _controller!.play(); // Automatically play video after initialization
+          _playVideo();// Automatically play video after initialization
         }
       });
     }
   }
 
   void _disposeVideoPlayer() {
+    _logAnalyticsVideoEvent(event: Analytics.LogAttributeVideoEventStopped);
     _controller?.dispose();
+  }
+
+  void _playVideo() {
+    _logAnalyticsVideoEvent(event: Analytics.LogAttributeVideoEventStarted);
+    _controller!.play();
+  }
+
+  void _pauseVideo() {
+    _logAnalyticsVideoEvent(event: Analytics.LogAttributeVideoEventPaused);
+    _controller!.pause();
   }
 
   Future<ClosedCaptionFile> _loadClosedCaptions() async {
     String? fileContents;
-    String? closedCaptionsUrl = widget.videoTutorial['cc_url'];
+    String? closedCaptionsUrl = widget.videoTutorial.ccUrl;
     if (StringUtils.isNotEmpty(closedCaptionsUrl)) {
       Response? response = await Network().get(closedCaptionsUrl);
       int? responseCode = response?.statusCode;
@@ -113,7 +126,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
     return Scaffold(
         backgroundColor: Styles().colors!.blackTransparent06,
         appBar: HeaderBar(
-            title: StringUtils.ensureNotEmpty(widget.videoTutorial['title'],
+            title: StringUtils.ensureNotEmpty(widget.videoTutorial.title,
                 defaultValue: Localization().getStringEx("panel.settings.video_tutorial.header.title", "Video Tutorial"))),
         body: Center(child: _buildVideoContent()));
   }
@@ -153,9 +166,9 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
                                                     padding: const EdgeInsets.symmetric(horizontal: 2.0),
                                                     child: Text(StringUtils.ensureNotEmpty(_currentCaptionText),
                                                         textAlign: TextAlign.center,
-                                                        style: TextStyle(fontSize: 16, color: Styles().colors!.white)))))))
+                                                        style:  Styles().textStyles?.getTextStyle("panel.settings.video_tutorial.caption.detail")))))))
                               ]),
-                              _buildPlayButton()
+                              Visibility(visible: (_isPlayerInitialized && !_isPlaying), child: VideoPlayButton())
                             ]))),
                     _buildCcButton()
                   ]));
@@ -166,39 +179,8 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
     } else {
       return Center(
           child: Text(Localization().getStringEx('panel.settings.video_tutorial.video.missing.msg', 'Missing video'),
-              style: TextStyle(color: Styles().colors!.white, fontSize: 20, fontFamily: Styles().fontFamilies!.bold)));
+              style: Styles().textStyles?.getTextStyle("panel.settings.video_tutorial.msg")));
     }
-  }
-
-  Widget _buildPlayButton() {
-    final double buttonWidth = 80;
-    final double buttonHeight = 50;
-    bool buttonVisible = _isPlayerInitialized && !_isPlaying;
-    return Visibility(
-        visible: buttonVisible,
-        child: Container(
-            decoration: BoxDecoration(color: Styles().colors!.iconColor, borderRadius: BorderRadius.all(Radius.circular(10))),
-            width: buttonWidth,
-            height: buttonHeight,
-            child: Center(
-                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Container(
-                  width: (buttonHeight / 2),
-                  child: CustomPaint(
-                      painter: TrianglePainter(
-                          painterColor: Styles().colors!.white,
-                          horzDir: TriangleHorzDirection.rightToLeft,
-                          vertDir: TriangleVertDirection.topToBottom),
-                      child: Container(height: (buttonHeight / 4)))),
-              Container(
-                  width: (buttonHeight / 2),
-                  child: CustomPaint(
-                      painter: TrianglePainter(
-                          painterColor: Styles().colors!.white,
-                          horzDir: TriangleHorzDirection.rightToLeft,
-                          vertDir: TriangleVertDirection.bottomToTop),
-                      child: Container(height: (buttonHeight / 4))))
-            ]))));
   }
 
   Widget _buildCcButton() {
@@ -219,10 +201,7 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
                             borderRadius: BorderRadius.all(Radius.circular(6))),
                         child: Center(
                             child: Text('CC',
-                                style: TextStyle(
-                                    color: (_ccEnabled ? Styles().colors!.white! : Styles().colors!.disabledTextColorTwo!),
-                                    fontSize: 18,
-                                    fontFamily: Styles().fontFamilies!.bold))))))));
+                                style: Styles().textStyles?.getTextStyle("panel.settings.video_tutorial.button"))))))));
   }
 
   void _onTapPlayPause() {
@@ -230,10 +209,10 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
       return;
     }
     if (_isPlaying) {
-      _controller?.pause();
+      _pauseVideo();
       _showCc(true);
     } else {
-      _controller?.play();
+      _playVideo();
       _startCcHidingTimer();
     }
     setState(() {});
@@ -271,6 +250,15 @@ class _SettingsVideoTutorialPanelState extends State<SettingsVideoTutorialPanel>
         }
       }
     }
+  }
+
+  void _logAnalyticsVideoEvent({required String event}) {
+    Analytics().logVideo(
+        videoId: widget.videoTutorial.id,
+        videoTitle: widget.videoTutorial.title,
+        videoEvent: event,
+        duration: _controller?.value.duration.inSeconds,
+        position: _controller?.value.position.inSeconds);
   }
 
   bool get _isPlaying {

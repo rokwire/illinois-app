@@ -34,9 +34,9 @@ class Config extends rokwire.Config {
   // Singletone Factory
 
   @protected
-  Config.internal() : super.internal();
+  Config.internal({rokwire.ConfigEnvironment? defaultEnvironment}) : super.internal(defaultEnvironment: defaultEnvironment);
 
-  factory Config() => ((rokwire.Config.instance is Config) ? (rokwire.Config.instance as Config) : (rokwire.Config.instance = Config.internal()));
+  factory Config({rokwire.ConfigEnvironment? defaultEnvironment}) => ((rokwire.Config.instance is Config) ? (rokwire.Config.instance as Config) : (rokwire.Config.instance = Config.internal(defaultEnvironment: defaultEnvironment)));
 
   // Getters: compound entries
 
@@ -46,6 +46,7 @@ class Config extends rokwire.Config {
   Map<String, dynamic> get secretIlliniCash => JsonUtils.mapValue(secretKeys['illini_cash']) ?? {};
   Map<String, dynamic> get secretParkhub => JsonUtils.mapValue(secretKeys['parkhub']) ?? {};
   Map<String, dynamic> get secretPadaapi => JsonUtils.mapValue(secretKeys['padaapi']) ?? {};
+  Map<String, dynamic> get secretMTD => JsonUtils.mapValue(secretKeys['mtd']) ?? {};
   Map<String, dynamic> get secretTwitter => JsonUtils.mapValue(secretKeys['twitter']) ?? {};
   
   Map<String, dynamic> get twitter => JsonUtils.mapValue(content['twitter']) ?? {};
@@ -71,6 +72,7 @@ class Config extends rokwire.Config {
   String? get illiniCashSecretKey    => JsonUtils.stringValue(secretIlliniCash['secret_key']);
 
   String? get padaapiApiKey          => JsonUtils.stringValue(secretPadaapi['api_key']);
+  String? get mtdApiKey              => JsonUtils.stringValue(secretMTD['api_key']);
 
   String? get twitterToken           => JsonUtils.stringValue(secretTwitter['token']);
   String? get twitterTokenType       => JsonUtils.stringValue(secretTwitter['token_type']);
@@ -96,6 +98,7 @@ class Config extends rokwire.Config {
   String? get crisisHelpUrl          => JsonUtils.stringValue(otherUniversityServices['crisis_help_url']);
   String? get privacyPolicyUrl       => JsonUtils.stringValue(otherUniversityServices['privacy_policy_url']);
   String? get padaapiUrl             => JsonUtils.stringValue(otherUniversityServices['padaapi_url']);
+  String? get mtdUrl                 => JsonUtils.stringValue(otherUniversityServices['mtd_url']);
   String? get canvasZoomMeetingUrl   => JsonUtils.stringValue(otherUniversityServices['canvas_zoom_meeting_url']);
   String? get dateCatalogUrl         => JsonUtils.stringValue(otherUniversityServices['date_catalog_url']);
   String? get faqsUrl                => JsonUtils.stringValue(otherUniversityServices['faqs_url']);
@@ -114,7 +117,8 @@ class Config extends rokwire.Config {
   String? get sportsServiceUrl       => JsonUtils.stringValue(platformBuildingBlocks['sports_service_url']);
   String? get transportationUrl      => JsonUtils.stringValue(platformBuildingBlocks["transportation_url"]);
   String? get wellnessUrl            => JsonUtils.stringValue(platformBuildingBlocks["wellness_url"]);
-  
+  String? get appointmentsUrl        => JsonUtils.stringValue(platformBuildingBlocks["appointments_url"]);
+
   // Getters: Third Party Services
   String? get instagramHostUrl       => JsonUtils.stringValue(thirdPartyServices['instagram_host_url']);
   String? get twitterHostUrl         => JsonUtils.stringValue(thirdPartyServices['twitter_host_url']);
@@ -161,6 +165,12 @@ class Config extends rokwire.Config {
   String? get canvasCourseDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['course_format']);
   String? get canvasAssignmentDeepLinkFormat => JsonUtils.stringValue(canvasDeepLink['assignment_format']);
 
+  // Getters: McKinley
+
+  String? get saferMcKinleyUrl       => JsonUtils.stringValue(saferMcKinley['url']);
+  String? get saferMcKinleyUrlLabel  => JsonUtils.stringValue(saferMcKinley['url_label']);
+  String? get saferMcKinleyPhone     => JsonUtils.stringValue(saferMcKinley['phone']);
+
   // Getters: settings
   int  get homeCampusGuideCount      => JsonUtils.intValue(settings['homeCampusGuideCount']) ?? 3;
   int  get homeCampusHighlightsCount => JsonUtils.intValue(settings['homeCampusHighlightsCount']) ?? 3;
@@ -172,18 +182,23 @@ class Config extends rokwire.Config {
   int  get homeRecentItemsCount      => JsonUtils.intValue(settings['homeRecentItemsCount']) ?? 3;
   int  get homeUpcomingEventsCount   => JsonUtils.intValue(settings['homeUpcomingEventsCount']) ?? 5;
   int  get homeWellnessResourcesCount=> JsonUtils.intValue(settings['homeWellnessResourcesCount']) ?? 5;
-  int  get recentItemsCount          => JsonUtils.intValue(settings['recentItemsCount']) ?? 32;
   int  get homeRecentNotificationsCount => JsonUtils.intValue(settings['homeRecentNotificationsCount']) ?? 5;
   int  get homeRecentPollsCount      => JsonUtils.intValue(settings['homeRecentPollsCount']) ?? 3;
+  int  get recentItemsCount          => JsonUtils.intValue(settings['recentItemsCount']) ?? 32;
   
   int  get appReviewSessionsCount    => JsonUtils.intValue(settings['appReviewSessionsCount']) ?? 24;
   int  get appReviewSessionDuration  => JsonUtils.intValue(settings['appReviewSessionDuration']) ?? 120;
   int  get appReviewActivityTimeout  => JsonUtils.intValue(settings['appReviewActivityTimeout']) ?? 3;
   int  get appReviewRequestTimeout   => JsonUtils.intValue(settings['appReviewRequestTimeout']) ?? 21;
-  
+
+  String? get timezoneLocation       => JsonUtils.stringValue(settings['timezoneLocation']);
+
   String get appPrivacyVersion       => JsonUtils.stringValue(settings['privacyVersion']) ?? (JsonUtils.stringValue(content['mobileAppVersion']) ?? '0.0.0');
   bool get allowGroupsAuthmanSync    => JsonUtils.boolValue(settings['allowGroupsAuthmanSync']) ?? false;
   bool get showGroupPostReactions    => JsonUtils.boolValue(settings['showGroupPostReactions']) ?? false;
+
+  String? get healthScreenerSurveyID => JsonUtils.stringValue(settings['health_screener_survey_id']);
+  String? get bessiSurveyID          => JsonUtils.stringValue(settings['bessi_survey_id']);
 
   @override
   int get refreshTimeout=> kReleaseMode ? super.refreshTimeout : 0;

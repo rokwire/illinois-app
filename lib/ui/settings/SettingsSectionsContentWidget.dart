@@ -145,8 +145,8 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     contentList.add(Padding(
         padding: EdgeInsets.only(bottom: 2),
         child: Text(
-          Localization().getStringEx("panel.settings.home.connect.not_logged_in.title", "Sign in to Illinois"),
-          style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
+          Localization().getStringEx("panel.settings.home.connect.not_logged_in.title", "Sign in to {{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+          style: Styles().textStyles?.getTextStyle("widget.title.large"),
         ),
       ),
     );
@@ -158,19 +158,19 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             padding: EdgeInsets.symmetric(vertical: 10),
             child: new RichText(
               text: new TextSpan(
-                style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                style:Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                 children: <TextSpan>[
                   new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_1", "Are you a ")),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_2", "university student"),
-                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+                      style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
                   new TextSpan(text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_3", " or ")),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_4", "employee"),
-                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+                      style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.netid.description.part_5",
-                          "? Sign in with your NetID to see Illinois information specific to you, like your Illini Cash and meal plan."))
+                          "? Sign in with your NetID to see {{app_title}} information specific to you, like your Illini Cash and meal plan.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')))
                 ],
               ),
             )),);
@@ -187,11 +187,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
             padding: EdgeInsets.symmetric(vertical: 10),
             child: new RichText(
               text: new TextSpan(
-                style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                 children: <TextSpan>[
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_1", "Don't have a NetID? "),
-                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold)),
+                      style:Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
                   new TextSpan(
                       text: Localization().getStringEx("panel.settings.home.connect.not_logged_in.phone_or_email.description.part_2",
                           "Sign in with your mobile phone number or email address to save your preferences and have the same experience on more than one device.")),
@@ -287,9 +287,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               Text(Localization().getStringEx("panel.settings.home.net_id.message", "Signed in with your NetID"),
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16)),
+                  style: Styles().textStyles?.getTextStyle("widget.message.regular.extra_fat")),
               Padding(padding: EdgeInsets.only(top: 3), child: Text(Auth2().fullName ?? "",
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20))),
+                  style: Styles().textStyles?.getTextStyle("widget.detail.large.fat"))),
             ]));
       }
       else if (code == 'disconnect') {
@@ -320,17 +320,17 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Text(Localization().getStringEx("panel.settings.home.phone_ver.message", "Signed in with your Phone"),
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16)),
+              style: Styles().textStyles?.getTextStyle("widget.message.regular.extra_fat")),
           Visibility(
               visible: hasFullName,
               child: Padding(
                   padding: EdgeInsets.only(top: 3),
                   child: Text(fullName,
-                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20)))),
+                      style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")))),
           Padding(
               padding: EdgeInsets.only(top: 3),
               child: Text(Auth2().account?.authType?.phone ?? "",
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20)))
+                  style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")))
         ]));
       }
       else if (code == 'verify') {
@@ -367,17 +367,17 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       if (code == 'info') {
         contentList.add(Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Text(Localization().getStringEx("panel.settings.home.email_login.message", "Signed in with your Email"),
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16)),
+              style: Styles().textStyles?.getTextStyle("widget.message.regular.extra_fat")),
           Visibility(
               visible: hasFullName,
               child: Padding(
                   padding: EdgeInsets.only(top: 3),
                   child: Text(fullName,
-                      style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20)))),
+                      style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")))),
           Padding(
               padding: EdgeInsets.only(top: 3),
               child: Text(Auth2().account?.authType?.email ?? "",
-                  style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 20)))
+                  style:  Styles().textStyles?.getTextStyle("widget.detail.large.fat")))
         ]));
       }
       else if (code == 'login') {
@@ -414,6 +414,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
   }
 
   Widget _buildLogoutDialog(BuildContext context) {
+    String promptEn = 'Are you sure you want to sign out?';
     return Dialog(
       child: Padding(
         padding: EdgeInsets.all(18),
@@ -421,15 +422,15 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              Localization().getStringEx("panel.settings.home.logout.title", "Illinois"),
-              style: TextStyle(fontSize: 24, color: Colors.black),
+              Localization().getStringEx("panel.settings.home.logout.title", "{{app_title}}").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+              style: Styles().textStyles?.getTextStyle("widget.message.dark.extra_large"),
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 26),
               child: Text(
-                Localization().getStringEx("panel.settings.home.logout.message", "Are you sure you want to sign out?"),
+                Localization().getStringEx("panel.settings.home.logout.message", promptEn),
                 textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
+                style: Styles().textStyles?.getTextStyle("widget.message.dark.medium")
               ),
             ),
             Row(
@@ -437,14 +438,14 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
               children: <Widget>[
                 TextButton(
                     onPressed: () {
-                      Analytics().logAlert(text: "Sign out", selection: "Yes");
+                      Analytics().logAlert(text: promptEn, selection: "Yes");
                       Navigator.pop(context);
                       Auth2().logout();
                     },
                     child: Text(Localization().getStringEx("panel.settings.home.logout.button.yes", "Yes"))),
                 TextButton(
                     onPressed: () {
-                      Analytics().logAlert(text: "Sign out", selection: "No");
+                      Analytics().logAlert(text: promptEn, selection: "No");
                       Navigator.pop(context);
                     },
                     child: Text(Localization().getStringEx("panel.settings.home.logout.no", "No")))
@@ -514,8 +515,8 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(Localization().getStringEx("panel.settings.home.linked.net_id.header", "UIN"),
-                            style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
-                        Text(linked.identifier!, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
+                            style: Styles().textStyles?.getTextStyle("widget.item.small.thin")),
+                        Text(linked.identifier!, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
                       ],
                     )
                 )));
@@ -548,11 +549,10 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(Localization().getStringEx("panel.settings.home.linked.phone.header", "Phone"),
-                            style: TextStyle(
-                                color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
+                            style: Styles().textStyles?.getTextStyle("widget.item.small.thin")),
                         Text(linked.identifier!,
                             style:
-                                TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
+                            Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
                       ],
                     ),
                     Expanded(child: Container()),
@@ -588,11 +588,10 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(Localization().getStringEx("panel.settings.home.linked.email.header", "Email"),
-                            style: TextStyle(
-                                color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 14)),
+                            style: Styles().textStyles?.getTextStyle("widget.item.small.thin")),
                         Text(linked.identifier!,
                             style:
-                                TextStyle(color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold, fontSize: 16)),
+                            Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
                       ]
                     ),
                     Expanded(child: Container()),
@@ -677,7 +676,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
         if (result == true) {
           Auth2().authenticateWithOidc(link: true).then((Auth2OidcAuthenticateResult? result) {
             if (result == Auth2OidcAuthenticateResult.failed) {
-              AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to add Illinois NetID."));
+              AppAlert.showDialogResult(context, Localization().getStringEx("panel.settings.netid.link.failed", "Failed to add {{app_title}} NetID.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
             } else if (result == Auth2OidcAuthenticateResult.failedAccountExist) {
               _showNetIDAccountExistsDialog();
             }
@@ -690,12 +689,12 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     AppAlert.showCustomDialog(context: context,
       contentWidget: Column(mainAxisSize: MainAxisSize.min, children: [
         Text(Localization().getStringEx("panel.settings.netid.link.failed.exists", "An account is already using this NetID."),
-          style: TextStyle(color: Colors.red, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+          style: Styles().textStyles?.getTextStyle("panel.settings.error.text")),
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: Text(Localization().getStringEx("panel.settings.netid.link.failed.exists.details",
               "1. You will need to sign in to the other account with this NetID.\n2. Go to \"Settings\" and press \"Forget all of my information\".\nYou can now use this as an alternate login."),
-            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),),
+            style: Styles().textStyles?.getTextStyle("widget.message.small")),
         ),
       ]),
       actions: [
@@ -773,6 +772,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       });
       return completer.future;
     }
+    else {
+      return null;
+    }
   }
 
   void _onTapAlternateEmail(Auth2Type linked) {
@@ -799,11 +801,12 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       Padding(padding: EdgeInsets.only(top: 12), child:
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Text(Localization().getStringEx("panel.settings.home.feedback.title", "App Feedback"), style:
-            TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+            Styles().textStyles?.getTextStyle("widget.title.large")),
           Container(height: 5),
           Text(Localization().getStringEx("panel.settings.home.feedback.description",
-            "Enjoying the app? Missing something? The Illinois app team needs your ideas and input. Thank you!"),
-              style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground, fontSize: 16))
+            "Enjoying the app? Missing something? The {{app_title}} app team needs your ideas and input. Thank you!").
+              replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"))
         ])
       ),
       Padding(padding: EdgeInsets.only(top: 12), child:
@@ -877,7 +880,10 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   void _onTapHtmlLink(String? url) {
     if (StringUtils.isNotEmpty(url)) {
-      launch(url!);
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 
@@ -900,11 +906,11 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   // Version Info
   Widget _buildVersionInfo() {
-    String versionLabel = Localization().getStringEx('panel.settings.home.version.info.label', 'Illinois App Version:') + _versionName;
+    String versionLabel = Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) + _versionName;
     return Container(
         alignment: Alignment.center,
         child: Text(versionLabel,
-            style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)));
+            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")));
   }
 
   void _loadVersionInfo() async {
@@ -922,7 +928,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
     return Container(
         alignment: Alignment.center,
         child: Text(copyrightLabel, textAlign: TextAlign.center,
-            style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16)));
+            style:  Styles().textStyles?.getTextStyle("widget.item.regular.thin")));
   }
 
   // Utilities
@@ -963,6 +969,7 @@ class _OptionsSection extends StatelessWidget {
       {Key? key,
       this.widgets,
       this.title,
+      // ignore: unused_element
       this.description,
       this.showBox,
       this.titlePadding = const EdgeInsets.symmetric(horizontal: 8, vertical: 12)})
@@ -979,7 +986,7 @@ class _OptionsSection extends StatelessWidget {
               padding: titlePadding,
               child: Text(
                 (title != null) ? title! : '',
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20),
+                style:  Styles().textStyles?.getTextStyle("widget.title.large"),
               ),
             ),
           ),
@@ -989,7 +996,7 @@ class _OptionsSection extends StatelessWidget {
                   padding: EdgeInsets.only(left: 8, right: 8, bottom: 12),
                   child: Text(
                     description!,
-                    style: TextStyle(color: Styles().colors!.textBackground, fontFamily: Styles().fontFamilies!.regular, fontSize: 16),
+                    style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                   )),
           Stack(alignment: Alignment.topCenter, children: [
             Container(

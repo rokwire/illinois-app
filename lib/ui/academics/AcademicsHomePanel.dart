@@ -21,6 +21,7 @@ import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/academics/AcademicsEventsContentWidget.dart';
+import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/canvas/CanvasCoursesContentWidget.dart';
 import 'package:illinois/ui/gies/CheckListContentWidget.dart';
@@ -28,6 +29,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -36,8 +38,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class AcademicsHomePanel extends StatefulWidget {
   final AcademicsContent? content;
+  final bool rootTabDisplay;
 
-  AcademicsHomePanel({this.content});
+  AcademicsHomePanel({this.content, this.rootTabDisplay = false});
 
   @override
   _AcademicsHomePanelState createState() => _AcademicsHomePanelState();
@@ -76,30 +79,54 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     super.build(context);
 
     return Scaffold(
-        appBar: RootHeaderBar(title: Localization().getStringEx('panel.academics.header.title', 'Academics')),
-        body: Column(children: <Widget>[
-          Padding(padding: EdgeInsets.only(left: 16, top: 16, right: 16), child:
-            RibbonButton(
-              textColor: Styles().colors!.fillColorSecondary,
-              backgroundColor: Styles().colors!.white,
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-              rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-              label: _getContentLabel(_selectedContent),
-              onTap: _onTapRibbonButton
-            ),
-          ),
-          Expanded(child:
-            Stack(children: [
-              Padding(padding: EdgeInsets.only(top: 16, left: 16, right: 16,), child:
-                _contentWidget
-              ),
-              _buildContentValuesContainer()
-            ]),
-          )
-        ]),
-        backgroundColor: Styles().colors!.background
+        appBar: _headerBar,
+        body: _bodyWidget,
+        backgroundColor: Styles().colors!.background,
+        bottomNavigationBar: _navigationBar,
       );
+  }
+
+  PreferredSizeWidget get _headerBar {
+    String title = Localization().getStringEx('panel.academics.header.title', 'Academics');
+    if (widget.rootTabDisplay) {
+      return RootHeaderBar(title: title);
+    } else {
+      return HeaderBar(title: title);
+    }
+  }
+
+  Widget? get _navigationBar {
+    return widget.rootTabDisplay ? null : uiuc.TabBar();
+  }
+
+  Widget get _bodyWidget {
+    return Column(children: <Widget>[
+      Container(
+        color: _skillsSelfEvaluationSelected ? Styles().colors?.fillColorPrimaryVariant : Styles().colors?.background,
+        padding: EdgeInsets.only(left: 16, top: 16, right: 16), 
+        child: Semantics(
+          hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
+          container: true,
+          child: RibbonButton(
+            textColor: Styles().colors!.fillColorSecondary,
+            backgroundColor: Styles().colors!.white,
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+            rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+            label: _getContentLabel(_selectedContent),
+            onTap: _onTapRibbonButton
+          ),
+        ),
+      ),
+      Expanded(child:
+        Stack(children: [
+          Padding(padding: _skillsSelfEvaluationSelected ? EdgeInsets.zero : EdgeInsets.only(top: 16, left: 16, right: 16,), child:
+            _contentWidget
+          ),
+          _buildContentValuesContainer()
+        ]),
+      )
+    ]);
   }
 
   Widget _buildContentValuesContainer() {
@@ -206,6 +233,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
       return AcademicsContent.due_date_catalog;
     } else if (code == 'my_illini') {
       return AcademicsContent.my_illini;
+    } else if (code == 'skills_self_evaluation') {
+      return AcademicsContent.skills_self_evaluation;
     } else {
       return null;
     }
@@ -244,7 +273,10 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     } else if (StringUtils.isNotEmpty(Config().myIlliniUrl)) {
       // Please make this use an external browser
       // Ref: https://github.com/rokwire/illinois-app/issues/1110
-      launch(Config().myIlliniUrl!);
+      Uri? myIlliniUri = Uri.tryParse(Config().myIlliniUrl!);
+      if (myIlliniUri != null) {
+        launchUrl(myIlliniUri);
+      }
 
       //
       // Until webview_flutter get fixed for the dropdowns we will continue using it as a webview plugin,
@@ -267,7 +299,10 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   void _onTapDueDateCatalog() {
     Analytics().logSelect(target: "Due Date Catalog");
     if (StringUtils.isNotEmpty(Config().dateCatalogUrl)) {
-      launch(Config().dateCatalogUrl!);
+      Uri? uri = Uri.tryParse(Config().dateCatalogUrl!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 
@@ -279,7 +314,7 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
           _rawContentWidget
         ),
       );
-}
+  }
 
   Widget get _rawContentWidget {
     // There is no content for AcademicsContent.my_illini and AcademicsContent.due_date_catalog - it is a web url opened in an external browser
@@ -294,10 +329,14 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return CanvasCoursesContentWidget();
       case AcademicsContent.student_courses:
         return StudentCoursesContentWidget();
+      case AcademicsContent.skills_self_evaluation:
+        return SkillsSelfEvaluation();
       default:
         return Container();
     }
   }
+  
+  bool get _skillsSelfEvaluationSelected => _selectedContent == AcademicsContent.skills_self_evaluation;
 
   bool _isCheckListCompleted(String contentKey) {
     int stepsCount = CheckList(contentKey).progressSteps?.length ?? 0;
@@ -323,6 +362,8 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
         return Localization().getStringEx('panel.academics.section.due_date_catalog.label', 'Due Date Catalog');
       case AcademicsContent.my_illini:
         return Localization().getStringEx('panel.academics.section.my_illini.label', 'myIllini');
+      case AcademicsContent.skills_self_evaluation:
+        return Localization().getStringEx('panel.academics.section.skills_self_evaluation.label', 'Skills Self-Evaluation');
     }
   }
 
@@ -338,4 +379,4 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
   }
 }
 
-enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, student_courses, due_date_catalog, my_illini }
+enum AcademicsContent { events, gies_checklist, uiuc_checklist, canvas_courses, student_courses, due_date_catalog, my_illini, skills_self_evaluation }

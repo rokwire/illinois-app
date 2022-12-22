@@ -31,7 +31,7 @@ class Onboarding2TitleWidget extends StatelessWidget{
               Row(children: <Widget>[
                 Container(width: 32,),
                 Expanded(child:
-                  Text(title!, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 32, color: Styles().colors!.white, letterSpacing: 1),),
+                  Text(title!, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.onboarding2.heading.title"),),
                 ),
                 Container(width: 32,),
               ]),
@@ -115,7 +115,7 @@ class Onboarding2ToggleButton extends StatelessWidget{
                       children: <Widget>[
                         Expanded(child:
                         Text(_label!,
-                          style: TextStyle(color: Styles().colors!.textSurface, fontSize: 14, fontFamily: Styles().fontFamilies!.regular),
+                          style: Styles().textStyles?.getTextStyle("widget.button.description.small")
                         )
                         ),
                         Padding(padding: EdgeInsets.only(left: 7), child: _image),
@@ -141,8 +141,8 @@ class Onboarding2ToggleButton extends StatelessWidget{
 }
 
 class Onboarding2InfoDialog extends StatelessWidget{
-  static final TextStyle titleStyle = TextStyle(fontSize: 20.0, color: Styles().colors!.fillColorPrimary,fontFamily: Styles().fontFamilies!.bold);
-  static final TextStyle contentStyle = TextStyle(fontSize: 16.0, color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.regular);
+  static final TextStyle titleStyle = Styles().textStyles?.getTextStyle("widget.title.large.fat") ?? TextStyle(fontSize: 20.0, color: Styles().colors!.fillColorPrimary,fontFamily: Styles().fontFamilies!.bold);
+  static final TextStyle contentStyle = Styles().textStyles?.getTextStyle("widget.info.regular") ?? TextStyle(fontSize: 16.0, color: Styles().colors!.textSurface, fontFamily: Styles().fontFamilies!.regular);
 
   final Widget? content;
   final BuildContext? context;
@@ -265,20 +265,10 @@ class Onboarding2UnderlinedButton extends StatelessWidget{
           child: Padding(
               padding: padding,
               child: Container(
-                  decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1, ),)
-                  ),
                   padding: EdgeInsets.only(bottom: 2),
                   child: Text(
                     title!,
-                    style: TextStyle(
-                        fontFamily: fontFamily ?? Styles().fontFamilies!.medium,
-                        fontSize: fontSize,
-                        color: Styles().colors!.fillColorPrimary,
-                        decorationColor: Styles().colors!.fillColorSecondary,
-                        decorationThickness: 1,
-                        decorationStyle:
-                        TextDecorationStyle.solid),
+                    style: Styles().textStyles?.getTextStyle("widget.button.title.medium.underline")?.copyWith(fontSize: fontSize)
                   )))),
     );
   }

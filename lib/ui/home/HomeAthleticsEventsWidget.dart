@@ -130,7 +130,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
   Widget _buildContent() {
     if (Connectivity().isOffline) {
       return HomeMessageCard(
-        title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"),
+        title: Localization().getStringEx("common.message.offline", "You appear to be offline"),
         message: Localization().getStringEx("widget.home.athletics_events.text.offline", "Athletics Events are not available while offline"),
       );
     }
@@ -157,7 +157,7 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
       List<Widget> pages = <Widget>[];
       for (int index = 0; index < visibleCount; index++) {
         Game game = _games![index];
-        pages.add(Padding(key: _contentKeys[game.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 3), child:
+        pages.add(Padding(key: _contentKeys[game.id ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
           AthleticsCard(game: game, onTap: () => _onTapGame(game), showInterests: true, margin: EdgeInsets.zero,),),
         );
       }
@@ -178,14 +178,14 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
       );
     }
     else {
-      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8), child:
+      contentWidget = Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8), child:
         AthleticsCard(game: _games!.first, onTap: () => _onTapGame( _games!.first), showInterests: true, margin: EdgeInsets.zero)
       );
     }
     
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.athletics_events.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.athletics_events.button.all.hint', 'Tap to view all events'),
@@ -222,7 +222,8 @@ class _HomeAthleticsEventsWidgetState extends State<HomeAthliticsEventsWidget> i
           setState(() {
             _games = games;
             _pageViewKey = UniqueKey();
-            _pageController = null;
+            // _pageController = null;
+            _pageController?.jumpToPage(0);
             _contentKeys.clear();
           });
         }

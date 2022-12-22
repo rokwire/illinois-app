@@ -1,11 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:illinois/service/DeepLink.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
@@ -14,6 +18,7 @@ import 'package:illinois/service/Guide.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/guide/GuideEntryCard.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -22,8 +27,9 @@ import 'package:sprintf/sprintf.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
+  final String favoriteKey;
   final String? guideEntryId;
-  GuideDetailPanel({ this.guideEntryId });
+  GuideDetailPanel({ this.guideEntryId, this.favoriteKey = GuideFavorite.favoriteKeyName });
 
   @override
   _GuideDetailPanelState createState() => _GuideDetailPanelState();
@@ -52,9 +58,10 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
     NotificationService().subscribe(this, [
       Guide.notifyChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
     ]);
     _guideEntry = Guide().entryById(widget.guideEntryId);
-    _isFavorite = Auth2().isFavorite(GuideFavorite(id: widget.guideEntryId));
+    _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: widget.guideEntryId));
     
     RecentItems().addRecentItem(RecentItem.fromGuideItem(_guideEntry));
   }
@@ -70,14 +77,17 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
   @override
   void onNotification(String name, dynamic param) {
     if (name == Guide.notifyChanged) {
-      setState(() {
+      setStateIfMounted(() {
         _guideEntry = Guide().entryById(widget.guideEntryId);
       });
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {
-        _isFavorite = Auth2().isFavorite(GuideFavorite(id: widget.guideEntryId));
+      setStateIfMounted(() {
+        _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: widget.guideEntryId));
       });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted((){});
     }
   }
 
@@ -189,6 +199,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
           String? text = JsonUtils.stringValue(link['text']);
           String? icon = JsonUtils.stringValue(link['icon']);
           String? url = JsonUtils.stringValue(link['url']);
+          bool? useInternalBrowser = JsonUtils.boolValue(link['use_internal_browser']);
           Uri? uri = (url != null) ? Uri.tryParse(url) : null;
           bool hasUri = StringUtils.isNotEmpty(uri?.scheme);
 
@@ -196,16 +207,22 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
           Map<String, dynamic>? locationGps = (location != null) ? JsonUtils.mapValue(location['location']) : null;
           bool hasLocation = (locationGps != null) && (locationGps['latitude'] != null) && (locationGps['longitude'] != null);
 
-          if ((text != null) && (hasUri || hasLocation)) {
-
+          if (text != null) {
+            TextDecoration? linkTextDecoration;
+            Color? linkTextDecorationColor;
+            if (hasUri || hasLocation) {
+              linkTextDecoration = TextDecoration.underline;
+              linkTextDecorationColor = Styles().colors!.fillColorSecondary;
+            }
+            
             contentList.add(Semantics(button: true, child:
-              GestureDetector(onTap: () => hasLocation ? _onTapLocation(location) : (hasUri ? _onTapLink(url) : _nop()), child:
+              GestureDetector(onTap: () => hasLocation ? _onTapLocation(location) : (hasUri ? _onTapLink(url, useInternalBrowser: useInternalBrowser) : _nop()), child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     (icon != null) ? Padding(padding: EdgeInsets.only(top: 2), child: Image.network(icon, width: 20, height: 20, excludeFromSemantics: true,),) : Container(width: 24, height: 24),
                     Expanded(child:
                       Padding(padding: EdgeInsets.only(left: 8), child:
-                        Text(text, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.regular, decoration: TextDecoration.underline, decorationColor: Styles().colors!.fillColorSecondary))
+                        Text(text, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.regular, decoration: linkTextDecoration, decorationColor: linkTextDecorationColor))
                       ),
                     ),
                   ],)
@@ -245,7 +262,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
           Row(children: [
             Expanded(child:
               Column(children: [
-                Image.network(imageUrl, excludeFromSemantics: true,),
+                ModalImageHolder(child: Image.network(imageUrl, excludeFromSemantics: true,)),
               ]),
             ),
           ],)
@@ -450,7 +467,7 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
         if (guideEntry != null) {
           contentList.add(
             Padding(padding: EdgeInsets.only(bottom: 16), child:
-              GuideEntryCard(guideEntry)
+              GuideEntryCard(guideEntry, favoriteKey: widget.favoriteKey,)
           ),);
         }
       }
@@ -469,17 +486,24 @@ class _GuideDetailPanelState extends State<GuideDetailPanel> implements Notifica
   void _onTapFavorite() {
     String? title = Guide().entryTitle(_guideEntry, stripHtmlTags: true);
     Analytics().logSelect(target: "Favorite: $title");
-    Auth2().prefs?.toggleFavorite(GuideFavorite(id: Guide().entryId(_guideEntry)));
+    Auth2().prefs?.toggleFavorite(FavoriteItem(key:widget.favoriteKey, id: Guide().entryId(_guideEntry)));
   }
 
-  void _onTapLink(String? url) {
+  void _onTapLink(String? url, {bool? useInternalBrowser}) {
     Analytics().logSelect(target: 'Link: $url');
     if (StringUtils.isNotEmpty(url)) {
       if (DeepLink().isAppUrl(url)) {
         DeepLink().launchUrl(url);
       }
-      else{
-        launch(url!);
+      else {
+        if (useInternalBrowser == true) {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
+        } else {
+          Uri? uri = Uri.tryParse(url!);
+          if (uri != null) {
+            launchUrl(uri);
+          }
+        }
       }
     }
   }

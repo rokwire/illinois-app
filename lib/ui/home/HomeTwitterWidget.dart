@@ -5,7 +5,7 @@ import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:illinois/main.dart';
+import 'package:illinois/mainImpl.dart';
 import 'package:illinois/model/Twitter.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Storage.dart';
@@ -213,11 +213,14 @@ class _HomeTwitterWidgetState extends State<HomeTwitterWidget> implements Notifi
       if (tweetsPage.tweets != null) {
         for (Tweet? tweet in tweetsPage.tweets!) {
           bool isFirst = pages.isEmpty;
-          pages.add(_TweetWidget(
-            tweet: tweet,
-            margin: EdgeInsets.only(right: _pageSpacing),
-            onTapPrevious: isFirst? null : _onTapPrevious,
-            onTapNext: _onTapNext,
+          pages.add(Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: _TweetWidget(
+              tweet: tweet,
+              margin: EdgeInsets.only(right: _pageSpacing),
+              onTapPrevious: isFirst? null : _onTapPrevious,
+              onTapNext: _onTapNext,
+            ),
           ));
         }
       }
@@ -651,9 +654,9 @@ class _TweetWidget extends StatelessWidget {
         decoration: BoxDecoration(
             color: Styles().colors!.white,
             boxShadow: [BoxShadow(color: Styles().colors!.blackTransparent018!, spreadRadius: 1.0, blurRadius: 3.0, offset: Offset(1, 1))],
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
+            borderRadius: BorderRadius.all(Radius.circular(4)) // BorderRadius.all(Radius.circular(4))
         ),
-        clipBehavior: Clip.none,
+        clipBehavior: Clip.hardEdge,
         child:
           Column(children: <Widget>[
                 Column(children: [
@@ -737,7 +740,10 @@ class _TweetWidget extends StatelessWidget {
 
   void _launchUrl(String? url, {BuildContext? context}) {
     if (StringUtils.isNotEmpty(url)) {
-      launch(url!);
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 }

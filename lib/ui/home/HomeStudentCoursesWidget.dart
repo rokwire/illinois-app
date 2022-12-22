@@ -58,14 +58,14 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
       Connectivity.notifyStatusChanged,
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
-      StudentCourses.notifyCourseContentChanged,
+      StudentCourses.notifyCachedCoursesChanged,
     ]);
 
 
     if (widget.updateController != null) {
       widget.updateController!.stream.listen((String command) {
         if (command == HomePanel.notifyRefresh) {
-          _updateCourses();
+          _updateCourses(forceLoad: true);
         }
       });
     }
@@ -100,8 +100,10 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     else if (name == StudentCourses.notifySelectedTermChanged) {
       _updateCourses();
     }
-    else if (name == StudentCourses.notifyCourseContentChanged) {
-      _updateCourses();
+    else if (name == StudentCourses.notifyCachedCoursesChanged) {
+      if ((param == null) || (StudentCourses().displayTermId == param)) {
+        _updateCourses();
+      }
     }
   }
 
@@ -141,7 +143,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
                   Semantics(label: HomeStudentCoursesWidget.title, header: true, excludeSemantics: true, child:
-                    Text(HomeStudentCoursesWidget.title, style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20),)
+                    Text(HomeStudentCoursesWidget.title, style: TextStyle(color: Styles().colors?.textColorPrimary, fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20))
                   )
                 )
               ),
@@ -279,7 +281,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
 
     return Column(children: [
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount,),
       LinkButton(
         title: Localization().getStringEx('widget.home.student_courses.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.student_courses.button.all.hint', 'Tap to view all courses'),
@@ -289,7 +291,7 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
   }
 
   void _loadCourses() {
-    if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn) {
+    if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn && !_loading) {
       _loading = true;
       StudentCourses().loadCourses(termId: StudentCourses().displayTermId!).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
@@ -300,14 +302,14 @@ class _HomeStudentCoursesWidgetState extends State<HomeStudentCoursesWidget> imp
     }
   }
 
-  void _updateCourses({bool showProgress = true}) {
-    if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn) {
+  void _updateCourses({bool forceLoad = false, bool showProgress = true}) {
+    if (Connectivity().isNotOffline && (StudentCourses().displayTermId != null) && Auth2().isOidcLoggedIn && !_loading) {
       if (mounted && showProgress) {
         setState(() {
           _loading = true;
         });
       }
-      StudentCourses().loadCourses(termId: StudentCourses().displayTermId!).then((List<StudentCourse>? courses) {
+      StudentCourses().loadCourses(termId: StudentCourses().displayTermId!, forceLoad: forceLoad).then((List<StudentCourse>? courses) {
         setStateIfMounted(() {
           _courses = courses;
           _loading = false;

@@ -2,10 +2,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Guide.dart';
@@ -15,8 +17,9 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class GuideEntryCard extends StatefulWidget {
+  final String favoriteKey;
   final Map<String, dynamic>? guideEntry;
-  GuideEntryCard(this.guideEntry);
+  GuideEntryCard(this.guideEntry, { this.favoriteKey = GuideFavorite.favoriteKeyName });
 
   _GuideEntryCardState createState() => _GuideEntryCardState();
 }
@@ -30,8 +33,9 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
     super.initState();
     NotificationService().subscribe(this, [
       Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
     ]);
-    _isFavorite = Auth2().isFavorite(GuideFavorite(id: guideEntryId));
+    _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: guideEntryId));
   }
 
   @override
@@ -45,9 +49,12 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {
-        _isFavorite = Auth2().isFavorite(GuideFavorite(id: guideEntryId));
+      setStateIfMounted(() {
+        _isFavorite = Auth2().isFavorite(FavoriteItem(key:widget.favoriteKey, id: guideEntryId));
       });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
     }
   }
 
@@ -112,19 +119,22 @@ class _GuideEntryCardState extends State<GuideEntryCard> implements Notification
   void _onTapLink(String? url) {
     Analytics().logSelect(target: 'Link: $url');
     if (StringUtils.isNotEmpty(url)) {
-        launch(url!);
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri);
+        }
     }
   }
 
   void _onTapFavorite() {
     String? title = Guide().entryTitle(widget.guideEntry, stripHtmlTags: true);
     Analytics().logSelect(target: "Favorite: $title");
-    Auth2().prefs?.toggleFavorite(GuideFavorite(id: guideEntryId));
+    Auth2().prefs?.toggleFavorite(FavoriteItem(key:widget.favoriteKey, id: guideEntryId));
   }
 
   void _onTapEntry() {
     Analytics().logSelect(target: "Guide Entry: $guideEntryId");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: guideEntryId,)));
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => GuideDetailPanel(guideEntryId: guideEntryId, favoriteKey: widget.favoriteKey,)));
   }
 
   String? get guideEntryId {

@@ -64,7 +64,7 @@ class _GroupAllEventsState extends State<GroupAllEventsPanel>{
 
     if (_groupEvents != null) {
       for (Event? groupEvent in _groupEvents!) {
-        content.add(GroupEventCard(groupEvent: groupEvent, group: widget.group));
+        content.add(GroupEventCard(groupEvent: groupEvent, group: widget.group,));
       }
     }
 

@@ -50,7 +50,7 @@ class _SettingsBluetoothPanelState extends State<SettingsBluetoothPanel> {
             padding: EdgeInsets.symmetric(horizontal: 6),
             child: Text(
               Localization().getStringEx("panel.settings.bluetooth.label.desctiption", "Create and answer quizzes and polls with people near you."),
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
+              style:  Styles().textStyles?.getTextStyle("widget.description.regular.fat")
           ),),
           Container(height: 24,),
           InfoButton(

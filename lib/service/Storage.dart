@@ -152,7 +152,7 @@ class Storage extends rokwire.Storage {
   @override String get debugGeoFenceRegionRadiusKey  => 'debug_geo_fence_region_radius';
 
   static const String debugMapThresholdDistanceKey  = 'debug_map_threshold_distance';
-  int? get debugMapThresholdDistance => getIntWithName(debugMapThresholdDistanceKey, defaultValue: 200);
+  int? get debugMapThresholdDistance => getIntWithName(debugMapThresholdDistanceKey, defaultValue: null);
   set debugMapThresholdDistance(int? value) => setIntWithName(debugMapThresholdDistanceKey, value);
 
   static const String debugDisableLiveGameCheckKey  = 'debug_disable_live_game_check';
@@ -187,9 +187,6 @@ class Storage extends rokwire.Storage {
 
   // Polls
   @override String get activePollsKey  => 'active_polls';
-
-  // Styles
-  @override String get stylesContentModeKey => 'styles_content_mode';
 
   // Voter
   static const String _voterHiddenForPeriodKey = 'voter_hidden_for_period';
@@ -358,7 +355,7 @@ class Storage extends rokwire.Storage {
   set wellnessDailyTipTime(int? value) => setIntWithName(wellnessDailyTipTimeKey, value);
 
   // App Review
-  String? get _appReviewVersion  => AppVersion.majorVersion(Config().appVersion, 2);
+  String? get _appReviewVersion  => Config().appMajorVersion;
   
   String get appReviewSessionsCountKey  => 'edu.illinois.rokwire.$_appReviewVersion.app_review.sessions.count';
   int get appReviewSessionsCount => getIntWithName(appReviewSessionsCountKey, defaultValue: 0)!;
@@ -368,5 +365,33 @@ class Storage extends rokwire.Storage {
   String get selectedCourseTermIdKey => 'edu.illinois.rokwire.courses.selected.term.id';
   String? get selectedCourseTermId => getStringWithName(selectedCourseTermIdKey);
   set selectedCourseTermId(String? value) => setStringWithName(selectedCourseTermIdKey, value);
+
+  // Explore
+  String get selectedListExploreItemKey => 'edu.illinois.rokwire.explore.list.selected.item';
+  String? get selectedListExploreItem => getStringWithName(selectedListExploreItemKey);
+  set selectedListExploreItem(String? value) => setStringWithName(selectedListExploreItemKey, value);
+
+  String get selectedMapExploreItemKey => 'edu.illinois.rokwire.explore.map.selected.item';
+  String? get selectedMapExploreItem => getStringWithName(selectedMapExploreItemKey);
+  set selectedMapExploreItem(String? value) => setStringWithName(selectedMapExploreItemKey, value);
+
+  // Appointments
+  String get appointmentsDisplayEnabledKey => 'edu.illinois.rokwire.appointments.display_enabled';
+  bool? get appointmentsCanDisplay => getBoolWithName(appointmentsDisplayEnabledKey, defaultValue: true);
+  set appointmentsCanDisplay(bool? value) => setBoolWithName(appointmentsDisplayEnabledKey, value);
+
+  // MTD Map instructions
+  String get showMtdStopsMapInstructionsKey => 'edu.illinois.rokwire.explore.map.mtd_stops.show_instructions';
+  bool? get showMtdStopsMapInstructions => getBoolWithName(showMtdStopsMapInstructionsKey);
+  set showMtdStopMapsInstructions(bool? value) => setBoolWithName(showMtdStopsMapInstructionsKey, value);
+
+  String get showMtdDestinationsMapInstructionsKey => 'edu.illinois.rokwire.explore.map.mtd_destinations.show_instructions';
+  bool? get showMtdDestinationsMapInstructions => getBoolWithName(showMtdDestinationsMapInstructionsKey);
+  set showMtdDestinationsMapInstructions(bool? value) => setBoolWithName(showMtdDestinationsMapInstructionsKey, value);
+
+  // Participate In Research
+  static const String participateInResearchPromptedKey  = 'participate_in_research_prompted';
+  bool? get participateInResearchPrompted => getBoolWithName(participateInResearchPromptedKey);
+  set participateInResearchPrompted(bool? value) => setBoolWithName(participateInResearchPromptedKey, value);
 
 }

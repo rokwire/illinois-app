@@ -145,11 +145,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
         padding: EdgeInsets.only(left: 24, right: 24, top: 10, bottom: 52),
         child: Text(
           Localization().getStringEx("panel.poll_pin_bouble.long_info_description", "Each poll has a four-digit number. The poll creator can share this code so others can respond."),
-          style: TextStyle(
-            fontFamily: Styles().fontFamilies!.regular,
-            fontSize: 16,
-            color: Styles().colors!.white
-          ),
+          style: Styles().textStyles?.getTextStyle("widget.dialog.message.medium.thin")
 
         ),
       )
@@ -164,7 +160,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
           RichText(
             text: TextSpan(
               text:Localization().getStringEx("panel.poll_pin_bouble.label_description", "Enter the four-digit poll number to see the poll.") + " ",
-              style: TextStyle(color: Colors.white, fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24),
+              style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.extra_fat"),
               children:[
                 WidgetSpan(
                     child: Semantics(label: "Info", container:true, button: true,
@@ -183,11 +179,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
                           child: Center(
                             child: Text("i",
                               semanticsLabel: "",
-                              style: TextStyle(
-                                fontFamily: Styles().fontFamilies!.extraBold,
-                                fontSize: 20,
-                                color: Styles().colors!.fillColorSecondary,
-                              ),
+                              style:  Styles().textStyles?.getTextStyle("panel.poll.bubble.pin.button.info"),
                             ),
                           ),
                         ),
@@ -260,11 +252,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
               ),
             ),
           ),
-          style: TextStyle(
-            fontFamily: Styles().fontFamilies!.regular,
-            fontSize: 36,
-            color: Styles().colors!.fillColorPrimary,
-          ),
+          style: Styles().textStyles?.getTextStyle("panel.poll.bubble.pin.field.text")
         ),
       )
     );
@@ -314,7 +302,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
     if(_validate()) {
 
       if (!Connectivity().isNotOffline) {
-        AppAlert.showDialogResult(context, Localization().getStringEx('app.offline.message.title', 'You appear to be offline'));
+        AppAlert.showDialogResult(context, Localization().getStringEx('common.message.offline', 'You appear to be offline'));
       }
       else {
         setState(() {

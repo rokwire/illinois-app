@@ -13,6 +13,7 @@ import 'package:rokwire_plugin/service/assets.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -106,7 +107,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
   Widget _buildImageWidget(String imageUrl) {
     final double triangleHeight = 40;
     return Stack(children: [
-      Image.network(imageUrl, semanticLabel: 'tout',
+    ModalImageHolder(child: Image.network(imageUrl, semanticLabel: 'tout',
           loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         double imageWidth = MediaQuery.of(context).size.width;
         double imageHeight = imageWidth * 810 / 1080;
@@ -118,7 +119,7 @@ class _HomeToutWidgetState extends State<HomeToutWidget> implements Notification
                 child: Center(
                     child: CircularProgressIndicator(strokeWidth: 3, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.white))))
             : child;
-      }),
+      })),
       Align(
           alignment: Alignment.topCenter,
           child: CustomPaint(
@@ -230,7 +231,7 @@ class _InfoDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String preferredFirstNameUrlMacro = '{{preferred_first_name_url}}';
-    String contentHtml = Localization().getStringEx("widget.home.tout.popup.info.content", "To change your first name in the Illinois app, review the <a href='{{preferred_first_name_url}}'>preferred name instructions</a>.");
+    String contentHtml = Localization().getStringEx("widget.home.tout.popup.info.content", "To change your first name in the {{app_title}} app, review the <a href='{{preferred_first_name_url}}'>preferred name instructions</a>.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
     contentHtml = contentHtml.replaceAll(preferredFirstNameUrlMacro, Config().preferredFirstNameStmntUrl ?? '');
     return ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child:
       Dialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),), alignment: Alignment.center, child: 
@@ -277,7 +278,10 @@ class _InfoDialog extends StatelessWidget {
     Analytics().logAlert(text: "Info", selection: "Student Self Service");
     if (StringUtils.isNotEmpty(url)) {
       Navigator.pop(context);
-      launch(url!);
+      Uri? uri = Uri.tryParse(url!);
+      if (uri != null) {
+        launchUrl(uri);
+      }
     }
   }
 

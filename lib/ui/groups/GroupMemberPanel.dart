@@ -87,7 +87,7 @@ class _GroupMemberPanelState extends State<GroupMemberPanel> {
       bool newIsAdmin = !_isAdmin;
 
       GroupMemberStatus status = newIsAdmin ? GroupMemberStatus.admin : GroupMemberStatus.member;
-      Groups().updateMembership(_group, widget.memberId, status).then((bool succeed) {
+      Groups().updateMemberStatus(_group, widget.memberId, status).then((bool succeed) {
         if (mounted) {
           setState(() {
             _updating = false;

@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -52,12 +55,16 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
 
   bool _isFilterLoading = false;
   int _groupsLoadingProgress = 0;
+  Set<Completer<void>>? _reloadGroupsContentCompleters;
   bool _myGroupsBusy = false;
+
+  String? _newGroupId;
+  GlobalKey? _newGroupKey;
 
   GroupsContentType? _selectedContentType;
   bool _contentTypesVisible = false;
 
-  List<Group>? _visibleAllGroups;
+  List<Group>? _allGroups;
   List<Group>? _userGroups;
 
   String? _selectedCategory;
@@ -77,6 +84,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       Groups.notifyUserGroupsUpdated,
       Auth2.notifyLoginSucceeded,
       Auth2.notifyLogout,
+      FlexUI.notifyChanged,
       Connectivity.notifyStatusChanged,
     ]);
     _selectedContentType = widget.contentType;
@@ -105,58 +113,66 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   ///////////////////////////////////
   // Data Loading
 
-  void _reloadGroupsContent() {
-    _visibleAllGroups = null;
-    _loadUserGroups();
-    _loadAllGroups();
+  Future<void> _reloadGroupsContent() async {
+    if (!Connectivity().isOffline) {
+      if (_reloadGroupsContentCompleters == null) {
+        _reloadGroupsContentCompleters = <Completer<void>>{};
+
+        _allGroups = null;
+        _increaseGroupsLoadingProgress();
+        List<List<Group>?> result = await Future.wait([
+          _loadUserGroups(),
+          _loadAllGroups(),
+        ]);
+        _userGroups = (0 < result.length) ? result[0] : Groups().userGroups;
+        _allGroups = (1 < result.length) ? result[1] : null;
+        _decreaseGroupsLoadingProgress();
+        _checkGroupsContentLoaded();
+
+        if (_reloadGroupsContentCompleters != null) {
+          Set<Completer<void>> loginCompleters = _reloadGroupsContentCompleters!;
+          _reloadGroupsContentCompleters = null;
+          for (Completer<void> completer in loginCompleters) {
+            completer.complete();
+          }
+        }
+      }
+      else {
+        Completer<void> completer = Completer<bool?>();
+        _reloadGroupsContentCompleters!.add(completer);
+        return completer.future;
+      }
+    }
   }
 
-  void _loadUserGroups() {
-    _increaseGroupsLoadingProgress();
-    Groups().loadGroups(contentType: GroupsContentType.my).then((List<Group>? groups) {
-      _userGroups = groups;
+  Future<void> _reloadAllGroupsContent() async {
+    if (!Connectivity().isOffline) {
+      _increaseGroupsLoadingProgress();
+      _allGroups = await _loadAllGroups();
       _decreaseGroupsLoadingProgress();
       _checkGroupsContentLoaded();
-    });
+    }
+  }
+
+  Future<List<Group>?> _loadUserGroups() async =>
+    Groups().loadGroups(contentType: GroupsContentType.my);
+
+  Future<List<Group>?> _loadAllGroups() async =>
+    Groups().loadGroups(
+      contentType: GroupsContentType.all,
+      category: (_selectedCategory != _allCategoriesValue) ? _selectedCategory : null,
+      tags: (_selectedTagFilter == _TagFilter.my) ? Auth2().prefs?.positiveTags : null,
+    );
+
+  void _checkGroupsContentLoaded() {
+    if (!_isGroupsLoading) {
+      _selectedContentType ??= (CollectionUtils.isNotEmpty(_userGroups) ? GroupsContentType.my : GroupsContentType.all);
+      _updateState();
+    }
   }
 
   void _applyUserGroups() {
     _userGroups = Groups().userGroups;
-    _updateState();
-  }
-
-  void _loadAllGroups() {
-    // Do not load all groups when device is offline
-    if (Connectivity().isOffline) {
-      return;
-    }
-    _increaseGroupsLoadingProgress();
-    Groups().loadGroups(contentType: GroupsContentType.all).then((List<Group>? groups) {
-      int resultsCount = groups?.length ?? 0;
-      if (resultsCount > 0) {
-        if (_visibleAllGroups == null) {
-          _visibleAllGroups = <Group>[];
-        }
-        _visibleAllGroups!.addAll(groups!);
-      }
-      _decreaseGroupsLoadingProgress();
-      _checkGroupsContentLoaded();
-    });
-  }
-
-  void _checkGroupsContentLoaded() {
-    if (_isGroupsLoading) {
-      return;
-    }
-    // if all groups are empty and user groups are not then set all groups to be user groups. 
-    // This means that device failed to load all groups for some reason - connectivity issues etc.
-    if (CollectionUtils.isEmpty(_visibleAllGroups) && CollectionUtils.isNotEmpty(_userGroups)) {
-      _visibleAllGroups = _userGroups;
-    }
-    if (_selectedContentType != null) {
-      return;
-    }
-    _selectedContentType = CollectionUtils.isNotEmpty(_userGroups) ? GroupsContentType.my : GroupsContentType.all;
     _updateState();
   }
 
@@ -190,7 +206,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   bool get _showMyGroups {
-    return Auth2().privacyMatch(4);
+    return FlexUI().isAuthenticationAvailable;
   }
 
   void _buildMyGroupsAndPending({List<Group>? myGroups, List<Group>? myPendingGroups}) {
@@ -207,27 +223,6 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         }
       }
     }
-  }
-
-  List<Group>? get _filteredAllGroupsContent {
-    if (CollectionUtils.isEmpty(_visibleAllGroups)) {
-      return _visibleAllGroups;
-    }
-    // Filter By Category
-    String? selectedCategory = _allCategoriesValue != _selectedCategory ? _selectedCategory : null;
-    List<Group>? filteredGroups = _visibleAllGroups;
-    if (StringUtils.isNotEmpty(selectedCategory)) {
-      filteredGroups = _visibleAllGroups!.where((group) => (selectedCategory == group.category)).toList();
-    }
-    // Filter by User Tags
-    if (_selectedTagFilter == _TagFilter.my) {
-      Set<String>? userTags = Auth2().prefs?.positiveTags;
-      if (CollectionUtils.isNotEmpty(userTags) && CollectionUtils.isNotEmpty(filteredGroups)) {
-        filteredGroups = filteredGroups!.where((group) => group.tags?.any((tag) => userTags!.contains(tag)) ?? false).toList();
-      }
-    }
-
-    return filteredGroups;
   }
 
   void _increaseGroupsLoadingProgress() {
@@ -290,24 +285,20 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         Expanded(child: Stack(alignment: Alignment.topCenter, children: [
           Column(children: [
             _buildFunctionalBar(),
-            Expanded(
-              child: _isLoading
-                ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ),)
-                : Stack(
-                  alignment: AlignmentDirectional.topCenter,
-                  children: <Widget>[
-                    Container(color: Styles().colors!.background, child:
-                      RefreshIndicator(onRefresh: _onPullToRefresh, child:
-                        SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
-                          Column( children: <Widget>[ _buildGroupsContent(), ],),
-                        ),
+            Expanded(child: _isLoading
+              ? Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ),)
+              : Stack(alignment: AlignmentDirectional.topCenter, children: <Widget>[
+                  Container(color: Styles().colors!.background, child:
+                    RefreshIndicator(onRefresh: _onPullToRefresh, child:
+                      SingleChildScrollView(scrollDirection: Axis.vertical, physics: AlwaysScrollableScrollPhysics(), child:
+                        Column(children: <Widget>[ _buildGroupsContent(), ],),
                       ),
                     ),
-                    Visibility(
-                      visible: _hasActiveFilter, child: _buildDimmedContainer()),
-                    _hasActiveFilter ? _buildFilterContent() : Container()
-                  ],
-                ),
+                  ),
+                  Visibility(
+                    visible: _hasActiveFilter, child: _buildDimmedContainer()),
+                  _hasActiveFilter ? _buildFilterContent() : Container()
+                ],),
             )
           ]),
           _buildContentTypesContainer()
@@ -516,14 +507,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildMyGroupsContent(){
-    // _myGroups = sortedGroups?.where((group) => group.currentUserIsMemberOrAdmin).toList();
-    // _myPendingGroups = sortedGroups?.where((group) => group.currentUserIsPendingMember).toList();
     List<Group> myGroups = <Group>[], myPendingGroups = <Group>[];
     _buildMyGroupsAndPending(myGroups: myGroups, myPendingGroups: myPendingGroups);
 
     if (CollectionUtils.isEmpty(myGroups) && CollectionUtils.isEmpty(myPendingGroups)) {
       String text = Localization().getStringEx("panel.groups_home.label.my_groups.empty", "You are not member of any groups yet");
-      //Localization().getStringEx("panel.groups_home.label.my_groups.failed", "Failed to load groups");
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
         Text(text, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
       );
@@ -543,7 +531,12 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         if (group.isVisible) {
           widgets.add(Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup, onImageTap: (){ onTapImage(group);} ,),
+            child: GroupCard(
+              group: group,
+              displayType: GroupCardDisplayType.myGroup,
+              onImageTap: (){ onTapImage(group);},
+              key: _getGroupKey(group),
+            ),
           ));
         }
       }
@@ -565,7 +558,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
         if (group.isVisible) {
           widgets.add(Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(group: group, displayType: GroupCardDisplayType.myGroup,),
+            child: GroupCard(
+              group: group,
+              displayType: GroupCardDisplayType.myGroup,
+              key: _getGroupKey(group),
+            ),
           ));
         }
       }
@@ -589,14 +586,16 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
 
   Widget _buildAllGroupsContent(){
-    List<Group>? filteredGroups = CollectionUtils.isNotEmpty(_visibleAllGroups) ? _filteredAllGroupsContent : null;
-    if(CollectionUtils.isNotEmpty(filteredGroups)){
+    if(CollectionUtils.isNotEmpty(_allGroups)){
       List<Widget> widgets = [];
-      for(Group group in filteredGroups!) {
+      for(Group group in _allGroups!) {
         if (group.isVisible) {
           widgets.add(Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: GroupCard(group: group),
+            child: GroupCard(
+              group: group,
+              key: _getGroupKey(group),
+            ),
           ));
         }
       }
@@ -604,10 +603,10 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     }
     else{
       String text;
-      if (_visibleAllGroups == null) {
+      if (_allGroups == null) {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.failed", "Failed to load groups");
       }
-      else if (_visibleAllGroups!.isEmpty) {
+      else if (_allGroups!.isEmpty) {
         text = Localization().getStringEx("panel.groups_home.label.all_groups.empty", "There are no groups created yet");
       }
       else {
@@ -616,6 +615,15 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
       return Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 30), child:
         Text(text, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground),),
       );
+    }
+  }
+
+  Key? _getGroupKey(Group group) {
+    if ((_newGroupId != null) && (_newGroupId == group.id)) {
+      return _newGroupKey;
+    }
+    else {
+      return null;
     }
   }
 
@@ -664,6 +672,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     setState(() {
       _activeFilterType = _FilterType.none;
     });
+    _reloadAllGroupsContent();
   }
 
   void _onSelectAllGroups(){
@@ -715,7 +724,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   }
   
   bool get _canCreateGroup {
-    return Auth2().isOidcLoggedIn && Auth2().privacyMatch(5);
+    return Auth2().isOidcLoggedIn && FlexUI().isSharingAvailable;
   }
 
   bool get _canTapGroupsContentType {
@@ -729,7 +738,25 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
     if (name == Groups.notifyUserMembershipUpdated) {
       _updateState();
     }
-    else if ((name == Groups.notifyGroupCreated) || (name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted)) {
+    else if (name == Groups.notifyGroupCreated) {
+      if (mounted) {
+        _newGroupId = param;
+        _newGroupKey = GlobalKey();
+        _reloadGroupsContent().then((_) {
+          if (_newGroupId == param) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              BuildContext? newGroupContext = _newGroupKey?.currentContext;
+              _newGroupId = null;
+              _newGroupKey = null;
+              if (newGroupContext != null) {
+                Scrollable.ensureVisible(newGroupContext, duration: Duration(milliseconds: 300));
+              }
+            });
+          }
+        });
+      }
+    }
+    else if ((name == Groups.notifyGroupUpdated) || (name == Groups.notifyGroupDeleted)) {
       if (mounted) {
         _reloadGroupsContent();
       }
@@ -744,6 +771,11 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
           _reloadGroupsContent();
         }
       });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      if (mounted) {
+        _reloadGroupsContent();
+      }
     }
     else if (name == Connectivity.notifyStatusChanged) {
       if (Connectivity().isOnline && mounted) {

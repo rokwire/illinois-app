@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 
@@ -53,7 +54,10 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+    ]);
     _article = widget.article;
     if (_article != null) {
       RecentItems().addRecentItem(RecentItem.fromSource(_article));
@@ -76,6 +80,11 @@ class _AthleticsNewsArticlePanelState extends State<AthleticsNewsArticlePanel> i
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if (name == FlexUI.notifyChanged) {
       if (mounted) {
         setState(() {});
       }

@@ -25,6 +25,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/service/Config.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
@@ -40,7 +41,7 @@ import 'package:illinois/model/RecentItem.dart';
 import 'package:illinois/ext/RecentItem.dart';
 import 'package:illinois/model/sport/Game.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/RecentItems.dart';
@@ -96,7 +97,8 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
             setState(() {
               _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
               _pageViewKey = UniqueKey();
-              _pageController = null;
+              // _pageController = null;
+              _pageController?.jumpToPage(0);
               _contentKeys.clear();
             });
           }
@@ -120,7 +122,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
   void onNotification(String name, dynamic param) {
     if (name == RecentItems.notifyChanged) {
       if (mounted) {
-        SchedulerBinding.instance?.addPostFrameCallback((_) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
           if (mounted && !DeepCollectionEquality().equals(_recentItems, RecentItems().recentItems)) {
             setState(() {
               _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
@@ -190,7 +192,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to view all items'),
@@ -315,7 +317,10 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
 
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+    ]);
     super.initState();
   }
 
@@ -329,7 +334,8 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
+    if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
+        (name == FlexUI.notifyChanged)) {
       if (mounted){
         setState(() {});
       }

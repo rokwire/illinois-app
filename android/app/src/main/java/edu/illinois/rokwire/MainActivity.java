@@ -34,7 +34,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -291,6 +290,11 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         }
     }
 
+    
+    private String handleDeepLinkScheme(Object params) {
+        return getString(R.string.app_scheme);
+    }
+
     private String handleBarcode(Object params) {
         String barcodeImageData = null;
         String content = Utils.Map.getValueFromPath(params, "content", null);
@@ -361,8 +365,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             Bitmap bitmap = null;
             try {
                 BitMatrix bitMatrix = multiFormatWriter.encode(content, barcodeFormat, width, height);
-                BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                bitmap = createBitmap(bitMatrix);
             } catch (WriterException e) {
                 Log.e(TAG, "Failed to encode image:");
                 e.printStackTrace();
@@ -377,6 +380,28 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
             }
         }
         return barcodeImageData;
+    }
+
+    private Bitmap createBitmap(BitMatrix matrix) {
+        if (matrix == null) {
+            return null;
+        }
+        final int WHITE = 0xFFFFFFFF;
+        final int BLACK = 0xFF000000;
+        int width = matrix.getWidth();
+        int height = matrix.getHeight();
+        int[] pixels = new int[width * height];
+        // All are 0, or black, by default
+        for (int y = 0; y < height; y++) {
+            int offset = y * width;
+            for (int x = 0; x < width; x++) {
+                pixels[offset + x] = matrix.get(x, y) ? BLACK : WHITE;
+            }
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+        return bitmap;
     }
 
     private void handleSetLaunchScreenStatus(Object params) {
@@ -447,6 +472,10 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                     Object orientations = methodCall.argument("orientations");
                     List<String> orientationsList = handleEnabledOrientations(orientations);
                     result.success(orientationsList);
+                    break;
+                case Constants.DEEPLINK_SCHEME_KEY:
+                    String deepLinkScheme = handleDeepLinkScheme(methodCall.arguments);
+                    result.success(deepLinkScheme);
                     break;
                 case Constants.BARCODE_KEY:
                     String barcodeImageData = handleBarcode(methodCall.arguments);

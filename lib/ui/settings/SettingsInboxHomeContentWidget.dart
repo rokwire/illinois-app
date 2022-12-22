@@ -1,12 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
-import 'package:rokwire_plugin/model/auth2.dart';
+import 'package:illinois/ui/widgets/UnderlinedButton.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -16,10 +16,11 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:illinois/ext/Favorite.dart';
 
 class SettingsInboxHomeContentWidget extends StatefulWidget {
-  SettingsInboxHomeContentWidget();
+  final bool? unread;
+  final void Function()? onTapBanner;
+  SettingsInboxHomeContentWidget({Key? key, this.unread, this.onTapBanner}) : super(key: key);
 
   _SettingsInboxHomeContentWidgetState createState() => _SettingsInboxHomeContentWidgetState();
 }
@@ -37,6 +38,11 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     _FilterEntry(value: "Other"),
   ];
 
+  final List<_FilterEntry> _mutedValues = [
+    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.muted.show", "Show Muted"), value: null),  // Show both muted and not muted messages
+    _FilterEntry(name: Localization().getStringEx("panel.inbox.label.muted.hide", "Hide Muted"), value: false), // Show only not muted messages
+  ];
+
   final List<_FilterEntry> _times = [
     _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.any", "Any Time"), value: null),
     _FilterEntry(name: Localization().getStringEx("panel.inbox.label.time.today", "Today"), value: _TimeFilter.Today),
@@ -51,6 +57,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
 
   String? _selectedCategory;
   _TimeFilter? _selectedTime;
+  bool? _selectedMutedValue;
   _FilterType? _selectedFilter;
   bool? _hasMoreMessages;
   
@@ -62,15 +69,18 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   bool _isEditMode = false;
   Set<String> _selectedMessageIds = Set<String>();
 
+  bool _loadingMarkAllAsRead = false;
+
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      Inbox.notifyInboxUserInfoChanged
+      Inbox.notifyInboxUserInfoChanged,
+      Inbox.notifyInboxMessageRead
     ]);
 
     _scrollController.addListener(_scrollListener);
-
+    _selectedMutedValue = false;
     _loadInitialContent();
   }
 
@@ -89,6 +99,8 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
           //refresh
         });
       }
+    } else if (name == Inbox.notifyInboxMessageRead) {
+      _refreshContent();
     }
   }
 
@@ -99,7 +111,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
         child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[_buildBanner(), _buildFilters(), Expanded(child: _buildContent())]));
+            children: <Widget>[_buildBanner(), _buildAdditionalButtons(),  _buildFilters(), Expanded(child: _buildContent())]));
   }
 
   // Messages
@@ -160,7 +172,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   Widget _buildListHeading({String? text}) {
     return Container(color: Styles().colors!.fillColorPrimary, padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), child:
         Semantics(header: true, child:
-          Text(text ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 16, color: Styles().colors!.white),)
+          Text(text ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.regular.extra_fat"),)
         )
     );
   }
@@ -206,9 +218,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     Visibility(
       visible: _showBanner,
       child:GestureDetector(
-        onTap: (){
-          SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.preferences);
-        },
+        onTap: _onTapBanner,
         child:Container(
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
           color: Styles().colors?.saferLocationWaitTimeColorYellow ?? Colors.amberAccent,
@@ -219,18 +229,11 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
                 Text(
                   "Notifications Paused",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Styles().colors?.fillColorPrimary,
-                    fontFamily: Styles().fontFamilies?.regular,
-                    fontSize: 16
-                  ),
+                  style: Styles().textStyles?.getTextStyle("widget.detail.regular")
                 ),
               ),
               Text(">",
-                style: TextStyle(
-                    color: Styles().colors?.fillColorPrimary,
-                    fontSize: 16,
-                ),
+                style: Styles().textStyles?.getTextStyle("widget.detail.regular")
               ),
 
           ],)
@@ -238,9 +241,32 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
       ));
   }
 
+  //Buttons
+  Widget _buildAdditionalButtons() {
+    List<Widget> buttons = [];
+    if (widget.unread == true) {
+        buttons.add(_buildReadAllButton());
+    }
+
+    return Container(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: buttons,
+        ));
+  }
+
+  Widget _buildReadAllButton() {
+    return Container(
+        child: UnderlinedButton(
+            title: Localization().getStringEx("panel.inbox.mark_all_read.label", "Mark all as read"),
+            padding: EdgeInsets.symmetric(vertical: 8),
+            progress: _loadingMarkAllAsRead,
+            onTap: _onTapMarkAllAsRead));
+  }
 
   // Filters
-
   Widget _buildFilters() {
     return SingleChildScrollView(scrollDirection: Axis.horizontal, child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
@@ -250,6 +276,12 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
             active: _selectedFilter == _FilterType.Category,
             onTap: () { _onFilter(_FilterType.Category); }
           ),*/
+          FilterSelector(
+            padding: EdgeInsets.symmetric(horizontal: 4),
+            title: _FilterEntry.entryInList(_mutedValues, _selectedMutedValue)?.name ?? '',
+            active: _selectedFilter == _FilterType.Muted,
+            onTap: () { _onFilter(_FilterType.Muted); }
+          ),
           FilterSelector(
             padding: EdgeInsets.symmetric(horizontal: 4),
             title: _FilterEntry.entryInList(_times, _selectedTime)?.name ?? '',
@@ -286,6 +318,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     List<String>? subLabels;
     switch(_selectedFilter) {
       case _FilterType.Category: filterValues = _categories; selectedFilterValue = _selectedCategory; subLabels = null; break;
+      case _FilterType.Muted: filterValues = _mutedValues; selectedFilterValue = _selectedMutedValue; subLabels = null; break;
       case _FilterType.Time: filterValues = _times; selectedFilterValue = _selectedTime; subLabels = _buildTimeDates(); break;
       default: filterValues = []; break;
     }
@@ -346,8 +379,8 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     return {
       _TimeFilter.Today:     _DateInterval(startDate: DateTime(now.year, now.month, now.day)),
       _TimeFilter.Yesterday: _DateInterval(startDate: DateTime(now.year, now.month, now.day - 1), endDate: DateTime(now.year, now.month, now.day)),
-      _TimeFilter.ThisWeek:  _DateInterval(startDate: DateTime(now.year, now.month, now.day - now.weekday + 1) ),
-      _TimeFilter.LastWeek:  _DateInterval(startDate: DateTime(now.year, now.month, now.day - now.weekday + 1 - 7), endDate: DateTime(now.year, now.month, now.day - now.weekday)),
+      _TimeFilter.ThisWeek:  _DateInterval(startDate: DateTime(now.year, now.month, now.day - now.weekday + 1)),
+      _TimeFilter.LastWeek:  _DateInterval(startDate: DateTime(now.year, now.month, now.day - now.weekday + 1 - 7), endDate: DateTime(now.year, now.month, now.day - now.weekday + 1)),
       _TimeFilter.ThisMonth: _DateInterval(startDate: DateTime(now.year, now.month, 1)),
       _TimeFilter.LastMonth: _DateInterval(startDate: DateTime(now.year, now.month - 1, 1), endDate: DateTime(now.year, now.month, 0)),
     };
@@ -358,6 +391,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     setState(() {
       switch(filterType) {
         case _FilterType.Category: _selectedCategory = filterEntry.value; break;
+        case _FilterType.Muted: _selectedMutedValue = filterEntry.value; break;
         case _FilterType.Time: _selectedTime = filterEntry.value; break;
         default: break;
       }
@@ -406,28 +440,28 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   Widget _buildEditButton() {
     return Semantics(label: Localization().getStringEx('headerbar.edit.title', 'Edit'), hint: Localization().getStringEx('headerbar.edit.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onEdit, child:
-        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.edit.title', 'Edit'), style:  Styles().textStyles?.getTextStyle("widget.button.title.medium"),)
       ));
   }
 
   Widget _buildDoneButton() {
     return Semantics(label: Localization().getStringEx('headerbar.done.title', 'Done'), hint: Localization().getStringEx('headerbar.done.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDone, child:
-        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.done.title', 'Done'), style:  Styles().textStyles?.getTextStyle("widget.button.title.medium"),)
       ));
   }
 
   Widget _buildSelectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.select.all.title', 'Select All'), hint: Localization().getStringEx('headerbar.select.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onSelectAll, child:
-        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.select.all.title', 'Select All'), style:  Styles().textStyles?.getTextStyle("widget.button.title.medium"),)
       ));
   }
 
   Widget _buildDeselectAllButton() {
     return Semantics(label: Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), hint: Localization().getStringEx('headerbar.deselect.all.hint', ''), button: true, excludeSemantics: true, child:
       TextButton(onPressed: _onDeselectAll, child:
-        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium),)
+        Text(Localization().getStringEx('headerbar.deselect.all.title', 'Deselect All'), style:  Styles().textStyles?.getTextStyle("widget.button.title.medium"),)
       ));
   }
 
@@ -440,7 +474,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
       Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
         Padding(padding: EdgeInsets.only(bottom: 16), child:
           Row(children:<Widget>[Expanded(child:
-            Text(headingText, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),)
+            Text(headingText, style: Styles().textStyles?.getTextStyle("widget.title.regular"),)
           )]),
         ),
 
@@ -453,7 +487,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
                 Image.asset('images/icon-delete-group.png')
               ),
               Expanded(child:
-                Text("Delete", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold),)
+                Text("Delete", style: Styles().textStyles?.getTextStyle("widget.button.title.regular"),)
               ),
             ]),
           )
@@ -468,7 +502,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
                 Image.asset('images/close-orange.png', width: 18, height: 18)
               ),
               Expanded(child:
-                Text("Cancel", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18, fontFamily: Styles().fontFamilies!.bold),)
+                Text("Cancel", style: Styles().textStyles?.getTextStyle("widget.button.title.regular"),)
               ),
             ]),
           )
@@ -490,13 +524,13 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
                   Padding(padding: EdgeInsets.all(16), child:
                     Row(children: <Widget>[
                       Expanded(child:
-                        Text(title!, style: TextStyle(fontSize: 20, color: Colors.white, fontFamily: Styles().fontFamilies!.bold),),
+                        Text(title!, style: Styles().textStyles?.getTextStyle("widget.dialog.message.regular.fat"),),
                       ),
                       Semantics(label: "Close", button: true,  child:
                         GestureDetector(onTap: () => Navigator.pop(context), child:
                           Container(height: 30, width: 30, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(15)), border: Border.all(color: Styles().colors!.white!, width: 2), ), child:
                             Center(child:
-                              Text('\u00D7', style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies!.bold), semanticsLabel: "",),
+                              Text('\u00D7', style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.fat"), semanticsLabel: "",),
                             ),
                           )
                         ),
@@ -510,7 +544,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
             Padding(padding: const EdgeInsets.all(16), child:
               Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                 Container(height: 16),
-                Text(message!, textAlign: TextAlign.left, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 18, color: Styles().colors!.fillColorPrimary),),
+                Text(message!, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.message.medium"),),
                 Container(height: 32),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
                   Expanded(child:
@@ -618,10 +652,10 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     Navigator.pop(context);
   }
 
-  Future<void> _onPullToRefresh() async {
+  Future<void> _refreshMessages() async{
     int limit = max(_messages.length, _messagesPageSize);
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    List<InboxMessage>? messages = await Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
+    List<InboxMessage>? messages = await Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate);
     if (mounted) {
       setState(() {
         if (messages != null) {
@@ -635,6 +669,30 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
         _contentList = _buildContentList();
       });
     }
+  }
+
+  Future<void> _onPullToRefresh() async {
+    _refreshMessages();
+  }
+
+  void _onTapMarkAllAsRead() {
+    Analytics().logSelect(target: "Mark All As Read");
+    _setMarkAllAsReadLoading(true);
+    Inbox().markAllMessagesAsRead().then((succeeded) {
+      if (succeeded) {
+        _loadInitialContent();
+      } else {
+        AppAlert.showMessage(
+            context, Localization().getStringEx('panel.inbox.mark_as_read.failed.msg', 'Failed to mark all messages as read'));
+      }
+      _setMarkAllAsReadLoading(false);
+    });
+  }
+
+  void _setMarkAllAsReadLoading(bool loading) {
+    setStateIfMounted(() {
+      _loadingMarkAllAsRead = loading;
+    });
   }
 
   bool get _isAllMessagesSelected {
@@ -653,7 +711,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     });
 
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -677,7 +735,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     });
 
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: _messages.length, limit: _messagesPageSize, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
       if (mounted) {
         setState(() {
           if (messages != null) {
@@ -692,16 +750,15 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   }
 
   void _refreshContent({int? messagesCount}) {
-    setState(() {
+    setStateIfMounted(() {
       _loading = true;
     });
 
     int limit = max(messagesCount ?? _messages.length, _messagesPageSize);
     _DateInterval? selectedTimeInterval = (_selectedTime != null) ? _getTimeFilterIntervals()[_selectedTime] : null;
-    Inbox().loadMessages(offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
-      if (mounted) {
-        setState(() {
-          if (messages != null) {
+    Inbox().loadMessages(unread: widget.unread, muted: _selectedMutedValue, offset: 0, limit: limit, category: _selectedCategory, startDate: selectedTimeInterval?.startDate, endDate: selectedTimeInterval?.endDate).then((List<InboxMessage>? messages) {
+      setStateIfMounted(() {
+        if (messages != null) {
             _messages = messages;
             _hasMoreMessages = (_messagesPageSize <= messages.length);
           }
@@ -711,8 +768,7 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
           }
           _contentList = _buildContentList();
           _loading = false;
-        });
-      }
+      });
     });
   }
 
@@ -775,6 +831,15 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   bool get _showBanner{
     return FirebaseMessaging().notificationsPaused ?? false;
   }
+
+  void _onTapBanner() {
+    if (widget.onTapBanner != null) {
+      widget.onTapBanner!();
+    }
+    else {
+      // SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.preferences);
+    }
+  }
 }
 
 class _FilterEntry {
@@ -827,7 +892,7 @@ enum _TimeFilter {
 }
 
 enum _FilterType {
-  Category, Time
+  Category, Muted, Time
 }
 
 class InboxMessageCard extends StatefulWidget {
@@ -845,15 +910,12 @@ class InboxMessageCard extends StatefulWidget {
 
 class _InboxMessageCardState extends State<InboxMessageCard> implements NotificationsListener {
 
-  late bool _isFavorite;
-
   @override
   void initState() {
     super.initState();
     NotificationService().subscribe(this, [
-      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
     ]);
-    _isFavorite = Auth2().isFavorite(widget.message);
   }
 
   @override
@@ -866,9 +928,8 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
 
   @override
   void onNotification(String name, dynamic param) {
-    if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {
-        _isFavorite = Auth2().isFavorite(widget.message);
+    if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {
       });
     }
   }
@@ -876,7 +937,6 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
   @override
   Widget build(BuildContext context) {
     double leftPadding = (widget.selected != null) ? 12 : 16;
-    Image? favoriteStarIcon = widget.message?.favoriteStarIcon(selected: _isFavorite);
     return Container(
         decoration: BoxDecoration(
           color: Styles().colors!.white,
@@ -902,26 +962,26 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                       Padding(padding: EdgeInsets.only(bottom: 3, right: 12), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.category ?? '', semanticsLabel: "Category: ${widget.message?.category ?? ''}, ",style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))
+                            Text(widget.message?.category ?? '', semanticsLabel: "Category: ${widget.message?.category ?? ''}, ",style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"))
                       )])) : Container(),
                     
                     StringUtils.isNotEmpty(widget.message?.subject) ?
                       Padding(padding: EdgeInsets.only(bottom: 4, right: 12), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.subject ?? '', semanticsLabel: "Subject: ${widget.message?.subject ?? ''}, ", style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20, color: Styles().colors!.fillColorPrimary))
+                            Text(widget.message?.subject ?? '', semanticsLabel: "Subject: ${widget.message?.subject ?? ''}, ", style: Styles().textStyles?.getTextStyle("widget.card.title.medium.extra_fat"))
                       )])) : Container(),
 
                     StringUtils.isNotEmpty(widget.message?.body) ?
                       Padding(padding: EdgeInsets.only(bottom: 6), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.body ?? '', semanticsLabel: "Body: ${widget.message?.body ?? ''}, ", style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground))
+                            Text(widget.message?.body ?? '', semanticsLabel: "Body: ${widget.message?.body ?? ''}, ", style: Styles().textStyles?.getTextStyle("widget.card.detail.regular"))
                       )])) : Container(),
 
                     Row(children: [
                       Expanded(child:
-                        Text(widget.message?.displayInfo ?? '', style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 14, color: Styles().colors!.textSurface))
+                        Text(widget.message?.displayInfo ?? '', style: Styles().textStyles?.getTextStyle("widget.card.detail.small_variant"))
                     )]),
                   ])
                 ),
@@ -929,29 +989,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
             ),
           ),
           Container(color: Styles().colors!.fillColorSecondary, height: 4),
-          Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
-            Align(alignment: Alignment.topRight, child:
-            Semantics(
-              label: _isFavorite
-                  ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
-                  : Localization().getStringEx('widget.card.button.favorite.on.title', 'Add To Favorites'),
-              hint: _isFavorite
-                  ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
-                  : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
-              button: true,
-              child:
-              GestureDetector(onTap: _onTapFavorite, child:
-                Container(padding: EdgeInsets.only(left: 9, right: 9, top: 13, bottom: 9), child:
-                  favoriteStarIcon
-            ),)),),),
         ],)
     );
-  }
-
-  void _onTapFavorite() {
-    Analytics().logSelect(target: "Favorite: ${widget.message!.subject}");
-    setState(() {
-      Auth2().prefs?.toggleFavorite(widget.message);
-    });
   }
 }

@@ -195,9 +195,8 @@ class _ScheduleTabButton extends StatelessWidget {
   final bool? left;
   final bool? selected;
   final GestureTapCallback? onTap;
-  final double buttonHeight;
 
-  _ScheduleTabButton({Key? key, this.text, this.hint, this.left, this.selected, this.onTap, this.buttonHeight = 48})
+  _ScheduleTabButton({Key? key, this.text, this.hint, this.left, this.selected, this.onTap})
       : super(key: key);
 
   @override

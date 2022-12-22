@@ -16,6 +16,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Onboarding2.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/onboarding.dart';
@@ -39,7 +40,7 @@ class Onboarding2LoginEmailPanel extends StatefulWidget with OnboardingPanel {
   _Onboarding2LoginEmailPanelState createState() => _Onboarding2LoginEmailPanelState();
 }
 
-class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel> {
+class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel> implements Onboarding2ProgressableState {
 
   static final Color _successColor = Colors.green.shade800;
   static final Color _errorColor = Colors.red.shade700;
@@ -123,14 +124,14 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
                     Padding(padding: EdgeInsets.symmetric(horizontal: 36), child:
                       Semantics( header: true,
-                        child: Text(title, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary))),
+                        child: Text(title, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.onboarding2.login_email.heading.title"))),
                     ),
                     Container(height: 24,),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, bottom: 32), child:
-                      Text(description, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 18, color: Styles().colors!.fillColorPrimary)),
+                      Text(description, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("widget.description.medium")),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
-                      Text(Localization().getStringEx("panel.onboarding2.email.label.email.text", "Email Address:"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
+                      Text(Localization().getStringEx("panel.onboarding2.email.label.email.text", "Email Address:"), textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat"),),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12), child:
                       Semantics(
@@ -147,7 +148,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                             focusNode: _emailFocusNode,
                             autofocus: false,
                             autocorrect: false,
-                            style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
+                            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                             decoration: InputDecoration(
                               disabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0, style: BorderStyle.solid),),
                               enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0, style: BorderStyle.solid),),
@@ -159,7 +160,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                     ),
 
                     Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
-                      Text(Localization().getStringEx("panel.onboarding2.email.label.password.text", "Password:"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
+                      Text(Localization().getStringEx("panel.onboarding2.email.label.password.text", "Password:"), textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat"),),
                     ),
                     Padding(padding: EdgeInsets.only(left: 12, right: 12), child:
                       Semantics(
@@ -179,7 +180,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                             onSubmitted: (_) => _clearErrorMsg,
                             cursorColor: Styles().colors!.textBackground,
                             keyboardType: TextInputType.text,
-                            style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
+                            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                             decoration: InputDecoration(
                               enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0, style: BorderStyle.solid),),
                               focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0),),
@@ -191,7 +192,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
                     Visibility(visible: (_state == Auth2EmailAccountState.nonExistent), child:
                       Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 3), child:
-                        Text(Localization().getStringEx("panel.onboarding2.email.label.confirm_password.text", "Confirm Password:"), textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
+                        Text(Localization().getStringEx("panel.onboarding2.email.label.confirm_password.text", "Confirm Password:"), textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat"),),
                       ),
                     ),
                     Visibility(visible: (_state == Auth2EmailAccountState.nonExistent), child:
@@ -213,7 +214,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                               onSubmitted: (_) => _clearErrorMsg,
                               cursorColor: Styles().colors!.textBackground,
                               keyboardType: TextInputType.text,
-                              style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textBackground),
+                              style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0, style: BorderStyle.solid),),
                                 focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.0),),
@@ -232,7 +233,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                               Row(mainAxisSize: MainAxisSize.min, children: [
                                 Image.asset(_showingPassword ? 'images/deselected-dark.png' : 'images/deselected.png', excludeFromSemantics: true,),
                                 Container(width: 6),
-                                Text(showPassword, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
+                                Text(showPassword, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),),
                               ],)
                             ),
                           ),
@@ -245,8 +246,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                               Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12), child:
                                 Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end, children: [
                                   (_state == Auth2EmailAccountState.unverified) ?
-                                    Text(Localization().getStringEx("panel.onboarding2.email.label.resend_email.text", "Resend Verification"), textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies!.bold, decoration: TextDecoration.underline),) :
-                                    Text(Localization().getStringEx("panel.onboarding2.email.label.forgot_password.text", "Forgot Password?"), textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies!.bold, decoration: TextDecoration.underline),),
+                                    Text(Localization().getStringEx("panel.onboarding2.email.label.resend_email.text", "Resend Verification"), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle("panel.settings.login.button.underline")) :
+                                    Text(Localization().getStringEx("panel.onboarding2.email.label.forgot_password.text", "Forgot Password?"), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle("panel.settings.login.button.underline")),
                                 ],)
                               ),
                             ),
@@ -258,7 +259,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
                     Visibility(visible: StringUtils.isNotEmpty(_validationErrorText), child:
                       Padding(key:_validationErrorKey, padding: EdgeInsets.only(left: 12, right: 12, bottom: 12), child:
-                        Text(StringUtils.ensureNotEmpty(_validationErrorText ?? ''), style: TextStyle(color: _validationErrorColor ?? Styles().colors!.fillColorSecondary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+                        Text(StringUtils.ensureNotEmpty(_validationErrorText ?? ''), style: _validationErrorColor != null ? Styles().textStyles?.getTextStyle("panel.settings.login.validation.text")?.copyWith(color: _validationErrorColor)  : Styles().textStyles?.getTextStyle("panel.settings.login.validation.text"),),
                       ),
                     ),
                   ],),
@@ -508,13 +509,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
         });
         setErrorMsg(Localization().getStringEx("panel.onboarding2.email.sign_in.failed.invalid.text", "Incorrect password."));
       }
-      else if (widget.onboardingContext != null) {
-        Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
-        if(onSuccess!=null){
-          onSuccess();
-        } else {
-          Onboarding().next(context, widget);
-        }
+      else {
+        _onContinue();
       }
     }
   }
@@ -534,13 +530,8 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                 setErrorMsg(Localization().getStringEx("panel.onboarding2.email.link.cancel.text", "Failed to remove email address from your account."));
               });
             }
-            else if (widget.onboardingContext != null) {
-              Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
-              if(onSuccess!=null){
-                onSuccess();
-              } else {
-                Onboarding().next(context, widget);
-              }
+            else {
+              _onContinue();
             }
           }
         });
@@ -548,14 +539,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
       }
     }
 
-    if (widget.onboardingContext != null) {
-      Function? onSuccess = widget.onboardingContext!["onContinueAction"]; // Hook this panels to Onboarding2
-      if(onSuccess!=null){
-        onSuccess();
-      } else {
-        Onboarding().next(context, widget);
-      }
-    }
+    _onContinue();
   }
 
   void setErrorMsg(String? msg, { Color? color}) {
@@ -565,7 +549,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
     });
 
     if (StringUtils.isNotEmpty(msg)) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_validationErrorKey.currentContext != null) {
           Scrollable.ensureVisible(_validationErrorKey.currentContext!, duration: Duration(milliseconds: 300)).then((_) {
           });
@@ -578,5 +562,34 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
     setState(() {
       _validationErrorText = null;
     });
+  }
+
+  void _onContinue() {
+    // Hook this panels to Onboarding2
+    Function? onContinue = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueAction"] : null;
+    Function? onContinueEx = (widget.onboardingContext != null) ? widget.onboardingContext!["onContinueActionEx"] : null; 
+    if (onContinueEx != null) {
+      onContinueEx(this);
+    }
+    else if (onContinue != null) {
+      onContinue();
+    }
+    else {
+      Onboarding().next(context, widget);
+    }
+  }
+
+  // Onboarding2ProgressableState
+
+  @override
+  bool get onboarding2Progress => _isLoading;
+  
+  @override
+  set onboarding2Progress(bool progress) {
+    if (mounted) {
+      setState(() {
+        _isLoading = progress;
+      });
+    }
   }
 }

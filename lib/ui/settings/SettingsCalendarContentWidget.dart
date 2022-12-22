@@ -16,6 +16,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -85,29 +86,16 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
             toggled: Storage().calendarEnabledToSave ?? false,
             border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4)),
-            onTap: () {
-              setState(() {
-                Storage().calendarEnabledToSave = !Storage().calendarEnabledToSave!;
-              });
-            }));
+            onTap: _onAdd));
       } else if (code == 'prompt') {
         contentList.add(Container(height: 4));
         contentList.add(ToggleRibbonButton(
             label: Localization().getStringEx('panel.settings.home.calendar.settings.prompt.label', 'Prompt when saving events to calendar'),
-            textStyle: TextStyle(
-                fontSize: 16,
-                fontFamily: Styles().fontFamilies!.bold,
-                color: (Storage().calendarEnabledToSave == true) ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent),
+            textStyle: (Storage().calendarEnabledToSave == true) ? Styles().textStyles?.getTextStyle("widget.message.regular.fat") :   Styles().textStyles?.getTextStyle("widget.message.regular.fat.accent"),
             border: Border.all(color: Styles().colors!.blackTransparent018!, width: 1),
             borderRadius: BorderRadius.all(Radius.circular(4)),
             toggled: Storage().calendarCanPrompt ?? false,
-            onTap: () {
-              if (Storage().calendarEnabledToSave == true) {
-                setState(() {
-                  Storage().calendarCanPrompt = (Storage().calendarCanPrompt != true);
-                });
-              }
-            }));
+            onTap: _onPrompt));
       }
     }
 
@@ -117,10 +105,26 @@ class _SettingsCalendarContentWidgetState extends State<SettingsCalendarContentW
         Row(children: [
           Expanded(
               child: Text('Calendar',
-                  style: TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies?.bold, color: Styles().colors!.fillColorPrimary)))
+                  style:  Styles().textStyles?.getTextStyle("widget.detail.regular.fat")))
         ])
       ]);
     }
     return contentList;
+  }
+
+  void _onAdd() {
+    Analytics().logSelect(target: 'Add saved events to calendar');
+    setState(() {
+      Storage().calendarEnabledToSave = !Storage().calendarEnabledToSave!;
+    });
+  }
+
+  void _onPrompt() {
+    Analytics().logSelect(target: 'Prompt when saving events to calendar');
+    if (Storage().calendarEnabledToSave == true) {
+      setState(() {
+        Storage().calendarCanPrompt = (Storage().calendarCanPrompt != true);
+      });
+    }
   }
 }

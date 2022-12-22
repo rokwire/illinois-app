@@ -15,21 +15,21 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:illinois/ui/settings/SettingsInboxHomeContentWidget.dart';
 import 'package:illinois/ui/settings/SettingsNotificationPreferencesContentWidget.dart';
-import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
-import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum SettingsNotificationsContent { inbox, preferences }
+enum SettingsNotificationsContent { all, unread, preferences }
 
 class SettingsNotificationsContentPanel extends StatefulWidget {
   static final String routeName = 'settings_notifications_content_panel';
@@ -39,34 +39,43 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
   SettingsNotificationsContentPanel._({this.content});
 
   static void present(BuildContext context, {SettingsNotificationsContent? content}) {
-    if (content == SettingsNotificationsContent.inbox) {
-      if (Connectivity().isOffline) {
-        AppAlert.showOfflineMessage(
-            context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
-      } else if (!Auth2().isOidcLoggedIn) {
-        AppAlert.showMessage(context,
-            Localization().getStringEx('panel.browse.label.logged_out.inbox', 'You need to be logged in with your NetID to access Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
-      } else {
-        Navigator.push(
-            context,
-            PageRouteBuilder(
-                settings: RouteSettings(name: routeName),
-                pageBuilder: (context, animation1, animation2) => SettingsNotificationsContentPanel._(content: content),
-                transitionDuration: Duration.zero,
-                reverseTransitionDuration: Duration.zero));
-      }
-    } else {
-      Navigator.push(
-          context,
-          PageRouteBuilder(
-              settings: RouteSettings(name: routeName),
-              pageBuilder: (context, animation1, animation2) => SettingsNotificationsContentPanel._(content: content),
-              transitionDuration: Duration.zero,
-              reverseTransitionDuration: Duration.zero));
+    if (isInboxContent(content) && Connectivity().isOffline) {
+      AppAlert.showOfflineMessage(context, Localization().getStringEx('panel.browse.label.offline.inbox', 'Notifications are not available while offline.'));
+    }
+    else if (isInboxContent(content) && !Auth2().isOidcLoggedIn) {
+      AppAlert.showMessage(context,Localization().getStringEx('panel.browse.label.logged_out.inbox', 'You need to be logged in with your NetID to access Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.'));
+    }
+    else if (ModalRoute.of(context)?.settings.name != routeName) {
+      MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+      double height = mediaQuery.size.height - mediaQuery.viewPadding.top - mediaQuery.viewInsets.top - 16;
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        useRootNavigator: true,
+        routeSettings: RouteSettings(name: routeName),
+        clipBehavior: Clip.antiAlias,
+        backgroundColor: Styles().colors!.background,
+        constraints: BoxConstraints(maxHeight: height, minHeight: height),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+        builder: (context) {
+          return SettingsNotificationsContentPanel._(content: content);
+        }
+      );
+
+      /*Navigator.push(context, PageRouteBuilder(
+        settings: RouteSettings(name: routeName),
+        pageBuilder: (context, animation1, animation2) => SettingsNotificationsContentPanel._(content: content),
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero
+      ));*/
     }
   }
 
   static void launchMessageDetail(InboxMessage message) {
+    if (message.isRead == false) {
+      Inbox().readMessage(message.messageId);
+    }
     FirebaseMessaging().processDataMessageEx(message.data, allowedPayloadTypes: {
       FirebaseMessaging.payloadTypeEventDetail,
       FirebaseMessaging.payloadTypeGameDetail,
@@ -74,6 +83,10 @@ class SettingsNotificationsContentPanel extends StatefulWidget {
       FirebaseMessaging.payloadTypeAthleticsNewDetail,
       FirebaseMessaging.payloadTypeGroup
     });
+  }
+
+  static bool isInboxContent(SettingsNotificationsContent? content) {
+    return (content != SettingsNotificationsContent.preferences);
   }
 
   @override
@@ -84,8 +97,9 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   static final double _defaultPadding = 16;
   static SettingsNotificationsContent? _lastSelectedContent;
   late SettingsNotificationsContent _selectedContent;
-  final GlobalKey _headerBarKey = GlobalKey();
-  final GlobalKey _tabBarKey = GlobalKey();
+  final GlobalKey _allContentKey = GlobalKey();
+  final GlobalKey _unreadContentKey = GlobalKey();
+  final GlobalKey _sheetHeaderKey = GlobalKey();
   final GlobalKey _contentDropDownKey = GlobalKey();
   double _contentWidgetHeight = 300; // default value
   bool _contentValuesVisible = false;
@@ -95,7 +109,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
     NotificationService().subscribe(this, [Auth2.notifyLoginChanged]);
     
     _initInitialContent();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalContentWidgetHeight();
     });
     super.initState();
@@ -109,37 +123,78 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
 
   @override
   Widget build(BuildContext context) {
+    //return _buildScaffold();
+    return _buildSheet(context);
+  }
+
+  /*Widget _buildScaffold() {
     return Scaffold(
-        appBar: RootHeaderBar(
-            key: _headerBarKey, title: Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications')),
-        body: Column(children: <Widget>[
-          Expanded(
-              child:
-                  SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child: _buildContent()))
-        ]),
-        backgroundColor: Styles().colors!.background,
-        bottomNavigationBar: uiuc.TabBar(key: _tabBarKey));
+      appBar: RootHeaderBar(key: _headerBarKey, title: Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications')),
+      body: _buildPage(),
+      backgroundColor: Styles().colors!.background,
+      bottomNavigationBar: uiuc.TabBar(key: _tabBarKey)
+    );
+  }*/
+
+  Widget _buildSheet(BuildContext context) {
+    // MediaQuery(data: MediaQueryData.fromWindow(WidgetsBinding.instance.window), child: SafeArea(bottom: false, child: ))
+    return Column(children: [
+      Container(color: Styles().colors?.white, child:
+        Row(key: _sheetHeaderKey, children: [
+          Expanded(child:
+            Padding(padding: EdgeInsets.only(left: 16), child:
+              Text(Localization().getStringEx('panel.settings.notifications.header.inbox.label', 'Notifications'), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors?.fillColorSecondary),)
+            )
+          ),
+          Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
+            InkWell(onTap : _onTapClose, child:
+              Container(padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 16), child: 
+                Image.asset('images/close-orange.png', semanticLabel: '',),
+              ),
+            ),
+          ),
+
+        ],),
+      ),
+      Container(color: Styles().colors?.surfaceAccent, height: 1,),
+      Expanded(child:
+        _buildPage(context),
+      )
+    ],);
+  }
+
+  Widget _buildPage(BuildContext context) {
+    return Column(children: <Widget>[
+      Expanded(child:
+        SingleChildScrollView(physics: (_contentValuesVisible ? NeverScrollableScrollPhysics() : null), child:
+          _buildContent()
+        )
+      )
+    ]);
   }
 
   Widget _buildContent() {
-    return Container(
-        color: Styles().colors!.background,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Padding(
-              key: _contentDropDownKey,
-              padding: EdgeInsets.only(left: _defaultPadding, top: _defaultPadding, right: _defaultPadding),
-              child: RibbonButton(
-                  textColor: Styles().colors!.fillColorSecondary,
-                  backgroundColor: Styles().colors!.white,
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-                  rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-                  label: _getContentLabel(_selectedContent),
-                  onTap: _changeSettingsContentValuesVisibility)),
-          Container(
-              height: (_isInboxContent ? _contentWidgetHeight : null),
-              child: Stack(children: [Padding(padding: EdgeInsets.all(_defaultPadding), child: _contentWidget), _buildContentValuesContainer()]))
-        ]));
+    return Container(color: Styles().colors!.background, child:
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(key: _contentDropDownKey, padding: EdgeInsets.only(left: _defaultPadding, top: _defaultPadding, right: _defaultPadding), child:
+          RibbonButton(
+            textColor: Styles().colors!.fillColorSecondary,
+            backgroundColor: Styles().colors!.white,
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+            rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+            label: _getContentLabel(_selectedContent),
+            onTap: _changeSettingsContentValuesVisibility
+          )
+        ),
+        Container(height: (_isInboxContent ? _contentWidgetHeight : null), child:
+          Stack(children: [
+            Padding(padding: EdgeInsets.all(_defaultPadding), child: _contentWidget),
+            _buildContentValuesContainer()
+          ])
+        )
+      ])
+    );
   }
 
   Widget _buildContentValuesContainer() {
@@ -185,14 +240,15 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
 
   void _initInitialContent() {
     // Do not allow not logged in users to view "Notifications" content
-    if (!Auth2().isLoggedIn && (_lastSelectedContent == SettingsNotificationsContent.inbox)) {
+    if (!Auth2().isLoggedIn && (_lastSelectedContent != SettingsNotificationsContent.preferences)) {
       _lastSelectedContent = null;
     }
     _selectedContent = widget.content ??
-        (_lastSelectedContent ?? (Auth2().isLoggedIn ? SettingsNotificationsContent.inbox : SettingsNotificationsContent.preferences));
+        (_lastSelectedContent ?? (Auth2().isLoggedIn ? SettingsNotificationsContent.all : SettingsNotificationsContent.preferences));
   }
 
   void _onTapContentItem(SettingsNotificationsContent contentItem) {
+    Analytics().logSelect(target: contentItem.toString(), source: widget.runtimeType.toString());
     _selectedContent = _lastSelectedContent = contentItem;
     _changeSettingsContentValuesVisibility();
   }
@@ -207,19 +263,17 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   void _evalContentWidgetHeight() {
     double takenHeight = 0;
     try {
-      final RenderObject? headerRenderBox = _headerBarKey.currentContext?.findRenderObject();
-      if (headerRenderBox is RenderBox) {
-        takenHeight += headerRenderBox.size.height;
-      }
+      MediaQueryData mediaQuery = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+      takenHeight += mediaQuery.viewPadding.top + mediaQuery.viewInsets.top + 16;
 
       final RenderObject? contentDropDownRenderBox = _contentDropDownKey.currentContext?.findRenderObject();
       if (contentDropDownRenderBox is RenderBox) {
         takenHeight += contentDropDownRenderBox.size.height;
       }
 
-      final RenderObject? tabBarRenderBox = _tabBarKey.currentContext?.findRenderObject();
-      if (tabBarRenderBox is RenderBox) {
-        takenHeight += tabBarRenderBox.size.height;
+      final RenderObject? sheetHeaderRenderBox = _sheetHeaderKey.currentContext?.findRenderObject();
+      if (sheetHeaderRenderBox is RenderBox) {
+        takenHeight += sheetHeaderRenderBox.size.height;
       }
     } on Exception catch (e) {
       print(e.toString());
@@ -234,23 +288,39 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
 
   Widget get _contentWidget {
     switch (_selectedContent) {
-      case SettingsNotificationsContent.inbox:
-        return SettingsInboxHomeContentWidget();
+      case SettingsNotificationsContent.all:
+        return SettingsInboxHomeContentWidget(key: _allContentKey, onTapBanner: _onTapPausedBanner,);
+      case SettingsNotificationsContent.unread:
+        return SettingsInboxHomeContentWidget(unread: true, key: _unreadContentKey, onTapBanner: _onTapPausedBanner);
       case SettingsNotificationsContent.preferences:
         return SettingsNotificationPreferencesContentWidget();
     }
   }
 
-  bool get _isInboxContent {
-    return (_selectedContent == SettingsNotificationsContent.inbox);
+  bool get _isInboxContent => SettingsNotificationsContentPanel.isInboxContent(_selectedContent);
+
+  void _onTapClose() {
+    Analytics().logSelect(target: 'Close', source: widget.runtimeType.toString());
+    Navigator.of(context).pop();
+  }
+
+  void _onTapPausedBanner() {
+    Analytics().logSelect(target: 'Notifications Paused', source: widget.runtimeType.toString());
+    if (mounted) {
+      setState(() {
+        _selectedContent = _lastSelectedContent = SettingsNotificationsContent.preferences;
+      });
+    }
   }
 
   // Utilities
 
   String _getContentLabel(SettingsNotificationsContent content) {
     switch (content) {
-      case SettingsNotificationsContent.inbox:
-        return Localization().getStringEx('panel.settings.notifications.content.inbox.label', 'My Notifications');
+      case SettingsNotificationsContent.all:
+        return Localization().getStringEx('panel.settings.notifications.content.notifications.all.label', 'All Notifications');
+      case SettingsNotificationsContent.unread:
+        return Localization().getStringEx('panel.settings.notifications.content.notifications.unread.label', 'Unread Notifications');
       case SettingsNotificationsContent.preferences:
         return Localization().getStringEx('panel.settings.notifications.content.preferences.label', 'My Notification Preferences');
     }
@@ -261,7 +331,7 @@ class _SettingsNotificationsContentPanelState extends State<SettingsNotification
   @override
   void onNotification(String name, param) {
     if (name == Auth2.notifyLoginChanged) {
-      if ((_selectedContent == SettingsNotificationsContent.inbox) && !Auth2().isLoggedIn) {
+      if ((_selectedContent != SettingsNotificationsContent.preferences) && !Auth2().isLoggedIn) {
         // Do not allow not logged in users to view "Notifications" content
         _selectedContent = _lastSelectedContent = SettingsNotificationsContent.preferences;
       }

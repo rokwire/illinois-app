@@ -97,11 +97,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
                                 Text(
                                   Localization().getStringEx("panel.parking_lots.label.loading", "Loading parking lots. Please wait..."),
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontFamily: Styles().fontFamilies!.regular,
-                                    fontSize: 16,
-                                    color: Styles().colors!.mediumGray,
-                                  ),
+                                  style: Styles().textStyles?.getTextStyle("widget.message.light.regular")
                                 )
                               )
                             ])
@@ -137,11 +133,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
       widgets.add(Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(Localization().getStringEx("panel.parking_lots.label.empty","No parking lots available for this event"),
-          style: TextStyle(
-            fontFamily: Styles().fontFamilies!.regular,
-            fontSize: 16,
-            color: Styles().colors!.textBackground,
-          ),
+          style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")
         ),
       ));
     }
@@ -153,10 +145,7 @@ class _ParkingEventPanelState extends State<ParkingEventPanel>{
           padding: const EdgeInsets.all(16.0),
           child: Text(
             widget.event?.name ?? "",
-            style: TextStyle(
-              fontSize: 20,
-              color: Styles().colors!.fillColorPrimary,
-            ),
+            style: Styles().textStyles?.getTextStyle("widget.title.large")
           ),
         ),
         Column(
@@ -203,7 +192,7 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
 
   @override
   Widget build(BuildContext context) {
-    bool directionsVisible = FlexUI().hasFeature('parking_lot_directions') && (widget.inventory!.entrance != null);
+    bool directionsVisible = (widget.inventory!.entrance != null);
     return Semantics(container: true, child: Container(color: Colors.white, child: Row(
       children: <Widget>[
         Expanded(
@@ -215,27 +204,15 @@ class _ParkingLotWidgetState extends State<_ParkingLotWidget> implements Notific
               children: <Widget>[
                 Text(
                   widget.inventory!.lotName!,
-                  style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.bold,
-                    fontSize: 18,
-                    color: Styles().colors!.fillColorPrimary,
-                  ),
+                  style: Styles().textStyles?.getTextStyle("widget.detail.medium")
                 ),
                 Text(
                   "${StringUtils.ensureNotEmpty(widget.inventory!.lotAddress)}",
-                  style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.medium,
-                    fontSize: 16,
-                    color: Styles().colors!.fillColorPrimary,
-                  ),
+                  style: Styles().textStyles?.getTextStyle("widget.detail.medium")
                 ),
                 Text(
                   Localization().getStringEx("panel.parking_lots.label.available_spots", "Available Spots: ") + "${widget.inventory!.availableSpots}",
-                  style: TextStyle(
-                    fontFamily: Styles().fontFamilies!.regular,
-                    fontSize: 16,
-                    color: Styles().colors!.mediumGray,
-                  ),
+                  style: Styles().textStyles?.getTextStyle("widget.detail.light.regular")
                 ),
               ],
             ),

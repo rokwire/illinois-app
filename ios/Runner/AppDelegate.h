@@ -28,6 +28,7 @@
 @property (nonatomic, readonly) NSDictionary* config;
 @property (nonatomic, readonly) NSDictionary* secretKeys;
 @property (nonatomic, readonly) NSDictionary* thirdPartyServices;
+@property (nonatomic, readonly) NSOperationQueue* backgroundOperationQueue;
 + (instancetype)sharedInstance;
 @end
 

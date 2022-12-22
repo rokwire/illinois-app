@@ -11,7 +11,7 @@ description: Illinois client application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 4.1.36+1536
+version: 4.2.47+1647
 
 publish_to: none
 
@@ -43,14 +43,12 @@ dependencies:
   flutter_html: ^2.2.0
   qr_flutter: ^4.0.0
   webview_flutter: ^2.0.13
-  notification_permissions: ^0.6.1
   app_settings: ^4.1.1
   currency_text_input_formatter: ^2.1.5
   flutter_multi_formatter: ^2.4.1
   pinch_zoom: ^1.0.0
   uuid: ^3.0.5
   expandable_page_view: ^1.0.10
-  flutter_local_notifications: ^9.1.4
   package_info: ^2.0.2
   device_calendar: ^4.0.1
   image_cropping: ^0.0.11
@@ -58,7 +56,7 @@ dependencies:
   video_player: ^2.3.0
   just_audio: ^0.9.21
   flutter_barcode_scanner: ^2.0.0
-  confetti: ^0.6.0
+  confetti: ^0.7.0
   flutter_colorpicker: ^1.0.3
   in_app_review: ^2.0.4
 
@@ -89,6 +87,8 @@ flutter:
   assets:
   - images/
   - assets/
+  - app/images/
+  - app/assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

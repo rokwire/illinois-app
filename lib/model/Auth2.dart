@@ -1,8 +1,10 @@
 
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
+import 'package:rokwire_plugin/service/app_datetime.dart';
+import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:timezone/timezone.dart';
 
 
 ////////////////////////////////
@@ -95,6 +97,12 @@ class AuthCard {
 
   bool get needsUpdate {
     return (role == "Undergraduate") && (studentLevel != "1U");
+  }
+
+  DateTime? get expirationDateTimeUtc {
+    Location? universityLocation = AppDateTime().universityLocation;
+    DateTime? expirationDateTimeUtc = (expirationDate != null) ? DateTimeUtils.parseDateTime(expirationDate!, format: "yyyy-MM-dd", isUtc: true) : null;
+    return  ((expirationDateTimeUtc != null) && (universityLocation != null)) ? TZDateTime(universityLocation, expirationDateTimeUtc.year, expirationDateTimeUtc.month, expirationDateTimeUtc.day).toUtc() : null;
   }
 }
 

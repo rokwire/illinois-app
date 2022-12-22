@@ -116,25 +116,25 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
         child: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-                style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                style: Styles().textStyles?.getTextStyle("widget.detail.regular"),
                 children: [
                   TextSpan(
                       text: Localization().getStringEx('panel.wellness.sections.description.footer.wellness.text', 'Wellness '),
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold)),
+                      style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat")),
                   TextSpan(
                       text: Localization().getStringEx('panel.wellness.sections.description.footer.description.text',
                           'is a state of optimal well-being that is oriented toward maximizing an individual\'s potential. This is a life-long process of moving towards enhancing your ')),
                   TextSpan(
                       text: Localization().getStringEx('panel.wellness.sections.description.footer.dimensions.text',
                           'physical, mental, environmental, financial, spiritual, vocational, emotional, and social wellness.'),
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold))
+                      style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat"))
                 ])));
   }
 
   Widget _buildEightDimensionButton() {
     return RoundedButton(
         label: Localization().getStringEx('panel.wellness.sections.dimensions.button', 'Learn more about the 8 dimensions'),
-        textStyle: TextStyle(fontSize: 14),
+        textStyle: Styles().textStyles?.getTextStyle("panel.wellness.tips.button.title.small"),
         rightIcon: Image.asset('images/external-link.png'),
         rightIconPadding: EdgeInsets.only(left: 4, right: 6),
         onTap: onTapEightDimension);
@@ -157,7 +157,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
                 Row(children: [
                   Expanded(child:
                     Semantics( header: true, inMutuallyExclusiveGroup: true,
-                      child:Text(Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'), textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorSecondary, fontSize: 20, fontFamily: Styles().fontFamilies?.extraBold),),
+                      child:Text(Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'), textAlign: TextAlign.center, style:Styles().textStyles?.getTextStyle("panel.wellness.todo.dialog.heading.large")),
                   )),
                 ],),
                 Container(height: 16),
@@ -212,8 +212,11 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
       else if (UrlUtils.launchInternal(url)){
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       }
-      else{
-        launch(url!);
+      else {
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri);
+        }
       }
     }
   }

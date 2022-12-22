@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Storage.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 typedef void MapWidgetCreatedCallback(MapController controller);
@@ -62,6 +64,14 @@ class _MapWidgetState extends State<MapWidget> {
 }
 
 class MapController {
+  static const int DefaultMapThresholdDistance = 200;
+
+  static const String LocationThresoldDistanceParam = 'LocationThresoldDistance';
+  static const String HideBuildingLabelsParams = 'HideBuildingLabels';
+  static const String HideBusStopPOIsParams = 'HideBusStopPOIs';
+  static const String ShowMarkerPopupsParams = 'ShowMarkerPopus';
+  static const String UpdateOnlyParams = 'UpdateOnly';
+
   late MethodChannel _channel;
   int? _mapId;
 
@@ -73,28 +83,41 @@ class MapController {
 
   int? get mapId { return _mapId; }
 
-  Future<void> placePOIs(List<dynamic>? explores) async {
-    var options = {
-      "LocationThresoldDistance": Storage().debugMapThresholdDistance
-    };
+  Future<void> placePOIs(List<Explore>? explores, { Map<String, dynamic>? options }) async {
     List<dynamic> jsonData = [];
     if (CollectionUtils.isNotEmpty(explores)) {
-      for (dynamic explore in explores!) {
+      for (Explore explore in explores!) {
         jsonData.add(explore.toJson());
       }
     }
-    return _channel.invokeMethod('placePOIs', { "explores": jsonData, "options": options});
+
+    Map<String, dynamic> optionsParam = <String, dynamic>{
+      LocationThresoldDistanceParam: Storage().debugMapThresholdDistance // ?? DefaultMapThresholdDistance
+    };
+    if (options != null) {
+      optionsParam.addAll(options);
+    }
+
+    return _channel.invokeMethod('placePOIs', { "explores": jsonData, "options": optionsParam});
   }
 
   Future<void>enable(bool enable) async {
     return _channel.invokeMethod('enable', enable);
   }
 
+  Future<void>fixZOrder() async {
+    return _channel.invokeMethod('fixZOrder');
+  }
+
   Future<void>enableMyLocation(bool enable) async {
     return _channel.invokeMethod('enableMyLocation', enable);
   }
 
-  Future<void> viewPoi(Map<String, dynamic>? target) async {
-    return _channel.invokeMethod('viewPoi', {'target': target});
+  Future<void> viewPOI(Map<String, dynamic>? target) async {
+    return _channel.invokeMethod('viewPOI', {'target': target});
+  }
+
+  Future<void> markPOI(Explore? explore) async {
+    return _channel.invokeMethod('markPOI', {'explore': explore?.toJson()});
   }
 }

@@ -153,9 +153,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
           Stack(children: <Widget>[
             Padding( padding: EdgeInsets.all(16), child:
               Semantics(header: true, child:
-                Text(Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"), style:
-                  TextStyle(color: Color(0xff0f2040), fontFamily: Styles().fontFamilies!.extraBold, fontSize: 20),
-                ),
+                Text(Localization().getStringEx("panel.bus_pass.header.title", "MTD Bus Pass"), style: Styles().textStyles?.getTextStyle("panel.mtd_bus.heading.title")),
               ),
             ),
             Align(alignment: Alignment.topRight, child:
@@ -175,16 +173,14 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
   }
 
   Widget _buildBusContent() {
-    bool busPassAvailable = FlexUI().hasFeature('mtd_bus_pass');
+    bool busPassAvailable = FlexUI().isMTDBusPassAvailable;
     String description = busPassAvailable ?
       Localization().getStringEx("panel.bus_pass.description.text", "Show this screen to the bus operator as you board.") :
       Localization().getStringEx("panel.bus_pass.error.disabled.text", "You do not have an MTD Bus Pass.");
     return SingleChildScrollView(scrollDirection: Axis.vertical, child:
       Column(children: <Widget>[
         _buildAvatar(),
-        Text(Auth2().authCard?.role ?? '', style:
-          TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 36, color: Styles().colors!.white),
-        ),
+        Text(Auth2().authCard?.role ?? '', style: Styles().textStyles?.getTextStyle("panel.mtd_bus.role")),
         BusClockWidget(),
         Align(alignment: Alignment.center, child:
           Padding(padding: EdgeInsets.only(top: 10), child:
@@ -200,9 +196,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
         ),
         Align(alignment: Alignment.center, child:
           Container(width: _photoSize, padding: EdgeInsets.only(top: 12, left: 6, right: 6), child:
-            Text(description, textAlign: TextAlign.center, style:
-              TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.white,),
-            ),
+            Text(description, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.mtd_bus.description.label")),
           ),
         ),
       ],)
@@ -267,12 +261,7 @@ class _MTDBusPassPanelState extends State<MTDBusPassPanel> implements Notificati
         _buildBusIcon(),
         Container(width: 8,),
         Container(
-          child: Text(_busNumber!,
-              style: TextStyle(
-                fontFamily: Styles().fontFamilies!.bold,
-                fontSize: 36,
-                color: Styles().colors!.white,
-              )),
+          child: Text(_busNumber!, style: Styles().textStyles?.getTextStyle("panel.mtd_bus.buss_number.label"),),
         ),
       ],
     ));
@@ -484,10 +473,7 @@ class _BusClockState extends State<BusClockWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      _timeString!,
-      style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 48, color: Styles().colors!.white),
-    );
+    return Text(_timeString!, style: Styles().textStyles?.getTextStyle("panel.mtd_bus.clock.time"));
   }
 
   void _updateTime() {

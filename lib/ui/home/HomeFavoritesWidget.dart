@@ -9,30 +9,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Dinings.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/Laundries.dart';
+import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Sports.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
-import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreCard.dart';
-import 'package:illinois/ui/explore/ExploreDetailPanel.dart';
 import 'package:illinois/ui/home/HomePanel.dart';
 import 'package:illinois/ui/home/HomeWidgets.dart';
+import 'package:illinois/ui/mtd/MTDWidgets.dart';
+import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/ui/widgets/SemanticsWidgets.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:rokwire_plugin/model/inbox.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
-import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -61,8 +66,10 @@ class HomeFavoritesWidget extends StatefulWidget {
       case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.athletics', 'My Athletics Events');
       case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.news', 'My Athletics News');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.laundry', 'My Laundry');
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.inbox', 'My Notifications');
+      case MTDStop.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.mtd_stops', 'My MTD Stops');
+      case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.mtd_destinations', 'My MTD Destinations');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.campus_guide', 'My Campus Guide');
+      case Appointment.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.title.appointments', 'MyMcKinley Appointments');
     }
     return null;
   }
@@ -78,8 +85,14 @@ class HomeFavoritesWidget extends StatefulWidget {
       case Game.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.athletics", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Athletics Events</b></a> for quick access here."); break;
       case News.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.news", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Athletics News</b></a> for quick access here."); break;
       case LaundryRoom.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.laundry", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Laundry Locations</b></a> for quick access here."); break;
+      case MTDStop.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.mtd_stops", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>MTD Stops</b></a> for quick access here."); break;
+      case ExplorePOI.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.mtd_destinations", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>MTD Destinations</b></a> for quick access here."); break;
       case GuideFavorite.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.campus_guide", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>Campus Guide</b></a> for quick access here."); break;
-      case InboxMessage.favoriteKeyName: message = Localization().getStringEx("widget.home.favorites.message.empty.inbox", "See your most recent <a href='$localUrlMacro'><b>Notifications</b></a> for quick access here."); break;
+      case Appointment.favoriteKeyName: 
+        message = (Storage().appointmentsCanDisplay != true) ? 
+          Localization().getStringEx('widget.home.favorites.message.empty.appointments.not_to_display', 'There is nothing to display as you have chosen not to display any past or future appointments.') : 
+          Localization().getStringEx("widget.home.favorites.message.empty.appointments", "Tap the \u2606 on items in <a href='$localUrlMacro'><b>MyMcKinley Appointments</b></a> for quick access here."); 
+        break;
     }
     return (message != null) ? message.replaceAll(localUrlMacro, '$localScheme://${key.toLowerCase()}') : null;
   }
@@ -91,8 +104,10 @@ class HomeFavoritesWidget extends StatefulWidget {
       case Game.favoriteKeyName: return Styles().colors?.fillColorPrimary;
       case News.favoriteKeyName: return Styles().colors?.fillColorPrimary;
       case LaundryRoom.favoriteKeyName: return Styles().colors?.accentColor2;
+      case MTDStop.favoriteKeyName: return Styles().colors?.accentColor3;
+      case ExplorePOI.favoriteKeyName: return Styles().colors?.accentColor3;
       case GuideFavorite.favoriteKeyName: return Styles().colors?.accentColor3;
-      case InboxMessage.favoriteKeyName: return Styles().colors?.fillColorSecondary;
+      case Appointment.favoriteKeyName: return Styles().colors?.accentColor3;
     }
     return null;
   }
@@ -125,8 +140,10 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       Connectivity.notifyStatusChanged,
       Auth2UserPrefs.notifyFavoritesChanged,
       Auth2.notifyLoginChanged,
+      FlexUI.notifyChanged,
       Guide.notifyChanged,
       Config.notifyConfigChanged,
+      Storage.notifySettingChanged,
     ]);
     
     if (widget.updateController != null) {
@@ -154,7 +171,8 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   void onNotification(String name, dynamic param) {
     if ((name == Config.notifyConfigChanged) ||
         (name == Connectivity.notifyStatusChanged) ||
-        (name == Auth2.notifyLoginChanged)) {
+        (name == Auth2.notifyLoginChanged) ||
+        (name == FlexUI.notifyChanged)) {
       if (mounted) {
         setState(() {});
       }
@@ -162,6 +180,11 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     else if ((name == Auth2UserPrefs.notifyFavoritesChanged) ||
             (name == Guide.notifyChanged)) {
       _refreshFavorites(showProgress: false);
+    }
+    else if (name == Storage.notifySettingChanged) {
+      if ((widget.favoriteKey == Appointment.favoriteKeyName) && (param == Storage().appointmentsDisplayEnabledKey)) {
+        _initFavorites((_favoriteIds ?? LinkedHashSet<String>()), showProgress: true);
+      }
     }
   }
 
@@ -176,10 +199,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
 
   Widget _buildContent() {
     if (Connectivity().isOffline) {
-      return HomeMessageCard(title: Localization().getStringEx("app.offline.message.title", "You appear to be offline"), message: _offlineMessage,);
-    }
-    else if ((widget.favoriteKey == InboxMessage.favoriteKeyName) && !Auth2().isOidcLoggedIn) {
-      return HomeMessageCard(title: Localization().getStringEx("app.logged_out.message.title", "You are not logged in"), message: _loggedOutMessage,);
+      return HomeMessageCard(title: Localization().getStringEx("common.message.offline", "You appear to be offline"), message: _offlineMessage,);
     }
     else if (_loadingFavorites) {
       return HomeProgressWidget();
@@ -232,19 +252,36 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       Padding(padding: EdgeInsets.only(top: 8), child:
         contentWidget,
       ),
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: visibleCount,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => visibleCount),
       LinkButton(
         title: Localization().getStringEx('panel.saved.button.all.title', 'View All'),
         hint: _viewAllHint,
-        onTap: _onSeeAll,
+        onTap: _onTapViewAll,
       )      
     ]);
   }
 
   Widget _buildItemCard(Favorite? item) {
     //Custom layout for super events before release
-    if(item is Event && item.isComposite){
-      return _buildCompositEventCard(item);
+    if (item is Event && item.isComposite) {
+      return ExploreCard(
+        explore: item,
+        showTopBorder: true,
+        horizontalPadding: 0,
+        border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+        onTap:() => _onTapItem(item)
+      );
+    }
+    else if (item is MTDStop) {
+      return MTDStopScheduleCard(
+        stop: item,
+        onTap: () => _onTapItem(item),
+      );
+    }
+    else if (item is Appointment) {
+      return AppointmentCard(
+        appointment: item,
+      );
     }
 
     bool isFavorite = Auth2().isFavorite(item);
@@ -268,11 +305,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
                         Text(title ?? '', semanticsLabel: "", style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20), ),
                       ),
                       Visibility(visible: Auth2().canFavorite && (favoriteStarIcon != null), child:
-                        GestureDetector(behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            Analytics().logSelect(target: "Favorite: $title", source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
-                            Auth2().prefs?.toggleFavorite(item);
-                          }, child:
+                        GestureDetector(behavior: HitTestBehavior.opaque, onTap: () => _onTapFavoriteStar(item), child:
                           Semantics(container: true,
                             label: isFavorite
                                 ? Localization().getStringEx('widget.card.button.favorite.off.title', 'Remove From Favorites')
@@ -282,8 +315,7 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
                                 : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                             button: true,
                             excludeSemantics: true,
-                            child:
-                              Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: favoriteStarIcon))),
+                            child: Container(padding: EdgeInsets.only(left: 24, bottom: 24), child: favoriteStarIcon))),
                           )
                         ],
                       )
@@ -308,47 +340,37 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         )),);
   }
 
-  Widget _buildCompositEventCard(Event? item){
-      return ExploreCard(explore: item,showTopBorder: true, horizontalPadding: 0,border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-        onTap:(){
-          if (item != null) {
-            if (item.isComposite) {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: item)));
-            } else {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) =>
-                  ExploreDetailPanel(explore: item)));
-            }
-          }
-        });
-  }
-
   void _refreshFavorites({bool showProgress = true}) {
     if (Connectivity().isOnline) {
       LinkedHashSet<String> refFavoriteIds = Auth2().prefs?.getFavorites(widget.favoriteKey) ?? LinkedHashSet<String>();
       if (!DeepCollectionEquality().equals(_favoriteIds, refFavoriteIds)) {
-        if (showProgress && mounted) {
-          setState(() {
-            _loadingFavorites = true;
-          });
-        }
-        LinkedHashSet<String> favoriteIds = LinkedHashSet<String>.from(refFavoriteIds);
-        _loadFavorites(favoriteIds).then((List<Favorite>? favorites) {
-          if (mounted) {
-            setState(() {
-              _favoriteIds = favoriteIds;
-              _favorites = favorites;
-              _updateCurrentPage();
-            });
-          }
-        }).whenComplete(() {
-          if (mounted) {
-            setState(() {
-              _loadingFavorites = false;
-            });
-          }
-        }); 
+        _initFavorites(refFavoriteIds, showProgress: showProgress);
       }
     }
+  }
+
+  void _initFavorites(LinkedHashSet<String> refFavoriteIds, {bool showProgress = true}) {
+    if (showProgress && mounted) {
+      setState(() {
+        _loadingFavorites = true;
+      });
+    }
+    LinkedHashSet<String> favoriteIds = LinkedHashSet<String>.from(refFavoriteIds);
+    _loadFavorites(favoriteIds).then((List<Favorite>? favorites) {
+      if (mounted) {
+        setState(() {
+          _favoriteIds = favoriteIds;
+          _favorites = favorites;
+          _updateCurrentPage();
+        });
+      }
+    }).whenComplete(() {
+      if (mounted) {
+        setState(() {
+          _loadingFavorites = false;
+        });
+      }
+    });
   }
 
   double get _pageHeight {
@@ -390,7 +412,8 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       }
 
       _pageViewKey = UniqueKey();
-      _pageController = null;
+      // _pageController = null; //Doing this will break the listener in the buttons, instead reset to first page
+      _pageController?.jumpToPage(0);
       _contentKeys.clear();
     }
   }
@@ -403,8 +426,10 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
         case Game.favoriteKeyName: return _loadFavoriteGames(favoriteIds);
         case News.favoriteKeyName: return _loadFavoriteNews(favoriteIds);
         case LaundryRoom.favoriteKeyName: return _loadFavoriteLaundries(favoriteIds);
-        case InboxMessage.favoriteKeyName: return _loadFavoriteNotifications(favoriteIds);
+        case MTDStop.favoriteKeyName: return _loadFavoriteMTDStops(favoriteIds);
+        case ExplorePOI.favoriteKeyName: return _loadFavoriteMTDDestinations(favoriteIds);
         case GuideFavorite.favoriteKeyName: return _loadFavoriteGuideItems(favoriteIds);
+        case Appointment.favoriteKeyName: return _loadFavoriteAppointments(favoriteIds);
       }
     }
     return null;
@@ -425,8 +450,11 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
   Future<List<Favorite>?> _loadFavoriteLaundries(LinkedHashSet<String>? favoriteIds) async =>
     CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList((await Laundries().loadSchoolRooms())?.rooms, favoriteIds) : null;
 
-  Future<List<Favorite>?> _loadFavoriteNotifications(LinkedHashSet<String>? favoriteIds) async =>
-    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(await Inbox().loadMessages(messageIds: favoriteIds), favoriteIds) : null;
+  Future<List<Favorite>?> _loadFavoriteMTDStops(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? ListUtils.reversed(MTD().stopsByIds(favoriteIds)) : null;
+
+  Future<List<Favorite>?> _loadFavoriteMTDDestinations(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? ListUtils.reversed(ExplorePOI.listFromString(favoriteIds)) : null;
 
   Future<List<Favorite>?> _loadFavoriteGuideItems(LinkedHashSet<String>? favoriteIds) async {
     List<Favorite>? guideItems;
@@ -454,6 +482,11 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     }
     return guideItems;
   }
+
+  Future<List<Favorite>?> _loadFavoriteAppointments(LinkedHashSet<String>? favoriteIds) async =>
+      (CollectionUtils.isNotEmpty(favoriteIds) && (Storage().appointmentsCanDisplay == true))
+          ? _buildFavoritesList(await Appointments().loadAppointments(onlyUpcoming: true), favoriteIds)
+          : null;
 
   List<Favorite>? _buildFavoritesList(List<Favorite>? sourceList, LinkedHashSet<String>? favoriteIds) {
     if ((sourceList != null) && (favoriteIds != null)) {
@@ -508,8 +541,10 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       case Game.favoriteKeyName: return Image.asset('images/icon-calendar.png', excludeFromSemantics: true,);
       case News.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
       case LaundryRoom.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
-      case InboxMessage.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
+      case MTDStop.favoriteKeyName: return Image.asset('images/icon-location.png', excludeFromSemantics: true,);
+      case ExplorePOI.favoriteKeyName: return Image.asset('images/icon-location.png', excludeFromSemantics: true,);
       case GuideFavorite.favoriteKeyName: return Image.asset('images/icon-news.png', excludeFromSemantics: true,);
+      case Appointment.favoriteKeyName: return Image.asset('images/campus-tools.png', excludeFromSemantics: true,);
     }
     return null;
   }
@@ -521,15 +556,10 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.athletics', 'My Athletics Events are not available while offline.');
       case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.news', 'My Athletics News are not available while offline.');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.laundry', 'My Laundry are not available while offline.');
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.inbox', 'My Notifications are not available while offline.');
+      case MTDStop.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.mtd_stops', 'My MTD Stops are not available while offline.');
+      case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.mtd_destinations', 'My MTD Destinations are not available while offline.');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.campus_guide', 'My Campus Guide are not available while offline.');
-    }
-    return null;
-  }
-
-  String? get _loggedOutMessage {
-    switch(widget.favoriteKey) {
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.logged_out.inbox', 'You need to be logged in with your NetID to access My Notifications. Set your privacy level to 4 or 5 in your Profile. Then find the sign-in prompt under Settings.');
+      case Appointment.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.message.offline.appointments', 'MyMcKinley Appointments are not available while offline.');
     }
     return null;
   }
@@ -541,8 +571,10 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
       case Game.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.athletics', 'Tap to view all favorite athletics events');
       case News.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.news', 'Tap to view all favorite athletics news');
       case LaundryRoom.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.laundry', 'Tap to view all favorite laundries');
-      case InboxMessage.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.inbox', 'Tap to view all favorite notifications');
+      case MTDStop.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.mtd_stops', 'Tap to view all favorite MTD stops');
+      case ExplorePOI.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.mtd_destinations', 'Tap to view all favorite MTD destinations');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.campus_guide', 'Tap to view all favorite campus guide articles');
+      case Appointment.favoriteKeyName: return Localization().getStringEx('widget.home.favorites.all.hint.appointments', 'Tap to view all favorite appointments');
     }
     return null;
   }
@@ -552,8 +584,19 @@ class _HomeFavoritesWidgetState extends State<HomeFavoritesWidget> implements No
     item?.favoriteLaunchDetail(context);
   }
 
-  void _onSeeAll() {
+  void _onTapFavoriteStar(Favorite? item) {
+    Analytics().logSelect(target: "Favorite: ${item?.favoriteTitle}", source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
+    Auth2().prefs?.toggleFavorite(item);
+  }
+
+  void _onTapViewAll() {
     Analytics().logSelect(target: 'View All', source: '${widget.runtimeType.toString()}(${widget.favoriteKey})');
-    Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
+    if ((widget.favoriteKey == MTDStop.favoriteKeyName) || (widget.favoriteKey == ExplorePOI.favoriteKeyName)) {
+      FavoriteExt.launchHome(context, key: widget.favoriteKey);
+    }
+    else {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) { return SavedPanel(favoriteCategories: [widget.favoriteKey]); } ));
+    }
   }
 }
+

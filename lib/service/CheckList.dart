@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -191,11 +192,6 @@ abstract class CheckList with Service implements NotificationsListener{
     }
   }
 
-  // ignore: unused_element
-  Future<List<dynamic>?> _loadFromAssets() async{
-    return JsonUtils.decodeList(await AppBundle.loadString('assets/gies.json'));
-  }
-
   Future<dynamic> loadUserInfo() async {
     if(_contentName != giesOnboarding){
       return null;
@@ -204,12 +200,10 @@ abstract class CheckList with Service implements NotificationsListener{
       Log.e('Missing gateway url.');
       return null;
     }
-    String? contactInfoUrl = "${Config().gatewayUrl}/person/contactinfo?id=";
-        contactInfoUrl+="${Auth2().uin}";
-        // contactInfoUrl+="123456789"; //Workaround to return dummy data
-    String? token = Auth2().uiucToken?.accessToken;
+    String? contactInfoUrl = "${Config().gatewayUrl}/person/contactinfo?id=${Auth2().uin}";
+    // contactInfoUrl+="123456789"; //Workaround to return dummy data
 
-    Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: {"External-Authorization":token});
+    Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: Gateway().externalAuthorizationHeader);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     Log.d("Contact Info Request: ${response?.request.toString()}  Response: $responseCode : $responseString");
@@ -234,9 +228,7 @@ abstract class CheckList with Service implements NotificationsListener{
     }
 
     String? contactInfoUrl = "${Config().gatewayUrl}/courses/giescourses?id=${Auth2().uin}";
-    String? token = Auth2().uiucToken?.accessToken;
-
-    Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: {"External-Authorization":token});
+    Response? response = await Network().get(contactInfoUrl, auth: Auth2(), headers: Gateway().externalAuthorizationHeader);
 
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
@@ -399,7 +391,7 @@ abstract class CheckList with Service implements NotificationsListener{
       return;
     }
     
-    Groups().searchGroups(groupName, includeHidden: true).then((foundGroups){
+    Groups().searchGroups(groupName, includeHidden: true ).then((foundGroups){
       if(CollectionUtils.isEmpty(foundGroups)){
         Log.d("Unable to Join approval group: Unable to find group with name $groupName");
       }

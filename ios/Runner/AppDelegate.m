@@ -43,6 +43,7 @@
 static NSString *const kFIRMessagingFCMTokenNotification = @"com.firebase.iid.notif.fcm-token";
 
 @interface RootNavigationController : UINavigationController
+- (void)setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible;
 @end
 
 @interface LaunchScreenView : UIView
@@ -59,7 +60,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 }
 
 // Flutter
-@property (nonatomic) UINavigationController *navigationViewController;
+@property (nonatomic) RootNavigationController *navigationViewController;
 @property (nonatomic) FlutterViewController *flutterViewController;
 @property (nonatomic) FlutterMethodChannel *flutterMethodChannel;
 
@@ -80,6 +81,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
 	__weak typeof(self) weakSelf = self;
+	
+	_backgroundOperationQueue = [[NSOperationQueue alloc] init];
 	
 //	Initialize Google Maps SDK
 //	[GMSServices provideAPIKey:kGoogleAPIKey];
@@ -107,6 +110,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 	_navigationViewController = [[RootNavigationController alloc] initWithRootViewController:rootViewController];
 	_navigationViewController.navigationBarHidden = YES;
+	[_navigationViewController setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible];
 	_navigationViewController.delegate = self;
 
 	_navigationViewController.navigationBar.translucent = NO;
@@ -149,6 +153,8 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
+	[_backgroundOperationQueue cancelAllOperations];
 
 	[super applicationWillTerminate:application];
 }
@@ -238,6 +244,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 	}
 	else if ([call.method isEqualToString:@"barcode"]) {
 		[self handleBarcodeWithParameters:parameters result:result];
+	}
+	else if ([call.method isEqualToString:@"deepLinkScheme"]) {
+		[self handleDeepLinkSchemeWithParameters:parameters result:result];
 	}
 	else if ([call.method isEqualToString:@"test"]) {
 		[self handleTestWithParameters:parameters result:result];
@@ -419,6 +428,25 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 }
 */
 
+#pragma mark DeepLink Scheme
+
+- (void)handleDeepLinkSchemeWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
+	NSString *deepLinkScheme = nil;
+	NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleURLTypes"];
+	if ([urlTypes isKindOfClass:[NSArray class]]) {
+		for (NSUInteger index = 0; index < urlTypes.count; index++) {
+			NSDictionary *urlType = [urlTypes inaDictAtIndex: index];
+			NSString *urlName = [urlType inaStringForKey:@"CFBundleURLName"];
+			if ([urlName isEqualToString:@"edu.illinois.rokwire.auth"]) {
+				NSArray *urlSchemes = [urlType inaArrayForKey:@"CFBundleURLSchemes"];
+				deepLinkScheme = urlSchemes.firstObject;
+				break;
+			}
+		}
+	}
+	result(deepLinkScheme);
+}
+
 #pragma mark Orientations
 
 - (void)handleEnabledOrientationsWithParameters:(NSDictionary*)parameters result:(FlutterResult)result {
@@ -453,6 +481,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		
 		if ((0 < supportedOrientations.count) && ![_supportedInterfaceOrientations isEqualToSet:supportedOrientations]) {
 			_supportedInterfaceOrientations = supportedOrientations;
+
+			[_navigationViewController setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible];
+
 			UIDeviceOrientation currentOrientation = [[UIDevice currentDevice] orientation];
 			if (![_supportedInterfaceOrientations containsObject:@(currentOrientation)]) {
 				[[UIDevice currentDevice] setValue:@(_preferredInterfaceOrientation) forKey:@"orientation"];
@@ -565,6 +596,14 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 @implementation RootNavigationController
 
+- (void)setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible {
+	SEL selector = NSSelectorFromString(@"setNeedsUpdateOfSupportedInterfaceOrientations");
+	if ([self respondsToSelector:selector]) {
+		[self performSelector:selector withObject:nil afterDelay:0];
+	}
+}
+
+
 - (BOOL)shouldAutorotate {
 	return true;
 }
@@ -585,7 +624,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 @end
 
 //////////////////////////////////////
-// UIInterfaceOrientation
+// LaunchScreenView
 
 @interface LaunchScreenView()
 @property (nonatomic) UIImageView *imageView;

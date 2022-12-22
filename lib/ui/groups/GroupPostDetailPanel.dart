@@ -36,7 +36,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/utils/utils.dart';
-import 'package:rokwire_plugin/ui/panels/modal_image_panel.dart';
+import 'package:sprintf/sprintf.dart';
 
 class GroupPostDetailPanel extends StatefulWidget implements AnalyticsPageAttributes {
   final GroupPost? post;
@@ -89,7 +89,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _sortReplies(_post?.replies);
     _sortReplies(_focusedReply?.replies);
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalSliverHeaderHeight();
       if (_focusedReply != null) {
         _scrollToPostEdit();
@@ -130,7 +130,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         SingleChildScrollView(key: _scrollContainerKey, controller: _scrollController, child:
         Column(children: [
           Container(height: _sliverHeaderHeight ?? 0,),
-          _isEditMainPost || StringUtils.isNotEmpty(_post?.imageUrl) //TBD remove if statement
+          _isEditMainPost || StringUtils.isNotEmpty(_post?.imageUrl)
             ? ImageChooserWidget(key: _postImageHolderKey, imageUrl: _post?.imageUrl, buttonVisible: _isEditMainPost, onImageChanged: (url) => _mainPostUpdateData?.imageUrl = url,)
             : Container(),
           _buildPostContent(),
@@ -149,7 +149,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 ),
 
                 Visibility(
-                  visible: Config().showGroupPostReactions,
+                  visible: Config().showGroupPostReactions && (widget.group?.currentUserHasPermissionToSendReactions == true),
                   child: Padding(
                     padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
                     child: GroupPostReaction(
@@ -159,6 +159,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       accountIDs: _post?.reactions[thumbsUpReaction],
                       selectedIconPath: 'images/icon-thumbs-up-solid.png',
                       deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                      // onTapEnabled: _canSendReaction,
                     ),
                   ),
                 ),
@@ -245,7 +246,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                                         maxLines: null,
                                         autofocus: true,
                                         decoration: InputDecoration(
-                                            hintText: "Edit the post",
+                                            hintText: Localization().getStringEx("panel.group.detail.post.edit.hint", "Edit the post"),
                                             border: OutlineInputBorder(
                                                 borderSide: BorderSide(
                                                     color: Styles().colors!.mediumGray!,
@@ -291,7 +292,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                               child: Text(
                                   StringUtils.ensureNotEmpty(
                                       _post?.displayDateTime),
-                                  semanticsLabel: "Updated ${widget.post?.displayDateTime ?? ""} ago",
+                                  semanticsLabel:  sprintf(Localization().getStringEx("panel.group.detail.post.updated.ago.format", "Updated %s ago"),[widget.post?.displayDateTime ?? ""]),
                                   style: TextStyle(
                                       fontFamily:
                                       Styles().fontFamilies!.medium,
@@ -307,7 +308,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                         groupId: widget.group?.id,
                         groupPrivacy: widget.group?.privacy,
                         onSelectionChanged: (members){
-                          setState(() {
+                          setStateIfMounted(() {
                             _mainPostUpdateData?.members = members;
                           });
                         },)
@@ -330,7 +331,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     if (_focusedReply != null) {
       replies = _generateFocusedThreadList();
     }
-    else if (_editingReply != null) { //TBD check this
+    else if (_editingReply != null) {
       replies = [_editingReply!];
     }
     else {
@@ -356,11 +357,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildPostEdit() {
-    bool currentUserIsMemberOrAdmin =
-        widget.group?.currentUserIsMemberOrAdmin ?? false;
     return Visibility(
         key: _postEditKey,
-        visible: currentUserIsMemberOrAdmin,
+        visible: widget.group?.currentUserHasPermissionToSendReply == true,
         child: Padding(
             padding: EdgeInsets.all(_outerPadding),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -402,7 +401,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
           wrapContent: true,
           buttonVisible: _editingReply!=null,
           onImageChanged: (String imageUrl) => _replyEditData?.imageUrl = imageUrl,
-          imageSemanticsLabel: "Reply", //TBD localize
+          imageSemanticsLabel: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"),
         )
      );
   }
@@ -456,7 +455,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 semanticsLabel: "options",
                 showRepliesCount: showRepliesCount,
                 onIconTap: optionsFunctionTap,
-                onImageTap: (){_showModalImage(reply.imageUrl);},
                 onCardTap: (){_onTapReplyCard(reply);},
             ))));
       if(reply.id == focusedReplyId) {
@@ -709,11 +707,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   void _onTapPostReply({GroupPost? reply}) {
     Analytics().logSelect(target: 'Post Reply');
     //Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupPostDetailPanel(post: widget.post, group: widget.group, focusedReply: reply, hidePostOptions: true,)));
-    if (mounted) {
-      setState(() {
-        _selectedReplyId = reply?.id;
-      });
-    }
+    setStateIfMounted(() {
+      _selectedReplyId = reply?.id;
+    });
     _clearBodyControllerContent();
     _scrollToPostEdit();
   }
@@ -736,10 +732,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
 
   void _onTapEditMainPost(){
     _mainPostUpdateData = PostDataModel(body:_post?.body, imageUrl: _post?.imageUrl, members: GroupMembersSelectionWidget.constructUpdatedMembersList(selection:_post?.members, upToDateMembers: _allMembersAllowedToPost));
-    if(mounted){
-      setState(() {
-      });
-    }
+    setStateIfMounted(() { });
   }
 
   void _onTapUpdateMainPost(){
@@ -799,12 +792,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
         _sortReplies(_post?.replies);
         GroupPost? updatedReply = deepFindPost(posts, _focusedReply?.id);
         if(updatedReply!=null){
-          setState(() {
+          setStateIfMounted(() {
             _focusedReply = updatedReply;
             _sortReplies(_focusedReply?.replies);
           });
         } else {
-          setState(() {}); // Refresh MainPost
+          setStateIfMounted(() {}); // Refresh MainPost
         }
       } else {
         _post = null;
@@ -814,17 +807,15 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   void _setLoading(bool loading) {
-    if (mounted) {
-      setState(() {
-        _loading = loading;
-      });
-    }
+    setStateIfMounted(() {
+      _loading = loading;
+    });
   }
 
   void _onTapCancel() {
     Analytics().logSelect(target: 'Cancel');
     if (_editingReply != null) {
-      setState(() {
+      setStateIfMounted(() {
         _editingReply = null;
         _replyEditData?.imageUrl = null;
         _replyEditData?.body = '';
@@ -907,13 +898,6 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
     _replyEditData?.body = '';
   }
 
-  //Modal Image Dialog
-  void _showModalImage(String? url){
-    Analytics().logSelect(target: "Image");
-    if (url != null) {
-Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, _, __) => ModalImagePanel(imageUrl: url, onCloseAnalytics: () => Analytics().logSelect(target: "Close Image"))));    }
-  }
-
   //Scroll
   void _evalSliverHeaderHeight() {
     double? sliverHeaderHeight;
@@ -926,7 +910,7 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
       print(e.toString());
     }
 
-    setState(() {
+    setStateIfMounted(() {
       _sliverHeaderHeight = sliverHeaderHeight;
     });
   }
@@ -977,7 +961,7 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
     if(CollectionUtils.isNotEmpty(replies)) {
       try {
         replies!.sort((post1, post2) =>
-            post1.dateCreatedUtc!.compareTo(post2.dateCreatedUtc!));
+            post2.dateCreatedUtc!.compareTo(post1.dateCreatedUtc!));
       } catch (e) {}
     }
   }
@@ -1018,7 +1002,7 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
   }
 
   bool get _isReplyVisible {
-    return widget.group?.currentUserIsMemberOrAdmin ?? false;
+    return widget.group?.currentUserHasPermissionToSendReply == true;
   }
 
   bool get _isReportAbuseVisible {
@@ -1035,7 +1019,7 @@ Navigator.push(context, PageRouteBuilder( opaque: false, pageBuilder: (context, 
     if (name == Groups.notifyGroupPostsUpdated) {
       _reloadPost();
     } else if (name == Groups.notifyGroupPostReactionsUpdated) {
-      setState(() { });
+      setStateIfMounted(() { });
     }
   }
 }

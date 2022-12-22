@@ -52,7 +52,7 @@ class _SettingsLocationPanelState extends State<SettingsLocationPanel> {
             padding: EdgeInsets.symmetric(horizontal: 6),
             child: Text(
               Localization().getStringEx("panel.settings.location.label.desctiption", "Find events and places on campus near you."),
-              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
+              style: Styles().textStyles?.getTextStyle("widget.description.regular.fat"),
             ),
           ),
           Container(
@@ -116,6 +116,7 @@ class _InfoToggleButton extends StatefulWidget {
 
   final void Function()? onTap;
 
+  // ignore: unused_element
   const _InfoToggleButton({Key? key, this.title, this.iconRes, this.additionalInfo, this.onTap, this.enabled = true , this.toggled = false, this.height = 110, this.iconResDisabled="",}) : super(key: key);
 
   @override
@@ -165,7 +166,9 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
                             padding: EdgeInsets.only(right: 14),
                             child: Text(
                               widget.title!,
-                              style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: widget.enabled?Styles().colors!.fillColorPrimary : Styles().colors!.fillColorPrimaryTransparent015),
+                              style: widget.enabled?
+                                Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") :
+                                Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
                             )),
                         _buildAdditionalInfo(),
                       ],
@@ -207,7 +210,9 @@ class _InfoToggleButtonState extends State<_InfoToggleButton> {
               Container(height: 12),
               Text(
                 widget.additionalInfo!,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 12, color: widget.enabled? Styles().colors!.textSurface:  Styles().colors!.textSurfaceTransparent15),
+                style: widget.enabled?
+                  Styles().textStyles?.getTextStyle("panel.settings.location.toggle_button.additional_info.enabled") :
+                  Styles().textStyles?.getTextStyle("panel.settings.location.toggle_button.additional_info.disabled")
               ),
             ],
           );

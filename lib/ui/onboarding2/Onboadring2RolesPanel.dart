@@ -54,7 +54,9 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles().colors!.background,
-      body: SafeArea(child: Column( children: <Widget>[
+      body: SafeArea(child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
         Container(
           color: Styles().colors!.white,
           padding: EdgeInsets.only(top: 19, bottom: 19),
@@ -73,28 +75,33 @@ class _Onboarding2RoleSelectionPanelState extends State<Onboarding2RolesPanel> {
                 hint: Localization().getStringEx('panel.onboarding2.roles.label.title.hint', 'Header 1').toLowerCase(),
                 excludeSemantics: true,
                 child: Text(Localization().getStringEx('panel.onboarding2.roles.label.title', 'Who Are You?'),
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24, color: Styles().colors!.fillColorPrimary),
+                  style: Styles().textStyles?.getTextStyle("widget.title.extra_large"),
                 ),
               ),
             ],),),
             Padding(padding: EdgeInsets.only(left: 42),),
           ],),
         ),
-        
-        Padding(padding: EdgeInsets.symmetric(horizontal: 36, vertical: 6),
-          child: Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Select all that apply to help us understand who you are.'),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontFamily: Styles().fontFamilies!.regular,
-                fontSize: 16,
-                color: Styles().colors!.fillColorPrimary,
-                height: 1.5
-            ),
+
+        Container(height: 6,),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: Text(Localization().getStringEx('panel.onboarding2.roles.label.description', 'Please check all that apply to create a personalized experience for you'),
+            textAlign: TextAlign.start,
+            style: Styles().textStyles?.getTextStyle("panel.onboarding2.roles.description")
           ),
         ),
-        
+
+        Padding(
+          padding: EdgeInsets.only(bottom:  10, left: 20, right: 20),
+          child: Text(
+              Localization().getStringEx('panel.onboarding2.roles.label.description2', 'I am a...'),
+              style: Styles().textStyles?.getTextStyle("widget.title.medium.extra_fat"),
+            textAlign: TextAlign.start,
+          ),
+        ),
+
         Expanded(child: SingleChildScrollView(child: Padding(padding: EdgeInsets.only(left: 16, right: 8, ), child:
-          RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton),
+          RoleGridButton.gridFromFlexUI(selectedRoles: _selectedRoles, onTap: _onRoleGridButton, scaleFactor: MediaQuery.of(context).textScaleFactor,)
         ),),),
         
         !_allowNext? Container():

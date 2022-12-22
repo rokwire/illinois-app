@@ -53,12 +53,19 @@ public class MapViewController implements PlatformView, MethodChannel.MethodCall
             } else if ("enable".equals(methodCall.method)) {
                 enableMap(methodCall.arguments);
                 result.success(true);
+            } else if ("fixZOrder".equals(methodCall.method)) {
+                // No fix is needed in Android
+                result.success(true);
             } else if ("enableMyLocation".equals(methodCall.method)) {
                 enableMyLocation(methodCall.arguments);
                 result.success(true);
-            } else if ("viewPoi".equals(methodCall.method)) {
+            } else if ("viewPOI".equals(methodCall.method)) {
                 Object target = methodCall.argument("target");
                 viewPoi(target);
+                result.success(true);
+            } else if ("markPOI".equals(methodCall.method)) {
+                Object target = methodCall.argument("explore");
+                markPoi(target);
                 result.success(true);
             } else {
                 result.notImplemented();
@@ -113,6 +120,13 @@ public class MapViewController implements PlatformView, MethodChannel.MethodCall
         HashMap targetMap = (target instanceof HashMap) ? (HashMap) target : null;
         if (mapView != null) {
             mapView.viewPoi(targetMap);
+        }
+    }
+
+    private void markPoi(Object target) {
+        HashMap targetMap = (target instanceof HashMap) ? (HashMap) target : null;
+        if (mapView != null) {
+            mapView.markPoi(targetMap);
         }
     }
 }

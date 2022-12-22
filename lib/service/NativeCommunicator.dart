@@ -15,12 +15,10 @@
  */
 
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
-import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/service.dart';
 import 'package:illinois/service/Storage.dart';
@@ -29,11 +27,13 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class NativeCommunicator with Service {
   
   static const String notifyMapSelectExplore  = "edu.illinois.rokwire.nativecommunicator.map.explore.select";
-  static const String notifyMapClearExplore   = "edu.illinois.rokwire.nativecommunicator.map.explore.clear";
+  static const String notifyMapSelectLocation   = "edu.illinois.rokwire.nativecommunicator.map.location.select";
   
   static const String notifyMapRouteStart  = "edu.illinois.rokwire.nativecommunicator.map.route.start";
   static const String notifyMapRouteFinish = "edu.illinois.rokwire.nativecommunicator.map.route.finish";
   
+  static const String notifyMapSelectPOI  = "edu.illinois.rokwire.nativecommunicator.map.poi.select";
+
   final MethodChannel _platformChannel = const MethodChannel('edu.illinois.rokwire/native_call');
 
   // Singletone
@@ -64,7 +64,7 @@ class NativeCommunicator with Service {
 
   @override
   Set<Service> get serviceDependsOn {
-    return Set.from([Config(), DeepLink()]);
+    return Set.from([Config()]);
   }
 
   // NotificationsListener
@@ -78,7 +78,7 @@ class NativeCommunicator with Service {
     }
   }
 
-  Future<void> launchExploreMapDirections({dynamic target}) async {
+  Future<void> launchExploreMapDirections({dynamic target, Map<String, dynamic>? options}) async {
     dynamic jsonData;
     try {
       if (target != null) {
@@ -97,23 +97,29 @@ class NativeCommunicator with Service {
     }
     
     if (jsonData != null) {
-      await launchMapDirections(jsonData: jsonData);
+      await launchMapDirections(jsonData: jsonData, options: options);
     }
   }
 
-  Future<void> launchMapDirections({dynamic jsonData}) async {
+  Future<void> launchMapDirections({dynamic jsonData, Map<String, dynamic>? options}) async {
     try {
       String? lastPageName = Analytics().currentPageName;
       Map<String, dynamic>? lastPageAttributes = Analytics().currentPageAttributes;
       Analytics().logPage(name: 'MapDirections');
       Analytics().logMapShow();
+
+      Map<String, dynamic> optionsParam = {
+        'showDebugLocation': Storage().debugMapLocationProvider,
+        'enableLevels': Storage().debugMapShowLevels,
+      };
+      if (options != null) {
+        optionsParam.addAll(options);
+      }
       
       await _platformChannel.invokeMethod('directions', {
         'explore': jsonData,
-        'options': {
-          'showDebugLocation': Storage().debugMapLocationProvider,
-          'enableLevels': Storage().debugMapShowLevels,
-        }});
+        'options': optionsParam
+      });
 
       Analytics().logMapHide();
       Analytics().logPage(name: lastPageName, attributes: lastPageAttributes);
@@ -209,6 +215,17 @@ class NativeCommunicator with Service {
     return result;
   }
 
+  Future<String?> getDeepLinkScheme() async {
+    String? result;
+    try {
+      result = await _platformChannel.invokeMethod('deepLinkScheme');
+    }
+    catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
   Future<void> launchTest() async {
     try {
       await _platformChannel.invokeMethod('test');
@@ -222,8 +239,11 @@ class NativeCommunicator with Service {
       case "map.explore.select":
         _notifyMapSelectExplore(call.arguments);
         break;
-      case "map.explore.clear":
-        _notifyMapClearExplore(call.arguments);
+      case "map.poi.select":
+        _notifyMapSelectPOI(call.arguments);
+        break;
+      case "map.location.select":
+        _notifyMapLocationSelect(call.arguments);
         break;
       
       case "map.route.start":
@@ -233,6 +253,7 @@ class NativeCommunicator with Service {
         _notifyMapRouteFinish(call.arguments);
         break;
       
+
       case "firebase_message":
         //PS use firebase messaging plugin!
         //FirebaseMessaging().onMessage(call.arguments);
@@ -245,37 +266,23 @@ class NativeCommunicator with Service {
   }
 
   void _notifyMapSelectExplore(dynamic arguments) {
-    dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
-    Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
-    int? mapId = (params is Map) ? params!['mapId'] : null;
-    dynamic exploreJson = (params is Map) ? params!['explore'] : null;
-
-    NotificationService().notify(notifyMapSelectExplore, {
-      'mapId': mapId,
-      'exploreJson': exploreJson
-    });
+    NotificationService().notify(notifyMapSelectExplore, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
   }
   
-  void _notifyMapClearExplore(dynamic arguments) {
-    dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
-    Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
-    int? mapId = (params is Map) ? params!['mapId'] : null;
+  void _notifyMapLocationSelect(dynamic arguments) {
+    NotificationService().notify(notifyMapSelectLocation, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
+  }
 
-    NotificationService().notify(notifyMapClearExplore, {
-      'mapId': mapId,
-    });
+  void _notifyMapSelectPOI(dynamic arguments) {
+    NotificationService().notify(notifyMapSelectPOI, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
   }
 
   void _notifyMapRouteStart(dynamic arguments) {
-    dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
-    Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
-    NotificationService().notify(notifyMapRouteStart, params);
+    NotificationService().notify(notifyMapRouteStart, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
   }
 
   void _notifyMapRouteFinish(dynamic arguments) {
-    dynamic jsonData = (arguments is String) ? JsonUtils.decode(arguments) : null;
-    Map<String, dynamic>? params = (jsonData is Map) ? jsonData.cast<String, dynamic>() : null;
-    NotificationService().notify(notifyMapRouteFinish, params);
+    NotificationService().notify(notifyMapRouteFinish, (arguments is String) ? JsonUtils.decodeMap(arguments) : null);
   }
 }
 

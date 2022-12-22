@@ -124,7 +124,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                 label: Localization().getStringEx("panel.create_stadium_poll.setting.geofence", "Geofence poll to venue"),
                 toggled: _selectedGeofenceResult,
                 borderRadius:  BorderRadius.all(Radius.circular(5)),
-                textStyle: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
+                textStyle: Styles().textStyles?.getTextStyle("widget.button.title.medium.thin"),
                 onTap: () {
                   if (_progressPollStatus == null) {
                     setState(() {
@@ -149,13 +149,9 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                 icon: Image.asset(
                     'images/icon-down-orange.png'),
                 isExpanded: true,
-                style: TextStyle(
-                    color: Styles().colors!.mediumGray,
-                    fontSize: 16,
-                    fontFamily:
-                    Styles().fontFamilies!.regular),
+                style:Styles().textStyles?.getTextStyle("panel.poll.create.stadium.geofence.dropdown.title"),
                 hint: Text(_selectedGeofence?.name??"Select Geofence",
-                    style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.regular)
+                    style: Styles().textStyles?.getTextStyle("widget.detail.regular")
                 ),
                 items: _buildDropDownItems(),
                 onChanged: _onDropDownValueChanged)),
@@ -173,7 +169,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
           excludeSemantics: true, button:false,child:
           Text(
             geofence.name ?? '',
-            style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.regular)
+            style: Styles().textStyles?.getTextStyle("widget.detail.regular")
         ),
       )));
     }).toList();
@@ -217,7 +213,12 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
       for (int i = 0; i < _optionsControllers!.length; i++) {
         TextEditingController controller = _optionsControllers![i];
         String title = Localization().getStringEx("panel.create_stadium_poll.text.option", "OPTION") + " " + (i + 1).toString();
-        options.add(PollOptionView(title: title, textController: controller, enabled: (_progressPollStatus == null),));
+        options.add(PollOptionView(
+          title: title,
+          textController: controller,
+          enabled: (_progressPollStatus == null),
+          onClose: (_defaultOptionsCount <= i) ? () => _onRemoveOption(i) : null,
+        ));
       }
 
       if (_optionsControllers!.length < _maxOptionsCount)
@@ -234,43 +235,45 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   Widget _constructAddOptionButton() {
     String label = Localization().getStringEx("panel.create_stadium_poll.button.add_option.text", "Add Option");
     String? hint = Localization().getStringEx("panel.create_stadium_poll.button.add_option.hint", "");
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 24),
-      alignment: Alignment.centerRight,
-      child: Semantics(
-          label: label,
-          hint: hint,
-          button: true,
-          excludeSemantics: true,
-          child: InkWell(
-              onTap: () {
-                if (_progressPollStatus == null) {
-                  _optionsControllers!.add(TextEditingController());
-                  setState(() {});
-                }
-              },
-              child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                  decoration: BoxDecoration(
-                    color: Styles().colors!.white,
-                    border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2.0),
-                    borderRadius: BorderRadius.circular(24.0),
-                  ),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                    Text(
-                      label,
-                      style: TextStyle(
-                        fontFamily: Styles().fontFamilies!.bold,
-                        fontSize: 16,
-                        color: Styles().colors!.fillColorPrimary,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 5),
-                      child: Image.asset('images/icon-add-14x14.png'),
-                    )
-                  ])))),
+    return Container(padding: EdgeInsets.symmetric(vertical: 24), alignment: Alignment.centerRight, child:
+      Semantics(label: label, hint: hint, button: true, excludeSemantics: true, child:
+        InkWell(onTap: _onAddOption, child:
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+            decoration: BoxDecoration(
+              color: Styles().colors!.white,
+              border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2.0),
+              borderRadius: BorderRadius.circular(24.0),
+            ),
+            child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+              Text(label, style:
+                Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),
+              ),
+              Padding(padding: EdgeInsets.only(left: 5), child:
+                Image.asset('images/icon-add-14x14.png'),
+              )
+            ])
+          )
+        )
+      ),
     );
+  }
+
+  void _onAddOption() {
+    Analytics().logSelect(target: 'Add Option');
+    if (_progressPollStatus == null) {
+      _optionsControllers?.add(TextEditingController());
+      setState(() {});
+    }
+  }
+
+  void _onRemoveOption(int index) {
+    Analytics().logSelect(target: 'Remove Option');
+    if ((_progressPollStatus == null) && (_optionsControllers != null) & (0 <= index) && (index < _optionsControllers!.length)) {
+      _optionsControllers![index].dispose();
+      _optionsControllers!.removeAt(index);
+      setState(() {});
+    }
   }
 
   Widget _buildSettingsHeader() {
@@ -288,7 +291,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                       Image.asset('images/icon-settings.png'),
                       Padding(
                         padding: EdgeInsets.only(left: 10),
-                        child: Text(additionalSettingsText, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),
+                        child: Text(additionalSettingsText, style:  Styles().textStyles?.getTextStyle("widget.title.regular"),
                         ),
                       )
                     ],
@@ -310,7 +313,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
   }
 
   List<Widget> _buildSettingsButtons() {
-    TextStyle _textStyle = TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 16, fontFamily: Styles().fontFamilies!.medium);
+    TextStyle? _textStyle =  Styles().textStyles?.getTextStyle("widget.button.title.medium");
     BorderRadius rounding = BorderRadius.all(Radius.circular(5));
     List<Widget> widgets =  [];
 
@@ -326,7 +329,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
             });
           }
         }));
-    widgets.add(Container(
+    /*widgets.add(Container(
       height: 16,
     ));
     widgets.add(ToggleRibbonButton(
@@ -340,7 +343,7 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
               _selectedRepeatVotes = !_selectedRepeatVotes;
             });
           }
-        }));
+        }));*/
     widgets.add(Container(
       height: 16,
     ));
@@ -415,14 +418,14 @@ class _CreateStadiumPollPanelState extends State<CreateStadiumPollPanel> {
                 children: <Widget>[
                   Text(
                     Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.title", "Illinois"),
-                    style: TextStyle(fontSize: 24, color: Colors.black),
+                    style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.large"),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 26),
                     child: Text(
                       Localization().getStringEx("panel.create_stadium_poll.cancel_dialog.message", "Are you sure you want to cancel this Stadium Poll"),
                       textAlign: TextAlign.left,
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Colors.black),
+                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.dark.medium"),
                     ),
                   ),
                   Row(

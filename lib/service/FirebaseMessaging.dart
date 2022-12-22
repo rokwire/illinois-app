@@ -18,7 +18,8 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
@@ -39,6 +40,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
 
   static String get notifyToken                  => rokwire.FirebaseMessaging.notifyToken;
   static String get notifyForegroundMessage      => rokwire.FirebaseMessaging.notifyForegroundMessage;
+  static String get notifyGroupsNotification     => rokwire.FirebaseMessaging.notifyGroupsNotification;
 
   static const String notifyPopupMessage                   = "edu.illinois.rokwire.firebase.messaging.message.popup";
   static const String notifyScoreMessage                   = "edu.illinois.rokwire.firebase.messaging.message.score";
@@ -49,11 +51,11 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String notifyAthleticsGameStarted           = "edu.illinois.rokwire.firebase.messaging.athletics_game.started";
   static const String notifyAthleticsNewsUpdated           = "edu.illinois.rokwire.firebase.messaging.athletics.news.updated";
   static const String notifySettingUpdated                 = "edu.illinois.rokwire.firebase.messaging.setting.updated";
-  static const String notifyGroupsNotification             = "edu.illinois.rokwire.firebase.messaging.groups.updated";
   static const String notifyGroupPostNotification          = "edu.illinois.rokwire.firebase.messaging.group.posts.updated";
   static const String notifyHomeNotification               = "edu.illinois.rokwire.firebase.messaging.home";
   static const String notifyInboxNotification              = "edu.illinois.rokwire.firebase.messaging.inbox";
   static const String notifyCanvasAppDeepLinkNotification  = "edu.illinois.rokwire.firebase.messaging.app.canvas.deeplink";
+  static const String notifyAppointmentNotification        = "edu.illinois.rokwire.firebase.messaging.appointment";
 
   // Topic names
   static const List<String> _permanentTopics = [
@@ -136,6 +138,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   static const String payloadTypeHome = 'home';
   static const String payloadTypeInbox = 'inbox';
   static const String payloadTypeCanvasAppDeepLink = 'canvas_app_deeplink';
+  static const String payloadTypeAppointment = 'appointment';
 
   DateTime? _pausedDateTime;
   
@@ -157,6 +160,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
       Auth2UserPrefs.notifyInterestsChanged,
       Auth2.notifyProfileChanged,
       Auth2.notifyUserDeleted,
+      FlexUI.notifyChanged,
       AppLivecycle.notifyStateChanged,
       Inbox.notifyInboxUserInfoChanged
     ]);
@@ -194,6 +198,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     else if (name == Auth2.notifyUserDeleted) {
       _updateSubscriptions();
     }
+    else if (name == FlexUI.notifyChanged) {
+      _updateNotifySettingsSubscriptions();
+    }
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param); 
     }
@@ -216,18 +223,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
   }
 
-  // AndroidNotificationChannel
-
-  @override
-  AndroidNotificationChannel get androidNotificationChannel {
-    return const AndroidNotificationChannel(
-      "Notifications_Channel_ID", // id
-      "Illinois", // name
-      description: "Receive notifications",
-      importance: Importance.high,
-    );
-  }
-
   // Token
 
   @override
@@ -239,7 +234,13 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   // Message Processing
 
   @override
-  void processDataMessage(Map<String, dynamic>? data) => _processDataMessage(data);
+  void processDataMessage(Map<String, dynamic>? data) {
+    String? messageId = JsonUtils.stringValue(data?['message_id']);
+    if (messageId != null) {
+      Inbox().readMessage(messageId);
+    }
+    _processDataMessage(data);
+  }
 
   void _processDataMessage(Map<String, dynamic>? data, {String? type} ) {
     
@@ -284,6 +285,9 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
     }
     else if (type == payloadTypeCanvasAppDeepLink) {
       NotificationService().notify(notifyCanvasAppDeepLinkNotification, data);
+    }
+    else if (type == payloadTypeAppointment) {
+      NotificationService().notify(notifyAppointmentNotification, data);
     }
     else if (_isScoreTypeMessage(type)) {
       NotificationService().notify(notifyScoreMessage, data);
@@ -395,7 +399,7 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   bool? get notificationsPaused {return _getStoredSetting(_pauseNotificationKey,);}
 
   bool get _notifySettingsAvailable  {
-    return Auth2().privacyMatch(4);
+    return FlexUI().isNotificationsAvailable;
   }
 
   bool? _getNotifySetting(String name) {

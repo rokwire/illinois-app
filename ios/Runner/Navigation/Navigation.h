@@ -22,7 +22,9 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CLLocation.h>
 
-@class NavRoute, NavRouteLeg, NavRouteStep, NavCoord, NavBounds, NavPolyline, NavIntVal;
+@class NavRoute, NavRouteLeg, NavRouteStep,
+	NavTransitDetails, NavTransitStop, NavTransitLine, NavTransitVehicle, NavTransitAgency,
+	NavCoord, NavBounds, NavPolyline, NavIntVal, NavTimeVal;
 
 //////////////////////////////////////////////
 // Navigation
@@ -88,10 +90,79 @@
 @property (nonatomic, strong) NavIntVal* distance;
 @property (nonatomic, strong) NavPolyline* polyline;
 @property (nonatomic, strong) NSString* maneuver;
+@property (nonatomic, strong) NSArray<NavRouteStep*>* steps;
 
 - (instancetype)initWithJsonData:(NSDictionary*)jsonData;
 + (instancetype)createFromJsonData:(NSDictionary*)jsonData;
 + (NSArray<NavRouteStep*>*)createListFromJsonList:(NSArray*)jsonList;
+@end
+
+//////////////////////////////////////////////
+// NavTransitDetails
+
+@interface NavTransitDetails : NSObject
+@property (nonatomic, strong) NavTransitStop* arrivalStop;
+@property (nonatomic, strong) NavTimeVal* arrivalTime;
+@property (nonatomic, strong) NavTransitStop* departureStop;
+@property (nonatomic, strong) NavTimeVal* departureTime;
+@property (nonatomic, strong) NavTransitLine* line;
+@property (nonatomic, strong) NSString* headsign;
+@property (nonatomic, assign) NSInteger numStops;
+
+
+- (instancetype)initWithJsonData:(NSDictionary*)jsonData;
++ (instancetype)createFromJsonData:(NSDictionary*)jsonData;
+@end
+
+//////////////////////////////////////////////
+// NavTransitStop
+
+@interface NavTransitStop : NSObject
+@property (nonatomic, strong) NSString* name;
+@property (nonatomic, strong) NavCoord* location;
+
+- (instancetype)initWithJsonData:(NSDictionary*)jsonData;
++ (instancetype)createFromJsonData:(NSDictionary*)jsonData;
+@end
+
+//////////////////////////////////////////////
+// NavTransitLine
+
+@interface NavTransitLine : NSObject
+@property (nonatomic, strong) NSString* name;
+@property (nonatomic, strong) NSString* shortName;
+@property (nonatomic, strong) NSString* color;
+@property (nonatomic, strong) NSString* textColor;
+@property (nonatomic, strong) NavTransitVehicle* vehicle;
+@property (nonatomic, strong) NSArray<NavTransitAgency*>* agencies;
+
+- (instancetype)initWithJsonData:(NSDictionary*)jsonData;
++ (instancetype)createFromJsonData:(NSDictionary*)jsonData;
+@end
+
+//////////////////////////////////////////////
+// NavTransitVehicle
+
+@interface NavTransitVehicle : NSObject
+@property (nonatomic, strong) NSString* name;
+@property (nonatomic, strong) NSString* icon;
+@property (nonatomic, strong) NSString* type;
+
+- (instancetype)initWithJsonData:(NSDictionary*)jsonData;
++ (instancetype)createFromJsonData:(NSDictionary*)jsonData;
+@end
+
+//////////////////////////////////////////////
+// NavTransitAgency
+
+@interface NavTransitAgency : NSObject
+@property (nonatomic, strong) NSString* name;
+@property (nonatomic, strong) NSString* phone;
+@property (nonatomic, strong) NSString* url;
+
+- (instancetype)initWithJsonData:(NSDictionary*)jsonData;
++ (instancetype)createFromJsonData:(NSDictionary*)jsonData;
++ (NSArray<NavTransitAgency*>*)createListFromJsonList:(NSArray*)jsonList;
 @end
 
 //////////////////////////////////////////////
@@ -163,3 +234,12 @@ extern NSString * kNavTravelModeTransit;
 + (instancetype)createFromJsonData:(NSDictionary*)jsonData;
 @end
 
+//////////////////////////////////////////////
+// NavTimeVal
+
+@interface NavTimeVal : NavIntVal
+
+@property (nonatomic, strong) NSString	*timeZone;
+
++ (instancetype)createFromJsonData:(NSDictionary*)jsonData;
+@end

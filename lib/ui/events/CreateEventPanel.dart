@@ -548,7 +548,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                                   Container(
                                     padding: EdgeInsets.only(top: 0),
                                     child: Text(
-                                      _isPrivateEvent? //TBD localozation
+                                      _isPrivateEvent?
                                       Localization().getStringEx("panel.create_event.additional_info.group.description.private","This event will only show up on your group's page."):
                                       Localization().getStringEx("panel.create_event.additional_info.group.description.public","This event will show up on your group's page and also on the event's page."),
                                       style: TextStyle(
@@ -1027,7 +1027,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           )
                       ),
                       Container(height: 8,),
-                      Semantics(label:Localization().getStringEx("panel.create_event.location.lat.title",'EVENT LATITUDE'), //TBD localization
+                      Semantics(label:Localization().getStringEx("panel.create_event.location.lat.title",'EVENT LATITUDE'),
                           header: true, excludeSemantics: true, child:
                           Padding(
                             padding: EdgeInsets.only(bottom: 8),
@@ -1073,7 +1073,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                           )
                       ),
                       Container(height: 8,),
-                      Semantics(label:Localization().getStringEx("panel.create_event.location.long.title",'EVENT LONGITUDE'), //TBD localization
+                      Semantics(label:Localization().getStringEx("panel.create_event.location.long.title",'EVENT LONGITUDE'),
                           header: true, excludeSemantics: true, child:
                           Padding(
                             padding: EdgeInsets.only(bottom: 8),
@@ -1333,7 +1333,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
       color: Styles().colors!.background,
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(children: [
-        Semantics(label:Localization().getStringEx("panel.create_event.button.free.title","Is this event free?"),//TBD localize
+        Semantics(label:Localization().getStringEx("panel.create_event.button.free.title","Is this event free?"),
             hint: Localization().getStringEx("panel.create_event.button.free.hint",""), toggled: _isFree, excludeSemantics: true, child:
             ToggleRibbonButton(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -1358,7 +1358,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
                 children: <Widget>[
                   Expanded(
                   child: Text(
-                    Localization().getStringEx("panel.create_event.price.label.title","Cost Description (eg: \$10, Donation suggested)"),//TBD localization
+                    Localization().getStringEx("panel.create_event.price.label.title","Cost Description (eg: \$10, Donation suggested)"),
                     style: TextStyle(
                         color: Styles().colors!.fillColorPrimary,
                         fontSize: 14,
@@ -1490,7 +1490,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
   /* TMP: Widget _buildAttendanceSwitch(){
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      child: Semantics(label:Localization().getStringEx("panel.create_event.button.attendance.title","Attendance required"),//TBD localize
+      child: Semantics(label:Localization().getStringEx("panel.create_event.button.attendance.title","Attendance required"),
         hint: Localization().getStringEx("panel.create_event.button.attendance..hint",""), toggled: true, excludeSemantics: true, child:
         ToggleRibbonButton(
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -1697,7 +1697,7 @@ class _CreateEventPanelState extends State<CreateEventPanel> {
           locationSelectionResult.isNotEmpty) {
         Map<String, dynamic>? locationData = locationSelectionResult["location"];
         if (locationData != null) {
-          _location = ExploreLocation.fromJSON(locationData);
+          _location = ExploreLocation.fromJson(locationData);
           _modified = true;
           _populateLocationField();
           setState(() {});
@@ -2342,7 +2342,7 @@ class _AddImageWidgetState extends State<AddImageWidget> {
           //do nothing
             break;
           case ImagesResultType.error:
-            AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
+            AppToast.show(logicResult.errorMessage ?? '');
             break;
           case ImagesResultType.succeeded:
           //ready
@@ -2376,7 +2376,7 @@ class _AddImageWidgetState extends State<AddImageWidget> {
         //do nothing
           break;
         case ImagesResultType.error:
-          AppToast.show(logicResult.errorMessage ?? ''); //TBD: localize error message
+          AppToast.show(logicResult.errorMessage ?? '');
           break;
         case ImagesResultType.succeeded:
         //ready

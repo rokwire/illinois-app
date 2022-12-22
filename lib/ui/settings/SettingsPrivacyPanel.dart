@@ -216,82 +216,42 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
   Widget _buildUpdatePrivacyDialog(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                color: Styles().colors!.fillColorPrimary,
-                child: Padding(
+        Material(
+          color: Styles().colors!.fillColorPrimary,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Semantics(label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.button.back.title", "Back"),
+                      child: IconButton(onPressed: () => Navigator.pop(context), icon: Image.asset('images/close-white-large.png'))),
+                ),
+                Padding(
                   padding: EdgeInsets.all(8),
-                  child: Row(
-                    children: <Widget>[
-                       Expanded(
-                          child: Center( child:
-                            Container(
-                              padding: EdgeInsets.only(top: 42, bottom: 10, left: 40, right: 40),
-                              child:
-                              Semantics(button:false,  hint: "${_sliderIntValue?.toString() ?? ""}",
-                                child: Text(
-                                  Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.title", "Your New \nPrivacy Level"),
-                                  style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: Styles().fontFamilies!.bold),
-                                  textAlign: TextAlign.center,
-                                ),
-                              )
-                            )
-                          ),
-                      ),
-                      Semantics(
-                        explicitChildNodes: true,
-                        child:
-                          GestureDetector(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              height: 30,
-                              width: 30,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(15)),
-                                border: Border.all(color: Styles().colors!.white!, width: 2),
-                              ),
-                              child: Semantics( button: true, label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.button.back.title", "Back"),child:
-                                Center(child:
-                                ExcludeSemantics( child:
-                                  Text(
-                                    "\u00D7",
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      )
-                    ],
+                  child: Semantics(button:false, hint: "${_sliderIntValue?.toString() ?? ""}",
+                    child: Text(
+                      Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.title", "Your New\nPrivacy Level"),
+                      style: Styles().textStyles?.getTextStyle("widget.dialog.message.large.fat"),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
-        Expanded(child: SingleChildScrollView(
+        SingleChildScrollView(
           child: Column(children: <Widget>[
             Stack(
               alignment: Alignment.center,
               children: <Widget>[
                 Container(
                   child: Column(children: <Widget>[
-                    Container(
-                      height: 48,
-                      color: Styles().colors!.fillColorPrimary,
-                    ),
-                    Container(
-                      height: 48,
-                      color: Styles().colors!.white,
-                    ),
-
+                    Container(height: 48, color: Styles().colors!.fillColorPrimary,),
+                    Container(height: 48, color: Styles().colors!.white,),
                   ],),
                 ),
                 Center(
@@ -318,7 +278,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                                   label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.label.new_privacy", "Privacy Level: "),
                                   child: Text(
                                     _sliderIntValue?.toString() ?? "",
-                                    style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 24, fontFamily: Styles().fontFamilies!.extraBold),
+                                    style: Styles().textStyles?.getTextStyle("widget.title.extra_large")
                                   ),
                                 )
                               ),
@@ -326,33 +286,28 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                   ),
                 )
               ],),
-            Container(
-              height: 10,
-            ),
+            SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 26),
               child: Text(
                 Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.label2", "This change requires us to make the following changes where applicable:"),
                 textAlign: TextAlign.center,
-                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimaryVariant),
+                style:  Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.update.message.fat")
               ),
             ),
             _buildPrivacyFeature2DialogEntries(),
-            Container(
-              height: 10,
-            ),
+            SizedBox(height: 16),
             Text(
               Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.confirm", "Are you sure?"),
               textAlign: TextAlign.center,
-              style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimaryVariant),
+              style:  Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.update.message.fat")
             ),
-            Container(
-              height: 10,
-            ),
+            SizedBox(height: 16),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 22),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Expanded(
                     child: RoundedButton(
@@ -361,32 +316,22 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                         Analytics().logAlert(text: "Update privacy", selection: "Yes");
                         _save();
                       },
-                      backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors!.fillColorSecondary,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      contentWeight: 0.0,
                       label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.yes", "Yes")),
                   ),
-                  Container(
-                    width: 10,
-                  ),
+                  SizedBox(width: 16),
                   Expanded(
-                    child:RoundedButton(
+                    child: RoundedButton(
                       onTap: () {
                         Analytics().logAlert(text: "Update privacy", selection: "No");
                         Navigator.pop(context);
                       },
-                      backgroundColor: Colors.transparent,
-                      borderColor: Styles().colors!.fillColorSecondary,
-                      textColor: Styles().colors!.fillColorPrimary,
-                      contentWeight: 0.0,
-                      label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.no", "No"))
+                      label: Localization().getStringEx("panel.settings.privacy.privacy.dialog.update_privacy.no", "No")),
                   )
                 ],
               ),
             ),
             Container(height:20)
-          ],),)),
+          ],),),
       ],
     );
   }
@@ -397,20 +342,20 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
       for (PrivacyFeature2? feature2 in _data!.features2!) {
         if (feature2!.maxLevel!.round() >= _sliderIntValue!) {
           list.add(
-              Row(children: <Widget>[
-                Container(
-                  width: 8, height: 8,
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(100), color: Styles().colors!.fillColorSecondary,),
-                ),
-                Container(width: 8,),
-                Expanded( child:
+            Row(children: <Widget>[
+              Container(
+                width: 8, height: 8,
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(100), color: Styles().colors!.fillColorSecondary,),
+              ),
+              SizedBox(width: 8),
+              Expanded( child:
                 Text(
                   Localization().getString(feature2.key, defaults:feature2.text) ?? '',
-                  style: TextStyle( fontSize: 16, color: Styles().colors!.fillColorPrimaryVariant,),
+                  style: Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.update.message"),
                 )
-                )
-              ],)
-              );
+              )
+            ])
+          );
         }
       }
     }
@@ -498,7 +443,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
               child: Center(
                   child: Text(
                     title,
-                    style: new TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24.0, color: Styles().colors!.fillColorPrimary),
+                    style: Styles().textStyles?.getTextStyle("widget.title.extra_large")
                   )),
             )));
 
@@ -518,7 +463,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                 child: Center(
                     child: Text(
                       subTitle,
-                      style: new TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 18.0, color: Styles().colors!.fillColorPrimary),
+                      style: Styles().textStyles?.getTextStyle("widget.title.medium.fat")
                     )),
               )));
     }
@@ -539,7 +484,7 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
         Expanded(child:
         Text(
           Localization().getStringEx("panel.settings.privacy.privacy.label.slider_help", "Adjust slider to change your privacy level"),
-          style: TextStyle(color: Styles().colors!.textSurface, fontSize: 18, fontFamily:Styles().fontFamilies!.bold),
+          style:  Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.privacy.label.medium"),
           textAlign: TextAlign.center,
           overflow: TextOverflow.ellipsis,
         ),
@@ -562,11 +507,12 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
     if(description == null){
       return Container(); //empty
     }
-    return Container(
-        height: 160,
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: 180),
+      child: Container(
         color: Styles().colors!.white,
         child: Padding(
-            padding: EdgeInsets.only(top: 24, left: 22, right: 22,),
+            padding: EdgeInsets.only(top: 24, left: 22, right: 22, bottom: 8),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -590,15 +536,16 @@ class _SettingsPrivacyPanelState extends State<SettingsPrivacyPanel> implements 
                   ),
                   child: Semantics( label:Localization().getStringEx("panel.settings.privacy.label.privacy_level.title", "Privacy Level: "),
                     child: Text(level.toString(),
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24, color: Styles().colors!.fillColorPrimary)),
+                      style: Styles().textStyles?.getTextStyle("widget.title.extra_large")),
                   ),
                 )),
                 Container(width: 20,),
                 Expanded(child:
                   Text( Localization().getString(description.key, defaults: description.text) ?? '',
-                    style: new TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16.0, color: Styles().colors!.textSurface),
+                    style: Styles().textStyles?.getTextStyle( "panel.settings.privacy_panel.privacy.label.regular"),
                     textAlign: TextAlign.left))
-              ])));
+              ]))),
+    );
 
   }
 
@@ -653,13 +600,13 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 22),
                 child: Text(Localization().getStringEx("panel.settings.privacy.label.description.title", "Features and Data Collection"),
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 20)),
+                  style:  Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.privacy.description.large")),
               ),
               Container(height: 7,),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 22),
                 child: Text(Localization().getStringEx("panel.settings.privacy.label.description.info", "Learn more about specific features, and use dropdown for more information about how data is being used."),
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface, fontSize: 16)),
+                  style: Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.privacy.label.regular")),
               ),
               Container(height: 12,),
               Container(
@@ -674,7 +621,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
                       onTap: _onTapExpandAll,
                       child: Text(
                         _canClose? Localization().getStringEx("panel.settings.privacy.button.close_all.title","Close All") : Localization().getStringEx("panel.settings.privacy.button.expand_all.title","Expand All"),
-                        style: TextStyle(fontFamily: Styles().fontFamilies!.regular, color: Styles().colors!.textSurface, fontSize: 16)
+                        style: Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.privacy.label.regular")
                       ),
                     )
                   )
@@ -725,7 +672,7 @@ class PrivacyEntriesListState extends State<_PrivacyEntriesListWidget>  with Tic
               Semantics(label: Localization().getString(category.titleKey, defaults: category.title),
                   hint: Localization().getStringEx("panel.settings.privacy.label.hint","Double tap to ") + (expanded ? "Hide" : "Show") + " information",
                   excludeSemantics:true,child:
-                  Container(child: Text(Localization().getString(category.titleKey, defaults:category.title) ?? '', style: TextStyle(color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, fontSize: 16),))),
+                  Container(child: Text(Localization().getString(category.titleKey, defaults:category.title) ?? '', style: Styles().textStyles?.getTextStyle("widget.heading.regular.fat")))),
               backgroundColor: Styles().colors!.fillColorPrimary,
               children: _buildCategoryEntries(category),
               trailing: RotationTransition(
@@ -809,7 +756,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
   Widget build(BuildContext context) {
     PrivacyEntry2 data = widget.data!;
     String title = Localization().getString(data.titleKey, defaults: data.title)!;
-    String? description = Localization().getString(data.descriptionKey, defaults: data.description);
+    String? description = Localization().getString(data.descriptionKey, defaults: data.description)?.replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
     String? dataUsageInfo = Localization().getString(data.dataUsageKey, defaults: data.dataUsage);
     String iconRes = "images/" + data.iconRes!;
     String iconResOff = "images/" + data.offIconRes!;
@@ -840,7 +787,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                crossAxisAlignment: CrossAxisAlignment.start,
                children: <Widget>[
                  Padding(padding: EdgeInsets.only(right: 20), child: Text(title,
-                  style:  TextStyle(fontSize: 16, fontFamily: Styles().fontFamilies!.extraBold, color: isEnabled? Styles().colors!.fillColorPrimary: Styles().colors!.fillColorPrimaryTransparent015),
+                  style:  isEnabled?  Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.privacy.entry.title.enabled") : Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.privacy.entry.title.disabled"),
                  )),
                  Container(height: 2,),
                  Semantics( explicitChildNodes: false,
@@ -872,7 +819,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(padding: EdgeInsets.only(right: 20), child: Text(description!,
-          style:  TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: isEnabled? Styles().colors!.textSurface: Styles().colors!.textSurfaceTransparent15),
+          style: isEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")
         )),
         Semantics( explicitChildNodes: true,
           child: GestureDetector(
@@ -884,7 +831,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                   children: <Widget>[
                     Expanded(child:
                       Text(Localization().getStringEx("panel.settings.privacy.button.expand_data.title","See Data Usage"),
-                        style:  TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: isEnabled? Styles().colors!.fillColorPrimary: Styles().colors!.fillColorPrimaryTransparent015),
+                        style: isEnabled? Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.privacy.entry.info.enabled") : Styles().textStyles?.getTextStyle("panel.settings.privacy_panel.privacy.entry.info.disabled")
                       )
                     ),
                     Container(width: 9,),
@@ -905,7 +852,7 @@ class _PrivacyEntryState extends State<_PrivacyEntry> with TickerProviderStateMi
                     border: Border(left: BorderSide(width: 1, color: Styles().colors!.fillColorSecondary!))
                 ),
                 child: Text(dataUsageInfo!,
-                    style:  TextStyle(fontSize: 14, fontFamily: Styles().fontFamilies!.regular, color: isEnabled? Styles().colors!.textSurface: Styles().colors!.textSurfaceTransparent15)),
+                    style: isEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.variant.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.variant.disabled")),
               ),
             )
         )

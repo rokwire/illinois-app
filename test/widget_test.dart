@@ -24,7 +24,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:illinois/main.dart';
+import 'package:illinois/mainImpl.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

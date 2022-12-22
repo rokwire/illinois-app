@@ -16,9 +16,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/SportDetails.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:illinois/service/Sports.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -44,7 +46,10 @@ class AthleticsScheduleCard extends StatefulWidget {
 class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implements NotificationsListener {
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+    ]);
     super.initState();
   }
 
@@ -59,7 +64,10 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {});
+      setStateIfMounted(() {});
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
     }
   }
 
@@ -127,7 +135,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                 padding: EdgeInsets.only(top: 16, right: 24),
                 child: Text(
                   widget._game!.title,
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.extraBold, fontSize: 24, color: Styles().colors!.fillColorPrimary),
+                  style: Styles().textStyles?.getTextStyle('widget.card.title.large')
                 )),
           ),
           Visibility(
@@ -150,7 +158,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                 Expanded(
                     child: Text(
                   widget._game!.shortDescription!,
-                  style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.textBackground),
+                  style: Styles().textStyles?.getTextStyle('widget.card.detail.regular.fat')
                 ))
               ],
             ),
@@ -169,7 +177,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
             Padding(
               padding: EdgeInsets.only(right: 5),
             ),
-            Text(displayTime, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+            Text(displayTime, style: Styles().textStyles?.getTextStyle('widget.card.detail.medium')),
           ],
         ),
       );
@@ -211,7 +219,7 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                           padding: EdgeInsets.symmetric(horizontal: 24),
                           child: Row(children: <Widget>[
                             Text(_getTicketsInformationText(sport)!,
-                                style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
+                                style: Styles().textStyles?.getTextStyle('widget.card.title.small.fat')),
                             Padding(
                               padding: EdgeInsets.only(left: 8),
                             ),
@@ -259,11 +267,11 @@ class _AthleticsScheduleCardState extends State<AthleticsScheduleCard> implement
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Row(children: <Widget>[
                     Text(Localization().getStringEx("widget.schedule_card.final_score", "Final Score"),
-                        style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
+                        style: Styles().textStyles?.getTextStyle('widget.card.title.small.fat')),
                     Expanded(
                       child: Container(),
                     ),
-                    Text(formattedResult, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)),
+                    Text(formattedResult, style: Styles().textStyles?.getTextStyle('widget.card.detail.medium')),
                   ])))
         ],
       ),

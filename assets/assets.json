@@ -54,7 +54,8 @@
 			}
 		}
 	},
-	"privacy":{
+
+	"privacy": {
 		"description":[
 			{"level":1, "key": "privacy.category.description.1", "text": "You may not be able to use all features, but you are anonymous, and we don't ask you for any identifying information or store any data. Anonymous data will be collected and used to optimize app performance."},
 			{"level":2, "key": "privacy.category.description.2", "text": "See what's happening around you. We use Wi-Fi and Bluetooth location services to improve your experience, but we never store that data."},
@@ -227,6 +228,17 @@
 						"description_key" :"privacy.entry.health.location.sharing.description",
 						"dataUsage" : "This feature uses location services but does not store your location.",
 						"dataUsage_key" :"privacy.entry.health.location.sharing.data_usage"
+					},
+					{
+						"min_level": 4,
+						"icon_resource": "notifications-blue.png",
+						"off_icon_resource": "notifications-blue-off.png",
+						"title" : "Notifications",
+						"title_key" :"privacy.entry.health.notifications.title",
+						"description" : "Get notifications of upcoming appointments and additional screening you should take.",
+						"description_key" :"privacy.entry.health.notifications.description",
+						"dataUsage" : "This feature sends notifications based on your upcoming appointments and screenings.",
+						"dataUsage_key" :"privacy.entry.health.notifications.data_usage"
 					}
 				]
 			},
@@ -240,7 +252,7 @@
 						"off_icon_resource": "view-only-blue.png",
 						"title" : "View Only",
 						"title_key" :"privacy.entry.wayfinding.view.only.title",
-						"description" : "View a map of campus with places of interest.",
+						"description" : "View a map of campus with places of interest, MTD bus stops and schedules.",
 						"description_key" :"privacy.entry.wayfinding.view.only.description",
 						"dataUsage" : "This feature does not use or store your location.",
 						"dataUsage_key" :"privacy.entry.wayfinding.view.only.data_usage"
@@ -251,7 +263,7 @@
 						"off_icon_resource": "location-sharing-blue-off.png",
 						"title" : "Location Sharing",
 						"title_key" :"privacy.entry.wayfinding.location.sharing.title",
-						"description" : "View a map of campus with places of interest.",
+						"description" : "View a map of campus with places of interest, MTD bus destinations and stops with bus directions.",
 						"description_key" :"privacy.entry.wayfinding.location.sharing.description",
 						"dataUsage" : "This feature uses location services but does not store your location.",
 						"dataUsage_key" :"privacy.entry.wayfinding.location.sharing.data_usage"
@@ -362,7 +374,7 @@
 						"off_icon_resource": "view-only-blue.png",
 						"title" : "View Only",
 						"title_key" :"privacy.entry.general.view.only.title",
-						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
+						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog, the Illinois Twitter feed, etc.",
 						"description_key" :"privacy.entry.general.view.only.description",
 						"dataUsage" : "Building access and due date catalog require a university sign in.",
 						"dataUsage_key" :"privacy.entry.general.view.only.data_usage"
@@ -384,9 +396,9 @@
 						"off_icon_resource": "personalization-blue-off.png",
 						"title" : "Personalizations",
 						"title_key" :"privacy.entry.general.personalizations.title",
-						"description" : "View your building access, campus guides, crisis help, campus reminders, due date catalog and the Illinois Twitter feed.",
+						"description" : "View your Research projects, building access, campus guides, crisis help, campus reminders, due date catalog, the Illinois Twitter feed, etc.",
 						"description_key" :"privacy.entry.general.personalizations.description",
-						"dataUsage" : "Building access and due date catalog require a university sign in.",
+						"dataUsage" : "Research projects, building access and due date catalog require a university sign in. Your answers to a Research interest form are used to qualify you to participate in a research project.",
 						"dataUsage_key" :"privacy.entry.general.personalizations.data_usage"
 					},
 					{
@@ -395,9 +407,9 @@
 						"off_icon_resource": "notifications-blue-off.png",
 						"title" : "Notifications",
 						"title_key" :"privacy.entry.general.notifications.title",
-						"description" : "You may receive notifications when content is updated, and you can star various content.",
+						"description" : "You may receive notifications when content is updated, research project qualification, appointments, group membership and you can star various content.",
 						"description_key" :"privacy.entry.general.notifications.description",
-						"dataUsage" : "Building access and due date catalog require a university sign in.",
+						"dataUsage" : "Research participation, Building access and due date catalog require a university sign in. Your answers to a Research interest form are used to qualify you to participate in research projects.",
 						"dataUsage_key" :"privacy.entry.general.notifications.data_usage"
 					},
 					{
@@ -406,9 +418,9 @@
 						"off_icon_resource": "share-blue-off.png",
 						"title" : "Sharing",
 						"title_key" :"privacy.entry.general.sharing.title",
-						"description" : "You may receive notifications when content is updated, and you can star various content.",
+						"description" : "You may receive notifications when content is updated, research project qualification, appointments, group membership and you can star various content.",
 						"description_key" :"privacy.entry.general.sharing.description",
-						"dataUsage" : "Building access and due date catalog require a University sign in.",
+						"dataUsage" : "Research participation, Building access and due date catalog require a university sign in. Your answers to a Research interest form are used to qualify you to participate in research projects.",
 						"dataUsage_key" :"privacy.entry.general.sharing.data_usage"
 					}
 				]
@@ -416,37 +428,37 @@
 		],
 		"features2": [
 			{
-				"key":"com.illinois.features2.entry.disable_location_awareness",
+				"key":"privacy.features2.entry.disable_location_awareness",
 				"text":"Disable location awareness.",
 				"max_level":1
 			},
 			{
-				"key":"com.illinois.features2.entry.dont_store_location",
+				"key":"privacy.features2.entry.dont_store_location",
 				"text":"Not store your location.",
 				"max_level":2
 			},
 			{
-				"key":"com.illinois.features2.entry.remove_preferences",
+				"key":"privacy.features2.entry.remove_preferences",
 				"text":"Remove your preferences.",
 				"max_level":2
 			},
 			{
-				"key":"com.illinois.features2.entry.log_out",
+				"key":"privacy.features2.entry.log_out",
 				"text":"Log you off system.",
 				"max_level":3
 			},
 			{
-				"key":"com.illinois.features2.entry.disable_notifications",
+				"key":"privacy.features2.entry.disable_notifications",
 				"text":"Turn off notifications.",
 				"max_level":3
 			},
 			{
-				"key":"com.illinois.features2.entry.remove_credit_card",
+				"key":"privacy.features2.entry.remove_credit_card",
 				"text":"Remove your credit card info.",
 				"max_level":3
 			},
 			{
-				"key":"com.illinois.features2.entry.dont_share_location",
+				"key":"privacy.features2.entry.dont_share_location",
 				"text":"Not share your data with others.",
 				"max_level":4
 			}
@@ -981,43 +993,66 @@
 			{
 				"id": "video.tutorial.4.0",
 				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.webp",
 				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/illinois_app_4_0_overview.srt"
 			},
 			{
 				"id": "find.your.courses.4.1",
 				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_find_your_courses.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_find_your_courses.webp",
 				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_find_your_courses.srt"
 			},
 			{
 				"id": "groups.overview.4.1",
 				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_groups_overview.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_groups_overview.webp",
 				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_groups_overview.srt"
 			},
 			{
 				"id": "wellness.rings.overview.4.1",
 				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.webp",
 				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_1_wellness_rings_overview.srt"
+			},
+			{
+				"id": "favorites.tutorial.4.2",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_favorites_tutorial.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_favorites_tutorial.webp",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_favorites_tutorial.srt"
+			},
+			{
+				"id": "groups.create.new.4.2",
+				"video_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_groups_create_new.mp4",
+				"image_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_groups_create_new.webp",
+				"cc_url": "https://rokwire-ios-beta.s3.us-east-2.amazonaws.com/Videos/Illinois_app_4_2_groups_create_new.srt"
 			}
 		],
 		"onboarding": { "dev": "video.tutorial.4.0", "test": "video.tutorial.4.0", "production": "video.tutorial.4.0" },
+		"welcome": { "dev": "favorites.tutorial.4.2", "test": "favorites.tutorial.4.2", "production": "favorites.tutorial.4.2" },
 		"strings": {
 			"en": {
 				"video.tutorial.4.0": "Application overview",
 				"find.your.courses.4.1": "Find Your Courses",
 				"groups.overview.4.1": "Groups Overview",
-				"wellness.rings.overview.4.1": "Daily Wellness Rings"
+				"wellness.rings.overview.4.1": "Daily Wellness Rings",
+				"favorites.tutorial.4.2": "Favorites Tutorial",
+				"groups.create.new.4.2": "Creating a New Group"
 			},
 			"es": {
 				"video.tutorial.4.0": "Descripción general de la aplicación",
 				"find.your.courses.4.1": "Encuentra tus cursos",
 				"groups.overview.4.1": "Resumen de grupos",
-				"wellness.rings.overview.4.1": "Anillos de bienestar diarios"
+				"wellness.rings.overview.4.1": "Anillos de bienestar diarios",
+				"favorites.tutorial.4.2": "Tutorial de Favoritos",
+				"groups.create.new.4.2": "Creación de un nuevo grupo"
 			},
 			"zh": {
 				"video.tutorial.4.0": "應用概述",
 				"find.your.courses.4.1": "查找您的課程",
 				"groups.overview.4.1": "組概述",
-				"wellness.rings.overview.4.1": "每日健康戒指"
+				"wellness.rings.overview.4.1": "每日健康戒指",
+				"favorites.tutorial.4.2": "收藏教程",
+				"groups.create.new.4.2": "創建一個新組"
 			}
 		}
 	}

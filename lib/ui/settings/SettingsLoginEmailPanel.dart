@@ -77,7 +77,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
 
     String? headingTitle; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.onboarding2.email.link.title.text', 'Add Your Email Address') : null;
 
-    String? heading; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the Illinois App will not be available unless you login with your NetID.') : null;
+    String? heading; //((_state == Auth2EmailAccountState.nonExistent) && (widget.link == true)) ? Localization().getStringEx('panel.settings.link.email.label.description', 'You may sign in using your email as an alternative way to sign in. Some features of the {{app_title}} App will not be available unless you login with your NetID.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) : null;
 
     String description = (_state == Auth2EmailAccountState.nonExistent) ?
       (widget.link == true) ? Localization().getStringEx('panel.onboarding2.email.link.description.text', 'Please enter a password to add your email address.') :
@@ -114,20 +114,20 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                 
                 (heading != null) ? 
                   Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 24), child:
-                      Text(heading, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 18, color: Styles().colors!.fillColorPrimary),)
+                      Text(heading, style:  Styles().textStyles?.getTextStyle("widget.title.medium"),)
                   ),)],) : Container(),
 
                 (headingTitle != null) ? 
                   Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 24), child:
-                    Text(headingTitle, textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 36, color: Styles().colors!.fillColorPrimary),)
+                    Text(headingTitle, textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.settings.login.title.large"),)
                   ),)],) : Container(),
 
                 Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 24), child:
-                  Text(description, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 18, color: Styles().colors!.fillColorPrimary),)
+                  Text(description, style: Styles().textStyles?.getTextStyle("widget.title.medium"))
                 ),)],),
 
                 Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 6), child:
-                  Text(Localization().getStringEx("panel.onboarding2.email.label.email.text", "Email Address:"), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors!.fillColorPrimary),)
+                  Text(Localization().getStringEx("panel.onboarding2.email.label.email.text", "Email Address:"), style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"),)
                 ),)],),
                 
                 Padding(padding: EdgeInsets.only(bottom: 12), child:
@@ -143,7 +143,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                         autofocus: false,
                         autocorrect: false,
                         enabled: false,
-                        style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies?.regular, color: Styles().colors?.textBackground),
+                        style: Styles().textStyles?.getTextStyle("widget.input_field.text.medium"),
                         decoration: textFeildDecoration,
                       ),
                     ),
@@ -151,7 +151,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                 ),
 
                 Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(bottom: 6), child:
-                  Text(Localization().getStringEx("panel.onboarding2.email.label.password.text", "Password:"), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors!.fillColorPrimary),)
+                  Text(Localization().getStringEx("panel.onboarding2.email.label.password.text", "Password:"), style: Styles().textStyles?.getTextStyle("widget.title.medium.fat"),)
                 ),)],),
                 
                 Semantics(textField: true, excludeSemantics: true, 
@@ -169,7 +169,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                       onSubmitted: (_) => _clearErrorMsg,
                       cursorColor: Styles().colors?.textBackground,
                       keyboardType: TextInputType.text,
-                      style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies?.regular, color: Styles().colors?.textBackground),
+                      style: Styles().textStyles?.getTextStyle("widget.input_field.text.medium"),
                       decoration: textFeildDecoration,
                     ),
                   ),
@@ -179,7 +179,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
                     Row(children: [ Expanded(child: Padding(padding: EdgeInsets.only(top: 12, bottom: 6), child:
-                      Text(Localization().getStringEx("panel.onboarding2.email.label.confirm_password.text", "Confirm Password:"), style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 18, color: Styles().colors!.fillColorPrimary),)
+                      Text(Localization().getStringEx("panel.onboarding2.email.label.confirm_password.text", "Confirm Password:"), style:  Styles().textStyles?.getTextStyle("widget.title.medium"),)
                     ),)],),
 
                     Semantics(textField: true, excludeSemantics: true,
@@ -197,7 +197,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                           onSubmitted: (_) => _clearErrorMsg,
                           cursorColor: Styles().colors?.textBackground,
                           keyboardType: TextInputType.text,
-                          style: TextStyle(fontSize: 18, fontFamily: Styles().fontFamilies?.regular, color: Styles().colors?.textBackground),
+                          style: Styles().textStyles?.getTextStyle("widget.input_field.text.medium"),
                           decoration: textFeildDecoration,
                         ),
                       ),
@@ -210,7 +210,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                       Expanded(child:
                         Padding(padding: EdgeInsets.only(top: 12,), child:
                           Text(Localization().getStringEx("panel.onboarding2.email.password_instructions.text", "Use 8 or more characters containing a mix of lowercase letters, uppercase letters, a number, and a special character.",),
-                            style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular),
+                            style: Styles().textStyles?.getTextStyle("widget.description.regular"),
                           )
                         )
                       )
@@ -226,7 +226,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                           Row(mainAxisSize: MainAxisSize.min, children: [
                             Image.asset(_isShowingPassword ? 'images/deselected-dark.png' : 'images/deselected.png', excludeFromSemantics: true,),
                             Container(width: 6),
-                            Text(showPassword, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.bold),),
+                            Text(showPassword, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.regular.fat"),),
                           ],)
                         ),
                       ),
@@ -240,8 +240,8 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
                           Padding(padding: EdgeInsets.only(top: 12, bottom: 12), child:
                             //Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.end, children: [
                               (_state == Auth2EmailAccountState.unverified)  ?
-                                Text(Localization().getStringEx("panel.onboarding2.email.label.resend_email.text", "Resend Verification"), textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies!.bold, decoration: TextDecoration.underline),) :
-                                Text(Localization().getStringEx("panel.onboarding2.email.label.forgot_password.text", "Forgot Password?"), textAlign: TextAlign.right, style: TextStyle(fontSize: 16, color: Colors.blue.shade900, fontFamily: Styles().fontFamilies!.bold, decoration: TextDecoration.underline),),
+                                Text(Localization().getStringEx("panel.onboarding2.email.label.resend_email.text", "Resend Verification"), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle("panel.settings.login.button.underline")) :
+                                Text(Localization().getStringEx("panel.onboarding2.email.label.forgot_password.text", "Forgot Password?"), textAlign: TextAlign.right, style: Styles().textStyles?.getTextStyle("panel.settings.login.button.underline")),
                             //],)
                           ),
                         ),
@@ -252,7 +252,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
 
                 Visibility(visible: StringUtils.isNotEmpty(_validationErrorText), child:
                   Padding(key:_validationErrorKey, padding: EdgeInsets.only(bottom: 12), child:
-                    Text(StringUtils.ensureNotEmpty(_validationErrorText ?? ''), style: TextStyle(color: _validationErrorColor ?? Styles().colors!.fillColorSecondary, fontSize: 16, fontFamily: Styles().fontFamilies!.bold),),
+                    Text(StringUtils.ensureNotEmpty(_validationErrorText ?? ''), style: Styles().textStyles?.getTextStyle("panel.settings.login.validation.text")?.copyWith(color: _validationErrorColor ?? Styles().colors!.fillColorSecondary),),
                   ),
                 ),
 
@@ -540,7 +540,7 @@ class _SettingsLoginEmailPanelState extends State<SettingsLoginEmailPanel>  {
     });
 
     if (StringUtils.isNotEmpty(msg)) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_validationErrorKey.currentContext != null) {
           Scrollable.ensureVisible(_validationErrorKey.currentContext!, duration: Duration(milliseconds: 300)).then((_) {
           });

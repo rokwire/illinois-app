@@ -257,13 +257,10 @@ class _GroupFindEventPanelState extends State<GroupFindEventPanel>{
                   onSubmitted: (_) => _onTapSearch(),
                   cursorColor: Styles().colors!.fillColorSecondary,
                   keyboardType: TextInputType.text,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies!.regular,
-                      color: Styles().colors!.white),
+                  style: Styles().textStyles?.getTextStyle('widget.heading.regular'),
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintStyle: TextStyle(color: Styles().colors!.white, fontSize: 16, fontFamily: Styles().fontFamilies!.regular, ),
+                    hintStyle: Styles().textStyles?.getTextStyle('widget.heading.regular'),
                     hintText: Localization().getStringEx("panel.find_event.label.search_event_by_title", "Search event by title"),
                   ),
                 ),
@@ -581,11 +578,7 @@ class _EventCardState extends State<_EventCard>{
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(StringUtils.isNotEmpty(widget.event.exploreTitle) ? widget.event.exploreTitle! : "",
-                            style: TextStyle(
-                              fontFamily: Styles().fontFamilies!.extraBold,
-                              fontSize: 20,
-                              color: Styles().colors!.fillColorPrimary
-                            ),
+                            style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')
                           ),
                           Container(height: 4,),
                           _exploreTimeDetail()
@@ -613,10 +606,8 @@ class _EventCardState extends State<_EventCard>{
         Container(width: 7,),
         Flexible(child: Text(displayTime!, overflow: TextOverflow.ellipsis,
             maxLines: 1,
-            style: TextStyle(
-                fontFamily: Styles().fontFamilies!.medium,
-                fontSize: 14,
-                color: Styles().colors!.textBackground)),)
+            style: Styles().textStyles?.getTextStyle('widget.card.detail.small_variant2')
+    ),)
       ],
     ));
   }

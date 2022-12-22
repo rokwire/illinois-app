@@ -17,6 +17,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
@@ -25,7 +26,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/utils/AppUtils.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/location_services.dart';
@@ -104,8 +105,9 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       LocationServices.notifyStatusChanged,
       Localization.notifyStringsUpdated,
       NativeCommunicator.notifyMapSelectExplore,
-      NativeCommunicator.notifyMapClearExplore,
+      NativeCommunicator.notifyMapSelectLocation,
       Auth2UserPrefs.notifyPrivacyLevelChanged,
+      FlexUI.notifyChanged,
     ]);
     _initFilters();
     _initLocationService();
@@ -247,22 +249,12 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   Widget _buildDateTitle(String date){
-    return Text(date,
-      style: TextStyle(
-        fontSize: 20,
-        color: Styles().colors!.fillColorPrimary,
-        fontFamily: Styles().fontFamilies!.extraBold
-      ),
+    return Text(date, style: Styles().textStyles?.getTextStyle('panel.event_schedule.title')
     );
   }
 
   Widget _buildCategoryTitle(String category){
-    return Text(category,
-        style: TextStyle(
-            fontSize: 16,
-            color: Styles().colors!.textBackground,
-            fontFamily: Styles().fontFamilies!.extraBold
-        ));
+    return Text(category, style: Styles().textStyles?.getTextStyle('panel.event_schedule.category'));
   }
 
   Widget _buildEventCart(Event event) {
@@ -378,10 +370,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                   autofocus: true,
                   cursorColor: Styles().colors!.fillColorSecondary,
                   keyboardType: TextInputType.text,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: Styles().fontFamilies!.regular,
-                      color: Styles().colors!.textBackground),
+                  style: Styles().textStyles?.getTextStyle('panel.event_schedule.search.edit'),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                   ),
@@ -634,16 +623,10 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
                     children: <Widget>[
                       Text((title != null) ? title : "",
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Styles().colors!.fillColorPrimary,
-                              fontFamily: Styles().fontFamilies!.extraBold,
-                              fontSize: 20)),
+                          style: Styles().textStyles?.getTextStyle('panel.event_schedule.title')),
                       Text((description != null) ? description : "",
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.black38,
-                              fontFamily: Styles().fontFamilies!.medium,
-                              fontSize: 16)),
+                          style: Styles().textStyles?.getTextStyle('panel.event_schedule.map.description')),
                       Container(
                         height: 8,
                       ),
@@ -781,7 +764,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   bool _userLocationEnabled() {
-    return Auth2().privacyMatch(2) && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
+    return FlexUI().isLocationServicesAvailable && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
   }
 
   //EventsLoading
@@ -923,7 +906,7 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
 
   //LocationServices
   _initLocationService(){
-    if (Auth2().privacyMatch(2)) {
+    if (FlexUI().isLocationServicesAvailable) {
       LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
 
@@ -960,18 +943,21 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
       setState(() { });
     }
     else if (name == NativeCommunicator.notifyMapSelectExplore) {
-      _onNativeMapSelectExplore(param['mapId'], param['exploreJson']);
+      _onNativeMapSelectExplore(param);
     }
-    else if (name == NativeCommunicator.notifyMapClearExplore) {
-      _onNativeMapClearExplore(param['mapId']);
+    else if (name == NativeCommunicator.notifyMapSelectLocation) {
+      _onNativeMapSelectLocation(param);
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
-      _onPrivacyLevelChanged();
+      _updateLocationServicesStatus();
+    }
+    else if (name == FlexUI.notifyChanged) {
+      _updateLocationServicesStatus();
     }
   }
 
-  _onPrivacyLevelChanged(){
-    if (Auth2().privacyMatch(2)) {
+  void _updateLocationServicesStatus(){
+    if (FlexUI().isLocationServicesAvailable) {
       LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
         _locationServicesStatus = locationServicesStatus;
         _refresh((){});
@@ -983,15 +969,17 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
   }
 
   void _onLocationServicesStatusChanged(LocationServicesStatus? status) {
-    if (Auth2().privacyMatch(2)) {
+    if (FlexUI().isLocationServicesAvailable) {
       _locationServicesStatus = status;
       _refresh((){});
     }
   }
 
-  void _onNativeMapSelectExplore(int? mapID, dynamic exploreJson) {
-    if (_nativeMapController!.mapId == mapID) {
+  void _onNativeMapSelectExplore(Map<String, dynamic>? params) {
+    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
+    if (_nativeMapController!.mapId == mapId) {
       dynamic explore;
+      dynamic exploreJson = (params != null) ? params['explore'] : null;
       if (exploreJson is Map) {
         explore = _exploreFromMapExplore(Explore.fromJson(exploreJson as Map<String, dynamic>?));
       }
@@ -1005,8 +993,9 @@ class EventsSchedulePanelState extends State<EventsSchedulePanel>
     }
   }
 
-  void _onNativeMapClearExplore(int? mapID) {
-    if (_nativeMapController!.mapId == mapID) {
+  void _onNativeMapSelectLocation(Map<String, dynamic>? params) {
+    int? mapId = (params != null) ? JsonUtils.intValue(params['mapId']) : null;
+    if (_nativeMapController!.mapId == mapId) {
       _selectMapExplore(null);
     }
   }
@@ -1042,7 +1031,10 @@ class EventScheduleCard extends StatefulWidget {
 class _EventScheduleCardState extends State<EventScheduleCard> implements NotificationsListener {
   @override
   void initState() {
-    NotificationService().subscribe(this, Auth2UserPrefs.notifyFavoritesChanged);
+    NotificationService().subscribe(this, [
+      Auth2UserPrefs.notifyFavoritesChanged,
+      FlexUI.notifyChanged,
+    ]);
     super.initState();
   }
 
@@ -1057,7 +1049,10 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
   @override
   void onNotification(String name, dynamic param) {
     if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      setState(() {});
+      setStateIfMounted(() {});
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() {});
     }
   }
 
@@ -1102,7 +1097,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                           Expanded(
                             child: Text(
                               widget.event!.title!,
-                              style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 20, fontFamily: Styles().fontFamilies!.extraBold),
+                              style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),
                             ),
                           ),
                           Visibility(
@@ -1133,7 +1128,7 @@ class _EventScheduleCardState extends State<EventScheduleCard> implements Notifi
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 4, left: 28),
-                    child: Text(widget.event?.displaySuperTime ?? '', style: TextStyle(color: Styles().colors!.textBackground, fontSize: 14, fontFamily: Styles().fontFamilies!.medium)),
+                    child: Text(widget.event?.displaySuperTime ?? '', style: Styles().textStyles?.getTextStyle('widget.explore.card.detail.regular')),
                   )
                 ]),
               ),
@@ -1173,7 +1168,7 @@ class _EventTabView extends StatelessWidget{
             ),
             child: Center(
                 child: Text(text!,
-                    style: TextStyle(fontFamily: selected! ? Styles().fontFamilies!.extraBold : Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
+                    style: selected! ? Styles().textStyles?.getTextStyle('widget.tab.selected') : Styles().textStyles?.getTextStyle('widget.tab.not_selected') )),
           )),
     );
   }

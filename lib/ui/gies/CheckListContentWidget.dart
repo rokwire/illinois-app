@@ -165,8 +165,11 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
         }
 
         progressWidgets.add(
-          Semantics(label: "Page ${progressStep.toString()}", button: true, hint: progressStepCompleted? "Completed" :((progressStep == currentPageProgress)? "Current page":"Not Completed"), child:
-            InkWell(onTap: () => _onTapProgress(progressStep), child:
+          Semantics(label: Localization().getStringEx("panel.checklist.text.page", "Page") + " ${progressStep.toString()}",
+            button: true,
+            hint: progressStepCompleted? Localization().getStringEx("panel.checklist.text.completed", "Completed") :
+              ((progressStep == currentPageProgress)? Localization().getStringEx("panel.checklist.text.current_page", "Current page") :  Localization().getStringEx("panel.checklist.text.not_completed","Not Completed")),
+              child: InkWell(onTap: () => _onTapProgress(progressStep), child:
               Padding(padding: EdgeInsets.symmetric(horizontal: 3, vertical: 3), child:
                 Container(width: 32, height: 32, child:
                   Stack(children:<Widget>[
@@ -182,7 +185,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
                         ),
                         !showCheckIcon ? Container() :
                         Container(height: 14, width: 14, child:
-                          Image.asset('images/green-check-mark.png', semanticLabel: "completed",)
+                          Image.asset('images/green-check-mark.png', semanticLabel: Localization().getStringEx("panel.checklist.text.completed", "Completed"),)
                         )
                       ]),
                     )
@@ -229,7 +232,9 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
       else if (UrlUtils.launchInternal(url)) {
         Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
-        launch(url);
+        if (uri != null) {
+          launchUrl(uri);
+        }
       }
     }
   }
@@ -525,7 +530,7 @@ class _CheckListPageWidget extends StatelessWidget{
           String? title = JsonUtils.stringValue(button['title']);
           buttonWidgets.add(
               Semantics(container: true,
-                  child: RoundedButton(label: "${position == "right"? "Next" : "Previous"} Page",
+                  child: RoundedButton(label: position == "right"? Localization().getStringEx("panel.checklist.button.next_page.label", "Next Page") : Localization().getStringEx("panel.checklist.button.previous_page.label",  "Previous Page"),
                       backgroundColor: Styles().colors!.white,
                       textWidget: Text(
                         title ?? "",
@@ -600,7 +605,7 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
   @override
   void initState() {
     _focusNode = FocusNode();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_focusKey.currentContext != null) {
         Scrollable.ensureVisible(_focusKey.currentContext!, duration: Duration(milliseconds: 300)).then((_) {
           _focusNode.requestFocus();
@@ -693,7 +698,7 @@ class _CheckListNotesWidgetState extends State<CheckListNotesWidget> {
           Expanded(child: Container(),),
           Row(children: [
             Expanded(child:
-            Text('No saved notes yet.', textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
+            Text( Localization().getStringEx("panel.checklist.text.no_saved_notes.label", 'No saved notes yet.'), textAlign: TextAlign.center, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),),
             ),
           ]),
           Expanded(child: Container(),),
@@ -841,8 +846,11 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
 
     String tabName = "${widget.pageProgress}${tabKey??""}";
     return Container(
-      child: Semantics(label: "Page ${tabName.toString()}", button: true, hint: "${isCompleted? "Completed" : "Not Completed" } ${(isCurrentTab)? ", Current page" : ""}", child:
-       GestureDetector(
+      child:  Semantics(label: Localization().getStringEx("panel.checklist.text.page", "Page") + " ${tabName.toString()}",
+          button: true,
+          hint: isCompleted? Localization().getStringEx("panel.checklist.text.completed", "Completed") :
+          (isCurrentTab ? Localization().getStringEx("panel.checklist.text.current_page", "Current page") :  Localization().getStringEx("panel.checklist.text.not_completed", "Not Completed")),
+          child: GestureDetector(
           onTap: (){_onTapTabButton(index);},
           child: Container(
             padding: EdgeInsets.only(right: 16, top: 8, bottom: 8),
@@ -1100,13 +1108,13 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
 
     //Mailing Address
     Map<String, dynamic>? mailingAddressData = JsonUtils.mapValue(_studentInfo!['mailingAddress']);
-    content.add(_buildTitleEntry(title:"Mailing Address", countyName: JsonUtils.stringValue(mailingAddressData?['County']) ?? ""));
+    content.add(_buildTitleEntry(title: Localization().getStringEx("panel.checklist.text.mailing_address",  "Mailing Address"), countyName: JsonUtils.stringValue(mailingAddressData?['County']) ?? ""));
     content.add(Container(height: 10,));
     content.add(_buildAddressEntry(data: mailingAddressData));
 
     //Permanent Address
     Map<String, dynamic>? permanentAddressData = JsonUtils.mapValue(_studentInfo!['permanentAddress']);
-    content.add(_buildTitleEntry(title:"Permanent Address", countyName: JsonUtils.stringValue(permanentAddressData?['County']) ?? ""));
+    content.add(_buildTitleEntry(title: Localization().getStringEx("panel.checklist.text.permanent_address", "Permanent Address"), countyName: JsonUtils.stringValue(permanentAddressData?['County']) ?? ""));
     content.add(Container(height: 10,));
     content.add(_buildAddressEntry(data: permanentAddressData));
 
@@ -1117,7 +1125,7 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
         Map<String, dynamic>? contractData = JsonUtils.mapValue(contractRawData);
         if(contractData!=null){
           Map<String, dynamic>? addressData = JsonUtils.mapValue(contractData["Address"]);
-          content.add(_buildTitleEntry(title:"Emergency Contact ${i+1}", countyName: JsonUtils.stringValue(addressData?['County']) ?? ""));
+          content.add(_buildTitleEntry(title: Localization().getStringEx("panel.checklist.text.emergency_contact", "Emergency Contact")+ "${i+1}", countyName: JsonUtils.stringValue(addressData?['County']) ?? ""));
           content.add(Container(height: 10,));
 
           content.add(_buildContactNameEntry(data: contractData));
@@ -1153,7 +1161,7 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
                   text: TextSpan(
                       children:[
                         TextSpan(text:"$firstName $lastName (", style : CheckListContentWidget._regularText,),
-                        TextSpan(text: "Preferred Name: ", style : CheckListContentWidget._boldText), //If we have customInfo show it, else try to show preffered
+                        TextSpan(text: Localization().getStringEx("panel.checklist.text.preferred_name", "Preferred Name: "), style : CheckListContentWidget._boldText), //If we have customInfo show it, else try to show preffered
                         TextSpan(text: "$preferred)", style : CheckListContentWidget._regularText,),
                       ]
                   ))
@@ -1214,7 +1222,7 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
                 children:[
                   TextSpan(text:"$title ", style : CheckListContentWidget._boldText,),
                   TextSpan(text:"(", style : CheckListContentWidget._regularText,),
-                  TextSpan(text: "County: ", style : CheckListContentWidget._boldText),
+                  TextSpan(text: Localization().getStringEx("panel.checklist.text.county", "County: "), style : CheckListContentWidget._boldText),
                   TextSpan(text: "$countyName):", style : CheckListContentWidget._regularText,),
                 ]
             ))
@@ -1252,7 +1260,7 @@ class _ContactInfoState extends State<ContactInfoWidget> with NotificationsListe
                   textAlign: TextAlign.left,
                   text: TextSpan(
                       children:[
-                        TextSpan(text:"Phone: ", style : CheckListContentWidget._boldText,),
+                        TextSpan(text:Localization().getStringEx("panel.checklist.text.phone", "Phone: "), style : CheckListContentWidget._boldText,),
                         TextSpan(text: "($areaCode) $phoneNumber", style :CheckListContentWidget._regularText),
                       ]
                   ))
@@ -1361,7 +1369,7 @@ class _CoursesListState extends State<CoursesListWidget> with NotificationsListe
       return Container();
     }
 
-    content.add(Text("Registered Courses", //TBD localize
+    content.add(Text(Localization().getStringEx("panel.checklist.text.registered_courses",  "Registered Courses",),
       style: TextStyle(
         color: Styles().colors!.fillColorPrimary,
         fontFamily: Styles().fontFamilies!.bold,
@@ -1402,27 +1410,27 @@ class _CoursesListState extends State<CoursesListWidget> with NotificationsListe
     String? title = JsonUtils.stringValue(data['title'] );
 
     if(StringUtils.isNotEmpty(title)){
-      content.add( _buildTextEntry(title:"Title", value: title) ?? Container());
+      content.add( _buildTextEntry(title: Localization().getStringEx("panel.checklist.text.course.title",  "Title"), value: title) ?? Container());
     }
 
     if(StringUtils.isNotEmpty(subject)){
-      content.add( _buildTextEntry(title:"Subject", value: subject) ?? Container());
+      content.add( _buildTextEntry(title: Localization().getStringEx("panel.checklist.text.course.subject", "Subject"), value: subject) ?? Container());
     }
 
     if(StringUtils.isNotEmpty(instructor)){
-      content.add( _buildTextEntry(title:"Instructor", value: instructor) ?? Container());
+      content.add( _buildTextEntry(title: Localization().getStringEx("panel.checklist.text.course.instructor", "Instructor"), value: instructor) ?? Container());
     }
 
     if(StringUtils.isNotEmpty(number)){
-      content.add( _buildTextEntry(title:"Number", value: number) ?? Container());
+      content.add( _buildTextEntry(title: Localization().getStringEx("panel.checklist.text.course.number", "Number") , value: number) ?? Container());
     }
 
     if(StringUtils.isNotEmpty(section)){
-      content.add( _buildTextEntry(title:"Section", value: section) ?? Container());
+      content.add( _buildTextEntry(title:Localization().getStringEx("panel.checklist.text.course.section", "Section"), value: section) ?? Container());
     }
 
     if(StringUtils.isNotEmpty(term)){
-      content.add( _buildTextEntry(title:"Term", value: term) ?? Container());
+      content.add( _buildTextEntry(title: Localization().getStringEx("panel.checklist.text.course.term", "Term"), value: term) ?? Container());
     }
 
     return Container(

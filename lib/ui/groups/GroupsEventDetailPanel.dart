@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/ext/Group.dart';
@@ -10,7 +11,7 @@ import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/ext/Event.dart';
 import 'package:rokwire_plugin/service/config.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/groups.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -24,6 +25,7 @@ import 'package:illinois/ui/events/CreateEventPanel.dart';
 import 'package:illinois/ui/groups/GroupWidgets.dart';
 import 'package:illinois/ui/widgets/PrivacyTicketsDialog.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/ui/panels/modal_image_holder.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/ui/widgets/triangle_painter.dart';
@@ -66,7 +68,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       setState(() {});
     });
 
-    NotificationService().subscribe(this, [Groups.notifyGroupEventsUpdated]);
+    NotificationService().subscribe(this, [
+      Groups.notifyGroupEventsUpdated,
+      FlexUI.notifyChanged,
+    ]);
     super.initState();
   }
 
@@ -152,10 +157,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     return Container(
       height: 200,
       color: Styles().colors!.background,
-      child: Stack(
+      child:Stack(
         alignment: Alignment.bottomCenter,
         children: <Widget>[
-          StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child:Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true)) : Container(),
+          StringUtils.isNotEmpty(imageUrl) ?  Positioned.fill(child: ModalImageHolder(child: Image.network(imageUrl ?? '', fit: BoxFit.cover, headers: Config().networkAuthHeaders, excludeFromSemantics: true))) : Container(),
           CustomPaint(
             painter: TrianglePainter(painterColor: Styles().colors!.fillColorSecondaryTransparent05, horzDir: TriangleHorzDirection.leftToRight),
             child: Container(
@@ -246,7 +251,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
     BoxDecoration underlineLocationDecoration = BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1)));
     String iconRes = "images/location.png" ;
     String? locationId = widget.event?.location?.locationId;
-    String? locationText = _event?.getLongDisplayLocation(null); //TBD decide if we need distance calculation - pass _locationData
+    String? locationText = _event?.getLongDisplayLocation(null); // if we need distance calculation - pass _locationData
     String? value = locationId ?? locationText;
     bool isValueVisible = StringUtils.isNotEmpty(value);
     return GestureDetector(
@@ -543,7 +548,7 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
               hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                   'widget.card.button.favorite.on.hint', ''),
               button: true,
-              child: Image.asset(isFavorite ? 'images/icon-star-white-transluent.png' : 'images/icon-star-white-frame-bold.png') //TBD selected image res
+              child: Image.asset(isFavorite ? 'images/icon-star-white-transluent.png' : 'images/icon-star-white-frame-bold.png')
           )));
   }
 
@@ -744,7 +749,10 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
       if (UrlUtils.launchInternal(url)) {
         Navigator.push(context!, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
       } else {
-        launch(url!);
+        Uri? uri = Uri.tryParse(url!);
+        if (uri != null) {
+          launchUrl(uri);
+        }
       }
     }
   }
@@ -757,11 +765,14 @@ class _GroupEventDetailsPanelState extends State<GroupEventDetailPanel> with Not
   void onNotification(String name, param) {
     if (name == Groups.notifyGroupEventsUpdated) {
       Events().getEventById(_event?.eventId).then((event) {
-        setState(() {
+        setStateIfMounted(() {
           if (event != null)
             event = _event;
         });
       });
+    }
+    else if (name == FlexUI.notifyChanged) {
+      setStateIfMounted(() { });
     }
   }
 }

@@ -35,12 +35,13 @@ class Onboarding2GetStartedPanel extends StatelessWidget {
           Expanded(child:
             SingleChildScrollView(child:
               Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
-                Semantics(hint: Localization().getStringEx("app.common.heading.one.hint","Header 1"), header: true, child: 
+                Semantics(hint: Localization().getStringEx("common.heading.one.hint","Header 1"), header: true, child: 
                   Onboarding2TitleWidget(title: Localization().getStringEx("panel.onboarding2.get_started.title", "A Smart Campus\nIn Your Pocket",)),
                 ),
                 Container(height: 14,),
                 Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                  Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the Illinois app connects you to our campus ecosystem."), textAlign: TextAlign.center, style: TextStyle( fontWeight: FontWeight.w500, fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary,),),
+                  Text(Localization().getStringEx("panel.onboarding2.get_started.description", "From Memorial Stadium to the Quad and beyond, the {{app_title}} app connects you to our campus ecosystem.").replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')),
+                    textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle("panel.onboarding2.get_started.description"),),
                 ),
               ]),
             )

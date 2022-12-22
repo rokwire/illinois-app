@@ -117,9 +117,7 @@ class _HomeCheckListWidgetState extends State<HomeCheckListWidget> implements No
                     container: true,
                     child:Text(Localization().getStringEx(
                         'widget.gies.message.start', 'Ready to get started?'),
-                      style: TextStyle(color: Styles().colors!.fillColorPrimary,
-                        fontFamily: Styles().fontFamilies!.extraBold,
-                        fontSize: 32,),),)),
+                      style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat')),)),
                   ],),
                 Container(height: 24,),
                 RoundedButton(

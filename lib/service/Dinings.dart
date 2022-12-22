@@ -245,11 +245,11 @@ class Dinings  with Service implements ExploreJsonHandler {
     explores.sort((Explore explore1, Explore explore2) {
       double? lat1 = explore1.exploreLocation?.latitude?.toDouble();
       double? lng1 = explore1.exploreLocation?.longitude?.toDouble();
-      double distance1 = ((lat1 != null) && (lng1 != null)) ? LocationUtils.distance(lat1, lng1, locationData.latitude, locationData.longitude) : double.infinity;
+      double distance1 = ((lat1 != null) && (lng1 != null)) ? Geolocator.distanceBetween(lat1, lng1, locationData.latitude, locationData.longitude) : double.infinity;
       
       double? lat2 = explore2.exploreLocation?.latitude?.toDouble();
       double? lng2 = explore2.exploreLocation?.longitude?.toDouble();
-      double distance2 = ((lat2 != null) && (lng2 != null)) ? LocationUtils.distance(lat2, lng2, locationData.latitude, locationData.longitude) : double.infinity;
+      double distance2 = ((lat2 != null) && (lng2 != null)) ? Geolocator.distanceBetween(lat2, lng2, locationData.latitude, locationData.longitude) : double.infinity;
       
       if (distance1 < distance2) {
         return -1;

@@ -28,28 +28,33 @@ class DebugStylesPanel extends StatefulWidget {
 
 class _DebugStylesPanelState extends State<DebugStylesPanel> implements NotificationsListener {
 
-  TextEditingController? _stylesContentController;
+  TextEditingController? _debugContentController;
+  TextEditingController? _contentContentController;
 
   @override
   void initState() {
     NotificationService().subscribe(this, [
       Styles.notifyChanged
     ]);
-    _stylesContentController = TextEditingController(text: JsonUtils.encode(Styles().content, prettify: true) ?? '');
+    _contentContentController = TextEditingController(text: JsonUtils.encode(Styles().contentMap, prettify: true) ?? '');
+    _debugContentController = TextEditingController(text: JsonUtils.encode(Styles().debugMap, prettify: true) ?? '');
     super.initState();
   }
 
   @override
   void dispose() {
     NotificationService().unsubscribe(this);
-    _stylesContentController!.dispose();
+    _contentContentController?.dispose();
+    _debugContentController?.dispose();
+
     super.dispose();
   }
 
   @override
   void onNotification(String name, dynamic param) {
     if (name == Styles.notifyChanged) {
-      _stylesContentController!.text = JsonUtils.encode(Styles().content, prettify: true) ?? '';
+      _contentContentController!.text = JsonUtils.encode(Styles().contentMap, prettify: true) ?? '';
+      _debugContentController!.text = JsonUtils.encode(Styles().debugMap, prettify: true) ?? '';
       setState(() {});
     }
   }
@@ -58,58 +63,34 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles().colors!.surface,
-      appBar: HeaderBar(
-        title: "Styles",
-      ),
+      appBar: HeaderBar( title: "Styles", ),
       body: Padding(padding: EdgeInsets.all(16), child:
         SafeArea(child:
-          Column(children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Content:', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
             Expanded(child:
               TextField(
                 maxLines: 1024,
-                controller: _stylesContentController,
+                controller: _contentContentController,
+                readOnly: true,
+                autocorrect: false,
                 decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
                 style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground,),
               ),
             ),
-            Padding(padding: EdgeInsets.only(top: 16), child:
-              Wrap(runSpacing: 8, spacing: 16, children: <Widget>[
-                Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  RoundedButton(
-                    label: StringUtils.ensureNotEmpty('Debug'),
-                    textColor: Styles().colors!.white,
-                    textStyle: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary, decoration: (Styles().contentMode == StylesContentMode.debug) ? TextDecoration.underline : null),
-                    borderColor: Styles().colors!.fillColorSecondary,
-                    backgroundColor: Styles().colors!.white,
-                    contentWeight: 0.0,
-                    onTap: _onTapDebug,
-                  ),
-                ],),
-                Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  RoundedButton(
-                    label: StringUtils.ensureNotEmpty('Auto'),
-                    textColor: Styles().colors!.white,
-                    textStyle: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary, decoration: (Styles().contentMode == StylesContentMode.auto) ? TextDecoration.underline : null),
-                    borderColor: Styles().colors!.fillColorSecondary,
-                    backgroundColor: Styles().colors!.white,
-                    contentWeight: 0.0,
-                    onTap: _onTapAuto,
-                  ),
-                ],),
-                Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                  RoundedButton(
-                    label: StringUtils.ensureNotEmpty('Assets'),
-                    textColor: Styles().colors!.white,
-                    textStyle: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 20, color: Styles().colors!.fillColorPrimary, decoration: (Styles().contentMode == StylesContentMode.assets) ? TextDecoration.underline : null),
-                    borderColor: Styles().colors!.fillColorSecondary,
-                    backgroundColor: Styles().colors!.white,
-                    contentWeight: 0.0,
-                    onTap: _onTapAssets,
-                  ),
-                ],),
-
-              ]),
-              //RoundedButton(label: "Preview", backgroundColor: Styles().colors.background, fontSize: 16.0, textColor: Styles().colors.fillColorPrimary, borderColor: Styles().colors.fillColorPrimary, onTap: _onTapPreview),
+            Container(height: 8,),
+            Text('Debug:', style: TextStyle(fontFamily: Styles().fontFamilies?.bold, fontSize: 16, color: Styles().colors?.fillColorPrimary)),
+            Expanded(child:
+              TextField(
+                maxLines: 1024,
+                controller: _debugContentController,
+                autocorrect: false,
+                decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.0))),
+                style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textBackground,),
+              ),
+            ),
+            Padding(padding: EdgeInsets.only(top: 16, bottom: 16), child:
+              RoundedButton(label: "Apply", backgroundColor: Styles().colors?.white, fontSize: 16.0, textColor: Styles().colors?.fillColorPrimary, borderColor: Styles().colors?.fillColorPrimary, onTap: _onTapApply),
             ),
           ],),
         ),
@@ -117,24 +98,21 @@ class _DebugStylesPanelState extends State<DebugStylesPanel> implements Notifica
     );
   }
 
-  void _onTapDebug() {
-    String stylesContent = _stylesContentController!.text;
-    if (JsonUtils.decode(stylesContent) is Map) {
-      Styles().setContentMode(StylesContentMode.debug, _stylesContentController!.text);
+  void _onTapApply() {
+    String? debugContent = _debugContentController?.text;
+    if (StringUtils.isNotEmpty(debugContent)) {
+      Map<String, dynamic>? debugStyles = JsonUtils.decodeMap(debugContent);
+      if (debugStyles != null) {
+        Styles().debugMap = debugStyles;
+      }
+      else {
+        AppAlert.showDialogResult(context, 'Invalid JSON content');
+      }
     }
     else {
-      AppAlert.showDialogResult(context, 'Invalid JSON content');
+      Styles().debugMap = null;
     }
   }
-
-  void _onTapAuto() {
-    Styles().setContentMode(StylesContentMode.auto);
-  }
-
-  void _onTapAssets() {
-    Styles().setContentMode(StylesContentMode.assets);
-  }
-
 }
 
 

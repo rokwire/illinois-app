@@ -160,10 +160,7 @@ class _SettingsAddIlliniCashPanelState
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.recipient_uin.text",
                                                   "RECIPIENT'S UIN"),
-                                              style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies!.medium,
-                                                  fontSize: 14,
-                                                  color: Styles().colors!.textBackground),
+                                              style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.medium")
                                             ),
                                             TextFormField(
                                               controller: _uinController,
@@ -187,11 +184,7 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
-                                              style: TextStyle(
-                                                fontFamily: Styles().fontFamilies!.bold,
-                                                fontSize: 20,
-                                                color: Styles().colors!.fillColorPrimary,
-                                              ),
+                                              style:  Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                           ])),
                                   Container(
@@ -213,10 +206,7 @@ class _SettingsAddIlliniCashPanelState
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.first_name.text",
                                                   "RECIPIENT'S FIRST NAME"),
-                                              style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies!.medium,
-                                                  fontSize: 14,
-                                                  color: Styles().colors!.textBackground),
+                                              style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.medium"),
                                             ),
                                             TextFormField(
                                               controller: _firstNameController,
@@ -241,12 +231,7 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
-                                              style: TextStyle(
-                                                fontFamily: Styles().fontFamilies!.bold,
-                                                fontSize: 20,
-                                                color: Styles().colors!.fillColorPrimary,
-                                              ),
-
+                                              style:  Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                           ])),
                                   Container(
@@ -268,10 +253,7 @@ class _SettingsAddIlliniCashPanelState
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.last_name.text",
                                                   "RECIPIENT'S LAST NAME"),
-                                              style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies!.medium,
-                                                  fontSize: 14,
-                                                  color: Styles().colors!.textBackground),
+                                              style:  Styles().textStyles?.getTextStyle("panel.settings.detail.title.medium")
                                             ),
                                             TextFormField(
                                               controller: _lastNameController,
@@ -296,12 +278,7 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
-                                              style: TextStyle(
-                                                fontFamily: Styles().fontFamilies!.bold,
-                                                fontSize: 20,
-                                                color: Styles().colors!.fillColorPrimary,
-                                              ),
-
+                                              style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                           ])),
                                   Container(
@@ -323,10 +300,7 @@ class _SettingsAddIlliniCashPanelState
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.email_address.text",
                                                   "EMAIL RECEIPT TO"),
-                                              style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies!.medium,
-                                                  fontSize: 14,
-                                                  color: Styles().colors!.textBackground),
+                                              style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.medium"),
                                             ),
                                             TextFormField(
                                               controller: _emailController,
@@ -350,11 +324,7 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
-                                              style: TextStyle(
-                                                fontFamily: Styles().fontFamilies!.bold,
-                                                fontSize: 20,
-                                                color: Styles().colors!.fillColorPrimary,
-                                              ),
+                                              style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                           ])),
                                   Container(
@@ -374,10 +344,7 @@ class _SettingsAddIlliniCashPanelState
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.credit_card.text", "CREDIT CARD"),
-                                              style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies!.medium,
-                                                  fontSize: 14,
-                                                  color: Styles().colors!.textBackground),
+                                              style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.medium")
                                             ),
                                             TextFormField(
                                               focusNode: _ccFocusNode,
@@ -403,11 +370,7 @@ class _SettingsAddIlliniCashPanelState
                                               ),
                                               inputFormatters: [CreditCardNumberInputFormatter()],
                                               onFieldSubmitted: (_){ FocusScope.of(context).requestFocus(_expiryFocusNode); },
-                                              style: TextStyle(
-                                                fontFamily: Styles().fontFamilies!.bold,
-                                                fontSize: 20,
-                                                color: Styles().colors!.fillColorPrimary,
-                                              ),
+                                              style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                           ])),
                                   Container(
@@ -427,10 +390,7 @@ class _SettingsAddIlliniCashPanelState
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.expiration_date.text", "EXPIRATION DATE: (MMYY)"),
-                                              style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies!.medium,
-                                                  fontSize: 14,
-                                                  color: Styles().colors!.textBackground),
+                                              style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.medium")
                                             ),
                                             TextFormField(
                                               focusNode: _expiryFocusNode,
@@ -456,11 +416,7 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
-                                              style: TextStyle(
-                                                fontFamily: Styles().fontFamilies!.bold,
-                                                fontSize: 20,
-                                                color: Styles().colors!.fillColorPrimary,
-                                              ),
+                                              style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                           ])),
                                   Container(
@@ -480,10 +436,7 @@ class _SettingsAddIlliniCashPanelState
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.cvv.text", "CVV"),
-                                              style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies!.medium,
-                                                  fontSize: 14,
-                                                  color: Styles().colors!.textBackground),
+                                              style:Styles().textStyles?.getTextStyle("panel.settings.detail.title.medium")
                                             ),
                                             TextFormField(
                                               focusNode: _cvvFocusNode,
@@ -509,11 +462,7 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
-                                              style: TextStyle(
-                                                fontFamily: Styles().fontFamilies!.bold,
-                                                fontSize: 20,
-                                                color: Styles().colors!.fillColorPrimary,
-                                              ),
+                                              style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                           ])),
                                   Container(
@@ -535,10 +484,7 @@ class _SettingsAddIlliniCashPanelState
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.dollar_amount.text",
                                                   "DOLLAR AMOUNT"),
-                                              style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies!.medium,
-                                                  fontSize: 14,
-                                                  color: Styles().colors!.textBackground),
+                                              style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.medium")
                                             ),
                                             TextFormField(
                                               focusNode: _amountFocusNode,
@@ -559,20 +505,13 @@ class _SettingsAddIlliniCashPanelState
                                                       width: 1.0),
                                                 ),
                                               ),
-                                              style: TextStyle(
-                                                fontFamily: Styles().fontFamilies!.bold,
-                                                fontSize: 20,
-                                                color: Styles().colors!.fillColorPrimary,
-                                              ),
+                                              style: Styles().textStyles?.getTextStyle("widget.detail.large.fat")
                                             ),
                                             Text(
                                               Localization().getStringEx(
                                                   "panel.settings.add_illini_cash.label.minimum_amount.text",
                                                   "(\$5.00 minimum purchase)"),
-                                              style: TextStyle(
-                                                  fontFamily: Styles().fontFamilies!.medium,
-                                                  fontSize: 14,
-                                                  color: Styles().colors!.textBackground),
+                                              style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.medium")
                                             ),
                                           ])),
                                   Container(
@@ -610,10 +549,7 @@ class _SettingsAddIlliniCashPanelState
                                           Localization().getStringEx(
                                               "panel.settings.add_illini_cash.label.agree",
                                               "I agree to the"),
-                                          style: TextStyle(
-                                              fontFamily: Styles().fontFamilies!.regular,
-                                              fontSize: 16,
-                                              color: Styles().colors!.textBackground),
+                                          style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.regular")
                                         ),
                                       ),
                                       Container(
@@ -630,7 +566,7 @@ class _SettingsAddIlliniCashPanelState
                                                 onTap: _onTermsAndConditionsTapped,
                                                 child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
                                                   Text(Localization().getStringEx("panel.settings.add_illini_cash.label.agree", "terms & conditions"),
-                                                   style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.fillColorPrimary)),
+                                                   style: Styles().textStyles?.getTextStyle("widget.detail.regular") ),
                                                   Padding(padding: EdgeInsets.only(left: 3), child: Image.asset('images/external-link.png'))
                                                 ]),
                                               ))),
