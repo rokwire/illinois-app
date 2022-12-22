@@ -91,37 +91,32 @@ class Onboarding2 with Service {
   }
 
   void _didProceedToLogin(BuildContext context, { dynamic loginPanelState}) {
-    if (Auth2().isLoggedIn) {
+    Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
+    if (codes.contains('research_questionnaire')) {
       _startResearhQuestionnaireIfNeeded(context, currentPanelState: loginPanelState);
     }
     else {
-      finish(context);      
+      _didFinishResearhQuestionnaire(context);
     }
   }
 
   void _startResearhQuestionnaireIfNeeded(BuildContext context, { dynamic currentPanelState }) {
-    Set<dynamic> codes = Set.from(FlexUI()['onboarding'] ?? []);
-    if (codes.contains('research_questionnaire')) {
-      if (Questionnaires().participateInResearch == true) {
-        Onboarding2ProgressableState? progressableState = (currentPanelState is Onboarding2ProgressableState) ? currentPanelState : null;
-        progressableState?.onboarding2Progress = true;
-        Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
-          progressableState?.onboarding2Progress = false;
-          Map<String, LinkedHashSet<String>>? questionnaireAnswers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
-          if (questionnaireAnswers?.isNotEmpty ?? false) {
-            _didFinishResearhQuestionnaire(context);
-          }
-          else {
-            _promptForResearhQuestionnaire(context, questionanire: questionnaire);
-          }
-        });
-      }
-      else {
-        _promptForResearhQuestionnaire(context);
-      }
+    if (Questionnaires().participateInResearch == true) {
+      Onboarding2ProgressableState? progressableState = (currentPanelState is Onboarding2ProgressableState) ? currentPanelState : null;
+      progressableState?.onboarding2Progress = true;
+      Questionnaires().loadResearch().then((Questionnaire? questionnaire) {
+        progressableState?.onboarding2Progress = false;
+        Map<String, LinkedHashSet<String>>? questionnaireAnswers = Auth2().profile?.getResearchQuestionnaireAnswers(questionnaire?.id);
+        if (questionnaireAnswers?.isNotEmpty ?? false) {
+          _didFinishResearhQuestionnaire(context);
+        }
+        else {
+          _promptForResearhQuestionnaire(context, questionanire: questionnaire);
+        }
+      });
     }
     else {
-      _didFinishResearhQuestionnaire(context);
+      _promptForResearhQuestionnaire(context);
     }
   }
 
