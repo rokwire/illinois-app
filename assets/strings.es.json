@@ -2802,7 +2802,9 @@
 
     "widget.home.inbox.text.all.title": "Todas las notificaciones",
     "widget.home.inbox.text.unread.title": "Notificaciones no leídas",
-    "widget.home.inbox.text.empty.description": "Las notificaciones están disponibles ahora mismo.",
+    "widget.home.inbox.text.empty.all.description": "Aún no tienes notificaciones.",
+    "widget.home.inbox.text.empty.unread.description": "No tienes notificaciones sin leer. <a href='{{local_url}}'><b>Ver todas las notificaciones</b></а>.",
+    "widget.home.inbox.text.failed.description": "No se pudieron cargar las notificaciones.",
     "widget.home.inbox.text.offline": "Las notificaciones recientes no están disponibles sin conexión.",
     "widget.home.inbox.text.logged_out": "Debe iniciar sesión para acceder a las notificaciones. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
     "widget.home.inbox.button.all.title": "Ver Тodo",
