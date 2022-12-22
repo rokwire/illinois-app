@@ -99,8 +99,7 @@ class MTDStopCard extends StatelessWidget {
               ),
             ],),
             
-            Visibility(visible: description.isNotEmpty, child:
-              
+            Visibility(visible: description.isNotEmpty || CollectionUtils.isNotEmpty(stop?.points), child:
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(child:
                   Padding(padding: EdgeInsets.only(top: 4, bottom: 8), child:
@@ -168,11 +167,33 @@ class MTDStopCard extends StatelessWidget {
     }
   }
 
-  bool get _isFavorite => Auth2().account?.prefs?.isFavorite(stop) ?? false;
+  bool? get _isFavorite {
+    if (CollectionUtils.isEmpty(stop?.points)) {
+      return Auth2().account?.prefs?.isFavorite(stop) ?? false;
+    }
+    else {
+      bool? stopSelected;
+      for (MTDStop stopPoint in stop!.points!) {
+        bool stopPointSelected = Auth2().account?.prefs?.isFavorite(stopPoint) ?? false;
+        if (stopSelected == null) {
+          stopSelected = stopPointSelected;
+        }
+        else if (stopSelected != stopPointSelected) {
+          return null;
+        }
+      }
+      return stopSelected;
+    }
+  }
 
   void _onTapFavorite(BuildContext context) {
     Analytics().logSelect(target: "Favorite: ${MTDStop.favoriteKeyName}");
-    Auth2().account?.prefs?.toggleFavorite(stop);
+    if (CollectionUtils.isEmpty(stop?.points)) {
+      Auth2().account?.prefs?.toggleFavorite(stop);
+    }
+    else {
+       Auth2().account?.prefs?.setListFavorite(stop?.points, _isFavorite != true);
+    }
   }
 }
 
