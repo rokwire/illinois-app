@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Polls :: not-signed-in error - needs better message [#2777](https://github.com/rokwire/illinois-app/issues/2777).
+### Fixed
+- Remove loading card from home inbox widget [#2846](https://github.com/rokwire/illinois-app/issues/2846).
 
 ## [4.2.46] - 2022-12-21
 ### Fixed
