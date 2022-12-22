@@ -499,7 +499,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return -1;
   }
 
-  Future<void> _loadExplores({bool progress = true, bool updateOnly = false}) async {
+  Future<void> _loadExplores({bool? progress, bool updateOnly = false}) async {
     Future<List<Explore>?>? task;
     if (Connectivity().isNotOffline) {
       List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedItem] : null;
@@ -520,7 +520,7 @@ class ExplorePanelState extends State<ExplorePanel>
     if (task != null) {
       _refresh(() {
         _loadingTask = task;
-        _loadingProgress = (progress == true);
+        _loadingProgress = progress ?? !updateOnly;
       });
       
       List<Explore>? explores = await task;
@@ -529,6 +529,15 @@ class ExplorePanelState extends State<ExplorePanel>
         if ((updateOnly == false) || ((explores != null) && !DeepCollectionEquality().equals(explores, _displayExplores))) {
           _applyExplores(explores, updateOnly: updateOnly);
         }
+        else {
+          _refresh(() {
+            _loadingTask = null;
+            _loadingProgress = null;
+          });
+        }
+      }
+      else {
+        // Do not do anything, _loadingTask will finish the loading.
       }
     }
     else if (updateOnly == false) {
