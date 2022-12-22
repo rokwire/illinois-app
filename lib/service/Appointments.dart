@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import 'package:flutter/material.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:rokwire_plugin/model/explore.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/deep_link.dart';
 import 'package:rokwire_plugin/service/log.dart';
 import 'package:rokwire_plugin/service/network.dart';
@@ -28,6 +30,12 @@ import 'package:illinois/service/Auth2.dart';
 
 class Appointments with Service implements ExploreJsonHandler, NotificationsListener {
   static const String notifyAppointmentDetail = "edu.illinois.rokwire.appointments.detail";
+  static const String notifyAppointmentsAccountUpdated = "edu.illinois.rokwire.appointments.account.updated";
+  
+  DateTime? _pausedDateTime;
+  
+  AppointmentsAccount? _account;
+  bool? _isLastAccountResponseSuccessful;
 
   List<Map<String, dynamic>>? _appointmentDetailsCache;
 
@@ -41,6 +49,8 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   void createService() {
     NotificationService().subscribe(this, [
       DeepLink.notifyUri,
+      AppLivecycle.notifyStateChanged,
+      Auth2.notifyLoginChanged
     ]);
     Explore.addJsonHandler(this);
     _appointmentDetailsCache = <Map<String, dynamic>>[];
@@ -55,9 +65,24 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   }
 
   @override
+  Future<void> initService() async {
+    await _loadAccount();
+    if ((account == null) && Auth2().isLoggedIn && isAccountValid) { 
+      // if the backend returns successful response without account, then populate the account with default values
+      _initAccountOnFirstSignIn();
+    }
+    await super.initService();
+  }
+
+  @override
   void initServiceUI() {
     _processCachedAppointmentDetails();
   }
+
+  // Getters
+
+  AppointmentsAccount? get account => _account;
+  bool get isAccountValid => (_isLastAccountResponseSuccessful == true);
 
   // APIs
   Future<List<Appointment>?> loadAppointments({bool? onlyUpcoming, AppointmentType? type}) async {
@@ -132,6 +157,49 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
     }
   }
 
+  Future<void> _loadAccount() async {
+    if (Auth2().isLoggedIn) {
+      String? url = "${Config().appointmentsUrl}/services/account";
+      http.Response? response = await Network().get(url, auth: Auth2());
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        _isLastAccountResponseSuccessful = true;
+        _account = AppointmentsAccount.fromJson(JsonUtils.decodeMap(responseString));
+      } else {
+        Log.w('Failed to load Appointments Account. Response:\n$responseCode: $responseString');
+        _isLastAccountResponseSuccessful = false;
+        _account = null;
+      }
+    } else {
+      _isLastAccountResponseSuccessful = null;
+      _account = null;
+    }
+    NotificationService().notify(notifyAppointmentsAccountUpdated);
+  }
+
+  Future<void> _initAccountOnFirstSignIn() async {
+    // By Default
+    AppointmentsAccount defaultNewAccount = AppointmentsAccount(
+        notificationsAppointmentNew: true,
+        notificationsAppointmentReminderMorning: true,
+        notificationsAppointmentReminderNight: true);
+    String? accountJsonString = JsonUtils.encode(defaultNewAccount.toJson());
+    String? url = "${Config().appointmentsUrl}/services/account";
+    http.Response? response = await Network().post(url, auth: Auth2(), body: accountJsonString);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      _isLastAccountResponseSuccessful = true;
+      _account = AppointmentsAccount.fromJson(JsonUtils.decodeMap(responseString));
+    } else {
+      Log.w('Failed to init default Appointments Account. Response:\n$responseCode: $responseString');
+      _isLastAccountResponseSuccessful = false;
+      _account = null;
+    }
+    NotificationService().notify(notifyAppointmentsAccountUpdated);
+  }
+
   // ExploreJsonHandler
   @override bool exploreCanJson(Map<String, dynamic>? json) => Appointment.canJson(json);
   @override Explore? exploreFromJson(Map<String, dynamic>? json) => Appointment.fromJson(json);
@@ -189,6 +257,24 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   void onNotification(String name, dynamic param) {
     if (name == DeepLink.notifyUri) {
       _onDeepLinkUri(param);
+    } else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    } else if (name == Auth2.notifyLoginChanged) {
+      _loadAccount();
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          _loadAccount();
+        }
+      }
     }
   }
 }
