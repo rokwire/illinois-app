@@ -1099,7 +1099,7 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapWellnessHealthScreener(BuildContext context) {
-    Analytics().logSelect(target: "Wellness Health Screener");
+    Analytics().logSelect(target: "Illinois Health Screener");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.healthScreener,)));
   }
 
