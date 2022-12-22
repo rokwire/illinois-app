@@ -23,6 +23,7 @@ import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/home/HomeLaundryWidget.dart';
+import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
@@ -116,7 +117,7 @@ class _ExploreListPanelState extends State<ExploreListPanel> implements Notifica
 
     if (explore is LaundryRoom) {
       return Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: isLast ? 16 : 0), child:
-        LaundryRoomCard(room: explore, onTap: () => _onExploreTap(explore)),
+        LaundryRoomCard(room: explore, onTap: () => _onTapExplore(explore)),
       );
     }
     else if (explore is MTDStop) {
@@ -124,8 +125,8 @@ class _ExploreListPanelState extends State<ExploreListPanel> implements Notifica
         MTDStopCard(
           stop: explore,
           expanded: _mtdExpanded,
-          onDetail: () => _onExploreTap(explore),
-          onExpand: () => _onExpandMTDStop(explore),
+          onDetail: _onTapMTDStop,
+          onExpand: _onExpandMTDStop,
           currentPosition: widget.initialLocationData,
         ),
       );
@@ -142,18 +143,25 @@ class _ExploreListPanelState extends State<ExploreListPanel> implements Notifica
     }
     else {
       return Padding(padding: EdgeInsets.only(top: 16, bottom: isLast ? 16 : 0), child:
-        ExploreCard(explore: explore, onTap: () => _onExploreTap(explore), locationData: widget.initialLocationData, showTopBorder: true),
+        ExploreCard(explore: explore, onTap: () => _onTapExplore(explore), locationData: widget.initialLocationData, showTopBorder: true),
       );
     }
   }
 
-  void _onExploreTap(Explore explore) {
+  void _onTapExplore(Explore explore) {
     Analytics().logSelect(target: explore.exploreTitle);
 
     //show the detail panel
     Widget? detailPanel = ExploreDetailPanel.contentPanel(explore: explore, initialLocationData: widget.initialLocationData,);
     if (detailPanel != null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => detailPanel));
+    }
+  }
+
+  void _onTapMTDStop(MTDStop? stop) {
+    Analytics().logSelect(target: "MTD Stop: ${stop?.name}" );
+    if (stop != null) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopDeparturesPanel(stop: stop)));
     }
   }
 
