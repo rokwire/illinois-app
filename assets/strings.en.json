@@ -2689,7 +2689,7 @@
     "widget.home.research_projects.open.label.header.title":"Open Research Projects",
 	"widget.home.research_projects.my.text.empty.admin.description": "You have not created any research projects yet.",
 	"widget.home.research_projects.my.html.empty.user.description": "You are currently not participating in any research projects. <a href='{{open_projects_url}}'>View current studies</a> that match your <a href='{{questionnaire_url}}'>Research Interest Form</a> to opt in and become part of the study’s recruitment pool.",
-	"widget.home.research_projects.all.text.empty.description": "Failed to load research projects.",
+	"widget.home.research_projects.all.text.empty.description": "There are no opened research projects at the moment.",
     "widget.home.research_projects.message.offline":"Research Projects are not available while offline.",
     "widget.home.research_projects.message.logged_out":"You need to be logged in to access Research Projects.",
     "widget.home.research_projects.button.all.title": "View All",

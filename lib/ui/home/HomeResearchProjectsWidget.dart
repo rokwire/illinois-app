@@ -216,7 +216,7 @@ class _HomeGroupsWidgetState extends State<HomeResearchProjectsWidget> implement
 
   Widget _buildEmpty() {
     if (widget.contentType == ResearchProjectsContentType.open) {
-      return HomeMessageCard(message: Localization().getStringEx('widget.home.research_projects.all.text.empty.description', 'Failed to load research projects.'));
+      return HomeMessageCard(message: Localization().getStringEx('widget.home.research_projects.all.text.empty.description', 'There are no opened research projects at the moment.'));
     }
     else if (widget.contentType == ResearchProjectsContentType.my) {
       if (Auth2().account?.isResearchProjectAdmin ?? false) {

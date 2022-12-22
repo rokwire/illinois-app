@@ -2687,7 +2687,7 @@
     "widget.home.research_projects.open.label.header.title":"Proyectos de Investigación Abierta",
 	"widget.home.research_projects.my.text.empty.admin.description": "Aún no ha creado ningún proyecto de investigación.",
 	"widget.home.research_projects.my.html.empty.user.description": "Actualmente no participa en ningún proyecto de investigación. <a href='{{open_projects_url}}'>Consulte los estudios actuales</a> que coincidan con su <a href='{{questionnaire_url}}'>Formulario de interés de investigación</a> para participar y formar parte del estudio bolsa de reclutamiento.",
-	"widget.home.research_projects.all.text.empty.description": "No se pudieron cargar los proyectos de investigación.",
+	"widget.home.research_projects.all.text.empty.description": "No hay proyectos de investigación abiertos en este momento.",
     "widget.home.research_projects.message.offline":"Los proyectos de investigación no están disponibles sin conexión.",
     "widget.home.research_projects.message.logged_out":"Debe iniciar sesión para acceder a Proyectos de Investigación.",
     "widget.home.research_projects.button.all.title": "Ver todo",
