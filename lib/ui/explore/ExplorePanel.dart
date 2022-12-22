@@ -609,14 +609,9 @@ class ExplorePanelState extends State<ExplorePanel>
     PaymentType? paymentType = _getSelectedPaymentType(selectedFilterList);
     bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
 
+    _diningSpecials = await Dinings().loadDiningSpecials();
     _locationData = _userLocationEnabled() ? await LocationServices().location : null;
-    List<List<dynamic>?> results = await Future.wait([
-      Dinings().loadDiningSpecials(),
-      Dinings().loadBackendDinings(onlyOpened, paymentType, _locationData),
-    ]);
-    
-    _diningSpecials = (0 < results.length) ? (results[0] as List<DiningSpecial>) : null;
-    return (1 < results.length) ? (results[1] as List<Dining>) : null;
+    return Dinings().loadBackendDinings(onlyOpened, paymentType, _locationData);
   }
 
   Future<List<Explore>?> _loadLaundry() async {
