@@ -19,7 +19,6 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
 class HomeInboxWidget extends StatefulWidget {
@@ -230,18 +229,6 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
       for (InboxMessage message in _messages!) {
         pages.add(Padding(key: _contentKeys[message.messageId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
           InboxMessageCard(message: message, onTap: () => _onTapMessage(message)),
-        ));
-      }
-
-      if (_loadingMessagesPage) {
-        pages.add(Padding(key: _contentKeys['last'] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
-          Container(decoration: BoxDecoration(color: Styles().colors?.white, borderRadius: BorderRadius.circular(5)), child:
-            HomeProgressWidget(
-              padding: EdgeInsets.symmetric(horizontal: 32, vertical: (_pageHeight - 24) / 2),
-              progessSize: Size(24, 24),
-              progressColor: Styles().colors?.fillColorPrimary,
-            ),
-          ),
         ));
       }
 
