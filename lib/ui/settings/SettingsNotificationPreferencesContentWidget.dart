@@ -223,7 +223,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
       _CustomToggleButton(
           enabled: _groupsSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
-          label: Localization().getStringEx("panel.settings.notifications.group_updates.event.label", "Event"),
+          label: Localization().getStringEx("panel.settings.notifications.group_updates.events.label", "Events"),
           toggled: FirebaseMessaging().notifyGroupEventsUpdates,
           onTap: _groupsSubNotificationsEnabled ? _onGroupsUpdatesEventsToggled : (){},
           textStyle: _groupsSubNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
