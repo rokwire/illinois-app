@@ -2980,7 +2980,7 @@ class GroupMemberSettingsLayout extends StatelessWidget{
                               EnabledToggleButton(
                                   enabled: isGroupInfoAllowed,
                                   borderRadius: BorderRadius.zero,
-                                  label: Localization().getStringEx("panel.groups_create.settings.allow_view_email.label", "View Email"),
+                                  label: Localization().getStringEx("panel.groups_create.settings.allow_view_email.label", "View Email Address"),
                                   toggled: (settings?.memberInfoPreferences?.viewMemberEmail ?? false),
                                   onTap: (){_onSettingsTap(
                                       changeSetting: (){  if(isGroupInfoAllowed == true) {settings?.memberInfoPreferences?.viewMemberEmail =  !(settings?.memberInfoPreferences?.viewMemberEmail ?? false);}}
