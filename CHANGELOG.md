@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated View Email Address setting entry text [#2830](https://github.com/rokwire/illinois-app/issues/2830).
 - Updated "Event" to "Events" in group notification settings [#2829](https://github.com/rokwire/illinois-app/issues/2829).
 - "Search Stop" is updated to "Search Stops" in MTD home panel dropdown [#2821](https://github.com/rokwire/illinois-app/issues/2821).
+- Updated checkbox images in PollCard [#2802](https://github.com/rokwire/illinois-app/issues/2802).
 ### Fixed
 - Remove loading card from home inbox widget [#2846](https://github.com/rokwire/illinois-app/issues/2846).
 - Fixed expanding compund MTD bus stops [#2851](https://github.com/rokwire/illinois-app/issues/2851).

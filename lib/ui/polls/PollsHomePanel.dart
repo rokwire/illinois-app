@@ -924,7 +924,7 @@ class _PollCardState extends State<PollCard> {
       bool useCustomColor = isClosed && maxValueIndex == optionIndex;
       String option = widget.poll!.options![optionIndex];
       bool didVote = ((widget.poll!.userVote != null) && (0 < (widget.poll!.userVote![optionIndex] ?? 0)));
-      String checkboxImage = didVote ? 'images/deselected-dark.png' : 'images/checkbox-unselected.png';
+      String checkboxImage = didVote ? 'images/checkbox-radio-selected.png' : 'images/checkbox-radio-unselected.png';
 
       String? votesString;
       int? votesCount = (widget.poll!.results != null) ? widget.poll!.results![optionIndex] : null;
