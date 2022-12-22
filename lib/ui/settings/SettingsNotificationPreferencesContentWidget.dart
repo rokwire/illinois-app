@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -46,7 +47,8 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
       AppLivecycle.notifyStateChanged,
       FirebaseMessaging.notifySettingUpdated,
       FlexUI.notifyChanged,
-      Appointments.notifyAppointmentsAccountUpdated
+      Appointments.notifyAppointmentsAccountUpdated,
+      Auth2UserPrefs.notifySettingsChanged
     ]);
 
     _checkNotificationsEnabled();
@@ -111,12 +113,12 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           textStyle: _appointmentsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
     widgets.add(_CustomToggleButton(
-          enabled: Appointments().reminderNotificationsEnabled,
+          enabled: _appointmentsNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.appointments.reminders", "Appointment Reminders"),
           toggled: Appointments().reminderNotificationsEnabled,
-          onTap: Appointments().reminderNotificationsEnabled ? _onAppointmentRemindersToggled : (){},
-          textStyle: Appointments().reminderNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+          onTap: _appointmentsNotificationsEnabled ? _onAppointmentRemindersToggled : (){},
+          textStyle: _appointmentsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
     widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _CustomToggleButton(
@@ -308,6 +310,9 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     }
     Analytics().logSelect(target: "Appointment Reminders");
     Appointments().reminderNotificationsEnabled = !Appointments().reminderNotificationsEnabled;
+    if (!Appointments().reminderNotificationsEnabled) {
+      Appointments().changeAccountPreferences(morningReminder: false, nightReminder: false);
+    }
   }
 
   void _onAppointmentRemindersMorningToggled() {
@@ -456,6 +461,10 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
         setState(() {});
       }
     } else if (name == Appointments.notifyAppointmentsAccountUpdated) {
+      if (mounted) {
+        setState(() {});
+      }
+    } else if (name == Auth2UserPrefs.notifySettingsChanged) {
       if (mounted) {
         setState(() {});
       }

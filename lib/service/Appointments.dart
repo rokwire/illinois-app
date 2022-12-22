@@ -68,11 +68,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
 
   @override
   Future<void> initService() async {
-    await _loadAccount();
-    if ((account == null) && Auth2().isLoggedIn && (_isLastAccountResponseSuccessful == true)) { 
-      // if the backend returns successful response without account, then populate the account with default values
-      _initAccountOnFirstSignIn();
-    }
+    await _initAccount();
     await super.initService();
   }
 
@@ -171,6 +167,14 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
     }
   }
 
+  Future<void> _initAccount() async {
+    await _loadAccount();
+    if ((account == null) && Auth2().isLoggedIn && (_isLastAccountResponseSuccessful == true)) {
+      // if the backend returns successful response without account, then populate the account with default values
+      _initAccountOnFirstSignIn();
+    }
+  }
+
   Future<void> _loadAccount() async {
     if (Auth2().isLoggedIn) {
       String? url = "${Config().appointmentsUrl}/services/account";
@@ -195,12 +199,11 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   Future<void> _initAccountOnFirstSignIn() async {
     // By Default
     AppointmentsAccount defaultNewAccount = AppointmentsAccount(
-        notificationsAppointmentNew: true,
-        notificationsAppointmentReminderMorning: true,
-        notificationsAppointmentReminderNight: true);
+        notificationsAppointmentNew: true, notificationsAppointmentReminderMorning: true, notificationsAppointmentReminderNight: true);
+    Map<String, String> headers = {'Content-Type': 'application/json'};
     String? accountJsonString = JsonUtils.encode(defaultNewAccount.toJson());
     String? url = "${Config().appointmentsUrl}/services/account";
-    http.Response? response = await Network().post(url, auth: Auth2(), body: accountJsonString);
+    http.Response? response = await Network().post(url, auth: Auth2(), body: accountJsonString, headers: headers);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -237,8 +240,9 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
 
   Future<void> _updateAccount() async {
     String? accountJsonString = JsonUtils.encode(_account);
+    Map<String, String> headers = {'Content-Type': 'application/json'};
     String? url = "${Config().appointmentsUrl}/services/account";
-    http.Response? response = await Network().post(url, auth: Auth2(), body: accountJsonString);
+    http.Response? response = await Network().post(url, auth: Auth2(), body: accountJsonString, headers: headers);
     int? responseCode = response?.statusCode;
     String? responseString = response?.body;
     if (responseCode == 200) {
@@ -312,7 +316,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
     } else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     } else if (name == Auth2.notifyLoginChanged) {
-      _loadAccount();
+      _initAccount();
     }
   }
 
