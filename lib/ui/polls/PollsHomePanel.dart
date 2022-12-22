@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:rokwire_plugin/model/poll.dart';
 import 'package:illinois/service/Analytics.dart';
-import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:rokwire_plugin/service/geo_fence.dart';
 import 'package:rokwire_plugin/service/groups.dart';
@@ -31,6 +30,7 @@ import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/polls/PollProgressPainter.dart';
 import 'package:illinois/ui/polls/CreatePollPanel.dart';
 import 'package:illinois/ui/polls/PollBubblePinPanel.dart';
+import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
@@ -66,7 +66,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   bool _groupPollsLoading = false;
   List<Group>? _myGroups;
 
-  bool _loggingIn = false;
+  bool _hasPollsAccess = false;
   
   final GlobalKey _keyBleDescriptionText = GlobalKey();
   double _bleDescriptionTextHeight = 0;
@@ -83,14 +83,14 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       Polls.notifyLifecycleDelete,
       GeoFence.notifyCurrentRegionsUpdated,
       FlexUI.notifyChanged,
-      Groups.notifyUserMembershipUpdated
+      Groups.notifyUserMembershipUpdated,
     ]);
 
     _scrollController = ScrollController();
     _scrollController!.addListener(_scrollListener);
     
     _recentLocalPolls = Polls().localRecentPolls();
-    _selectPollType(_couldCreatePoll ? _PollType.values[Storage().selectedPollType ?? 0] : _PollType.recentPolls);
+    _selectPollType(_PollType.values[Storage().selectedPollType ?? 0]);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _evalBleDescriptionHeight();
@@ -118,8 +118,9 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Widget _buildScaffoldBody() {
-    return Column(children:[
-      Expanded(child:
+    List<Widget> bodyWidgets = [];
+    Widget? accessWidget = AccessCard.builder(resource: 'polls');
+    Widget content = Expanded(child:
       CustomScrollView(
           controller: _scrollController,
           slivers: <Widget>[
@@ -136,9 +137,20 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
             ),
           ],
       )
-      ),
-      _buildCreatePollButton()
-    ]);
+    );
+
+    if (accessWidget != null) {
+      bodyWidgets.add(Padding(padding: const EdgeInsets.only(top: 16), child: accessWidget));
+      _hasPollsAccess = false;
+    } else {
+      bodyWidgets.add(content);
+      bodyWidgets.add(_buildCreatePollButton());
+      if (!_hasPollsAccess) {
+        _loadPolls();
+      }
+      _hasPollsAccess = true;
+    }
+    return Column(children: bodyWidgets);
   }
 
   Widget _buildDescriptionLayout(){
@@ -177,40 +189,38 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
   }
 
   Widget _buildPollsTabbar() {
-    return _couldCreatePoll ?
-      Container(
-        color: Styles().colors!.backgroundVariant,
-        padding: EdgeInsets.only(left: 16, top: 16, right: 16),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: _PollsHomePanelFilterTab(
-                text: Localization().getStringEx("panel.polls_home.tab.title.recent_polls","Recent Polls"),
-                tabPosition: _PollFilterTabPosition.left,
-                selected: (_selectedPollType == _PollType.recentPolls),
-                onTap: _onRecentPollsTapped,
-              )
-            ),
-            Expanded(
-                child: _PollsHomePanelFilterTab(
-                  text: Localization().getStringEx("panel.polls_home.tab.title.group_polls","Group Polls"),
-                  tabPosition: _PollFilterTabPosition.center,
-                  selected: (_selectedPollType == _PollType.groupPolls),
-                  onTap: _onGroupPollsTapped,
-                )
-            ),
-            Expanded(
-              child: _PollsHomePanelFilterTab(
-                text: Localization().getStringEx("panel.polls_home.tab.title.my_polls","My Polls"),
-                tabPosition: _PollFilterTabPosition.right,
-                selected: (_selectedPollType == _PollType.myPolls),
-                onTap: _onMyPollsTapped,
-              )
+    return Container(
+      color: Styles().colors!.backgroundVariant,
+      padding: EdgeInsets.only(left: 16, top: 16, right: 16),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: _PollsHomePanelFilterTab(
+              text: Localization().getStringEx("panel.polls_home.tab.title.recent_polls","Recent Polls"),
+              tabPosition: _PollFilterTabPosition.left,
+              selected: (_selectedPollType == _PollType.recentPolls),
+              onTap: _onRecentPollsTapped,
             )
-          ],
-        ),
-      ) :
-      Container();
+          ),
+          Expanded(
+              child: _PollsHomePanelFilterTab(
+                text: Localization().getStringEx("panel.polls_home.tab.title.group_polls","Group Polls"),
+                tabPosition: _PollFilterTabPosition.center,
+                selected: (_selectedPollType == _PollType.groupPolls),
+                onTap: _onGroupPollsTapped,
+              )
+          ),
+          Expanded(
+            child: _PollsHomePanelFilterTab(
+              text: Localization().getStringEx("panel.polls_home.tab.title.my_polls","My Polls"),
+              tabPosition: _PollFilterTabPosition.right,
+              selected: (_selectedPollType == _PollType.myPolls),
+              onTap: _onMyPollsTapped,
+            )
+          )
+        ],
+      ),
+    );
   }
 
   Widget _buildPollsContent(){
@@ -239,10 +249,7 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     int pollsLenght = (polls?.length ?? 0) + (localPolls?.length ?? 0);
 
     Widget pollsContent;
-    if ((_selectedPollType == _PollType.myPolls) && !_canCreatePoll) {
-      pollsContent = _buildLoginContent();
-    }
-    else if ((0 < pollsLenght) || pollsLoading) {
+    if ((0 < pollsLenght) || pollsLoading) {
       pollsContent = _buildPolls(localPolls, polls, pollsLoading);
     }
     else if (pollsError != null) {
@@ -256,18 +263,16 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
       Stack(
           alignment: Alignment.topCenter,
           children: <Widget>[
-            Visibility(visible: _couldCreatePoll, child:
-              Column(
-                children: <Widget>[
-                  Container(
-                    height: 88,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("images/slant-down-right-grey.png" ),
-                            fit: BoxFit.fill)),
-                  )
-                ],
-              ),
+            Column(
+              children: <Widget>[
+                Container(
+                  height: 88,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage("images/slant-down-right-grey.png" ),
+                          fit: BoxFit.fill)),
+                )
+              ],
             ),
             Padding( padding: EdgeInsets.symmetric(horizontal: 16),
                 child: pollsContent,
@@ -383,74 +388,14 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     ));
   }
 
-  Widget _buildLoginContent(){
-
-    return Container(padding: EdgeInsets.symmetric(horizontal: 24), child:
-      Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children:[
-          Container(height: 100,),
-          _canSignIn?
-          Text(Localization().getStringEx("panel.polls_home.text.login_description", 'You need to be signed in to create and share polls with people near you.'),
-            textAlign: TextAlign.center,
-            style: Styles().textStyles?.getTextStyle("widget.title.extra_large.semi_fat")) :
-            _buildPrivacyAlertMessageWidget(),
-
-      ]),
-    );
-  }
-
   Widget _buildCreatePollButton() {
-    if (_canCreatePoll) {
-      return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors!.white,child:
-        RoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a Poll"),
-            textColor: Styles().colors!.fillColorPrimary,
-            borderColor: Styles().colors!.fillColorSecondary,
-            backgroundColor: Styles().colors!.white,
-          onTap:_onCreatePollTapped
-      ));
-    }
-    else if (_couldCreatePoll && _canSignIn) {
-      return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors!.white,child:
-          RoundedButton(label:Localization().getStringEx("panel.polls_home.text.login","Sign in"),
-            textColor: Styles().colors!.fillColorPrimary,
-            borderColor: Styles().colors!.fillColorSecondary,
-            backgroundColor: Styles().colors!.white,
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            progress: _loggingIn,
-            onTap:_onLoginTapped
-          ),
-        );
-    }
-    else {
-      return Container();
-    }
-  }
-
-  Widget _buildPrivacyAlertMessageWidget() {
-    final String iconMacro = '{{privacy_level_icon}}';
-    String privacyMsg = Localization().getStringEx('panel.polls_home.text.privacy_alert.msg', "With your privacy level at $iconMacro , you can't sign in. To create and share polls with people near you, you must set your privacy level to 4 and sign in.");
-    int iconMacroPosition = privacyMsg.indexOf(iconMacro);
-    String privacyMsgStart = (0 < iconMacroPosition) ? privacyMsg.substring(0, iconMacroPosition) : '';
-    String privacyMsgEnd = ((0 < iconMacroPosition) && (iconMacroPosition < privacyMsg.length)) ? privacyMsg.substring(iconMacroPosition + iconMacro.length) : '';
-
-    return RichText(text: TextSpan(
-        style: Styles().textStyles?.getTextStyle("widget.title.extra_large.semi_fat"),
-        children: [
-          TextSpan(text: privacyMsgStart),
-          WidgetSpan(alignment: PlaceholderAlignment.middle, child: _buildPrivacyLevelIcon()),
-          TextSpan(text: privacyMsgEnd)
-    ]));
-  }
-
-  Widget _buildPrivacyLevelIcon() {
-    String privacyLevel = Auth2().prefs?.privacyLevel?.toString() ?? '';
-    return Container(height: 40, width: 40, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-      Container(height: 32, width: 32, alignment: Alignment.center, decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorSecondary!, width: 2), color: Styles().colors!.white, borderRadius: BorderRadius.all(Radius.circular(100)),), child:
-        Text(privacyLevel, style: Styles().textStyles?.getTextStyle("widget.title.medium.extra_fat"))
-      ),
-    );
+    return Container(padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), color:Styles().colors!.white,child:
+      RoundedButton(label:Localization().getStringEx("panel.polls_home.text.create_poll","Create a Poll"),
+          textColor: Styles().colors!.fillColorPrimary,
+          borderColor: Styles().colors!.fillColorSecondary,
+          backgroundColor: Styles().colors!.white,
+        onTap:_onCreatePollTapped
+    ));
   }
 
   void _evalBleDescriptionHeight() {
@@ -480,18 +425,6 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
     Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));
   }
 
-  void _onLoginTapped() {
-    if (_loggingIn != true) {
-      setStateIfMounted(() { _loggingIn = true; });
-      Auth2().authenticateWithOidc().then((Auth2OidcAuthenticateResult? result) {
-        setStateIfMounted(() { _loggingIn = false; });
-          if (result != Auth2OidcAuthenticateResult.succeeded) {
-            AppAlert.showDialogResult(context, Localization().getStringEx("logic.general.login_failed", "Unable to login. Please try again later."));
-          }
-        });
-    }
-  }
-
   void _onRecentPollsTapped(){
     _selectPollType(_PollType.recentPolls);
   }
@@ -514,14 +447,6 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
         }
       });
     }
-  }
-
-  bool get _couldCreatePoll {
-    return FlexUI().isSharingAvailable;
-  }
-
-  bool get _canCreatePoll {
-    return _couldCreatePoll && Auth2().isLoggedIn;
   }
 
   void _loadPolls() {
@@ -795,10 +720,6 @@ class _PollsHomePanelState extends State<PollsHomePanel> implements Notification
         _loadPolls();
       });
     }
-  }
-
-  bool get _canSignIn{
-    return FlexUI().isAuthenticationAvailable;
   }
 }
 

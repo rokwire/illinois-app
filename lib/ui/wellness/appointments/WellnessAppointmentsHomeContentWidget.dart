@@ -65,7 +65,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildContent() {
-    Widget? accessWidget = AccessCard.builder(resource: 'wellness.appointments.features');
+    Widget? accessWidget = AccessCard.builder(resource: 'wellness.appointments');
     if (accessWidget != null) {
       return accessWidget;
     }
