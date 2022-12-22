@@ -170,7 +170,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       backgroundColor: Styles().colors?.white,
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
       rightIconAsset: null,
-      label: Localization().getStringEx('panel.mtd_stops.home.dropdown.search.title', 'Search Stop'),
+      label: Localization().getStringEx('panel.mtd_stops.home.dropdown.search.title', 'Search Stops'),
       onTap: _onTapSearch
     ),);
 
