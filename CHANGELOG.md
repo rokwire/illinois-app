@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed NetID and Sign-in prompted at Privacy Level 3 during onboarding [#2826](https://github.com/rokwire/illinois-app/issues/2826).
 - Fixed Dining Locations loading in Maps [#2841](https://github.com/rokwire/illinois-app/issues/2841).
 - Fixed never ending progress indicator in Maps [#2841](https://github.com/rokwire/illinois-app/issues/2841).
+- Implement appointments notifications and reminders [#2621](https://github.com/rokwire/illinois-app/issues/2621).
 
 ## [4.2.46] - 2022-12-21
 ### Fixed

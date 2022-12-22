@@ -19,7 +19,9 @@ import 'dart:io';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -45,6 +47,8 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
       AppLivecycle.notifyStateChanged,
       FirebaseMessaging.notifySettingUpdated,
       FlexUI.notifyChanged,
+      Appointments.notifyAppointmentsAccountUpdated,
+      Auth2UserPrefs.notifySettingsChanged
     ]);
 
     _checkNotificationsEnabled();
@@ -101,37 +105,36 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
 
     
     widgets.add(_CustomToggleButton(
-          enabled: _toggleButtonEnabled,
+          enabled: _appointmentsNotificationsEnabled,
           borderRadius: _topRounding,
           label: Localization().getStringEx("panel.settings.notifications.appointments.new", "New MyMcKinley Appointment"),
-          toggled: FirebaseMessaging().notifyNewAppointment,
-          onTap: _toggleButtonEnabled ? _onNewAppointmentToggled : (){},
-          textStyle: _toggleButtonEnabled? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+          toggled: (Appointments().account?.notificationsAppointmentNew == true),
+          onTap: _appointmentsNotificationsEnabled ? _onNewAppointmentToggled : (){},
+          textStyle: _appointmentsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
-    //TBD: Appointments - properly implement reminders
     widgets.add(_CustomToggleButton(
-          enabled: _toggleButtonEnabled,
+          enabled: _appointmentsNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.appointments.reminders", "Appointment Reminders"),
-          toggled: false,
-          onTap: (){},
-          textStyle: _toggleButtonEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
+          toggled: Appointments().reminderNotificationsEnabled,
+          onTap: _appointmentsNotificationsEnabled ? _onAppointmentRemindersToggled : (){},
+          textStyle: _appointmentsNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.fat.disabled")
     ));
     widgets.add(Row(children: [Expanded(child: Container(color: Styles().colors!.white, child: Padding(padding: EdgeInsets.only(left: 10), child: Column(children: [
       _CustomToggleButton(
           enabled: _appointmentRemindersSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.appointments.reminders.morning_of.label", "Morning Of (8:00 AM)"),
-          toggled: false,
-          onTap: (){},
+          toggled: (Appointments().account?.notificationsAppointmentReminderMorning ?? false),
+          onTap: Appointments().reminderNotificationsEnabled ? _onAppointmentRemindersMorningToggled : (){},
           textStyle: _appointmentRemindersSubNotificationsEnabled ?  Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
     ),
       _CustomToggleButton(
           enabled: _appointmentRemindersSubNotificationsEnabled,
           borderRadius: BorderRadius.zero,
           label: Localization().getStringEx("panel.settings.notifications.appointments.reminders.night_before.label", "Night Before (9:00 PM)"),
-          toggled: false,
-          onTap: (){},
+          toggled: (Appointments().account?.notificationsAppointmentReminderNight ?? false),
+          onTap: Appointments().reminderNotificationsEnabled ? _onAppointmentRemindersNightToggled : (){},
           textStyle: _appointmentRemindersSubNotificationsEnabled ? Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.enabled") : Styles().textStyles?.getTextStyle("panel.settings.toggle_button.title.small.disabled")
       )
     ]))))]));
@@ -298,7 +301,34 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
       return;
     }
     Analytics().logSelect(target: "New Appointment");
-    FirebaseMessaging().notifyNewAppointment = !FirebaseMessaging().notifyNewAppointment!;
+    Appointments().changeAccountPreferences(newAppointment: !(Appointments().account?.notificationsAppointmentNew ?? false));
+  }
+
+  void _onAppointmentRemindersToggled() {
+    if(!_notificationsEnabled) {
+      return;
+    }
+    Analytics().logSelect(target: "Appointment Reminders");
+    Appointments().reminderNotificationsEnabled = !Appointments().reminderNotificationsEnabled;
+    if (!Appointments().reminderNotificationsEnabled) {
+      Appointments().changeAccountPreferences(morningReminder: false, nightReminder: false);
+    }
+  }
+
+  void _onAppointmentRemindersMorningToggled() {
+    if(!_notificationsEnabled) {
+      return;
+    }
+    Analytics().logSelect(target: "Appointment Reminders: Morning Of");
+    Appointments().changeAccountPreferences(morningReminder: !(Appointments().account?.notificationsAppointmentReminderMorning ?? false));
+  }
+
+  void _onAppointmentRemindersNightToggled() {
+    if(!_notificationsEnabled) {
+      return;
+    }
+    Analytics().logSelect(target: "Appointment Reminders: Night Before");
+    Appointments().changeAccountPreferences(nightReminder: !(Appointments().account?.notificationsAppointmentReminderNight ?? false));
   }
 
   void _onEventRemindersToggled() {
@@ -392,11 +422,6 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
     return _notificationsAuthorized && FlexUI().isNotificationsAvailable;
   }
 
-  bool get _appointmentRemindersSubNotificationsEnabled {
-    //TBD: Appointments - implement reminders
-    return false;
-  }
-
   bool get _athleticsSubNotificationsEnabled {
     return (FirebaseMessaging().notifyAthleticsUpdates! && _toggleButtonEnabled);
   }
@@ -407,6 +432,14 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
 
   bool get _toggleButtonEnabled{
     return _notificationsEnabled && !FirebaseMessaging().notificationsPaused!;
+  }
+
+  bool get _appointmentsNotificationsEnabled {
+    return _toggleButtonEnabled && Appointments().isAccountValid;
+  }
+
+  bool get _appointmentRemindersSubNotificationsEnabled {
+    return Appointments().reminderNotificationsEnabled;
   }
 
   String? get _notificationsStatus{
@@ -424,6 +457,14 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
         setState(() {});
       }
     } else if (name == FlexUI.notifyChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    } else if (name == Appointments.notifyAppointmentsAccountUpdated) {
+      if (mounted) {
+        setState(() {});
+      }
+    } else if (name == Auth2UserPrefs.notifySettingsChanged) {
       if (mounted) {
         setState(() {});
       }
