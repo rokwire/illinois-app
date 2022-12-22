@@ -100,29 +100,30 @@ class MTDStopCard extends StatelessWidget {
             ],),
             
             Visibility(visible: description.isNotEmpty, child:
-              InkWell(onTap: _onTapExpand, child:
-                Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Expanded(child:
-                    Padding(padding: EdgeInsets.only(top: 4, bottom: 8), child:
-                      Text(description, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface), maxLines: 1, overflow: TextOverflow.ellipsis,)
-                    )
-                  ),
-                  Semantics(
-                    label: _isExpanded ? Localization().getStringEx('panel.browse.section.status.colapse.title', 'Colapse') : Localization().getStringEx('panel.browse.section.status.expand.title', 'Expand'),
-                    hint: _isExpanded ? Localization().getStringEx('panel.browse.section.status.colapse.hint', 'Tap to colapse section content') : Localization().getStringEx('panel.browse.section.status.expand.hint', 'Tap to expand section content'),
-                    button: true, child:
-                        Container(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 16), child:
-                          SizedBox(width: 18, height: 18, child:
-                            Center(child:
-                              _isExpanded ?
-                                Image.asset('images/arrow-up-orange.png', excludeFromSemantics: true) :
-                                Image.asset('images/arrow-down-orange.png', excludeFromSemantics: true)
-                            ),
-                          )
-                        ),
-                  ),
-                ],),
-              ),
+              
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Expanded(child:
+                  Padding(padding: EdgeInsets.only(top: 4, bottom: 8), child:
+                    Text(description, style: TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.textSurface), maxLines: 1, overflow: TextOverflow.ellipsis,)
+                  )
+                ),
+                Semantics(
+                  label: _isExpanded ? Localization().getStringEx('panel.browse.section.status.colapse.title', 'Colapse') : Localization().getStringEx('panel.browse.section.status.expand.title', 'Expand'),
+                  hint: _isExpanded ? Localization().getStringEx('panel.browse.section.status.colapse.hint', 'Tap to colapse section content') : Localization().getStringEx('panel.browse.section.status.expand.hint', 'Tap to expand section content'),
+                  button: true, child:
+                    InkWell(onTap: _onTapExpand, child:
+                      Container(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 16), child:
+                        SizedBox(width: 18, height: 18, child:
+                          Center(child:
+                            _isExpanded ?
+                              Image.asset('images/arrow-up-orange.png', excludeFromSemantics: true) :
+                              Image.asset('images/arrow-down-orange.png', excludeFromSemantics: true)
+                          ),
+                        )
+                      ),
+                    ),
+                ),
+              ],),
             ),
           ],),
         ),
