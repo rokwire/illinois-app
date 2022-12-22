@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Remove loading card from home inbox widget [#2846](https://github.com/rokwire/illinois-app/issues/2846).
+
 ## [4.2.46] - 2022-12-21
 ### Fixed
 - Fix BESSI content items response handling [#2820](https://github.com/rokwire/illinois-app/issues/2820).
