@@ -183,8 +183,8 @@ class _MTDStopSearchPanelState extends State<MTDStopSearchPanel> implements Noti
       itemBuilder: (context, index) => MTDStopCard(
         stop: ListUtils.entry(_stops, index),
         expanded: _expanded,
-        onDetail: () => _onSelectStop(ListUtils.entry(_stops, index)),
-        onExpand: () => _onExpandStop(ListUtils.entry(_stops, index)),
+        onDetail: _onSelectStop,
+        onExpand: _onExpandStop,
         currentPosition: _currentPosition,
       ),
       separatorBuilder: (context, index) => Container(),

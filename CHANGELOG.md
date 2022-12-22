@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Remove loading card from home inbox widget [#2846](https://github.com/rokwire/illinois-app/issues/2846).
 - Fixed expanding compund MTD bus stops [#2851](https://github.com/rokwire/illinois-app/issues/2851).
+- Fixed detail open from single MTD Stop [#2851](https://github.com/rokwire/illinois-app/issues/2851).
 
 ## [4.2.46] - 2022-12-21
 ### Fixed

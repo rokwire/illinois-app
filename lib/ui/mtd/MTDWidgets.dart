@@ -25,8 +25,8 @@ import 'package:rokwire_plugin/utils/utils.dart';
 class MTDStopCard extends StatelessWidget {
   final MTDStop? stop;
   final Set<String>? expanded;
-  final void Function()? onDetail;
-  final void Function()? onExpand;
+  final void Function(MTDStop? stop)? onDetail;
+  final void Function(MTDStop? stop)? onExpand;
   final Position? currentPosition;
 
   MTDStopCard({Key? key, this.stop, this.expanded, this.onDetail, this.onExpand, this.currentPosition }) : super(key: key);
@@ -79,7 +79,7 @@ class MTDStopCard extends StatelessWidget {
     }
 
     return Padding(padding: EdgeInsets.only(bottom: 4), child:
-      InkWell(onTap: onDetail, child:
+      InkWell(onTap: () => _onTapDetail(stop), child:
         Container(
           decoration: BoxDecoration(color: Styles().colors?.white, border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),),
           padding: EdgeInsets.only(left: 16,),
@@ -110,7 +110,7 @@ class MTDStopCard extends StatelessWidget {
                   label: _isExpanded ? Localization().getStringEx('panel.browse.section.status.colapse.title', 'Colapse') : Localization().getStringEx('panel.browse.section.status.expand.title', 'Expand'),
                   hint: _isExpanded ? Localization().getStringEx('panel.browse.section.status.colapse.hint', 'Tap to colapse section content') : Localization().getStringEx('panel.browse.section.status.expand.hint', 'Tap to expand section content'),
                   button: true, child:
-                    InkWell(onTap: _onTapExpand, child:
+                    InkWell(onTap: () => _onTapExpand(stop), child:
                       Container(padding: EdgeInsets.only(left: 8, right: 16, top: 8, bottom: 16), child:
                         SizedBox(width: 18, height: 18, child:
                           Center(child:
@@ -138,6 +138,7 @@ class MTDStopCard extends StatelessWidget {
             stop: stop,
             expanded: expanded,
             onExpand: onExpand,
+            onDetail: onDetail,
             currentPosition: currentPosition,
           ));
         }
@@ -161,9 +162,9 @@ class MTDStopCard extends StatelessWidget {
 
   bool get _isExpanded => expanded?.contains(stop?.id) ?? false;
 
-  void _onTapExpand() {
+  void _onTapExpand(MTDStop? stop) {
     if (_canExpand && (onExpand != null)) {
-      onExpand!();
+      onExpand!(stop);
     }
   }
 
@@ -193,6 +194,12 @@ class MTDStopCard extends StatelessWidget {
     }
     else {
        Auth2().account?.prefs?.setListFavorite(stop?.points, _isFavorite != true);
+    }
+  }
+
+  void _onTapDetail(MTDStop? stop) {
+    if (onDetail != null) {
+      onDetail!(stop);
     }
   }
 }
