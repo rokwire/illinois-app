@@ -32,6 +32,8 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   static const String notifyAppointmentDetail = "edu.illinois.rokwire.appointments.detail";
   static const String notifyAppointmentsAccountUpdated = "edu.illinois.rokwire.appointments.account.updated";
   
+  static const String _appointmentRemindersNotificationsEnabledKey = 'edu.illinois.rokwire.settings.inbox.notification.appointments.reminders.notifications.enabled';
+  
   DateTime? _pausedDateTime;
   
   AppointmentsAccount? _account;
@@ -67,7 +69,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   @override
   Future<void> initService() async {
     await _loadAccount();
-    if ((account == null) && Auth2().isLoggedIn && isAccountValid) { 
+    if ((account == null) && Auth2().isLoggedIn && (_isLastAccountResponseSuccessful == true)) { 
       // if the backend returns successful response without account, then populate the account with default values
       _initAccountOnFirstSignIn();
     }
@@ -79,10 +81,22 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
     _processCachedAppointmentDetails();
   }
 
-  // Getters
+  // Getters & Setters
 
   AppointmentsAccount? get account => _account;
-  bool get isAccountValid => (_isLastAccountResponseSuccessful == true);
+
+  bool get isAccountValid => (account != null) && (_isLastAccountResponseSuccessful == true);
+
+  bool get reminderNotificationsEnabled =>
+      isAccountValid &&
+      (Auth2().isLoggedIn) &&
+      (Auth2().prefs?.getBoolSetting(_appointmentRemindersNotificationsEnabledKey, defaultValue: true) ?? true);
+
+  set reminderNotificationsEnabled(bool value) {
+    if (Auth2().isLoggedIn) {
+      Auth2().prefs?.applySetting(_appointmentRemindersNotificationsEnabledKey, value);
+    }
+  }
 
   // APIs
   Future<List<Appointment>?> loadAppointments({bool? onlyUpcoming, AppointmentType? type}) async {
@@ -185,6 +199,44 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
         notificationsAppointmentReminderMorning: true,
         notificationsAppointmentReminderNight: true);
     String? accountJsonString = JsonUtils.encode(defaultNewAccount.toJson());
+    String? url = "${Config().appointmentsUrl}/services/account";
+    http.Response? response = await Network().post(url, auth: Auth2(), body: accountJsonString);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      _isLastAccountResponseSuccessful = true;
+      _account = AppointmentsAccount.fromJson(JsonUtils.decodeMap(responseString));
+    } else {
+      Log.w('Failed to init default Appointments Account. Response:\n$responseCode: $responseString');
+      _isLastAccountResponseSuccessful = false;
+      _account = null;
+    }
+    NotificationService().notify(notifyAppointmentsAccountUpdated);
+  }
+
+  void changeAccountPreferences({bool? newAppointment, bool? morningReminder, bool? nightReminder}) {
+    if (_account != null) {
+      bool changed = false;
+      if (newAppointment != null) {
+        _account!.notificationsAppointmentNew = newAppointment;
+        changed = true;
+      }
+      if (morningReminder != null) {
+        _account!.notificationsAppointmentReminderMorning = morningReminder;
+        changed = true;
+      }
+      if (nightReminder != null) {
+        _account!.notificationsAppointmentReminderNight = nightReminder;
+        changed = true;
+      }
+      if (changed) {
+        _updateAccount();
+      }
+    }
+  }
+
+  Future<void> _updateAccount() async {
+    String? accountJsonString = JsonUtils.encode(_account);
     String? url = "${Config().appointmentsUrl}/services/account";
     http.Response? response = await Network().post(url, auth: Auth2(), body: accountJsonString);
     int? responseCode = response?.statusCode;
