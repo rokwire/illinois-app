@@ -138,15 +138,7 @@ extension FavoriteExt on Favorite {
   }
 
   Image? favoriteStarIcon({required bool selected}) {
-    if ((this is Event) || (this is Dining) || (this is LaundryRoom) || (this is InboxMessage) || (this is MTDStop)|| (this is ExplorePOI)) {
-      return Image.asset(selected ? 'images/icon-star-orange.png' : 'images/icon-star-white.png', excludeFromSemantics: true);
-    }
-    else if ((this is Game) || (this is News) || (this is GuideFavorite)) {
-      return Image.asset(selected ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true);
-    }
-    else {
-      return null;
-    }
+    return Image.asset(selected ? 'images/icon-star-orange.png' : 'images/icon-star-white.png', excludeFromSemantics: true);
   }
 
   Color? get favoriteHeaderColor {
