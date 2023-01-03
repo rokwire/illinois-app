@@ -958,13 +958,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                 
                 Expanded(child:
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    StringUtils.isNotEmpty(widget.message?.category) ?
-                      Padding(padding: EdgeInsets.only(bottom: 3, right: 12), child:
-                        Row(children: [
-                          Expanded(child:
-                            Text(widget.message?.category ?? '', semanticsLabel: "Category: ${widget.message?.category ?? ''}, ",style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"))
-                      )])) : Container(),
-                    
+
                     StringUtils.isNotEmpty(widget.message?.subject) ?
                       Padding(padding: EdgeInsets.only(bottom: 4, right: 12), child:
                         Row(children: [
