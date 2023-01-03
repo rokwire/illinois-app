@@ -47,7 +47,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
       AppLivecycle.notifyStateChanged,
       FirebaseMessaging.notifySettingUpdated,
       FlexUI.notifyChanged,
-      Appointments.notifyAppointmentsAccountUpdated,
+      Appointments.notifyAppointmentsAccountChanged,
       Auth2UserPrefs.notifySettingsChanged
     ]);
 
@@ -460,7 +460,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
       if (mounted) {
         setState(() {});
       }
-    } else if (name == Appointments.notifyAppointmentsAccountUpdated) {
+    } else if (name == Appointments.notifyAppointmentsAccountChanged) {
       if (mounted) {
         setState(() {});
       }

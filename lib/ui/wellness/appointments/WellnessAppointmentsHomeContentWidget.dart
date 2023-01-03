@@ -48,7 +48,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Storage.notifySettingChanged, FlexUI.notifyChanged]);
+    NotificationService().subscribe(this, [Storage.notifySettingChanged, FlexUI.notifyChanged, Appointments.notifyAppointmentsChanged]);
     _initAppointments();
     super.initState();
   }
@@ -78,14 +78,14 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     } else if (_loading) {
       return _buildLoadingContent();
     } else {
-      return Padding(
+      return RefreshIndicator(onRefresh: _onPullToRefresh, child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child: ListView(physics: AlwaysScrollableScrollPhysics(), shrinkWrap: true, children: [
             _buildRescheduleDescription(),
             _buildUpcomingAppointments(),
             _buildPastAppointments(),
             _buildDisplayAppointmentsSettings()
-          ]));
+          ])));
     }
   }
 
@@ -290,6 +290,10 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
             ])));
   }
 
+  Future<void> _onPullToRefresh() async {
+    await Appointments().refreshAppointments();
+  }
+
   void _onTapCloseReschedulePopup() {
     Analytics().logSelect(target: 'Close reschedule appointment popup');
     Navigator.of(context).pop();
@@ -322,7 +326,8 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   void _loadAppointments() {
     if (_appointmentsCanDisplay) {
       _setLoading(true);
-      Appointments().loadAppointments().then((appointments) {
+      Appointments().refreshAppointments().then((_) {
+        List<Appointment>? appointments = Appointments().getAppointments();
         if (CollectionUtils.isNotEmpty(appointments)) {
           _upcomingAppointments = <Appointment>[];
           _pastAppointments = <Appointment>[];
@@ -357,6 +362,8 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
       if (mounted) {
         setState(() {});
       }
+    } else if (name == Appointments.notifyAppointmentsChanged) {
+      _loadAppointments();
     }
   }
 }
