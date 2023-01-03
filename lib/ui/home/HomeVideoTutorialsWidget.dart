@@ -225,17 +225,14 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
                             child: Text(StringUtils.ensureNotEmpty(videoTitle),
                                 style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))),
                         Stack(alignment: Alignment.center, children: [
-                          Container(
-                              foregroundDecoration:
-                                  BoxDecoration(color: hasImage ? Styles().colors!.blackTransparent018 : Colors.transparent),
-                              child: hasImage
+                          hasImage
                                   ? ClipRRect(
                                       borderRadius: BorderRadius.circular(4),
                                       child: Image.network(imageUrl!,
                                           loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                                         return (loadingProgress == null) ? child : emptyImagePlaceholder;
                                       }))
-                                  : emptyImagePlaceholder),
+                                  : emptyImagePlaceholder,
                           VideoPlayButton(hasBackground: !hasImage)
                         ])
                       ])))),

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Refresh issue with appointments [#2843](https://github.com/rokwire/illinois-app/issues/2843).
 - Added appointments default end date time [#2842](https://github.com/rokwire/illinois-app/issues/2842).
+- Remove dimmed foreground decoration from video tutorial thumbnails [#2823](https://github.com/rokwire/illinois-app/issues/2823).
 
 ## [4.2.47] - 2022-12-22
 ### Changed
