@@ -2408,6 +2408,13 @@
     "panel.inbox.label.muted.hide": "Hide Muted",
     "panel.inbox.mark_as_read.failed.msg": "Failed to mark all messages as read",
 
+    "widget.inbox_message_card.selected.hint": "Selected",
+    "widget.inbox_message_card.unselected.hint": "Not Selected",
+    "widget.inbox_message_card.status.muted": "Muted",
+    "widget.inbox_message_card.status.hint": "status: %s ,for: ",
+    "widget.inbox_message_card.subject.hint": "Subject: %s",
+    "widget.inbox_message_card.body.hint": "Body: %s",
+
     "panel.guide_list.label.highlights.heading": "Campus Guide",
 
     "panel.guide_list.label.highlights.section": "Campus Highlights",

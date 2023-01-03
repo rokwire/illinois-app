@@ -2406,6 +2406,13 @@
     "panel.inbox.label.muted.hide": "Ocultar silenciado",
     "panel.inbox.mark_as_read.failed.msg": "Error al marcar todos los mensajes como leídos",
 
+    "widget.inbox_message_card.selected.hint": "Seleccionada",
+    "widget.inbox_message_card.unselected.hint": "No seleccionada",
+    "widget.inbox_message_card.status.muted": "Apagada",
+    "widget.inbox_message_card.status.hint": "sestado: %s ,para:",
+    "widget.inbox_message_card.subject.hint": "Asignaturas",
+    "widget.inbox_message_card.body.hint": "Cuerpo: %s",
+
     "panel.guide_list.label.highlights.heading": "Campus Guide",
 
     "panel.guide_list.label.highlights.section": "Puntos destacados del campus",
