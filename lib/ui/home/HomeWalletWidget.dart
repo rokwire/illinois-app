@@ -87,6 +87,7 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
   @override
   void initState() {
     NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
       IlliniCash.notifyBallanceUpdated,
       IlliniCash.notifyEligibilityUpdated,
       Connectivity.notifyStatusChanged,
@@ -98,6 +99,19 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
   void dispose() {
     NotificationService().unsubscribe(this);
     super.dispose();
+  }
+
+  // NotificationsListener
+
+  void onNotification(String name, dynamic param) {
+    if ((name == Auth2.notifyLoginChanged) ||
+        (name == IlliniCash.notifyBallanceUpdated) ||
+        (name == IlliniCash.notifyEligibilityUpdated) ||
+        (name == Connectivity.notifyStatusChanged)) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   @override
@@ -124,6 +138,13 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       );
     }
+    else if (!Auth2().isOidcLoggedIn) {
+      contentWidget = VerticalTitleValueSection(
+       title: Localization().getStringEx('panel.browse.label.logged_out.illini_cash.short', 'You need to be logged in with your NetID to access Illini Cash.'),
+        titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      );
+    }    
     else {
       contentWidget = Container();
     }
@@ -175,18 +196,6 @@ class _HomeIlliniCashWalletWidgetState extends State<HomeIlliniCashWalletWidget>
     Analytics().logSelect(target: "Add Illini Cash", source: widget.runtimeType.toString());
     SettingsAddIlliniCashPanel.present(context);
   }
-
-  // NotificationsListener
-
-  void onNotification(String name, dynamic param) {
-    if ((name == IlliniCash.notifyBallanceUpdated) ||
-        (name == IlliniCash.notifyEligibilityUpdated) ||
-        (name == Connectivity.notifyStatusChanged)) {
-      if (mounted) {
-        setState(() {});
-      }
-    }
-  }
 }
 
 // HomeMealPlanWalletWidget
@@ -205,6 +214,7 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
   @override
   void initState() {
     NotificationService().subscribe(this, [
+      Auth2.notifyLoginChanged,
       IlliniCash.notifyBallanceUpdated,
       IlliniCash.notifyEligibilityUpdated,
     ]);
@@ -217,30 +227,25 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
     super.dispose();
   }
 
+  // NotificationsListener
+
+  void onNotification(String name, dynamic param) {
+    if ((name == Auth2.notifyLoginChanged) ||
+        (name == IlliniCash.notifyBallanceUpdated) ||
+        (name == IlliniCash.notifyEligibilityUpdated)) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget contentWidget;
     String? mealBalance = IlliniCash().ballance?.mealBalanceDisplayText;
     String? cafeCreditBalance = IlliniCash().ballance?.cafeCreditBalanceDisplayText;
 
-    if (IlliniCash().eligibility?.eligible == false) {
-      String title = Localization().getStringEx('widget.home.wallet.meal_plan.label.ineligible', 'Ineligible');
-      String? status = StringUtils.isNotEmpty(IlliniCash().eligibility?.accountStatus) ? IlliniCash().eligibility?.accountStatus :
-        Localization().getStringEx('widget.home.wallet.meal_plan.label.ineligible_status', 'You are not eligibile for Meal Plan');
-      
-      contentWidget = Row(children: <Widget>[
-        Expanded(child:
-          VerticalTitleValueSection(
-            title: title,
-            titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary),
-            value: status,
-            valueTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
-            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          ),
-        ),
-      ]);
-    }
-    else {
+    if (StringUtils.isNotEmpty(mealBalance) || StringUtils.isNotEmpty(cafeCreditBalance)) {
       contentWidget = Row(children: <Widget>[
         Expanded(child:
           Opacity(opacity: StringUtils.isNotEmpty(mealBalance) ? 1 : 0, child:
@@ -261,6 +266,41 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
           ),
         ),
       ]);
+    }
+    else if (IlliniCash().eligibility?.eligible == false) {
+      String title = Localization().getStringEx('widget.home.wallet.meal_plan.label.ineligible', 'Ineligible');
+      String? status = StringUtils.isNotEmpty(IlliniCash().eligibility?.accountStatus) ? IlliniCash().eligibility?.accountStatus :
+        Localization().getStringEx('widget.home.wallet.meal_plan.label.ineligible_status', 'You are not eligibile for Meal Plan');
+      
+      contentWidget = Row(children: <Widget>[
+        Expanded(child:
+          VerticalTitleValueSection(
+            title: title,
+            titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.extraBold, fontSize: 20, color: Styles().colors?.fillColorPrimary),
+            value: status,
+            valueTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          ),
+        ),
+      ]);
+    }
+    else if (!Auth2().isOidcLoggedIn) {
+      contentWidget = Row(children: <Widget>[
+        Expanded(child:
+          VerticalTitleValueSection(
+          title: Localization().getStringEx('panel.browse.label.logged_out.meal_plan.short', 'You need to be logged in with your NetID to access University Housing Meal Plan.'),
+            titleTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
+            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          ),
+        ),
+      ]);
+    }    
+    else {
+      contentWidget = Row(children: <Widget>[
+        Expanded(child:
+        Container()
+      )
+    ]);
     }
 
     return GestureDetector(onTap: _onTap, child:
@@ -296,17 +336,6 @@ class _HomeMealPlanWalletWidgetState extends State<HomeMealPlanWalletWidget> imp
   void _onTap() {
     Analytics().logSelect(target: 'Meal Plan', source: widget.runtimeType.toString());
     SettingsMealPlanPanel.present(context);
-  }
-
-  // NotificationsListener
-
-  void onNotification(String name, dynamic param) {
-    if ((name == IlliniCash.notifyBallanceUpdated) ||
-        (name == IlliniCash.notifyEligibilityUpdated)) {
-      if (mounted) {
-        setState(() {});
-      }
-    }
   }
 }
 
