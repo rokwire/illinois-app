@@ -667,7 +667,7 @@ class _EventSmallCard extends StatelessWidget {
                             button: true,
                             excludeSemantics: true,
                             child: Container(child: Padding(padding: EdgeInsets.only(left: 24, bottom: 5), child: Image.asset(
-                                isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)
+                                isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)
                             ))
                         )),),
                     Visibility(visible: isMoreCardType, child: Padding(
