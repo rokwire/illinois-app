@@ -27,17 +27,6 @@ class SettingsInboxHomeContentWidget extends StatefulWidget {
 
 class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeContentWidget> implements NotificationsListener {
 
-  final List<_FilterEntry> _categories = [
-    _FilterEntry(value: null, name: "Any Category"),
-    _FilterEntry(value: "Admin"),
-    _FilterEntry(value: "Academic"),
-    _FilterEntry(value: "Athletics"),
-    _FilterEntry(value: "Community"),
-    _FilterEntry(value: "Entertainment"),
-    _FilterEntry(value: "Recreation"),
-    _FilterEntry(value: "Other"),
-  ];
-
   final List<_FilterEntry> _mutedValues = [
     _FilterEntry(name: Localization().getStringEx("panel.inbox.label.muted.show", "Show Muted"), value: null),  // Show both muted and not muted messages
     _FilterEntry(name: Localization().getStringEx("panel.inbox.label.muted.hide", "Hide Muted"), value: false), // Show only not muted messages
@@ -270,12 +259,6 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   Widget _buildFilters() {
     return SingleChildScrollView(scrollDirection: Axis.horizontal, child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-          // Hide the "Categories" drop down in Inbox panel (#721)
-          /*FilterSelector(
-            title: _FilterEntry.entryInList(_categories, _selectedCategory)?.name ?? '',
-            active: _selectedFilter == _FilterType.Category,
-            onTap: () { _onFilter(_FilterType.Category); }
-          ),*/
           FilterSelector(
             padding: EdgeInsets.symmetric(horizontal: 4),
             title: _FilterEntry.entryInList(_mutedValues, _selectedMutedValue)?.name ?? '',
@@ -317,7 +300,6 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     dynamic selectedFilterValue;
     List<String>? subLabels;
     switch(_selectedFilter) {
-      case _FilterType.Category: filterValues = _categories; selectedFilterValue = _selectedCategory; subLabels = null; break;
       case _FilterType.Muted: filterValues = _mutedValues; selectedFilterValue = _selectedMutedValue; subLabels = null; break;
       case _FilterType.Time: filterValues = _times; selectedFilterValue = _selectedTime; subLabels = _buildTimeDates(); break;
       default: filterValues = []; break;
@@ -390,7 +372,6 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     Analytics().logSelect(target: "FilterItem: ${filterEntry.name}");
     setState(() {
       switch(filterType) {
-        case _FilterType.Category: _selectedCategory = filterEntry.value; break;
         case _FilterType.Muted: _selectedMutedValue = filterEntry.value; break;
         case _FilterType.Time: _selectedTime = filterEntry.value; break;
         default: break;
@@ -892,7 +873,7 @@ enum _TimeFilter {
 }
 
 enum _FilterType {
-  Category, Muted, Time
+  Muted, Time
 }
 
 class InboxMessageCard extends StatefulWidget {
