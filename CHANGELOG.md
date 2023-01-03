@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refresh issue with appointments [#2843](https://github.com/rokwire/illinois-app/issues/2843).
 - Added appointments default end date time [#2842](https://github.com/rokwire/illinois-app/issues/2842).
 - Remove dimmed foreground decoration from video tutorial thumbnails [#2823](https://github.com/rokwire/illinois-app/issues/2823).
+- Fixed "Add Cover Image" button background color [#2868](https://github.com/rokwire/illinois-app/issues/2868).
 ### Added
 - Added muted indicator to inbox message card [#2877](https://github.com/rokwire/illinois-app/issues/2877).
 
