@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed "Add Cover Image" button background color [#2868](https://github.com/rokwire/illinois-app/issues/2868).
 ### Added
 - Added muted indicator to inbox message card [#2877](https://github.com/rokwire/illinois-app/issues/2877).
+- Show not logged in message in Illini Cash and MTD Buss Wallet cards [#2867](https://github.com/rokwire/illinois-app/issues/2877).
 ### Deleted
 - Removed explanation message "View current studies that match ..." from questionnaire acknowledgement panel [#2873](https://github.com/rokwire/illinois-app/issues/2873).
 

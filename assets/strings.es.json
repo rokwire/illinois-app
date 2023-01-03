@@ -225,7 +225,9 @@
     "panel.browse.label.offline.inbox": "Las notificaciones no están disponibles sin conexión.",
 
     "panel.browse.label.logged_out.illini_cash": "Debe iniciar sesión con su NetID para acceder a Illini Cash. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
+    "panel.browse.label.logged_out.illini_cash.short": "Debe iniciar sesión con su NetID para acceder a Illini Cash.",
     "panel.browse.label.logged_out.meal_plan": "Debe iniciar sesión con su NetID para acceder al Plan de comidas de alojamiento universitario. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
+    "panel.browse.label.logged_out.meal_plan.short": "Debe iniciar sesión con su NetID para acceder al Plan de comidas de alojamiento universitario.",
     "panel.browse.label.logged_out.bus_pass": "Debe iniciar sesión con su NetID para acceder a MTD Bus Pass. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
     "panel.browse.label.logged_out.bus_pass.short": "Debe iniciar sesión con su NetID para acceder a MTD Bus Pass.",
     "panel.browse.label.logged_out.illini_id": "Debe iniciar sesión con su NetID para acceder a Illini ID. Establezca su nivel de privacidad en 4 o 5 en su perfil. Luego busque el mensaje de inicio de sesión en Configuración.",
