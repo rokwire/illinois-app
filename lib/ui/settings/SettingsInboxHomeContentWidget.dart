@@ -16,6 +16,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 class SettingsInboxHomeContentWidget extends StatefulWidget {
   final bool? unread;
@@ -918,6 +919,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
   @override
   Widget build(BuildContext context) {
     double leftPadding = (widget.selected != null) ? 12 : 16;
+    String mutedStatus = Localization().getStringEx('widget.inbox_message_card.status.muted', 'Muted');
     return Container(
         decoration: BoxDecoration(
           color: Styles().colors!.white,
@@ -931,7 +933,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
               Row(children: <Widget>[
                 Visibility(visible: (widget.selected != null), child:
                   Padding(padding: EdgeInsets.only(right: leftPadding), child:
-                    Semantics(label:(widget.selected == true) ? "Selected" : "Not Selected", child:
+                    Semantics(label:(widget.selected == true) ? Localization().getStringEx('widget.inbox_message_card.selected.hint', 'Selected') : Localization().getStringEx('widget.inbox_message_card.unselected.hint', 'Not Selected'), child:
                       Image.asset((widget.selected == true) ? 'images/deselected-dark.png' : 'images/deselected.png', excludeFromSemantics: true,),
                     )
                   ),
@@ -941,17 +943,23 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
 
                     StringUtils.isNotEmpty(widget.message?.subject) ?
-                      Padding(padding: EdgeInsets.only(bottom: 4, right: 12), child:
-                        Row(children: [
+                      Padding(padding: EdgeInsets.only(bottom: 4), child:
+                        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Expanded(child:
-                            Text(widget.message?.subject ?? '', semanticsLabel: "Subject: ${widget.message?.subject ?? ''}, ", style: Styles().textStyles?.getTextStyle("widget.card.title.medium.extra_fat"))
-                      )])) : Container(),
+                            Text(widget.message?.subject ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.subject.hint', 'Subject: %s'), [widget.message?.subject ?? '']), style: Styles().textStyles?.getTextStyle("widget.card.title.medium.extra_fat"))
+                          ),
+                          (widget.message?.mute == true) ? Semantics(label: sprintf(Localization().getStringEx('widget.inbox_message_card.status.hint', 'status: %s ,for: '), [mutedStatus.toLowerCase()]), excludeSemantics: true, child:
+                            Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors?.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))), child:
+                              Text(mutedStatus.toUpperCase(), style: Styles().textStyles?.getTextStyle("widget.heading.small"))
+                          )) : Container()
+                        ])
+                      ) : Container(),
 
                     StringUtils.isNotEmpty(widget.message?.body) ?
                       Padding(padding: EdgeInsets.only(bottom: 6), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.body ?? '', semanticsLabel: "Body: ${widget.message?.body ?? ''}, ", style: Styles().textStyles?.getTextStyle("widget.card.detail.regular"))
+                            Text(widget.message?.body ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'), [widget.message?.body ?? '']), style: Styles().textStyles?.getTextStyle("widget.card.detail.regular"))
                       )])) : Container(),
 
                     Row(children: [

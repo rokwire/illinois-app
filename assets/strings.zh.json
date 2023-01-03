@@ -2401,9 +2401,16 @@
 	"panel.inbox.label.time.last_week": "上個星期",
 	"panel.inbox.label.time.this_month": "這個月",
 	"panel.inbox.label.time.last_month": "上個月",
-    "panel.inbox.label.muted.show": "顯示靜音",
-    "panel.inbox.label.muted.hide": "隱藏靜音",
-    "panel.inbox.mark_as_read.failed.msg": "無法將所有消息標記為已讀",
+	"panel.inbox.label.muted.show": "顯示靜音",
+	"panel.inbox.label.muted.hide": "隱藏靜音",
+	"panel.inbox.mark_as_read.failed.msg": "無法將所有消息標記為已讀",
+
+	"widget.inbox_message_card.selected.hint": "已選",
+	"widget.inbox_message_card.unselected.hint": "未選中的",
+	"widget.inbox_message_card.status.muted": "靜音",
+	"widget.inbox_message_card.status.hint": "狀態：%s，用於：",
+	"widget.inbox_message_card.subject.hint": "主題：%s",
+	"widget.inbox_message_card.body.hint": "身體：%s",
 
 	"panel.guide_list.label.highlights.heading": "Campus Guide",
 
