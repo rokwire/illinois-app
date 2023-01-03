@@ -43,22 +43,12 @@ class Onboarding2ResearchQuestionnaireAcknowledgementPanel extends StatelessWidg
     return Padding(padding: EdgeInsets.only(left: 24, right: 24, top: 148), child: 
     Column(children: [
       Padding(padding: EdgeInsets.only(top: 48), child:
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            Expanded(child: 
-              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.acknowledgement.title', 'Thank you! We will notify you when you become eligible for any upcoming research projects.'), textAlign: TextAlign.center,
-                style: Styles().textStyles?.getTextStyle("widget.message.large.fat"),
-              ),
-            )
-          ],),
-          Container(height: 32,),
-          Row(children: [
-            Expanded(child:
-              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.acknowledgement.explanation', 'View current studies that match your completed Research Interest Form under Browse > Research at Illinois. Opt in and become part of the study\u2019s recruitment pool.'), textAlign: TextAlign.center,
-                style: Styles().textStyles?.getTextStyle("widget.message.regular"),
-              ),
-            )
-          ],),
+        Row(children: [
+          Expanded(child: 
+            Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.acknowledgement.title', 'Thank you! We will notify you when you become eligible for any upcoming research projects.'), textAlign: TextAlign.center,
+              style: Styles().textStyles?.getTextStyle("widget.message.large.fat"),
+            ),
+          )
         ],),
       ),
       Expanded(child: Container(),),
