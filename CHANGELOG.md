@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed delete poll notification processing [#2173](https://github.com/rokwire/illinois-app/issues/2173).
 ### Changed
 - Show user profile picture for personal info button in root header bar [#2157](https://github.com/rokwire/illinois-app/issues/2157).
+- Text update: Settings - Sign In/Sign Out [#2457](https://github.com/rokwire/illinois-app/issues/2457).
 
 ## [4.2.48] - 2022-01-03
 ### Fixed
