@@ -88,9 +88,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootBackHeaderBar(
-        title: Localization().getStringEx('panel.research_projects.home.header_bar.title', 'Research at Illinois'),
-      ),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.research_projects.home.header_bar.title', 'Research at Illinois'), leading: RootHeaderBarLeading.Back,),
       body: _buildPage(),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: uiuc.TabBar(),
