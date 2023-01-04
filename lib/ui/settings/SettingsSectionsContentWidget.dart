@@ -129,9 +129,9 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
       contentList.add(_buildDebug());
     }
 
-    contentList.add(_buildVersionInfo());
-    
     contentList.add(Container(height: 24,),);
+
+    contentList.add(_buildVersionInfo());
 
     contentList.add(_buildCopyright());
 
@@ -891,7 +891,7 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   Widget _buildDebug() {
     return Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
+        padding: EdgeInsets.only(top: 24),
         child: RibbonButton(
             border: _allBorder,
             borderRadius: _allRounding,
@@ -906,11 +906,19 @@ class _SettingsSectionsContentWidgetState extends State<SettingsSectionsContentW
 
   // Version Info
   Widget _buildVersionInfo() {
-    String versionLabel = Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')) + _versionName;
+    String versionLabel = Localization().getStringEx('panel.settings.home.version.info.label', '{{app_title}} App Version:').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois'));
     return Container(
         alignment: Alignment.center,
-        child: Text(versionLabel,
-            style: Styles().textStyles?.getTextStyle("widget.item.regular.thin")));
+        child: RichText(
+            textAlign: TextAlign.left,
+            text: TextSpan(
+                style: Styles().textStyles?.getTextStyle("widget.item.regular.thin"),
+                children:[
+                  TextSpan(text: versionLabel,),
+                  TextSpan(text:  " $_versionName", style : TextStyle(fontFamily: "ProximaNovaBold")),
+                ]
+            ))
+      );
   }
 
   void _loadVersionInfo() async {
