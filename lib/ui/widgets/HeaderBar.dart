@@ -369,7 +369,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
         Padding(padding: EdgeInsets.symmetric(vertical: 12, horizontal: 2), child:
           Stack(alignment: Alignment.topRight, children: [
             Center(child: Padding(padding: EdgeInsets.symmetric(horizontal: 6), child: Image.asset('images/notifications-white.png', excludeFromSemantics: true,))),
-            Visibility(visible: (unreadMsgsCount > 0), child: 
+            Opacity(opacity: (unreadMsgsCount > 0) ? 1 : 0, child: 
               Align(alignment: Alignment.topRight, child: Container(padding: EdgeInsets.all(2), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red), child: 
                 Text(unreadMsgsCount.toString(), style: TextStyle(color: Styles().colors!.white, fontSize: 10, fontFamily: Styles().fontFamilies!.medium)))))
           ])
