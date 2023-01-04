@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- The next build on `develop` should refer to version 5.0.0 -->
 ### Fixed
 - Fixed delete poll notification processing [#2173](https://github.com/rokwire/illinois-app/issues/2173).
+- Fixed dropdown menu needs extending in Groups Manage Members [#2407](https://github.com/rokwire/illinois-app/issues/2407).
 ### Changed
 - Switch to xCode 14.2.
 - Show user profile picture for personal info button in root header bar [#2157](https://github.com/rokwire/illinois-app/issues/2157).
