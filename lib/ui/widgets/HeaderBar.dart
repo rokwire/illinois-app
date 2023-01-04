@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:illinois/service/Analytics.dart';
+import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/WPGUFMRadio.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
@@ -26,6 +27,7 @@ import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/widgets/header_bar.dart' as rokwire;
+import 'package:rokwire_plugin/utils/utils.dart';
 
 class HeaderBar extends rokwire.HeaderBar {
 
@@ -263,6 +265,7 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     NotificationService().subscribe(this, [
       WPGUFMRadio.notifyPlayerStateChanged,
       Inbox.notifyInboxUnreadMessagesCountChanged,
+      Auth2.notifyPictureChanged,
     ]);
     super.initState();
   }
@@ -281,7 +284,13 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
       if (mounted) {
         setState(() {});
       }
-    } else if (name == Inbox.notifyInboxUnreadMessagesCountChanged) {
+    }
+    else if (name == Inbox.notifyInboxUnreadMessagesCountChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    }
+    else if (name == Auth2.notifyPictureChanged) {
       if (mounted) {
         setState(() {});
       }
@@ -373,9 +382,17 @@ class _RootHeaderBarState extends State<RootHeaderBar> implements NotificationsL
     return Semantics(label: Localization().getStringEx('headerbar.personal_information.title', 'Personal Information'), hint: Localization().getStringEx('headerbar.personal_information.hint', ''), button: true, excludeSemantics: true, child:
 //    IconButton(icon: Image.asset('images/person-white.png', excludeFromSemantics: true), onPressed: () => onTapPersonalInformations())
       InkWell(onTap: () => _onTapPersonalInformation(), child:
-        Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
-          Image.asset('images/person-white.png', excludeFromSemantics: true,),
-        )
+        CollectionUtils.isNotEmpty(Auth2().authPicture) ?
+          Padding(padding: EdgeInsets.symmetric(vertical: 15, horizontal: 5), child:
+            Container(width: 20, height: 20, decoration:
+              BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
+                DecorationImage( fit: BoxFit.cover, image: Image.memory(Auth2().authPicture!).image)
+              )
+            )
+          ) :
+          Padding(padding: EdgeInsets.symmetric(vertical: 16, horizontal: 6), child:
+            Image.asset('images/person-white.png', excludeFromSemantics: true,)
+          ),
       )
     );
   }
