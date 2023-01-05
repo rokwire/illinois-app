@@ -62,7 +62,7 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'),),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: SingleChildScrollView(
         child: SectionSlantHeader(
           headerWidget: _buildHeader(),

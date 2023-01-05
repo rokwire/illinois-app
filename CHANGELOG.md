@@ -5,6 +5,57 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.1] - 2022-01-04
+### Changed
+- Switch to xCode 14.2.
+
+## [4.2.49] - 2022-01-05
+### Fixed
+- Fixed delete poll notification processing [#2173](https://github.com/rokwire/illinois-app/issues/2173).
+- Fixed dropdown menu needs extending in Groups Manage Members [#2407](https://github.com/rokwire/illinois-app/issues/2407).
+- Fixed empty iCard expiration date processing for retired faculty/staff [#2892](https://github.com/rokwire/illinois-app/issues/2892).
+- Fixed update privacy dialog scrolling (+ some other nonsense items) [#2891](https://github.com/rokwire/illinois-app/issues/2891).
+- Formatting date times in events [#2719](https://github.com/rokwire/illinois-app/issues/2719).
+### Changed
+- Show user profile picture for personal info button in root header bar [#2157](https://github.com/rokwire/illinois-app/issues/2157).
+- Text update: Settings - Sign In/Sign Out [#2457](https://github.com/rokwire/illinois-app/issues/2457).
+
+## [4.2.48] - 2022-01-03
+### Fixed
+- Refresh issue with appointments [#2843](https://github.com/rokwire/illinois-app/issues/2843).
+- Added appointments default end date time [#2842](https://github.com/rokwire/illinois-app/issues/2842).
+- Remove dimmed foreground decoration from video tutorial thumbnails [#2823](https://github.com/rokwire/illinois-app/issues/2823).
+- Fixed "Add Cover Image" button background color [#2868](https://github.com/rokwire/illinois-app/issues/2868).
+### Added
+- Added muted indicator to inbox message card [#2877](https://github.com/rokwire/illinois-app/issues/2877).
+- Show not logged in message in Illini Cash and MTD Buss Wallet cards [#2867](https://github.com/rokwire/illinois-app/issues/2877).
+### Deleted
+- Removed explanation message "View current studies that match ..." from questionnaire acknowledgement panel [#2873](https://github.com/rokwire/illinois-app/issues/2873).
+### Changed
+- Always use orange favorite icon, removed all references to the blue favorite icon [#2165](https://github.com/rokwire/illinois-app/issues/2165).
+
+## [4.2.47] - 2022-12-22
+### Changed
+- Polls :: not-signed-in error - needs better message [#2777](https://github.com/rokwire/illinois-app/issues/2777).
+- Updated favorite star behavior of compound MTD stops [#2822](https://github.com/rokwire/illinois-app/issues/2822).
+- Updated research questionnaire prompt message [#2849](https://github.com/rokwire/illinois-app/issues/2849).
+- Updated no research projects message text in favorite widget [#2845](https://github.com/rokwire/illinois-app/issues/2845).
+- Updated View Email Address setting entry text [#2830](https://github.com/rokwire/illinois-app/issues/2830).
+- Updated "Event" to "Events" in group notification settings [#2829](https://github.com/rokwire/illinois-app/issues/2829).
+- "Search Stop" is updated to "Search Stops" in MTD home panel dropdown [#2821](https://github.com/rokwire/illinois-app/issues/2821).
+- Updated checkbox images in PollCard [#2802](https://github.com/rokwire/illinois-app/issues/2802).
+### Fixed
+- Remove loading card from home inbox widget [#2846](https://github.com/rokwire/illinois-app/issues/2846).
+- Fixed expanding compund MTD bus stops [#2851](https://github.com/rokwire/illinois-app/issues/2851).
+- Fixed detail open from single MTD Stop [#2851](https://github.com/rokwire/illinois-app/issues/2851).
+- Fixed Illinois Health Screener in Browse / Wellness section [#2848](https://github.com/rokwire/illinois-app/issues/2848).
+- Fixed NetID and Sign-in prompted at Privacy Level 3 during onboarding [#2826](https://github.com/rokwire/illinois-app/issues/2826).
+- Fixed Dining Locations loading in Maps [#2841](https://github.com/rokwire/illinois-app/issues/2841).
+- Fixed never ending progress indicator in Maps [#2841](https://github.com/rokwire/illinois-app/issues/2841).
+- Implement appointments notifications and reminders [#2621](https://github.com/rokwire/illinois-app/issues/2621).
+- Fixed error and empty status in All/Unread Notifications favorite card [#2847](https://github.com/rokwire/illinois-app/issues/2847).
+
 ## [4.2.46] - 2022-12-21
 ### Fixed
 - Fix BESSI content items response handling [#2820](https://github.com/rokwire/illinois-app/issues/2820).

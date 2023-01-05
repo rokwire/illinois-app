@@ -202,7 +202,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
   }
 
   void _onTapStartEvaluation() {
-    Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation.features');
+    Future? result = AccessDialog.show(context: context, resource: 'academics.skills_self_evaluation');
     if (Config().bessiSurveyID != null && result == null) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => SurveyPanel(survey: Config().bessiSurveyID, onComplete: _gotoResults, offlineWidget: _buildOfflineWidget(), tabBar: uiuc.TabBar())));
     }

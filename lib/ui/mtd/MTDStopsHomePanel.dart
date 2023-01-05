@@ -103,9 +103,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootBackHeaderBar(
-        title: Localization().getStringEx('panel.mtd_stops.home.header_bar.title', 'MTD Stops'),
-      ),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.mtd_stops.home.header_bar.title', 'MTD Stops'), leading: RootHeaderBarLeading.Back,),
       body: _buildPage(),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: uiuc.TabBar(),
@@ -170,7 +168,7 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       backgroundColor: Styles().colors?.white,
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
       rightIconKey: null,
-      label: Localization().getStringEx('panel.mtd_stops.home.dropdown.search.title', 'Search Stop'),
+      label: Localization().getStringEx('panel.mtd_stops.home.dropdown.search.title', 'Search Stops'),
       onTap: _onTapSearch
     ),);
 
@@ -250,8 +248,8 @@ class _MTDStopsHomePanelState extends State<MTDStopsHomePanel> implements Notifi
       itemBuilder: (context, index) => MTDStopCard(
         stop: ListUtils.entry(_stops, index),
         expanded: _expanded,
-        onDetail: () => _onSelectStop(ListUtils.entry(_stops, index)),
-        onExpand: () => _onExpandStop(ListUtils.entry(_stops, index)),
+        onDetail: _onSelectStop,
+        onExpand: _onExpandStop,
         currentPosition: _currentPosition,
       ),
       separatorBuilder: (context, index) => Container(),

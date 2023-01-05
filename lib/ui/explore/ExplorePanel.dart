@@ -190,6 +190,7 @@ class ExplorePanelState extends State<ExplorePanel>
       StudentCourses.notifySelectedTermChanged,
       StudentCourses.notifyCachedCoursesChanged,
       MTD.notifyStopsChanged,
+      Appointments.notifyAppointmentsChanged,
       ExplorePanel.notifySelectMap,
       RootPanel.notifyTabChanged,
       AppLivecycle.notifyStateChanged,
@@ -499,7 +500,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return -1;
   }
 
-  Future<void> _loadExplores({bool progress = true, bool updateOnly = false}) async {
+  Future<void> _loadExplores({bool? progress, bool updateOnly = false}) async {
     Future<List<Explore>?>? task;
     if (Connectivity().isNotOffline) {
       List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedItem] : null;
@@ -520,7 +521,7 @@ class ExplorePanelState extends State<ExplorePanel>
     if (task != null) {
       _refresh(() {
         _loadingTask = task;
-        _loadingProgress = (progress == true);
+        _loadingProgress = progress ?? !updateOnly;
       });
       
       List<Explore>? explores = await task;
@@ -529,6 +530,15 @@ class ExplorePanelState extends State<ExplorePanel>
         if ((updateOnly == false) || ((explores != null) && !DeepCollectionEquality().equals(explores, _displayExplores))) {
           _applyExplores(explores, updateOnly: updateOnly);
         }
+        else {
+          _refresh(() {
+            _loadingTask = null;
+            _loadingProgress = null;
+          });
+        }
+      }
+      else {
+        // Do not do anything, _loadingTask will finish the loading.
       }
     }
     else if (updateOnly == false) {
@@ -609,14 +619,9 @@ class ExplorePanelState extends State<ExplorePanel>
     PaymentType? paymentType = _getSelectedPaymentType(selectedFilterList);
     bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
 
+    _diningSpecials = await Dinings().loadDiningSpecials();
     _locationData = _userLocationEnabled() ? await LocationServices().location : null;
-    List<List<dynamic>?> results = await Future.wait([
-      Dinings().loadDiningSpecials(),
-      Dinings().loadBackendDinings(onlyOpened, paymentType, _locationData),
-    ]);
-
-    _diningSpecials = (0 < results.length) ? (results[0] as List<DiningSpecial>) : null;
-    return (1 < results.length) ? (results[1] as List<Dining>) : null;
+    return Dinings().loadBackendDinings(onlyOpened, paymentType, _locationData);
   }
 
   Future<List<Explore>?> _loadLaundry() async {
@@ -657,7 +662,7 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   Future<List<Explore>?> _loadAppointments() async {
-    return Appointments().loadAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
+    return Appointments().getAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
   }
 
   void _showMessagePopup(String message) {
@@ -2018,6 +2023,11 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     else if (name == MTD.notifyStopsChanged) {
       if ((_selectedItem == ExploreItem.MTDStops) && mounted && widget.rootTabDisplay) {
+        _loadExplores(updateOnly: true);
+      }
+    }
+    else if (name == Appointments.notifyAppointmentsChanged) {
+      if ((_selectedItem == ExploreItem.Appointments) && mounted && widget.rootTabDisplay) {
         _loadExplores(updateOnly: true);
       }
     }

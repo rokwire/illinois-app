@@ -271,7 +271,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           label: Localization().getStringEx("panel.groups_settings.add_image", "Add Cover Image"),
                           textColor: Styles().colors!.fillColorPrimary,
                           onTap: _onTapAddImage,
-                          backgroundColor: Colors.transparent,
                           contentWeight: 0.8,
                     ))))
         ])));

@@ -137,16 +137,8 @@ extension FavoriteExt on Favorite {
     }
   }
 
-  Widget? favoriteStarIcon({required bool selected}) {
-    if ((this is Event) || (this is Dining) || (this is LaundryRoom) || (this is InboxMessage) || (this is MTDStop)|| (this is ExplorePOI)) {
-      return Styles().images?.getImage(selected ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true);
-    }
-    else if ((this is Game) || (this is News) || (this is GuideFavorite)) {
-      return Styles().images?.getImage(selected ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true);
-    }
-    else {
-      return null;
-    }
+  Image? favoriteStarIcon({required bool selected}) {
+    return Styles().images?.getImage(selected ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true);
   }
 
   Color? get favoriteHeaderColor {

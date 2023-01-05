@@ -597,9 +597,10 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 @implementation RootNavigationController
 
 - (void)setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible {
-	SEL selector = NSSelectorFromString(@"setNeedsUpdateOfSupportedInterfaceOrientations");
-	if ([self respondsToSelector:selector]) {
-		[self performSelector:selector withObject:nil afterDelay:0];
+	if ([self respondsToSelector:@selector(setNeedsUpdateOfSupportedInterfaceOrientations)]) {
+		if (@available(iOS 16.0, *)) {
+			[self setNeedsUpdateOfSupportedInterfaceOrientations];
+		}
 	}
 }
 

@@ -16,6 +16,7 @@ import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+import 'package:sprintf/sprintf.dart';
 
 class SettingsInboxHomeContentWidget extends StatefulWidget {
   final bool? unread;
@@ -26,17 +27,6 @@ class SettingsInboxHomeContentWidget extends StatefulWidget {
 }
 
 class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeContentWidget> implements NotificationsListener {
-
-  final List<_FilterEntry> _categories = [
-    _FilterEntry(value: null, name: "Any Category"),
-    _FilterEntry(value: "Admin"),
-    _FilterEntry(value: "Academic"),
-    _FilterEntry(value: "Athletics"),
-    _FilterEntry(value: "Community"),
-    _FilterEntry(value: "Entertainment"),
-    _FilterEntry(value: "Recreation"),
-    _FilterEntry(value: "Other"),
-  ];
 
   final List<_FilterEntry> _mutedValues = [
     _FilterEntry(name: Localization().getStringEx("panel.inbox.label.muted.show", "Show Muted"), value: null),  // Show both muted and not muted messages
@@ -270,12 +260,6 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
   Widget _buildFilters() {
     return SingleChildScrollView(scrollDirection: Axis.horizontal, child:
       Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-          // Hide the "Categories" drop down in Inbox panel (#721)
-          /*FilterSelector(
-            title: _FilterEntry.entryInList(_categories, _selectedCategory)?.name ?? '',
-            active: _selectedFilter == _FilterType.Category,
-            onTap: () { _onFilter(_FilterType.Category); }
-          ),*/
           FilterSelector(
             padding: EdgeInsets.symmetric(horizontal: 4),
             title: _FilterEntry.entryInList(_mutedValues, _selectedMutedValue)?.name ?? '',
@@ -317,7 +301,6 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     dynamic selectedFilterValue;
     List<String>? subLabels;
     switch(_selectedFilter) {
-      case _FilterType.Category: filterValues = _categories; selectedFilterValue = _selectedCategory; subLabels = null; break;
       case _FilterType.Muted: filterValues = _mutedValues; selectedFilterValue = _selectedMutedValue; subLabels = null; break;
       case _FilterType.Time: filterValues = _times; selectedFilterValue = _selectedTime; subLabels = _buildTimeDates(); break;
       default: filterValues = []; break;
@@ -390,7 +373,6 @@ class _SettingsInboxHomeContentWidgetState extends State<SettingsInboxHomeConten
     Analytics().logSelect(target: "FilterItem: ${filterEntry.name}");
     setState(() {
       switch(filterType) {
-        case _FilterType.Category: _selectedCategory = filterEntry.value; break;
         case _FilterType.Muted: _selectedMutedValue = filterEntry.value; break;
         case _FilterType.Time: _selectedTime = filterEntry.value; break;
         default: break;
@@ -892,7 +874,7 @@ enum _TimeFilter {
 }
 
 enum _FilterType {
-  Category, Muted, Time
+  Muted, Time
 }
 
 class InboxMessageCard extends StatefulWidget {
@@ -937,6 +919,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
   @override
   Widget build(BuildContext context) {
     double leftPadding = (widget.selected != null) ? 12 : 16;
+    String mutedStatus = Localization().getStringEx('widget.inbox_message_card.status.muted', 'Muted');
     return Container(
         decoration: BoxDecoration(
           color: Styles().colors!.white,
@@ -950,7 +933,7 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
               Row(children: <Widget>[
                 Visibility(visible: (widget.selected != null), child:
                   Padding(padding: EdgeInsets.only(right: leftPadding), child:
-                    Semantics(label:(widget.selected == true) ? "Selected" : "Not Selected", child:
+                    Semantics(label:(widget.selected == true) ? Localization().getStringEx('widget.inbox_message_card.selected.hint', 'Selected') : Localization().getStringEx('widget.inbox_message_card.unselected.hint', 'Not Selected'), child:
                       Styles().images?.getImage((widget.selected == true) ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true,),
                     )
                   ),
@@ -958,25 +941,25 @@ class _InboxMessageCardState extends State<InboxMessageCard> implements Notifica
                 
                 Expanded(child:
                   Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    StringUtils.isNotEmpty(widget.message?.category) ?
-                      Padding(padding: EdgeInsets.only(bottom: 3, right: 12), child:
-                        Row(children: [
-                          Expanded(child:
-                            Text(widget.message?.category ?? '', semanticsLabel: "Category: ${widget.message?.category ?? ''}, ",style: Styles().textStyles?.getTextStyle("widget.card.title.small.fat"))
-                      )])) : Container(),
-                    
+
                     StringUtils.isNotEmpty(widget.message?.subject) ?
-                      Padding(padding: EdgeInsets.only(bottom: 4, right: 12), child:
-                        Row(children: [
+                      Padding(padding: EdgeInsets.only(bottom: 4), child:
+                        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Expanded(child:
-                            Text(widget.message?.subject ?? '', semanticsLabel: "Subject: ${widget.message?.subject ?? ''}, ", style: Styles().textStyles?.getTextStyle("widget.card.title.medium.extra_fat"))
-                      )])) : Container(),
+                            Text(widget.message?.subject ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.subject.hint', 'Subject: %s'), [widget.message?.subject ?? '']), style: Styles().textStyles?.getTextStyle("widget.card.title.medium.extra_fat"))
+                          ),
+                          (widget.message?.mute == true) ? Semantics(label: sprintf(Localization().getStringEx('widget.inbox_message_card.status.hint', 'status: %s ,for: '), [mutedStatus.toLowerCase()]), excludeSemantics: true, child:
+                            Container(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: Styles().colors?.fillColorSecondary, borderRadius: BorderRadius.all(Radius.circular(2))), child:
+                              Text(mutedStatus.toUpperCase(), style: Styles().textStyles?.getTextStyle("widget.heading.small"))
+                          )) : Container()
+                        ])
+                      ) : Container(),
 
                     StringUtils.isNotEmpty(widget.message?.body) ?
                       Padding(padding: EdgeInsets.only(bottom: 6), child:
                         Row(children: [
                           Expanded(child:
-                            Text(widget.message?.body ?? '', semanticsLabel: "Body: ${widget.message?.body ?? ''}, ", style: Styles().textStyles?.getTextStyle("widget.card.detail.regular"))
+                            Text(widget.message?.body ?? '', semanticsLabel: sprintf(Localization().getStringEx('widget.inbox_message_card.body.hint', 'Body: %s'), [widget.message?.body ?? '']), style: Styles().textStyles?.getTextStyle("widget.card.detail.regular"))
                       )])) : Container(),
 
                     Row(children: [

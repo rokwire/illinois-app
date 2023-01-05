@@ -101,9 +101,7 @@ class _GroupsHomePanelState extends State<GroupsHomePanel> implements Notificati
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootBackHeaderBar(
-        title: Localization().getStringEx("panel.groups_home.label.heading","Groups"),
-      ),
+      appBar: RootHeaderBar(title: Localization().getStringEx("panel.groups_home.label.heading","Groups"), leading: RootHeaderBarLeading.Back,),
       body: _buildContent(),
       backgroundColor: Styles().colors!.background,
       bottomNavigationBar: uiuc.TabBar(),
