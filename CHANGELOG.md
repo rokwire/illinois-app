@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ## [5.0.1] - 2022-01-04
+### Changed
+- Switch to xCode 14.2.
+
+## [4.2.49] - 2022-01-05
 ### Fixed
 - Fixed delete poll notification processing [#2173](https://github.com/rokwire/illinois-app/issues/2173).
 - Fixed dropdown menu needs extending in Groups Manage Members [#2407](https://github.com/rokwire/illinois-app/issues/2407).
@@ -14,7 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed update privacy dialog scrolling (+ some other nonsense items) [#2891](https://github.com/rokwire/illinois-app/issues/2891).
 - Formatting date times in events [#2719](https://github.com/rokwire/illinois-app/issues/2719).
 ### Changed
-- Switch to xCode 14.2.
 - Show user profile picture for personal info button in root header bar [#2157](https://github.com/rokwire/illinois-app/issues/2157).
 - Text update: Settings - Sign In/Sign Out [#2457](https://github.com/rokwire/illinois-app/issues/2457).
 
