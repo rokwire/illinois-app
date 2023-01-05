@@ -104,5 +104,10 @@ class AuthCard {
     DateTime? expirationDateTimeUtc = (expirationDate != null) ? DateTimeUtils.parseDateTime(expirationDate!, format: "yyyy-MM-dd", isUtc: true) : null;
     return  ((expirationDateTimeUtc != null) && (universityLocation != null)) ? TZDateTime(universityLocation, expirationDateTimeUtc.year, expirationDateTimeUtc.month, expirationDateTimeUtc.day).toUtc() : null;
   }
+
+  // Result: <= 0 - expired; > 0 - valid; = null - valid
+  int? get expirationIntervalInDays {
+    return expirationDateTimeUtc?.difference(DateTime.now().toUtc()).inDays;
+  }
 }
 
