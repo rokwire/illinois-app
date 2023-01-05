@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed delete poll notification processing [#2173](https://github.com/rokwire/illinois-app/issues/2173).
 - Fixed dropdown menu needs extending in Groups Manage Members [#2407](https://github.com/rokwire/illinois-app/issues/2407).
 - Fixed empty iCard expiration date processing for retired faculty/staff [#2892](https://github.com/rokwire/illinois-app/issues/2892).
+- Fixed update privacy dialog scrolling (+ some other nonsense items) [#2891](https://github.com/rokwire/illinois-app/issues/2891).
 ### Changed
 - Switch to xCode 14.2.
 - Show user profile picture for personal info button in root header bar [#2157](https://github.com/rokwire/illinois-app/issues/2157).
