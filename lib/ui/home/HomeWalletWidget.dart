@@ -472,12 +472,23 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
 
   @override
   Widget build(BuildContext context) {
-    String? message;
+    String? message, warning;
     if (!Auth2().isOidcLoggedIn) {
       message = Localization().getStringEx('panel.browse.label.logged_out.illini_id.short', 'You need to be logged in with your NetID to access Illini ID.');
     }
-    else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber) || (Auth2().authCard?.expirationDateTimeUtc == null)) {
+    else if (StringUtils.isEmpty(Auth2().authCard?.cardNumber)) {
       message = Localization().getStringEx('panel.browse.label.no_card.illini_id', 'No Illini ID information. You do not have an active i-card. Please visit the ID Center.');
+    }
+    else {
+      int? expirationDays = Auth2().authCard?.expirationIntervalInDays;
+      if (expirationDays != null) {
+        if (expirationDays <= 0) {
+          message = sprintf(Localization().getStringEx('panel.browse.label.expired_card.illini_id', 'No Illini ID information. Your i-card expired on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
+        }
+        else if ((0 < expirationDays) && (expirationDays < 30)) {
+          warning = sprintf(Localization().getStringEx('panel.browse.label.expiring_card.illini_id','Your ID will expire on %s. Please visit the ID Center.'), [Auth2().authCard?.expirationDate ?? '']);
+        }
+      }
     }
 
     return GestureDetector(onTap: _onTap, child:
@@ -498,7 +509,7 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
                 ),
                 Container(color: Styles().colors!.backgroundVariant, height: 1,),
                 Container(color: Styles().colors!.white, child:
-                  Padding(padding: EdgeInsets.only(top: 8, right: 8, bottom: 8), child:
+                  Padding(padding: EdgeInsets.symmetric(vertical: 8), child:
                     Row(children: <Widget>[
                       Expanded(child:
                         VerticalTitleValueSection(
@@ -506,6 +517,8 @@ class _HomeIlliniIdWalletWidgetState extends State<HomeIlliniIdWalletWidget> imp
                           titleTextStyle: (message != null) ? TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary) : null,
                           value: (message != null) ? null : Auth2().authCard?.uin,
                           valueTextStyle: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'),
+                          hint: (warning != null) ? warning : null,
+                          hintTextStyle: Styles().textStyles?.getTextStyle('widget.card.detail.tiny'),
                           margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                       ),
