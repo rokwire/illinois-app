@@ -265,9 +265,6 @@ class Onboarding2UnderlinedButton extends StatelessWidget{
           child: Padding(
               padding: padding,
               child: Container(
-                  decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 1, ),)
-                  ),
                   padding: EdgeInsets.only(bottom: 2),
                   child: Text(
                     title!,

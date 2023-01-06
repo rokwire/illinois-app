@@ -27,12 +27,12 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Auth2.dart';
 import 'package:illinois/service/CheckList.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/ui/home/HomeAppHelpWidget.dart';
-import 'package:illinois/ui/home/HomeAppointmentsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsEventsWidget.dart';
 import 'package:illinois/ui/home/HomeAthleticsNewsWidget.dart';
 import 'package:illinois/ui/home/HomeCampusSafetyResourcesWidget.dart';
@@ -407,11 +407,11 @@ class _HomePanelState extends State<HomePanel> with AutomaticKeepAliveClientMixi
     }
     else if (code == 'my_appointments') {
       if (title) {
-        return HomeAppointmentsWidget.title;
+        return HomeFavoritesWidget.titleFromKey(favoriteKey: Appointment.favoriteKeyName);
       } else if (handle) {
-        return HomeAppointmentsWidget.handle(favoriteId: code, dragAndDropHost: this, position: position,);
+        return HomeFavoritesWidget.handle(key: _handleKey(code), favoriteId: code, dragAndDropHost: this, position: position, favoriteKey: Appointment.favoriteKeyName, );
       } else {
-        return HomeAppointmentsWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController,);
+        return HomeFavoritesWidget(key: _widgetKey(code), favoriteId: code, updateController: _updateController, favoriteKey: Appointment.favoriteKeyName);
       }
     }
     else if (code == 'my_mtd_stops') {

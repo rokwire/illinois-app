@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/model/wellness/Appointment.dart';
@@ -22,11 +21,12 @@ import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/Config.dart';
 import 'package:illinois/service/Storage.dart';
-import 'package:illinois/ui/WebPanel.dart';
 import 'package:illinois/ui/settings/SettingsHomeContentPanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentCard.dart';
+import 'package:illinois/ui/widgets/AccessWidgets.dart';
 import 'package:illinois/ui/widgets/LinkButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
+import 'package:rokwire_plugin/service/flex_ui.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -48,7 +48,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
 
   @override
   void initState() {
-    NotificationService().subscribe(this, [Storage.notifySettingChanged]);
+    NotificationService().subscribe(this, [Storage.notifySettingChanged, FlexUI.notifyChanged, Appointments.notifyAppointmentsChanged]);
     _initAppointments();
     super.initState();
   }
@@ -65,7 +65,11 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildContent() {
-    if (!_appointmentsCanDisplay) {
+    Widget? accessWidget = AccessCard.builder(resource: 'wellness.appointments');
+    if (accessWidget != null) {
+      return accessWidget;
+    }
+    else if (!_appointmentsCanDisplay) {
       return Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -74,14 +78,14 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     } else if (_loading) {
       return _buildLoadingContent();
     } else {
-      return Padding(
+      return RefreshIndicator(onRefresh: _onPullToRefresh, child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child: ListView(physics: AlwaysScrollableScrollPhysics(), shrinkWrap: true, children: [
             _buildRescheduleDescription(),
             _buildUpcomingAppointments(),
             _buildPastAppointments(),
             _buildDisplayAppointmentsSettings()
-          ]));
+          ])));
     }
   }
 
@@ -126,13 +130,28 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   }
 
   Widget _buildEmptyUpcomingAppointments() {
+    final String urlLabelMacro = '{{mckinley_url_label}}';
+    final String urlMacro = '{{mckinley_url}}';
+    final String externalLinkIconMacro = '{{external_link_icon}}';
+    final String appTitleMacro = '{{app_title}}';
+    String emptyUpcommingContentHtml = Localization().getStringEx("panel.wellness.appointments.home.upcoming.list.empty.msg",
+        "You currently have no upcoming appointments linked within the Illinois app. New appointments made via <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> may take up to 20 minutes to appear in the {{app_title}} app.");
+    emptyUpcommingContentHtml = emptyUpcommingContentHtml.replaceAll(urlMacro, Config().saferMcKinleyUrl ?? '');
+    emptyUpcommingContentHtml = emptyUpcommingContentHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
+    emptyUpcommingContentHtml = emptyUpcommingContentHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
+    emptyUpcommingContentHtml = emptyUpcommingContentHtml.replaceAll(appTitleMacro, Localization().getStringEx('app.title', 'Illinois'));
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 16),
-        child: Text(
-            Localization().getStringEx('panel.wellness.appointments.home.upcoming.list.empty.msg',
-                'You currently have no upcoming appointments linked within the Illinois app.'),
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, color: Styles().colors!.fillColorPrimary, fontFamily: Styles().fontFamilies!.regular)));
+        child: Html(data: emptyUpcommingContentHtml, onLinkTap: (url, renderContext, attributes, element) => _onTapMcKinleyUrl(url), style: {
+          "body": Style(
+              textAlign: TextAlign.center,
+              color: Styles().colors!.fillColorPrimary,
+              fontFamily: Styles().fontFamilies!.regular,
+              fontSize: FontSize(18),
+              padding: EdgeInsets.zero,
+              margin: EdgeInsets.zero),
+          "a": Style(color: Styles().colors?.fillColorPrimary)
+        }));
   }
 
   Widget _buildPastAppointments() {
@@ -233,7 +252,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     final String externalLinkIconMacro = '{{external_link_icon}}';
     final String phoneMacro = '{{mckinley_phone}}';
     String rescheduleContentHtml = Localization().getStringEx("panel.wellness.appointments.home.reschedule_appointment.alert.description",
-        "To cancel an appointment, go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call (<u>{{mckinley_phone}}</u>) during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.");
+        "<p>To cancel an appointment, go to  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/> or call <a href='tel:{{mckinley_phone}}'>(<u>{{mckinley_phone}}</u>)</a> during business hours. To avoid a missed appointment charge, you must cancel your appointment at least two hours prior to your scheduled appointment time.</p><p>Cancellations and appointment changes may take up to 20 minutes to appear in the Illinois app. The two-hour cancellation fee will be based on the time you cancel via  <a href='{{mckinley_url}}'>{{mckinley_url_label}}</a>&nbsp;<img src='asset:{{external_link_icon}}' alt=''/>.</p>");
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(urlMacro, Config().saferMcKinleyUrl ?? '');
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(urlLabelMacro, Config().saferMcKinleyUrlLabel ?? '');
     rescheduleContentHtml = rescheduleContentHtml.replaceAll(externalLinkIconMacro, 'images/external-link.png');
@@ -242,7 +261,6 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
         context: context,
         contentPadding: EdgeInsets.all(0),
         contentWidget: Container(
-            height: 250,
             decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
               Padding(
@@ -264,12 +282,16 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
                               "a": Style(color: Styles().colors?.fillColorPrimary)
                             }))
                   ])),
-              Align(
+              Positioned.fill(child: Align(
                   alignment: Alignment.topRight,
-                  child: GestureDetector(
+                  child: InkWell(
                       onTap: _onTapCloseReschedulePopup,
-                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png'))))
+                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png')))))
             ])));
+  }
+
+  Future<void> _onPullToRefresh() async {
+    await Appointments().refreshAppointments();
   }
 
   void _onTapCloseReschedulePopup() {
@@ -277,16 +299,12 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
     Navigator.of(context).pop();
   }
 
-  void _onTapMcKinleyUrl(String? url) {
+  void _onTapMcKinleyUrl(String? url) async {
     Analytics().logSelect(target: 'McKinley Url');
     if (StringUtils.isNotEmpty(url)) {
-      if (UrlUtils.launchInternal(url)) {
-        Navigator.push(context, CupertinoPageRoute(builder: (context) => WebPanel(url: url)));
-      } else {
-        Uri? uri = Uri.tryParse(url!);
-        if (uri != null) {
-          launchUrl(uri);
-        }
+      Uri? uri = Uri.tryParse(url!);
+      if ((uri != null) && (await canLaunchUrl(uri))) {
+        launchUrl(uri, mode: LaunchMode.externalApplication);
       }
     }
   }
@@ -308,7 +326,8 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
   void _loadAppointments() {
     if (_appointmentsCanDisplay) {
       _setLoading(true);
-      Appointments().loadAppointments().then((appointments) {
+      Appointments().refreshAppointments().then((_) {
+        List<Appointment>? appointments = Appointments().getAppointments();
         if (CollectionUtils.isNotEmpty(appointments)) {
           _upcomingAppointments = <Appointment>[];
           _pastAppointments = <Appointment>[];
@@ -339,6 +358,12 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
       if (param == Storage().appointmentsDisplayEnabledKey) {
         _initAppointments();
       }
+    } else if (name == FlexUI.notifyChanged) {
+      if (mounted) {
+        setState(() {});
+      }
+    } else if (name == Appointments.notifyAppointmentsChanged) {
+      _loadAppointments();
     }
   }
 }

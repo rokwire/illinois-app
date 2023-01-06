@@ -17,8 +17,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:illinois/service/AppDateTime.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/ui/groups/GroupMemberNotificationsPanel.dart';
 import 'package:illinois/ui/groups/GroupPostDetailPanel.dart';
@@ -110,7 +108,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   List<Poll>?        _groupPolls;
   bool               _pollsLoading = false;
 
-  bool               _memberAttendLoading = false;
+//bool               _memberAttendLoading = false;
   bool               _researchProjectConsent = false;
 
   String?            _postId;
@@ -173,7 +171,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   }
 
   bool get _canCreatePost {
-    return _isAdmin || (_isMember && FlexUI().isSharingAvailable);
+    return _isAdmin || (_isMember && _group?.isMemberAllowedToCreatePost == true && FlexUI().isSharingAvailable);
   }
 
   bool get _canCreatePoll {
@@ -184,8 +182,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return (_group?.researchProject == true);
   }
 
-  bool get _isAttendanceGroup {
+  /*bool get _isAttendanceGroup {
     return (_group?.attendanceGroup == true);
+  }*/
+
+  bool get _canViewMembers {
+    return _isAdmin || (_isMember && (_group?.isMemberAllowedToViewMembersInfo == true));
   }
 
   @override
@@ -200,10 +202,10 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Groups.notifyGroupEventsUpdated,
       Groups.notifyGroupPostsUpdated,
       Polls.notifyCreated,
+      Polls.notifyDeleted,
       Polls.notifyStatusChanged,
       Polls.notifyVoteChanged,
       Polls.notifyResultsChanged,
-      Polls.notifyLifecycleDelete,
       FlexUI.notifyChanged,
       Connectivity.notifyStatusChanged,
     ]);
@@ -511,8 +513,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     else if (name == Groups.notifyGroupPostsUpdated) {
       _refreshCurrentPosts(delta: param is int ? param : null);
     } 
-    else if ((name == Polls.notifyCreated)
-             || (name == Polls.notifyLifecycleDelete)) {
+    else if ((name == Polls.notifyCreated) || (name == Polls.notifyDeleted)) {
       _refreshPolls();
     } 
     else if (name == Polls.notifyVoteChanged
@@ -722,7 +723,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             onTap: _onTapPromote,
           ));
         }
-        if (_isAttendanceGroup && !_isResearchProject) {
+        //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2
+        /*if (_isAttendanceGroup && !_isResearchProject) {
           commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
           commands.add(Stack(alignment: Alignment.center, children: [
             RibbonButton(
@@ -734,13 +736,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           ),
           Visibility(visible: _memberAttendLoading, child: CircularProgressIndicator(color: Styles().colors!.fillColorSecondary, strokeWidth: 2))
           ]));
-        }
+        }*/
       }
       if (CollectionUtils.isNotEmpty(commands)) {
         commands.add(Container(height: 1, color: Styles().colors!.surfaceAccent));
       }
       commands.add(RibbonButton(
-        label: Localization().getStringEx("panel.group_detail.button.notifications.title", "Notifications"),
+        label: Localization().getStringEx("panel.group_detail.button.notifications.title", "Notifications Preferences"),
         hint: Localization().getStringEx("panel.group_detail.button.notifications.hint", ""),
         leftIconAsset: 'images/icon-reminder.png',
         leftIconPadding: EdgeInsets.only(right: 8, left: 2),
@@ -779,9 +781,9 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               ),
               
               Visibility(visible: StringUtils.isNotEmpty(members), child:
-                GestureDetector(onTap: () => { if (_isMember) {_onTapMembers()} }, child:
+                GestureDetector(onTap: () => { if (_isMember  && _canViewMembers) {_onTapMembers()} }, child:
                   Padding(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4), child:
-                    Container(decoration: (_isMember ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
+                    Container(decoration: (_isMember && _canViewMembers ? BoxDecoration(border: Border(bottom: BorderSide(color: Styles().colors!.fillColorSecondary!, width: 2))) : null), child:
                       Text(members, style:  Styles().textStyles?.getTextStyle('panel.group.detail.fat'))
                     ),
                   ),
@@ -921,7 +923,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       if (_isMemberOrAdmin) {
         Column(children: <Widget>[
           SectionSlantHeader(
-              title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
+              title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts and Direct Messages'),
               titleIconAsset: 'images/icon-calendar.png',
               rightIconAsset: _canCreatePost ? "images/icon-add-20x18.png" : null,
               rightIconAction: _canCreatePost ? _onTapCreatePost : null,
@@ -960,7 +962,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
 
     return Column(children: <Widget>[
       SectionSlantHeader(
-          title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts'),
+          title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts and Direct Messages'),
           titleIconAsset: 'images/icon-calendar.png',
           rightIconAsset: _canCreatePost ? "images/icon-add-20x18.png" : null,
           rightIconAction: _canCreatePost ? _onTapCreatePost : null,
@@ -1530,7 +1532,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupMemberNotificationsPanel(groupId: _group?.id, memberId: _group?.currentMember?.id)));
   }
 
-  void _onTapTakeAttendance() {
+  /*void _onTapTakeAttendance() {
     if (_memberAttendLoading) {
       return;
     }
@@ -1575,12 +1577,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     DateTime? attendedUniTime = AppDateTime().getUniLocalTimeFromUtcTime(member.dateAttendedUtc);
     String? dateTimeFormatted = AppDateTime().formatDateTime(attendedUniTime, format: 'yyyy/MM/dd h:mm');
     return dateTimeFormatted;
-  }
+  }*/
 
   ///
   /// Returns UIN number from string (uin or megTrack2), null - otherwise
   ///
-  String? _extractUin(String? stringToCheck) {
+  /*String? _extractUin(String? stringToCheck) {
     if (StringUtils.isEmpty(stringToCheck)) {
       return stringToCheck;
     }
@@ -1651,12 +1653,12 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         _attendMember(member: member);
       }
     }
-  }
+  }*/
 
   ///
   /// Returns true if member has already attended, false - otherwise
   ///
-  bool _checkMemberAttended({required Member member}) {
+  /*bool _checkMemberAttended({required Member member}) {
     return (member.dateAttendedUtc != null);
   }
 
@@ -1665,7 +1667,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     if (mounted) {
       setState(() {});
     }
-  }
+  }*/
 
   void _onMembershipRequest() {
     String target;

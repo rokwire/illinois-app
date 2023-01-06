@@ -389,7 +389,7 @@ class _RosterItem extends StatelessWidget{
                     margin: EdgeInsets.only(right: _horizontalMargin + _photoMargin, top: _photoMargin),
                     decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!,width: 2, style: BorderStyle.solid)),
                     child: (StringUtils.isNotEmpty(roster.thumbPhotoUrl) ?
-                      ModalImageHolder(child: Image.network(roster.thumbPhotoUrl!, semanticLabel: "roster", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,)) :
+                      ModalImageHolder(url: roster.fullSizePhotoUrl, child: Image.network(roster.thumbPhotoUrl!, semanticLabel: "roster", width: _photoWidth, fit: BoxFit.cover, alignment: Alignment.topCenter,)) :
                       Container(height: 96, width: 80, color: Colors.white,)),
                   ),
                 ),

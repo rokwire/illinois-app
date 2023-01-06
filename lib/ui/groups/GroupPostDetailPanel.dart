@@ -149,7 +149,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 ),
 
                 Visibility(
-                  visible: Config().showGroupPostReactions,
+                  visible: Config().showGroupPostReactions && (widget.group?.currentUserHasPermissionToSendReactions == true),
                   child: Padding(
                     padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8),
                     child: GroupPostReaction(
@@ -159,6 +159,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       accountIDs: _post?.reactions[thumbsUpReaction],
                       selectedIconPath: 'images/icon-thumbs-up-solid.png',
                       deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                      // onTapEnabled: _canSendReaction,
                     ),
                   ),
                 ),
@@ -356,11 +357,9 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   Widget _buildPostEdit() {
-    bool currentUserIsMemberOrAdmin =
-        widget.group?.currentUserIsMemberOrAdmin ?? false;
     return Visibility(
         key: _postEditKey,
-        visible: currentUserIsMemberOrAdmin,
+        visible: widget.group?.currentUserHasPermissionToSendReply == true,
         child: Padding(
             padding: EdgeInsets.all(_outerPadding),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1003,7 +1002,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
   }
 
   bool get _isReplyVisible {
-    return widget.group?.currentUserIsMemberOrAdmin ?? false;
+    return widget.group?.currentUserHasPermissionToSendReply == true;
   }
 
   bool get _isReportAbuseVisible {

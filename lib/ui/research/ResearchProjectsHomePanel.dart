@@ -88,9 +88,7 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootBackHeaderBar(
-        title: Localization().getStringEx('panel.research_projects.home.header_bar.title', 'Research at Illinois'),
-      ),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.research_projects.home.header_bar.title', 'Research at Illinois'), leading: RootHeaderBarLeading.Back,),
       body: _buildPage(),
       backgroundColor: Styles().colors?.background,
       bottomNavigationBar: uiuc.TabBar(),
@@ -143,7 +141,10 @@ class _ResearchProjectsHomePanelState extends State<ResearchProjectsHomePanel> i
       Stack(children: [
         GestureDetector(onTap: _onTapContentTypeBackgroundContainer, child:
           Container(color: _dimmedBackgroundColor)),
-        _buildContentTypesDropdownList()
+        Semantics(
+          container: true, //Take accessibility access when shown
+          child: _buildContentTypesDropdownList()
+        )
     ]));
   }
 

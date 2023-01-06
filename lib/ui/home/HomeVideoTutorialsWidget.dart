@@ -18,7 +18,6 @@ import 'dart:async';
 
 import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:illinois/model/Video.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Config.dart';
@@ -132,7 +131,8 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
     setStateIfMounted(() {
       _pageViewKey = UniqueKey();
       _contentKeys.clear();
-      _pageController = null;
+      // _pageController = null;
+      _pageController?.jumpToPage(0);
     });
   }
 
@@ -192,7 +192,7 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.video_tutorials.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.video_tutorials.button.all.hint', 'Tap to view all video tutorials'),
@@ -224,17 +224,14 @@ class _HomeVideoTutorialsWidgetState extends State<HomeVideoTutorialsWidget> imp
                             child: Text(StringUtils.ensureNotEmpty(videoTitle),
                                 style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'))),
                         Stack(alignment: Alignment.center, children: [
-                          Container(
-                              foregroundDecoration:
-                                  BoxDecoration(color: hasImage ? Styles().colors!.blackTransparent018 : Colors.transparent),
-                              child: hasImage
+                          hasImage
                                   ? ClipRRect(
                                       borderRadius: BorderRadius.circular(4),
                                       child: Image.network(imageUrl!,
                                           loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                                         return (loadingProgress == null) ? child : emptyImagePlaceholder;
                                       }))
-                                  : emptyImagePlaceholder),
+                                  : emptyImagePlaceholder,
                           VideoPlayButton(hasBackground: !hasImage)
                         ])
                       ])))),

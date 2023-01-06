@@ -66,7 +66,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
 
   // Settings entry : topic name
   static const Map<String, String> _notifySettingTopics = {
-    _newAppointmentUpdatesNotificationSetting  : _newAppointmentUpdatesNotificationSetting,
     'event_reminders'  : 'event_reminders',
     'dining_specials'  : 'dinning_specials',
     _groupUpdatesPostsNotificationSetting : _groupUpdatesPostsNotificationSetting,
@@ -77,7 +76,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
 
   // Settings entry : setting name (User.prefs.setting name)
   static const Map<String, String> _notifySettingNames = {
-    _newAppointmentUpdatesNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.new_appointment.enabled',
     _eventRemindersUpdatesNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.event_reminders.enabled',
     _diningSpecialsUpdatesNotificationSetting   : 'edu.illinois.rokwire.settings.inbox.notification.dining_specials.enabled',
     _groupUpdatesPostsNotificationSetting       : 'edu.illinois.rokwire.settings.inbox.notification.group.posts.enabled',
@@ -97,7 +95,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   };
 
   //settingKeys
-  static const String _newAppointmentUpdatesNotificationSetting = 'new_appointment';
   static const String _eventRemindersUpdatesNotificationSetting = 'event_reminders';
   static const String _diningSpecialsUpdatesNotificationSetting = 'dining_specials';
   static const String _pauseNotificationKey = 'pause_notifications';
@@ -237,7 +234,13 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   // Message Processing
 
   @override
-  void processDataMessage(Map<String, dynamic>? data) => _processDataMessage(data);
+  void processDataMessage(Map<String, dynamic>? data) {
+    String? messageId = JsonUtils.stringValue(data?['message_id']);
+    if (messageId != null) {
+      Inbox().readMessage(messageId);
+    }
+    _processDataMessage(data);
+  }
 
   void _processDataMessage(Map<String, dynamic>? data, {String? type} ) {
     
@@ -357,9 +360,6 @@ class FirebaseMessaging extends rokwire.FirebaseMessaging implements Notificatio
   }
 
   // Settings topics
-
-  bool? get notifyNewAppointment               { return _getNotifySetting('new_appointment'); } 
-       set notifyNewAppointment(bool? value)   { _setNotifySetting('new_appointment', value); }
 
   bool? get notifyEventReminders               { return _getNotifySetting('event_reminders'); } 
        set notifyEventReminders(bool? value)   { _setNotifySetting('event_reminders', value); }

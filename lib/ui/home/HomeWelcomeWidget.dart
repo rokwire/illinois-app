@@ -116,20 +116,15 @@ class _HomeWelcomeWidgetState extends State<HomeWelcomeWidget> {
             button: true,
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Stack(alignment: Alignment.center, children: [
-                Container(
-                    foregroundDecoration: BoxDecoration(color: Styles().colors!.blackTransparent06),
-                    child: StringUtils.isNotEmpty(_video!.thumbUrl)
+                StringUtils.isNotEmpty(_video!.thumbUrl)
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(4),
                                 child: Image.network(_video!.thumbUrl!,
                                     loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                               return (loadingProgress == null) ? child : emptyImagePlaceholder;
                             }))
-                        : emptyImagePlaceholder),
-                Column(children: [
-                  Text(StringUtils.ensureNotEmpty(_video!.title), style: TextStyle(fontSize: 18, color: Styles().colors!.white, fontFamily: Styles().fontFamilies!.bold, letterSpacing: 1.1),),
-                  VideoPlayButton(hasBackground: false)
-                ])
+                        : emptyImagePlaceholder,
+                VideoPlayButton(hasBackground: false)
               ])
             ])));
   }

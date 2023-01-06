@@ -20,6 +20,7 @@ import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/guide/GuideDetailPanel.dart';
 import 'package:illinois/ui/settings/SettingsVideoTutorialPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/VideoPlayButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -37,7 +38,7 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results_detail.header.title', 'Skills Self-Evaluation'),),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results_detail.header.title', 'Skills Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
       body: SingleChildScrollView(child: content != null ? SectionSlantHeader(
         headerWidget: content!.header != null ? _buildHeader() : null,
         slantColor: Styles().colors?.gradientColorPrimary,
@@ -48,12 +49,12 @@ class SkillsSelfEvaluationResultsDetailPanel extends StatelessWidget {
         childrenAlignment: CrossAxisAlignment.start,
         allowOverlap: false,
       ) : Padding(padding: const EdgeInsets.all(24.0), child: Text(
-        Localization().getStringEx("panel.skills_self_evaluation.results_detail.missing_content", "There is no detailed results content for this skill."),
+        Localization().getStringEx("panel.skills_self_evaluation.results_detail.unavailable.message", "Detailed results content for this skill is currently unavailable."),
         style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
         textAlign: TextAlign.center,
       ))),
       backgroundColor: Styles().colors?.background,
-      bottomNavigationBar: null,
+      bottomNavigationBar: uiuc.TabBar(),
     );
   }
 

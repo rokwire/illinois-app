@@ -29,6 +29,7 @@ import 'package:illinois/service/Gateway.dart';
 import 'package:illinois/service/Laundries.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/StudentCourses.dart';
+import 'package:illinois/ui/RootPanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/explore/ExploreBuildingDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
@@ -42,6 +43,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:rokwire_plugin/service/app_livecycle.dart';
 import 'package:rokwire_plugin/service/auth2.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/app_datetime.dart';
@@ -77,7 +79,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 
-enum ExploreItem { Events, Dining, Laundry, Buildings, MTDStops, StudentCourse, Appointments, StateFarmWayfinding }
+enum ExploreItem { Events, Dining, Laundry, Buildings, StudentCourse, Appointments, MTDStops, MTDDestinations, StateFarmWayfinding }
 
 enum EventsDisplayType {single, multiple, all}
 
@@ -92,7 +94,7 @@ class _ExploreSortKey extends OrdinalSortKey {
 
 class ExplorePanel extends StatefulWidget {
 
-  static const String notifyMapSelect    = "edu.illinois.rokwire.explore.select";
+  static const String notifySelectMap    = "edu.illinois.rokwire.explore.map.select";
 
   final ExploreItem? initialItem;
   final EventsDisplayType? eventsDisplayType;
@@ -156,6 +158,7 @@ class ExplorePanelState extends State<ExplorePanel>
   bool? _loadingProgress;
   bool _itemsDropDownValuesVisible = false;
   bool _eventsDisplayDropDownValuesVisible = false;
+  DateTime? _pausedDateTime;
 
   //Maps
   static const double MapBarHeight = 116;
@@ -186,7 +189,11 @@ class ExplorePanelState extends State<ExplorePanel>
       StudentCourses.notifyTermsChanged,
       StudentCourses.notifySelectedTermChanged,
       StudentCourses.notifyCachedCoursesChanged,
-      ExplorePanel.notifyMapSelect,
+      MTD.notifyStopsChanged,
+      Appointments.notifyAppointmentsChanged,
+      ExplorePanel.notifySelectMap,
+      RootPanel.notifyTabChanged,
+      AppLivecycle.notifyStateChanged,
     ]);
 
 
@@ -234,7 +241,7 @@ class ExplorePanelState extends State<ExplorePanel>
     return Scaffold(
         appBar: headerBarWidget,
         body: RefreshIndicator(
-          onRefresh: () => _loadExplores(progress: false),
+          onRefresh: () => _loadExplores(progress: false, updateOnly: true),
           child: _buildContent(),
         ),
         backgroundColor: Styles().colors!.background,
@@ -310,14 +317,17 @@ class ExplorePanelState extends State<ExplorePanel>
         else if (code == 'buildings') {
           exploreItems.add(ExploreItem.Buildings);
         }
-        else if (code == 'mtd_stops') {
-          exploreItems.add(ExploreItem.MTDStops);
-        }
         else if (code == 'student_courses') {
           exploreItems.add(ExploreItem.StudentCourse);
         }
         else if (code == 'appointments') {
           exploreItems.add(ExploreItem.Appointments);
+        }
+        else if (code == 'mtd_stops') {
+          exploreItems.add(ExploreItem.MTDStops);
+        }
+        else if (code == 'mtd_destinations') {
+          exploreItems.add(ExploreItem.MTDDestinations);
         }
         else if (code == 'state_farm_wayfinding') {
           exploreItems.add(ExploreItem.StateFarmWayfinding);
@@ -326,13 +336,14 @@ class ExplorePanelState extends State<ExplorePanel>
     }
     
     if (!ListEquality().equals(_exploreItems, exploreItems)) {
+      bool updateOnly = _exploreItems.isNotEmpty;
       _exploreItems = exploreItems;
 
       if (!_exploreItems.contains(_selectedItem)) {
         selectItem(_exploreItems[0]);
       }
       else {
-        _loadExplores();
+        _loadExplores(updateOnly: updateOnly);
       }
     }
 
@@ -400,7 +411,7 @@ class ExplorePanelState extends State<ExplorePanel>
         _refresh(() {
           _eventCategories = result;
         });
-        _loadExplores();
+        _loadExplores(updateOnly: true);
       }
     });
     
@@ -489,89 +500,89 @@ class ExplorePanelState extends State<ExplorePanel>
     return -1;
   }
 
-  Future<void> _loadExplores({bool progress = true}) async {
-
-    _diningSpecials = null;
-
-    _selectMapExplore(null);
-
+  Future<void> _loadExplores({bool? progress, bool updateOnly = false}) async {
     Future<List<Explore>?>? task;
     if (Connectivity().isNotOffline) {
-
       List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedItem] : null;
       switch (_selectedItem) {
-        
-        case ExploreItem.Events: 
-          task = _loadEvents(selectedFilterList);
-          break;
-        
-        case ExploreItem.Dining:
-          task = _loadDining(selectedFilterList);
-          break;
-
-        case ExploreItem.Laundry:
-          task = _loadLaundry();
-          break;
-
-        case ExploreItem.Buildings:
-          task = _loadBuildings();
-          break;
-
-        case ExploreItem.MTDStops:
-          task = _loadMTDStops();
-          break;
-
-        case ExploreItem.StudentCourse:
-          task = _loadStudentCourse(selectedFilterList);
-          break;
-
-        case ExploreItem.Appointments:
-          task = _loadAppointments();
-          break;
-
-        case ExploreItem.StateFarmWayfinding:
-          _clearExploresFromMap();
-          _viewStateFarmPoi();
-          break;
-
-        default:
-          break;
+        case ExploreItem.Events: task = _loadEvents(selectedFilterList); break;
+        case ExploreItem.Dining: task = _loadDining(selectedFilterList); break;
+        case ExploreItem.Laundry: task = _loadLaundry(); break;
+        case ExploreItem.Buildings: task = _loadBuildings(); break;
+        case ExploreItem.StudentCourse: task = _loadStudentCourse(selectedFilterList); break;
+        case ExploreItem.Appointments: task = _loadAppointments(); break;
+        case ExploreItem.MTDStops: task = _loadMTDStops(); break;
+        case ExploreItem.MTDDestinations: task = _loadMTDDestinations(); break;
+        case ExploreItem.StateFarmWayfinding: break;
+        default: break;
       }
     }
 
     if (task != null) {
-
       _refresh(() {
         _loadingTask = task;
-        _loadingProgress = (progress == true);
+        _loadingProgress = progress ?? !updateOnly;
       });
       
       List<Explore>? explores = await task;
 
       if (_loadingTask == task) {
-        _applyExplores(explores);
+        if ((updateOnly == false) || ((explores != null) && !DeepCollectionEquality().equals(explores, _displayExplores))) {
+          _applyExplores(explores, updateOnly: updateOnly);
+        }
+        else {
+          _refresh(() {
+            _loadingTask = null;
+            _loadingProgress = null;
+          });
+        }
+      }
+      else {
+        // Do not do anything, _loadingTask will finish the loading.
       }
     }
-    else {
-      _applyExplores(null);
+    else if (updateOnly == false) {
+      _applyExplores(null, updateOnly: updateOnly);
     }
   }
 
-  void _applyExplores(List<Explore>? explores) {
+
+  void _applyExplores(List<Explore>? explores, { bool updateOnly = false}) {
+    debugPrint('ExplorePanel._applyExplores(explores:${explores?.length} updateOnly: $updateOnly)');
     _refresh(() {
       _loadingTask = null;
       _loadingProgress = null;
       _displayExplores = explores;
-      _placeExploresOnMap();
-      if (_selectedItem == ExploreItem.Appointments) {
-        if (Storage().appointmentsCanDisplay != true) {
-          _showMissingAppointmentsPopup(Localization().getStringEx('panel.explore.hide.appointments.msg',
-              'There is nothing to display as you have chosen not to display any past or future appointments.'));
-        } else if (CollectionUtils.isEmpty(_displayExplores)) {
-          _showMissingAppointmentsPopup(Localization()
-              .getStringEx('panel.explore.missing.appointments.msg',
-                  'You currently have no upcoming in-person appointments linked within {{app_title}} app.')
-              .replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
+
+      _placeExploresOnMap(updateOnly: updateOnly);
+
+      if (updateOnly == false) {
+        _selectMapExplore(null);
+
+        if (_selectedItem == ExploreItem.Appointments) {
+          if (Storage().appointmentsCanDisplay != true) {
+            _showMessagePopup(Localization().getStringEx('panel.explore.hide.appointments.msg', 'There is nothing to display as you have chosen not to display any past or future appointments.'));
+          } else if (CollectionUtils.isEmpty(_displayExplores)) {
+            _showMessagePopup(Localization().getStringEx('panel.explore.missing.appointments.msg','You currently have no upcoming in-person appointments linked within {{app_title}} app.').replaceAll('{{app_title}}', Localization().getStringEx('app.title', 'Illinois')));
+          }
+        }
+        else if (_selectedItem == ExploreItem.MTDStops) {
+          if (Storage().showMtdStopsMapInstructions != false) {
+            _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_stops.msg", "Please tap a bus stop on the map to get bus schedules. Tap the star to save the bus stop as a favorite."), showPopupStorageKey: Storage().showMtdStopsMapInstructionsKey,
+            );
+          }
+        }
+        else if (_selectedItem == ExploreItem.MTDDestinations) {
+          if (Storage().showMtdDestinationsMapInstructions != false) {
+            _showOptionalMessagePopup(Localization().getStringEx("panel.explore.instructions.mtd_destinations.msg", "Please tap a location on the map that will be your destination. Tap the star to save the destination as a favorite.",), showPopupStorageKey: Storage().showMtdDestinationsMapInstructionsKey
+            );
+          }
+          else if (CollectionUtils.isEmpty(_displayExplores)) {
+            _showMessagePopup(Localization().getStringEx('panel.explore.missing.mtd_destinations.msg', 'You currently have no saved destinations. Please tap the location on the map that will be your destination. You can tap the Map to get Directions or Save the destination as a favorite.'),);
+          }
+        }
+        else if (_selectedItem == ExploreItem.StateFarmWayfinding) {
+          _viewStateFarmPoi();
         }
       }
     });
@@ -608,9 +619,8 @@ class ExplorePanelState extends State<ExplorePanel>
     PaymentType? paymentType = _getSelectedPaymentType(selectedFilterList);
     bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
 
-    _locationData = _userLocationEnabled() ? await LocationServices().location : null;
     _diningSpecials = await Dinings().loadDiningSpecials();
-
+    _locationData = _userLocationEnabled() ? await LocationServices().location : null;
     return Dinings().loadBackendDinings(onlyOpened, paymentType, _locationData);
   }
 
@@ -627,6 +637,10 @@ class ExplorePanelState extends State<ExplorePanel>
     List<Explore> result = <Explore>[];
     _collectBusStops(result, stops: MTD().stops?.stops);
     return result;
+  }
+
+  Future<List<Explore>?> _loadMTDDestinations() async {
+    return ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
   }
 
   void _collectBusStops(List<Explore> result, { List<MTDStop>? stops }) {
@@ -648,15 +662,14 @@ class ExplorePanelState extends State<ExplorePanel>
   }
 
   Future<List<Explore>?> _loadAppointments() async {
-    return Appointments().loadAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
+    return Appointments().getAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
   }
 
-  void _showMissingAppointmentsPopup(String missingAppointmentsText) {
+  void _showMessagePopup(String message) {
     AppAlert.showCustomDialog(
         context: context,
         contentPadding: EdgeInsets.all(0),
         contentWidget: Container(
-            height: 200,
             decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)),
             child: Stack(alignment: Alignment.center, fit: StackFit.loose, children: [
               Padding(
@@ -665,19 +678,26 @@ class ExplorePanelState extends State<ExplorePanel>
                     Image.asset('images/block-i-orange.png'),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
-                        child: Text(missingAppointmentsText,
+                        child: Text(message,
                             textAlign: TextAlign.center,
                             style: Styles().textStyles?.getTextStyle("widget.detail.small")))
                   ])),
-              Align(
+              Positioned.fill(child: Align(
                   alignment: Alignment.topRight,
                   child: InkWell(
                       onTap: () {
                         Analytics().logSelect(target: 'Close missing appointments popup');
                         Navigator.of(context).pop();
                       },
-                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png'))))
-            ])));
+                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png')))))
+            ]))).then((_) => _fixMap());
+  }
+
+  void _showOptionalMessagePopup(String message, { String? showPopupStorageKey }) {
+    showDialog(context: context, builder: (context) => _OptionalMessagePopup(
+      message: message,
+      showPopupStorageKey: showPopupStorageKey,
+    )).then((_) => _fixMap());
   }
 
   List<Event>? _buildDisplayEvents(List<Event> allEvents) {
@@ -1264,6 +1284,7 @@ class ExplorePanelState extends State<ExplorePanel>
     Color? exploreColor;
     Widget? descriptionWidget;
     bool canDirections = _userLocationEnabled(), canDetail = true;
+    void Function() onTapDetail = _onTapMapExploreDetail;
 
     if (_selectedMapExplore is Explore) {
       title = _selectedMapExplore?.exploreTitle;
@@ -1274,7 +1295,12 @@ class ExplorePanelState extends State<ExplorePanel>
         detailsHint = Localization().getStringEx('panel.explore.button.bus_schedule.hint', '');
         descriptionWidget = _buildStopDescription();
       }
-      canDetail = !(_selectedMapExplore is ExplorePOI);
+      else if (_selectedMapExplore is ExplorePOI) {
+        title = title?.replaceAll('\n', ' ');
+        detailsLabel = Localization().getStringEx('panel.explore.button.clear.title', 'Clear');
+        detailsHint = Localization().getStringEx('panel.explore.button.clear.hint', '');
+        onTapDetail = _onTapMapClear;
+      }
     }
     else if  (_selectedMapExplore is List<Explore>) {
       String? exploreName = ExploreExt.getExploresListDisplayTitle(_selectedMapExplore);
@@ -1333,7 +1359,7 @@ class ExplorePanelState extends State<ExplorePanel>
                       fontSize: 16.0,
                       textColor: canDetail ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
                       borderColor: canDetail ? Styles().colors!.fillColorSecondary : Styles().colors!.surfaceAccent,
-                      onTap: _onTapMapExploreDetail,
+                      onTap: onTapDetail,
                     ),
                   ),
                 ],),
@@ -1430,7 +1456,6 @@ class ExplorePanelState extends State<ExplorePanel>
     Analytics().logSelect(target: (_selectedMapExplore is MTDStop) ? 'Bus Schedule' : 'Details');
 
     Route? route;
-    String? message;
     if (_selectedMapExplore is Event) {
       if (_selectedMapExplore.isGameEvent) {
         route = CupertinoPageRoute(builder: (context) => AthleticsGameDetailPanel(gameId: _selectedMapExplore.speaker, sportName: _selectedMapExplore.registrationLabel,),);
@@ -1464,7 +1489,7 @@ class ExplorePanelState extends State<ExplorePanel>
       route = CupertinoPageRoute(builder: (context) => AppointmentDetailPanel(appointment: _selectedMapExplore),);
     }
     else if (_selectedMapExplore is ExplorePOI) {
-      message = Localization().getStringEx("panel.explore.details.na.msg", "Details are not available for custom points of interests.");
+      // Not supported
     }
     else if (_selectedMapExplore is Explore) {
       route = CupertinoPageRoute(builder: (context) => ExploreDetailPanel(explore: _selectedMapExplore, initialLocationData: _locationData,),);
@@ -1477,9 +1502,14 @@ class ExplorePanelState extends State<ExplorePanel>
       _selectMapExplore(null);
       Navigator.push(context, route);
     }
-    else if (message != null) {
-      AppAlert.showMessage(context, message);
+  }
+
+  void _onTapMapClear() {
+    Analytics().logSelect(target: 'Clear');
+    if (_selectedMapExplore is Favorite) {
+      Auth2().account?.prefs?.setFavorite(_selectedMapExplore as Favorite, false);
     }
+    _selectMapExplore(null);
   }
 
   void _updateSelectedMapStopRoutes() {
@@ -1525,8 +1555,10 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining: message = Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.'); break;
       case ExploreItem.Laundry: message = Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.'); break;
       case ExploreItem.Buildings: message = Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.'); break;
-      case ExploreItem.MTDStops: message = Localization().getStringEx('panel.explore.state.online.empty.bus_stops', 'No bus stop locations available.'); break;
       case ExploreItem.StudentCourse: message = Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses available.'); break;
+      case ExploreItem.Appointments: message = Localization().getStringEx('panel.explore.state.online.empty.appointments', 'No appointments available.'); break;
+      case ExploreItem.MTDStops: message = Localization().getStringEx('panel.explore.state.online.empty.mtd_stops', 'No MTD stop locations available.'); break;
+      case ExploreItem.MTDDestinations: message = Localization().getStringEx('panel.explore.state.online.empty.mtd_destinations', 'No MTD destinaion locations available.'); break;
       default:  message =  ''; break;
     }
     return SingleChildScrollView(child:
@@ -1547,8 +1579,10 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining:              message = Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.'); break;
       case ExploreItem.Laundry:             message = Localization().getStringEx('panel.explore.state.offline.empty.laundry', 'No laundry locations available while offline.'); break;
       case ExploreItem.Buildings:           message = Localization().getStringEx('panel.explore.state.offline.empty.buildings', 'No building locations available while offline.'); break;
-      case ExploreItem.MTDStops:            message = Localization().getStringEx('panel.explore.state.offline.empty.bus_stops', 'No bus stop locations available while offline.'); break;
       case ExploreItem.StudentCourse:       message = Localization().getStringEx('panel.explore.state.offline.empty.student_course', 'No student courses available while offline.'); break;
+      case ExploreItem.Appointments:        message = Localization().getStringEx('panel.explore.state.offline.empty.appointments', 'No appointments available while offline.'); break;
+      case ExploreItem.MTDStops:            message = Localization().getStringEx('panel.explore.state.offline.empty.mtd_stops', 'No MTD stop locations available while offline.'); break;
+      case ExploreItem.MTDDestinations:     message = Localization().getStringEx('panel.explore.state.offline.empty.mtd_destinations', 'No MTD destinaion locations available while offline.'); break;
       case ExploreItem.StateFarmWayfinding: message = Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.'); break;
       default:                              message =  ''; break;
     }
@@ -1774,9 +1808,10 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.title', 'Residence Hall Dining');
       case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.title', 'Laundry');
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.title', 'Campus Buildings');
-      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.bus_stops.title', 'MTD Bus');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.title', 'My Courses');
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.title', 'MyMcKinley In-Person Appointments');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.title', 'MTD Stops');
+      case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.button.mtd_destinations.title', 'MTD Destinations');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
     }
@@ -1788,9 +1823,10 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.button.dining.hint', '');
       case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.button.laundry.hint', '');
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.button.buildings.hint', '');
-      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.bus_stops.hint', '');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.button.student_course.hint', '');
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.button.appointments.hint', '');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.button.mtd_stops.hint', '');
+      case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.button.mtd_destinations.hint', '');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.button.state_farm.hint', '');
       default:                              return null;
     }
@@ -1802,9 +1838,10 @@ class ExplorePanelState extends State<ExplorePanel>
       case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.header.dining.title', 'Residence Hall Dining');
       case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.header.laundry.title', 'Laundry');
       case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.header.buildings.title', 'Campus Buildings');
-      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.header.bus_stops.title', 'MTD Bus');
       case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.header.student_course.title', 'My Courses');
       case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.header.appointments.title', 'MyMcKinley In-Person Appointments');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.header.mtd_stops.title', 'MTD Stops');
+      case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.header.mtd_destinations.title', 'MTD Destinations');
       case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.header.state_farm.title', 'State Farm Wayfinding');
       default:                              return null;
     }
@@ -1840,30 +1877,39 @@ class ExplorePanelState extends State<ExplorePanel>
   ///
   void _onNativeMapCreated(mapController) {
     _nativeMapController = mapController;
-    _placeExploresOnMap();
+    if (_displayExplores != null) {
+      _placeExploresOnMap();
+    }
     _enableMap(_displayType == ListMapDisplayType.Map);
     _enableMyLocationOnMap();
   }
 
-  void _placeExploresOnMap() {
+  void _placeExploresOnMap({ bool updateOnly = false }) {
     if (_nativeMapController != null)   {
       _nativeMapController!.placePOIs(_displayExplores, options: <String, dynamic>{
         MapController.HideBuildingLabelsParams : (_selectedItem == ExploreItem.Buildings) ? true : null,
         MapController.HideBusStopPOIsParams : (_selectedItem == ExploreItem.MTDStops) ? true : null,
         MapController.ShowMarkerPopupsParams: (_selectedItem != ExploreItem.MTDStops) ? true : false,
+        MapController.UpdateOnlyParams: updateOnly
       });
     }
   }
 
-  void _clearExploresFromMap() {
+  /*void _clearExploresFromMap() {
     if (_nativeMapController != null) {
       _nativeMapController!.placePOIs(null);
     }
-  }
+  }*/
 
   void _enableMap(bool enable) {
     if (_nativeMapController != null) {
       _nativeMapController!.enable(enable);
+    }
+  }
+
+  void _fixMap() {
+    if (_nativeMapController != null) {
+      _nativeMapController!.fixZOrder();
     }
   }
 
@@ -1915,7 +1961,7 @@ class ExplorePanelState extends State<ExplorePanel>
       _onLocationServicesStatusChanged(param);
     }
     else if (name == Connectivity.notifyStatusChanged) {
-      if (Connectivity().isNotOffline) {
+      if ((Connectivity().isNotOffline) && mounted) {
         _updateEventCategories();
       }
     }
@@ -1931,17 +1977,21 @@ class ExplorePanelState extends State<ExplorePanel>
     else if (name == NativeCommunicator.notifyMapSelectLocation) {
       _onNativeMapSelectLocation(param);
     }
-    else if(name == Storage.offsetDateKey){
-      _loadExplores();
+    else if (name == Storage.offsetDateKey) {
+      if (mounted) {
+        _loadExplores(updateOnly: true);
+      }
     }
-    else if(name == Storage.useDeviceLocalTimeZoneKey){
-      _loadExplores();
+    else if (name == Storage.useDeviceLocalTimeZoneKey) {
+      if (mounted) {
+        _loadExplores(updateOnly: true);
+      }
     }
     else if (name == Auth2UserPrefs.notifyPrivacyLevelChanged) {
       _updateLocationServicesStatus();
     }
     else if (name == Auth2UserPrefs.notifyFavoritesChanged) {
-      _refresh(() { });
+      _onFavoritesChanged();
     }
     else if (name == FlexUI.notifyChanged) {
       _updateLocationServicesStatus();
@@ -1950,30 +2000,72 @@ class ExplorePanelState extends State<ExplorePanel>
     else if (name == Styles.notifyChanged){
       _refresh(() { });
     }
-    else if (name == StudentCourses.notifyTermsChanged){
-      _refresh(() {
-        _studentCourseTerms = StudentCourses().terms;
-      });
-      _loadExplores();
-    }
-    else if (name == StudentCourses.notifySelectedTermChanged) {
-      _refresh(() {
-        _updateSelectedTermId();
-      });
-      _loadExplores();
-    }
-    else if (name == StudentCourses.notifyCachedCoursesChanged) {
-      if ((param == null) || (StudentCourses().displayTermId == param)) {
-        _loadExplores();
+    else if (name == StudentCourses.notifyTermsChanged) {
+      if ((_selectedItem == ExploreItem.StudentCourse) && mounted && widget.rootTabDisplay) {
+        _refresh(() {
+          _studentCourseTerms = StudentCourses().terms;
+        });
+        _loadExplores(updateOnly: true);
       }
     }
-    else if (name == ExplorePanel.notifyMapSelect) {
-      if (mounted) {
+    else if (name == StudentCourses.notifySelectedTermChanged) {
+      if ((_selectedItem == ExploreItem.StudentCourse) && mounted && widget.rootTabDisplay) {
+        _refresh(() {
+          _updateSelectedTermId();
+        });
+        _loadExplores(updateOnly: true);
+      }
+    }
+    else if (name == StudentCourses.notifyCachedCoursesChanged) {
+      if ((_selectedItem == ExploreItem.StudentCourse) && ((param == null) || (StudentCourses().displayTermId == param)) && mounted && widget.rootTabDisplay) {
+        _loadExplores(updateOnly: true);
+      }
+    }
+    else if (name == MTD.notifyStopsChanged) {
+      if ((_selectedItem == ExploreItem.MTDStops) && mounted && widget.rootTabDisplay) {
+        _loadExplores(updateOnly: true);
+      }
+    }
+    else if (name == Appointments.notifyAppointmentsChanged) {
+      if ((_selectedItem == ExploreItem.Appointments) && mounted && widget.rootTabDisplay) {
+        _loadExplores(updateOnly: true);
+      }
+    }
+    else if (name == ExplorePanel.notifySelectMap) {
+      if (mounted && ((_displayType != ListMapDisplayType.Map) || (_selectedItem != param))) {
         setState(() {
           _displayType = ListMapDisplayType.Map;
           _mapAllowed = true;
           _selectedItem = param;
         });
+        _loadExplores();
+      }
+    }
+    else if (name == RootPanel.notifyTabChanged) {
+      if (((param == RootTab.Explore) || (param == RootTab.Maps)) &&
+          (CollectionUtils.isEmpty(_exploreItems) || (_selectedItem == ExploreItem.Events) || (_selectedItem == ExploreItem.Appointments)) && // Do not refresh for other ExploreItem types as they are rarely changed or fire notification for that
+          widget.rootTabDisplay && mounted
+      ) {
+        _loadExplores(updateOnly: true);
+      }
+    }
+    else if (name == AppLivecycle.notifyStateChanged) {
+      _onAppLivecycleStateChanged(param);
+    }
+  }
+
+  void _onAppLivecycleStateChanged(AppLifecycleState? state) {
+    if (state == AppLifecycleState.paused) {
+      _pausedDateTime = DateTime.now();
+    }
+    else if (state == AppLifecycleState.resumed) {
+      if (_pausedDateTime != null) {
+        Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
+        if (Config().refreshTimeout < pausedDuration.inSeconds) {
+          if (mounted) {
+            _loadExplores(updateOnly: true);
+          }
+        }
       }
     }
   }
@@ -1994,6 +2086,24 @@ class ExplorePanelState extends State<ExplorePanel>
     if (FlexUI().isLocationServicesAvailable) {
       _locationServicesStatus = status;
       _updateExploreItems();
+    }
+  }
+
+  void _onFavoritesChanged() {
+    if (_selectedItem == ExploreItem.MTDDestinations) {
+      List<Explore>? explores = ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
+      if (!DeepCollectionEquality().equals(_displayExplores, explores)) {
+        _refresh(() {
+          _displayExplores = explores;
+          _placeExploresOnMap(updateOnly: true);
+        });
+      }
+      else {
+        _refresh(() {});
+      }
+    }
+    else {
+      _refresh(() {});
     }
   }
 
@@ -2027,7 +2137,15 @@ class ExplorePanelState extends State<ExplorePanel>
           mtdStop = MTD().stops?.findStop(name: poiName) ??
             MTD().stops?.findStop(location: poiLocation, locationThresholdDistance: 10 /*in meters*/);
         }
-        _selectMapExplore(mtdStop ?? ExplorePOI.fromJson(poi));
+        if (mtdStop != null) {
+          _selectMapExplore(mtdStop);
+        }
+        else if (_selectedItem == ExploreItem.MTDDestinations) {
+          _selectMapExplore(ExplorePOI.fromJson(poi));
+        }
+        else if (_selectedMapExplore != null) {
+          _selectMapExplore(null);
+        }
       }
     }
   }
@@ -2043,13 +2161,103 @@ class ExplorePanelState extends State<ExplorePanel>
       else if (_selectedMapExplore != null) {
         _selectMapExplore(null);
       }
-      else if (location?.isValid ?? false){
+      else if ((_selectedItem == ExploreItem.MTDDestinations) && (location?.isValid ?? false)) {
         _selectMapExplore(ExplorePOI(location: ExploreLocation(latitude: location?.latitude, longitude: location?.longitude)));
       }
     }
   }
-
 }
+
+/////////////////////////
+// _OptionalMessagePopup
+
+class _OptionalMessagePopup extends StatefulWidget {
+  final String message;
+  final String? showPopupStorageKey;
+  _OptionalMessagePopup({Key? key, required this.message, this.showPopupStorageKey}) : super(key: key);
+
+  @override
+  State<_OptionalMessagePopup> createState() => _MTDInstructionsPopupState();
+}
+
+class _MTDInstructionsPopupState extends State<_OptionalMessagePopup> {
+  bool? showInstructionsPopup;
+  
+  @override
+  void initState() {
+    showInstructionsPopup = (widget.showPopupStorageKey != null) ? Storage().getBoolWithName(widget.showPopupStorageKey!) : null;
+    super.initState();
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    String dontShow = Localization().getStringEx("panel.explore.instructions.mtd.dont_show.msg", "Don't show me this again.");
+
+    return AlertDialog(contentPadding: EdgeInsets.zero, content:
+      Container(decoration: BoxDecoration(color: Styles().colors!.white, borderRadius: BorderRadius.circular(10.0)), child:
+        Stack(alignment: Alignment.center, children: [
+          Padding(padding: EdgeInsets.only(top: 36, bottom: 9), child:
+            Column(mainAxisSize: MainAxisSize.min, children: [
+              Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+                Column(children: [
+                  Image.asset('images/block-i-orange.png', semanticLabel: "",),
+                  Padding(padding: EdgeInsets.only(top: 18), child:
+                    Text(widget.message, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.detail.small"))
+                  ),
+                ],),
+              ),
+
+              Visibility(visible: (widget.showPopupStorageKey != null), child:
+                Padding(padding: EdgeInsets.only(left: 16, right: 32), child:
+                  Semantics(
+                      label: dontShow,
+                      value: showInstructionsPopup == false ?   Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
+                      button: true,
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      InkWell(
+                        onTap: (){
+                          AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(showInstructionsPopup == false), dontShow);
+                          _onDoNotShow();
+                          },
+                        child: Padding(padding: EdgeInsets.all(16), child:
+                          Image.asset((showInstructionsPopup == false) ? "images/selected-checkbox.png" : "images/deselected-checkbox.png", semanticLabel: "",),
+                        ),
+                      ),
+                      Expanded(child:
+                        Text(dontShow, style: Styles().textStyles?.getTextStyle("widget.detail.small"), textAlign: TextAlign.left,semanticsLabel: "",)
+                      ),
+                  ])),
+                ),
+              ),
+            ])
+          ),
+          Positioned.fill(child:
+            Align(alignment: Alignment.topRight, child:
+              Semantics(  button: true, label: "close",
+              child: InkWell(onTap: () {
+                Analytics().logSelect(target: 'Close MTD instructions popup');
+                Navigator.of(context).pop();
+                }, child:
+                Padding(padding: EdgeInsets.all(16), child:
+                  Image.asset('images/icon-x-orange.png', semanticLabel: "",),
+                )
+              ))
+            )
+          ),
+        ])
+     )
+    );
+  }
+
+  void _onDoNotShow() {
+    setState(() {
+      if (widget.showPopupStorageKey != null) {
+        Storage().setBoolWithName(widget.showPopupStorageKey!, showInstructionsPopup = (showInstructionsPopup == false));
+      }
+    });  
+  }
+}
+
 
 ////////////////////
 // ExploreFilter
@@ -2087,14 +2295,17 @@ ExploreItem? exploreItemFromString(String? value) {
   else if (value == 'buildings') {
     return ExploreItem.Buildings;
   }
-  else if (value == 'mtdStops') {
-    return ExploreItem.MTDStops;
-  }
   else if (value == 'studentCourse') {
     return ExploreItem.StudentCourse;
   }
   else if (value == 'appointments') {
     return ExploreItem.Appointments;
+  }
+  else if (value == 'mtdStops') {
+    return ExploreItem.MTDStops;
+  }
+  else if (value == 'mtdDestinations') {
+    return ExploreItem.MTDDestinations;
   }
   else if (value == 'stateFarmWayfinding') {
     return ExploreItem.StateFarmWayfinding;
@@ -2106,14 +2317,16 @@ ExploreItem? exploreItemFromString(String? value) {
 
 String? exploreItemToString(ExploreItem? value) {
   switch(value) {
-    case ExploreItem.Events: return 'events';
-    case ExploreItem.Dining: return 'dining';
-    case ExploreItem.Laundry: return 'laundry';
-    case ExploreItem.Buildings: return 'buildings';
-    case ExploreItem.MTDStops: return 'mtdStops';
-    case ExploreItem.StudentCourse: return 'studentCourse';
-    case ExploreItem.Appointments: return 'appointments';
+    case ExploreItem.Events:              return 'events';
+    case ExploreItem.Dining:              return 'dining';
+    case ExploreItem.Laundry:             return 'laundry';
+    case ExploreItem.Buildings:           return 'buildings';
+    case ExploreItem.StudentCourse:       return 'studentCourse';
+    case ExploreItem.Appointments:        return 'appointments';
+    case ExploreItem.MTDStops:            return 'mtdStops';
+    case ExploreItem.MTDDestinations:     return 'mtdDestinations';
     case ExploreItem.StateFarmWayfinding: return 'stateFarmWayfinding';
     default: return null;
   }
 }
+

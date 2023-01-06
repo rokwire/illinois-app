@@ -242,10 +242,11 @@ class _ExploreCardState extends State<ExploreCard> implements NotificationsListe
       if (StringUtils.isNotEmpty(sportName)) {
         leftLabel += ' - $sportName';
       }
-      leftLabelStyle = Styles().textStyles?.getTextStyle('widget.description.small.fat') ;
+      leftLabelStyle = Styles().textStyles?.getTextStyle('widget.description.small.fat.semi_expanded') ;
     } else {
       leftLabel = widget.explore!.exploreTitle ?? "";
-      leftLabelStyle = Styles().textStyles?.getTextStyle('widget.explore.card.title.regular') ;
+      leftLabelStyle = Styles().textStyles?.getTextStyle('widget.explore.card.title.regular.extra_fat') ;
+    
     }
 
     return Row(
@@ -666,7 +667,7 @@ class _EventSmallCard extends StatelessWidget {
                             button: true,
                             excludeSemantics: true,
                             child: Container(child: Padding(padding: EdgeInsets.only(left: 24, bottom: 5), child: Image.asset(
-                                isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)
+                                isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true)
                             ))
                         )),),
                     Visibility(visible: isMoreCardType, child: Padding(

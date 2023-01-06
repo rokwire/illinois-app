@@ -33,6 +33,9 @@ class Appointment with Explore, Favorite {
   final String? instructions;
   final AppointmentHost? host;
 
+  //Util fields
+  String? randomImageURL; // to return same random image for this instance
+
   Appointment(
       {this.id, this.dateTimeUtc, this.type, this.onlineDetails, this.location, this.cancelled, this.instructions, this.host});
 
@@ -52,7 +55,7 @@ class Appointment with Explore, Favorite {
   }
 
   String? get displayDate {
-    return AppDateTime().formatDateTime(AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc), format: 'MMM dd, H:mma');
+    return AppDateTime().formatDateTime(AppDateTime().getDeviceTimeFromUtcTime(dateTimeUtc), format: 'MMM dd, h:mm a');
   }
 
   bool get isUpcoming {
@@ -81,7 +84,24 @@ class Appointment with Explore, Favorite {
   }
 
   String? get _randomImageUrl {
-    return Assets().randomStringFromListWithKey('images.random.events.Other');
+    randomImageURL ??= Assets().randomStringFromListWithKey('images.random.events.Other');
+    return randomImageURL;
+  }
+
+  String? get imageUrlBasedOnCategory { //Keep consistent images
+      String? toutImageUrl;
+      switch (type) {
+        case AppointmentType.in_person:
+          toutImageUrl = 'images/appointment-detail-inperson-tout.png';
+          break;
+        case AppointmentType.online:
+          toutImageUrl = 'images/appointment-detail-online-tout.jpg';
+          break;
+        default:
+          toutImageUrl = imageUrl!;
+          break;
+      }
+      return toutImageUrl;
   }
 
   static List<Appointment>? listFromJson(List<dynamic>? jsonList) {
@@ -308,4 +328,31 @@ class AppointmentHost {
   int get hashCode =>
     (firstName?.hashCode ?? 0) ^
     (lastName?.hashCode ?? 0);
+}
+
+class AppointmentsAccount {
+  bool? notificationsAppointmentNew;
+  bool? notificationsAppointmentReminderMorning;
+  bool? notificationsAppointmentReminderNight;
+
+  AppointmentsAccount(
+      {this.notificationsAppointmentNew, this.notificationsAppointmentReminderMorning, this.notificationsAppointmentReminderNight});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'notifications_appointment_new': notificationsAppointmentNew,
+      'notifications_appointment_reminder_morning': notificationsAppointmentReminderMorning,
+      'notifications_appointment_reminder_night': notificationsAppointmentReminderNight
+    };
+  }
+
+  static AppointmentsAccount? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+    return AppointmentsAccount(
+        notificationsAppointmentNew: JsonUtils.boolValue(json['notifications_appointment_new']),
+        notificationsAppointmentReminderMorning: JsonUtils.boolValue(json['notifications_appointment_reminder_morning']),
+        notificationsAppointmentReminderNight: JsonUtils.boolValue(json['notifications_appointment_reminder_night']));
+  }
 }

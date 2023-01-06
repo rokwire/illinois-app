@@ -21,6 +21,7 @@ import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/SavedPanel.dart';
 import 'package:illinois/ui/WebPanel.dart';
+import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/academics/StudentCourses.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
@@ -98,7 +99,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       Styles.notifyChanged,
     ]);
     
-    _contentCodes = JsonUtils.listStringsValue(FlexUI()['browse']);
+    _contentCodes = buildContentCodes();
     super.initState();
   }
 
@@ -188,7 +189,7 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
   }
 
   void _updateContentCodes() {
-    List<String>?  contentCodes = JsonUtils.listStringsValue(FlexUI()['browse']);
+    List<String>?  contentCodes = buildContentCodes();
     if ((contentCodes != null) && !DeepCollectionEquality().equals(_contentCodes, contentCodes)) {
       if (mounted) {
         setState(() {
@@ -226,6 +227,17 @@ class _BrowsePanelState extends State<BrowsePanel> with AutomaticKeepAliveClient
       setState(() {});
     }
   }
+
+  static List<String>? buildContentCodes() {
+    List<String>? codes = JsonUtils.listStringsValue(FlexUI()['browse']);
+    codes?.sort((String code1, String code2) {
+      String title1 = _BrowseSection.title(sectionId: code1);
+      String title2 = _BrowseSection.title(sectionId: code2);
+      return title1.toLowerCase().compareTo(title2.toLowerCase());
+    });
+    return codes;
+  }
+
 }
 
 class _BrowseSection extends StatelessWidget {
@@ -238,11 +250,21 @@ class _BrowseSection extends StatelessWidget {
   final Set<String>? _homeRootEntriesCodes;
 
   _BrowseSection({Key? key, required this.sectionId, this.expanded = false, this.onExpand}) :
-    _browseEntriesCodes = JsonUtils.listStringsValue(FlexUI()['browse.$sectionId']),
+    _browseEntriesCodes = _buildBrowseEntryCodes(sectionId: sectionId),
     _homeSectionEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home.$sectionId']),
     _homeRootEntriesCodes = JsonUtils.setStringsValue(FlexUI()['home']),
     super(key: key);
 
+  static List<String>? _buildBrowseEntryCodes({required String sectionId}) {
+    List<String>? codes = JsonUtils.listStringsValue(FlexUI()['browse.$sectionId']);
+    codes?.sort((String code1, String code2) {
+      String title1 = _BrowseEntry.title(sectionId: sectionId, entryId: code1);
+      String title2 = _BrowseEntry.title(sectionId: sectionId, entryId: code2);
+      return title1.toLowerCase().compareTo(title2.toLowerCase());
+    });
+    return codes;
+  }
+  
   HomeFavorite? _favorite(String code) {
     if (_homeSectionEntriesCodes?.contains(code) ?? false) {
       return HomeFavorite(code, category: sectionId);
@@ -329,9 +351,18 @@ class _BrowseSection extends StatelessWidget {
       ) : Container();
   }
 
-  String get _appTitle => Localization().getStringEx('app.title', 'Illinois');
-  String get _title => Localization().getStringEx('panel.browse.section.$sectionId.title', StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
-  String get _description => Localization().getStringEx('panel.browse.section.$sectionId.description', '').replaceAll('{{app_title}}', _appTitle);
+  String get _title => title(sectionId: sectionId);
+  String get _description => description(sectionId: sectionId);
+
+  static String get appTitle => Localization().getStringEx('app.title', 'Illinois');
+  
+  static String title({required String sectionId}) {
+    return Localization().getString('panel.browse.section.$sectionId.title') ?? StringUtils.capitalize(sectionId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
+  }
+
+  static String description({required String sectionId}) {
+    return Localization().getString('panel.browse.section.$sectionId.description')?.replaceAll('{{app_title}}', appTitle) ?? '';
+  }
 
   void _onTapExpand() {
     if (_hasBrowseContent && (onExpand != null)) {
@@ -465,18 +496,17 @@ class _BrowseEntry extends StatelessWidget {
     );
   }
 
-  String get _title {
-    if ((entryId == 'video_tutorials') && (sectionId == 'app_help')) {
-      return (_videoTutorialsCount > 1) ? Localization().getStringEx('panel.browse.entry.app_help.video_tutorials.title', 'Video Tutorials') : Localization().getStringEx('panel.browse.entry.app_help.video_tutorial.title', 'Video Tutorial');
-    } else {
-      return Localization().getStringEx('panel.browse.entry.$sectionId.$entryId.title', StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' '));
-    }
+  String get _title => title(sectionId: sectionId, entryId: entryId);
+
+  static String title({required String sectionId, required String entryId}) {
+    return Localization().getString('panel.browse.entry.$sectionId.$entryId.title') ?? StringUtils.capitalize(entryId, allWords: true, splitDelimiter: '_', joinDelimiter: ' ');
   }
 
   void _onTap(BuildContext context) {
     switch("$sectionId.$entryId") {
       case "academics.gies_checklist":        _onTapGiesChecklist(context); break;
       case "academics.new_student_checklist": _onTapNewStudentChecklist(context); break;
+      case "academics.skills_self_evaluation":_onTapSkillSelfEvaluation(context); break;
       case "academics.student_courses":       _onTapStudentCourses(context); break;
       case "academics.canvas_courses":        _onTapCanvasCourses(context); break;
       case "academics.campus_reminders":      _onTapCampusReminders(context); break;
@@ -592,6 +622,11 @@ class _BrowseEntry extends StatelessWidget {
   void _onTapNewStudentChecklist(BuildContext context) {
     Analytics().logSelect(target: "New Student Checklist");
     CheckListPanel.present(context, contentKey: CheckList.uiucOnboarding);
+  }
+
+  void _onTapSkillSelfEvaluation(BuildContext context) {
+    Analytics().logSelect(target: "Skills Self-Evaluation");
+    Navigator.push(context, CupertinoPageRoute(builder: (context) => AcademicsHomePanel(content: AcademicsContent.skills_self_evaluation,)));
   }
 
   void _onTapCanvasCourses(BuildContext context) {
@@ -785,6 +820,7 @@ class _BrowseEntry extends StatelessWidget {
       contentList: Guide().promotedList,
       contentTitle: Localization().getStringEx('panel.guide_list.label.highlights.section', 'Campus Highlights'),
       contentEmptyMessage: Localization().getStringEx("panel.guide_list.label.highlights.empty", "There are no active Campus Hightlights."),
+      favoriteKey: GuideFavorite.constructFavoriteKeyName(contentType: Guide.campusHighlightContentType),
     )));
   }
 
@@ -995,7 +1031,7 @@ class _BrowseEntry extends StatelessWidget {
 
   void _onTapCreatePoll(BuildContext context) {
     Analytics().logSelect(target: "Create Poll");
-    Navigator.push(context, CupertinoPageRoute(builder: (context) => CreatePollPanel()));
+    CreatePollPanel.present(context);
   }
 
   void _onTapViewPolls(BuildContext context) {
@@ -1063,7 +1099,7 @@ class _BrowseEntry extends StatelessWidget {
   }
 
   void _onTapWellnessHealthScreener(BuildContext context) {
-    Analytics().logSelect(target: "Wellness Health Screener");
+    Analytics().logSelect(target: "Illinois Health Screener");
     Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.healthScreener,)));
   }
 

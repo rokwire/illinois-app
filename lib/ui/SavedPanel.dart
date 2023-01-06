@@ -24,6 +24,8 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:illinois/ext/Favorite.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/MTD.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
+import 'package:illinois/service/Appointments.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/MTD.dart';
 import 'package:illinois/ui/home/HomeFavoritesWidget.dart';
@@ -94,6 +96,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       FlexUI.notifyChanged,
       Assets.notifyChanged,
       Guide.notifyChanged,
+      Appointments.notifyAppointmentsChanged,
     ]);
     _refreshFavorites();
     _requestPermissionsStatus();
@@ -128,6 +131,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     }
     else if (name == Guide.notifyChanged) {
       _refreshFavorites(favoriteCategories: {GuideFavorite.favoriteKeyName}, showProgress: false);
+    }
+    else if (name == Appointments.notifyAppointmentsChanged) {
+      _refreshFavorites(favoriteCategories: {Appointment.favoriteKeyName}, showProgress: false);
     }
   }
 
@@ -338,6 +344,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case MTDStop.favoriteKeyName: return _loadFavoriteMTDStops;
       case ExplorePOI.favoriteKeyName: return _loadFavoriteMTDDestinations;
       case GuideFavorite.favoriteKeyName: return _loadFavoriteGuideItems;
+      case Appointment.favoriteKeyName: return _loadFavoriteAppointments;
     }
     return _loadNOP;
   }
@@ -392,6 +399,9 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return guideItems;
   }
 
+  Future<List<Favorite>?> _loadFavoriteAppointments(LinkedHashSet<String>? favoriteIds) async =>
+    CollectionUtils.isNotEmpty(favoriteIds) ? _buildFavoritesList(Appointments().getAppointments(onlyUpcoming: true), favoriteIds) : null;
+
   List<Favorite>? _buildFavoritesList(List<Favorite>? sourceList, LinkedHashSet<String>? favoriteIds) {
     if ((sourceList != null) && (favoriteIds != null)) {
       Map<String, Favorite> favorites = <String, Favorite>{};
@@ -433,6 +443,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case MTDStop.favoriteKeyName:       return Localization().getStringEx('panel.saved.label.mtd_stops', 'My MTD Stops');
       case ExplorePOI.favoriteKeyName:    return Localization().getStringEx('panel.saved.label.mtd_destinations', 'My MTD Destinations');
       case GuideFavorite.favoriteKeyName: return Localization().getStringEx('panel.saved.label.campus_guide', 'My Campus Guide');
+      case Appointment.favoriteKeyName:   return Localization().getStringEx('panel.saved.label.appointments', 'MyMcKinley Appointments');
     }
     return null;
   }
@@ -447,6 +458,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
       case MTDStop.favoriteKeyName:       return 'images/icon-location.png';
       case ExplorePOI.favoriteKeyName:    return 'images/icon-location.png';
       case GuideFavorite.favoriteKeyName: return 'images/icon-news.png';
+      case Appointment.favoriteKeyName:   return 'images/campus-tools.png';
     }
     return null;
   }

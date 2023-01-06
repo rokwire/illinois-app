@@ -16,6 +16,7 @@
   -->
 <resources>
     <color name="illinoisBlue">#ff13294b</color>
+    <color name="mtdBlue">#ff2376e5</color>
     <color name="darkBlueGrey">#ff0e203b</color>
     <color name="illinois_orange">#ffe84a27</color>
     <color name="mongo">#fff29835</color>

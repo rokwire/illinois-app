@@ -16,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/ui/panels/web_panel.dart';
@@ -31,10 +32,21 @@ class SkillsSelfEvaluationInfoPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.info.header.title', 'Skills Self-Evaluation'),),
-      body: SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(24.0), child: _buildContent(context))),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.info.header.title', 'Skills Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
+      body: SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(24.0), child: content == null ? _buildUnavailableMessage() : _buildContent(context))),
       backgroundColor: Styles().colors?.background,
-      bottomNavigationBar: null,
+      bottomNavigationBar: uiuc.TabBar(),
+    );
+  }
+
+  Widget _buildUnavailableMessage() {
+    return Padding(padding: EdgeInsets.all(28), child:
+      Center(child:
+        Text(
+          Localization().getStringEx('panel.skills_self_evaluation.info.unavailable.error.msg', 'Information content not available.'),
+          textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title')
+        )
+      ),
     );
   }
 

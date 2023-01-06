@@ -29,6 +29,7 @@ import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -37,8 +38,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class AcademicsHomePanel extends StatefulWidget {
   final AcademicsContent? content;
+  final bool rootTabDisplay;
 
-  AcademicsHomePanel({this.content});
+  AcademicsHomePanel({this.content, this.rootTabDisplay = false});
 
   @override
   _AcademicsHomePanelState createState() => _AcademicsHomePanelState();
@@ -77,32 +79,54 @@ class _AcademicsHomePanelState extends State<AcademicsHomePanel>
     super.build(context);
 
     return Scaffold(
-        appBar: RootHeaderBar(title: Localization().getStringEx('panel.academics.header.title', 'Academics')),
-        body: Column(children: <Widget>[
-          Container(
-            color: _skillsSelfEvaluationSelected ? Styles().colors?.fillColorPrimaryVariant : Styles().colors?.background,
-            padding: EdgeInsets.only(left: 16, top: 16, right: 16), 
-            child: RibbonButton(
-              textColor: Styles().colors!.fillColorSecondary,
-              backgroundColor: Styles().colors!.white,
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-              rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
-              label: _getContentLabel(_selectedContent),
-              onTap: _onTapRibbonButton
-            ),
-          ),
-          Expanded(child:
-            Stack(children: [
-              Padding(padding: _skillsSelfEvaluationSelected ? EdgeInsets.zero : EdgeInsets.only(top: 16, left: 16, right: 16,), child:
-                _contentWidget
-              ),
-              _buildContentValuesContainer()
-            ]),
-          )
-        ]),
-        backgroundColor: Styles().colors!.background
+        appBar: _headerBar,
+        body: _bodyWidget,
+        backgroundColor: Styles().colors!.background,
+        bottomNavigationBar: _navigationBar,
       );
+  }
+
+  PreferredSizeWidget get _headerBar {
+    String title = Localization().getStringEx('panel.academics.header.title', 'Academics');
+    if (widget.rootTabDisplay) {
+      return RootHeaderBar(title: title);
+    } else {
+      return HeaderBar(title: title);
+    }
+  }
+
+  Widget? get _navigationBar {
+    return widget.rootTabDisplay ? null : uiuc.TabBar();
+  }
+
+  Widget get _bodyWidget {
+    return Column(children: <Widget>[
+      Container(
+        color: _skillsSelfEvaluationSelected ? Styles().colors?.fillColorPrimaryVariant : Styles().colors?.background,
+        padding: EdgeInsets.only(left: 16, top: 16, right: 16), 
+        child: Semantics(
+          hint:  Localization().getStringEx("dropdown.hint", "DropDown"),
+          container: true,
+          child: RibbonButton(
+            textColor: Styles().colors!.fillColorSecondary,
+            backgroundColor: Styles().colors!.white,
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+            rightIconAsset: (_contentValuesVisible ? 'images/icon-up.png' : 'images/icon-down-orange.png'),
+            label: _getContentLabel(_selectedContent),
+            onTap: _onTapRibbonButton
+          ),
+        ),
+      ),
+      Expanded(child:
+        Stack(children: [
+          Padding(padding: _skillsSelfEvaluationSelected ? EdgeInsets.zero : EdgeInsets.only(top: 16, left: 16, right: 16,), child:
+            _contentWidget
+          ),
+          _buildContentValuesContainer()
+        ]),
+      )
+    ]);
   }
 
   Widget _buildContentValuesContainer() {

@@ -302,7 +302,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
         ToggleRibbonButton(
           label: Localization().getStringEx('panel.settings.home.calendar.research.toggle.title', 'Participate in research'),
           border: Border.all(color: Styles().colors!.surfaceAccent!),
-          toggled: Questionnaires().participateInResearch,
+          toggled: Questionnaires().participateInResearch == true,
           onTap: _onResearchQuestionnaireToggled
         ),
         Container(height: 4),
@@ -310,8 +310,8 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
           //borderRadius: BorderRadius.all(Radius.circular(5)),
           label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
-          textColor: Questionnaires().participateInResearch ? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-          rightIconAsset: Questionnaires().participateInResearch ? 'images/chevron-right.png' : 'images/chevron-right-gray.png',
+          textColor: (Questionnaires().participateInResearch == true)? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
+          rightIconAsset: (Questionnaires().participateInResearch == true) ? 'images/chevron-right.png' : 'images/chevron-right-gray.png',
           onTap: _onResearchQuestionnaireClicked
         ),
       ]),
@@ -393,7 +393,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
 
   void _onResearchQuestionnaireToggled() {
     Analytics().logSelect(target: 'Participate in research');
-    if (Questionnaires().participateInResearch) {
+    if (Questionnaires().participateInResearch == true) {
       _promptTurnOffParticipateInResearch().then((bool? result) {
         if (result == true) {
           setState(() {
@@ -637,7 +637,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
             padding: EdgeInsets.only(bottom: 2),
             child: Text(title,
                 semanticsLabel: "",
-                style: Styles().textStyles?.getTextStyle("panel.settings.button.title.medium")))));
+                style:  Styles().textStyles?.getTextStyle("panel.settings.button.title.medium")))));
   }
 
   void _loadUserProfilePicture() {
@@ -934,7 +934,7 @@ class _PersonalInfoEntry extends StatelessWidget {
               Text(title ?? '', style: Styles().textStyles?.getTextStyle("panel.settings.detail.title.medium")
               ),
               Container(height: 5,),
-              Text(value ?? '', style: Styles().textStyles?.getTextStyle("widget.detail.large"))
+              Text(value ?? '', style: Styles().textStyles?.getTextStyle("widget.detail.large.fat"))
             ],),
         )
       ],),

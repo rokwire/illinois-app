@@ -5,13 +5,188 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [5.0.1] - 2022-01-04
+### Changed
+- Switch to xCode 14.2.
+
+## [4.2.49] - 2022-01-05
+### Fixed
+- Fixed delete poll notification processing [#2173](https://github.com/rokwire/illinois-app/issues/2173).
+- Fixed dropdown menu needs extending in Groups Manage Members [#2407](https://github.com/rokwire/illinois-app/issues/2407).
+- Fixed empty iCard expiration date processing for retired faculty/staff [#2892](https://github.com/rokwire/illinois-app/issues/2892).
+- Fixed update privacy dialog scrolling (+ some other nonsense items) [#2891](https://github.com/rokwire/illinois-app/issues/2891).
+- Formatting date times in events [#2719](https://github.com/rokwire/illinois-app/issues/2719).
+### Changed
+- Show user profile picture for personal info button in root header bar [#2157](https://github.com/rokwire/illinois-app/issues/2157).
+- Text update: Settings - Sign In/Sign Out [#2457](https://github.com/rokwire/illinois-app/issues/2457).
+
+## [4.2.48] - 2022-01-03
+### Fixed
+- Refresh issue with appointments [#2843](https://github.com/rokwire/illinois-app/issues/2843).
+- Added appointments default end date time [#2842](https://github.com/rokwire/illinois-app/issues/2842).
+- Remove dimmed foreground decoration from video tutorial thumbnails [#2823](https://github.com/rokwire/illinois-app/issues/2823).
+- Fixed "Add Cover Image" button background color [#2868](https://github.com/rokwire/illinois-app/issues/2868).
+### Added
+- Added muted indicator to inbox message card [#2877](https://github.com/rokwire/illinois-app/issues/2877).
+- Show not logged in message in Illini Cash and MTD Buss Wallet cards [#2867](https://github.com/rokwire/illinois-app/issues/2877).
+### Deleted
+- Removed explanation message "View current studies that match ..." from questionnaire acknowledgement panel [#2873](https://github.com/rokwire/illinois-app/issues/2873).
+### Changed
+- Always use orange favorite icon, removed all references to the blue favorite icon [#2165](https://github.com/rokwire/illinois-app/issues/2165).
+
+## [4.2.47] - 2022-12-22
+### Changed
+- Polls :: not-signed-in error - needs better message [#2777](https://github.com/rokwire/illinois-app/issues/2777).
+- Updated favorite star behavior of compound MTD stops [#2822](https://github.com/rokwire/illinois-app/issues/2822).
+- Updated research questionnaire prompt message [#2849](https://github.com/rokwire/illinois-app/issues/2849).
+- Updated no research projects message text in favorite widget [#2845](https://github.com/rokwire/illinois-app/issues/2845).
+- Updated View Email Address setting entry text [#2830](https://github.com/rokwire/illinois-app/issues/2830).
+- Updated "Event" to "Events" in group notification settings [#2829](https://github.com/rokwire/illinois-app/issues/2829).
+- "Search Stop" is updated to "Search Stops" in MTD home panel dropdown [#2821](https://github.com/rokwire/illinois-app/issues/2821).
+- Updated checkbox images in PollCard [#2802](https://github.com/rokwire/illinois-app/issues/2802).
+### Fixed
+- Remove loading card from home inbox widget [#2846](https://github.com/rokwire/illinois-app/issues/2846).
+- Fixed expanding compund MTD bus stops [#2851](https://github.com/rokwire/illinois-app/issues/2851).
+- Fixed detail open from single MTD Stop [#2851](https://github.com/rokwire/illinois-app/issues/2851).
+- Fixed Illinois Health Screener in Browse / Wellness section [#2848](https://github.com/rokwire/illinois-app/issues/2848).
+- Fixed NetID and Sign-in prompted at Privacy Level 3 during onboarding [#2826](https://github.com/rokwire/illinois-app/issues/2826).
+- Fixed Dining Locations loading in Maps [#2841](https://github.com/rokwire/illinois-app/issues/2841).
+- Fixed never ending progress indicator in Maps [#2841](https://github.com/rokwire/illinois-app/issues/2841).
+- Implement appointments notifications and reminders [#2621](https://github.com/rokwire/illinois-app/issues/2621).
+- Fixed error and empty status in All/Unread Notifications favorite card [#2847](https://github.com/rokwire/illinois-app/issues/2847).
+
+## [4.2.46] - 2022-12-21
+### Fixed
+- Fix BESSI content items response handling [#2820](https://github.com/rokwire/illinois-app/issues/2820).
+- Remove title from welcome video [#2831](https://github.com/rokwire/illinois-app/issues/2831).
+- Fixed various problems in Maps [#2834](https://github.com/rokwire/illinois-app/issues/2834).
+### Added
+- Various Notification updates [#2833](https://github.com/rokwire/illinois-app/issues/2833).
+
+## [4.2.45] - 2022-12-20
+### Fixed
+- Android: show bus stops on the map when zooming [#2807](https://github.com/rokwire/illinois-app/issues/2807).
+- Android: hide marker info view for bus stops [#2809](https://github.com/rokwire/illinois-app/issues/2809).
+### Changed
+- iOS: show activity indicator while processing markers [#2811](https://github.com/rokwire/illinois-app/issues/2811).
+- Allow marking POIs or Locations in Map only in MTD Destinations content type [#2813](https://github.com/rokwire/illinois-app/issues/2813).
+- View All on favorite MTD Stops & Destinations launches relevant home panel instead of Saved [#2815](https://github.com/rokwire/illinois-app/issues/2815).
+
+## [4.2.44] - 2022-12-19
+### Fixed
+- Improve accessibility for Health Screener and BESSI [#2788](https://github.com/rokwire/illinois-app/issues/2788).
+- External website 2FA login loop for McKinley portal [#2578](https://github.com/rokwire/illinois-app/issues/2578).
+- Update resources for "Who Are You?" icons [#2577](https://github.com/rokwire/illinois-app/issues/2577).
+- Fixed tweaks on Favorite MTD items details [#2597](https://github.com/rokwire/illinois-app/issues/2597).
+- Fixed video rotation on iOS 16 [#2587](https://github.com/rokwire/illinois-app/issues/2587).
+### Changed
+- Present research questionnaire on startup after upgrade [#2793](https://github.com/rokwire/illinois-app/issues/2793).
+
+## [4.2.43] - 2022-12-16
+### Fixed
+- MTD Bus Stop favorites issues [#2775](https://github.com/rokwire/illinois-app/issues/2775).
+- Fixed alert for insufficient privacy level when attempting to open group detail panel [#2756](https://github.com/rokwire/illinois-app/issues/2756).
+- Hide "Vote" button after user selectes all options in a poll [#2776](https://github.com/rokwire/illinois-app/issues/2776).
+- Fixed text styles in ExploreCard and ProfileInfo content widget [#2757](https://github.com/rokwire/illinois-app/issues/2757).
+### Added
+- Added switch to allow/disable sending post to additional groups [#2765](https://github.com/rokwire/illinois-app/issues/2765).
+- Issues related to inbox notifications [#2778](https://github.com/rokwire/illinois-app/issues/2778).
+### Changed
+- Refresh Map tab content when the Map tab is selcted or the app is awaken from background [#2734](https://github.com/rokwire/illinois-app/issues/2734).
+
+## [4.2.42] - 2022-12-15
+### Changed
+- Added Skills Self-Evaluation entry in Academics section in Browse panel [#2746](https://github.com/rokwire/illinois-app/issues/2746).
+### Changed
+- Updated GroupAdvancedSettingsPanel [#2744](https://github.com/rokwire/illinois-app/issues/2744).
+- Updated privacy content statements [#2763](https://github.com/rokwire/illinois-app/issues/2763).
+### Fixed
+- Fixed privacy content statement strings [#2763](https://github.com/rokwire/illinois-app/issues/2763).
+- Unread notifications issues [#2761](https://github.com/rokwire/illinois-app/issues/2761).
+- Cleaned up Create Group / Research Project button processing [#2740](https://github.com/rokwire/illinois-app/issues/2740).
+- Fixed Campus Guide Highlights home widget [#2785](https://github.com/rokwire/illinois-app/issues/2785).
+- Fix access widget strings and BESSI clear scores [#2770](https://github.com/rokwire/illinois-app/issues/2770).
+
+## [4.2.41] - 2022-12-14
+### Fixed
+- Android: app bundle builds [#2741](https://github.com/rokwire/illinois-app/issues/2741).
+- Fixed empty Illini Cash and Meal Plan Wallet widgets content after login [#2736](https://github.com/rokwire/illinois-app/issues/2736).
+- Skills Self- Evaluation - "Clear all Scores" is not clearing the scores [#2731](https://github.com/rokwire/illinois-app/issues/2731).
+### Changed
+- Removed debug label in native iOS MapView.
+- Use specific item cards, where possible, in ExploreListPanel [#2664](https://github.com/rokwire/illinois-app/issues/2664).
+- Ensure visible the newly created groups [#2683](https://github.com/rokwire/illinois-app/issues/2683).
+- Updated Research Projects section description in Browse panel [#2729](https://github.com/rokwire/illinois-app/issues/2729).
+- Removed "Enable attendance checking" from Create Group / Group Settings panels [#2685](https://github.com/rokwire/illinois-app/issues/2685).
+- Removed "Take Attendance" from admin view in Group [#2685](https://github.com/rokwire/illinois-app/issues/2685).
+- "My Favorites" dropdown item in Settings renamed to "Customize Favorites" [#2735](https://github.com/rokwire/illinois-app/issues/2735).
+- Rename Group setting switch [#2753](https://github.com/rokwire/illinois-app/issues/2753).
+### Added
+- Android: handle MTD stops on the Google map [#2711](https://github.com/rokwire/illinois-app/issues/2711).
+
+## [4.2.40] - 2022-12-13
+### Changed
+- Updated privacy descriptions [#2720](https://github.com/rokwire/illinois-app/issues/2720).
+- MTD Map strings updates [#2722](https://github.com/rokwire/illinois-app/issues/2722).
+- GroupMemberNotificationsPanel: update override switches to get global settings values if main override switch is of [#2713](https://github.com/rokwire/illinois-app/issues/2713).
+### Fixed
+- Fixed HomeGroupWidget vertical overflow.
+- Fixed initial camera zoom and position when presenting empty explores list in iOS [#2727](https://github.com/rokwire/illinois-app/issues/2727).
+### Added
+- Implemented MTD Stops search [#2724](https://github.com/rokwire/illinois-app/issues/2724).
+- Standardize logged out widget [#2668](https://github.com/rokwire/illinois-app/issues/2668).
+
+## [4.2.39] - 2022-12-12
+### Changed
+- Introduce Surveys BB [#2703](https://github.com/rokwire/illinois-app/issues/2703).
+- Hide "Allow repeat votes" from Create Poll panels [#2686](https://github.com/rokwire/illinois-app/issues/2686).
+- Update Group Member Selection Panel [#2708](https://github.com/rokwire/illinois-app/issues/2708).
+- Renamed "Posts" section to "Posts and Direct Messages" in Group Detail Panel [#2252](https://github.com/rokwire/illinois-app/issues/2252).
+- Update Group Member Notifications Panel [#2713](https://github.com/rokwire/illinois-app/issues/2713).
+### Fixed
+- Style definition for wellness to-do item card [#2702](https://github.com/rokwire/illinois-app/issues/2702).
+- Show MyMcKinley appointments in home panel based on the user favorites [#2702](https://github.com/rokwire/illinois-app/issues/2702).
+- Check for login status before presenting create poll panel [#2705](https://github.com/rokwire/illinois-app/issues/2705).
+- Fixed groups sort order inconsistency [#2716](https://github.com/rokwire/illinois-app/issues/2716).
+### Added
+- Added delete functionality for poll options in create poll panel [#2085](https://github.com/rokwire/illinois-app/issues/2085).
+
+## [4.2.38] - 2022-12-09
+### Fixed
+- Privacy level is not getting saved property [#2666](https://github.com/rokwire/illinois-app/issues/2666).
+### Added
+- Sort items and sections in Browse panel [#2699](https://github.com/rokwire/illinois-app/issues/2699).
+
+## [4.2.37] - 2022-12-09
+### Added
+- Show "Cancelled" label for Appointments [#2692](https://github.com/rokwire/illinois-app/issues/2692).
+### Fixed
+- Fixed Teams Coach and Roaster list panels open full size image url[#2694](https://github.com/rokwire/illinois-app/issues/2694).
+- McKinley link and phone number handling[#2659](https://github.com/rokwire/illinois-app/issues/2659).
+### Changed
+- MTD Stops and Desinations map view updates [#2633](https://github.com/rokwire/illinois-app/issues/2633).
+
+## [4.2.36] - 2022-12-08
 ### Changed
 - Updated research projects questionnaire [#2669](https://github.com/rokwire/illinois-app/issues/2669).
+- Texts for MyMcKinley appointments [#2662](https://github.com/rokwire/illinois-app/issues/2662).
+- GroupNotifications Panel changed override switch styling [#2648](https://github.com/rokwire/illinois-app/issues/2648).
+- GroupDetailPanel change Notifications button label to "Notification Preferences" [#2649](https://github.com/rokwire/illinois-app/issues/2649).
+### Added
+- Added user friendly alerts when native directions controller fails to build a route [#2615](https://github.com/rokwire/illinois-app/issues/2615).
+- Show departures in My MTD Buss items [#2633](https://github.com/rokwire/illinois-app/issues/2633).
+- Handle multiple BESSI score profiles [#2647](https://github.com/rokwire/illinois-app/issues/2647)
 ### Fixed
+- Fix Appointments Image behaviour [#2660](https://github.com/rokwire/illinois-app/issues/2660).
 - Show appointment instructions in detail panel [#2653](https://github.com/rokwire/illinois-app/issues/2653).
 - Fixed navigation from Browse / My / My Research Projects [#2656](https://github.com/rokwire/illinois-app/issues/2656).
 - Fixed appointment detection in app native sides [#2664](https://github.com/rokwire/illinois-app/issues/2664).
 - Show appointment location detail in underlined link style [#2665](https://github.com/rokwire/illinois-app/issues/2665).
+- Make appointment display time in 12-hour format [#2663](https://github.com/rokwire/illinois-app/issues/2663).
+- Issues in HomeStudentCoursesWidget [#2654](https://github.com/rokwire/illinois-app/issues/2654).
+- Fix Create Group Panel: can auto join switch is not working [#2642](https://github.com/rokwire/illinois-app/issues/2642).
+- Fixed map notifications from Android native side [#2633](https://github.com/rokwire/illinois-app/issues/2633).
 
 ## [4.2.35] - 2022-12-07
 ### Added

@@ -203,7 +203,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                         'widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png')
+                    child: Image.asset(isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png')
                 ))
         )),)
       ],
@@ -793,7 +793,7 @@ class _EventEntry extends StatelessWidget {
                       hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                           'widget.card.button.favorite.on.hint', ''),
                       button: true,
-                      child: Image.asset(isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png')
+                      child: Image.asset(isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png')
                   ))
           )),)
         ],),),

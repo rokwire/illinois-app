@@ -115,6 +115,56 @@ extension GroupExt on Group {
     }
     return "";
   }
+
+  //Settings Preferences rules
+  //Post
+  bool get isMemberAllowedToPost => /*true ||*//*TMP TODO*//* */(settings?.memberPostPreferences?.allowSendPost == true) && //If all 5 sub checks for posts are set to false by an admin, this is the same as the admin unchecking/false the main section category, in this case "Member Posts"
+      ((settings?.memberPostPreferences?.sendPostToSpecificMembers == true) ||
+          (settings?.memberPostPreferences?.sendPostToAdmins == true) ||
+          (settings?.memberPostPreferences?.sendPostToAll == true) ||
+          (settings?.memberPostPreferences?.sendPostReplies == true) ||
+          (settings?.memberPostPreferences?.sendPostReactions == true)
+      );
+
+  bool get isMemberAllowedToCreatePost => (settings?.memberPostPreferences?.allowSendPost == true) && //If all the above 3 are set to false then a member will not see a + (create) option for posts as they cannot make a post.
+      ((settings?.memberPostPreferences?.sendPostToSpecificMembers == true) ||
+          (settings?.memberPostPreferences?.sendPostToAdmins == true) ||
+          (settings?.memberPostPreferences?.sendPostToAll == true)
+      );
+
+  bool get isMemberAllowedToPostToSpecificMembers =>
+      (settings?.memberPostPreferences?.allowSendPost == true) &&
+      (settings?.memberPostPreferences?.sendPostToSpecificMembers == true) &&
+      (isMemberAllowedToViewMembersInfo); // Additional dependency to Member Info
+
+  bool get isMemberAllowedToReplyToPost =>
+      (settings?.memberPostPreferences?.allowSendPost == true) &&
+          (settings?.memberPostPreferences?.sendPostReplies == true);
+
+  bool get isMemberAllowedToSendReactionsToPost =>
+      (settings?.memberPostPreferences?.allowSendPost == true) &&
+          (settings?.memberPostPreferences?.sendPostReactions == true);
+
+  //Member Info
+  bool get isMemberAllowedToViewMembersInfo => (settings?.memberInfoPreferences?.allowMemberInfo == true) && //If all 5 sub checks for posts are set to false by an admin, this is the same as the admin unchecking/false the main section category, in this case allowMemberInfo/"View Other Members"
+      ((settings?.memberInfoPreferences?.viewMemberNetId == true) ||
+          (settings?.memberInfoPreferences?.viewMemberName == true) ||
+          (settings?.memberInfoPreferences?.viewMemberEmail == true) ||
+          (settings?.memberInfoPreferences?.viewMemberPhone == true)
+      );
+
+  //Settings user permission depending on settings and role
+  bool get currentUserHasPermissionToSendReactions{
+    return (currentUserIsAdmin == true) ||
+        (currentUserIsMember == true &&
+          isMemberAllowedToSendReactionsToPost == true);
+  }
+
+  bool get currentUserHasPermissionToSendReply{
+    return ((currentUserIsAdmin == true) ||
+        (currentUserIsMember == true &&
+            isMemberAllowedToReplyToPost == true));
+  }
 }
 
 String? groupMemberStatusToDisplayString(GroupMemberStatus? value) {
@@ -189,6 +239,14 @@ extension GroupPostExt on GroupPost {
       return DateFormat("MMM dd, yyyy").format(deviceDateTime);
     }
     return null;
+  }
+}
+
+extension GroupSettingsExt on GroupSettings{
+  static GroupSettings initialDefaultSettings(){
+    return GroupSettings(
+        memberInfoPreferences: MemberInfoPreferences(allowMemberInfo: true, viewMemberNetId: false, viewMemberName: true, viewMemberEmail: false),
+        memberPostPreferences: MemberPostPreferences(allowSendPost: true, sendPostToSpecificMembers: false, sendPostToAll: true, sendPostToAdmins: true, sendPostReplies: true, sendPostReactions: true)); //Set Default values to true
   }
 }
 

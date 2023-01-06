@@ -17,10 +17,10 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/service/MTD.dart';
+import 'package:illinois/ui/mtd/MTDWidgets.dart';
 import 'package:illinois/ui/widgets/FavoriteButton.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
-import 'package:intl/intl.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -155,7 +155,7 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
     }
     else {
       return ListView.separated(
-        itemBuilder: (context, index) => _buildDeparture(ListUtils.entry(_departures, index)!),
+        itemBuilder: (context, index) => _buildDeparture(ListUtils.entry(_departures, index)),
         separatorBuilder: (context, index) => Divider(height: 1, color: Styles().colors!.fillColorPrimaryTransparent03,),
         itemCount: _departures?.length ?? 0,
         padding: EdgeInsets.zero,
@@ -163,55 +163,8 @@ class _MTDStopDeparturesPanelState extends State<MTDStopDeparturesPanel> impleme
     }
   }
 
-  Widget _buildDeparture(MTDDeparture departure) {
-    
-    String? expectedTimeString1, expectedTimeString2;
-    int expectedMins = departure.expectedMins ?? -1;
-    if (expectedMins == 0) {
-      expectedTimeString1 = 'Now';
-    }
-    else if (expectedMins == 1) {
-      expectedTimeString1 = '1';
-      expectedTimeString2 = 'min';
-    }
-    else if ((1 < expectedMins) && (expectedMins < 60)) {
-      expectedTimeString1 = '$expectedMins';
-      expectedTimeString2 = 'mins';
-    }
-    else {
-      DateTime? expectedTime = departure.expectedTime;
-      expectedTimeString1 = (expectedTime != null) ? DateFormat('h:mm').format(expectedTime) : null;
-      expectedTimeString2 = (expectedTime != null) ? DateFormat('a').format(expectedTime) : null;
-    }
-
-    String? desciption = StringUtils.isNotEmpty(departure.trip?.headsign) ? 'To ${departure.trip?.headsign}' : '';
-    
-    return InkWell(onTap: () => _onDeparture(departure), child: Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      child: Row(children: [
-        Container(width: 48, height: 48,
-          decoration: BoxDecoration(
-            color: departure.route?.color,
-            border: Border.all(color: Styles().colors!.surfaceAccentTransparent15!, width: 1),
-            shape: BoxShape.circle),
-          child: Center(child:
-            Text(departure.route?.shortName ?? '', overflow: TextOverflow.ellipsis, style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 20, color: departure.route?.textColor,))
-          )
-        ),
-        Expanded(child:
-          Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-            Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(departure.headsign ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.textBackground,),),
-                Text(desciption, style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),)
-            ],)
-          )
-        ),
-        Column(mainAxisSize: MainAxisSize.min, children: [
-          Text(expectedTimeString1 ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 24, color: Styles().colors?.fillColorPrimary,),),
-          Text(expectedTimeString2 ?? '', style: TextStyle(fontFamily: Styles().fontFamilies?.regular, fontSize: 16, color: Styles().colors?.textBackground,),),
-        ],)
-      ],)
-    ),);
+  Widget _buildDeparture(MTDDeparture? departure) {
+    return (departure != null) ? MTDDepartureCard(departure: departure, onTap: () => _onDeparture(departure),) : Container();
   }
 
   /*Widget _buildRoute(MTDRoute route) {

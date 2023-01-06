@@ -43,6 +43,7 @@
 static NSString *const kFIRMessagingFCMTokenNotification = @"com.firebase.iid.notif.fcm-token";
 
 @interface RootNavigationController : UINavigationController
+- (void)setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible;
 @end
 
 @interface LaunchScreenView : UIView
@@ -59,7 +60,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 }
 
 // Flutter
-@property (nonatomic) UINavigationController *navigationViewController;
+@property (nonatomic) RootNavigationController *navigationViewController;
 @property (nonatomic) FlutterViewController *flutterViewController;
 @property (nonatomic) FlutterMethodChannel *flutterMethodChannel;
 
@@ -109,6 +110,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 	_navigationViewController = [[RootNavigationController alloc] initWithRootViewController:rootViewController];
 	_navigationViewController.navigationBarHidden = YES;
+	[_navigationViewController setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible];
 	_navigationViewController.delegate = self;
 
 	_navigationViewController.navigationBar.translucent = NO;
@@ -479,6 +481,9 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 		
 		if ((0 < supportedOrientations.count) && ![_supportedInterfaceOrientations isEqualToSet:supportedOrientations]) {
 			_supportedInterfaceOrientations = supportedOrientations;
+
+			[_navigationViewController setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible];
+
 			UIDeviceOrientation currentOrientation = [[UIDevice currentDevice] orientation];
 			if (![_supportedInterfaceOrientations containsObject:@(currentOrientation)]) {
 				[[UIDevice currentDevice] setValue:@(_preferredInterfaceOrientation) forKey:@"orientation"];
@@ -591,6 +596,15 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 
 @implementation RootNavigationController
 
+- (void)setNeedsUpdateOfSupportedInterfaceOrientationsIfPossible {
+	if ([self respondsToSelector:@selector(setNeedsUpdateOfSupportedInterfaceOrientations)]) {
+		if (@available(iOS 16.0, *)) {
+			[self setNeedsUpdateOfSupportedInterfaceOrientations];
+		}
+	}
+}
+
+
 - (BOOL)shouldAutorotate {
 	return true;
 }
@@ -611,7 +625,7 @@ UIInterfaceOrientationMask _interfaceOrientationToMask(UIInterfaceOrientation va
 @end
 
 //////////////////////////////////////
-// UIInterfaceOrientation
+// LaunchScreenView
 
 @interface LaunchScreenView()
 @property (nonatomic) UIImageView *imageView;

@@ -19,8 +19,9 @@ import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/notification_service.dart';
-import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
+
+enum HomeInboxContent { all, unread }
 
 class HomeInboxWidget extends StatefulWidget {
 
@@ -64,6 +65,10 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
   Map<String, GlobalKey> _contentKeys = <String, GlobalKey>{};
   final double _pageSpacing = 16;
 
+  static const String localScheme = 'local';
+  static const String allNotificationsHost = 'all_notifications';
+  static const String localUrlMacro = '{{local_url}}';
+
   @override
   void initState() {
 
@@ -72,6 +77,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
       AppLivecycle.notifyStateChanged,
       Auth2.notifyLoginChanged,
       Inbox.notifyInboxUserInfoChanged,
+      Inbox.notifyInboxMessageRead,
     ]);
 
     _unread = (widget.content == HomeInboxContent.unread) ? true : null;
@@ -86,7 +92,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
 
     if (Connectivity().isOnline && Auth2().isLoggedIn) {
       _loadingMessages = true;
-      Inbox().loadMessages(unread: _unread, offset: 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
+      Inbox().loadMessages(unread: _unread, muted: false, offset: 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
         setStateIfMounted(() {
           _loadingMessages = false;
           _messages = messages;
@@ -115,8 +121,14 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
     else if (name == AppLivecycle.notifyStateChanged) {
       _onAppLivecycleStateChanged(param);
     }
-    else if ((name == Auth2.notifyLoginChanged) || (name == Inbox.notifyInboxUserInfoChanged)) {
+    else if (name == Auth2.notifyLoginChanged) {
       setStateIfMounted(() {});
+    }
+    else if (name == Inbox.notifyInboxUserInfoChanged) {
+      setStateIfMounted(() {});
+    }
+    else if (name == Inbox.notifyInboxMessageRead) {
+      _refresh(showProgress: true);
     }
   }
 
@@ -136,21 +148,21 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
 
   void _refresh({bool showProgress = false}) {
     if (Connectivity().isOnline && Auth2().isLoggedIn) {
-      if (showProgress && mounted) {
-        setState(() {
+      if (showProgress) {
+        setStateIfMounted(() {
           _loadingMessagesPage = true;
         });
-        Inbox().loadMessages(unread: _unread, offset: 0, limit: max(_messages?.length ?? 0, Config().homeRecentNotificationsCount)).then((List<InboxMessage>? messages) {
-          setStateIfMounted(() {
-            _loadingMessages = false;
-            _messages = messages;
-          });
-        });
       }
-    }
-    else {
-      setStateIfMounted(() {
+      Inbox().loadMessages(unread: _unread, muted: false, offset: 0, limit: max(_messages?.length ?? 0, Config().homeRecentNotificationsCount)).then((List<InboxMessage>? messages) {
+        if (showProgress) {
+          _loadingMessages = false;
+        }
+        setStateIfMounted(() {
+          _messages = messages;
+        });
       });
+    } else {
+      setStateIfMounted(() {});
     }
   }
 
@@ -160,7 +172,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
         setState(() {
           _loadingMessagesPage = true;
         });
-        Inbox().loadMessages(unread: _unread, offset: _messages?.length ?? 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
+        Inbox().loadMessages(unread: _unread, muted: false, offset: _messages?.length ?? 0, limit: Config().homeRecentNotificationsCount).then((List<InboxMessage>? messages) {
           setStateIfMounted(() {
             _loadingMessagesPage = false;
             _hasMoreMessages = (messages?.length ?? 0) == Config().homeRecentNotificationsCount;
@@ -205,9 +217,19 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
     else if (_loadingMessages) {
       return HomeProgressWidget();
     }
+    else if (_messages == null) {
+      return HomeMessageCard(message: Localization().getStringEx("widget.home.inbox.text.failed.description", "Failed to load notifications."),);
+    }
     else if (CollectionUtils.isEmpty(_messages)) {
-      return HomeMessageCard(
-        message: Localization().getStringEx("widget.home.inbox.text.empty.description", "Notifications are available right now."),);
+      if (widget.content == HomeInboxContent.unread) {
+        String message = Localization().getStringEx("widget.home.inbox.text.empty.unread.description", "You have no unread notifications. <a href='$localUrlMacro'><b>View all notifications</b></а>.")
+          .replaceAll(localUrlMacro, '$localScheme://$allNotificationsHost');
+          return HomeMessageHtmlCard(message: message, onTapLink: _onTapMessageLink,);
+      }
+      else {
+        return HomeMessageCard(
+          message: Localization().getStringEx("widget.home.inbox.text.empty.all.description", "You have not any notifications yet."),);
+      }
     }
     else {
       return _buildMessagesContent();
@@ -223,18 +245,6 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
       for (InboxMessage message in _messages!) {
         pages.add(Padding(key: _contentKeys[message.messageId ?? ''] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing, bottom: 16), child:
           InboxMessageCard(message: message, onTap: () => _onTapMessage(message)),
-        ));
-      }
-
-      if (_loadingMessagesPage) {
-        pages.add(Padding(key: _contentKeys['last'] ??= GlobalKey(), padding: EdgeInsets.only(right: _pageSpacing), child:
-          Container(decoration: BoxDecoration(color: Styles().colors?.white, borderRadius: BorderRadius.circular(5)), child:
-            HomeProgressWidget(
-              padding: EdgeInsets.symmetric(horizontal: 32, vertical: (_pageHeight - 24) / 2),
-              progessSize: Size(24, 24),
-              progressColor: Styles().colors?.fillColorPrimary,
-            ),
-          ),
         ));
       }
 
@@ -263,7 +273,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.inbox.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.inbox.button.all.hint', 'Tap to view all notifications'),
@@ -291,6 +301,15 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
     return minContentHeight ?? 0;
   }
 
+  void _onTapMessageLink(String? url) {
+    Uri? uri = (url != null) ? Uri.tryParse(url) : null;
+    if (uri?.scheme == localScheme) {
+      if (uri?.host.toLowerCase() == allNotificationsHost.toLowerCase()) {
+        SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.all);
+      }
+    }
+  }
+
   void _onTapMessage(InboxMessage message) {
     Analytics().logSelect(target: message.subject);
     SettingsNotificationsContentPanel.launchMessageDetail(message);
@@ -301,5 +320,3 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
     SettingsNotificationsContentPanel.present(context, content: (_unread == true) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
   }
 }
-
-enum HomeInboxContent { all, unread }

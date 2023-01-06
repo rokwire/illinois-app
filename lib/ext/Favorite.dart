@@ -8,12 +8,14 @@ import 'package:illinois/model/Laundry.dart';
 import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/News.dart';
 import 'package:illinois/model/sport/Game.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Guide.dart';
 import 'package:illinois/service/NativeCommunicator.dart';
 import 'package:illinois/ui/athletics/AthleticsGameDetailPanel.dart';
 import 'package:illinois/ui/athletics/AthleticsHomePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsArticlePanel.dart';
 import 'package:illinois/ui/athletics/AthleticsNewsListPanel.dart';
+import 'package:illinois/ui/events/CompositeEventsDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreDiningDetailPanel.dart';
 import 'package:illinois/ui/explore/ExploreEventDetailPanel.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
@@ -24,6 +26,7 @@ import 'package:illinois/ui/laundry/LaundryRoomDetailPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopDeparturesPanel.dart';
 import 'package:illinois/ui/mtd/MTDStopsHomePanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
+import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:rokwire_plugin/model/auth2.dart';
 import 'package:rokwire_plugin/model/event.dart';
 import 'package:rokwire_plugin/model/explore.dart';
@@ -58,6 +61,9 @@ extension FavoriteExt on Favorite {
     else if (this is ExplorePOI) {
       return (this as ExplorePOI).exploreTitle;
     }
+    else if (this is Appointment) {
+      return (this as Appointment).exploreTitle;
+    }
     else {
       return null;
     }
@@ -84,6 +90,9 @@ extension FavoriteExt on Favorite {
     }
     else if (this is ExplorePOI) {
       return (this as ExplorePOI).exploreLocationDescription;
+    }
+    else if (this is Appointment) {
+      return (this as Appointment).displayDate;
     }
     else {
       return null;
@@ -120,21 +129,16 @@ extension FavoriteExt on Favorite {
     else if (this is ExplorePOI) {
       return Image.asset('images/icon-location.png', excludeFromSemantics: true);
     }
+    else if (this is Appointment) {
+      return Image.asset('images/icon-calendar.png', excludeFromSemantics: true);
+    }
     else {
       return null;
     }
   }
 
   Image? favoriteStarIcon({required bool selected}) {
-    if ((this is Event) || (this is Dining) || (this is LaundryRoom) || (this is InboxMessage) || (this is MTDStop)|| (this is ExplorePOI)) {
-      return Image.asset(selected ? 'images/icon-star-orange.png' : 'images/icon-star-white.png', excludeFromSemantics: true);
-    }
-    else if ((this is Game) || (this is News) || (this is GuideFavorite)) {
-      return Image.asset(selected ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png', excludeFromSemantics: true);
-    }
-    else {
-      return null;
-    }
+    return Image.asset(selected ? 'images/icon-star-orange.png' : 'images/icon-star-white.png', excludeFromSemantics: true);
   }
 
   Color? get favoriteHeaderColor {
@@ -164,9 +168,15 @@ extension FavoriteExt on Favorite {
     }
   }
 
+
   void favoriteLaunchDetail(BuildContext context) {
     if (this is Event) {
-      Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: this as Event,)));
+      if ((this as Event).isComposite) {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => CompositeEventsDetailPanel(parentEvent: this as Event)));
+      }
+      else {
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreEventDetailPanel(event: this as Event,)));
+      }
     }
     else if (this is Dining) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreDiningDetailPanel(dining: this as Dining,)));
@@ -218,10 +228,13 @@ extension FavoriteExt on Favorite {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => MTDStopsHomePanel(contentType: MTDStopsContentType.all)));
     }
     else if (lowerCaseKey == ExplorePOI.favoriteKeyName.toLowerCase()) {
-      NotificationService().notify(ExplorePanel.notifyMapSelect, ExploreItem.MTDStops);
+      NotificationService().notify(ExplorePanel.notifySelectMap, ExploreItem.MTDDestinations);
     }
     else if (lowerCaseKey == GuideFavorite.favoriteKeyName.toLowerCase()) {
       Navigator.push(context, CupertinoPageRoute(builder: (context) => CampusGuidePanel()));
+    }
+    else if (lowerCaseKey == Appointment.favoriteKeyName.toLowerCase()) {
+      Navigator.push(context, CupertinoPageRoute(builder: (context) => WellnessHomePanel(content: WellnessContent.appointments)));
     }
   }
 }

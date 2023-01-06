@@ -18,9 +18,12 @@ import 'package:illinois/service/Polls.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluation.dart';
 import 'package:illinois/ui/academics/SkillsSelfEvaluationResultsDetailPanel.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
+import 'package:illinois/ui/widgets/TabBar.dart' as uiuc;
 import 'package:rokwire_plugin/model/survey.dart';
+import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
+import 'package:rokwire_plugin/service/surveys.dart';
 import 'package:rokwire_plugin/ui/popups/popup_message.dart';
 import 'package:rokwire_plugin/ui/widgets/rounded_button.dart';
 import 'package:rokwire_plugin/ui/widgets/section_header.dart';
@@ -36,10 +39,16 @@ class SkillsSelfEvaluationResultsPanel extends StatefulWidget {
 }
 
 class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationResultsPanel> {
+  static const String _defaultComparisonResponseId = 'none';
+  
   Map<String, SkillsSelfEvaluationContent> _resultsContentItems = {};
+  List<SkillsSelfEvaluationProfile> _profileContentItems = [];
   List<SurveyResponse> _responses = [];
   SurveyResponse? _latestResponse;
-  DateTime? _selectedComparisonDate;
+  String _comparisonResponseId = _defaultComparisonResponseId;
+
+  bool _latestCleared = false;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -53,20 +62,34 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RootBackHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'),),
+      appBar: RootHeaderBar(title: Localization().getStringEx('panel.skills_self_evaluation.results.header.title', 'Skills Self-Evaluation'), leading: RootHeaderBarLeading.Back,),
       body: RefreshIndicator(onRefresh: _onPullToRefresh, child: SingleChildScrollView(
         child: SectionSlantHeader(
           headerWidget: _buildHeader(),
           slantColor: Styles().colors?.gradientColorPrimary,
           slantPainterHeadingHeight: 0,
           backgroundColor: Styles().colors?.background,
-          children: _buildContent(),
+          children: Connectivity().isOffline ? _buildOfflineMessage() : _buildContent(),
           childrenPadding: EdgeInsets.zero,
+          allowOverlap: !Connectivity().isOffline,
         ),
       )),
       backgroundColor: Styles().colors?.background,
-      bottomNavigationBar: null,
+      bottomNavigationBar: uiuc.TabBar(),
     );
+  }
+
+  List<Widget> _buildOfflineMessage() {
+    return [
+      Padding(padding: EdgeInsets.all(28), child:
+        Center(child:
+          Text(
+            Localization().getStringEx('panel.skills_self_evaluation.results.offline.error.msg', 'Results not available while offline.'),
+            textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title')
+          )
+        ),
+      ),
+    ];
   }
 
   Widget _buildHeader() {
@@ -101,12 +124,12 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           Flexible(flex: 4, fit: FlexFit.tight, child: Text(Localization().getStringEx('panel.skills_self_evaluation.results.skills.title', 'SKILLS'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
           Flexible(flex: 3, fit: FlexFit.tight, child: Text(_latestResponse != null ? DateTimeUtils.localDateTimeToString(_latestResponse!.dateTaken, format: 'MM/dd/yy h:mma') ?? 'NONE' : 'NONE', textAlign: TextAlign.center, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),)),
           Flexible(flex: 3, fit: FlexFit.tight, child: DropdownButtonHideUnderline(child:
-            DropdownButton<DateTime?>(
+            DropdownButton<String>(
               icon: Image.asset('images/icon-down.png', color: Styles().colors?.surface),
               isExpanded: true,
               style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'),
               items: _buildResponseDateDropDownItems(),
-              value: _selectedComparisonDate,
+              value: _comparisonResponseId,
               onChanged: _onResponseDateDropDownChanged,
               dropdownColor: Styles().colors?.textBackground,
             ),
@@ -117,92 +140,129 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
   }
 
   List<Widget> _buildContent() {
-    Iterable<String> responseSections = _resultsContentItems['section_score_titles']?.data?.keys ?? [];
-    return [
-      ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.only(top: 8),
-        itemCount: responseSections.length,
-        itemBuilder: (BuildContext context, int index) {
-          String section = responseSections.elementAt(index);
-          String title = _resultsContentItems['section_score_titles']?.data?[section].toString() ?? '';
-          num? mostRecentScore = _latestResponse?.survey.stats?.percentages[section];
-          if (mostRecentScore != null) {
-            mostRecentScore = (mostRecentScore*100).round();
-          }
-          num? comparisonScore;
-          try {
-            if (_selectedComparisonDate?.isAtSameMomentAs(DateTime(0)) ?? false) {
-              dynamic studentAverage = _resultsContentItems['student_averages']?.data?[section];
-              if (studentAverage is num) {
-                comparisonScore = studentAverage;
-              }
-            } else {
-              comparisonScore = _responses.firstWhere((element) => element.dateTaken.isAtSameMomentAs(_selectedComparisonDate ?? DateTime(0))).survey.stats?.percentages[section];
-              comparisonScore = (comparisonScore!*100).round();
-            }
-          } catch (e) {
-            debugPrint(e.toString());
-          }
+    Iterable<String> responseSections = _resultsContentItems['section_titles']?.params?.keys ?? [];
+    Map<String, num>? comparisonScores;
+    SkillsSelfEvaluationProfile? selectedProfile;
+    if (_comparisonResponseId != _defaultComparisonResponseId) {
+      try {
+        selectedProfile = _profileContentItems.firstWhere((element) => element.key == _comparisonResponseId);
+        comparisonScores = selectedProfile.scores;
+      } catch (e) {
+        try {
+          comparisonScores = _responses.firstWhere((element) => element.id == _comparisonResponseId).survey.stats?.percentages;
+        } catch (e) {
+          debugPrint(e.toString());
+        }
+      }
+    }
 
-          return Padding(padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-            child: Card(
-              child: InkWell(
-                onTap: () => _showScoreDescription(section),
-                child: Padding(padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16), child: Row(children: [
-                  Flexible(flex: 5, fit: FlexFit.tight, child: Text(title, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))),
-                  Flexible(flex: 3, fit: FlexFit.tight, child: Text(mostRecentScore?.toString() ?? "--", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)),
-                  Flexible(flex: 3, fit: FlexFit.tight, child: Text(comparisonScore?.toString() ?? "--", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.past'), textAlign: TextAlign.center)),
-                  Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Image.asset('images/chevron-right.png', color: Styles().colors?.fillColorSecondary))),
-                ],)),
+    return [
+      Stack(children: [
+        responseSections.length > 0 ? ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(top: 8),
+          itemCount: responseSections.length,
+          itemBuilder: (BuildContext context, int index) {
+            String section = responseSections.elementAt(index);
+            String title = _resultsContentItems['section_titles']?.params?[section].toString() ?? '';
+            num? mostRecentScore = _latestResponse?.survey.stats?.percentages[section];
+            if (mostRecentScore != null) {
+              mostRecentScore = (mostRecentScore*100).round();
+            }
+            num? comparisonScore = comparisonScores?[section];
+            if (comparisonScore != null) {
+              comparisonScore = (comparisonScore*100).round();
+            }
+
+            return Padding(padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+              child: Card(
+                child: InkWell(
+                  onTap: () => _showScoreDescription(section),
+                  child: Padding(padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16), child: Row(children: [
+                    Flexible(flex: 5, fit: FlexFit.tight, child: Text(title, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'))),
+                    Flexible(flex: 3, fit: FlexFit.tight, child: Text(mostRecentScore?.toString() ?? "--", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.current'), textAlign: TextAlign.center,)),
+                    Flexible(flex: 3, fit: FlexFit.tight, child: Text(comparisonScore?.toString() ?? "--", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.score.past'), textAlign: TextAlign.center)),
+                    Flexible(flex: 1, fit: FlexFit.tight, child: SizedBox(height: 16.0 , child: Image.asset('images/chevron-right.png', color: Styles().colors?.fillColorSecondary))),
+                  ],)),
+                )
               )
-            ));
-      }),
-      Padding(padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 32), child: Text.rich(
-        TextSpan(
-          children: [
-            TextSpan(
-              text: Localization().getStringEx('panel.skills_self_evaluation.results.student_average.term', 'Student Average'),
-              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
-            ),
-            TextSpan(
-              text: Localization().getStringEx('panel.skills_self_evaluation.results.student_average.description', ' = Average score among approximately 750 students at Colby College and the University of Illinois.'),
-              style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
-            ),
-          ],
+            );
+        }) : Padding(padding: const EdgeInsets.only(top: 80, bottom: 32, left: 32, right: 32), child: Text(
+          Localization().getStringEx('panel.skills_self_evaluation.results.unavailable.message', 'Results content is currently unavailable. Please try again later.'),
+          style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+          textAlign: TextAlign.center,
+        )),
+        Visibility(
+          visible: _loading,
+          child: Container(
+            child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors?.fillColorPrimary)),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(vertical: 64),
+          )
         ),
-      ),),
-      Padding(padding: const EdgeInsets.only(bottom: 32), child: GestureDetector(onTap: _onTapClearAllScores, child:
-        Text("Clear All Scores", style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
+      ],),
+      Visibility(
+        visible: responseSections.length > 0,
+        child: Padding(padding: const EdgeInsets.only(top: 4), child: GestureDetector(onTap: _onTapClearAllScores, child:
+          Text(Localization().getStringEx('panel.skills_self_evaluation.results.more_info.description', '*Tap score cards for more info'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body.small'), textAlign: TextAlign.left,
+        ),)),
+      ),
+      Visibility(
+        visible: selectedProfile?.params['name'] is String && selectedProfile?.params['definition'] is String,
+        child: Padding(padding: const EdgeInsets.only(top: 32, left: 32, right: 32), child: Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                text: selectedProfile?.params['name'] ?? '',
+                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
+              ),
+              TextSpan(
+                text: ' = ${selectedProfile?.params['definition'] ?? ''}',
+                style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.body'),
+              ),
+            ],
+          ),
+        ),)
+      ),
+      Padding(padding: const EdgeInsets.symmetric(vertical: 32), child: GestureDetector(onTap: _onTapClearAllScores, child:
+        Text(Localization().getStringEx('panel.skills_self_evaluation.results.clear_scores.label', 'Clear All Scores'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
       ),)),
     ];
   }
 
-  List<DropdownMenuItem<DateTime?>> _buildResponseDateDropDownItems() {
-    List<DropdownMenuItem<DateTime?>> items = <DropdownMenuItem<DateTime?>>[
-      DropdownMenuItem<DateTime?>(
-        value: null,
-        child: Text('NONE', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,),
-      ),
-      DropdownMenuItem<DateTime?>(
-        value: DateTime(0),
-        child: Text('STU. AVG.', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,),
+  List<DropdownMenuItem<String>> _buildResponseDateDropDownItems() {
+    List<DropdownMenuItem<String>> items = [
+      DropdownMenuItem<String>(
+        value: _defaultComparisonResponseId,
+        child: Align(alignment: Alignment.center, child: Text('NONE', style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,)),
       ),
     ];
+
+    List<String> profileKeys = [];
+    for (SkillsSelfEvaluationProfile profile in _profileContentItems) {
+      if (profile.params['abbreviation'] is String && !profileKeys.contains(profile.key)) {
+        items.add(DropdownMenuItem<String>(
+          value: profile.key,
+          child: Align(alignment: Alignment.center, child: Text(profile.params['abbreviation'], style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,)),
+        ));
+        profileKeys.add(profile.key);
+      }
+    }
     
     for (SurveyResponse response in _responses) {
       String dateString = DateTimeUtils.localDateTimeToString(response.dateTaken, format: 'MM/dd/yy h:mma') ?? '';
-      items.add(DropdownMenuItem<DateTime>(
-        value: response.dateTaken,
-        child: Text(dateString, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,),
+      items.add(DropdownMenuItem<String>(
+        value: response.id,
+        child: Align(alignment: Alignment.center, child: Text(dateString, style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.results.table.header'), textAlign: TextAlign.center,)),
       ));
     }
     return items;
   }
 
   void _loadResults() {
-    Polls().loadSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
+    _setLoading(true);
+    Surveys().loadSurveyResponses(surveyTypes: ["bessi"], limit: 10).then((responses) {
       _responses.clear();
       if (CollectionUtils.isNotEmpty(responses)) {
         responses!.sort(((a, b) => b.dateTaken.compareTo(a.dateTaken)));
@@ -211,22 +271,28 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
           _latestResponse = responses[0];
         }
         _responses = responses.sublist(_latestResponse?.id == responses[0].id ? 1 : 0);
-      } else {
+      } else if (!_latestCleared) {
         _latestResponse = widget.latestResponse;
       }
 
-      if (mounted) {
-        setState(() {});
-      }
+      _setLoading(false);
     });
   }
 
   void _loadContentItems() {
-    Polls().loadContentItems(categories: ["bessi_results"]).then((content) {
+    Polls().loadContentItems(categories: ["bessi_results", "bessi_profile"]).then((content) {
       if (content?.isNotEmpty ?? false) {
         _resultsContentItems.clear();
+        _profileContentItems.clear();
         for (MapEntry<String, Map<String, dynamic>> item in content?.entries ?? []) {
-          _resultsContentItems[item.key] = SkillsSelfEvaluationContent.fromJson(item.value);
+          switch (item.value['category']) {
+            case 'bessi_results': 
+              _resultsContentItems[item.key] = SkillsSelfEvaluationContent.fromJson(item.value);
+              break;
+            case 'bessi_profile':
+              _profileContentItems.add(SkillsSelfEvaluationProfile.fromJson(item.value));
+              break;
+          }
         }
 
         if (mounted) {
@@ -236,14 +302,22 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
     });
   }
 
+  void _setLoading(bool value) {
+    if (mounted) {
+      setState(() {
+        _loading = value;
+      });
+    }
+  }
+
   Future<void> _onPullToRefresh() async {
     _loadResults();
     _loadContentItems();
   }
 
-  void _onResponseDateDropDownChanged(DateTime? value) {
+  void _onResponseDateDropDownChanged(String? value) {
     setState(() {
-      _selectedComparisonDate = value;
+      _comparisonResponseId = value ?? _defaultComparisonResponseId;
     });
   }
 
@@ -290,10 +364,11 @@ class _SkillsSelfEvaluationResultsPanelState extends State<SkillsSelfEvaluationR
 
   void _onTapConfirmDeleteScores() {
     Navigator.of(context).pop();
-    Polls().deleteSurveyResponses(surveyTypes: ["bessi"]).then((success) {
-      if (success && mounted) {
-        _loadResults();
-      }
+    Surveys().deleteSurveyResponses(surveyTypes: ["bessi"]).then((_) {
+      _latestCleared = true;
+      _latestResponse = null;
+      _comparisonResponseId = _defaultComparisonResponseId;
+      _loadResults();
     });
   }
 }

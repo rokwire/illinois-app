@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/Questionnaire.dart';
+import 'package:illinois/service/Storage.dart';
 import 'package:illinois/ui/onboarding/OnboardingBackButton.dart';
 import 'package:rokwire_plugin/service/localization.dart';
 import 'package:rokwire_plugin/service/styles.dart';
@@ -33,8 +34,10 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
         SafeArea(child:
           _buildContent(context)
         ),
-        SafeArea(child: 
-          OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: () => _onBack(context)),
+        Visibility(visible: Navigator.canPop(context), child:
+          SafeArea(child: 
+            OnboardingBackButton(padding: const EdgeInsets.only(left: 10, top: 30, right: 20, bottom: 20), onTap: () => _onBack(context)),
+          ),
         ),
       ]),
     );
@@ -49,7 +52,7 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             Expanded(child: 
-              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.introduction', 'Illinois is one of the world’s great research universities. Become a citizen scientist and take part in the discovery by participating in research at Illinois.'), textAlign: TextAlign.center,
+              Text(Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.introduction', 'Illinois is one of the world’s great research universities. As a member of the university, you can help scientists answer questions that lead to new discoveries.'), textAlign: TextAlign.center,
                 style: Styles().textStyles?.getTextStyle("widget.message.large"),
               ),
             )
@@ -59,7 +62,7 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
             Expanded(child:
               RichText(text:
                 TextSpan(children: [
-                  TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.question', 'Would you like to get invitations to participate in research studies via the Illinois app?'),
+                  TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.question', 'Would you like to get invitations to become a research participant via the Illinois app?'),
                     style: Styles().textStyles?.getTextStyle("widget.message.large.fat"),
                   ),
                   TextSpan(text: Localization().getStringEx('panel.onboarding2.research.questionnaire.prompt.explanation', ' Many studies offer incentives.'),
@@ -117,14 +120,21 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
 
   void _onBack(BuildContext context) {
     Analytics().logSelect(target: "Back");
-    Navigator.pop(context);
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   void _onYes(BuildContext context) {
     Analytics().logSelect(target: "Yes");
     Questionnaires().participateInResearch = true;
+    Storage().participateInResearchPrompted = true;
     Function? onConfirm = (onboardingContext != null) ? onboardingContext!["onConfirmAction"] : null;
-    if (onConfirm != null) {
+    Function? onConfirmEx = (onboardingContext != null) ? onboardingContext!["onConfirmActionEx"] : null;
+    if (onConfirmEx != null) {
+      onConfirmEx(context);
+    }
+    else if (onConfirm != null) {
       onConfirm();
     }
   }
@@ -132,16 +142,26 @@ class Onboarding2ResearchQuestionnairePromptPanel extends StatelessWidget {
   void _onNo(BuildContext context) {
     Analytics().logSelect(target: "No");
     Questionnaires().participateInResearch = false;
+    Storage().participateInResearchPrompted = true;
     Function? onReject = (onboardingContext != null) ? onboardingContext!["onRejectAction"] : null;
-    if (onReject != null) {
+    Function? onRejectEx = (onboardingContext != null) ? onboardingContext!["onRejectActionEx"] : null;
+    if (onRejectEx != null) {
+      onRejectEx(context);
+    }
+    else if (onReject != null) {
       onReject();
     }
   }
 
   void _onNotRightNow(BuildContext context) {
     Analytics().logSelect(target: "Not right now");
+    Storage().participateInResearchPrompted = true;
     Function? onReject = (onboardingContext != null) ? onboardingContext!["onRejectAction"] : null;
-    if (onReject != null) {
+    Function? onRejectEx = (onboardingContext != null) ? onboardingContext!["onRejectActionEx"] : null;
+    if (onRejectEx != null) {
+      onRejectEx(context);
+    }
+    else if (onReject != null) {
       onReject();
     }
   }

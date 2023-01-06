@@ -16,8 +16,11 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:illinois/ext/Group.dart';
 import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/ui/groups/GroupAdvancedSettingsPanel.dart';
 import 'package:illinois/ui/research/ResearchProjectProfilePanel.dart';
+import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/group.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:rokwire_plugin/service/config.dart';
@@ -84,11 +87,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     _group?.researchOpen ??= (_group?.researchProject == true) ? true : null;
     _group?.privacy ??= (_group?.researchProject == true) ? GroupPrivacy.public : GroupPrivacy.private;
     _group?.category ??= (_group?.researchProject == true) ? 'Other' : null;
+    _group?.settings ??= GroupSettingsExt.initialDefaultSettings();
 
     _groupTitleController.text = _group?.title ?? '';
     _groupDescriptionController.text = _group?.description ?? '';
     _researchConsentDetailsController.text = _group?.researchConsentDetails ?? '';
     _authManGroupNameController.text = _group?.authManGroupName ?? '';
+
 
     // #2550: we need consent checkbox selected by default
     // #2626: Hide consent checkbox and edit control. Default it to false...
@@ -150,7 +155,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 Container(
                   child: Align(alignment: Alignment.center,
                     child: SizedBox(height: 24, width: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), )
+                        child: Semantics(label: "Loading." ,container: true, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color?>(Styles().colors!.fillColorPrimary), ))
                     ),
                   ),
                 ),
@@ -217,21 +222,15 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                         _buildTitle(_isResearchProject ? 'Participation' : Localization().getStringEx("panel.groups_create.membership.section.title", "Membership"), "images/icon-member.png"),
                         _buildMembershipLayout(),
                       ],),),),
-                      
+                    //#2685 [USABILITY] Hide group setting "Enable attendance checking" for 4.2
+                    //Visibility(visible: !_isResearchProject, child:
+                    //  Padding(padding: EdgeInsets.only(top: 8), child:
+                    //    _buildAttendanceLayout(),
+                    //  )
+                    //),
                       Visibility(visible: !_isResearchProject, child:
                         Padding(padding: EdgeInsets.only(top: 8), child:
-                          _buildCanAutojoinLayout(),
-                        )
-                      ),
-
-                      Visibility(visible: !_isResearchProject, child:
-                        Padding(padding: EdgeInsets.only(top: 8), child:
-                          _buildPollsLayout(),
-                        )
-                      ),
-                      Visibility(visible: !_isResearchProject, child:
-                        Padding(padding: EdgeInsets.only(top: 8), child:
-                          _buildAttendanceLayout(),
+                          _buildSettingsLayout(),
                         )
                       ),
                       Container(height: 40),
@@ -251,7 +250,7 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
   Widget _buildImageSection() {
     final double _imageHeight = 200;
 
-    return Container(
+    return Semantics(container: true,  child: Container(
         height: _imageHeight,
         color: Styles().colors!.background,
         child: Stack(alignment: Alignment.bottomCenter, children: <Widget>[
@@ -272,10 +271,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                           label: Localization().getStringEx("panel.groups_settings.add_image", "Add Cover Image"),
                           textColor: Styles().colors!.fillColorPrimary,
                           onTap: _onTapAddImage,
-                          backgroundColor: Colors.transparent,
                           contentWeight: 0.8,
                     ))))
-        ]));
+        ])));
   }
 
   void _onTapAddImage() async {
@@ -310,9 +308,10 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                 hint: fieldHint,
                 textField: true,
                 excludeSemantics: true,
+                value: _groupTitleController.text,
                 child: TextField(
                   controller: _groupTitleController,
-                  onChanged: (text) => setState((){_group?.title = text; }) ,
+                  onChanged: (text) => setState((){_group?.title = text;}) ,
                   maxLines: 1,
                   decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0)),
                   style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
@@ -351,8 +350,9 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
                     hint: fieldHint,
                     textField: true,
                     excludeSemantics: true,
+                    value: _groupDescriptionController.text,
                     child: TextField(
-                      onChanged: (text) => _group?.description = text,
+                      onChanged: (text) {_group?.description = text; setStateIfMounted(() { });},
                       controller: _groupDescriptionController,
                       maxLines: 5,
                       decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
@@ -379,13 +379,13 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
           Container(decoration: BoxDecoration(border: Border.all(color: Styles().colors!.fillColorPrimary!, width: 1), color: Styles().colors!.white), child:
             Row(children: [
               Expanded(child:
-                Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, child:
+                Semantics(label: fieldTitle, hint: fieldHint, textField: true, excludeSemantics: true, value: _researchConsentDetailsController.text, child:
                   TextField(
                       controller: _researchConsentDetailsController,
                       maxLines: 15,
                       decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12)),
                       style: TextStyle(color: Styles().colors!.textBackground, fontSize: 16, fontFamily: Styles().fontFamilies!.regular),
-                      onChanged: (text) => _group?.researchConsentDetails = text,
+                      onChanged: (text){ _group?.researchConsentDetails = text; setStateIfMounted(() { });},
                   )
                 ),
               )
@@ -810,23 +810,6 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     });
   }
 
-  //Autojoin
-  Widget _buildCanAutojoinLayout(){
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.auto_join.enabled.label", "Group can be joined automatically?"),
-        value: _group?.canJoinAutomatically,
-        onTap: () {
-          if (_group?.canJoinAutomatically != null) {
-            _group!.canJoinAutomatically = !(_group!.canJoinAutomatically!);
-          } else {
-            _group?.canJoinAutomatically = true;
-          }
-        }
-      ),
-    );
-  }
-
   // AuthMan Group
   Widget _buildAuthManLayout() {
     return Padding(
@@ -871,29 +854,8 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
     }
   }
 
-  //Polls
-  Widget _buildPollsLayout(){
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: _buildSwitch(title: Localization().getStringEx("panel.groups_create.only_admins_create_polls.enabled.label", "Only admins can create Polls"),
-          value: _group?.onlyAdminsCanCreatePolls,
-          onTap: _onTapOnlyAdminCreatePolls
-      ),
-    );
-  }
-
-  void _onTapOnlyAdminCreatePolls(){
-    if(_group?.onlyAdminsCanCreatePolls != null) {
-      if(mounted){
-        setState(() {
-          _group!.onlyAdminsCanCreatePolls = !(_group!.onlyAdminsCanCreatePolls ?? false);
-        });
-      }
-    }
-  }
-
   // Attendance
-  Widget _buildAttendanceLayout() {
+  /*Widget _buildAttendanceLayout() {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: _buildSwitch(
@@ -909,12 +871,32 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
         setState(() {});
       }
     }
+  }*/
+
+  //Settings
+  Widget _buildSettingsLayout() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child:  RibbonButton(
+          label: Localization().getStringEx('panel.groups_settings..button.advanced_settings.title', 'Advanced Settings'), //Localize
+          hint: Localization().getStringEx('panel.groups_settings..button.advanced_settings..hint', ''),
+          border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+          borderRadius: BorderRadius.circular(4),
+          onTap: (){
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => GroupAdvancedSettingsPanel(group: _group,))).then((_){
+                if(mounted){
+                  setState(() {
+
+                  });
+                }
+            });
+          }),
+    );
   }
 
   //Buttons
   Widget _buildButtonsLayout() {
-    return
-        Container( color: Styles().colors!.white,
+    return Semantics(container: true, child: Container( color: Styles().colors!.white,
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Center(
             child: RoundedButton(
@@ -924,33 +906,51 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
               textColor: _canSave ? Styles().colors!.fillColorPrimary : Styles().colors!.surfaceAccent,
               enabled: _canSave,
               progress:  _creating,
-              onTap: _onCreateTap,
+              onTap: _onTapCreate,
             ),
           ),
-        );
+        ));
   }
 
-  void _onCreateTap() {
-    AppAlert.showCustomDialog(
-        context: context,
-        contentWidget: Text(Localization().getStringEx("panel.groups_create.prompt.msg.title", "The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.").replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois'))),
-        actions: <Widget>[
-          TextButton(
-              child:
-              Text(Localization().getStringEx('dialog.ok.title', 'Ok')),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _onCreateGroup();
-              }),
-          TextButton(
-              child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')),
-              onPressed: () => Navigator.of(context).pop())
-        ]);
+  void _onTapCreate() {
+    Analytics().logSelect(target: "Create Group");
+    if (!_creating && _canSave) {
+      if (_isResearchProject) {
+        _onCreateGroup();
+      }
+      else {
+        _showCreateGroupPrompt().then((bool? result) {
+          if (result == true) {
+            _onCreateGroup();
+          }
+        });
+      }
+      
+    }
+  }
+
+  Future<bool?> _showCreateGroupPrompt() {
+    String prompt = Localization().getStringEx("panel.groups_create.prompt.msg.title", "The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.").replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois'));
+    return AppAlert.showCustomDialog(context: context,
+      contentWidget: Text(prompt),
+      actions: <Widget>[
+        TextButton(
+          child: Text(Localization().getStringEx('dialog.ok.title', 'OK')),
+          onPressed: () {
+            Analytics().logAlert(text: prompt, selection: "OK");
+            Navigator.of(context).pop(true);
+          }),
+        TextButton(
+          child: Text(Localization().getStringEx('dialog.cancel.title', 'Cancel')),
+          onPressed: () {
+            Analytics().logAlert(text: prompt, selection: "Cancel");
+            Navigator.of(context).pop(false);
+          })
+      ]);
   }
 
   void _onCreateGroup() {
-    Analytics().logSelect(target: "Create Group");
-    if(!_creating && _canSave) {
+    if (!_creating && _canSave) {
       setState(() {
         _creating = true;
       });
@@ -1071,23 +1071,32 @@ class _GroupCreatePanelState extends State<GroupCreatePanel> {
 
   Widget _buildSwitch({String? title, bool? value, void Function()? onTap}){
     return Container(
-      child: Container(
-          decoration: BoxDecoration(
-              color: Styles().colors!.white,
-              border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
-              borderRadius: BorderRadius.all(Radius.circular(4))),
-          padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Expanded(
-                  child: Text(title ?? "",
-                      style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary))),
-              GestureDetector(
-                  onTap: onTap ?? (){},
-                  child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset((value ?? false) ? 'images/switch-on.png' : 'images/switch-off.png')))
-            ])
-          ])),
-    );
+      child: Semantics(
+        label: title,
+        value: value == true?  Localization().getStringEx("toggle_button.status.checked", "checked",) : Localization().getStringEx("toggle_button.status.unchecked", "unchecked"),
+        button: true,
+        child: Container(
+              decoration: BoxDecoration(
+                  color: Styles().colors!.white,
+                  border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(4))),
+              padding: EdgeInsets.only(left: 16, right: 16, top: 14, bottom: 18),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Expanded(
+                      child: Text(title ?? "",
+                          style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Styles().colors!.fillColorPrimary),
+                          semanticsLabel: "",)),
+                  GestureDetector(
+                      onTap: ((onTap != null)) ?
+                          (){
+                        onTap();
+                        AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(value == true), title);
+                      } : (){},
+                      child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset((value ?? false) ? 'images/switch-on.png' : 'images/switch-off.png')))
+                ])
+              ])),
+        ));
   }
 
   bool get _isManagedGroupAdmin {

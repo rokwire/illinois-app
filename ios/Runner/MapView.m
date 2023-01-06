@@ -53,13 +53,13 @@
 	bool          _enabled;
 	NSOperation*  _buildeExploresOperation;
 	NSMutableDictionary<NSString*, UIImage*>* _markersImageCache;
-	UILabel*       _debugLabel;
 }
 @property (nonatomic, readonly) GMSMapView*     mapView;
 @property (nonatomic) NSArray*      explores;
 @property (nonatomic) NSArray*      displayExplores;
 @property (nonatomic) NSMutableSet* markers;
 @property (nonatomic) NSOperation*  buildeExploresOperation;
+@property (nonatomic) UIActivityIndicatorView* activityIndicator;
 @end
 
 @interface MapViewMarkerData : NSObject
@@ -84,13 +84,9 @@
 		//_mapView.settings.indoorPicker = NO;
 		[self addSubview:_mapView];
 
-		_debugLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-		_debugLabel.font = [UIFont boldSystemFontOfSize:14];
-		_debugLabel.textAlignment = NSTextAlignmentLeft;
-		_debugLabel.textColor = [UIColor blackColor];
-		_debugLabel.shadowColor = [UIColor colorWithWhite:1 alpha:0.5];
-		_debugLabel.shadowOffset = CGSizeMake(2, 2);
-		[self addSubview:_debugLabel];
+		_activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
+		_activityIndicator.color = [UIColor blackColor];
+		[self addSubview:_activityIndicator];
 
 		_markers = [[NSMutableSet alloc] init];
 		_markersImageCache = [[NSMutableDictionary alloc] init];
@@ -116,7 +112,9 @@
 - (void)layoutSubviews {
 	CGSize contentSize = self.frame.size;
 	_mapView.frame = CGRectMake(0, 0, contentSize.width, contentSize.height);
-	_debugLabel.frame = CGRectMake(8, 8, contentSize.width - 16, 16);
+
+	CGSize activityIndicatorSize = [_activityIndicator sizeThatFits:contentSize];
+	_activityIndicator.frame = CGRectMake((contentSize.width - activityIndicatorSize.width) / 2, (contentSize.height - activityIndicatorSize.height) / 2, activityIndicatorSize.width, activityIndicatorSize.height);
 
 	if (!_didFirstLayout) {
 		_didFirstLayout = true;
@@ -131,7 +129,14 @@
 	_explores = explores;
 	_exploreOptions = options;
 	if (_didFirstLayout) {
-		[self acknowledgeExplores];
+		
+		NSNumber *updateOnly = [_exploreOptions inaNumberForKey:@"UpdateOnly"];
+		if ([updateOnly boolValue]) {
+			[self buildDisplayExplores];
+		}
+		else {
+			[self acknowledgeExplores];
+		}
 	}
 }
 
@@ -145,7 +150,9 @@
 			thresoldDistance = debugThresoldDistance.doubleValue;
 		}
 		else {
-			GMSCameraPosition *camera = [_mapView cameraForBounds:bounds insets: UIEdgeInsetsMake(50, 50, 50, 50)];
+			GMSCameraPosition *camera = (bounds != nil) ?
+				[_mapView cameraForBounds:bounds insets: UIEdgeInsetsMake(50, 50, 50, 50)] :
+				[GMSCameraPosition cameraWithTarget:kInitialCameraLocation zoom:kInitialCameraZoom];
 			thresoldDistance = [self thresoldDistanceForZoom:camera.zoom];
 		}
 
@@ -187,19 +194,27 @@
 					if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
 						weakSelf.displayExplores = displayExplores;
 						[weakSelf applyMarkers: [weakSelf buildMarkersFromExplores:displayExplores markerDataMap:markerDataMap]];
+						[weakSelf.activityIndicator stopAnimating];
 						weakSelf.buildeExploresOperation = nil;
 					}
 				});
 			}
 			else if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
 				weakSelf.buildeExploresOperation = nil;
+				dispatch_sync(dispatch_get_main_queue(), ^{
+					[weakSelf.activityIndicator stopAnimating];
+				});
 			}
 		}
 		else if ((weakSelf.buildeExploresOperation != nil) && (weakSelf.buildeExploresOperation == weakOperation)) {
 			weakSelf.buildeExploresOperation = nil;
+			dispatch_sync(dispatch_get_main_queue(), ^{
+				[weakSelf.activityIndicator stopAnimating];
+			});
 		}
 	}];
 
+	[self.activityIndicator startAnimating];
 	_buildeExploresOperation = operation;
 	[AppDelegate.sharedInstance.backgroundOperationQueue addOperation:_buildeExploresOperation];
 }
@@ -306,7 +321,6 @@
 		double nextZoomDistance = ((zoomIndex + 1) < _countof(kThresoldDistanceByZoom)) ? kThresoldDistanceByZoom[zoomIndex + 1] : 0;
 		double thresoldDistance = zoomDistance - (zoom - (double)zoomIndex) * (zoomDistance - nextZoomDistance);
 		NSLog(@"thresoldDistanceForZoom: %.2f => %ld", zoom, (NSInteger)floor(thresoldDistance));
-		_debugLabel.text = [NSString stringWithFormat:@"Zoom: %.2f Dist: %ldm", zoom, (NSInteger)floor(thresoldDistance)];
 		return thresoldDistance;
 	}
 	return 0;
@@ -315,7 +329,7 @@
 
 - (GMSCameraUpdate*)cameraUpdateFromBounds:(GMSCoordinateBounds*)bounds {
 		if ((bounds == nil) || !bounds.isValid) {
-			return nil;
+			return [GMSCameraUpdate setTarget:kInitialCameraLocation zoom: kInitialCameraZoom];
 		}
 		else if (CLLocationCoordinate2DIsEqual(bounds.northEast, bounds.southWest)) {
 			return [GMSCameraUpdate setTarget:bounds.northEast zoom: kInitialCameraZoom];
@@ -339,12 +353,22 @@
 	if (_enabled) {
 		if (_mapView.superview == nil) {
 			[self addSubview:_mapView];
+			[self addSubview:_activityIndicator];
 		}
 	}
 	else {
 		if (_mapView.superview == self) {
 			[_mapView removeFromSuperview];
+			[_activityIndicator removeFromSuperview];
 		}
+	}
+}
+
+- (void)fixZOrder {
+	if (_mapView.superview == self) {
+		[_mapView removeFromSuperview];
+		[self addSubview:_mapView];
+		[self bringSubviewToFront:_activityIndicator];
 	}
 }
 
@@ -558,12 +582,26 @@
 
 #pragma mark GMSMapViewDelegate
 
+- (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
+	NSLog(@"GMSMapViewZoom: %@", @(position.zoom));
+	
+	if (kThresoldZoomUpdateStep < fabs(_currentZoom - position.zoom)) {
+		_currentZoom = position.zoom;
+		[self buildDisplayExplores];
+	}
+	else {
+		[self updateMarkersDisplayMode];
+	}
+	[self updateMapStyle];
+}
+
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(nonnull GMSMarker *)marker {
 	NSDictionary *explore = [marker.userData isKindOfClass:[NSDictionary class]] ? [marker.userData inaDictForKey:@"explore"] : nil;
 	id exploreParam = explore.uiucExplores ?: explore;
 	NSLog(@"didTapMarker: %@", [exploreParam isKindOfClass:[NSArray class]] ?
 		[NSString stringWithFormat:@"%@ Explores", @([exploreParam count])] :
 		([exploreParam isKindOfClass:[NSDictionary class]] ? [exploreParam uiucExploreTitle] : @"????"));
+
 	if (exploreParam != nil) {
 		NSDictionary *arguments = @{
 			@"mapId" : @(_mapId),
@@ -579,6 +617,7 @@
 
 - (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {
 	NSLog(@"didTapAtCoordinate: [%.6f, %.6f]", coordinate.latitude, coordinate.longitude);
+
 	NSDictionary *arguments = @{
 		@"mapId" : @(_mapId),
 		@"location": @{
@@ -587,19 +626,6 @@
 		}
 	};
 	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"map.location.select" arguments:arguments.inaJsonString];
-}
-
-- (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
-	NSLog(@"GMSMapViewZoom: %@", @(position.zoom));
-	
-	if (kThresoldZoomUpdateStep < fabs(_currentZoom - position.zoom)) {
-		_currentZoom = position.zoom;
-		[self buildDisplayExplores];
-	}
-	else {
-		[self updateMarkersDisplayMode];
-	}
-	[self updateMapStyle];
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapPOIWithPlaceID:(NSString *)placeID name:(NSString *)name location:(CLLocationCoordinate2D)location {
@@ -619,7 +645,6 @@
 	[AppDelegate.sharedInstance.flutterMethodChannel invokeMethod:@"map.poi.select" arguments:arguments.inaJsonString];
 	
 }
-
 
 @end
 
@@ -693,6 +718,9 @@
 	else if ([[call method] isEqualToString:@"enable"]) {
 		bool enable = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;
 		[_mapView enable:enable];
+	}
+	else if ([[call method] isEqualToString:@"fixZOrder"]) {
+		[_mapView fixZOrder];
 	}
 	else if ([[call method] isEqualToString:@"enableMyLocation"]) {
 		bool enableMyLocation = [call.arguments isKindOfClass:[NSNumber class]] ? [(NSNumber*)(call.arguments) boolValue] : false;

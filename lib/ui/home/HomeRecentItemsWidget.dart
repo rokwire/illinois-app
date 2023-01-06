@@ -97,7 +97,8 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
             setState(() {
               _recentItems = Queue<RecentItem>.from(RecentItems().recentItems);
               _pageViewKey = UniqueKey();
-              _pageController = null;
+              // _pageController = null;
+              _pageController?.jumpToPage(0);
               _contentKeys.clear();
             });
           }
@@ -191,7 +192,7 @@ class _HomeRecentItemsWidgetState extends State<HomeRecentItemsWidget> implement
 
     return Column(children: <Widget>[
       contentWidget,
-      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: pages.length,),
+      AccessibleViewPagerNavigationButtons(controller: _pageController, pagesCount: () => pages.length,),
       LinkButton(
         title: Localization().getStringEx('widget.home.recent_items.button.all.title', 'View All'),
         hint: Localization().getStringEx('widget.home.recent_items.button.all.hint', 'Tap to view all items'),
@@ -353,7 +354,7 @@ class _HomeRecentItemCardState extends State<HomeRecentItemCard> implements Noti
       Localization().getStringEx('widget.card.button.favorite.off.hint', '') :
       Localization().getStringEx('widget.card.button.favorite.on.hint','');
 
-    String favIcon = isFavorite ? 'images/icon-star-blue.png' : 'images/icon-star-gray-frame-thin.png';
+    String favIcon = isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png';
 
     return Padding(padding: EdgeInsets.only(bottom: 8), child:
       Container(decoration: BoxDecoration(boxShadow: [BoxShadow(color: Color.fromRGBO(19, 41, 75, 0.3), spreadRadius: 2.0, blurRadius: 8.0, offset: Offset(0, 2))]), clipBehavior: Clip.none, child:

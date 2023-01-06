@@ -35,6 +35,7 @@ import 'package:rokwire_plugin/service/events.dart';
 import 'package:illinois/service/FlexUI.dart';
 import 'package:illinois/service/FirebaseMessaging.dart';
 import 'package:rokwire_plugin/service/groups.dart';
+import 'package:rokwire_plugin/service/inbox.dart';
 import 'package:rokwire_plugin/service/polls.dart';
 import 'package:illinois/utils/AppUtils.dart';
 import 'package:rokwire_plugin/service/service.dart';
@@ -67,6 +68,8 @@ enum RootTab { Home, Favorites, Athletics, Explore, Browse, Maps, Academics, Wel
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
+
+  static const String notifyTabChanged    = "edu.illinois.rokwire.root.tab.changed";
 
   RootPanel() : super(key: stateKey);
 
@@ -118,7 +121,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       DeviceCalendar.notifyShowConsoleMessage,
       uiuc.TabBar.notifySelectionChanged,
       HomePanel.notifyCustomize,
-      ExplorePanel.notifyMapSelect,
+      ExplorePanel.notifySelectMap,
     ]);
 
     _tabs = _getTabs();
@@ -236,7 +239,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (name == HomePanel.notifyCustomize) {
       _onSelectHome();
     }
-    else if (name == ExplorePanel.notifyMapSelect) {
+    else if (name == ExplorePanel.notifySelectMap) {
       _onSelectMaps();
     }
     else if (name == uiuc.TabBar.notifySelectionChanged) {
@@ -293,13 +296,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   
   void _selectTab(int tabIndex) {
 
-    if ((tabIndex >= 0) && (tabIndex != _currentTabIndex)) {
+    if ((0 <= tabIndex) && (tabIndex < _tabs.length) && (tabIndex != _currentTabIndex)) {
       _tabBarController!.animateTo(tabIndex);
-
-      Widget? tabPanel = _getTabPanelAtIndex(tabIndex);
-      if (tabPanel != null) {
-        Analytics().logPage(name:tabPanel.runtimeType.toString());
-      }
 
       if (mounted) {
         setState(() {
@@ -309,6 +307,12 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       else {
         _currentTabIndex = tabIndex;
       }
+
+      Widget? tabPanel = _getTabPanelAtIndex(tabIndex);
+      Analytics().logPage(name: tabPanel?.runtimeType.toString());
+
+      RootTab? rootTab = getRootTabByIndex(tabIndex);
+      NotificationService().notify(RootPanel.notifyTabChanged, rootTab);
     }
   }
 
@@ -682,7 +686,7 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
       return ExplorePanel(rootTabDisplay: true, mapDisplayType: ListMapDisplayType.Map);
     }
     else if (rootTab == RootTab.Academics) {
-      return AcademicsHomePanel();
+      return AcademicsHomePanel(rootTabDisplay: true,);
     }
     else if (rootTab == RootTab.Wellness) {
       return WellnessHomePanel(rootTabDisplay: true,);
@@ -731,7 +735,8 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
   }
 
   void _onFirebaseInboxNotification() {
-    SettingsNotificationsContentPanel.present(context, content: SettingsNotificationsContent.all);
+    SettingsNotificationsContentPanel.present(context,
+        content: (Inbox().unreadMessagesCount > 0) ? SettingsNotificationsContent.unread : SettingsNotificationsContent.all);
   }
   
   void _onFirebaseCanvasAppDeepLinkNotification(dynamic param) {

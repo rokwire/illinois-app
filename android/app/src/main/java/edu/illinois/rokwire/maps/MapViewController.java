@@ -53,6 +53,9 @@ public class MapViewController implements PlatformView, MethodChannel.MethodCall
             } else if ("enable".equals(methodCall.method)) {
                 enableMap(methodCall.arguments);
                 result.success(true);
+            } else if ("fixZOrder".equals(methodCall.method)) {
+                // No fix is needed in Android
+                result.success(true);
             } else if ("enableMyLocation".equals(methodCall.method)) {
                 enableMyLocation(methodCall.arguments);
                 result.success(true);
