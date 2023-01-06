@@ -77,7 +77,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Flexible(child: Text(Localization().getStringEx('panel.skills_self_evaluation.get_started.section.title', 'Skills Self Evaluation'), style: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.get_started.header'), textAlign: TextAlign.left,)),
           IconButton(
-            icon: Image.asset('images/tab-more.png', color: Styles().colors?.surface, excludeFromSemantics: true),
+            icon: Styles().images?.getImage('more-white', excludeFromSemantics: true) ?? Container(),
             tooltip: Localization().getStringEx('panel.skills_self_evaluation.button.more.hint', 'Show more'),
             onPressed: _onTapShowBottomSheet,
             padding: EdgeInsets.zero,
@@ -120,7 +120,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
     bool saveEnabled = Storage().assessmentsSaveResultsMap?['bessi'] != false;
     return <Widget>[
       RibbonButton(
-        leftIconAsset: "images/icon-info-orange.png",
+        leftIconKey: "info",
         label: saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.description", "Your results will be saved for you to revisit or compare to future results.") :
                 Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.description", "Your results will not be saved for you to compare to future results."),
         textStyle: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.title'),
@@ -128,7 +128,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
         onTap: _onTapSavedResultsInfo,
       ),
       RibbonButton(
-        leftIconAsset: "images/icon-settings.png",
+        leftIconKey: "settings",
         label: saveEnabled ? Localization().getStringEx("panel.skills_self_evaluation.get_started.body.dont_save.label", "Don't Save My Results") :
                 Localization().getStringEx("panel.skills_self_evaluation.get_started.body.save.label", "Save My Results"),
         textStyle: Styles().textStyles?.getTextStyle('panel.skills_self_evaluation.content.link.fat'),
@@ -168,31 +168,31 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
                               color: Styles().colors?.mediumGray)))),
               SizedBox(height: 16),
               RibbonButton(
-                rightIconAsset: "images/chevron-right.png",
+                rightIconKey: "chevron-right",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.past_results.label", "View past results"),
                 textColor: Styles().colors?.fillColorPrimaryVariant,
                 onTap: _onTapResults,
               ),
               RibbonButton(
-                rightIconAsset: "images/chevron-right.png",
+                rightIconKey: "chevron-right",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.where_results_go.label", "Where do my results go?"),
                 textColor: Styles().colors?.fillColorPrimaryVariant,
                 onTap: () => _onTapShowInfo("where_results_go"),
               ),
               RibbonButton(
-                rightIconAsset: "images/chevron-right.png",
+                rightIconKey: "chevron-right",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.how_results_determined.label", "How are my results determined?"),
                 textColor: Styles().colors?.fillColorPrimaryVariant,
                 onTap: () => _onTapShowInfo("how_results_determined"),
               ),
               RibbonButton(
-                rightIconAsset: "images/chevron-right.png",
+                rightIconKey: "chevron-right",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.why_skills_matter.label", "Why do these skills matter?"),
                 textColor: Styles().colors?.fillColorPrimaryVariant,
                 onTap: () => _onTapShowInfo("why_skills_matter"),
               ),
               RibbonButton(
-                rightIconAsset: "images/chevron-right.png",
+                rightIconKey: "chevron-right",
                 label: Localization().getStringEx("panel.skills_self_evaluation.get_started.bottom_sheet.who_created_assessment.label", "Who created this assessment?"),
                 textColor: Styles().colors?.fillColorPrimaryVariant,
                 onTap: () => _onTapShowInfo("who_created_assessment"),
@@ -222,7 +222,7 @@ class _SkillsSelfEvaluationState extends State<SkillsSelfEvaluation> implements 
       padding: EdgeInsets.only(left: 32, right: 32, top: 40, bottom: 32),
       alignment: Alignment.center,
       infoTextWidget: textWidget,
-      closeIcon: Image.asset('images/close-orange-small.png', color: Styles().colors?.fillColorPrimaryVariant),
+      closeIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
     ),);
   }
 

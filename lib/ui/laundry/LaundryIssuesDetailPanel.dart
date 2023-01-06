@@ -88,18 +88,15 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
   }
 
   Widget _buildMachineImageWidget() {
-    final double imageSize = 70;
-    Widget machineImagePlaceHolder;
+    Widget? machineImagePlaceHolder;
     switch (widget.issues.type) {
       case LaundryApplianceType.washer:
-        machineImagePlaceHolder = Image.asset('images/icon-washer-big.png', width: imageSize, height: imageSize, fit: BoxFit.fill);
+        machineImagePlaceHolder = Styles().images?.getImage('washer-large', excludeFromSemantics: true) ?? Container();
         break;
       case LaundryApplianceType.dryer:
-        machineImagePlaceHolder = Image.asset('images/icon-dryer-big.png', width: imageSize, height: imageSize, fit: BoxFit.fill);
+        machineImagePlaceHolder = Styles().images?.getImage('dryer-large', excludeFromSemantics: true) ?? Container();
         break;
       default:
-        machineImagePlaceHolder = Container(width: imageSize, height: imageSize, color: Styles().colors!.fillColorPrimaryTransparent015);
-        break;
     }
     return Padding(padding: EdgeInsets.only(right: 20), child: machineImagePlaceHolder);
   }
@@ -127,7 +124,7 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
             child: Padding(
                 padding: EdgeInsets.only(top: 15),
                 child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                  Image.asset((selected ? 'images/icon-selected-checkbox.png' : 'images/icon-deselected-checkbox.png')),
+                  Styles().images?.getImage(selected ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true) ?? Container(),
                   Padding(
                       padding: EdgeInsets.only(left: 15),
                       child: Text(StringUtils.ensureNotEmpty(issueCode),
@@ -173,7 +170,7 @@ class _LaundryIssuesDetailPanelState extends State<LaundryIssuesDetailPanel> {
             borderColor: Styles().colors!.fillColorPrimary,
             label: Localization().getStringEx('panel.laundry.issues_detail.continue.button', 'Continue'),
             onTap: _onTapContinue,
-            rightIcon: Image.asset('images/chevron-right-white.png')));
+            rightIcon: Styles().images?.getImage('chevron-right-white', excludeFromSemantics: true)));
   }
 
   void _onTapIssueCode(String? issueCode) {

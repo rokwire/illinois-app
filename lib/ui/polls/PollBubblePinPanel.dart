@@ -138,7 +138,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
   List<Widget> _buildInfoContent() {
     return <Widget>[
       IconButton(
-        icon: Semantics(label: "Back", child: Image.asset('images/chevron-left-white.png', excludeFromSemantics: true,)),
+        icon: Semantics(label: "Back", child: Styles().images?.getImage('chevron-left-white', excludeFromSemantics: true)),
         onPressed: ()=>setState((){_showInfo = false;}),
       ),
       Padding(
@@ -282,7 +282,7 @@ class _PollBubblePinPanelState extends State<PollBubblePinPanel> {
         button: true,
         child: InkWell(
             onTap : _onClose,
-            child: Container(width: 48, height: 48, alignment: Alignment.center, child: Image.asset('images/close-white.png', semanticLabel: "",))));
+            child: Container(width: 48, height: 48, alignment: Alignment.center, child: Styles().images?.getImage('close-circle-white', excludeFromSemantics: true))));
   }
 
   //Workaround to pronounce the Dialog Message when entering the first field for first time.

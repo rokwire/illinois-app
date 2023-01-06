@@ -89,7 +89,7 @@ class _SettingsNotificationPreferencesContentWidgetState extends State<SettingsN
           title: Localization().getStringEx("panel.settings.notifications.label.notifications", "Push Notifications"),
           description: _notificationsStatus,
           additionalInfo: Localization().getStringEx("panel.settings.notifications.label.info", "To receive notifications enable in your device's settings."),
-          iconRes: "images/notifications-blue.png",
+          iconKey: "notification",
           onTap: (){_onOpenNotifications(context);},
         ),
         Container(height: 27,),

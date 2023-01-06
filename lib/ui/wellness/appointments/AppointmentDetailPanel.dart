@@ -140,13 +140,13 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
   }
 
   Widget _buildAppointmentContent() {
-    String? toutImageUrl = _appointment?.imageUrlBasedOnCategory;
+    String? toutImageKey = _appointment?.imageKeyBasedOnCategory;
 
     return Column(children: <Widget>[
       Expanded(
           child: Container(
               child: CustomScrollView(scrollDirection: Axis.vertical, slivers: <Widget>[
-        SliverToutHeaderBar(flexImageUrl: toutImageUrl, flexRightToLeftTriangleColor: Colors.white),
+        SliverToutHeaderBar(flexImageKey: toutImageKey, flexRightToLeftTriangleColor: Colors.white),
         SliverList(
             delegate: SliverChildListDelegate([
           Padding(
@@ -200,7 +200,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                                       ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
                                       : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                                   button: true,
-                                  child: Image.asset(isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png',
+                                  child: Styles().images?.getImage(isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png',
                                       excludeFromSemantics: true)))))))
         ]));
   }*/
@@ -232,8 +232,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                               ? Localization().getStringEx('widget.card.button.favorite.off.hint', '')
                               : Localization().getStringEx('widget.card.button.favorite.on.hint', ''),
                           button: true,
-                          child: Image.asset(isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png',
-                              excludeFromSemantics: true)))))
+                          child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray', excludeFromSemantics: true)))))
         ]));
   }
 
@@ -307,7 +306,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         child: Padding(
             padding: EdgeInsets.only(bottom: 8),
             child: Row(children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 7), child: Image.asset('images/icon-calendar.png', excludeFromSemantics: true)),
+              Padding(padding: EdgeInsets.only(right: 7), child: Styles().images?.getImage('calendar', excludeFromSemantics: true)),
               Expanded(
                   child: Text(displayTime!,
                       style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
@@ -353,7 +352,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                    Padding(padding: EdgeInsets.only(right: 6), child: Image.asset('images/location.png', excludeFromSemantics: true)),
+                    Padding(padding: EdgeInsets.only(right: 6), child: Styles().images?.getImage('location', excludeFromSemantics: true)),
                     Text(typeLabel,
                         style: TextStyle(
                             fontFamily: Styles().fontFamilies!.medium,
@@ -399,7 +398,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-                Padding(padding: EdgeInsets.only(right: 6), child: Image.asset('images/laptop.png', excludeFromSemantics: true)),
+                Padding(padding: EdgeInsets.only(right: 6), child: Styles().images?.getImage('laptop', excludeFromSemantics: true)),
                 Container(
                     padding: EdgeInsets.only(bottom: 2),
                     child: Text(typeLabel,
@@ -459,7 +458,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     return Padding(
         padding: EdgeInsets.only(bottom: 8),
         child: Row(children: <Widget>[
-          Padding(padding: EdgeInsets.only(right: 12), child: Image.asset('images/u.png', excludeFromSemantics: true)),
+          Padding(padding: EdgeInsets.only(right: 12), child: Styles().images?.getImage('person', excludeFromSemantics: true)),
           Expanded(
               child: Text(hostDisplayName!,
                   style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
@@ -473,7 +472,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     return Padding(
         padding: EdgeInsets.only(bottom: 8),
         child: Row(children: <Widget>[
-          Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/icon-info-orange.png', excludeFromSemantics: true)),
+          Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('info', excludeFromSemantics: true)),
           Expanded(
               child: Text(Localization().getStringEx('panel.appointment.detail.instructions.label', 'Required prep'),
                   style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
@@ -488,7 +487,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
     return Padding(
         padding: EdgeInsets.only(bottom: 8),
         child: Row(children: <Widget>[
-          Padding(padding: EdgeInsets.only(right: 11), child: Image.asset('images/icon-phone.png', excludeFromSemantics: true)),
+          Padding(padding: EdgeInsets.only(right: 11), child: Styles().images?.getImage('phone', excludeFromSemantics: true)),
           Expanded(
               child: Text(phone!,
                   style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))
@@ -505,7 +504,7 @@ class _AppointmentDetailPanelState extends State<AppointmentDetailPanel> impleme
         child: Padding(
             padding: EdgeInsets.only(bottom: 8),
             child: Row(children: <Widget>[
-              Padding(padding: EdgeInsets.only(right: 10), child: Image.asset('images/external-link.png', excludeFromSemantics: true)),
+              Padding(padding: EdgeInsets.only(right: 10), child: Styles().images?.getImage('external-link', excludeFromSemantics: true)),
               Expanded(
                   child: Text(url!,
                       style: TextStyle(fontFamily: Styles().fontFamilies!.medium, fontSize: 16, color: Styles().colors!.textBackground)))

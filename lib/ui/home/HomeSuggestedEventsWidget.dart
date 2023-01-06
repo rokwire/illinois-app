@@ -285,7 +285,7 @@ class _HomeSuggestedEventsWidgetState extends State<HomeSuggestedEventsWidget> i
         title: Localization().getStringEx('widget.home.suggested_events.label.events_for_you', 'Suggested Events'),
         subTitle: _hasFiltersApplied ? Localization().getStringEx('widget.home.suggested_events.label.events_for_you.sub_title', 'Curated from your interests') : '',
         favoriteId: widget.favoriteId,
-        rightIconAsset: 'images/settings-white.png',
+        rightIconKey: 'settings-white',
         rightIconAction: _navigateToSettings,
       ),
       Stack(children:<Widget>[
@@ -400,7 +400,7 @@ class _EventsRibbonHeader extends StatelessWidget {
   final String? subTitle;
 
   final String? rightIconLabel;
-  final String? rightIconAsset;
+  final String? rightIconKey;
   final void Function()? rightIconAction;
 
   final String? favoriteId;
@@ -411,7 +411,7 @@ class _EventsRibbonHeader extends StatelessWidget {
 
     // ignore: unused_element
     this.rightIconLabel,
-    this.rightIconAsset,
+    this.rightIconKey,
     this.rightIconAction,
 
     this.favoriteId,
@@ -422,7 +422,7 @@ class _EventsRibbonHeader extends StatelessWidget {
     List<Widget> titleList = <Widget>[];
 
     titleList.add(
-      HomeTitleIcon(image: Image.asset('images/icon-calendar.png')),
+      HomeTitleIcon(image: Styles().images?.getImage('calendar')),
     );
       
     titleList.add(
@@ -444,11 +444,11 @@ class _EventsRibbonHeader extends StatelessWidget {
       ),
     );
 
-    Widget? rightIconWidget = (rightIconAsset != null) ?
+    Widget? rightIconWidget = (rightIconKey != null) ?
       Semantics(label: rightIconLabel, button: true, child:
         InkWell(onTap: rightIconAction, child:
           Padding(padding: EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 16), child:
-            Image.asset(rightIconAsset!, excludeFromSemantics: true,),
+            Styles().images?.getImage(rightIconKey, excludeFromSemantics: true,),
           )
         )
       ) : null;

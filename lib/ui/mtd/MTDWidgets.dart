@@ -115,16 +115,16 @@ class MTDStopCard extends StatelessWidget {
                         SizedBox(width: 18, height: 18, child:
                           Center(child:
                             _isExpanded ?
-                              Image.asset('images/arrow-up-orange.png', excludeFromSemantics: true) :
-                              Image.asset('images/arrow-down-orange.png', excludeFromSemantics: true)
+                            Styles().images?.getImage('chevron-up', excludeFromSemantics: true) :
+                            Styles().images?.getImage('chevron-down', excludeFromSemantics: true)
                           ),
                         )
                       ),
                     ),
                 ),
-              ],),
+              ]),
             ),
-          ],),
+          ]),
         ),
       ),
     );
@@ -264,12 +264,12 @@ class _MTDStopScheduleCardState extends State<MTDStopScheduleCard> implements No
   @override
   Widget build(BuildContext context) {
     bool isFavorite = Auth2().isFavorite(widget.stop);
-    Image? favoriteStarIcon = widget.stop.favoriteStarIcon(selected: isFavorite);
+    Widget? favoriteStarIcon = widget.stop.favoriteStarIcon(selected: isFavorite);
     Color? headerColor = widget.stop.favoriteHeaderColor;
     String? title = widget.stop.favoriteTitle;
     String? cardDetailText = widget.stop.favoriteDetailText;
     Color? cardDetailTextColor = widget.stop.favoriteDetailTextColor ?? Styles().colors?.textBackground;
-    Image? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? widget.stop.favoriteDetailIcon : null;
+    Widget? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? widget.stop.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: widget.onTap, child:
       Semantics(label: title, child:

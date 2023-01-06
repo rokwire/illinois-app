@@ -53,7 +53,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessRingsWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'wellness',
       childPadding: HomeSlantWidget.defaultChildPadding,
       child: _buildContent(),
     );
@@ -158,7 +158,7 @@ class _HomeWellnessRingsWidgetState extends State<HomeWellnessRingsWidget> imple
                     children: <Widget>[
                       Container(
                         padding: EdgeInsets.only(right: 8),
-                        child: Image.asset('images/icons-control-add-blue.png', excludeFromSemantics: true, color: enabled? Colors.black : disabledTextColor,),
+                        child: Styles().images?.getImage('plus-circle', excludeFromSemantics: true, color: enabled? Colors.black : disabledTextColor,),
                       ),
                       Expanded(
                           flex: 5,

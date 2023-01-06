@@ -311,7 +311,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           //borderRadius: BorderRadius.all(Radius.circular(5)),
           label: Localization().getStringEx("panel.settings.home.calendar.research.questionnaire.title", "Research interest form"),
           textColor: (Questionnaires().participateInResearch == true)? Styles().colors?.fillColorPrimary : Styles().colors?.surfaceAccent,
-          rightIconAsset: (Questionnaires().participateInResearch == true) ? 'images/chevron-right.png' : 'images/chevron-right-gray.png',
+          rightIconKey: Questionnaires().participateInResearch ?? false ? 'chevron-right' : 'chevron-right-gray',
           onTap: _onResearchQuestionnaireClicked
         ),
       ]),
@@ -376,7 +376,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
               )
             ),
             Padding(padding: EdgeInsets.only(left: 5), child:
-              Image.asset(selected ? 'images/deselected-dark.png' : 'images/deselected.png')
+              Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true)
             )
           ])
         )
@@ -578,7 +578,13 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
     if (_profilePicProcessing) {
       contentWidget = Center(child: CircularProgressIndicator());
     } else {
-      Image profileImage = _hasProfilePicture ? Image.memory(_profileImageBytes!) : Image.asset('images/missing-profile-photo-placeholder.png', excludeFromSemantics: true);
+      Image? profileImage = _hasProfilePicture? Image.memory(_profileImageBytes!) : null;
+      Widget? profilePicture = _hasProfilePicture ? ModalImageHolder(
+          image: profileImage?.image,
+          child: Container(decoration:
+            BoxDecoration(shape: BoxShape.circle, color: Colors.white, image: DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage!.image))
+          ),
+        ) : Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true);
       contentWidget = Column(children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Visibility(visible: _hasProfilePicture, child:
@@ -592,16 +598,7 @@ class _SettingsPersonalInfoContentWidgetState extends State<SettingsPersonalInfo
           ),
           Expanded(child:
             Container(width: 189, height: 189, child:
-              Semantics(image: true, label: "Profile", child:
-                ModalImageHolder(
-                  image: _hasProfilePicture? profileImage.image : null,
-                  child: Container(decoration:
-                    BoxDecoration(shape: BoxShape.circle, color: Colors.white, image:
-                      DecorationImage(fit: _hasProfilePicture ? BoxFit.cover : BoxFit.contain, image: profileImage.image)
-                    )
-                  ),
-                )
-              )
+              Semantics(image: true, label: "Profile", child: profilePicture)
             ),
           ),
           Visibility(visible: _hasProfilePicture, child:

@@ -122,7 +122,7 @@ class _HomeAthleticsNewsWidgetState extends State<HomeAthliticsNewsWidget> imple
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
         title: Localization().getStringEx('widget.home.athletics_news.text.title', 'Athletics News'),
-        titleIcon: Image.asset('images/icon-news.png'),
+        titleIconKey: 'news',
         child: _buildContent(),
     );
   }

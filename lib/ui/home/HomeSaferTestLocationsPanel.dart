@@ -189,7 +189,7 @@ class _TestLocation extends StatelessWidget {
     TextStyle linkStyle = TextStyle(fontFamily: Styles().fontFamilies!.regular, fontSize: 16, color: Styles().colors!.accentColor3, decoration: TextDecoration.underline);
 
     List<Widget> locationContent = <Widget>[
-      Image.asset('images/icon-location.png',excludeFromSemantics: true),
+      Styles().images?.getImage('location', excludeFromSemantics: true) ?? Container(),
       Container(width: 8),
     ];
 
@@ -269,7 +269,7 @@ class _TestLocation extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Image.asset('images/icon-time.png',excludeFromSemantics: true),
+                  Styles().images?.getImage('time', excludeFromSemantics: true) ?? Container(),
                   Container(width: 8,),
                   Expanded(child:
                     _buildWorkTime(),
@@ -363,7 +363,7 @@ class _TestLocation extends StatelessWidget {
       underline: Container(),
       value: period,
       onChanged: (value){},
-      icon: Image.asset('images/chevron-down.png', color: Styles().colors!.fillColorSecondary, excludeFromSemantics: false,),
+      icon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true),
       selectedItemBuilder:(context){
         return items.map<Widget>((entry){
           return Row(

@@ -47,7 +47,7 @@ class ExploreDisplayTypeHeader extends StatelessWidget {
                   ExploreViewTypeTab(
                     label: Localization().getStringEx('widget.explore_display_type.header.list.title', 'List'),
                     hint: Localization().getStringEx('widget.explore_display_type.header.list.hint', ''),
-                    iconResource: 'images/icon-list-view.png',
+                    iconKey: 'list-outline',
                     selected: (displayType == ListMapDisplayType.List),
                     onTap: onTapList,
                   ),
@@ -57,7 +57,7 @@ class ExploreDisplayTypeHeader extends StatelessWidget {
                   ExploreViewTypeTab(
                     label: Localization().getStringEx('widget.explore_display_type.header.map.title', 'Map'),
                     hint: Localization().getStringEx('widget.explore_display_type.header.map.hint', ''),
-                    iconResource: 'images/icon-map-view.png',
+                    iconKey: 'location-outline',
                     selected: (displayType == ListMapDisplayType.Map),
                     onTap: onTapMap,
                   ),
@@ -70,7 +70,7 @@ class ExploreDisplayTypeHeader extends StatelessWidget {
                       button: true, excludeSemantics: true,
                       label: Localization().getStringEx('panel.search.button.search.title', 'Search'),child:
                     IconButton(
-                      icon: Image.asset('images/icon-search.png', excludeFromSemantics: true),
+                      icon: Styles().images?.getImage('search', excludeFromSemantics: true) ?? Container(),
                       onPressed: () {
                         Analytics().logSelect(target: "Search");
                         Navigator.push(context, CupertinoPageRoute(builder: (context) => ExploreSearchPanel(searchData:additionalData ))).

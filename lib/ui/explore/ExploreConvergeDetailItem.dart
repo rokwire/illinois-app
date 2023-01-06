@@ -69,7 +69,7 @@ class ExploreConvergeDetailItem extends StatelessWidget{
         visible: hasConvergeUrl(),
         child:  Padding(
           padding: EdgeInsets.only(left: 3),
-          child: Image.asset('images/icon-more-info.png', excludeFromSemantics: true),
+          child: Styles().images?.getImage('info', excludeFromSemantics: true),
         ),
       );
   }
@@ -123,7 +123,7 @@ class ExploreConvergeDetailButton extends ExploreConvergeDetailItem{
       ),
       Text( Localization().getString("widget.card.label.converge")!),
       Container(width: 5,),
-//      Image.asset('images/chevron-right.png')
+//      Styles().images?.getImage('images/chevron-right.png')
 
     ];
   }

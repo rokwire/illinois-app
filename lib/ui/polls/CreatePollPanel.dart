@@ -85,7 +85,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
     return Scaffold(
         appBar: HeaderBar(
           title: Localization().getStringEx("panel.create_poll.header.title", "Create a Quick Poll"),
-          leadingAsset: 'images/close-white.png',
+          leadingIconKey: 'close-circle-white',
           onLeading: _onTapCancel,
         ),
         body: SafeArea(
@@ -234,7 +234,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                 Styles().textStyles?.getTextStyle("widget.button.title.medium.fat")
               ),
               Padding(padding: EdgeInsets.only(left: 5), child:
-                Image.asset('images/icon-add-14x14.png'),
+              Styles().images?.getImage('plus-circle', excludeFromSemantics: true),
               ),
             ]),
           )
@@ -272,7 +272,7 @@ class _CreatePollPanelState extends State<CreatePollPanel> {
                 Container(
                     child: Row(
                     children: <Widget>[
-                      Image.asset('images/icon-settings.png'),
+                      Styles().images?.getImage('settings', excludeFromSemantics: true) ?? Container(),
                       Expanded(child:
                         Padding(
                           padding: EdgeInsets.only(left: 10),

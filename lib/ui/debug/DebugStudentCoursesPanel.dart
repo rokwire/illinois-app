@@ -75,7 +75,7 @@ class _DebugStudentCoursesPanelState extends State<DebugStudentCoursesPanel> {
                 Visibility(visible: !_processingContent, child:
                   Align(alignment: Alignment.bottomRight, child:
                     Padding(padding: EdgeInsets.all(10), child: 
-                      _validContent ? Image.asset('images/green-check-mark.png', width: 18, height: 18) : Image.asset('images/close-orange-small.png', width: 18, height: 18),
+                      _validContent ? Styles().images?.getImage('check-green') : Styles().images?.getImage('clear'),
                     ),
                   ),
                 ),
@@ -84,7 +84,7 @@ class _DebugStudentCoursesPanelState extends State<DebugStudentCoursesPanel> {
                     Wrap(children: [
                       InkWell(onTap: _onPaste, child:
                         Padding(padding: EdgeInsets.all(10), child: 
-                          Image.asset('images/icon-paste.png', excludeFromSemantics: true),
+                          Styles().images?.getImage('paste', excludeFromSemantics: true),
                         ),
                       ),
                       InkWell(onTap: _onClear, child:

@@ -101,7 +101,7 @@ class _HomeHandleWidgetState extends State<HomeHandleWidget> implements Notifica
 
           Semantics(label: 'Drag Handle' /* TBD: Localization */, onLongPress: (){},button: true, child:
             Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-              Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
+              Styles().images?.getImage('drag-white', excludeFromSemantics: true),
             ),
           ),
 
@@ -239,7 +239,7 @@ class HomeSlantWidget extends StatelessWidget {
   static const EdgeInsetsGeometry defaultChildPadding = const EdgeInsets.only(left: 16, right: 16, bottom: 16);
 
   final String? title;
-  final Image? titleIcon;
+  final String? titleIconKey;
   final CrossAxisAlignment headerAxisAlignment;
 
   final double flatHeight;
@@ -252,7 +252,7 @@ class HomeSlantWidget extends StatelessWidget {
 
   const HomeSlantWidget({Key? key,
     this.title,
-    this.titleIcon,
+    this.titleIconKey,
     this.headerAxisAlignment = CrossAxisAlignment.center,
     
     this.flatHeight = 40,
@@ -275,7 +275,7 @@ class HomeSlantWidget extends StatelessWidget {
           child: Container(color: Styles().colors!.fillColorPrimary, child:
             Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
-              HomeTitleIcon(image: titleIcon),
+              HomeTitleIcon(image: Styles().images?.getImage(titleIconKey, excludeFromSemantics: true)),
 
               Expanded(child:
                 Padding(padding: EdgeInsets.symmetric(vertical: 12), child:
@@ -321,7 +321,7 @@ class HomeSlantWidget extends StatelessWidget {
 
 class HomeTitleIcon extends StatelessWidget {
 
-  final Image? image;
+  final Widget? image;
   HomeTitleIcon({Key? key, this.image});
 
   @override
@@ -507,7 +507,7 @@ class HomeDragFeedback extends StatelessWidget {
         Row(crossAxisAlignment: headerAxisAlignment, children: <Widget>[
 
           Container(padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16), child:
-            Image.asset('images/icon-drag-white.png', excludeFromSemantics: true),
+            Styles().images?.getImage('drag-white', excludeFromSemantics: true),
           ),
           
           Expanded(child:
@@ -551,7 +551,7 @@ class HomeCommandButton extends StatelessWidget {
                   Text(title ?? '', style: Styles().textStyles?.getTextStyle('widget.title.large.extra_fat'), semanticsLabel: "",),
                 )
               ),
-              // Image.asset('images/chevron-right.png', excludeFromSemantics: true)
+              // Styles().images?.getImage('images/chevron-right.png', excludeFromSemantics: true)
               ((loading == true)
                 ? Padding(padding: EdgeInsets.all(16), child:
                     SizedBox(height: 16, width: 16, child:
@@ -712,7 +712,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   String  get contentKey => 'home.$favoriteId';
   
   String? get title;
-  Image?  get titleIcon => Image.asset('images/campus-tools.png', excludeFromSemantics: true);
+  String?  get titleIconKey => 'campus-tools';
   
   String? get emptyTitle => null;
   String? get emptyMessage;
@@ -783,7 +783,7 @@ abstract class HomeCompoundWidgetState<T extends StatefulWidget> extends State<T
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: favoriteId,
       title: title,
-      titleIcon: titleIcon,
+      titleIconKey: titleIconKey,
       childPadding: EdgeInsets.zero,
       child: _buildContent(),
     );

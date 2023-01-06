@@ -94,13 +94,13 @@ class _CanvasCourseHomePanelState extends State<CanvasCourseHomePanel> {
       RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.assignments.title', 'Assignments'),
           hint: Localization().getStringEx('panel.home_canvas_course.button.assignments.hint', ''),
-          leftIconAsset: 'images/icon-canvas-implemented-working.png',
+          leftIconKey: 'settings-working',
           onTap: _onTapAssignments),
       _buildDelimiter(),
       RibbonButton(
           label: Localization().getStringEx('panel.home_canvas_course.button.launch.title', 'Launch Canvas'),
           hint: Localization().getStringEx('panel.home_canvas_course.button.launch.hint', ''),
-          leftIconAsset: 'images/icon-canvas-implemented-working.png',
+          leftIconKey: 'settings-working',
           onTap: _onTapLaunch),
       _buildDelimiter()
     ]);

@@ -237,8 +237,8 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
     bool selected = selectedAnswers?.contains(answer.id) ?? false;
     String title = _questionnaireString(answer.title);
     String imageAsset = (question.maxAnswers == 1) ?
-      (selected ? "images/checkbox-radio-selected.png" : "images/checkbox-radio-unselected.png") :
-      (selected ? "images/selected-checkbox.png" : "images/deselected-checkbox.png");
+      (selected ? "radio-button-on" : "radio-button-off") :
+      (selected ? "check-box-filled" : "check-box-outline-gray");
     return
       Semantics(
         label: title, button: true,
@@ -249,7 +249,7 @@ class _Onboarding2ResearchQuestionnairePanelState extends State<Onboarding2Resea
           Padding(padding: EdgeInsets.symmetric(horizontal: _hPadding, vertical: _hPadding / 2), child:
             Row(children: [
               Padding(padding: EdgeInsets.only(right: 12), child:
-                Image.asset(imageAsset),
+                Styles().images?.getImage(imageAsset, excludeFromSemantics: true),
               ),
               Expanded(child:
                 Padding(padding: EdgeInsets.only(top: 8, bottom: 8,), child:

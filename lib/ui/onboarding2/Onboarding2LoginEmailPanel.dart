@@ -115,7 +115,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
 
     return Scaffold(backgroundColor: Styles().colors!.background, body:
       Stack(children: <Widget>[
-        Image.asset("images/login-header.png", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true, ),
+        Styles().images?.getImage("header-login", fit: BoxFit.fitWidth, width: MediaQuery.of(context).size.width, excludeFromSemantics: true) ?? Container(),
         SafeArea(child:
           Column(children:[
             Expanded(child:
@@ -231,7 +231,7 @@ class _Onboarding2LoginEmailPanelState extends State<Onboarding2LoginEmailPanel>
                           child: InkWell(onTap: () => _onTapShowPassword(), child:
                             Padding(padding: EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12), child:
                               Row(mainAxisSize: MainAxisSize.min, children: [
-                                Image.asset(_showingPassword ? 'images/deselected-dark.png' : 'images/deselected.png', excludeFromSemantics: true,),
+                                Styles().images?.getImage(_showingPassword ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true) ?? Container(),
                                 Container(width: 6),
                                 Text(showPassword, textAlign: TextAlign.left, style: Styles().textStyles?.getTextStyle("widget.button.title.medium.fat"),),
                               ],)

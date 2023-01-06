@@ -145,9 +145,9 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
       controller: widget.scrollController,
       slivers: <Widget>[
         SliverHeaderBar(
-          leadingAsset: widget.scrollController == null
-              ? 'images/chevron-left-white.png'
-              : 'images/chevron-left-blue.png',
+          leadingIconKey: widget.scrollController == null
+              ? 'chevron-left-white'
+              : 'chevron-left',
           title: Localization().getStringEx('panel.settings.illini_cash.label.title','Illini Cash'),
           textColor: widget.scrollController == null
               ? Styles().colors!.white
@@ -242,8 +242,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildSettingsHeader(Localization().getStringEx("panel.settings.illini_cash.label.buy_illini_cash", "Buy Illini Cash"),
-                'images/icon-schedule.png'),
+            _buildSettingsHeader(Localization().getStringEx("panel.settings.illini_cash.label.buy_illini_cash", "Buy Illini Cash"), 'cost'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Html(data: contentHtml,
@@ -283,7 +282,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
     return Column(
       children: <Widget>[
         _buildSettingsHeader(Localization().getStringEx(
-            "panel.settings.illini_cash.label.history", "History"), 'images/icon-schedule.png'),
+            "panel.settings.illini_cash.label.history", "History"), 'history'),
         _buildBalanceTableRow(),
         _buildBalancePeriodViewPicker(),
 
@@ -305,7 +304,7 @@ class _SettingsIlliniCashPanelState extends State<SettingsIlliniCashPanel> imple
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: <Widget>[
-                Image.asset(StringUtils.ensureNotEmpty(iconSrc, defaultValue: 'images/icon-settings.png')),
+                Styles().images?.getImage(StringUtils.ensureNotEmpty(iconSrc, defaultValue: 'settings'), excludeFromSemantics: true) ?? Container(),
                 Padding(
                   padding: EdgeInsets.only(left: 12),
                   child: Text(
@@ -732,7 +731,7 @@ class _DateValue extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(title!, style: Styles().textStyles?.getTextStyle("widget.title.regular"),),
-          Image.asset('images/icon-down.png')
+          Styles().images?.getImage('chevron-down', excludeFromSemantics: true) ?? Container(),
         ],), Container(height: 2, color: Styles().colors!.fillColorSecondary,)
     ],),),);
   }

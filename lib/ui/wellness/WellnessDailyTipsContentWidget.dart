@@ -104,7 +104,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     return Padding(padding: EdgeInsets.only(top: 16), child:
       Semantics(label: Localization().getStringEx('panel.wellness.sections.dimensions.title', '8 Dimensions of Wellness'), hint: Localization().getStringEx('panel.wellness.sections.dimensions.hint', 'Tap to see the 8 Dimensions of Wellness'), button: true, image: true, child:
         InkWell(onTap: _onTapEightDimensionsImage, child:
-          Image.asset('images/wellness-wheel-thumbnail.png', width: 45, height: 45, excludeFromSemantics: true,),
+          Styles().images?.getImage('wellness-wheel-small', excludeFromSemantics: true,),
         ),
       ),
     );
@@ -135,7 +135,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
     return RoundedButton(
         label: Localization().getStringEx('panel.wellness.sections.dimensions.button', 'Learn more about the 8 dimensions'),
         textStyle: Styles().textStyles?.getTextStyle("panel.wellness.tips.button.title.small"),
-        rightIcon: Image.asset('images/external-link.png'),
+        rightIcon: Styles().images?.getImage('external-link', excludeFromSemantics: true),
         rightIconPadding: EdgeInsets.only(left: 4, right: 6),
         onTap: onTapEightDimension);
   }
@@ -161,7 +161,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
                   )),
                 ],),
                 Container(height: 16),
-                Image.asset('images/wellness-wheel-2019.png', semanticLabel: "Circular diagram with 8 dimensions title in center. Then a 2nd ring of icons representing different dimensions in the next ring of diagram. In the Third and final ring of diagram, there are names of dimensions: Environmental, Financial, Spiritual, Vocational, Emotional, Social, Physical, Mental.",), //TBD localize
+                Styles().images?.getImage('wellness-wheel', semanticLabel: "Circular diagram with 8 dimensions title in center. Then a 2nd ring of icons representing different dimensions in the next ring of diagram. In the Third and final ring of diagram, there are names of dimensions: Environmental, Financial, Spiritual, Vocational, Emotional, Social, Physical, Mental.") ?? Container(), //TBD localize
               ],),
             ),
             Column(mainAxisSize: MainAxisSize.min, children: [
@@ -170,7 +170,7 @@ class _WellnessDailyTipsContentWidgetState extends State<WellnessDailyTipsConten
                 Semantics( label: Localization().getStringEx('dialog.close.title', 'Close'), hint: Localization().getStringEx('dialog.close.hint', ''), inMutuallyExclusiveGroup: true, button: true, child:
                   InkWell(onTap : () => _onClosePopup(context), child:
                     Padding(padding: EdgeInsets.all(18), child: 
-                      Image.asset('images/close-orange-small.png', semanticLabel: '',),
+                      Styles().images?.getImage('close', excludeFromSemantics: true),
                     ),
                   ),
                 ),

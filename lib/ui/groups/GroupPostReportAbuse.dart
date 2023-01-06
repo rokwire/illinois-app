@@ -93,7 +93,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
             hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
             child: InkWell(onTap: _onPolicy, child:
               Padding(padding: EdgeInsets.all(16), child:
-                Image.asset('images/icon-info-orange.png')
+                  Styles().images?.getImage('info')
               ),
             ),
           ),
@@ -179,7 +179,7 @@ class _GroupPostReportAbuseState extends State<GroupPostReportAbuse> {
       alignment: Alignment.topRight,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
       infoTextStyle: TextStyle(fontFamily: Styles().fontFamilies?.medium, fontSize: 16, color: Styles().colors?.fillColorPrimary),
-      closeIcon: Image.asset('images/close-orange-small.png'),
+      closeIcon: Styles().images?.getImage('close'),
     ),);
   }
 

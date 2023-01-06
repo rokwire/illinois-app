@@ -133,7 +133,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                   rightIconPadding: EdgeInsets.symmetric(horizontal: 12),
                   borderColor: Styles().colors!.fillColorSecondary,
                   textColor: Styles().colors!.fillColorPrimary,
-                  leftIcon: Image.asset('images/icon-add-14x14.png', color: Styles().colors!.fillColorPrimary),
+                  leftIcon: Styles().images?.getImage('plus-dark', excludeFromSemantics: true),
                   fontSize: 14,
                   fontFamily: Styles().fontFamilies!.bold,
                   onTap: _onTapAddItem)),
@@ -178,7 +178,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                   style: Styles().textStyles?.getTextStyle("widget.title.regular")),
               GestureDetector(
                   onTap: _onTapCalendarInfo,
-                  child: Padding(padding: EdgeInsets.only(left: 5), child: Image.asset('images/icon-more-info.png')))
+                  child: Padding(padding: EdgeInsets.only(left: 5), child: Styles().images?.getImage('info', excludeFromSemantics: true)))
             ]),
             Expanded(child: Container()),
             GestureDetector(
@@ -187,7 +187,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                     color: Colors.transparent,
                     child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                        child: Image.asset('images/icon-blue-chevron-left.png')))),
+                        child: Styles().images?.getImage('chevron-left', excludeFromSemantics: true)))),
             Text(Localization().getStringEx('panel.wellness.todo.items.this_week.label', 'This Week'), style: smallStyle),
             GestureDetector(
                 onTap: _onTapNextWeek,
@@ -195,7 +195,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                     color: Colors.transparent,
                     child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                        child: Image.asset('images/icon-blue-chevron-right.png'))))
+                        child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true))))
           ]),
           Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
             Text('Su', style: smallStyle),
@@ -290,10 +290,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
             decoration: BoxDecoration(color: item?.color ?? Colors.transparent, shape: BoxShape.circle),
             child: Visibility(
                 visible: hasReminder,
-                child: Center(
-                    child: Stack(
-                        alignment: Alignment.center,
-                        children: [Image.asset('images/icon-oval-white.png'), Image.asset('images/icon-arrows.png')])))));
+                child: Center(child: Styles().images?.getImage('clock-white', excludeFromSemantics: true) ?? Container()))));
   }
 
   Widget _buildItemsContent() {
@@ -337,7 +334,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
     return Padding(
         padding: EdgeInsets.only(top: 25),
         child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Image.asset('images/icon-down.png'),
+          Styles().images?.getImage('chevron-down', excludeFromSemantics: true) ?? Container(),
           Padding(
               padding: EdgeInsets.only(left: 7),
               child: Text(sectionKey,
@@ -375,7 +372,7 @@ class _WellnessToDoHomeContentWidgetState extends State<WellnessToDoHomeContentW
                   alignment: Alignment.topRight,
                   child: GestureDetector(
                       onTap: _onClose,
-                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png'))))
+                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage('close', excludeFromSemantics: true))))
             ])));
   }
 
@@ -670,20 +667,14 @@ class _ToDoItemCardState extends State<_ToDoItemCard> {
                         overflow: TextOverflow.ellipsis,
                         style: Styles().textStyles?.getTextStyle("panel.wellness.todo.card.title"))),
             ])),
-            Semantics(label: "Edit", button: true, child: GestureDetector(onTap: () => _onTapEdit(widget.item), child: Image.asset('images/edit-white.png', excludeFromSemantics: true,)))
+            Semantics(label: "Edit", button: true, child: GestureDetector(onTap: () => _onTapEdit(widget.item), child: Styles().images?.getImage('edit-white', excludeFromSemantics: true,)))
           ])),
       Visibility(visible: _loading, child: CircularProgressIndicator())
     ]);
   }
 
   Widget _buildCompletedWidget({required Color color}) {
-    final double viewWidgetSize = 30;
-    Widget viewWidget = widget.item.isCompleted
-        ? Image.asset('images/example.png', height: viewWidgetSize, width: viewWidgetSize, fit: BoxFit.fill)
-        : Container(
-            decoration: BoxDecoration(color: Styles().colors!.white, shape: BoxShape.circle),
-            height: viewWidgetSize,
-            width: viewWidgetSize);
+    Widget? viewWidget = Styles().images?.getImage(widget.item.isCompleted ? 'check-circle-outline-gray-white' : 'circle-outline-white', excludeFromSemantics: true);
     return AppSemantics.buildCheckBoxSemantics( selected: widget.item.isCompleted, title: widget.item.name,
     child:GestureDetector(onTap: _onTapCompleted, child: Padding(padding: EdgeInsets.only(right: 20), child: viewWidget)));
   }
@@ -808,7 +799,7 @@ class _ToDoItemReminderDialogState extends State<_ToDoItemReminderDialog> {
                 onTap: _onTapCloseEditReminderDialog,
                 child: Container(
                     color: Colors.transparent,
-                    child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png'))))),
+                    child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage('close', excludeFromSemantics: true))))),
         Padding(
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
             child: Center(

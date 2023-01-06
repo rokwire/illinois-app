@@ -104,7 +104,7 @@ class _HomeWellnessTipsWidgetState extends State<HomeWellnessTipsWidget> impleme
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: HomeWellnessTipsWidget.title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'wellness',
       childPadding: HomeSlantWidget.defaultChildPadding,
       child: _buildContent(),
     );

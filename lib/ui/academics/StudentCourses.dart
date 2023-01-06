@@ -163,7 +163,7 @@ class _StudentCoursesContentWidgetState extends State<StudentCoursesContentWidge
     return Semantics(label: currentTerm?.name, hint: "Double tap to select account", button: true, container: true, child:
       DropdownButtonHideUnderline(child:
         DropdownButton<String>(
-          icon: Padding(padding: EdgeInsets.only(left: 4), child: Image.asset('images/icon-down.png')),
+          icon: Padding(padding: EdgeInsets.only(left: 4), child: Styles().images?.getImage('chevron-down', excludeFromSemantics: true)),
           isExpanded: false,
           style: getTermDropDownItemStyle(selected: true),
           //alignment: AlignmentDirectional.centerEnd,
@@ -260,7 +260,7 @@ class StudentCourseCard extends StatelessWidget {
                     Padding(padding: EdgeInsets.only(top: 6), child:
                       Row(children: [
                         Padding(padding: EdgeInsets.only(right: 6), child:
-                          Image.asset('images/icon-calendar.png'),
+                          Styles().images?.getImage('calendar', excludeFromSemantics: true),
                         ),
                         Expanded(child:
                           Text(courseSchedule, style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),),
@@ -275,7 +275,7 @@ class StudentCourseCard extends StatelessWidget {
                       Padding(padding: EdgeInsets.symmetric(vertical: 6), child:
                         Row(children: [
                           Padding(padding: EdgeInsets.only(right: 6), child:
-                            Image.asset('images/icon-location.png'),
+                            Styles().images?.getImage('location', excludeFromSemantics: true),
                           ),
                           Expanded(child:
                             Text(courseLocation, style:
@@ -447,7 +447,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
       Padding(padding: EdgeInsets.symmetric(vertical: 10), child:
         Row(children: [
           Padding(padding: EdgeInsets.only(right: 6), child:
-          Image.asset('images/icon-calendar.png'),
+            Styles().images?.getImage('calendar', excludeFromSemantics: true),
           ),
           Expanded(child:
             Text(courseSchedule, style: TextStyle(color: Styles().colors?.textBackground, fontFamily: Styles().fontFamilies?.medium, fontSize: 16),),
@@ -465,7 +465,7 @@ class StudentCourseDetailPanel extends StatelessWidget {
         Padding(padding: EdgeInsets.symmetric(vertical: 10, ), child:
           Row(children: [
             Padding(padding: EdgeInsets.only(right: 6), child:
-              Image.asset('images/icon-location.png'),
+              Styles().images?.getImage('location', excludeFromSemantics: true),
             ),
             Expanded(child:
               Text(courseLocation, style:

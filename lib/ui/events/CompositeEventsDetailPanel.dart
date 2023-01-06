@@ -203,7 +203,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                     hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                         'widget.card.button.favorite.on.hint', ''),
                     button: true,
-                    child: Image.asset(isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png')
+                    child: Styles().images?.getImage(isFavorite ? 'star-filled' : 'star-outline-gray')
                 ))
         )),)
       ],
@@ -319,7 +319,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child: Image.asset('images/icon-calendar.png'),
+                  child: Styles().images?.getImage('calendar'),
                 ),
                 Expanded(child: Text(displayTime,
                     style: TextStyle(
@@ -352,7 +352,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.only(right: 10),
-                    child:Image.asset('images/icon-location.png'),
+                    child: Styles().images?.getImage('location'), //Image.asset('images/icon-location.png'),
                   ),
                   Expanded(child: Text(locationText,
                       style: TextStyle(
@@ -386,7 +386,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.only(right: 10),
-                    child:Image.asset('images/laptop.png'), //TBD update icon res
+                    child: Styles().images?.getImage('laptop'), //TBD update icon res
                   ),
                   Expanded(child: Text(locationText,
                       style: TextStyle(
@@ -415,7 +415,7 @@ class _CompositeEventsDetailPanelState extends State<CompositeEventsDetailPanel>
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child:Image.asset('images/icon-cost.png'),
+                  child: Styles().images?.getImage('cost'),
                 ),
                 Expanded(child: Text(priceText,
                     style: TextStyle(
@@ -690,7 +690,7 @@ class _EventsListState extends State<_EventsList>{
         : "panel.explore_detail.recurring_event.schedule.heading.title";
     return SectionSlantHeader(
         title: Localization().getStringEx(titleKey, "Event Schedule"),
-        slantImageAsset: "images/slant-down-right-grey.png",
+        slantImageKey: "slant-dark",
         slantColor: Styles().colors!.backgroundVariant,
         titleTextColor: Styles().colors!.fillColorPrimary,
         children: _buildListItems()
@@ -734,7 +734,7 @@ class _EventsListState extends State<_EventsList>{
                     Expanded(
                       child: Text(title, overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontFamily: Styles().fontFamilies!.bold, fontSize: 16, color: Colors.white),),
                     ),
-                    Image.asset('images/chevron-right.png')
+                    Styles().images?.getImage('chevron-right') ?? Container(),
                   ],
                 ),
               ),
@@ -793,7 +793,7 @@ class _EventEntry extends StatelessWidget {
                       hint: isFavorite ? Localization().getStringEx('widget.card.button.favorite.off.hint', '') : Localization().getStringEx(
                           'widget.card.button.favorite.on.hint', ''),
                       button: true,
-                      child: Image.asset(isFavorite ? 'images/icon-star-orange.png' : 'images/icon-star-gray-frame-thin.png')
+                      child: Styles().images?.getImage(isFavorite ? 'star-filled': 'star-outline-gray')
                   ))
           )),)
         ],),),

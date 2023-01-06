@@ -483,9 +483,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                   button: true,
                   excludeSemantics: true,
                   child: IconButton(
-                    icon: Image.asset(
-                      'images/groups-more-inactive.png',
-                    ),
+                    icon: Styles().images?.getImage('more-white',) ?? Container(),
                     onPressed: _onGroupOptionsTap,
                   )))
         ]),
@@ -701,7 +699,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         commands.add(RibbonButton(
           label: _isResearchProject ? 'Manage Participants' : Localization().getStringEx("panel.group_detail.button.manage_members.title", "Manage Members"),
           hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.manage_members.hint", ""),
-          leftIconAsset: 'images/icon-member.png',
+          leftIconKey: 'person-circle',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapMembers,
         ));
@@ -709,7 +707,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         commands.add(RibbonButton(
           label: _isResearchProject ? 'Research Project Settings' : Localization().getStringEx("panel.group_detail.button.group_settings.title", "Group Settings"),
           hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.group_settings.hint", ""),
-          leftIconAsset: 'images/icon-gear.png',
+          leftIconKey: 'settings',
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
           onTap: _onTapSettings,
         ));
@@ -718,7 +716,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
           commands.add(RibbonButton(
             label: _isResearchProject ? 'Promote this project' : Localization().getStringEx("panel.group_detail.button.group_promote.title", "Promote this group"),
             hint: _isResearchProject ? '' : Localization().getStringEx("panel.group_detail.button.group_promote.hint", ""),
-            leftIconAsset: 'images/icon-qr-code.png',
+            leftIconKey: 'qr',
             padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
             onTap: _onTapPromote,
           ));
@@ -730,7 +728,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
             RibbonButton(
             label: Localization().getStringEx("panel.group_detail.button.take_attendance.title", "Take Attendance"),
             hint: Localization().getStringEx("panel.group_detail.button.take_attendance.hint", ""),
-            leftIconAsset: 'images/icon-qr-code.png',
+            leftIconKey: 'qr',
             padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
             onTap: _onTapTakeAttendance,
           ),
@@ -744,7 +742,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       commands.add(RibbonButton(
         label: Localization().getStringEx("panel.group_detail.button.notifications.title", "Notifications Preferences"),
         hint: Localization().getStringEx("panel.group_detail.button.notifications.hint", ""),
-        leftIconAsset: 'images/icon-reminder.png',
+        leftIconKey: 'reminder',
         leftIconPadding: EdgeInsets.only(right: 8, left: 2),
         padding: EdgeInsets.symmetric(vertical: 14),
         onTap: _onTapNotifications,
@@ -900,8 +898,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Column(children: <Widget>[
         SectionSlantHeader(
             title: Localization().getStringEx("panel.group_detail.label.upcoming_events", 'Upcoming Events') + ' ($_allEventsCount)',
-            titleIconAsset: 'images/icon-calendar.png',
-            rightIconAsset: _canAddEvent ? "images/icon-add-20x18.png" : null,
+            titleIconKey: 'calendar',
+            rightIconKey: _canAddEvent ? "plus-circle" : null,
             rightIconAction: _canAddEvent ? _onTapEventOptions : null,
             rightIconLabel: _canAddEvent ? Localization().getStringEx("panel.group_detail.button.create_event.title", "Create Event") : null,
             children: content)
@@ -924,8 +922,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         Column(children: <Widget>[
           SectionSlantHeader(
               title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts and Direct Messages'),
-              titleIconAsset: 'images/icon-calendar.png',
-              rightIconAsset: _canCreatePost ? "images/icon-add-20x18.png" : null,
+              titleIconKey: 'posts',
+              rightIconKey: _canCreatePost ? "plus-circle" : null,
               rightIconAction: _canCreatePost ? _onTapCreatePost : null,
               rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
               children: postsContent)
@@ -963,8 +961,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
     return Column(children: <Widget>[
       SectionSlantHeader(
           title: Localization().getStringEx("panel.group_detail.label.posts", 'Posts and Direct Messages'),
-          titleIconAsset: 'images/icon-calendar.png',
-          rightIconAsset: _canCreatePost ? "images/icon-add-20x18.png" : null,
+          titleIconKey: 'posts',
+          rightIconKey: _canCreatePost ? "plus-circle" : null,
           rightIconAction: _canCreatePost ? _onTapCreatePost : null,
           rightIconLabel: _canCreatePost ? Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post") : null,
           children: postsContent)
@@ -1003,8 +1001,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       Column(children: <Widget>[
         SectionSlantHeader(
             title: Localization().getStringEx('panel.group_detail.label.polls', 'Polls'),
-            titleIconAsset: 'images/icon-calendar.png',
-            rightIconAsset: _canCreatePoll? 'images/icon-add-20x18.png' : null,
+            titleIconKey: 'polls',
+            rightIconKey: _canCreatePoll? 'plus-circle' : null,
             rightIconAction: _canCreatePoll? _onTapCreatePoll : null,
             rightIconLabel: _canCreatePoll? Localization().getStringEx('panel.group_detail.button.create_poll.title', 'Create Poll') : null,
             children: pollsContentList)
@@ -1029,13 +1027,13 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         ExpandableText(description,
           textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
           trimLinesCount: 4,
-          readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
+          readMoreIcon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true)),
         researchConsentDetails.isNotEmpty ?
           Padding(padding: EdgeInsets.only(top: 8), child:
             ExpandableText(researchConsentDetails,
               textStyle: Styles().textStyles?.getTextStyle('panel.group.detail.regular'),
               trimLinesCount: 12,
-              readMoreIcon: Image.asset('images/icon-down-orange.png', color: Styles().colors!.fillColorPrimary, excludeFromSemantics: true),),
+              readMoreIcon: Styles().images?.getImage('chevron-down', excludeFromSemantics: true)),
           ) : Container()
       ],),);
   }
@@ -1064,8 +1062,8 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
   Widget _buildWebsiteLink() {
     return RibbonButton(
       label: Localization().getStringEx("panel.group_detail.button.website.title", 'Website'),
-      rightIconAsset: 'images/external-link.png',
-      leftIconAsset: 'images/globe.png',
+      rightIconKey: 'external-link',
+      leftIconKey: 'web',
       padding: EdgeInsets.symmetric(vertical: 14, horizontal: 0),
       onTap: _onWebsite
     );
@@ -1117,7 +1115,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
         hint: Localization().getStringEx('panel.group_detail.button.policy.hint', 'Tap to ready policy statement'),
         child: InkWell(onTap: _onPolicy, child:
           Padding(padding: EdgeInsets.all(16), child:
-            Image.asset('images/icon-info-orange.png')
+            Styles().images?.getImage('info', excludeFromSemantics: true)
           ),
         ),
       ),
@@ -1194,7 +1192,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 InkWell(onTap: _onResearchProjectConsent, child:
                   Padding(padding: EdgeInsets.all(16), child:
-                    Image.asset(_researchProjectConsent ? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
+                    Styles().images?.getImage(_researchProjectConsent ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true)
                   ),
                 ),
                 Expanded(child:
@@ -1331,7 +1329,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canCreatePost,
                     child: RibbonButton(
-                        leftIconAsset: "images/icon-add-20x18.png",
+                        leftIconKey: "plus-circle",
                         label: Localization().getStringEx("panel.group_detail.button.create_post.title", "Create Post"),
                         onTap: () {
                           Navigator.of(context).pop();
@@ -1340,7 +1338,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canLeaveGroup,
                     child: RibbonButton(
-                        leftIconAsset: "images/icon-leave-group.png",
+                        leftIconKey: "trash",
                         label: _isResearchProject ? 'Leave project' : Localization().getStringEx("panel.group_detail.button.leave_group.title", "Leave group"),
                         onTap: () {
                           Analytics().logSelect(target: "Leave group", attributes: _group?.analyticsAttributes);
@@ -1356,7 +1354,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canAddEvent,
                     child: RibbonButton(
-                        leftIconAsset: "images/icon-edit.png",
+                        leftIconKey: "edit",
                         label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add existing event"),
                         onTap: (){
                           Navigator.pop(context);
@@ -1365,7 +1363,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canAddEvent,
                     child: RibbonButton(
-                        leftIconAsset: "images/icon-edit.png",
+                        leftIconKey: "edit",
                         label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create new event"),
                         onTap: (){
                           Navigator.pop(context);
@@ -1374,7 +1372,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canEditGroup,
                     child: RibbonButton(
-                        leftIconAsset: "images/icon-gear.png",
+                        leftIconKey: "settings",
                         label: _isResearchProject ? 'Research project settings' : Localization().getStringEx("panel.group_detail.button.group.edit.title", "Group Settings"),
                         onTap: () {
                           Navigator.pop(context);
@@ -1383,7 +1381,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canDeleteGroup,
                     child: RibbonButton(
-                        leftIconAsset: "images/icon-delete-group.png",
+                        leftIconKey: "trash",
                         label: _isResearchProject ? 'Delete research project' : Localization().getStringEx("panel.group_detail.button.group.delete.title", "Delete group"),
                         onTap: () {
                           Analytics().logSelect(target: "Delete group", attributes: _group?.analyticsAttributes);
@@ -1417,7 +1415,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canAddEvent,
                     child: RibbonButton(
-                        leftIconAsset: "images/icon-edit.png",
+                        leftIconKey: "edit",
                         label: Localization().getStringEx("panel.group_detail.button.group.add_event.title", "Add existing event"),
                         onTap: (){
                           Navigator.pop(context);
@@ -1426,7 +1424,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
                 Visibility(
                     visible: _canAddEvent,
                     child: RibbonButton(
-                        leftIconAsset: "images/icon-edit.png",
+                        leftIconKey: "edit",
                         label: Localization().getStringEx("panel.group_detail.button.group.create_event.title", "Create new event"),
                         onTap: (){
                           Navigator.pop(context);
@@ -1503,7 +1501,7 @@ class _GroupDetailPanelState extends State<GroupDetailPanel> implements Notifica
       alignment: Alignment.center,
       infoText: Localization().getStringEx('panel.group.detail.policy.text', 'The {{app_university}} takes pride in its efforts to support free speech and to foster inclusion and mutual respect. Users may submit a report to group administrators about obscene, threatening, or harassing content. Users may also choose to report content in violation of Student Code to the Office of the Dean of Students.').replaceAll('{{app_university}}', Localization().getStringEx('app.univerity_name', 'University of Illinois')),
       infoTextStyle: Styles().textStyles?.getTextStyle('widget.description.regular.thin"'),
-      closeIcon: Image.asset('images/close-orange-small.png'),
+      closeIcon: Styles().images?.getImage('close', excludeFromSemantics: true),
     ),);
   }
 

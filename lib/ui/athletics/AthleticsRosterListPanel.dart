@@ -239,7 +239,7 @@ class _RosterListHeading extends StatelessWidget{
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   StringUtils.isNotEmpty(sport?.iconPath) ?
-                    Image.asset(sport!.iconPath!, width: 16, height: 16, excludeFromSemantics: true,) : Container(),
+                    Styles().images?.getImage(sport!.iconPath!, width: 16, height: 16, excludeFromSemantics: true,) ?? Container() : Container(),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(sport!.name!,

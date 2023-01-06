@@ -212,7 +212,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     if (widget.favoriteCategories.length > 1) {
       for (String favoriteCategory in widget.favoriteCategories) {
         contentList.add(_SavedItemsList(headingTitle: _favoriteCategoryTitle(favoriteCategory),
-          headingIconResource: _favoriteCategoryIconResource(favoriteCategory),
+          headingIconKey: _favoriteCategoryIconKey(favoriteCategory),
           items: _favorites[favoriteCategory])
         );
       }
@@ -255,7 +255,7 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
             ),
             InkWell(onTap: _onAuthorizeSkip, child: 
               Padding(padding: EdgeInsets.only(right: 16), child:
-                Image.asset('images/close-white.png', excludeFromSemantics: true))
+                Styles().images?.getImage('close-circle-white', excludeFromSemantics: true))
               )
           ],),
           Padding(padding: EdgeInsets.only(left: 16, right: 16, bottom: 16), child:
@@ -448,17 +448,17 @@ class _SavedPanelState extends State<SavedPanel> implements NotificationsListene
     return null;
   }
 
-  String? _favoriteCategoryIconResource(String favoriteCategory) {
+  String? _favoriteCategoryIconKey(String favoriteCategory) {
     switch(favoriteCategory) {
-      case Event.favoriteKeyName:         return 'images/icon-calendar.png';
-      case Dining.favoriteKeyName:        return 'images/icon-dining-orange.png';
-      case Game.favoriteKeyName:          return 'images/icon-calendar.png';
-      case News.favoriteKeyName:          return 'images/icon-news.png';
-      case LaundryRoom.favoriteKeyName:   return 'images/icon-news.png';
-      case MTDStop.favoriteKeyName:       return 'images/icon-location.png';
-      case ExplorePOI.favoriteKeyName:    return 'images/icon-location.png';
-      case GuideFavorite.favoriteKeyName: return 'images/icon-news.png';
-      case Appointment.favoriteKeyName:   return 'images/campus-tools.png';
+      case Event.favoriteKeyName:         return 'events';
+      case Dining.favoriteKeyName:        return 'dining';
+      case Game.favoriteKeyName:          return 'athletics';
+      case News.favoriteKeyName:          return 'news';
+      case LaundryRoom.favoriteKeyName:   return 'laundry';
+      case MTDStop.favoriteKeyName:       return 'transit';
+      case ExplorePOI.favoriteKeyName:    return 'location';
+      case GuideFavorite.favoriteKeyName: return 'guide.';
+      case Appointment.favoriteKeyName:   return 'appointments';
     }
     return null;
   }
@@ -547,12 +547,12 @@ class _SavedItemsList extends StatefulWidget {
   final List<Favorite>? items;
   final int limit;
   final String? headingTitle;
-  final String? headingIconResource;
-  final String slantImageResource;
+  final String? headingIconKey;
+  final String slantImageKey;
   final Color? slantColor;
 
   // ignore: unused_element
-  _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconResource, this.slantImageResource = 'images/slant-down-right-blue.png', this.slantColor});
+  _SavedItemsList({this.items, this.limit = 3, this.headingTitle, this.headingIconKey, this.slantImageKey = 'slant-dark', this.slantColor});
 
   _SavedItemsListState createState() => _SavedItemsListState();
 }
@@ -571,8 +571,8 @@ class _SavedItemsListState extends State<_SavedItemsList>{
       children: <Widget>[
         SectionSlantHeader(
             title: widget.headingTitle,
-            titleIconAsset: widget.headingIconResource,
-            slantImageAsset: widget.slantImageResource,
+            titleIconKey: widget.headingIconKey,
+            slantImageKey: widget.slantImageKey,
             slantColor: widget.slantColor ?? Styles().colors!.fillColorPrimary,
             children: (0 <  widget.items!.length) ? _buildListItems(context) : _buildEmptyContent(context),),
         Visibility(visible: showMoreButton, child: Padding(padding: EdgeInsets.only(top: 8, bottom: 40), child: SmallRoundedButton(
@@ -632,7 +632,7 @@ class _SavedItem extends StatelessWidget {
     Color? headerColor = favorite.favoriteHeaderColor;
     String? title = favorite.favoriteTitle;
     String? cardDetailText = favorite.favoriteDetailText;
-    Image? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? favorite.favoriteDetailIcon : null;
+    Widget? cardDetailImage = StringUtils.isNotEmpty(cardDetailText) ? favorite.favoriteDetailIcon : null;
     bool detailVisible = StringUtils.isNotEmpty(cardDetailText);
     return GestureDetector(onTap: () => _onTapFavorite(context), child:
       Semantics(label: title, child:

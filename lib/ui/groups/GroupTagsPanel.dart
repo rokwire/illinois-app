@@ -179,11 +179,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
                 onTap: () {
                   _onTapCancelSearch();
                 },
-                child: Image.asset(
-                  'images/icon-x-orange.png',
-                  width: 25,
-                  height: 25,
-                ),
+                child: Styles().images?.getImage('close', excludeFromSemantics: true),
               ),
             ),
           ),
@@ -196,12 +192,7 @@ class _GroupTagsState extends State<GroupTagsPanel> {
                 onTap: () {
                   _onSearchTap();
                 },
-                child: Image.asset(
-                  'images/icon-search.png',
-                  color: Styles().colors!.fillColorSecondary,
-                  width: 25,
-                  height: 25,
-                ),
+                child: Styles().images?.getImage('search', excludeFromSemantics: true),
               ))
         ],
       ),
@@ -282,7 +273,7 @@ class _TagSelectionWidget extends StatelessWidget {
                           child: Text(label,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontFamily: Styles().fontFamilies!.bold, color: Styles().colors!.fillColorPrimary, fontSize: 16))),
-                      Image.asset(selected ? 'images/deselected-dark.png' : 'images/deselected.png')
+                      Styles().images?.getImage(selected ? 'check-circle-filled' : 'check-circle-outline-gray', excludeFromSemantics: true) ?? Container(),
                     ])))));
   }
 }

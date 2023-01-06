@@ -241,7 +241,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
         child: InkWell(
             onTap: _onTapDisplaySettings,
             child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.start, children: [
-              Padding(padding: EdgeInsets.only(right: 5), child: Image.asset('images/icon-settings.png')),
+              Padding(padding: EdgeInsets.only(right: 5), child: Styles().images?.getImage('settings', excludeFromSemantics: true)),
               LinkButton(title: buttonTitle, padding: EdgeInsets.zero)
             ])));
   }
@@ -266,7 +266,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
               Padding(
                   padding: EdgeInsets.all(30),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisSize: MainAxisSize.min, children: [
-                    Image.asset('images/block-i-orange.png'),
+                    Styles().images?.getImage('university-logo') ?? Container(),
                     Padding(
                         padding: EdgeInsets.only(top: 20),
                         child: Html(
@@ -286,7 +286,7 @@ class _WellnessAppointmentsHomeContentWidgetState extends State<WellnessAppointm
                   alignment: Alignment.topRight,
                   child: InkWell(
                       onTap: _onTapCloseReschedulePopup,
-                      child: Padding(padding: EdgeInsets.all(16), child: Image.asset('images/icon-x-orange.png')))))
+                      child: Padding(padding: EdgeInsets.all(16), child: Styles().images?.getImage('close', excludeFromSemantics: true)))))
             ])));
   }
 

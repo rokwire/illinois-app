@@ -37,7 +37,7 @@ class HomeInboxWidget extends StatefulWidget {
     );
 
   String get _title => titleForContent(content);
-  
+
   static String title({required HomeInboxContent content}) => titleForContent(content);
 
   static String titleForContent(HomeInboxContent content) {
@@ -198,7 +198,7 @@ class _HomeInboxWidgetState extends State<HomeInboxWidget> implements Notificati
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: widget.favoriteId,
       title: widget._title,
-      titleIcon: Image.asset('images/icon-news.png'),
+      titleIconKey: 'inbox',
       child: _buildContent(),
     );
   }

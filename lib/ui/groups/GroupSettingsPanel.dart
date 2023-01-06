@@ -122,7 +122,9 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                           child: Column(children: <Widget>[
                             _buildImageSection(),
                             Container(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                              _buildSectionTitle((_group?.researchProject == true) ? "General project information" : Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"), "images/icon-schedule.png"),
+                              _buildSectionTitle((_group?.researchProject == true) ? "General project information" :
+                                Localization().getStringEx("panel.groups_settings.label.heading.general_info", "General group information"),
+                                  "info"),
                             ),
                             _buildNameField(),
                             _buildDescriptionField(),
@@ -132,7 +134,8 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               Column(children: [
                                 Container(height: 1, color: Styles().colors!.surfaceAccent,),
                                 Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                                  _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability"), "images/icon-schedule.png"),
+                                  _buildSectionTitle(Localization().getStringEx("panel.groups_settings.label.heading.discoverability", "Discoverability"),
+                                      "search"),
                                 ),
                                 _buildCategoryDropDown(),
                                 _buildTagsLayout(),
@@ -143,7 +146,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                               Column(children: [
                                 Container(height: 1, color: Styles().colors!.surfaceAccent,),
                                 Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                                  _buildSectionTitle("Research", "images/icon-gear.png"),
+                                  _buildSectionTitle("Research", "settings"),
                                 ),
                                 //_buildResearchOptionLayout(),
                                 _buildResearchConsentDetailsField(),
@@ -160,7 +163,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                                   Container(height: 1, color: Styles().colors!.surfaceAccent,),
                                 ),
                                 Padding(padding: EdgeInsets.symmetric(horizontal: 16), child:
-                                  _buildSectionTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "images/icon-privacy.png"),
+                                  _buildSectionTitle(Localization().getStringEx("panel.groups_create.label.privacy", "Privacy"), "privacy"),
                                 ),
                                 Container(height: 8),
                                 _buildPrivacyDropDown(),
@@ -332,7 +335,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   BorderRadius.all(Radius.circular(4))),
               child: Row(
                 children: <Widget>[
-                  Image.asset('images/warning-orange.png'),
+                  Styles().images?.getImage('warning', excludeFromSemantics: true) ?? Container(),
                   Expanded(child:
                   Container(
                       padding: EdgeInsets.only(left: 12, right: 4),
@@ -590,7 +593,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                   ),
                 Container (
                   padding: EdgeInsets.only(top:8,bottom: 8,right: 8, left: 8),
-                  child: Image.asset("images/small-add-orange.png", excludeFromSemantics: true,),
+                  child: Styles().images?.getImage('plus-circle', excludeFromSemantics: true),
                 )
 
               ],)
@@ -745,7 +748,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column( children: <Widget>[
-          _buildSectionTitle(sectionTitle, "images/icon-member.png"),
+          _buildSectionTitle(sectionTitle, "person-circle"),
           Container(height: 12,),
           Semantics(
             explicitChildNodes: true,
@@ -788,7 +791,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 5),
-                      child: Image.asset('images/chevron-right.png'),
+                      child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
                     ),
                 ]),
                 Container(
@@ -976,7 +979,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
         color: Styles().colors!.background,
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Column(children: <Widget>[
-          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "University managed membership"), "images/icon-member.png"),
+          _buildSectionTitle(Localization().getStringEx("panel.groups_settings.authman.section.title", "University managed membership"), "person-circle"),
           Container(height: 12),
           Padding(
               padding: EdgeInsets.only(top: 12),
@@ -995,7 +998,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                         GestureDetector(
                             onTap: _onTapAuthMan,
                             child: Padding(
-                                padding: EdgeInsets.only(left: 10), child: Image.asset(isAuthManGroup ? 'images/switch-on.png' : 'images/switch-off.png')))
+                                padding: EdgeInsets.only(left: 10), child: Styles().images?.getImage(isAuthManGroup ? 'toggle-on' : 'toggle-off')))
                       ])
                     ])),
                 Visibility(
@@ -1243,7 +1246,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
     );
   }
 
-  Widget _buildSectionTitle(String title, String iconRes){
+  Widget _buildSectionTitle(String title, String iconKey){
     return Container(
         padding: EdgeInsets.only(top:24),
         child:
@@ -1252,7 +1255,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
           children: <Widget>[
               Container(
                 padding: EdgeInsets.only(right: 10),
-                child: Image.asset(iconRes, excludeFromSemantics: true,)
+                child: Styles().images?.getImage(iconKey, excludeFromSemantics: true)
               ),
             Expanded(child:
               Semantics(
@@ -1293,7 +1296,7 @@ class _GroupSettingsPanelState extends State<GroupSettingsPanel> {
                       onTap();
                       AppSemantics.announceCheckBoxStateChange(context,  /*reversed value*/!(value == true), title);
                   } : (){},
-                  child: Padding(padding: EdgeInsets.only(left: 10), child: Image.asset((value ?? false) ? 'images/switch-on.png' : 'images/switch-off.png')))
+                  child: Padding(padding: EdgeInsets.only(left: 10), child: Styles().images?.getImage(value ?? false ? 'toggle-on' : 'toggle-off')))
             ])
           ])),
     ));

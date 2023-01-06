@@ -183,10 +183,7 @@ class _CheckListContentWidgetState extends State<CheckListContentWidget> impleme
                         Text(progressStep.toString(), semanticsLabel: '', style:
                           TextStyle(color: textColor, fontFamily: textFamily, fontSize: 15, decoration: TextDecoration.underline),
                         ),
-                        !showCheckIcon ? Container() :
-                        Container(height: 14, width: 14, child:
-                          Image.asset('images/green-check-mark.png', semanticLabel: Localization().getStringEx("panel.checklist.text.completed", "Completed"),)
-                        )
+                        !showCheckIcon ? Container() : Styles().images?.getImage('check-green', semanticLabel: Localization().getStringEx("panel.checklist.text.completed", "Completed")) ?? Container()
                       ]),
                     )
                   ]),
@@ -343,7 +340,7 @@ class _CheckListPageWidget extends StatelessWidget{
             child: InkWell(
               onTap: onTapBack,
               child: Container(height: 36, width: 36, child:
-              Image.asset('images/chevron-left-gray.png')
+                Styles().images?.getImage('chevron-left-gray', excludeFromSemantics: true)
               ),
             ),
           ) :
@@ -860,7 +857,7 @@ class _StepsHorizontalListState extends State<_StepsHorizontalListWidget> implem
               Container(
                   height: 16,
                   width: 16,
-                  child:Image.asset('images/green-check-mark.png', semanticLabel: "completed",)
+                  child: Styles().images?.getImage('check-green', semanticLabel: "completed")
               )
             ],)
           )

@@ -106,7 +106,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
               child:
                 Container(
                   padding: EdgeInsets.only(left: 50, top: 4),
-                  child:Image.asset("images/icon-circle-close.png", excludeFromSemantics: true,)
+                  child: Styles().images?.getImage('close', excludeFromSemantics: true)
                 ),
               ),)
             ],),
@@ -172,7 +172,7 @@ class _SettingsDialogState extends State<SettingsDialog>{
             child: Container(
               padding: EdgeInsets.only(bottom: 16),
               child: Row(children: <Widget>[
-                Image.asset(isChecked? "images/selected-checkbox.png" : "images/deselected-checkbox.png"),
+                Styles().images?.getImage(isChecked ? "check-box-filled" : "box-outline-gray", excludeFromSemantics: true) ?? Container(),
                 Container(width: 10,),
                 Expanded(child:
                   Text(
@@ -304,11 +304,11 @@ class _SettingsDialogState extends State<SettingsDialog>{
 class InfoButton extends StatelessWidget {
   final String? title;
   final String? description;
-  final String? iconRes;
+  final String? iconKey;
   final String? additionalInfo;
   final void Function()? onTap;
 
-  const InfoButton({Key? key, this.title, this.description, this.iconRes, this.onTap, this.additionalInfo}) : super(key: key);
+  const InfoButton({Key? key, this.title, this.description, this.iconKey, this.onTap, this.additionalInfo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -323,7 +323,7 @@ class InfoButton extends StatelessWidget {
           children: <Widget>[
             Container(
               padding: EdgeInsets.symmetric(horizontal: 11),
-              child: Image.asset(iconRes!, excludeFromSemantics: true,),
+              child: Styles().images?.getImage(iconKey, excludeFromSemantics: true),
             ),
             Expanded(child:
             Column(
@@ -342,7 +342,7 @@ class InfoButton extends StatelessWidget {
             Container(width: 10,),
             Container(
               padding: EdgeInsets.symmetric( vertical: 4),
-              child:Image.asset('images/chevron-right.png', excludeFromSemantics: true,),
+              child: Styles().images?.getImage('chevron-right', excludeFromSemantics: true),
             ),
             Container(width: 16,)
           ],),

@@ -157,8 +157,8 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       post: _post,
                       reaction: thumbsUpReaction,
                       accountIDs: _post?.reactions[thumbsUpReaction],
-                      selectedIconPath: 'images/icon-thumbs-up-solid.png',
-                      deselectedIconPath: 'images/icon-thumbs-up-outline.png',
+                      selectedIconKey: 'thumbs-up-filled',
+                      deselectedIconKey: 'thumbs-up-outline-gray',
                       // onTapEnabled: _canSendReaction,
                     ),
                   ),
@@ -170,7 +170,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.edit.label', "Edit"), button: true, child:
                         GestureDetector(onTap: _onTapEditMainPost, child:
                           Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                            Image.asset('images/icon-edit.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
+                            Styles().images?.getImage('edit', excludeFromSemantics: true))))))),
 
                 Visibility(visible: _isDeletePostVisible && !widget.hidePostOptions, child:
                   Semantics(container: true, sortKey: OrdinalSortKey(5), child:
@@ -178,19 +178,19 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                       Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.delete.label', "Delete"), button: true, child:
                         GestureDetector(onTap: _onTapDeletePost, child:
                             Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                              Image.asset('images/trash.png', width: 18, height: 18, excludeFromSemantics: true,))))))),
+                              Styles().images?.getImage('trash', excludeFromSemantics: true))))))),
 
                 Visibility(visible: _isReportAbuseVisible && !widget.hidePostOptions, child:
                   Semantics(label: Localization().getStringEx('panel.group.detail.post.button.report.label', "Report"), button: true, child:
                     GestureDetector( onTap: () => _onTapReportAbusePostOptions(), child:
                         Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 8), child:
-                          Image.asset('images/icon-feedback.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
+                          Styles().images?.getImage('feedback', excludeFromSemantics: true))))),
 
                 Visibility(visible: _isReplyVisible && !widget.hidePostOptions, child:
                   Semantics(label: Localization().getStringEx('panel.group.detail.post.reply.reply.label', "Reply"), button: true, child:
                     GestureDetector(onTap: _onTapHeaderReply, child:
                         Padding(padding: EdgeInsets.only(left: 8, top: 22, bottom: 10, right: 16), child:
-                          Image.asset('images/icon-group-post-reply.png', width: 18, height: 18, fit: BoxFit.fill, excludeFromSemantics: true,))))),
+                          Styles().images?.getImage('reply', excludeFromSemantics: true))))),
 
               ]),
             ])
@@ -439,7 +439,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
       String? optionsIconPath;
       void Function()? optionsFunctionTap;
       if (_isReplyVisible) {
-        optionsIconPath = 'images/icon-groups-options-orange.png';
+        optionsIconPath = 'options';
         optionsFunctionTap = () => _onTapReplyOptions(reply);
       }
       replyWidgetList.add(
@@ -589,12 +589,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-feedback.png",
+                leftIconKey: "feedback",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents : true), post: widget.post),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-feedback.png",
+                leftIconKey: "feedback",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: widget.post),
               )),
@@ -619,7 +619,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Visibility(visible: _isReplyVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-group-post-reply.png",
+                leftIconKey: "reply",
                 label: Localization().getStringEx("panel.group.detail.post.reply.reply.label", "Reply"),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -627,7 +627,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 },
               )),
               Visibility(visible: _isEditVisible(reply), child: RibbonButton(
-                leftIconAsset: "images/icon-edit.png",
+                leftIconKey: "edit",
                 label: Localization().getStringEx("panel.group.detail.post.reply.edit.label", "Edit"),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -635,7 +635,7 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
                 },
               )),
               Visibility(visible: _isDeleteReplyVisible(reply), child: RibbonButton(
-                leftIconAsset: "images/trash.png",
+                leftIconKey: "trash",
                 label: Localization().getStringEx("panel.group.detail.post.reply.delete.label", "Delete"),
                 onTap: () {
                 Navigator.of(context).pop();
@@ -643,12 +643,12 @@ class _GroupPostDetailPanelState extends State<GroupPostDetailPanel> implements 
               },
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-feedback.png",
+                leftIconKey: "feedback",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.students_dean.labe", "Report to Dean of Students"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToDeanOfStudents: true), post: reply),
               )),
               Visibility(visible: _isReportAbuseVisible, child: RibbonButton(
-                leftIconAsset: "images/icon-feedback.png",
+                leftIconKey: "feedback",
                 label: Localization().getStringEx("panel.group.detail.post.button.report.group_admins.labe", "Report to Group Administrator(s)"),
                 onTap: () => _onTapReportAbuse(options: GroupPostReportAbuseOptions(reportToGroupAdmins: true), post: reply),
               )),

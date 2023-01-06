@@ -206,7 +206,7 @@ class _WellnessRingState extends State<WellnessRing> with TickerProviderStateMix
           Container(
             padding: EdgeInsets.all(1),
             decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white,),
-            child:Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(fit: BoxFit.cover, image: Image.asset('images/wellness_ring_profile.png', excludeFromSemantics: true).image))),
+            child: Styles().images?.getImage('profile-placeholder', excludeFromSemantics: true),
           ),
           Center(
               child: ConfettiWidget(
@@ -396,7 +396,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          child: Image.asset('images/edit-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+          child: Styles().images?.getImage('edit-white', excludeFromSemantics: true),
         )));
   }
   Widget get _increaseValueButton{
@@ -424,7 +424,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
               Center(
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+                  child: Styles().images?.getImage('plus-circle-white', excludeFromSemantics: true, color:  Styles().colors!.white!),
                 ))
             ]
         ))
@@ -458,7 +458,7 @@ class _WellnessRingButtonState extends State<WellnessRingButton>{
               Center(
                 child:Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Image.asset('images/group-decrease.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+                  child: Styles().images?.getImage('minus-circle-white', excludeFromSemantics: true),
               ))
             ]
           )
@@ -551,7 +551,7 @@ class _SmallWellnessRingButtonState extends State<SmallWellnessRingButton>{
                   Center(
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                        child: Image.asset('images/icons-control-add-small-white.png', excludeFromSemantics: true, color:  Styles().colors!.white!),
+                        child: Styles().images?.getImage('plus-circle-white', excludeFromSemantics: true),
                       ))
                 ]
             )));

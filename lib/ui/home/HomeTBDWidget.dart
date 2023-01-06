@@ -17,7 +17,7 @@ class HomeTBDWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return HomeSlantWidget(favoriteId: favoriteId,
       title: title,
-      titleIcon: Image.asset('images/campus-tools.png', excludeFromSemantics: true,),
+      titleIconKey: 'campus-tools',
       //flatHeight: 0, slantHeight: 0, childPadding: EdgeInsets.all(16),
       child: Container(
         padding: EdgeInsets.all(16),
