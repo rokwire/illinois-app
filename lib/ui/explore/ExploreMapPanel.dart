@@ -47,7 +47,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   
   bool _itemsDropDownValuesVisible = false;
   bool _eventsDisplayDropDownValuesVisible = false;
-  bool _filterOptionsVisible = false; // TBD: _filtersDropdownVisible
+  bool _filtersDropdownVisible = false;
   
   @override
   void initState() {
@@ -141,7 +141,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     Analytics().logSelect(target: 'Explore Dropdown');
     if (mounted) {
       setState(() {
-        _deactivateSelectedFilters();
+        _clearActiveFilter();
         _itemsDropDownValuesVisible = !_itemsDropDownValuesVisible;
       });
     }
@@ -154,7 +154,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       borderRadius: BorderRadius.all(Radius.circular(5)),
       border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
       rightIconKey: (_eventsDisplayDropDownValuesVisible ? 'chevron-up' : 'chevron-down'),
-      label: _eventsDisplayTypeLabel(_selectedEventsDisplayType),
+      label: _eventsDisplayTypeName(_selectedEventsDisplayType),
       onTap: _onEventsDisplayTypesDropDown
     );
   }
@@ -163,7 +163,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     Analytics().logSelect(target: 'Events Type Dropdown');
     if (mounted) {
       setState(() {
-        _deactivateSelectedFilters();
+        _clearActiveFilter();
         _eventsDisplayDropDownValuesVisible = !_eventsDisplayDropDownValuesVisible;
       });
     }
@@ -220,17 +220,17 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         backgroundColor: Styles().colors!.white,
         border: Border.all(color: Styles().colors!.surfaceAccent!, width: 1),
         rightIconKey: null,
-        label: _eventsDisplayTypeLabel(displayType),
+        label: _eventsDisplayTypeName(displayType),
         onTap: () => _onEventsDisplayType(displayType));
   }
 
   void _onEventsDisplayType(EventsDisplayType displayType) {
-    Analytics().logSelect(target: _eventsDisplayTypeLabel(displayType));
+    Analytics().logSelect(target: _eventsDisplayTypeName(displayType));
 
     if (mounted) {
       EventsDisplayType? lastDisplayType = _selectedEventsDisplayType;
       setState(() {
-        _deactivateSelectedFilters();
+        _clearActiveFilter();
         _selectedEventsDisplayType = displayType;
         _eventsDisplayDropDownValuesVisible = !_eventsDisplayDropDownValuesVisible;
       });
@@ -302,7 +302,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       ExploreItem? lastExploreItem = _selectedExploreItem;
       Storage().selectedMapExploreItem = exploreItemToString(item);
       setState(() {
-        _deactivateSelectedFilters();
+        _clearActiveFilter();
         _selectedExploreItem = item;
         _itemsDropDownValuesVisible = false;
       });
@@ -324,12 +324,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     else {
       for (int i = 0; i < visibleFilters.length; i++) {
         ExploreFilter selectedFilter = visibleFilters[i];
-        List<String> filterValues = _getFilterValuesByType(selectedFilter.type)!;
+        List<String> filterValues = _getFilterValues(selectedFilter.type)!;
         int filterValueIndex = selectedFilter.firstSelectedIndex;
         String? filterHeaderLabel = (0 <= filterValueIndex) && (filterValueIndex < filterValues.length) ? filterValues[filterValueIndex] : null;
         filterTypeWidgets.add(FilterSelector(
           title: filterHeaderLabel,
-          hint: _getFilterHintByType(selectedFilter.type),
+          hint: _getFilterHint(selectedFilter.type),
           active: selectedFilter.active,
           onTap: () => _onFilterType(filterHeaderLabel, selectedFilter),
         ));
@@ -349,11 +349,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   Widget _buildFilterValuesContainer() {
     ExploreFilter? selectedFilter = _selectedFilter;
-    List<String>? filterValues = (selectedFilter != null) ? _getFilterValuesByType(selectedFilter.type) : null;
+    List<String>? filterValues = (selectedFilter != null) ? _getFilterValues(selectedFilter.type) : null;
     if ((selectedFilter != null) && (filterValues != null)) {
       List<String?>? filterSubLabels = (selectedFilter.type == ExploreFilterType.event_time) ? _buildFilterEventDateSubLabels() : null;
       return Semantics(sortKey: OrdinalSortKey(filterLayoutSortKey), child:
-        Visibility(visible: _filterOptionsVisible, child:
+        Visibility(visible: _filtersDropdownVisible, child:
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 40), child:
             Semantics(child:
               Container(decoration: BoxDecoration(color: Styles().colors!.fillColorSecondary, borderRadius: BorderRadius.circular(5.0),), child:
@@ -409,7 +409,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     
     Set<int> lastSelectedIndexes = selectedFilter.selectedIndexes;
     selectedFilter.selectedIndexes = selectedIndexes;
-    selectedFilter.active = _filterOptionsVisible = false;
+    selectedFilter.active = _filtersDropdownVisible = false;
 
     if (selectedFilter.type == ExploreFilterType.student_course_terms) {
       StudentCourseTerm? term = ListUtils.entry(_studentCourseTerms, newValueIndex);
@@ -587,19 +587,19 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     }
   }
 
-  void _deactivateSelectedFilters() { // TBD: _clearActiveFilter
+  void _clearActiveFilter() {
     List<ExploreFilter>? itemFilters = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedExploreItem] : null;
     if (itemFilters != null && itemFilters.isNotEmpty) {
       for (ExploreFilter filter in itemFilters) {
         filter.active = false;
       }
     }
-    _filterOptionsVisible = false;
+    _filtersDropdownVisible = false;
   }
 
-  void _toggleActiveFilter(ExploreFilter selectedFilter) { // TBD: _closeFiltersDropdown
-    _deactivateSelectedFilters();
-    selectedFilter.active = _filterOptionsVisible = !selectedFilter.active;
+  void _toggleActiveFilter(ExploreFilter selectedFilter) {
+    _clearActiveFilter();
+    selectedFilter.active = _filtersDropdownVisible = !selectedFilter.active;
   }
 
   ExploreFilter? get _selectedFilter {
@@ -614,7 +614,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return null;
   }
 
-  static String? _eventsDisplayTypeLabel(EventsDisplayType? type) { // TBD: _eventsDisplayTypeName
+  static String? _eventsDisplayTypeName(EventsDisplayType? type) {
     switch (type) {
       case EventsDisplayType.all:       return Localization().getStringEx('panel.explore.button.events.display_type.all.label', 'All Events');
       case EventsDisplayType.multiple:  return Localization().getStringEx('panel.explore.button.events.display_type.multiple.label', 'Multi-day events');
@@ -623,7 +623,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     }
   }
 
-  List<String>? _getFilterValuesByType(ExploreFilterType filterType) { //TBD: _getFilterValues
+  List<String>? _getFilterValues(ExploreFilterType filterType) {
     switch (filterType) {
       case ExploreFilterType.categories:   return _filterEventCategoriesValues;
       case ExploreFilterType.work_time:    return _filterWorkTimeValues;
@@ -668,7 +668,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return -1;
   }
 
-  String? _getFilterHintByType(ExploreFilterType filterType) { // TBD: _getFilterHint
+  String? _getFilterHint(ExploreFilterType filterType) {
     switch (filterType) {
       case ExploreFilterType.categories:
         return Localization().getStringEx('panel.explore.filter.categories.hint', '');
