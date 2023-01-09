@@ -2,6 +2,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/StudentCourse.dart';
 import 'package:illinois/service/Analytics.dart';
@@ -16,6 +17,7 @@ import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
+import 'package:rokwire_plugin/service/location_services.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 import 'package:rokwire_plugin/utils/utils.dart';
 
@@ -31,6 +33,7 @@ class ExploreMapPanel extends StatefulWidget {
 class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ExploreMapPanel> {
 
   static const double filterLayoutSortKey = 1.0;
+  static const CameraPosition defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
 
   List<ExploreItem> _exploreItems = [];
   ExploreItem? _selectedExploreItem;
@@ -49,6 +52,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   bool _eventsDisplayDropDownValuesVisible = false;
   bool _filtersDropdownVisible = false;
   
+  GoogleMapController? _mapController;
+  LocationServicesStatus? _locationServicesStatus;
+
   @override
   void initState() {
     _exploreItems = _buildExploreItems();
@@ -56,6 +62,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     _selectedEventsDisplayType = EventsDisplayType.single;
     
     _initFilters();
+    _initLocationServicesStatus();
 
     super.initState();
   }
@@ -119,7 +126,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   // Map Widget
 
   Widget _buildMapView() {
-    return Container(color: Colors.blueAccent,);
+    return GoogleMap(
+      initialCameraPosition: defaultCameraPosition,
+      onMapCreated: (GoogleMapController controller) {
+        _mapController = controller;
+      },
+      compassEnabled: _userLocationEnabled,
+      mapToolbarEnabled: Storage().debugMapShowLevels ?? false,
+    );
   }
 
   // Dropdown Widgets
@@ -701,6 +715,25 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     }
     return eventCategories;
   }
+
+  // Locaction Services
+
+  bool get _userLocationEnabled {
+    return FlexUI().isLocationServicesAvailable && (_locationServicesStatus == LocationServicesStatus.permissionAllowed);
+  }
+
+  void _initLocationServicesStatus() {
+    if (FlexUI().isLocationServicesAvailable) {
+      LocationServices().status.then((LocationServicesStatus? locationServicesStatus) {
+        if (mounted) {
+          setState(() {
+            _locationServicesStatus = locationServicesStatus;
+          });
+        }
+      });
+    }
+  }
+
 
   // Explore Content
 
