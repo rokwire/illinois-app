@@ -44,6 +44,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
   late Directory _appDocDir;
 
   static const String _appointmentsCacheDocName = "appointments.json";
+  static const String _accountCacheDocName = "appointments_account.json";
   
   List<Appointment>? _appointments;
   AppointmentsAccount? _account;
@@ -93,8 +94,9 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
       }
     }
 
+    // Init account
     await _initAccount();
-    await super.initService();
+    super.initService();
   }
 
   @override
@@ -212,55 +214,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
     }
   }
 
-  Future<void> _initAccount() async {
-    await _loadAccount();
-    if ((account == null) && Auth2().isLoggedIn && (_isLastAccountResponseSuccessful == true)) {
-      // if the backend returns successful response without account, then populate the account with default values
-      _initAccountOnFirstSignIn();
-    }
-  }
-
-  Future<void> _loadAccount() async {
-    if (Auth2().isLoggedIn) {
-      String? url = "${Config().appointmentsUrl}/services/account";
-      http.Response? response = await Network().get(url, auth: Auth2());
-      int? responseCode = response?.statusCode;
-      String? responseString = response?.body;
-      if (responseCode == 200) {
-        _isLastAccountResponseSuccessful = true;
-        _account = AppointmentsAccount.fromJson(JsonUtils.decodeMap(responseString));
-      } else {
-        Log.w('Failed to load Appointments Account. Response:\n$responseCode: $responseString');
-        _isLastAccountResponseSuccessful = false;
-        _account = null;
-      }
-    } else {
-      _isLastAccountResponseSuccessful = null;
-      _account = null;
-    }
-    NotificationService().notify(notifyAppointmentsAccountChanged);
-  }
-
-  Future<void> _initAccountOnFirstSignIn() async {
-    // By Default
-    AppointmentsAccount defaultNewAccount = AppointmentsAccount(
-        notificationsAppointmentNew: true, notificationsAppointmentReminderMorning: true, notificationsAppointmentReminderNight: true);
-    Map<String, String> headers = {'Content-Type': 'application/json'};
-    String? accountJsonString = JsonUtils.encode(defaultNewAccount.toJson());
-    String? url = "${Config().appointmentsUrl}/services/account";
-    http.Response? response = await Network().post(url, auth: Auth2(), body: accountJsonString, headers: headers);
-    int? responseCode = response?.statusCode;
-    String? responseString = response?.body;
-    if (responseCode == 200) {
-      _isLastAccountResponseSuccessful = true;
-      _account = AppointmentsAccount.fromJson(JsonUtils.decodeMap(responseString));
-    } else {
-      Log.w('Failed to init default Appointments Account. Response:\n$responseCode: $responseString');
-      _isLastAccountResponseSuccessful = false;
-      _account = null;
-    }
-    NotificationService().notify(notifyAppointmentsAccountChanged);
-  }
+  // Appointments Account
 
   void changeAccountPreferences({bool? newAppointment, bool? morningReminder, bool? nightReminder}) {
     if (_account != null) {
@@ -278,12 +232,97 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
         changed = true;
       }
       if (changed) {
-        _updateAccount();
+        _updateAccountPreferences();
       }
     }
   }
 
+  Future<void> _initAccount() async {
+    _account = await _loadAccountFromCache();
+    if (_account != null) {
+      _updateAccount();
+    } else {
+      String? accountJsonString = await _loadAccountStringFromNet();
+      _account = AppointmentsAccount.fromJson(JsonUtils.decodeMap(accountJsonString));
+      if (_account != null) {
+        _saveAccountStringToCache(accountJsonString);
+        NotificationService().notify(notifyAppointmentsAccountChanged);
+      } else if (Auth2().isLoggedIn && (_isLastAccountResponseSuccessful == true)) {
+        // if the backend returns successful response without account, then populate the account with default values
+        _initAccountOnFirstSignIn();
+      }
+    }
+  }
+
+  File _getAccountCacheFile() => File(join(_appDocDir.path, _accountCacheDocName));
+
+  Future<String?> _loadAccountStringFromCache() async {
+    File accountFile = _getAccountCacheFile();
+    return await accountFile.exists() ? await accountFile.readAsString() : null;
+  }
+
+  Future<void> _saveAccountStringToCache(String? value) async {
+    await _getAccountCacheFile().writeAsString(value ?? '', flush: true);
+  }
+
+  Future<AppointmentsAccount?> _loadAccountFromCache() async {
+    return AppointmentsAccount.fromJson(JsonUtils.decodeMap(await _loadAccountStringFromCache()));
+  }
+
+  Future<String?> _loadAccountStringFromNet() async {
+    if (StringUtils.isNotEmpty(Config().appointmentsUrl) && Auth2().isLoggedIn) {
+      String? url = "${Config().appointmentsUrl}/services/account";
+      http.Response? response = await Network().get(url, auth: Auth2());
+      int? responseCode = response?.statusCode;
+      String? responseString = response?.body;
+      if (responseCode == 200) {
+        _isLastAccountResponseSuccessful = true;
+        return responseString;
+      } else {
+        Log.w('Failed to load Appointments Account. Response:\n$responseCode: $responseString');
+        _isLastAccountResponseSuccessful = false;
+        return null;
+      }
+    } else {
+      _isLastAccountResponseSuccessful = null;
+      return null;
+    }
+  }
+
   Future<void> _updateAccount() async {
+    String? accountJsonString = await _loadAccountStringFromNet();
+    AppointmentsAccount? apptsAccount = AppointmentsAccount.fromJson(JsonUtils.decodeMap(accountJsonString));
+    if (_account != apptsAccount) {
+      _account = apptsAccount;
+      _saveAccountStringToCache(accountJsonString);
+      NotificationService().notify(notifyAppointmentsAccountChanged);
+    }
+  }
+
+  Future<void> _initAccountOnFirstSignIn() async {
+    // By Default
+    AppointmentsAccount defaultNewAccount = AppointmentsAccount(
+        notificationsAppointmentNew: true, notificationsAppointmentReminderMorning: true, notificationsAppointmentReminderNight: true);
+    Map<String, String> headers = {'Content-Type': 'application/json'};
+    String? accountJsonString = JsonUtils.encode(defaultNewAccount.toJson());
+    String? url = "${Config().appointmentsUrl}/services/account";
+    http.Response? response = await Network().post(url, auth: Auth2(), body: accountJsonString, headers: headers);
+    int? responseCode = response?.statusCode;
+    String? responseString = response?.body;
+    if (responseCode == 200) {
+      _isLastAccountResponseSuccessful = true;
+      _account = AppointmentsAccount.fromJson(JsonUtils.decodeMap(responseString));
+      _saveAccountStringToCache(responseString);
+    } else {
+      Log.w('Failed to init default Appointments Account. Response:\n$responseCode: $responseString');
+      _isLastAccountResponseSuccessful = false;
+      _account = null;
+      _saveAccountStringToCache(null);
+    }
+    NotificationService().notify(notifyAppointmentsAccountChanged);
+  }
+
+  Future<void> _updateAccountPreferences() async {
     String? accountJsonString = JsonUtils.encode(_account);
     Map<String, String> headers = {'Content-Type': 'application/json'};
     String? url = "${Config().appointmentsUrl}/services/account";
@@ -293,10 +332,12 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
     if (responseCode == 200) {
       _isLastAccountResponseSuccessful = true;
       _account = AppointmentsAccount.fromJson(JsonUtils.decodeMap(responseString));
+      _saveAccountStringToCache(responseString);
     } else {
       Log.w('Failed to init default Appointments Account. Response:\n$responseCode: $responseString');
       _isLastAccountResponseSuccessful = false;
       _account = null;
+      _saveAccountStringToCache(null);
     }
     NotificationService().notify(notifyAppointmentsAccountChanged);
   }
@@ -374,7 +415,7 @@ class Appointments with Service implements ExploreJsonHandler, NotificationsList
       if (_pausedDateTime != null) {
         Duration pausedDuration = DateTime.now().difference(_pausedDateTime!);
         if (Config().refreshTimeout < pausedDuration.inSeconds) {
-          _loadAccount();
+          _updateAccount();
           _updateAppointments();
         }
       }
