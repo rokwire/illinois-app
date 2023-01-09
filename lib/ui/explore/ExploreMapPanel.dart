@@ -4,16 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/Dining.dart';
+import 'package:illinois/model/Explore.dart';
+import 'package:illinois/model/Laundry.dart';
+import 'package:illinois/model/MTD.dart';
 import 'package:illinois/model/StudentCourse.dart';
+import 'package:illinois/model/wellness/Appointment.dart';
 import 'package:illinois/service/Analytics.dart';
 import 'package:illinois/service/AppDateTime.dart';
+import 'package:illinois/service/Appointments.dart';
+import 'package:illinois/service/Auth2.dart';
+import 'package:illinois/service/Dinings.dart';
 import 'package:illinois/service/FlexUI.dart';
+import 'package:illinois/service/Gateway.dart';
+import 'package:illinois/service/Laundries.dart';
+import 'package:illinois/service/MTD.dart';
 import 'package:illinois/service/Storage.dart';
 import 'package:illinois/service/StudentCourses.dart';
 import 'package:illinois/ui/explore/ExplorePanel.dart';
 import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
+import 'package:rokwire_plugin/model/event.dart';
+import 'package:rokwire_plugin/model/Explore.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -55,6 +67,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   GoogleMapController? _mapController;
   LocationServicesStatus? _locationServicesStatus;
 
+  List<Explore>? _explores;
+  bool _exploreProgress = false;
+  Future<List<Explore>?>? _exploreTask;
+
   @override
   void initState() {
     _exploreItems = _buildExploreItems();
@@ -63,6 +79,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     
     _initFilters();
     _initLocationServicesStatus();
+    _initExplores();
 
     super.initState();
   }
@@ -82,12 +99,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     
     return Scaffold(
       appBar: RootHeaderBar(title: Localization().getStringEx("panel.maps.header.title", "Map")),
-      body: RefreshIndicator(onRefresh: _onRefresh, child: _buildContent(),),
+      body: RefreshIndicator(onRefresh: _onRefresh, child: _buildScaffoldBody(),),
       backgroundColor: Styles().colors?.background,
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildScaffoldBody() {
     return Column(children: <Widget>[
       Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0), child:
         _buildExploreItemsDropDownButton(),
@@ -108,7 +125,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
                   ),
                   Expanded(child:
                     Container(color: Styles().colors!.background, child:
-                      _buildMapView(),
+                      _buildContent(),
                     ),
                   ),
                 ]),
@@ -125,6 +142,24 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   // Map Widget
 
+  Widget _buildContent() {
+    if (_exploreProgress) {
+      return _buildLoadingContent();
+    }
+    else if (Connectivity().isOffline) {
+      return _buildMessageContent(_offlineContentMessage ?? '');
+    }
+    else if (_explores == null) {
+      return _buildMessageContent(_failedContentMessage ?? '');
+    }
+    else if (_explores!.isEmpty) {
+      return _buildMessageContent(_emptyContentMessage ?? '');
+    }
+    else {
+      return _buildMapView();
+    }
+  }
+
   Widget _buildMapView() {
     return GoogleMap(
       initialCameraPosition: defaultCameraPosition,
@@ -134,6 +169,31 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       compassEnabled: _userLocationEnabled,
       mapToolbarEnabled: Storage().debugMapShowLevels ?? false,
     );
+  }
+
+  Widget _buildLoadingContent() {
+    return Semantics(
+      label: Localization().getStringEx('panel.explore.state.loading.title', 'Loading'),
+      hint: Localization().getStringEx('panel.explore.state.loading.hint', 'Please wait'),
+      excludeSemantics: true,
+      child: Column(children: [
+        Expanded(flex: 1, child: Container(),),
+        SizedBox(width: 32, height: 32, child:
+          CircularProgressIndicator(color: Styles().colors?.fillColorSecondary, strokeWidth: 3,),
+        ),
+        Expanded(flex: 2, child: Container(),),
+      ],)
+    );
+  }
+
+  Widget _buildMessageContent(String message) {
+    return Column(children: [
+      Expanded(flex: 1, child: Container(),),
+      Padding(padding: EdgeInsets.symmetric(horizontal: 32), child:
+        Text(message, textAlign: TextAlign.center, style: TextStyle(color: Styles().colors!.fillColorPrimary, fontSize: 18)),
+      ),
+      Expanded(flex: 2, child: Container(),),
+    ],);
   }
 
   // Dropdown Widgets
@@ -682,6 +742,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return -1;
   }
 
+  String? _getSelectedTermId(List<ExploreFilter>? selectedFilterList) {
+    ExploreFilter? selectedFilter = _getSelectedFilter(selectedFilterList, ExploreFilterType.student_course_terms);
+    int index = selectedFilter?.firstSelectedIndex ?? -1;
+    return ((0 <= index) && (index < (_studentCourseTerms?.length ?? 0))) ? _studentCourseTerms![index].id : null;
+  }
+
   String? _getFilterHint(ExploreFilterType filterType) {
     switch (filterType) {
       case ExploreFilterType.categories:
@@ -716,6 +782,151 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return eventCategories;
   }
 
+  Set<int>? _getSelectedFilterIndexes(List<ExploreFilter>? selectedFilterList, ExploreFilterType filterType) {
+    if (selectedFilterList != null) {
+      for (ExploreFilter selectedFilter in selectedFilterList) {
+        if (selectedFilter.type == filterType) {
+          return selectedFilter.selectedIndexes;
+        }
+      }
+    }
+    return null;
+  }
+
+  ExploreFilter? _getSelectedFilter(List<ExploreFilter>? selectedFilterList, ExploreFilterType type) {
+    if (selectedFilterList != null) {
+      for (ExploreFilter selectedFilter in selectedFilterList) {
+        if (selectedFilter.type == type) {
+          return selectedFilter;
+        }
+      }
+    }
+    return null;
+  }
+
+  Set<String?>? _getSelectedCategories(List<ExploreFilter>? selectedFilterList) {
+    if (selectedFilterList == null || selectedFilterList.isEmpty) {
+      return null;
+    }
+    
+    Set<String?>? selectedCategories;
+    for (ExploreFilter selectedFilter in selectedFilterList) {
+      //Apply custom logic for categories
+      if (selectedFilter.type == ExploreFilterType.categories) {
+        Set<int> selectedIndexes = selectedFilter.selectedIndexes;
+        if (selectedIndexes.isEmpty || selectedIndexes.contains(0)) {
+          break; // All Categories
+        }
+        else {
+          selectedCategories = Set();
+          
+          if (selectedIndexes.contains(1)) { // My categories
+            Iterable<String>? userCategories = Auth2().prefs?.interestCategories;
+            if (userCategories != null && userCategories.isNotEmpty) {
+              selectedCategories.addAll(userCategories);
+            }
+          }
+          
+          List<String> filterCategoriesValues = _filterEventCategoriesValues;
+          if (filterCategoriesValues.isNotEmpty) {
+            for (int selectedCategoryIndex in selectedIndexes) {
+              if ((selectedCategoryIndex < filterCategoriesValues.length) && selectedCategoryIndex != 1) {
+                String? singleCategory = filterCategoriesValues[selectedCategoryIndex];
+                if (StringUtils.isNotEmpty(singleCategory)) {
+                  selectedCategories.add(singleCategory);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return selectedCategories;
+  }
+
+  EventTimeFilter _getSelectedEventTimePeriod(List<ExploreFilter>? selectedFilterList) {
+    Set<int>? selectedIndexes = _getSelectedFilterIndexes(selectedFilterList, ExploreFilterType.event_time);
+    int index = (selectedIndexes != null && selectedIndexes.isNotEmpty) ? selectedIndexes.first : -1; //Get first one because only categories has more than one selectable index
+    switch (index) {
+
+      case 0: // 'Upcoming':
+        return EventTimeFilter.upcoming;
+      case 1: // 'Today':
+        return EventTimeFilter.today;
+      case 2: // 'Next 7 days':
+        return EventTimeFilter.next7Day;
+      case 3: // 'This Weekend':
+        return EventTimeFilter.thisWeekend;
+      
+      case 4: //'Next 30 days':
+        return EventTimeFilter.next30Days;
+      default:
+        return EventTimeFilter.upcoming;
+    }
+
+    /*//Filter by the time in the University
+    DateTime nowUni = AppDateTime().getUniLocalTimeFromUtcTime(now.toUtc());
+    int hoursDiffToUni = now.hour - nowUni.hour;
+    DateTime startDateUni = startDate.add(Duration(hours: hoursDiffToUni));
+    DateTime endDateUni = (endDate != null) ? endDate.add(
+        Duration(hours: hoursDiffToUni)) : null;
+
+    return {
+      'start_date' : startDateUni,
+      'end_date' : endDateUni
+    };*/
+  }
+
+  Set<String>? _getSelectedEventTags(List<ExploreFilter>? selectedFilterList) {
+    if (selectedFilterList == null || selectedFilterList.isEmpty) {
+      return null;
+    }
+    for (ExploreFilter selectedFilter in selectedFilterList) {
+      if (selectedFilter.type == ExploreFilterType.event_tags) {
+        int index = selectedFilter.firstSelectedIndex;
+        if (index == 0) {
+          return null; //All Tags
+        } else { //My tags
+          return Auth2().prefs?.positiveTags;
+        }
+      }
+    }
+    return null;
+  }
+
+  String? _getSelectedWorkTime(List<ExploreFilter>? selectedFilterList) {
+    if (selectedFilterList == null || selectedFilterList.isEmpty) {
+      return null;
+    }
+    for (ExploreFilter selectedFilter in selectedFilterList) {
+      if (selectedFilter.type == ExploreFilterType.work_time) {
+        int index = selectedFilter.firstSelectedIndex;
+        return (_filterWorkTimeValues!.length > index)
+            ? _filterWorkTimeValues![index]
+            : null;
+      }
+    }
+    return null;
+  }
+
+  PaymentType? _getSelectedPaymentType(List<ExploreFilter>? selectedFilterList) {
+    if (selectedFilterList == null || selectedFilterList.isEmpty) {
+      return null;
+    }
+    for (ExploreFilter selectedFilter in selectedFilterList) {
+      if (selectedFilter.type == ExploreFilterType.payment_type) {
+        int index = selectedFilter.firstSelectedIndex;
+        if (index == 0) {
+          return null; //All payment types
+        }
+        return (_filterPaymentTypeValues!.length > index)
+            ? PaymentType.values[index - 1]
+            : null;
+      }
+    }
+    return null;
+  }
+
   // Locaction Services
 
   bool get _userLocationEnabled {
@@ -737,10 +948,192 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   // Explore Content
 
-  Future<void> _onRefresh() async {
+  void _initExplores() {
+    Future<List<Explore>?> exploreTask = _loadExplores();
+    _exploreTask = exploreTask;
+    _exploreProgress = true;
+    _exploreTask?.then((List<Explore>? explores) {
+      if (mounted && (exploreTask == _exploreTask)) {
+        setState(() {
+          _explores = explores;
+          _exploreTask = null;
+          _exploreProgress = false;
+        });
+        _acknowledgeExplores();
+      }
+    });
+  }
 
+  void _acknowledgeExplores({ bool updateOnly = false}) {
+    //TODO: eval camera zoom, , build markers, etc.
   }
 
 
+  Future<void> _onRefresh() async {
+    Future<List<Explore>?> exploreTask = _loadExplores();
+    _exploreTask = exploreTask;
+    List<Explore>? explores = await _exploreTask;
+    if (mounted && (exploreTask == _exploreTask)) {
+      setState(() {
+        _explores = explores;
+        _exploreTask = null;
+      });
+      _acknowledgeExplores();
+    }
+  }
+
+  Future<List<Explore>?> _loadExplores() async {
+    if (Connectivity().isNotOffline) {
+      List<ExploreFilter>? selectedFilterList = (_itemToFilterMap != null) ? _itemToFilterMap![_selectedExploreItem] : null;
+      switch (_selectedExploreItem) {
+        case ExploreItem.Events: return _loadEvents(selectedFilterList);
+        case ExploreItem.Dining: return _loadDining(selectedFilterList);
+        case ExploreItem.Laundry: return _loadLaundry();
+        case ExploreItem.Buildings: return _loadBuildings();
+        case ExploreItem.StudentCourse: return _loadStudentCourse(selectedFilterList);
+        case ExploreItem.Appointments: return _loadAppointments();
+        case ExploreItem.MTDStops: return _loadMTDStops();
+        case ExploreItem.MTDDestinations: return _loadMTDDestinations();
+        case ExploreItem.StateFarmWayfinding: break;
+        default: break;
+      }
+    }
+    return null;
+  }
+
+  Future<List<Explore>?> _loadEvents(List<ExploreFilter>? selectedFilterList) async {
+    List<Explore>? explores;
+    Set<String?>? categories = _getSelectedCategories(selectedFilterList);
+    Set<String>? tags = _getSelectedEventTags(selectedFilterList);
+    EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
+    List<Event>? events = await Events().loadEvents(categories: categories, tags: tags, eventFilter: eventFilter);
+    if (events != null) {
+      explores = _buildDisplayEvents(events);
+    }
+    return explores;
+  }
+
+  List<Explore>? _buildDisplayEvents(List<Event> allEvents) {
+    if (_selectedEventsDisplayType == EventsDisplayType.all) {
+      return _toExploreList(allEvents);
+    }
+    else {
+        List<Explore> displayEvents = [];
+        for (Event event in allEvents) {
+          if (((_selectedEventsDisplayType == EventsDisplayType.multiple) && event.isMultiEvent) ||
+              ((_selectedEventsDisplayType == EventsDisplayType.single) && !event.isMultiEvent)) {
+            Explore? explore = _toExplore(event);
+            if (explore != null) {
+              displayEvents.add(explore);
+            }
+          }
+        }
+        return displayEvents;
+    }
+  }
+
+  Future<List<Explore>?> _loadDining(List<ExploreFilter>? selectedFilterList) async {
+    String? workTime = _getSelectedWorkTime(selectedFilterList);
+    PaymentType? paymentType = _getSelectedPaymentType(selectedFilterList);
+    bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
+    return _toExploreList(await Dinings().loadBackendDinings(onlyOpened, paymentType, null));
+  }
+
+  Future<List<Explore>?> _loadLaundry() async {
+    LaundrySchool? laundrySchool = await Laundries().loadSchoolRooms();
+    return _toExploreList(laundrySchool?.rooms);
+  }
+
+  Future<List<Explore>?> _loadBuildings() async {
+    return _toExploreList(await Gateway().loadBuildings());
+  }
+
+  Future<List<Explore>?> _loadMTDStops() async {
+    List<Explore> result = <Explore>[];
+    _collectBusStops(result, stops: MTD().stops?.stops);
+    return result;
+  }
+
+  void _collectBusStops(List<Explore> result, { List<MTDStop>? stops }) {
+    if (stops != null) {
+      for(MTDStop stop in stops) {
+        if (stop.hasLocation) {
+          result.add(stop as Explore);
+        }
+        if (stop.points != null) {
+          _collectBusStops(result, stops: stop.points);
+        }
+      }
+    }
+  }
+
+  Future<List<Explore>?> _loadMTDDestinations() async {
+    return _toExploreList(ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName)));
+  }
+
+  Future<List<Explore>?> _loadStudentCourse(List<ExploreFilter>? selectedFilterList) async {
+    String? termId = _getSelectedTermId(selectedFilterList) ?? StudentCourses().displayTermId;
+    return (termId != null) ? _toExploreList(await StudentCourses().loadCourses(termId: termId)) : null;
+  }
+
+  Future<List<Explore>?> _loadAppointments() async {
+    return _toExploreList(Appointments().getAppointments(onlyUpcoming: true, type: AppointmentType.in_person));
+  }
+
+  String? get _offlineContentMessage {
+    switch (_selectedExploreItem) {
+      case ExploreItem.Events:              return Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..');
+      case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.');
+      case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.state.offline.empty.laundry', 'No laundry locations available while offline.');
+      case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.state.offline.empty.buildings', 'No building locations available while offline.');
+      case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.state.offline.empty.student_course', 'No student courses available while offline.');
+      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.state.offline.empty.appointments', 'No appointments available while offline.');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.state.offline.empty.mtd_stops', 'No MTD stop locations available while offline.');
+      case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.state.offline.empty.mtd_destinations', 'No MTD destinaion locations available while offline.');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.');
+      default:                              return null;
+    }
+  }
+
+  String? get _emptyContentMessage {
+    switch (_selectedExploreItem) {
+      case ExploreItem.Events: return Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.');
+      case ExploreItem.Dining: return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
+      case ExploreItem.Laundry: return Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.');
+      case ExploreItem.Buildings: return Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.');
+      case ExploreItem.StudentCourse: return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses available.');
+      case ExploreItem.Appointments: return Localization().getStringEx('panel.explore.state.online.empty.appointments', 'No appointments available.');
+      case ExploreItem.MTDStops: return Localization().getStringEx('panel.explore.state.online.empty.mtd_stops', 'No MTD stop locations available.');
+      case ExploreItem.MTDDestinations: return Localization().getStringEx('panel.explore.state.online.empty.mtd_destinations', 'No MTD destinaion locations available.');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.online.empty.state_farm', 'No State Farm Wayfinding available.');
+      default:  return null;
+    }
+  }
+
+  String? get _failedContentMessage {
+    switch (_selectedExploreItem) {
+      case ExploreItem.Events: return Localization().getStringEx('panel.explore.state.failed.events', 'Failed to load upcoming events.');
+      case ExploreItem.Dining: return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
+      case ExploreItem.Laundry: return Localization().getStringEx('panel.explore.state.failed.laundry', 'Failed to load laundry locations.');
+      case ExploreItem.Buildings: return Localization().getStringEx('panel.explore.state.failed.buildings', 'Failed to load building locations.');
+      case ExploreItem.StudentCourse: return Localization().getStringEx('panel.explore.state.failed.student_course', 'Failed to load student courses.');
+      case ExploreItem.Appointments: return Localization().getStringEx('panel.explore.state.failed.appointments', 'Failed to load appointments.');
+      case ExploreItem.MTDStops: return Localization().getStringEx('panel.explore.state.failed.mtd_stops', 'Failed to load MTD stop locations.');
+      case ExploreItem.MTDDestinations: return Localization().getStringEx('panel.explore.state.failed.mtd_destinations', 'Failed to load MTD destinaion locations.');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.failed.state_farm', 'Failed to load State Farm Wayfinding.');
+      default:  return null;
+    }
+  }
 }
 
+// Helpers 
+
+List<Explore>? _toExploreList(List<dynamic>? list) {
+  try { return list?.cast<Explore>(); }
+  catch(e) { debugPrint(e.toString()); return null; }
+}
+
+Explore? _toExplore(dynamic explore) {
+  try { return (explore is Explore) ? explore : null; }
+  catch(e) { debugPrint(e.toString()); return null; }
+}
