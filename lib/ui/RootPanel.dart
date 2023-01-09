@@ -25,6 +25,7 @@ import 'package:illinois/service/Canvas.dart';
 import 'package:illinois/ui/academics/AcademicsHomePanel.dart';
 import 'package:illinois/ui/explore/ExploreDisplayTypeHeader.dart';
 import 'package:illinois/ui/guide/GuideListPanel.dart';
+import 'package:illinois/ui/explore/ExploreMapPanel.dart';
 import 'package:illinois/ui/settings/SettingsNotificationsContentPanel.dart';
 import 'package:illinois/ui/wellness/WellnessHomePanel.dart';
 import 'package:illinois/ui/wellness/appointments/AppointmentDetailPanel.dart';
@@ -64,7 +65,7 @@ import 'package:rokwire_plugin/utils/utils.dart';
 import 'package:rokwire_plugin/service/local_notifications.dart';
 import 'package:rokwire_plugin/service/styles.dart';
 
-enum RootTab { Home, Favorites, Athletics, Explore, Browse, Maps, Academics, Wellness }
+enum RootTab { Home, Favorites, Athletics, Explore, Browse, Maps, Maps2, Academics, Wellness }
 
 class RootPanel extends StatefulWidget {
   static final GlobalKey<_RootPanelState> stateKey = GlobalKey<_RootPanelState>();
@@ -685,6 +686,9 @@ class _RootPanelState extends State<RootPanel> with TickerProviderStateMixin imp
     else if (rootTab == RootTab.Maps) {
       return ExplorePanel(rootTabDisplay: true, mapDisplayType: ListMapDisplayType.Map);
     }
+    else if (rootTab == RootTab.Maps2) {
+      return ExploreMapPanel();
+    }
     else if (rootTab == RootTab.Academics) {
       return AcademicsHomePanel(rootTabDisplay: true,);
     }
@@ -775,6 +779,9 @@ RootTab? rootTabFromString(String? value) {
     }
     else if (value == 'maps') {
       return RootTab.Maps;
+    }
+    else if (value == 'maps2') {
+      return RootTab.Maps2;
     }
     else if (value == 'academics') {
       return RootTab.Academics;
