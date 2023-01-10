@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -213,6 +214,39 @@ extension ExploreExt on Explore {
   }
 
   String? get exploreImageUrl => (this is Event) ? (this as Event).eventImageUrl : exploreImageURL;
+}
+
+extension ExploreMap on Explore {
+  static LatLngBounds? boundsOfList(List<Explore>? explores) {
+    double? latMin, longMin, latMax, longMax;
+    if (explores != null) {
+      for (Explore explore in explores) {
+        ExploreLocation? exploreLocation = explore.exploreLocation;
+        if ((exploreLocation != null)) {
+          double? exploreLat = exploreLocation.latitude?.toDouble();
+          double? exploreLong = exploreLocation.longitude?.toDouble();
+          if ((exploreLat != null) && (exploreLong != null)) {
+            if ((latMin != null) && (longMin != null) && (latMax != null) && (longMax != null)) {
+              if (exploreLat < latMin)
+                latMin = exploreLat;
+              else if (latMax < exploreLat)
+                latMax = exploreLat;
+
+              if (exploreLong < longMin)
+                longMin = exploreLong;
+              else if (longMax < exploreLong)
+                longMax = exploreLong;
+            }
+            else {
+              latMin = latMax = exploreLat;
+              longMin = longMax = exploreLong;
+            }
+          }
+        }
+      }
+    }
+    return ((latMin != null) && (longMin != null) && (latMax != null) && (longMax != null)) ? LatLngBounds(southwest: LatLng(latMin, longMin), northeast: LatLng(latMax, longMax)) : null;
+  }
 }
 
 extension ExplorePOIExt on ExplorePOI {

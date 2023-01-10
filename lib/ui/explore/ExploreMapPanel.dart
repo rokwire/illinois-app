@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:illinois/ext/Explore.dart';
 import 'package:illinois/model/Dining.dart';
 import 'package:illinois/model/Explore.dart';
 import 'package:illinois/model/Laundry.dart';
@@ -44,8 +45,10 @@ class ExploreMapPanel extends StatefulWidget {
 
 class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin<ExploreMapPanel> {
 
-  static const double filterLayoutSortKey = 1.0;
-  static const CameraPosition defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
+  static const double _filterLayoutSortKey = 1.0;
+  static const CameraPosition _defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
+  static const double _mapPadding = 50;
+  final UniqueKey _mapKey = UniqueKey();
 
   List<ExploreItem> _exploreItems = [];
   ExploreItem? _selectedExploreItem;
@@ -65,6 +68,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   bool _filtersDropdownVisible = false;
   
   GoogleMapController? _mapController;
+  bool _shouldUpdateMapCamera = false;
+  
   LocationServicesStatus? _locationServicesStatus;
 
   List<Explore>? _explores;
@@ -162,9 +167,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   Widget _buildMapView() {
     return GoogleMap(
-      initialCameraPosition: defaultCameraPosition,
+      key: _mapKey,
+      initialCameraPosition: _defaultCameraPosition,
       onMapCreated: (GoogleMapController controller) {
         _mapController = controller;
+        if (_shouldUpdateMapCamera) {
+          _acknowledgeExplores();
+          _shouldUpdateMapCamera = false;
+        }
       },
       compassEnabled: _userLocationEnabled,
       mapToolbarEnabled: Storage().debugMapShowLevels ?? false,
@@ -309,7 +319,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         _eventsDisplayDropDownValuesVisible = !_eventsDisplayDropDownValuesVisible;
       });
       if (lastDisplayType != _selectedEventsDisplayType) {
-        //TBD: _loadExplores();
+        _initExplores();
       }
     }
   }
@@ -381,7 +391,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
         _itemsDropDownValuesVisible = false;
       });
       if (lastExploreItem != item) {
-        //TBD: _loadExplores();
+        _initExplores();
       }
 
     }
@@ -426,7 +436,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     List<String>? filterValues = (selectedFilter != null) ? _getFilterValues(selectedFilter.type) : null;
     if ((selectedFilter != null) && (filterValues != null)) {
       List<String?>? filterSubLabels = (selectedFilter.type == ExploreFilterType.event_time) ? _buildFilterEventDateSubLabels() : null;
-      return Semantics(sortKey: OrdinalSortKey(filterLayoutSortKey), child:
+      return Semantics(sortKey: OrdinalSortKey(_filterLayoutSortKey), child:
         Visibility(visible: _filtersDropdownVisible, child:
           Padding(padding: EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 40), child:
             Semantics(child:
@@ -493,7 +503,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     }
 
     if (!DeepCollectionEquality().equals(lastSelectedIndexes, selectedIndexes)) {
-      //TBD: _loadExplores();
+      _initExplores();
     }
   }
 
@@ -927,6 +937,53 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return null;
   }
 
+  // Content Data
+
+  String? get _offlineContentMessage {
+    switch (_selectedExploreItem) {
+      case ExploreItem.Events:              return Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..');
+      case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.');
+      case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.state.offline.empty.laundry', 'No laundry locations available while offline.');
+      case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.state.offline.empty.buildings', 'No building locations available while offline.');
+      case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.state.offline.empty.student_course', 'No student courses available while offline.');
+      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.state.offline.empty.appointments', 'No appointments available while offline.');
+      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.state.offline.empty.mtd_stops', 'No MTD stop locations available while offline.');
+      case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.state.offline.empty.mtd_destinations', 'No MTD destinaion locations available while offline.');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.');
+      default:                              return null;
+    }
+  }
+
+  String? get _emptyContentMessage {
+    switch (_selectedExploreItem) {
+      case ExploreItem.Events: return Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.');
+      case ExploreItem.Dining: return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
+      case ExploreItem.Laundry: return Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.');
+      case ExploreItem.Buildings: return Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.');
+      case ExploreItem.StudentCourse: return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses available.');
+      case ExploreItem.Appointments: return Localization().getStringEx('panel.explore.state.online.empty.appointments', 'No appointments available.');
+      case ExploreItem.MTDStops: return Localization().getStringEx('panel.explore.state.online.empty.mtd_stops', 'No MTD stop locations available.');
+      case ExploreItem.MTDDestinations: return Localization().getStringEx('panel.explore.state.online.empty.mtd_destinations', 'No MTD destinaion locations available.');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.online.empty.state_farm', 'No State Farm Wayfinding available.');
+      default:  return null;
+    }
+  }
+
+  String? get _failedContentMessage {
+    switch (_selectedExploreItem) {
+      case ExploreItem.Events: return Localization().getStringEx('panel.explore.state.failed.events', 'Failed to load upcoming events.');
+      case ExploreItem.Dining: return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
+      case ExploreItem.Laundry: return Localization().getStringEx('panel.explore.state.failed.laundry', 'Failed to load laundry locations.');
+      case ExploreItem.Buildings: return Localization().getStringEx('panel.explore.state.failed.buildings', 'Failed to load building locations.');
+      case ExploreItem.StudentCourse: return Localization().getStringEx('panel.explore.state.failed.student_course', 'Failed to load student courses.');
+      case ExploreItem.Appointments: return Localization().getStringEx('panel.explore.state.failed.appointments', 'Failed to load appointments.');
+      case ExploreItem.MTDStops: return Localization().getStringEx('panel.explore.state.failed.mtd_stops', 'Failed to load MTD stop locations.');
+      case ExploreItem.MTDDestinations: return Localization().getStringEx('panel.explore.state.failed.mtd_destinations', 'Failed to load MTD destinaion locations.');
+      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.failed.state_farm', 'Failed to load State Farm Wayfinding.');
+      default:  return null;
+    }
+  }
+
   // Locaction Services
 
   bool get _userLocationEnabled {
@@ -958,16 +1015,11 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
           _explores = explores;
           _exploreTask = null;
           _exploreProgress = false;
+          _shouldUpdateMapCamera = true;
         });
-        _acknowledgeExplores();
       }
     });
   }
-
-  void _acknowledgeExplores({ bool updateOnly = false}) {
-    //TODO: eval camera zoom, , build markers, etc.
-  }
-
 
   Future<void> _onRefresh() async {
     Future<List<Explore>?> exploreTask = _loadExplores();
@@ -977,10 +1029,21 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       setState(() {
         _explores = explores;
         _exploreTask = null;
+        _shouldUpdateMapCamera = false;
       });
-      _acknowledgeExplores();
     }
   }
+
+  void _acknowledgeExplores() {
+    //TODO: eval camera zoom, , build markers, etc.
+    if ((_explores != null) && (_mapController != null)) {
+      LatLngBounds? bounds = ExploreMap.boundsOfList(_explores);
+      if (bounds != null) {
+        _mapController?.animateCamera(CameraUpdate.newLatLngBounds(bounds, _mapPadding));
+      }
+    }
+  }
+
 
   Future<List<Explore>?> _loadExplores() async {
     if (Connectivity().isNotOffline) {
@@ -1008,12 +1071,12 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     EventTimeFilter eventFilter = _getSelectedEventTimePeriod(selectedFilterList);
     List<Event>? events = await Events().loadEvents(categories: categories, tags: tags, eventFilter: eventFilter);
     if (events != null) {
-      explores = _buildDisplayEvents(events);
+      explores = _filterEvents(events);
     }
     return explores;
   }
 
-  List<Explore>? _buildDisplayEvents(List<Event> allEvents) {
+  List<Explore>? _filterEvents(List<Event> allEvents) {
     if (_selectedEventsDisplayType == EventsDisplayType.all) {
       return allEvents;
     }
@@ -1077,49 +1140,5 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     return Appointments().getAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
   }
 
-  String? get _offlineContentMessage {
-    switch (_selectedExploreItem) {
-      case ExploreItem.Events:              return Localization().getStringEx('panel.explore.state.offline.empty.events', 'No upcoming events available while offline..');
-      case ExploreItem.Dining:              return Localization().getStringEx('panel.explore.state.offline.empty.dining', 'No dining locations available while offline.');
-      case ExploreItem.Laundry:             return Localization().getStringEx('panel.explore.state.offline.empty.laundry', 'No laundry locations available while offline.');
-      case ExploreItem.Buildings:           return Localization().getStringEx('panel.explore.state.offline.empty.buildings', 'No building locations available while offline.');
-      case ExploreItem.StudentCourse:       return Localization().getStringEx('panel.explore.state.offline.empty.student_course', 'No student courses available while offline.');
-      case ExploreItem.Appointments:        return Localization().getStringEx('panel.explore.state.offline.empty.appointments', 'No appointments available while offline.');
-      case ExploreItem.MTDStops:            return Localization().getStringEx('panel.explore.state.offline.empty.mtd_stops', 'No MTD stop locations available while offline.');
-      case ExploreItem.MTDDestinations:     return Localization().getStringEx('panel.explore.state.offline.empty.mtd_destinations', 'No MTD destinaion locations available while offline.');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.offline.empty.state_farm', 'No State Farm Wayfinding available while offline.');
-      default:                              return null;
-    }
-  }
-
-  String? get _emptyContentMessage {
-    switch (_selectedExploreItem) {
-      case ExploreItem.Events: return Localization().getStringEx('panel.explore.state.online.empty.events', 'No upcoming events.');
-      case ExploreItem.Dining: return Localization().getStringEx('panel.explore.state.online.empty.dining', 'No dining locations are currently open.');
-      case ExploreItem.Laundry: return Localization().getStringEx('panel.explore.state.online.empty.laundry', 'No laundry locations are currently open.');
-      case ExploreItem.Buildings: return Localization().getStringEx('panel.explore.state.online.empty.buildings', 'No building locations available.');
-      case ExploreItem.StudentCourse: return Localization().getStringEx('panel.explore.state.online.empty.student_course', 'No student courses available.');
-      case ExploreItem.Appointments: return Localization().getStringEx('panel.explore.state.online.empty.appointments', 'No appointments available.');
-      case ExploreItem.MTDStops: return Localization().getStringEx('panel.explore.state.online.empty.mtd_stops', 'No MTD stop locations available.');
-      case ExploreItem.MTDDestinations: return Localization().getStringEx('panel.explore.state.online.empty.mtd_destinations', 'No MTD destinaion locations available.');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.online.empty.state_farm', 'No State Farm Wayfinding available.');
-      default:  return null;
-    }
-  }
-
-  String? get _failedContentMessage {
-    switch (_selectedExploreItem) {
-      case ExploreItem.Events: return Localization().getStringEx('panel.explore.state.failed.events', 'Failed to load upcoming events.');
-      case ExploreItem.Dining: return Localization().getStringEx('panel.explore.state.failed.dining', 'Failed to load dining locations.');
-      case ExploreItem.Laundry: return Localization().getStringEx('panel.explore.state.failed.laundry', 'Failed to load laundry locations.');
-      case ExploreItem.Buildings: return Localization().getStringEx('panel.explore.state.failed.buildings', 'Failed to load building locations.');
-      case ExploreItem.StudentCourse: return Localization().getStringEx('panel.explore.state.failed.student_course', 'Failed to load student courses.');
-      case ExploreItem.Appointments: return Localization().getStringEx('panel.explore.state.failed.appointments', 'Failed to load appointments.');
-      case ExploreItem.MTDStops: return Localization().getStringEx('panel.explore.state.failed.mtd_stops', 'Failed to load MTD stop locations.');
-      case ExploreItem.MTDDestinations: return Localization().getStringEx('panel.explore.state.failed.mtd_destinations', 'Failed to load MTD destinaion locations.');
-      case ExploreItem.StateFarmWayfinding: return Localization().getStringEx('panel.explore.state.failed.state_farm', 'Failed to load State Farm Wayfinding.');
-      default:  return null;
-    }
-  }
 }
 
