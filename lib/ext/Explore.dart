@@ -218,34 +218,34 @@ extension ExploreExt on Explore {
 
 extension ExploreMap on Explore {
   static LatLngBounds? boundsOfList(List<Explore>? explores) {
-    double? latMin, longMin, latMax, longMax;
+    double? minLat, minLng, maxLat, maxLng;
     if (explores != null) {
       for (Explore explore in explores) {
         ExploreLocation? exploreLocation = explore.exploreLocation;
         if ((exploreLocation != null)) {
           double? exploreLat = exploreLocation.latitude?.toDouble();
-          double? exploreLong = exploreLocation.longitude?.toDouble();
-          if ((exploreLat != null) && (exploreLat != 0.0) && (exploreLong != null) && (exploreLong != 0.0)) {
-            if ((latMin != null) && (longMin != null) && (latMax != null) && (longMax != null)) {
-              if (exploreLat < latMin)
-                latMin = exploreLat;
-              else if (latMax < exploreLat)
-                latMax = exploreLat;
+          double? exploreLng = exploreLocation.longitude?.toDouble();
+          if ((exploreLat != null) && (exploreLat != 0.0) && (exploreLng != null) && (exploreLng != 0.0)) {
+            if ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) {
+              if (exploreLat < minLat)
+                minLat = exploreLat;
+              else if (maxLat < exploreLat)
+                maxLat = exploreLat;
 
-              if (exploreLong < longMin)
-                longMin = exploreLong;
-              else if (longMax < exploreLong)
-                longMax = exploreLong;
+              if (exploreLng < minLng)
+                minLng = exploreLng;
+              else if (maxLng < exploreLng)
+                maxLng = exploreLng;
             }
             else {
-              latMin = latMax = exploreLat;
-              longMin = longMax = exploreLong;
+              minLat = maxLat = exploreLat;
+              minLng = maxLng = exploreLng;
             }
           }
         }
       }
     }
-    return ((latMin != null) && (longMin != null) && (latMax != null) && (longMax != null)) ? LatLngBounds(southwest: LatLng(latMin, longMin), northeast: LatLng(latMax, longMax)) : null;
+    return ((minLat != null) && (minLng != null) && (maxLat != null) && (maxLng != null)) ? LatLngBounds(southwest: LatLng(minLat, minLng), northeast: LatLng(maxLat, maxLng)) : null;
   }
 }
 
