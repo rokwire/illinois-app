@@ -85,6 +85,24 @@ extension GroupExt on Group {
     return null;
   }
 
+  String? get displayManagedMembershipUpdateTime {
+    DateTime? deviceManagedDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateManagedMembershipUpdatedUtc);
+    if (deviceManagedDateTime != null) {
+      String formattedManagedDateTime = DateFormat('yyyy/MM/dd h:mma').format(deviceManagedDateTime);
+      return formattedManagedDateTime;
+    }
+    return null;
+  }
+
+  String? get displayMembershipUpdateTime {
+    DateTime? deviceMembershipDateTime = AppDateTime().getDeviceTimeFromUtcTime(dateMembershipUpdatedUtc);
+    if (deviceMembershipDateTime != null) {
+      String formattedMembershipDateTime = DateFormat('yyyy/MM/dd h:mma').format(deviceMembershipDateTime);
+      return formattedMembershipDateTime;
+    }
+    return null;
+  }
+
   String get displayTags {
     String tagsString = "";
     if (tags != null) {
