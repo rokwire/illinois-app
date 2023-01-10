@@ -25,7 +25,7 @@ import 'package:illinois/ui/widgets/Filters.dart';
 import 'package:illinois/ui/widgets/HeaderBar.dart';
 import 'package:illinois/ui/widgets/RibbonButton.dart';
 import 'package:rokwire_plugin/model/event.dart';
-import 'package:rokwire_plugin/model/Explore.dart';
+import 'package:rokwire_plugin/model/explore.dart';
 import 'package:rokwire_plugin/service/connectivity.dart';
 import 'package:rokwire_plugin/service/events.dart';
 import 'package:rokwire_plugin/service/localization.dart';
@@ -1015,17 +1015,14 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   List<Explore>? _buildDisplayEvents(List<Event> allEvents) {
     if (_selectedEventsDisplayType == EventsDisplayType.all) {
-      return _toExploreList(allEvents);
+      return allEvents;
     }
     else {
         List<Explore> displayEvents = [];
         for (Event event in allEvents) {
           if (((_selectedEventsDisplayType == EventsDisplayType.multiple) && event.isMultiEvent) ||
               ((_selectedEventsDisplayType == EventsDisplayType.single) && !event.isMultiEvent)) {
-            Explore? explore = _toExplore(event);
-            if (explore != null) {
-              displayEvents.add(explore);
-            }
+            displayEvents.add(event);
           }
         }
         return displayEvents;
@@ -1036,16 +1033,16 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     String? workTime = _getSelectedWorkTime(selectedFilterList);
     PaymentType? paymentType = _getSelectedPaymentType(selectedFilterList);
     bool onlyOpened = (CollectionUtils.isNotEmpty(_filterWorkTimeValues)) ? (_filterWorkTimeValues![1] == workTime) : false;
-    return _toExploreList(await Dinings().loadBackendDinings(onlyOpened, paymentType, null));
+    return await Dinings().loadBackendDinings(onlyOpened, paymentType, null);
   }
 
   Future<List<Explore>?> _loadLaundry() async {
     LaundrySchool? laundrySchool = await Laundries().loadSchoolRooms();
-    return _toExploreList(laundrySchool?.rooms);
+    return laundrySchool?.rooms;
   }
 
   Future<List<Explore>?> _loadBuildings() async {
-    return _toExploreList(await Gateway().loadBuildings());
+    return await Gateway().loadBuildings();
   }
 
   Future<List<Explore>?> _loadMTDStops() async {
@@ -1058,7 +1055,7 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
     if (stops != null) {
       for(MTDStop stop in stops) {
         if (stop.hasLocation) {
-          result.add(stop as Explore);
+          result.add(stop);
         }
         if (stop.points != null) {
           _collectBusStops(result, stops: stop.points);
@@ -1068,16 +1065,16 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   }
 
   Future<List<Explore>?> _loadMTDDestinations() async {
-    return _toExploreList(ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName)));
+    return ExplorePOI.listFromString(Auth2().prefs?.getFavorites(ExplorePOI.favoriteKeyName));
   }
 
   Future<List<Explore>?> _loadStudentCourse(List<ExploreFilter>? selectedFilterList) async {
     String? termId = _getSelectedTermId(selectedFilterList) ?? StudentCourses().displayTermId;
-    return (termId != null) ? _toExploreList(await StudentCourses().loadCourses(termId: termId)) : null;
+    return (termId != null) ? await StudentCourses().loadCourses(termId: termId) : null;
   }
 
   Future<List<Explore>?> _loadAppointments() async {
-    return _toExploreList(Appointments().getAppointments(onlyUpcoming: true, type: AppointmentType.in_person));
+    return Appointments().getAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
   }
 
   String? get _offlineContentMessage {
@@ -1126,14 +1123,3 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   }
 }
 
-// Helpers 
-
-List<Explore>? _toExploreList(List<dynamic>? list) {
-  try { return list?.cast<Explore>(); }
-  catch(e) { debugPrint(e.toString()); return null; }
-}
-
-Explore? _toExplore(dynamic explore) {
-  try { return (explore is Explore) ? explore : null; }
-  catch(e) { debugPrint(e.toString()); return null; }
-}
