@@ -48,7 +48,6 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   static const double _filterLayoutSortKey = 1.0;
   static const CameraPosition _defaultCameraPosition = CameraPosition(target: LatLng(40.102116, -88.227129), zoom: 17);
   static const double _mapPadding = 50;
-  final UniqueKey _mapKey = UniqueKey();
 
   List<ExploreItem> _exploreItems = [];
   ExploreItem? _selectedExploreItem;
@@ -67,8 +66,10 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   bool _eventsDisplayDropDownValuesVisible = false;
   bool _filtersDropdownVisible = false;
   
+  UniqueKey _mapKey = UniqueKey();
   GoogleMapController? _mapController;
-  bool _shouldUpdateMapCamera = false;
+  CameraPosition? _lastCameraPosition;
+  CameraUpdate? _targetCameraUpdate;
   
   LocationServicesStatus? _locationServicesStatus;
 
@@ -168,17 +169,32 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
   Widget _buildMapView() {
     return GoogleMap(
       key: _mapKey,
-      initialCameraPosition: _defaultCameraPosition,
-      onMapCreated: (GoogleMapController controller) {
-        _mapController = controller;
-        if (_shouldUpdateMapCamera) {
-          _acknowledgeExplores();
-          _shouldUpdateMapCamera = false;
-        }
-      },
+      initialCameraPosition: _lastCameraPosition ?? _defaultCameraPosition,
+      onMapCreated: _onMapCreated,
+      onCameraIdle: _onMapCameraIdle,
+      onCameraMove: _onMapCameraMove,
       compassEnabled: _userLocationEnabled,
       mapToolbarEnabled: Storage().debugMapShowLevels ?? false,
     );
+  }
+
+  void _onMapCreated(GoogleMapController controller) async {
+    debugPrint('ExploreMap created' );
+    _mapController = controller;
+
+    if (_targetCameraUpdate != null) {
+      await _mapController?.moveCamera(_targetCameraUpdate!);
+      _targetCameraUpdate = null;
+    }
+  }
+
+  void _onMapCameraMove(CameraPosition cameraPosition) {
+    debugPrint('ExploreMap camera position: lat: ${cameraPosition.target.latitude} lng: ${cameraPosition.target.longitude} zoom: ${cameraPosition.zoom}' );
+    _lastCameraPosition = cameraPosition;
+  }
+
+  void _onMapCameraIdle() {
+    debugPrint('ExploreMap camera idle' );
   }
 
   Widget _buildLoadingContent() {
@@ -1015,7 +1031,8 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
           _explores = explores;
           _exploreTask = null;
           _exploreProgress = false;
-          _shouldUpdateMapCamera = true;
+          _mapKey = UniqueKey();
+          _targetCameraUpdate = exploresCameraUpdate(explores) ?? CameraUpdate.newCameraPosition(_defaultCameraPosition);
         });
       }
     });
@@ -1029,21 +1046,9 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
       setState(() {
         _explores = explores;
         _exploreTask = null;
-        _shouldUpdateMapCamera = false;
       });
     }
   }
-
-  void _acknowledgeExplores() {
-    //TODO: eval camera zoom, , build markers, etc.
-    if ((_explores != null) && (_mapController != null)) {
-      LatLngBounds? bounds = ExploreMap.boundsOfList(_explores);
-      if (bounds != null) {
-        _mapController?.animateCamera(CameraUpdate.newLatLngBounds(bounds, _mapPadding));
-      }
-    }
-  }
-
 
   Future<List<Explore>?> _loadExplores() async {
     if (Connectivity().isNotOffline) {
@@ -1138,6 +1143,13 @@ class _ExploreMapPanelState extends State<ExploreMapPanel> with SingleTickerProv
 
   Future<List<Explore>?> _loadAppointments() async {
     return Appointments().getAppointments(onlyUpcoming: true, type: AppointmentType.in_person);
+  }
+
+  // Map Content
+
+  static CameraUpdate? exploresCameraUpdate(List<Explore>? explores) {
+      LatLngBounds? bounds = ExploreMap.boundsOfList(explores);
+      return (bounds != null) ? CameraUpdate.newLatLngBounds(bounds, _mapPadding) : null;
   }
 
 }
