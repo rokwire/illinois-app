@@ -225,7 +225,7 @@ extension ExploreMap on Explore {
         if ((exploreLocation != null)) {
           double? exploreLat = exploreLocation.latitude?.toDouble();
           double? exploreLong = exploreLocation.longitude?.toDouble();
-          if ((exploreLat != null) && (exploreLong != null)) {
+          if ((exploreLat != null) && (exploreLat != 0.0) && (exploreLong != null) && (exploreLong != 0.0)) {
             if ((latMin != null) && (longMin != null) && (latMax != null) && (longMax != null)) {
               if (exploreLat < latMin)
                 latMin = exploreLat;
